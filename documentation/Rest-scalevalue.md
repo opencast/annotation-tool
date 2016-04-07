@@ -1,10 +1,10 @@
 # Scale value
 
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 
 ### Base URI
-The scale value resources are related to a [scale](Rest-scale). The base path for them is 
+The scale value resources are related to a [scale](Rest-scale.md). The base path for them is 
 
 `http://api.annotationstool.com/v1/scales/#{scaleId}/scalevalues` for "template" scales
 `http://api.annotationstool.com/v1/videos/#{videoId}/scales/#{scaleId}/scalevalues` for normal scales
@@ -88,7 +88,7 @@ Query values from a scale.
 
 | Method | Path | Parameters | HTTP Response |
 | ------ | ------ | ----- | -----: |
-|  GET  | /scales/#{scaleId}/scalevalues/#{scalevalueId} or /videos/#{videoId}/scale/#{scaleId}/scalevalues | [list queries parameters](rest-api#wiki-listparam) | `200 Ok`: Resources returned, `401 Unauthorized`: Operation not authorized for the user, `404 Not found`: Resource not found, `500 Internal server error`: Error happened on the server side. |
+|  GET  | /scales/#{scaleId}/scalevalues/#{scalevalueId} or /videos/#{videoId}/scale/#{scaleId}/scalevalues | [list queries parameters](rest-api.md#wiki-listparam) | `200 Ok`: Resources returned, `401 Unauthorized`: Operation not authorized for the user, `404 Not found`: Resource not found, `500 Internal server error`: Error happened on the server side. |
 
 ### Example request
 #### _Url_
@@ -223,5 +223,5 @@ NO CONTENT
 #### _Response content_
 NO CONTENT
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 [1]: rest-get-parameters

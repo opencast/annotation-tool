@@ -1,6 +1,6 @@
 # Comment
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 
 ### Base URI
 
@@ -75,7 +75,7 @@ Query comments from an annotation.
 
 | Method | Path | Parameters | HTTP Response |
 | ------ | ------ | ----- | -----: |
-|  GET  | /videos/#{videoId}/tracks/#{trackId}/annotations/#{annotationId}/comments | [list queries parameters](rest-api#wiki-listparam) | `200 Ok`: Resources returned, `401 Unauthorized`: Operation not authorized for the user, `404 Not found`: Resource not found, `500 Internal server error`: Error happened on the server side. |
+|  GET  | /videos/#{videoId}/tracks/#{trackId}/annotations/#{annotationId}/comments | [list queries parameters](rest-api.md#wiki-listparam) | `200 Ok`: Resources returned, `401 Unauthorized`: Operation not authorized for the user, `404 Not found`: Resource not found, `500 Internal server error`: Error happened on the server side. |
 
 ### Example request
 #### _Url_
@@ -168,5 +168,5 @@ NO CONTENT
 #### _Response content_
 NO CONTENT
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 [1]: rest-get-parameters

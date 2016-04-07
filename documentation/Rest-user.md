@@ -1,6 +1,6 @@
 # User
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 
 The user resources is used to make the binding between the annotations tool context (i.e. ilias or sakai) and the annotation tools itself for the users management. 
 
@@ -132,5 +132,5 @@ NO CONTENT
 #### _Response content_
 NO CONTENT
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 [1]: rest-get-parameters

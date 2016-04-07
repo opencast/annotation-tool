@@ -1,6 +1,6 @@
 #Annotation
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 
 ### Base URI
 
@@ -218,5 +218,5 @@ NO CONTENT
 #### _Response content_
 NO CONTENT
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 [1]: rest-get-parameters

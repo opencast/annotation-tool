@@ -1,8 +1,8 @@
 #Category
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 
-The category resources are related to a [video](Rest-video). Enhanced [annotation](Rest-annotation) are based on [label](Rest-label) that are grouped in category. The base path for categories is `http://api.annotationstool.com/v1/videos/#{videoId}/categories`. But of course a category can be supported by multiple videos. To work on unique categories the following path can be used `http://api.annotationstool.com/v1/categories`.
+The category resources are related to a [video](Rest-video.md). Enhanced [annotation](Rest-annotation) are based on [label](Rest-label.md) that are grouped in category. The base path for categories is `http://api.annotationstool.com/v1/videos/#{videoId}/categories`. But of course a category can be supported by multiple videos. To work on unique categories the following path can be used `http://api.annotationstool.com/v1/categories`.
 
 ### Base URI
 
@@ -143,7 +143,7 @@ Query categories from a video.
 
 | Method | Path | Parameters | HTTP Response |
 | ------ | ------ | ----- | -----: |
-|  GET  |  /videos/#{videoId}/categories or /categories | [list queries parameters](rest-api#wiki-listparam)  | `200 Ok`: Resources returned, `401 Unauthorized`: Operation not authorized for the user, `404 Not found`: Resource not found, `500 Internal server error`: Error happened on the server side. |
+|  GET  |  /videos/#{videoId}/categories or /categories | [list queries parameters](rest-api.md#wiki-listparam)  | `200 Ok`: Resources returned, `401 Unauthorized`: Operation not authorized for the user, `404 Not found`: Resource not found, `500 Internal server error`: Error happened on the server side. |
 
 ### Default sorting 
 
@@ -226,5 +226,5 @@ NO CONTENT
 ### Response content
 NO CONTENT
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 [1]: rest-get-parameters

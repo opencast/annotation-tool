@@ -5,15 +5,15 @@
 ##[General Status Codes and Messages](General-Status-Codes-and-Messages)
 
 ## Resources
-* [User](rest-user)
-* [Video](rest-video)
-* [Track](rest-track)
-* [Annotation](rest-annotation)
-* [Category](rest-category)
-* [Label](rest-label)
-* [Scale](rest-scale)
-* [Scale value](rest-scalevalue)
-* [Comment](rest-comment)
+* [User](rest-user.md)
+* [Video](rest-video.md)
+* [Track](rest-track.md)
+* [Annotation](rest-annotation.md)
+* [Category](rest-category.md)
+* [Label](rest-label.md)
+* [Scale](rest-scale.md)
+* [Scale value](rest-scalevalue.md)
+* [Comment](rest-comment.md)
 
 ## Data passing
 
@@ -75,7 +75,7 @@ To simply querying on it, a new list query parameter should be implemented. See 
 For video, category, track and annotation, a tag named "channel_id" can be present to defined the entity scope.
 
 
-## [Upcoming](Roadmap): List queries <a name="list-queries"></a>
+## [Upcoming](Roadmap.md): List queries <a name="list-queries"></a>
 
 For query on list like on [tracks](rest-track#getAll), [annotations](rest-annotation#getAll) or [categories](rest-category#wiki-getAll) different url parameters are accepted. They are always the same for all the list queries.
 

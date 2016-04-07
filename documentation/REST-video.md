@@ -1,6 +1,6 @@
 # Video
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
 
 
 The video is the root resources. It is a representation of the video element from the video portal/system (i.e. Opencast Matterhorn) for the annotation tool. 
@@ -105,4 +105,4 @@ Get CSV data from the video for statistics usage (Excel, ...).
 #### _Response content_
 `text/csv`
 
-[< Rest API documentation](Rest-API)
+[< Rest API documentation](Rest-API.md)
