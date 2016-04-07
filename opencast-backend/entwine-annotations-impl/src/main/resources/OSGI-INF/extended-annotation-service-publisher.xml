@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
+        name="ch.entwine.annotations.impl.ExtendedAnnotationServicePublisher"
+        immediate="true"
+        activate="activate"
+        deactivate="deactivate">
+  <implementation class="ch.entwine.annotations.impl.ExtendedAnnotationServicePublisher"/>
+  <service>
+    <provide interface="org.osgi.service.cm.ManagedService"/>
+  </service>
+  <property name="service.description" value="Extended Annotation Service Publisher"/>
+  <reference name="persistence"
+          interface="javax.persistence.spi.PersistenceProvider"
+          cardinality="1..1"
+          policy="static"/>
+  <reference name="persistenceProps"
+          interface="java.util.Map"
+          cardinality="1..1"
+          policy="static"
+          target="(type=persistence)"/>
+  <reference name="securityService" interface="org.opencastproject.security.api.SecurityService"
+          cardinality="1..1" policy="static" bind="setSecurityService"/>
+</scr:component>

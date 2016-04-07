@@ -1,0 +1,26 @@
+        <form class="form-horizontal">
+            <fieldset>                
+                <div class="control-group">
+                    <label class="control-label" for="nickanme"><b>*</b> Name: </label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge scale-name" placeholder="Insert the category name" value="{{scale.name}}"></input>
+                    </div>
+                    <label class="control-label" for="nickanme">Description: </label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge scale-description" placeholder="Insert the category description" value="{{scale.description}}"></input>
+                    </div>
+                    <div class="controls">
+                        <a class="btn delete-scale"><i class="icon-trash"></i>Delete</a>
+                    </div>
+
+                </div>
+
+                <div>
+                    <div class="header-name">Name</div>
+                    <div class="header-value">Value</div>
+                </div>
+                <div class="control-group list-scale-values"></div>
+                 <a class="btn create-scale-value"><i class="icon-plus-sign"></i> Add scale value</a>
+
+            </fieldset>
+        </form>

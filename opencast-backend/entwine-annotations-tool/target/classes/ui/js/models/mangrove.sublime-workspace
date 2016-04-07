@@ -1,0 +1,1623 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Layout",
+				"layoutManager"
+			],
+			[
+				"la",
+				"layoutManager"
+			],
+			[
+				"fi",
+				"filteredCategories"
+			],
+			[
+				"a",
+				"attributes"
+			],
+			[
+				"c",
+				"categories"
+			],
+			[
+				"cu",
+				"currentTarget"
+			],
+			[
+				"dele",
+				"delegateEvents"
+			],
+			[
+				"user",
+				"userExtId"
+			],
+			[
+				"get",
+				"getVideo"
+			],
+			[
+				"trac",
+				"track2"
+			],
+			[
+				"loc",
+				"localhost"
+			],
+			[
+				"curren",
+				"currentIndex"
+			],
+			[
+				"ca",
+				"categoriesTabs"
+			],
+			[
+				"ta",
+				"tabId"
+			],
+			[
+				"car",
+				"carouselElement"
+			],
+			[
+				"ev",
+				"events"
+			],
+			[
+				"lis",
+				"listenTo"
+			],
+			[
+				"ite",
+				"itemsLength"
+			],
+			[
+				"ini",
+				"initCarousel"
+			],
+			[
+				"remo",
+				"removeOne"
+			],
+			[
+				"add",
+				"addCarouselItem"
+			],
+			[
+				"cre",
+				"create"
+			],
+			[
+				"mod",
+				"models"
+			],
+			[
+				"new",
+				"newLabels"
+			],
+			[
+				"fil",
+				"filter"
+			],
+			[
+				"categ",
+				"categoriesCollection"
+			],
+			[
+				"cate",
+				"category"
+			],
+			[
+				"coll",
+				"collection"
+			],
+			[
+				"cat",
+				"categories"
+			],
+			[
+				"mo",
+				"models"
+			],
+			[
+				"attr",
+				"attributes"
+			],
+			[
+				"log",
+				"LoginView"
+			],
+			[
+				"login",
+				"loginView"
+			],
+			[
+				"u",
+				"users"
+			],
+			[
+				"ann",
+				"annotationsTool"
+			],
+			[
+				"an",
+				"annotationsTool"
+			],
+			[
+				"anno",
+				"annotation"
+			],
+			[
+				"old",
+				"oldTrack"
+			],
+			[
+				"newT",
+				"newTrack"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"_",
+				"_switchListener"
+			],
+			[
+				"swit",
+				"switchFilter"
+			],
+			[
+				"sw",
+				"switchFilter"
+			],
+			[
+				"is",
+				"isBindedToMaster"
+			],
+			[
+				"bind",
+				"bindToMaster"
+			],
+			[
+				"rem",
+				"remindingFetchingTrack"
+			],
+			[
+				"def",
+				"createDefaultTrack"
+			],
+			[
+				"sc",
+				"scalevalues"
+			],
+			[
+				"s",
+				"scalevalues"
+			],
+			[
+				"att",
+				"attributes"
+			],
+			[
+				"atr",
+				"attributes"
+			],
+			[
+				"categor",
+				"categories"
+			],
+			[
+				"re",
+				"removeOne"
+			],
+			[
+				"sort",
+				"sortViewsbyTime"
+			],
+			[
+				"track",
+				"trackJSON"
+			],
+			[
+				"tabs",
+				"tabsButtonsElement"
+			],
+			[
+				"wind",
+				"windowHeight"
+			],
+			[
+				"group",
+				"groupModal"
+			],
+			[
+				"item",
+				"item"
+			],
+			[
+				"start",
+				"start"
+			],
+			[
+				"annotati",
+				"annotation"
+			],
+			[
+				"temp",
+				"tempList"
+			],
+			[
+				"filt",
+				"filteredItems"
+			],
+			[
+				"remove",
+				"removeClass"
+			],
+			[
+				"dis",
+				"disableFilter"
+			],
+			[
+				"update",
+				"updateTrack"
+			],
+			[
+				"cons",
+				"constructor	@constructor"
+			],
+			[
+				"typ",
+				"type	@type"
+			],
+			[
+				"namespace",
+				"namespace	@namespace"
+			],
+			[
+				"memb",
+				"memberOf	@memberOf"
+			],
+			[
+				"me",
+				"memberOf	@memberOf"
+			],
+			[
+				"scale",
+				"scaleValue"
+			],
+			[
+				"scal",
+				"scalevalue"
+			],
+			[
+				"loa",
+				"loadAddTrackModal"
+			],
+			[
+				"pro",
+				"prototype"
+			],
+			[
+				"sca",
+				"scalevalue"
+			],
+			[
+				"creat",
+				"created_nickname"
+			],
+			[
+				"time",
+				"timeline"
+			],
+			[
+				"p",
+				"param	@param"
+			],
+			[
+				"un",
+				"undefined"
+			],
+			[
+				"tra",
+				"trackId"
+			],
+			[
+				"ol",
+				"oldTrack"
+			],
+			[
+				"html",
+				"htmlElement"
+			],
+			[
+				"curr",
+				"currentGroup"
+			],
+			[
+				"par",
+				"parameter"
+			],
+			[
+				"P",
+				"PUBLIC"
+			],
+			[
+				"del",
+				"deleted_nickname"
+			],
+			[
+				"upda",
+				"updated_nickname"
+			],
+			[
+				"tg",
+				"tags2"
+			],
+			[
+				"use",
+				"userExtId"
+			],
+			[
+				"pars",
+				"parseJSONString"
+			],
+			[
+				"ps",
+				"parseJSONString"
+			],
+			[
+				"pa",
+				"parseJSONString"
+			],
+			[
+				"parse",
+				"parseJSONString"
+			],
+			[
+				"string",
+				"stringsTags"
+			],
+			[
+				"strin",
+				"stringsTags"
+			],
+			[
+				"st",
+				"stringsTags"
+			],
+			[
+				"A",
+				"ACCESS"
+			],
+			[
+				"no",
+				"notFocusEvent"
+			],
+			[
+				"onD",
+				"onDeletePressed"
+			],
+			[
+				"sel",
+				"selection"
+			],
+			[
+				"getS",
+				"getSelection"
+			],
+			[
+				"font-",
+				"font-weight"
+			],
+			[
+				"carous",
+				"carouselElement"
+			],
+			[
+				"sav",
+				"scalevalue"
+			],
+			[
+				"fin",
+				"findByNameScale"
+			],
+			[
+				"sa",
+				"saveModel"
+			],
+			[
+				"carou",
+				"carousel"
+			],
+			[
+				"model",
+				"model"
+			],
+			[
+				"clas",
+				"className"
+			],
+			[
+				"save",
+				"saveChange"
+			],
+			[
+				"ign",
+				"ignoreAdd"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"annotations",
+				"annotationsTool"
+			],
+			[
+				"on",
+				"onColorChange"
+			],
+			[
+				"edit",
+				"editModus"
+			],
+			[
+				"ed",
+				"editModus"
+			],
+			[
+				"nam",
+				"nameInput"
+			],
+			[
+				"swi",
+				"switchEditModus"
+			],
+			[
+				"cur",
+				"currentIndex"
+			],
+			[
+				"insert",
+				"insertCategoryView"
+			],
+			[
+				"unde",
+				"undelegateEvents"
+			],
+			[
+				"catego",
+				"categories"
+			],
+			[
+				"Cate",
+				"Category"
+			],
+			[
+				"tie",
+				"titleLink"
+			],
+			[
+				"pr",
+				"idPrefix"
+			],
+			[
+				"tit",
+				"titleLink"
+			],
+			[
+				"con",
+				"confirmWithEnter"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/mangrove.player.js",
+			"settings":
+			{
+				"buffer_size": 49776,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/modules/timeline.js",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/libs/require/config.js",
+			"settings":
+			{
+				"buffer_size": 622,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/player-bootstrap.js",
+			"settings":
+			{
+				"buffer_size": 631,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/index.html",
+			"settings":
+			{
+				"buffer_size": 965,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/jquery.mangroveplayer.js",
+			"settings":
+			{
+				"buffer_size": 5395,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/modules/layoutManager.js",
+			"settings":
+			{
+				"buffer_size": 3778,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/plugins/heatmap.js",
+			"settings":
+			{
+				"buffer_size": 6130,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 39 files for \"order!\" (regex)\n\n/Users/xavier/Documents/Projects/Entwine/Mangrove/js/mangrove.player.js:\n    8   */\n    9  define(['jquery',\n   10:         'order!timelinePlugin',\n   11:         'order!mangrove.mediacontroller',\n   12:         'order!mangrove.mediaelement',\n   13          'text!tmpl/controls.tmpl',\n   14:         'order!modules/timeline',\n   15:         'order!jquery-tmpl',\n   16:         'order!jquery-ui',\n   17:         'order!libs/fullscreen'], \n   18  \n   19  \n\n7 matches in 1 file\n",
+			"settings":
+			{
+				"buffer_size": 516,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/plugins/slidepreview.js",
+			"settings":
+			{
+				"buffer_size": 12822,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/plugins/timeline.js",
+			"settings":
+			{
+				"buffer_size": 6385,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/build/config/require.js.build.js",
+			"settings":
+			{
+				"buffer_size": 193,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/modules/mangrove.mediacontroller.js",
+			"settings":
+			{
+				"buffer_size": 14577,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/Marked.sublime-build",
+	"command_palette":
+	{
+		"height": 47.0,
+		"selected_items":
+		[
+			[
+				"form",
+				"Format: Javascript"
+			],
+			[
+				"fo",
+				"Format: Javascript"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"mark",
+				"Set Syntax: MultiMarkdown"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"fom",
+				"Format: Javascript"
+			],
+			[
+				"i",
+				"Indent XML"
+			],
+			[
+				"xml",
+				"Indent XML"
+			],
+			[
+				"f",
+				"Format: Javascript"
+			],
+			[
+				"for",
+				"Format: Javascript"
+			],
+			[
+				"html",
+				"HTML: Encode Special Characters"
+			],
+			[
+				"ma",
+				"Markdown Preview: preview in Browser"
+			],
+			[
+				"preview",
+				"Markdown Preview: preview in Browser"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"ht",
+				"HTML: Encode Special Characters"
+			],
+			[
+				"fomr",
+				"Format: Javascript"
+			],
+			[
+				"brack",
+				"Bracket Highlighter: Match Brackets"
+			],
+			[
+				"tspace",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"zen",
+				"Set Syntax: ZenCoding"
+			],
+			[
+				"line",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			],
+			[
+				"br",
+				"Bracket Highlighter: Match Brackets"
+			],
+			[
+				"bra",
+				"Bracket Highlighter: Match Brackets"
+			],
+			[
+				"brak",
+				"Bracket Highlighter: Match Brackets"
+			],
+			[
+				"jquery",
+				"Set Syntax: jQuery (JavaScript)"
+			],
+			[
+				"en",
+				"HTML: Encode Special Characters"
+			],
+			[
+				"jslin",
+				"JSLint: Run JSLint"
+			],
+			[
+				"",
+				"Build: Build"
+			],
+			[
+				"ali",
+				"Preferences: Alignment Key Bindings – Default"
+			],
+			[
+				"align",
+				"Preferences: Alignment File Settings – Syntax Specific – User"
+			],
+			[
+				"package cont",
+				"Package Control: Install Package"
+			],
+			[
+				"convert ",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"space",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"package",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/xavier/Documents/Projects/Entwine/Mangrove/js/modules/layoutManager",
+		"/Users/xavier/Documents/Projects/Entwine/Mangrove/js/libs/require/require.config.js",
+		"/Users/xavier/Documents/Projects/Entwine/Mangrove/js/libs/require.config.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/libs/require/config/config.js",
+		"/Users/xavier/Desktop/diff-sync",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/build.xml",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/require/main-rest.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/rest-user.js",
+		"/Users/xavier/Documents/Projects/Entwine/mh/etc/config.properties",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/backbone-annotations-sync.js",
+		"/Users/xavier/Documents/Projects/Entwine/mh/etc/config.properties.entwine",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/annotation.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections/annotations.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections/tracks.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/FiltersManager.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/main.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models/category.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models/track.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections/categories.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/annotate.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/annotate-category.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/annotate-label.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/require/config.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/require/main-collections.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/rest.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/rest-video-and-track.js",
+		"/Users/xavier/Documents/Projects/Entwine/mh/etc/system.properties",
+		"/Users/xavier/Documents/Projects/Entwine/mh/pom.xml",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/require/main-models.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/require/main-playerAdapterHTML5.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/index.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/config/require.js.build.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/player_adapter_HTML5.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/rest-scale-and-scalevalue.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/user.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/annotations-tool-configuration.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/rest-category-and-label.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/playerAdapterHTML5.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/require/main-playeradapterHTML5.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/libs/require/config/main-config.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/list.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/models.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/collections.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/require/main-integration.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/require/main-playeradapter.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/main.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models/video.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/annotations.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/categories.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/category.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/label.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/labels.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/scale.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/scales.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/scalevalue.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/scalevalues.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/tracks.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests/js/video.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/libs/require/require-2.0.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/timeline-2.1/timeline-v1.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/timeline-2.1/timeline-min.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/VeriteCo-Timeline-b7e4158/examples/embed.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/timeline.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/login.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/templates/timeline-group.tmpl",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections/labels.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections/scales.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections/scalevalues.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections/users.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections/videos.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models/annotation.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models/label.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models/scale.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models/scalevalue.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models/user.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/templates/user-login.tmpl",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/annotations-tool.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/annotations-tool-configuration.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/config/project.properties",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/annotationTool-build.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/style/timeline/timeline-custom.less",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/templates/timeline-modal-group.tmpl",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/profiles/integration/annotations-tool-configuration.js",
+		"/Users/xavier/Downloads/20121223142920.ics",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/list-annotation.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/roles.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/config/jshint.properties",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/libs/backbone/backbone-min.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/libs/backbone/backbone-min2.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/Wiki/annotations.wiki/Player-adapter-API.md",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/Wiki/annotations.wiki/Remaining-tasks.md",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/Wiki/annotations.wiki/Home.md",
+		"/private/var/folders/zh/5z2pw_0x3px0g4jfsv0ldbl40000gn/T/tmpKQCEaJ.html",
+		"/Users/xavier/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/private/var/folders/zh/5z2pw_0x3px0g4jfsv0ldbl40000gn/T/114.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/annotate-tab.js",
+		"/Users/xavier/Library/Application Support/Sublime Text 2/Packages/SideBarEnhancements/messages/11.13.2012.1305.0.txt",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/templates/list-annotation.tmpl",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/style/annotations/list.less",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/templates/annotate-tab.tmpl",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/Wiki/annotations.wiki/Rest-API.md",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/roles.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views/access.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/config/jshint.globals",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/templates/timeline-item.tmpl",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/access.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/docs/index.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/tools/jsdoc3/conf.json",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/tools/jsdoc3/conf.json.EXAMPLE",
+		"/Users/xavier/Documents/Projects/Entwine/mh/modules/matterhorn-extended-annotation-tool/src/main/resources/ui/index.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/player_adapter_HTML5.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/profiles/local/videosource",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/profiles/integration/videosource",
+		"/Users/xavier/Sites/annotations/index.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/config/integration/videosource",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/config/local/videosource",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/libs/timeline.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/style/annotations/base_layout.less",
+		"/Users/xavier/Documents/Projects/Entwine/mh/.gitignore",
+		"/Users/xavier/Downloads/bootstrap-master/js/tests/index.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/config/matterhorn-configuration.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build_2/config/default.properties",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/docs/global.html",
+		"/Users/xavier/Documents/Projects/Entwine/mh/modules/matterhorn-extended-annotation-tool/src/main/resources/ui/js/annotations-tool-configuration.js",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/logs/index.html",
+		"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/build/logs/results-December 5, 2012 04:32:18.xml",
+		"/Users/xavier/Library/Application Support/Sublime Text 2/Packages/User/annotations-deploy.sublime-build",
+		"/Users/xavier/Library/Application Support/Sublime Text 2/Packages/User/deploy-2.sublime-build"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/Users/xavier/Documents/Projects/Entwine/Mangrove/js",
+			"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests, /Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js",
+			"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests",
+			"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js",
+			"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests,/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations",
+			"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/tests",
+			"/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/collections,/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/models,/Users/xavier/Documents/Projects/ETH/Annotations/tool/annotations/js/views",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"layoutManager",
+			"layoutManger",
+			"self",
+			"order!",
+			"timeline",
+			"order",
+			",",
+			"order!",
+			",",
+			"order!",
+			"modules",
+			",",
+			"order",
+			",",
+			"order!",
+			"addCategories",
+			"active",
+			"async: false",
+			"options",
+			"annotation",
+			"track",
+			"video",
+			"user.get('id')",
+			"label",
+			"Label",
+			"label",
+			"require",
+			"categoriesTabs",
+			"labelTab",
+			"showTab",
+			"onCarouselSlid",
+			"use",
+			"use!",
+			"setMuted",
+			".bind(",
+			"..",
+			"itemsCurrentContainer",
+			"insertCategoryView",
+			"addCarouselItem",
+			"addCategory",
+			"AddCategory",
+			"addCategory",
+			"order!",
+			"order",
+			"tests",
+			"addCategories",
+			"Collection",
+			"categoriesCollection",
+			"this.categoriesCollection",
+			"category.collection",
+			"collection",
+			"this.categories",
+			"=\"#",
+			"this.categories",
+			"'",
+			"all",
+			"'",
+			"settings",
+			"getMyTracks",
+			"tests",
+			" //",
+			"order!",
+			"order",
+			"order!",
+			"use!",
+			"use",
+			"use!",
+			"use",
+			"LoginView",
+			"loginOnInsert",
+			"loadLoginModal",
+			"LoginTmpl",
+			"groupTemplate",
+			"GroupTemplate",
+			"groupTemplate",
+			"setLoadingProgress",
+			"userModal",
+			"list",
+			"filters",
+			"isMine",
+			"allItems",
+			"parent",
+			"this.",
+			"FilterManagers",
+			"endGetAnnotations",
+			"getAnnotations",
+			"GetAnnotations",
+			"getAnnotations",
+			"onTrackSelected",
+			"Backbone.localSync",
+			"Backbone.localSync(\"read\",annotationsTool.users,{",
+			"model",
+			"tracks",
+			"'",
+			".bind(",
+			"'",
+			"addList",
+			"character",
+			"word",
+			"column",
+			"col",
+			"getAnnotations",
+			"login",
+			"video",
+			"addCategories",
+			"addCategory",
+			"AddCategory",
+			"addCategory",
+			"AddCategory",
+			"addCategory",
+			"modal",
+			"initTrackCreation",
+			"modal",
+			"modeal",
+			"access",
+			"modalGroupTemplate",
+			"groupTemplate",
+			"GroupTemplate",
+			"groupTemplate",
+			"GroupTmpl",
+			"login",
+			"LoginTmpl",
+			"newItem",
+			"index",
+			"newItem",
+			"newTrack",
+			"onTrackSelected",
+			"onTimelineMove"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"",
+			"user.get('id')",
+			"updated_nickname",
+			"created_nickname",
+			"user.get('nickname')"
+		],
+		"reverse": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 6,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/mangrove.player.js",
+					"settings":
+					{
+						"buffer_size": 49776,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4255,
+								4255
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1290.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/modules/timeline.js",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/libs/require/config.js",
+					"settings":
+					{
+						"buffer_size": 622,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								437,
+								437
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/player-bootstrap.js",
+					"settings":
+					{
+						"buffer_size": 631,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								120,
+								120
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.0,
+							"encoding_helper_encoding": "Unknown",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/index.html",
+					"settings":
+					{
+						"buffer_size": 965,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								168,
+								168
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/jquery.mangroveplayer.js",
+					"settings":
+					{
+						"buffer_size": 5395,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								186,
+								186
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/modules/layoutManager.js",
+					"settings":
+					{
+						"buffer_size": 3778,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								379,
+								383
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/plugins/heatmap.js",
+					"settings":
+					{
+						"buffer_size": 6130,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								461,
+								461
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"settings":
+					{
+						"buffer_size": 516,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										166,
+										172
+									],
+									[
+										205,
+										211
+									],
+									[
+										254,
+										260
+									],
+									[
+										342,
+										348
+									],
+									[
+										383,
+										389
+									],
+									[
+										419,
+										425
+									],
+									[
+										453,
+										459
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/plugins/slidepreview.js",
+					"settings":
+					{
+						"buffer_size": 12822,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								197,
+								197
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/plugins/timeline.js",
+					"settings":
+					{
+						"buffer_size": 6385,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								175,
+								6376
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/build/config/require.js.build.js",
+					"settings":
+					{
+						"buffer_size": 193,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								160,
+								160
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "/Users/xavier/Documents/Projects/Entwine/Mangrove/js/modules/mangrove.mediacontroller.js",
+					"settings":
+					{
+						"buffer_size": 14577,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								350,
+								350
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 137.0
+	},
+	"output.jslint_result_view":
+	{
+		"height": 202.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"time",
+				"js/views/timeline.js"
+			],
+			[
+				"pla",
+				"js/player_adapter_HTML5.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 286.0,
+	"status_bar_visible": true
+}

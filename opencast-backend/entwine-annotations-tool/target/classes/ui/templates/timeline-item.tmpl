@@ -1,0 +1,4 @@
+<div title="{{text}}" class="timeline-item {{#if atEnd}}at-end{{/if}}" style="{{#if category.settings.color}};background-color: {{category.settings.color}}{{/if}}" onclick="annotationsTool.onClickSelectionById([{id:'{{id}}',trackId:'{{track}}'}], true, true)" data-annotationid="{{id}}" data-trackid="{{track}}">
+    <span>{{#if label}}<b>{{label.abbreviation}}</b>{{/if}} {{text}}</span>
+    <i class="delete icon-remove" title="Delete  annotation" onclick="annotationsTool.trigger('deleteAnnotation', {{id}}, {{track}})"></i>
+</div>

@@ -1,0 +1,125 @@
+/**
+ * Style for the base element of the annotations tool
+ */
+ 
+//@import "variables.less";
+
+body {
+	padding-top: 30px; 
+	padding-bottom: 10px; 
+    overflow: hidden;
+}
+
+div#main-container {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+	
+.window{
+    background-color: @gray;
+    border: 2px solid @grayDark;
+    .standard_border_radius;
+
+    margin-bottom: 8px; 
+    overflow: hidden;
+    max-height: 40%;
+    
+   	.window-title{
+			color: @blue;
+			float: left;
+			display: block;
+			padding: 0;
+    }
+    
+		.navbar {
+			margin-bottom: 0px;
+	    @line-height: 16px;
+    
+			.navbar-inner {
+				.standard_border_radius; 
+				background-color: @grayDark;
+				background-image: none;	
+				padding: 0 5px 0 5px;
+				line-height: @line-height;
+				border-bottom: 4px solid @grayDark;
+      
+				.container-fluid {
+					padding: 0;
+    	  }
+			}
+
+			.nav > li > a {
+	      padding: 0 0 0 1em;
+				line-height: @line-height;
+						
+				&:hover{
+					cursor: pointer; 
+				}
+			}
+    }
+}
+
+
+.navbar {
+
+	@font-size: 12px;
+	@line-height: 20px;
+
+    .menu-category {
+        padding-left: 5px;
+    }
+
+	a.brand {
+		font-size: @font-size;
+		line-height: @line-height;
+		padding: 0px 1em 0px 20px;
+	}
+	.nav > li > a {
+		font-size: @font-size;	
+		line-height: @line-height;
+		font-weight: normal;
+		padding: 0 0 0 1em;
+		
+		&#logout{
+			display: none; 
+		}
+	}
+}
+
+#select-tracks {
+    padding: 7px;
+    label {
+        float: left;
+        color: white;
+        select {
+            float: right;
+            margin-left: 10px;
+            margin-bottom: 0px;
+        }
+        margin-bottom: 0px;
+    }
+}
+
+
+#video-container{
+  max-height: 50%;
+  max-width: 100%;
+  text-align: center;
+  object, video, embed{
+    width: 100%;
+    max-height: 500px;
+  	vertical-align: bottom;
+  }
+}
+
+#alert {
+    overflow: visible!important;
+
+    h4{
+        margin-bottom: 10px;
+    }
+}
+
+
+
+

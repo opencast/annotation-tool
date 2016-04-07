@@ -1,0 +1,90 @@
+/**
+ * Different style variable that can be use by all variables
+ */
+
+.inset-box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #000) {
+  background-size: 100% 100%;
+  box-shadow: inset @arguments;
+  -moz-box-shadow: inset @arguments;
+  -webkit-box-shadow: inset @arguments;
+}
+
+.box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #000) {
+  background-size: 100% 100%;
+  box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  -webkit-box-shadow: @arguments;
+}
+
+@border_radius: 0px;
+.standard_border_radius{border-radius: @border_radius @border_radius @border_radius @border_radius;	}
+
+// Grays Customized
+// -------------------------
+@black:                 #000;
+@grayDarker:            #222;    /* Light text */
+@grayDark:              #303030; /* Titlebar and window border */
+@gray:                  #4b4b4b; /* Very light text, annotation bg */
+@grayLikert:            #808080; /* Likert bg */
+@grayButtons:						#b0b0b0; /* Buttons bg */
+@grayLight:             #c7c7c7; /* Bright text on dark bg */
+@grayLighter:           #eaeaea; /* Timeline BG, Odd even */
+@white:                 #fff;
+
+// Accent colors
+// -------------------------
+@blue:                  #39a3f1;
+@blueDark:              #2d82c0;
+@green:                 #61ae24;
+@red:                   #da0000;
+@yellow:                #ffd800;
+@orange:                #ff7800;
+@pink:                  #555d7c;
+@purple:                #ac5bff;
+
+
+// Custom Scaffolding
+// -------------------------
+@textColor:             @black;
+@linkColor:             #39a3f1;
+@baseFontSize:          12px;
+@baseLineHeight:        16px;
+@baseFontFamily:        Verdana, sans-serif;
+@bodyBackground: 				#636363;
+
+
+// Buttons
+// -------------------------
+@btnBackground:          lighten(@grayButtons, 0%);
+@btnBackgroundHighlight: @grayButtons;
+@btnBorder:              @black;
+
+@btnPrimaryBackground:              lighten(@blue, 20%);
+@btnPrimaryBackgroundHighlight:     lighten(@blue, 20%);
+
+@btnInfoBackground:                 lighten(@blue, 30%);
+@btnInfoBackgroundHighlight:        lighten(@blue, 30%);
+
+@btnSuccessBackground:              lighten(@green, 20%);
+@btnSuccessBackgroundHighlight:     lighten(@green, 20%);
+
+@btnWarningBackground:              lighten(@orange, 20%);
+@btnWarningBackgroundHighlight:     lighten(@orange, 20%);
+
+@btnDangerBackground:               lighten(@red, 30%);
+@btnDangerBackgroundHighlight:      lighten(@red, 30%);
+
+@btnInverseBackground:              lighten(@grayDark, 20%);
+@btnInverseBackgroundHighlight:     lighten(@grayDark, 20%);
+
+// Hover
+// -------------------------
+
+
+.iconHover(@color1: fade(@blue,30%),@color2: fade(@blue,70%),@cursor: pointer,@radius: 3px) {
+	background-color: @color1;
+	box-shadow: 0 0 3px @color2 inset;
+	border-radius: @radius;
+  cursor: @cursor;
+}	
+

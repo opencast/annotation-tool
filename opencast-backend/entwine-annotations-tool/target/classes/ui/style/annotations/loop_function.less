@@ -1,0 +1,113 @@
+
+div#loop {
+    h4 {
+        font-size: 12px;
+        padding: 2px;
+        background-color: grey;
+    }
+
+    div.repeat, div.duration {
+        float: left;
+    }
+
+    div.repeat {
+        .after {
+           margin-left: -5px;
+        }
+    }
+
+    div.controls {
+        margin-top: 4px;
+
+        label{
+            float: left;
+            color: white;
+        }
+
+        select#interval{
+            float: left;
+            width: 60px;
+            margin-left: 20px;
+            margin-bottom: 0px;
+        }
+
+        div.btn-group {
+            float: right;
+            margin-top: -3px;
+
+            .deactivated {
+                background-image: none;
+                -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+                -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+                -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+                -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+                background-color: darken(grey, 10%);
+
+                &:hover{
+                    cursor: default;
+                }
+            }
+        }
+    }
+
+    &.disabled {
+        div.slider, div.btn-group, #loop-length, span {
+            visibility: hidden;
+        }
+    }
+
+    label {
+        padding-top : 0px;
+        margin-right: 20px;
+    }
+
+    .slider {
+        margin-top: -2px;
+    }
+
+    #loop-length {
+        width      : 3em;
+        line-height: 12px;
+        margin     : -2px 2px 0px 5px;
+        padding    : 1px;
+        text-align : right;
+    }
+
+    padding    : 5px 10px 10px 10px;
+    color      : white;
+    overflow   : visible;
+}
+
+div#timeline {
+    div.loop {
+        height: 21px;
+        margin-top: -27px;
+        background-color: grey;
+        border: 1px solid darken(grey, 10%);
+        border-right: 2px solid darken(grey, 50%);
+
+        &.current {
+            background-color: #0e90d2;
+
+            &:hover {
+                background-color: #0e90d2;
+                cursor: default;
+            }
+        }
+
+        &:hover {
+            background-color: lighten(grey, 10%);
+            cursor: pointer;
+        }
+    }
+
+    div.loop-group {
+        height          : 20px;
+        background-color: grey;
+        color           : white;
+        padding         : 2px;
+        font-weight     : bold;
+    }
+}

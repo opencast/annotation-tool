@@ -1,0 +1,226 @@
+  // Default print stylesheet taken from HTML5 boilerplate: https://github.com/h5bp/html5-boilerplate/blob/master/css/main.css
+  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; } /* Black prints faster: h5bp.com/s */
+  a, a:visited {}
+  a[href]:after { content: " (" attr(href) ")";}
+  abbr[title]:after { content: " (" attr(title) ")"; }
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }  /* Don't show links for images, or javascript/internal links */
+  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+  thead { display: table-header-group; } /* h5bp.com/t */
+  tr, img { page-break-inside: avoid; }
+  img { max-width: 100% !important; }
+  @page { margin: 1cm; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3 { page-break-after: avoid; }
+
+
+  @color1: grey;
+
+  div#error-container > div, div#video-container > div, div#annotate-container > div, div#timeline-container > div, .navbar, div#loop, span.scaling {
+    display: none;
+  }
+
+  div#content-list {
+    max-height: none !important;
+  }
+
+  source:before {
+    display: block;
+    content: " (" attr(src) ")";
+  }
+
+    div#title-container {
+    div#video-title {
+      font-size: 20pt;
+    }
+
+    div#title-owner {
+      font-size: 14pt;
+    }
+
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+    margin-bottom: 5px;
+  }
+
+  // Annotation list
+  div#list-container {
+
+    .annotation {
+      padding: 0px;
+      border-bottom: solid 1px black;
+      margin: 8px 0px 8px 0px;
+
+      > div {
+        margin: 4px;
+      }
+
+      .icon-comment-amount, .add-comment, .button-bar {
+        display: none;
+      }
+    }
+
+    .edit {
+      display: none;
+    }
+
+    .label-abr {
+      font-weight: bold;
+    }
+
+    .start,.end {
+      color: grey !important;
+      background: none !important;
+      border: none;
+      float: right;
+      width: 100px;
+      text-align: right;
+
+      input {
+        color: grey !important;
+        width: 70px;
+        font-size: 11pt;
+      }
+    }
+
+    .start {
+      margin-right: 80px;
+    }
+
+    .end {
+      margin-right: -182px;
+
+      &:before {
+        content: "-";
+      }
+
+      &.no-duration {
+        display: none;
+      }
+    }
+
+    input {
+      background: transparent !important;
+      border: none;
+    }
+
+    span.freetext .read-only {
+      display: block
+    }
+
+    .category {
+      color: grey !important;
+      display: block;
+
+
+      span {
+        font-size: 11pt;
+        display: inline-block;
+        &:after {
+          content: "|";
+          margin-left: 5px;
+        }
+
+        &:last-child:after{
+          display: none;
+        }
+      }
+
+      .no-label{
+        display: none;
+      }
+    }
+
+    .creator, .category-print, .creation-date {
+      font-size: 11pt;
+      color: grey !important;
+      display: inline-block;
+    }
+
+    .creator:after, .category-print:after {
+      content: "|";
+      margin-left: 5px;
+    }
+
+    .scaling {
+      font-style: oblique;
+      float: right;
+    }
+
+    div.comment-list {
+      > div {
+        background-image: url("../img/arrow-right.png") !important;
+        background-size: 20px !important;
+        background-repeat: no-repeat !important;
+        background-position: 25px top !important;
+        margin: 8px 0px 0px 0px;
+        padding-left: 60px;
+
+        span.header {
+          font-size: 11pt;
+          color: grey !important;
+          display: inline-block;
+
+          span {
+            color: grey !important;
+            
+            &:after {
+              content: "|";
+              margin-left: 5px;
+            }
+
+            &.date:after {
+              display: none;
+            }
+          }
+        }
+
+        span.text {
+          color: black !important;
+          display: block;
+          border:none;
+        }
+      }
+    }
+  }
+
+  .user {
+    color: grey !important;
+    font-weight: bold;
+  }
+
+  #categories-legend {
+    margin-top: 80px;
+    .category-legend {
+        margin-top: 20px;
+
+        .name, .scale {
+            display: inline-block;
+            font-style: italic;
+            margin-right: 5px;
+
+            .scale-value:after {
+              content: ", ";
+            }
+
+            .scale-value:last-child:after {
+              display: none;
+            }
+        }
+
+        .label {
+          .abbreviation {
+            width: 40px;
+            display: inline-block;
+          }
+
+          .value:before {
+            content: "|";
+            margin-right: 5px;
+          }
+        }
+    }
+  }
+
+
+
+

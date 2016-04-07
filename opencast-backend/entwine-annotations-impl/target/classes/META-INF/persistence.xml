@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence
+  version="2.0"
+  xmlns="http://java.sun.com/xml/ns/persistence"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+    http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="ch.entwine.annotations.impl.persistence" transaction-type="RESOURCE_LOCAL">
+    <class>ch.entwine.annotations.impl.persistence.UserDto</class>
+    <class>ch.entwine.annotations.impl.persistence.VideoDto</class>
+    <class>ch.entwine.annotations.impl.persistence.TrackDto</class>
+    <class>ch.entwine.annotations.impl.persistence.AnnotationDto</class>
+    <class>ch.entwine.annotations.impl.persistence.CategoryDto</class>
+    <class>ch.entwine.annotations.impl.persistence.LabelDto</class>
+    <class>ch.entwine.annotations.impl.persistence.ScaleDto</class>
+    <class>ch.entwine.annotations.impl.persistence.ScaleValueDto</class>
+    <class>ch.entwine.annotations.impl.persistence.CommentDto</class>
+    <properties>
+      <property name="eclipselink.create-ddl-jdbc-file-name" value="create-matterhorn-extended-annotation-impl.jdbc"/>
+      <property name="eclipselink.drop-ddl-jdbc-file-name" value="drop-matterhorn-extended-annotation-impl.jdbc"/>
+    </properties>
+  </persistence-unit>
+</persistence>

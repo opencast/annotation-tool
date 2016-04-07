@@ -1,0 +1,3 @@
+{{#each models}}
+    <option value="{{ this.id }}" {{#if this.attributes.visible}}selected{{/if}}>{{ this.attributes.name }}</option>
+{{/each}}

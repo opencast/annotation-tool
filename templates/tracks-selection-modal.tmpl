@@ -1,0 +1,35 @@
+<div class="modal" id="modal-track-selection">
+	  <div class="modal-header">
+	    <h3>Other public annotations</h3>
+	  </div>
+
+	  <div class="modal-body">
+        Users with public annotations:
+        <div class="input-append">
+          <input class="span12" type="text" id="search-track" placeholder="Type here to search...">
+          <button class="btn search-only" type="button">Clear</button>
+        </div>
+        <ul class="list-group">
+            {{#each users}}
+            <li class="list-group-item">
+                <input type="checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}> {{this.nickname}}
+                <span class="search-fields">
+                    {{#toUpperCase}}
+                    {{this.nickname}}
+                    {{/toUpperCase}}
+                </span>
+            </li>
+            {{/each}}
+        </ul>
+
+        <span>
+            <input type="checkbox" value=""> Select / unselect all
+        </span>
+	  </div>
+
+
+	  <div class="modal-footer">
+        <a id="cancel-selection" href="#" class="btn">Cancel</a>
+	    <a id="confirm-selection" href="#" class="btn btn-primary">Ok</a>
+	  </div>
+</div>
