@@ -1,7 +1,7 @@
 # Annotating Academic Video
 
-### [News] (https://github.com/entwinemedia/annotations/wiki/News)
-You can find the latest news about the annotations tool on [this page] (https://github.com/entwinemedia/annotations/wiki/News).
+### [News] (wiki/News)
+You can find the latest news about the annotations tool on [this page] (wiki/News).
 
 ### Project description
 The Annotating Academic Video (AAV) project is a video annotation service that is suitable for research, teaching or learning.  Architected as a stand-alone service, AAV can be integrated with most video players, video management systems, learning management systems, and lecture capture systems.
@@ -15,7 +15,7 @@ This architecture aims to make the tool integrable in any video system.
 #### Player adapter
 Any kind of web video player can be used with the annotations tool as long as it has its own player adapter and implements all the methods from the player adapter API. The annotations tool will communicate with the player through the player adapter.
 
-[Player adapter API](https://github.com/entwinemedia/annotations/wiki/Player-adapter-API)
+[Player adapter API](wiki/Player-adapter-API)
 
 #### Web application
 This is the core of the tool. It retrieves the annotations from the backend and allows one to create/edit annotations and synchronise them back. It communicates with the player and gets all types of events from it. It facilitates the synchronisation between the playhead, the timeline and the annotations table. The tool communicates with the backend through Rest Endpoints to get the existing annotations and persists the new or modified one.
@@ -27,7 +27,7 @@ Most of the files in this repository are part of the web app.
 The tool is made to work with any kind of lecture capture system or video system. It requires the implementation of this API and the related Rest Endpoint.
 Jump to the part below about Existing system integration to see some examples.
 
-[Rest API](https://github.com/entwinemedia/annotations/wiki/Rest-API)
+[Rest API](wiki/Rest-API)
 
 ## Technology dependancies
 All the dependancies below are related to the web application.
