@@ -1,7 +1,7 @@
 # Annotating Academic Video
 
-### [News] (wiki/News)
-You can find the latest news about the annotations tool on [this page] (wiki/News).
+### [News] (documentation/News)
+You can find the latest news about the annotations tool on [this page] (documentation/News).
 
 ### Project description
 The Annotating Academic Video (AAV) project is a video annotation service that is suitable for research, teaching or learning.  Architected as a stand-alone service, AAV can be integrated with most video players, video management systems, learning management systems, and lecture capture systems.
@@ -15,7 +15,7 @@ This architecture aims to make the tool integrable in any video system.
 #### Player adapter
 Any kind of web video player can be used with the annotations tool as long as it has its own player adapter and implements all the methods from the player adapter API. The annotations tool will communicate with the player through the player adapter.
 
-[Player adapter API](wiki/Player-adapter-API)
+[Player adapter API](documentation/Player-adapter-API)
 
 #### Web application
 This is the core of the tool. It retrieves the annotations from the backend and allows one to create/edit annotations and synchronise them back. It communicates with the player and gets all types of events from it. It facilitates the synchronisation between the playhead, the timeline and the annotations table. The tool communicates with the backend through Rest Endpoints to get the existing annotations and persists the new or modified one.
@@ -27,7 +27,7 @@ Most of the files in this repository are part of the web app.
 The tool is made to work with any kind of lecture capture system or video system. It requires the implementation of this API and the related Rest Endpoint.
 Jump to the part below about Existing system integration to see some examples.
 
-[Rest API](wiki/Rest-API)
+[Rest API](documentation/Rest-API)
 
 ## Technology dependancies
 All the dependancies below are related to the web application.
@@ -74,8 +74,8 @@ Actually the tool has been integrated in two video lecture system:
 * [Opencast Matterhorn](http://opencast.org/matterhorn/), implemented by Entwine
 * Switchcast, implemented by Switch
 
-## [Documentation](https://github.com/entwinemedia/annotations/wiki)
-All the documentation is present on the [wiki](https://github.com/entwinemedia/annotations/wiki).
+## [Documentation](docs/Home)
+All the documentation is present on the [wiki](docs/Home).
 
 ## [DEMO](http://entwinemedia.github.com/annotations/)
 A demo is available [here](http://entwinemedia.github.com/annotations/). It works with localStorage and no real backend communication. Therefore all the functionalities related to rights management / authorisations are not working on this version.
