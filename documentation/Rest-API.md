@@ -5,15 +5,15 @@
 ##[General Status Codes and Messages](General-Status-Codes-and-Messages)
 
 ## Resources
-* [User](rest-user.md)
-* [Video](rest-video.md)
-* [Track](rest-track.md)
-* [Annotation](rest-annotation.md)
-* [Category](rest-category.md)
-* [Label](rest-label.md)
-* [Scale](rest-scale.md)
-* [Scale value](rest-scalevalue.md)
-* [Comment](rest-comment.md)
+* [User](Rest-user.md)
+* [Video](Rest-video.md)
+* [Track](Rest-track.md)
+* [Annotation](Rest-annotation.md)
+* [Category](Rest-category.md)
+* [Label](Rest-label.md)
+* [Scale](Rest-scale.md)
+* [Scale value](Rest-scalevalue.md)
+* [Comment](Rest-comment.md)
 
 ## Data passing
 
