@@ -15,35 +15,38 @@
  */
 package ch.entwine.annotations.impl;
 
-import static org.opencastproject.util.data.Collections.list;
-import static org.opencastproject.util.persistence.PersistenceUtil.newEntityManagerFactory;
-import static org.opencastproject.util.persistence.PersistenceUtil.newPersistenceEnvironment;
+import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 
 import org.opencastproject.security.api.SecurityService;
-import org.opencastproject.util.data.Effect0;
 import org.opencastproject.util.osgi.SimpleServicePublisher;
 import org.opencastproject.util.persistence.PersistenceEnv;
 
-import ch.entwine.annotations.api.ExtendedAnnotationService;
-import ch.entwine.annotations.impl.persistence.ExtendedAnnotationServiceJpaImpl;
-
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.component.ComponentContext;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
+
+import javax.persistence.EntityManagerFactory;
+
+import ch.entwine.annotations.api.ExtendedAnnotationService;
+import ch.entwine.annotations.impl.persistence.ExtendedAnnotationServiceJpaImpl;
 
 /**
  * Create and register an implementation of {@link ch.entwine.annotations.api.ExtendedAnnotationService} .
  */
 public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
 
+  private EntityManagerFactory emf;
   private SecurityService securityService;
+
+  /** OSGi DI */
+  void setEntityManagerFactory(EntityManagerFactory emf) {
+    this.emf = emf;
+  }
 
   /**
    * OSGi callback for setting the security service.
-   * 
+   *
    * @param securityService
    *          the security service
    */
@@ -64,13 +67,8 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    */
   @Override
   public ServiceReg registerService(Dictionary properties, ComponentContext cc) throws ConfigurationException {
-    final PersistenceEnv penv = newPersistenceEnvironment(newEntityManagerFactory(cc,
-            "ch.entwine.annotations.impl.persistence"));
+    final PersistenceEnv penv = persistenceEnvironment(emf);
     final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService);
-    final ServiceRegistration sr = registerService(cc, eas, ExtendedAnnotationService.class,
-            "Extended Annotation Service");
-    ArrayList<Effect0> effects = new ArrayList<Effect0>();
-    effects.add(close(eas));
-    return ServiceReg.reg(list(sr), effects);
+    return ServiceReg.reg(registerService(cc, eas, ExtendedAnnotationService.class, "Extended Annotation Service"));
   }
 }

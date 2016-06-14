@@ -72,7 +72,6 @@ import ch.entwine.annotations.impl.VideoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -85,10 +84,8 @@ import javax.persistence.RollbackException;
 
 /**
  * JPA-based implementation of the {@link ExtendedAnnotationService}.
- * <p/>
- * Please {@link #close()} on shutdown.
  */
-public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotationService, Closeable {
+public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotationService {
   /** The logger */
   private static final Logger logger = LoggerFactory.getLogger(ExtendedAnnotationServiceJpaImpl.class);
 
@@ -98,23 +95,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService) {
     this.penv = penv;
     this.securityService = securityService;
-  }
-
-  /**
-   * @see java.io.Closeable#close()
-   */
-  @Override
-  public void close() {
-    penv.close();
-  }
-
-  /**
-   * @see java.io.Closeable#finalize()
-   */
-  @Override
-  protected void finalize() throws Throwable {
-    super.finalize();
-    close();
   }
 
   /**

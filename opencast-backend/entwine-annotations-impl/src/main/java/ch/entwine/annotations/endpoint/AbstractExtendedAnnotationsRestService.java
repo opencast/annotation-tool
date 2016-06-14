@@ -66,7 +66,7 @@ import ch.entwine.annotations.impl.persistence.VideoDto;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
