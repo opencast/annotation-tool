@@ -1,4 +1,10 @@
-You will find here below the project weekly updates. For each news publication, the [demo page](http://entwinemedia.github.io/annotations/) will be updated.
+###14.06.2016
+Updated to an Opencast 2.2 compatible backend
+
+Moved Opencast 1.6 compatible version to a separate branch.
+
+###07.06.2016
+Moved this annotation tool to the Opencast community repository. Added Opencast compatible backend files.
 
 ###27.1.2015
 The performance of the tool have been highly improved during the last months. The points requiring better response time have been focused: The start time of the tool and the annotation creation. The first one has been reduced by two and now the creation of an annotation takes 7x less time.

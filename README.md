@@ -10,7 +10,10 @@ The Annotating Academic Video (AAV) project is a video annotation service that i
 The AAV tool is composed of a javascript web application communicating with REST endpoints for persistence resources and a player adapter. This one is the interface between the javascript annotations tool and the used player.
 This architecture aims to make the tool integrable in any video system.
 
-<img src="http://entwinemedia.github.com/annotations/AnnotationTool.png" />
+![Image of the architecture] (documentation/annotationtool.png)
+
+[Architecture](documentation/Rest-API-Architecture.md)
+
 
 #### Player adapter
 Any kind of web video player can be used with the annotations tool as long as it has its own player adapter and implements all the methods from the player adapter API. The annotations tool will communicate with the player through the player adapter.
@@ -41,8 +44,8 @@ All the dependancies below are related to the web application.
 * Dynamic stylesheet language: [LESS](http://lesscss.org/)
 * Color-picker: [Really Simple Color](http://www.laktek.com/2008/10/27/really-simple-color-picker-in-jquery/)
 * Polyfill:
-* * [FileReader](https://github.com/Jahdrien/FileReader)
-* * [FileSaver](https://github.com/eligrey/FileSaver.js)
+    * [FileReader](https://github.com/Jahdrien/FileReader)
+    * [FileSaver](https://github.com/eligrey/FileSaver.js)
 
 ## Participants
 
