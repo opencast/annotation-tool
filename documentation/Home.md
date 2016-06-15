@@ -1,10 +1,17 @@
 # Documentation
-This wiki represents the main documentation for the AAA annotations project.
-
-For questions or more informations, visit IRC channel _aaa-annotations_ on _irc.freenode.net_.
 
 ## [News](News.md)
 The latest news about the annotations tool.
+
+## [Installation](opencast-installation.md)
+The instruction on how to install the Annotation tool in Opencast 2.2 [can be found here](documentation/opencast-installation.md)
+
+## [Building the Frontend](build-frontend.md)
+Instructions on how to build the frontend webapp [can be found here](documentation/build-frontend.md). This is NOT 
+needed to install the Annotation Tool in Opencast!
+
+## [General Overview](overview.md)
+You can find a general overview over this software [here](overview.md).
 
 ## [Rest API](Rest-API.md)
 How should the Rest API be used and implemented.
@@ -12,17 +19,8 @@ How should the Rest API be used and implemented.
 ## [Player adapter API](Player-adapter-API.md)
 Documentation of the player adapter interface, making the link between the annotations library and the video player.
 
-## [Javascript API](http://entwinemedia.github.com/annotations/docs/index.html)
-The documentation of the javascript API from the annotations tool.
-
-## [Build script](build-script.md)
-Small Documentation for the ANT build script provided with the tool.
-
 ## [Supported Browsers](Supported-browsers.md)
 List of supported browsers.
-
-## [Roadmap](Roadmap.md)
-List of goal for the upcoming version.
 
 ## [Test with preset](Test-the-tool-with-an-annotations-preset.md)
 Test the tool with a large set of annotations.

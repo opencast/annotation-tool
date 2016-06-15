@@ -14,7 +14,7 @@ module.exports = function (grunt) {
         currentWatchFile: '',
 
         /** Local directory for the tests */
-        webServerDir: '/var/www/html/annoation',
+        webServerDir: '/var/www/html/annotation/',
 
         buildDir: 'target',
 
@@ -56,9 +56,9 @@ module.exports = function (grunt) {
             },            
 
             demo: {
-                sources: '<source src=\"/annotations/resources/sinteltrailer.mp4\" type=\"video/mp4\" />\n \
-                          <source src=\"/annotations/resources/sinteltrailer.ogv\" type=\"video/ogg\" /> ',
-                target : '/Users/xavierbutty/Sites/DEMO_ANNOT/',
+                sources: '<source src=\"/annotation/resources/sinteltrailer.mp4\" type=\"video/mp4\" />\n \
+                          <source src=\"/annotation/resources/sinteltrailer.ogv\" type=\"video/ogg\" /> ',
+                target : '/var/www/html/annotation/',
                 config : 'build/profiles/local/annotations-tool-configuration.js'
             }
         },
@@ -359,7 +359,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-preprocess');
     grunt.loadNpmTasks('grunt-concurrent');
-    grunt.loadNpmTasks('grunt-jsdoc');
+    //grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mkdir');
     grunt.loadNpmTasks('assemble-less');
 
@@ -372,7 +372,8 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['jshint:all', 'less:annotation', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDEV', ['handlebars:all', 'less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config']);
-    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseBUILD', ['blanket_qunit', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
