@@ -14,7 +14,7 @@ module.exports = function (grunt) {
         currentWatchFile: '',
 
         /** Local directory for the tests */
-        webServerDir: 'www',
+        webServerDir: '/var/www/html/annoation',
 
         buildDir: 'target',
 
@@ -35,8 +35,7 @@ module.exports = function (grunt) {
              
             integration: {
                 sources : '',
-                //target  : '../Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
-                target  : '/Users/xavierbutty/Documents/Projects/Entwine/System/vagrant/share/matterhorn/lib/local/entwine-annotations-tool-1.6-SNAPSHOT/ui',
+                target  : '../opencast-backend/entwine-annotations-tool/src/main/resources/ui/',
                 config  : 'build/profiles/integration/annotations-tool-configuration.js'
             },
 
