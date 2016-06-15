@@ -9,7 +9,7 @@ In general you should follow the [installation from source](https://docs.opencas
 instructions for Opencast. These instructions extend the _Building Opencast_ section.
 
 ### Preparing the Build of Opencast with the Annotation Tool
-Additional to the Opencast source code you will also need the source code for the Annotation Tool. In this manual we use `annotationtool-dir` for the base dir of the Annotation Tool checkout and `opencast-dir` like in the Opencast manual for the checkout dir of the Opencast source code
+Additional to the Opencast source code you will also need the source code for the Annotation Tool. In this manual we use `<annotationtool-dir>` for the base dir of the Annotation Tool checkout and `<opencast-dir>` like in the Opencast manual for the checkout dir of the Opencast source code
 
 #### Cloning the Annotation Tool Git repository
 
@@ -17,16 +17,16 @@ Additional to the Opencast source code you will also need the source code for th
 
 #### Copying files
 
-    cp __annotationtool-dir__/opencast-backend/entwine-annotations-* __opencast-dir__/modules/
+    cp <annotationtool-dir>/opencast-backend/entwine-annotations-* <opencast-dir>/modules/
 
 #### Configuring Build Configurations
 
 You will need to include the Annotation Tool to the Opencast main `pom.xml` file and to the Karaf assembly `feature.xml`.
 
-You can find an example [`pom.xml`](..(opencast-backend/pom.xml) and [`feature.xml](../opencast-backend/assemblies/karaf-features/src/main/feature/feature.xml) are included in the `opencast-backend` directory. You might use these
+You can find an example [pom.xml](../opencast-backend/pom.xml) and [feature.xml](../opencast-backend/assemblies/karaf-features/src/main/feature/feature.xml) are included in the `opencast-backend` directory. You might use these
 files if you have the right Opencast version (2.2-SNAPSHOT) AND no other additional external modules included already.
 
-Otherwise open `__opencast-dir__/pom.xml` in an editor and add the _entwine-annotations_ modules in the <modules> section:
+Otherwise open `<opencast-dir>/pom.xml` in an editor and add the _entwine-annotations_ modules in the <modules> section:
 
     ...
     <modules>
@@ -40,7 +40,7 @@ Otherwise open `__opencast-dir__/pom.xml` in an editor and add the _entwine-anno
     ...
 
 
-Then open `__opencast-dir__/assemblies/karaf-features/src/main/feature/feature.xml` in the editor of you choice. We need to add the annotations to the _opencast-allinone_ feature and would recommend to add it to the _opencast-presentation_ feature.
+Then open `<opencast-dir>/assemblies/karaf-features/src/main/feature/feature.xml` in the editor of you choice. We need to add the annotations to the _opencast-allinone_ feature and would recommend to add it to the _opencast-presentation_ feature.
 
     ...
     <feature name="opencast-allinone" version="${project.version}">
@@ -62,7 +62,7 @@ Then open `__opencast-dir__/assemblies/karaf-features/src/main/feature/feature.x
     </feature>
     ...
 
-After this you can continue with the __Building Opencast__ section of the Opencast insatlation manual.
+After this you can continue with the __Building Opencast__ section of the Opencast installation manual.
     
 ## Using the Tool
 

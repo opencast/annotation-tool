@@ -48,7 +48,7 @@ You will find the webapp in `/opt/annotation/annotation-tool/frontend/`.
     grunt build integration --forced
 
 The files in `/opt/annotation/annotation-tool/opencast-backend/entwine-annotations-tool/src/main/resources/ui/` should
-have been updated, __what ius currently unfortunately not the case!__
+have been updated, __what is currently unfortunately not the case!__
 
 ## Building __local__
 
