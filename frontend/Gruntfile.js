@@ -227,6 +227,14 @@ module.exports = function (grunt) {
                     dest: '<%= currentProfile.target %>',
                 }]  
             },
+            'integration': {
+                files: [{
+                    flatten: false,
+                    expand: true,
+                    src: ['img/**/*', 'style/**/*.png', 'style/**/*.css', 'js/libs/**/*'],
+                    dest: '<%= currentProfile.target %>',
+                }]  
+            },            
             // ... the index locally 
             'index': {
                 options: {
@@ -374,6 +382,7 @@ module.exports = function (grunt) {
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config']);
     //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
     grunt.registerTask('baseBUILD', ['blanket_qunit', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseINTEGRATION', ['blanket_qunit', 'less:annotation', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
@@ -416,6 +425,7 @@ module.exports = function (grunt) {
 
     grunt.registerTaskWithProfile('build', 'Build task', 'build');
     grunt.registerTaskWithProfile('demo', 'Generate build for demo', 'demo');
+    grunt.registerTaskWithProfile('integration', 'Deploy webapp in Opencast backend', 'integration');
     grunt.registerTaskWithProfile('dev', 'Development workflow');
 
 
