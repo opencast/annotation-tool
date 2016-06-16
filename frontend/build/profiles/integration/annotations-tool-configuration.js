@@ -263,7 +263,7 @@ define(["jquery",
                                 annotationsTool.userExtId = data.user.username;
                             },
                             error: function () {
-                                console.warn("Error getting user information from Matterhorn!");
+                                console.warn("Error getting user information from Opencast!");
                             }
                         });
                     }

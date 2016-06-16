@@ -31,21 +31,21 @@ and gave your current user write access to this directory. You can adjust pathes
 
     cp -rf /opt/annotation/annotation-tool/frontend/resources /var/www/html/annotation
     cd /opt/annotation/annotation-tool/frontend/
-    grunt build demo --forced
+    grunt build demo --force
 
 Open your webbrowser with the URL `http://localhost/annotation/1.1.3`
 
 ## Building __build__
 
     cd /opt/annotation/annotation-tool/frontend/
-    grunt build --forced
+    grunt build --force
 
 You will find the webapp in `/opt/annotation/annotation-tool/frontend/`.
 
 ## Building __integration__
 
     cd /opt/annotation/annotation-tool/frontend/
-    grunt build integration --forced
+    grunt build integration --force
 
 The files in `/opt/annotation/annotation-tool/opencast-backend/entwine-annotations-tool/src/main/resources/ui/` should
 have been updated, __what is currently unfortunately not the case!__
@@ -53,6 +53,6 @@ have been updated, __what is currently unfortunately not the case!__
 ## Building __local__
 
     cd /opt/annotation/annotation-tool/frontend/
-    grunt build local --forced
+    grunt build local --force
 
 Unit-test are run for the files and some preprocessors.
