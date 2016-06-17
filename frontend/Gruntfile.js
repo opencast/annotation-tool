@@ -160,6 +160,20 @@ module.exports = function (grunt) {
                 dest: '<%= currentProfile.target %>'
             }]
           },
+          
+          temp: {
+            options: {
+              namespace: false,
+              amd: true
+            },
+            files: [{
+                ext: '.js',
+                flatten : false,
+                expand  : true,
+                src: 'templates/*.tmpl',
+                dest: 'target'
+            }]
+          },          
         },
 
         /** Copy .. */
@@ -223,7 +237,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.png',  'resources/*', 'style/**/*.css', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>',
                 }]  
             },
@@ -336,7 +350,7 @@ module.exports = function (grunt) {
                 options: {
                     baseUrl                    : './js',
                     name                       : 'annotations',
-                    mainConfigFile             : './js/libs/require/config/config.js',
+                    mainConfigFile             : './js/libs/require/config/config-build.js',
                     name                       : 'main',
                     optimizeAllPluginResources : false,
                     preserveLicenseComments    : false,
@@ -381,8 +395,9 @@ module.exports = function (grunt) {
     grunt.registerTask('baseDEV', ['handlebars:all', 'less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config']);
     //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseBUILD', ['blanket_qunit', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseINTEGRATION', ['blanket_qunit', 'less:annotation', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseBUILD', ['blanket_qunit', 'handlebars:temp', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseINTEGRATION', ['blanket_qunit', 'handlebars:all', 'less:annotation', 'copy:integration', 'processhtml:dev', 'copy:config']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less:annotation', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
@@ -414,9 +429,9 @@ module.exports = function (grunt) {
             // Configure the tasks with given profiles
             grunt.config.set('currentProfile', profileConfig);
 
-            if (name.toUpperCase() === "DEMO") {
-                grunt.config.set('currentProfile.target', grunt.config.get('currentProfile.target') + grunt.config.get('pkg.version'));
-            }
+//            if (name.toUpperCase() === "DEMO") {
+//                grunt.config.set('currentProfile.target', grunt.config.get('currentProfile.target') + grunt.config.get('pkg.version'));
+//            }
 
             // Run the tasks
             grunt.task.run('base' + name.toUpperCase());
@@ -426,6 +441,7 @@ module.exports = function (grunt) {
     grunt.registerTaskWithProfile('build', 'Build task', 'build');
     grunt.registerTaskWithProfile('demo', 'Generate build for demo', 'demo');
     grunt.registerTaskWithProfile('integration', 'Deploy webapp in Opencast backend', 'integration');
+    grunt.registerTaskWithProfile('integrationminified', 'Deploy webapp in Opencast backend as minified version', 'integration');
     grunt.registerTaskWithProfile('dev', 'Development workflow');
 
 

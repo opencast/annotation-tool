@@ -21,8 +21,8 @@ You have now several options to build and deploy the webapp:
 
 * `demo` mode on a local webserver
 * `integration` to update the webapp within the Opencast backend __(currently not working)__.
-* `local` to update and complie the files at they current location.
 * `build` to build the webapp and put in the the _target_ directory.
+* `dev` to start a webserver with grunt to test the current webapp
 
 ## Building __demo__
 
@@ -31,9 +31,9 @@ and gave your current user write access to this directory. You can adjust pathes
 
     cp -rf /opt/annotation/annotation-tool/frontend/resources /var/www/html/annotation
     cd /opt/annotation/annotation-tool/frontend/
-    grunt build demo --force
+    grunt demo --force
 
-Open your webbrowser with the URL `http://localhost/annotation/1.1.3`
+Open your webbrowser with the URL `http://localhost/annotation/`
 
 ## Building __build__
 
@@ -45,14 +45,14 @@ You will find the webapp in `/opt/annotation/annotation-tool/frontend/`.
 ## Building __integration__
 
     cd /opt/annotation/annotation-tool/frontend/
-    grunt build integration --force
+    grunt integration --force
 
 The files in `/opt/annotation/annotation-tool/opencast-backend/entwine-annotations-tool/src/main/resources/ui/` should
-have been updated, __what is currently unfortunately not the case!__
+have been updated. Use the [installation guide for Opencast](opencast-installation.md) to update Opencast with the new frontend.
 
-## Building __local__
+## Building __dev__
 
     cd /opt/annotation/annotation-tool/frontend/
-    grunt build local --force
+    grunt dev --force
 
-Unit-test are run for the files and some preprocessors.
+See the console output for the URL and port that you can open in your webserver.

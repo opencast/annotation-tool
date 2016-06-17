@@ -1,6 +1,6 @@
 # Opencast Installation Instructions
 
-## Installing the Annoation Tool 
+## Installing the Annotation Tool 
 
 __Note:__ These are the installation instructions for the Opencast 2.2 branch. If you intent to use a release version
 of Opencast or a 2.2+ version you will need to update `<version>2.2-SNAPSHOT</version>` to your Opencast version!
@@ -69,4 +69,8 @@ After this you can continue with the __Building Opencast__ section of the Openca
 To use the Annotation Tool you need to open it with the event-ID:
 
     http://my.opencast.tld:8080/annotations-tool/index.html?id=<my-event-id>
+
+## Development Notice
+
+To avoid that the standalone webapp and the version included in Opencast become different version, pleas edit the JS source code in the `frontend` directory and update the backen with `grunt integration --force`
 

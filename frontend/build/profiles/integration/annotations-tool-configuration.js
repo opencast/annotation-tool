@@ -332,7 +332,7 @@ define(["jquery",
 
                     // Get the mediapackage and fill the player element with the videos
                     $.ajax({
-                        url: "/archive/episode.json",
+                        url: "/search/episode.json",
                         async: false,
                         crossDomain: true,
                         data: "id=" + mediaPackageId + "&limit=1",
@@ -348,9 +348,9 @@ define(["jquery",
                                 selectedVideos = {},
                                 videoIE9;
 
-                            video_title = result.dcTitle;
-                            video_creator = result.dcCreator;
-                            video_creation_date = result.dcCreated;
+                            video_title = result.DcTitle;
+                            video_creator = result.DcCreator;
+                            video_creation_date = result.DcCreated;
 
                             $.each(videoTypesForFallBack, function (idx, mimetype) {
                                 videosFallback[mimetype] = {};
