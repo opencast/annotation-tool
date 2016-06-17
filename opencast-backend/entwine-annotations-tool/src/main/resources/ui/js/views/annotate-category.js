@@ -26,13 +26,13 @@
  */
 define(["jquery",
         "views/annotate-label",
-        "text!templates/annotate-category.tmpl",
+        "templates/annotate-category",
         "handlebarsHelpers",
         "jquery.colorPicker",
         "backbone"],
 
 
-    function ($, LabelView, Template, Handlebars) {
+    function ($, LabelView, Template) {
 
         "use strict";
 
@@ -83,9 +83,9 @@ define(["jquery",
             /**
              * View template
              * @alias module:views-annotate-category.Category#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Events to handle by the annotate-category view
@@ -131,30 +131,7 @@ define(["jquery",
 
 
                 // Define the colors (global setting for all color pickers)
-                $.fn.colorPicker.defaults.colors = ["ffff99",
-                                                  "ffd800",
-                                                  "ffcc99",
-                                                  "ffa800",
-                                                  "ff7800",
-                                                  "c36e00",
-                                                  "d5d602",
-                                                  "d9be6c",
-                                                  "ff99cc",
-                                                  "ff5d7c",
-                                                  "da0000",
-                                                  "d15c49",
-                                                  "969601",
-                                                  "adfded",
-                                                  "8fc7c7",
-                                                  "a4d2ff",
-                                                  "00ccff",
-                                                  "64b0e8",
-                                                  "61ae24",
-                                                  "9ded0a",
-                                                  "92ffaa",
-                                                  "c0adfd",
-                                                  "ac5bff",
-                                                  "6569ff"];
+                $.fn.colorPicker.defaults.colors = annotationsTool.colorsManager.getColors();
 
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
@@ -210,6 +187,8 @@ define(["jquery",
                 _.each(this.labelViews, function (labelView) {
                     labelView.updateInputWidth();
                 }, this);
+
+                this.delegateEvents(this.events);
             },
 
             /**
@@ -297,10 +276,7 @@ define(["jquery",
 
                 this.$labelsContainer.append(labelView.render().$el);
 
-                // If unique label added, we redraw all the category view
-                // if (single) {
-                //     this.render();
-                // }
+                labelView.updateInputWidth();
             },
 
             /**
@@ -309,14 +285,12 @@ define(["jquery",
              */
             onCreateLabel: function () {
                 this.model.get("labels").create({
-                    value       : "LB",
-                    abbreviation: "New",
+                    value       : "New",
+                    abbreviation: "NEW",
                     category    : this.model
                 },
                   {wait: true}
                 );
-
-              //  label.save();
             },
 
             /**
@@ -339,8 +313,8 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onFocusOut
              */
             onFocusOut: function () {
-                this.model.set("name", _.escape(this.nameInput.val()), {silent: true});
-                this.model.save({silent: true});
+                this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
+                this.model.save({wait: true});
             },
 
             /**
@@ -348,9 +322,11 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onKeyDown
              */
             onKeyDown: function (e) {
+                e.stopImmediatePropagation();
+
                 if (e.keyCode === 13) { // If "return" key
-                    this.model.set("name", _.escape(this.nameInput.val()));
-                    this.model.save({silent: true});
+                    this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
+                    this.model.save({wait: true});
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
                            e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
                     // Avoid scrolling through arrows keys
@@ -361,7 +337,7 @@ define(["jquery",
             /**
              * Get the position of the caret in the given input element
              * @alias module:views-annotate-category.CategoryView#getCaretPosition
-             * @param  {DOM Element} inputElement The given element with focus
+             * @param  {DOMElement} inputElement The given element with focus
              * @return {integer}              The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
@@ -401,9 +377,10 @@ define(["jquery",
              * @return {CategoryView} this category view
              */
             render: function () {
-                console.log("render category");
-
                 var modelJSON = this.model.toJSON();
+
+                this.undelegateEvents();
+
                 modelJSON.notEdit = !this.editModus;
 
                 _.each(this.labelViews, function (view) {
@@ -420,6 +397,10 @@ define(["jquery",
                 }, this);
 
                 this.nameInput = this.$el.find(".catItem-header input");
+
+                if (_.isString(this.model.attributes.settings)) {
+                    this.model.attributes.settings = this.model.parseJSONString(this.model.attributes.settings);
+                }
 
                 this.$el.find(".colorpicker").colorPicker({
                     pickerDefault: this.model.attributes.settings.color.replace("#", ""),

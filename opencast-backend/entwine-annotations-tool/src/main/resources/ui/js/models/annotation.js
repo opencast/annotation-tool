@@ -113,7 +113,7 @@ define(["jquery",
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 
-                //this.set(attr);
+                this.set(attr);
             },
 
             /**

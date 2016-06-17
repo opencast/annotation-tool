@@ -32,13 +32,15 @@ define(["jquery",
         "collections/videos",
         "views/main",
         "views/alert",
-        "text!templates/delete-modal.tmpl",
-        "text!templates/delete-warning-content.tmpl",
+        "templates/delete-modal",
+        "templates/delete-warning-content",
         "prototypes/player_adapter",
         "handlebarsHelpers",
-        "roles"],
+        "FiltersManager",
+        "roles",
+        "colors"],
 
-        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, ROLES) {
+        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager) {
 
             "use strict";
 
@@ -46,7 +48,7 @@ define(["jquery",
              * The main object of the annotations tool
              * @namespace annotationsTool
              */
-            window.annotationsTool = {
+            window.annotationsTool = _.extend({
 
                 EVENTS: {
                     ANNOTATION_SELECTION : "at:annotation-selection",
@@ -58,15 +60,15 @@ define(["jquery",
                     USER_LOGGED          : "at:logged"
                 },
 
-                timeupdateIntervals: {},
+                timeupdateIntervals: [],
 
                 views: {},
 
                 modelsInitialized: false,
 
-                deleteModalTmpl: Handlebars.compile(DeleteModalTmpl),
+                deleteModalTmpl: DeleteModalTmpl,
 
-                deleteContentTmpl: Handlebars.compile(DeleteContentTmpl),
+                deleteContentTmpl: DeleteContentTmpl,
 
                 deleteOperation: {
                     /**
@@ -137,7 +139,7 @@ define(["jquery",
                                     "getTrack",
                                     "getTracks",
                                     "getSelectedTrack",
-                                    "initModels",
+                                    "fetchData",
                                     "importTracks",
                                     "importCategories",
                                     "hasSelection",
@@ -146,11 +148,14 @@ define(["jquery",
                                     "onMouseDown",
                                     "onMouseUp",
                                     "onTimeUpdate",
+                                    "selectTrack",
                                     "setSelection",
                                     "setSelectionById",
+                                    "addTimeupdateListener",
+                                    "removeTimeupdateListener",
                                     "updateSelectionOnTimeUpdate");
 
-                    _.extend(this, config, _.clone(Backbone.Events));
+                    _.extend(this, config);
 
                     if (this.loadVideo) {
                         this.loadVideo();
@@ -171,7 +176,7 @@ define(["jquery",
 
                     this.currentSelection = [];
 
-                    this.once(this.EVENTS.USER_LOGGED, this.initModels);
+                    this.once(this.EVENTS.USER_LOGGED, this.fetchData);
                     this.once(this.EVENTS.MODELS_INITIALIZED, function () {
                         var trackImported = false;
 
@@ -192,6 +197,11 @@ define(["jquery",
                         }
                     }, this);
 
+                    this.colorsManager = new ColorsManager();
+
+                    this.filtersManager   = new FiltersManager();
+                    this.tracksFiltersManager   = new FiltersManager();
+
                     this.views.main = new MainView(this.playerAdapter);
 
                     $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
@@ -199,7 +209,7 @@ define(["jquery",
                     $(window).bind("mousedown", this.onMouseDown);
                     $(window).bind("mouseup", this.onMouseUp);
 
-
+                    return this;
                 },
 
                 /**
@@ -303,7 +313,9 @@ define(["jquery",
                  */
                 onTimeUpdate: function () {
                     var currentPlayerTime = this.playerAdapter.getCurrentTime(),
-                        currentTime = new Date().getTime();
+                        currentTime = new Date().getTime(),
+                        value,
+                        i;
 
                     // Ensure that this is an timeupdate due to normal playback, otherwise trigger timeupdate event for all intervals
                     if ((_.isUndefined(this.lastTimeUpdate)) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) ||
@@ -313,43 +325,77 @@ define(["jquery",
                         if (_.isUndefined(this.lastTimeUpdate)) {
                             this.lastTimeUpdate = 1;
                         }
-                        _.each(this.timeupdateIntervals, function (lastUpdate, interval) {
-                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + interval, currentPlayerTime);
-                            this.timeupdateIntervals[interval] = currentTime;
-                        }, this);
+
+                        for (i = 0; i < this.timeupdateIntervals.length; i++) {
+                            value = this.timeupdateIntervals[i];
+                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + value.interval, currentPlayerTime);
+                            this.timeupdateIntervals[i].lastUpdate = currentTime;
+                        }
+
                     } else {
                         // Trigger all the current events
                         this.trigger(this.EVENTS.TIMEUPDATE + ":all", currentPlayerTime);
-                        _.each(this.timeupdateIntervals, function (lastUpdate, interval) {
-                            if ((currentTime - lastUpdate) > parseInt(interval, 10)) {
-                                this.trigger(this.EVENTS.TIMEUPDATE + ":" + interval, currentPlayerTime);
-                                this.timeupdateIntervals[interval] = currentTime;
+
+                        for (i = 0; i < this.timeupdateIntervals.length; i++) {
+                            value = this.timeupdateIntervals[i];
+                            if ((currentTime - value.lastUpdate) > parseInt(value.interval, 10)) {
+                                this.trigger(this.EVENTS.TIMEUPDATE + ":" + value.interval, currentPlayerTime);
+                                this.timeupdateIntervals[i].lastUpdate = currentTime;
                             }
-                        }, this);
+                        }
                     }
 
                     this.lastTimeUpdate = new Date().getTime();
                 },
 
                 /**
-                 * Add a timeupdate listener with a certain 
+                 * Add a timeupdate listener with the given interval
                  * @alias   annotationsTool.addTimeupdateListener
                  * @param {Object} callback the listener callback
-                 * @param {Integer} (interval) the interval between each timeupdate event
+                 * @param {Number} (interval) the interval between each timeupdate event
                  */
                 addTimeupdateListener: function (callback, interval) {
+                    var timeupdateEvent = annotationsTool.EVENTS.TIMEUPDATE,
+                        value,
+                        i = 0;
+
+                    if (!_.isUndefined(interval)) {
+                        timeupdateEvent += ":" + interval;
+                        //this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
+
+                        // Check if the interval needs to be added to list
+                        for (i = 0; i < annotationsTool.timeupdateIntervals.length; i++) {
+                            value = annotationsTool.timeupdateIntervals[i];
+
+                            if (value.interval === interval) {
+                                return;
+                            }
+                        }
+
+                        // Add interval to list
+                        annotationsTool.timeupdateIntervals.push({
+                            interval: interval,
+                            lastUpdate: 0
+                        });
+                    }
+
+                    this.listenTo(annotationsTool, timeupdateEvent, callback);
+                },
+
+                /**
+                 * Remove the given timepudate listener
+                 * @alias   annotationsTool.removeTimeupdateListener
+                 * @param {Object} callback the listener callback
+                 * @param {Number} (interval) the interval between each timeupdate event
+                 */
+                removeTimeupdateListener: function (callback, interval) {
                     var timeupdateEvent = annotationsTool.EVENTS.TIMEUPDATE;
 
                     if (!_.isUndefined(interval)) {
                         timeupdateEvent += ":" + interval;
-                        this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
-                        
-                        if (_.isUndefined(annotationsTool.timeupdateIntervals[interval])) {
-                            annotationsTool.timeupdateIntervals[interval] = 0;
-                        }
                     }
 
-                    this.listenTo(annotationsTool, timeupdateEvent, callback);
+                    this.stopListening(annotationsTool, timeupdateEvent, callback);
                 },
 
                 ///////////////////////////////////////////////
@@ -380,13 +426,18 @@ define(["jquery",
                  * @param  {Object} annotation The destroyed annotation
                  */
                 onDestroyRemoveSelection: function (annotation) {
-                    _.each(this.currentSelection, function (item, index) {
+                    var currentSelection = this.currentSelection,
+                        item,
+                        i;
+
+                    for (i = 0; i < currentSelection.length; i++) {
+                        item = currentSelection[i];
                         if (item.get("id") == annotation.get("id")) {
-                            this.currentSelection.splice(index, 1);
-                            this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
+                            currentSelection.splice(i, 1);
+                            this.trigger(this.EVENTS.ANNOTATION_SELECTION, currentSelection);
                             return;
                         }
-                    }, this);
+                    }
                 },
                 
                 /**
@@ -428,24 +479,31 @@ define(["jquery",
                  */
                 setSelection: function (selection, moveTo, isManuallySelected) {
 
-                    var isEqual =   _.bind(function (newSelection) {
-                                        var equal = true;
+                    var currentSelection = this.currentSelection,
+                        isEqual =   function (newSelection) {
+                                        var equal = true,
+                                            annotation,
+                                            findAnnotation = function (newAnnotation) {
+                                                        return newAnnotation.get("id") === annotation.get("id");
+                                                    },
+                                            i;
 
-                                        if (this.currentSelection.length !== newSelection.length) {
+                                        if (currentSelection.length !== newSelection.length) {
                                             return false;
                                         }
 
-                                        _.each(this.currentSelection, function (annotation) {
-                                            if (!_.find(newSelection, function (newAnnotation) {
-                                                return newAnnotation.get("id") === annotation.get("id");
-                                            }, this)) {
+                                        for (i = 0; i < currentSelection.length; i++) {
+                                            annotation = currentSelection[i];
+                                            if (!_.find(newSelection, findAnnotation)) {
                                                 equal = false;
                                                 return equal;
                                             }
-                                        }, this);
+                                        }
 
                                         return equal;
-                                    }, this);
+                                    },
+                        item,
+                        i;
 
                     this.isManuallySelected = isManuallySelected;
 
@@ -454,10 +512,11 @@ define(["jquery",
                             if (isManuallySelected) {
                                 // If the selection is the same, we unselect it if this is a manual selection
                                 // Remove listener for destroy event (unselect);
-                                _.each(this.currentSelection, function (item) {
+                                for (i = 0; i < currentSelection.length; i++) {
+                                    item = currentSelection[i];
                                     this.stopListening(item, "destroy", this.onDestroyRemoveSelection);
-                                }, this);
-                                this.currentSelection = [];
+                                }
+                                currentSelection = [];
                                 this.isManuallySelected = false;
                             } else {
                                 // If the selection is not done manually we don't need to reselect it
@@ -465,7 +524,7 @@ define(["jquery",
                             }
                         } else {
                             // else we set the new selection
-                            this.currentSelection = selection;
+                            currentSelection = selection;
                         }
                     } else {
                         // If there is already no selection, no more work to do
@@ -473,21 +532,24 @@ define(["jquery",
                             return;
                         }
 
-                        this.currentSelection = [];
+                        currentSelection = [];
                     }
 
                     // Add listener for destroy event (unselect);
-                    _.each(this.currentSelection, function (item) {
+                    for (i = 0; i < currentSelection.length; i++) {
+                        item = currentSelection[i];
                         this.listenTo(item, "destroy", this.onDestroyRemoveSelection);
-                    }, this);
+                    }
+
+                    this.currentSelection = currentSelection;
 
                     // if the selection is not empty, we move the playhead to it
-                    if (this.currentSelection.length > 0 && moveTo) {
+                    if (currentSelection.length > 0 && moveTo) {
                         this.playerAdapter.setCurrentTime(selection[0].get("start"));
                     }
 
                     // Trigger the selection event
-                    this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
+                    this.trigger(this.EVENTS.ANNOTATION_SELECTION, currentSelection);
                 },
 
                 /**
@@ -516,9 +578,11 @@ define(["jquery",
                     var currentTime = this.playerAdapter.getCurrentTime(),
                         selection = [],
                         annotations = [],
+                        annotation,
                         start,
                         duration,
-                        end;
+                        end,
+                        i;
 
                     if (typeof this.video === "undefined" || (this.isManuallySelected && this.hasSelection())) {
                         return;
@@ -528,7 +592,8 @@ define(["jquery",
                         annotations = annotations.concat(track.get("annotations").models);
                     }, this);
 
-                    _.each(annotations, function (annotation) {
+                    for (i = 0; i < annotations.length; i++) {
+                        annotation = annotations[i];
 
                         start    = annotation.get("start");
                         duration = annotation.get("duration");
@@ -538,7 +603,7 @@ define(["jquery",
                             selection.push(annotation);
                         }
 
-                    }, this);
+                    }
 
                     this.setSelection(selection, false);
                 },
@@ -556,7 +621,9 @@ define(["jquery",
                  * @return {Object}  The created track
                  */
                 createTrack: function (parameters, options) {
-                    var defaultOptions = {wait: true}; // TODO define default options for all tracks
+                    var defaultOptions = {
+                        wait: true
+                    }; // TODO define default options for all tracks
 
                     return this.video.get("tracks").create(parameters, (_.isUndefined(options) ? defaultOptions : options));
                 },
@@ -619,6 +686,16 @@ define(["jquery",
                  */
                 getSelectedTrack: function () {
                     return this.selectedTrack;
+                },
+
+                /**
+                 * Select the given track
+                 * @alias   annotationsTool.selectTrack
+                 * @param  {Object} track the track to select
+                 */
+                selectTrack: function (track) {
+                    this.selectedTrack = track;
+                    this.video.get("tracks").trigger("selected_track", track);
                 },
 
                 /**
@@ -795,17 +872,16 @@ define(["jquery",
 
                 /**
                  * Get all the annotations for the current user
-                 * @alias annotationsTool.initModels
+                 * @alias annotationsTool.fetchData
                  */
-                initModels: function () {
+                fetchData: function () {
                     var video,
                         videos = new Videos(),
                         tracks,
-                        annotations,
+                        self = this,
                         selectedTrack,
-                        remindingFetchingTrack,
 
-                        // function to conclude the retrive of annotations
+                        // function to conclude the retrieve of annotations
                         concludeInitialization = $.proxy(function () {
 
                             // At least one private track should exist, we select the first one
@@ -817,19 +893,8 @@ define(["jquery",
                                 annotationsTool.selectedTrack = selectedTrack;
                             }
 
-                            // Use to know if all the tracks have been fetched
-                            remindingFetchingTrack = tracks.length;
-
-                            // Function to add the different listener to the annotations
-                            tracks.each(function (track) {
-                                annotations = track.get("annotations");
-                                this.listenTo(annotations, "add", this.onWindowResize);
-                                if (--remindingFetchingTrack === 0) {
-                                    annotationsTool.modelsInitialized = true;
-                                    annotationsTool.trigger(annotationsTool.EVENTS.MODELS_INITIALIZED);
-                                }
-                            }, this);
-
+                            annotationsTool.modelsInitialized = true;
+                            annotationsTool.trigger(annotationsTool.EVENTS.MODELS_INITIALIZED);
                         }, this),
 
                         /**
@@ -840,13 +905,13 @@ define(["jquery",
                             tracks = annotationsTool.video.get("tracks");
 
                             if (annotationsTool.localStorage) {
-                                tracks = tracks.getVisibleTracks();
+                                tracks = tracks.getTracksForLocalStorage();
                             }
 
                             if (tracks.getMine().length === 0) {
                                 tracks.create({
                                         name        : "Default " + annotationsTool.user.get("nickname"),
-                                        description : "Default track for user " + annotationsTool.user.get("name")
+                                        description : "Default track for user " + annotationsTool.user.get("nickname")
                                     },
                                     {
                                         wait    : true,
@@ -854,22 +919,26 @@ define(["jquery",
                                     }
                                 );
                             } else {
+                                tracks.showTracks(_.first(tracks.filter(annotationsTool.getDefaultTracks().filter), annotationsTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE));
                                 concludeInitialization();
                             }
                         };
 
                     // If we are using the localstorage
                     if (this.localStorage) {
-                        videos.fetch();
+                        videos.fetch({
+                            success: function () {
+                                if (videos.length === 0) {
+                                    video = videos.create(self.getVideoParameters(), {wait: true});
+                                } else {
+                                    video = videos.at(0);
+                                    video.set(self.getVideoParameters());
+                                }
 
-                        if (videos.length === 0) {
-                            video = videos.create(this.getVideoParameters(), {wait: true});
-                        } else {
-                            video = videos.at(0);
-                            video.set(this.getVideoParameters());
-                        }
+                                self.video = video;
+                            }
+                        });
 
-                        this.video = video;
                         createDefaultTrack();
                     } else { // With Rest storage
                         videos.add({video_extid: this.getVideoExtId()});
@@ -883,7 +952,7 @@ define(["jquery",
                         }
                     }
                 }
-            };
+            }, _.clone(Backbone.Events));
 
 
 

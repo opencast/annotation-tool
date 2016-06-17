@@ -245,7 +245,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['img/**/*', 'style/**/*.png', 'style/**/*.css', 'js/libs/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>',
                 }]  
             },            
@@ -396,7 +396,7 @@ module.exports = function (grunt) {
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config']);
     //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
     grunt.registerTask('baseBUILD', ['blanket_qunit', 'handlebars:temp', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseINTEGRATION', ['blanket_qunit', 'handlebars:all', 'less:annotation', 'copy:integration', 'processhtml:dev', 'copy:config']);
+    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less:annotation', 'copy:integration', 'processhtml:dev', 'copy:config']);
     grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less:annotation', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {

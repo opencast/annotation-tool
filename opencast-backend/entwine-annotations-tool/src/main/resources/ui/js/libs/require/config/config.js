@@ -8,8 +8,7 @@ require.config({
         "bootstrap"                     : "libs/bootstrap/bootstrap.min",
         "carousel"                      : "libs/bootstrap/carousel2.2",
         "domReady"                      : "libs/require/config/domReady",
-        "handlebars"                    : "libs/handlebars-v1.1.2",
-        //"handlebars"                    : "libs/handlebars",
+        "handlebars"                    : "libs/handlebars-v1.3.0",
         "handlebarsHelpers"             : "handlebarsHelpers",
         "jquery.colorPicker"            : "libs/jquery.colorPicker.min",
         "jquery.FileReader"             : "libs/jquery.FileReader",
@@ -24,7 +23,8 @@ require.config({
         "text"                          : "libs/require/config/text",
         "tooltip"                       : "libs/bootstrap/tooltip",
         "timeline"                      : "libs/timeline-min",
-        "underscore"                    : "libs/underscore-min-1.4.3"
+        "underscore"                    : "libs/underscore-min-1.4.3",
+        "raf"                           : "libs/rAF"
     },
     waitSeconds: 10,
 
@@ -76,7 +76,7 @@ require.config({
 });
 
 // Bootstrap function for main app
-require(["domReady", "annotations-tool-configuration", "annotations-tool"],
+require(["domReady", "annotations-tool-configuration", "annotations-tool", "raf"],
 
 function (domReady, config, app) {
     domReady(function () {

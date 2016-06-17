@@ -50,7 +50,7 @@ define(["jquery",
         "collections/labels",
         "collections/scalevalues",
         "views/annotate-category",
-        "text!templates/annotate-tab.tmpl",
+        "templates/annotate-tab",
         "default_scale_set",
         "handlebarsHelpers",
         "backbone",
@@ -119,14 +119,14 @@ define(["jquery",
             /**
              * Tab template
              * @alias module:views-annotate-tab.AnnotateTab#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Template for the carousel items
              * @alias module:views-annotate-tab.AnnotateTab#itemContainerTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             itemContainerTemplate: Handlebars.compile("<div class=\"item row-fluid\" id=\"item-{{number}}\">\
                                                         <div class=\"span12\">\
@@ -138,42 +138,42 @@ define(["jquery",
             /**
              * Template for pagination link
              * @alias module:views-annotate-tab.AnnotateTab#paginationBulletTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             paginationBulletTemplate: Handlebars.compile("<li><a href=\"#\" class=\"page-link\" title=\"{{frame}}\" id=\"page-{{number}}\">{{number}}</a></li>"),
 
             /**
              * Element containing the "carousel"
              * @alias module:views-annotate-tab.AnnotateTab#carouselElement
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             carouselElement: undefined,
 
             /**
              * Element containing the pagination
              * @alias module:views-annotate-tab.AnnotateTab#carouselPagination
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             carouselPagination: undefined,
 
             /**
              * Element containing the all the categories
              * @alias module:views-annotate-tab.AnnotateTab#categoriesContainer
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             categoriesContainer: undefined,
 
             /**
              * Current container for categories group in the carousel
              * @alias module:views-annotate-tab.AnnotateTab#itemsCurrentContainer
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             itemsCurrentContainer: undefined,
 
             /**
              * Element represeting the tab top link
              * @alias module:views-annotate-tab.AnnotateTab#titleLink
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             titleLink: undefined,
 
@@ -209,6 +209,7 @@ define(["jquery",
 
                 // Set the current context for all these functions
                 _.bindAll(this,
+                  "select",
                   "addCategories",
                   "addCategory",
                   "onAddCategory",
@@ -286,6 +287,13 @@ define(["jquery",
                 this.carouselElement.carousel(0).carousel("pause");
 
                 return this;
+            },
+
+            select: function () {
+                console.log("Tab selected");
+                _.each(this.categoryViews, function (view) {
+                    view.updateInputWidth();
+                }, this);
             },
 
             /**
@@ -381,7 +389,7 @@ define(["jquery",
                 var attributes = {
                     name    : "NEW CATEGORY",
                     settings: {
-                        color   : this.DEFAULT_CAT_COLOR,
+                        color   : "#" + annotationsTool.colorsManager.getNextColor(),
                         hasScale: false
                     }
                 };
@@ -408,7 +416,7 @@ define(["jquery",
             /**
              * Insert the given category in the carousel
              * @alias module:views-annotate-tab.AnnotateTab#insertCategoryView
-             * @param  {Category View} categoryView the view to insert
+             * @param  {CategoryView} categoryView the view to insert
              */
             insertCategoryView: function (categoryView) {
                 var itemsLength = this.categoriesContainer.find("div.category-item").length;
@@ -672,7 +680,7 @@ define(["jquery",
                 this.carouselPagination.find("li:not(:last,:first)").remove();
 
                 _.each(this.categoryViews, function (catView) {
-                    this.insertCategoryView(catView);
+                    this.insertCategoryView(catView.render());
                 }, this);
 
                 if (currentId) {

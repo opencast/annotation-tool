@@ -26,9 +26,8 @@
 define(["jquery",
         "backbone",
         "models/scalevalue",
-        "text!templates/scale-value-editor.tmpl",
-        "handlebars"],
-        function ($, Backbone, ScaleValue, ScaleValueEditorTmpl, Handlebars) {
+        "templates/scale-value-editor"],
+        function ($, Backbone, ScaleValue, ScaleValueEditorTmpl) {
 
             "use strict";
 
@@ -44,9 +43,9 @@ define(["jquery",
                 /**
                  * Scale value editor template
                  * @alias module:views-scalevalue-editor.ScaleValueEditor#ScaleValueEditorTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
-                scaleValueEditorTemplate: Handlebars.compile(ScaleValueEditorTmpl),
+                scaleValueEditorTemplate: ScaleValueEditorTmpl,
 
                 /**
                  * Define if the scale value is or not deleted

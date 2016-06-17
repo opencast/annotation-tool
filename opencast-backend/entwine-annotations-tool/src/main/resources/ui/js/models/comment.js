@@ -45,12 +45,6 @@ define(["jquery",
              * @static
              */
             defaults: {
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null,
                 access: ACCESS.PUBLIC
             },
 
@@ -82,6 +76,10 @@ define(["jquery",
                     if (!attr.created_by_nickname) {
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
                     }
+
+                    if (!attr.created_at) {
+                        attr.created_at = new Date();
+                    }
                 }
 
                 if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
@@ -106,9 +104,17 @@ define(["jquery",
             parse: function (data) {
                 var attr = data.attributes ? data.attributes : data;
 
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                if (!_.isUndefined(attr.created_at)) {
+                    attr.created_at = Date.parse(attr.created_at);
+                }
+
+                if (!_.isUndefined(attr.updated_at)) {
+                    attr.updated_at = Date.parse(attr.updated_at);
+                }
+
+                if (!_.isUndefined(attr.deleted_at)) {
+                    attr.deleted_at = Date.parse(attr.deleted_at);
+                }
 
                 if (annotationsTool.user.get("id") === attr.created_by) {
                     attr.isMine = true;
@@ -162,20 +168,6 @@ define(["jquery",
                 if (attr.created_at) {
                     if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
                         return "\"created_at\" attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "\"created_at\" attribute must be a number!";
-                    }
-                }
-
-                if (attr.updated_at) {
-                    if (!_.isNumber(attr.updated_at)) {
-                        return "\"updated_at\" attribute must be a number!";
-                    }
-                }
-
-                if (attr.deleted_at) {
-                    if (!_.isNumber(attr.deleted_at)) {
-                        return "\"deleted_at\" attribute must be a number!";
                     }
                 }
             },

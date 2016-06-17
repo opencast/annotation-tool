@@ -33,6 +33,25 @@
                   <a class="brand" href="#">Annotating Academic video - Load testing <!-- <span id="fps"><span id="value">100</span> FPS</span> --></a>
           
                 <ul class="nav pull-right">
+                    <li class="dropdown" id="view-options">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+
+                          <li><a id="opt-annotate-text" class="opt-layout checked" href="#"><i class="check icon-check"></i> Text annotations</a></li>
+                          <li><a id="opt-annotate-categories" class="opt-layout checked" href="#"><i class="check icon-check"></i> Structured annotations</a></li>
+                          <li role="presentation" class="divider"></li>
+                          
+                          <span id="menu-plugins">
+                              <!-- Place to add the menu elements from the plugins -->
+                          </span>
+
+                          <li role="presentation" class="divider"></li>
+                          <li><a id="opt-tracks-mine" class="opt-tracks" href="#"><i class="check icon-check"></i> My annotations only</a></li>
+                          <!-- <li><a id="opt-select-annotations" href="#"><i class="check icon-check"></i> Other public annotations...</a></li> -->
+                          <li><a id="opt-tracks-public" class="opt-tracks" href="#"><i class="check icon-check"></i> All public annotations</a></li>
+
+                        </ul>
+                    </li>
                     <li><a href="#" id="export">Export for statistics</a></li>
                     <li><a href="#" id="print">Print</a></li>
                     <li><a href="#" id="logout">Logout</a></li>
@@ -82,6 +101,14 @@
                     <source src="../resources/aav2.ogv" type="video/ogg" />
                 </video>
             </div>
+
+            <div class="window" id="select-tracks">
+                <div class="controls stop-fields">
+                    <label class="inline"> Active track
+                        <select name="tracks" size="0"></select>
+                    </label>
+                </div>
+            </div>
             
             <!-- container for the timeline-->
             <div>
@@ -91,16 +118,6 @@
                           <div class="container-fluid">
                             <span class="window-title">Timeline</span>
                             <span class="time-header">Current time: <span class="time"></span></span>
-                            <ul class="nav pull-right">
-                                  <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Filter <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                      <li><a id="filter-none" href="#">No filter</a></li>
-                                      <li><a id="filter-mine" class="filter" href="#"><i class="check icon-check"></i> Only my tracks</a></li>
-                                      <li><a id="filter-public" class="filter" href="#"><i class="check icon-check"></i> Only public tracks</a></li>
-                                    </ul>
-                                  </li>
-                            </ul>
                           </div>
                         </div>
                     </div>
@@ -133,14 +150,6 @@
                                <span class="content">No track selected</span>
                              </div>
                             <ul class="nav pull-right">
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Layout <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                      <li><a id="annotate-full" href="#"><i class="check icon-check"></i> Full</a></li>
-                                      <li><a id="annotate-text" href="#"><i class="check icon-check"></i> Only free text</a></li>
-                                      <li><a id="annotate-categories" href="#"><i class="check icon-check"></i> Only with labels</a></li>
-                                    </ul>
-                                  </li>
                                 <li><a href="#" class="toggle-collapse">
                                     Collapse</a></li>
                             </ul>
@@ -151,7 +160,6 @@
                     <div class="control-group" id="annotate-form">
                         
 
-                        
                         <div id="input-container" class="insert-fields">
                             <textarea id="new-annotation" placeholder="Write a free text annotation. Use &raquo;shift + return&laquo; keys to create a new line." rows="3" title="Use &raquo;shift + return&laquo; keys to create a new line."></textarea>
                             <div class="controls stop-fields">
@@ -200,13 +208,6 @@
                                       <li><a href="#" class="expand-all">Expand All</a></i></li>
                                     </ul>
                                   </li>
-                                  <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Filter <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                      <li><a id="filter-none" href="#">No filter</a></li>
-                                      <li><a id="filter-mine" class="filter" href="#"><i class="check icon-check"></i> Only my annotations</a></li>
-                                    </ul>
-                                  </li>
                                   <li><a href="#" class="toggle-collapse">Collapse</a></i></li>
                             </ul>
                           </div>
@@ -214,7 +215,9 @@
                         </div>
                     </div>
 
-                    <div id="content-list"></div>
+                    <div id="content-list-scroll">
+                        <div id="content-list"></div>
+                    </div>
                     
                 </div>
             </div>

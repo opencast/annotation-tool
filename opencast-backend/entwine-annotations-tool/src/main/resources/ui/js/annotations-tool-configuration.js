@@ -47,10 +47,24 @@ define(["jquery",
                 LAYOUT_CONFIGURATION: {
                     /** default configuration */
                     DEFAULT: {
-                        timeline: true,
-                        list: true,
-                        annotate: true
+                        timeline : true,
+                        list     : true,
+                        annotate : true,
+                        loop     : false
                     }
+                },
+
+                /**
+                 * The default tracks at startup
+                 * @type {{@link this.TRACKS}}
+                 */
+                getDefaultTracks: function () {
+                    return {
+                        name: "mine",
+                        filter: function (track) {
+                            return track.get("isMine");
+                        }
+                    };
                 },
 
                 /**
@@ -68,6 +82,12 @@ define(["jquery",
                  * @type {Number}
                  */
                 CATEGORIES_PER_TAB: 7,
+
+                /**
+                * The maximal number of tracks visible in the timeline at the same time
+                * @type {Number}
+                */
+                MAX_VISIBLE_TRACKS: 0,
 
                 /**
                  * Define if the localStorage should be used or not
@@ -240,10 +260,10 @@ define(["jquery",
                             async: false,
                             dataType: "json",
                             success: function (data) {
-                                annotationsTool.userExtId = data.username;
+                                annotationsTool.userExtId = data.user.username;
                             },
                             error: function () {
-                                console.warn("Error getting user information from Matterhorn!");
+                                console.warn("Error getting user information from Opencast!");
                             }
                         });
                     }
@@ -315,7 +335,7 @@ define(["jquery",
                         url: "/search/episode.json",
                         async: false,
                         crossDomain: true,
-                        data: "id=" + mediaPackageId,
+                        data: "id=" + mediaPackageId + "&limit=1",
                         dataType: "json",
                         success: function (data) {
                             var result = data["search-results"].result,
@@ -328,9 +348,9 @@ define(["jquery",
                                 selectedVideos = {},
                                 videoIE9;
 
-                            video_title = result.dcTitle;
-                            video_creator = result.dcCreator;
-                            video_creation_date = result.dcCreated;
+                            video_title = result.DcTitle;
+                            video_creator = result.DcCreator;
+                            video_creation_date = result.DcCreated;
 
                             $.each(videoTypesForFallBack, function (idx, mimetype) {
                                 videosFallback[mimetype] = {};

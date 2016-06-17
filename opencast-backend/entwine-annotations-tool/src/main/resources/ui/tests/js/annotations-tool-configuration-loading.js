@@ -47,7 +47,8 @@ define(["jquery",
                 DEFAULT: {
                     timeline : true,
                     list     : true,
-                    annotate : true
+                    annotate : true,
+                    loop     : false
                 }
             },
 
@@ -66,6 +67,12 @@ define(["jquery",
              * @type {Number}
              */
             CATEGORIES_PER_TAB: 7,
+
+            /**
+             * The maximal number of tracks visible in the timeline at the same time
+             * @type {Number}
+             */
+            MAX_VISIBLE_TRACKS: 0,
 
             /**
              * Define if the localStorage should be used or not
@@ -138,20 +145,24 @@ define(["jquery",
                     duration = annotationsTool.playerAdapter.getDuration(),
                     track,
                     tracks = [],
-                    nbAnnotations = 40, // Number of annotations to generate pro track
-                    nbTrack = 25,       // Number of tracks to generate
+                    diff = 50,
+                    nbTracks = 20,       // Number of tracks to generate
+                    nbAnnotations = diff * nbTracks, // Number of annotations to generate pro track
                     i,
                     y;
 
                 // Generate tracks
-                for (i = 0; i < nbTrack; i++) {
+                for (i = nbTracks; i > 1; i--) {
+                    nbAnnotations -= diff;
+
                     track = {
                         id          : "testtrack" + i,
-                        name        : "Test track " + i,
+                        name        : "Track " + nbAnnotations,
                         description : "Track dynamically generated for load tests",
                         access      : Math.round(Math.random()),
                         annotations : [],
-
+                        visible: false,
+                        annotationsLoaded: true
                     };
 
                     // Generate  annotations
@@ -159,7 +170,8 @@ define(["jquery",
                         annStart = Math.floor((Math.random() * duration) + 1);
 
                         track.annotations.push({
-                            text: "Annotation " + y + " on track " + i,
+                            id: (i * 1000) + y,
+                            text: "Annotation " + y + " on track " + nbAnnotations,
                             start: annStart,
                             duration: Math.floor((Math.random() * (duration - annStart)) + annStart)
                         });

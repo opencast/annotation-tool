@@ -60,7 +60,7 @@ define(["jquery",
              * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
-                if (!attr  || _.isUndefined(attr.name) || attr.name === "" ||
+                if (!attr  || _.isUndefined(attr.name) ||
                    _.isUndefined(attr.value) || !_.isNumber(attr.value) ||
                    _.isUndefined(attr.order) || !_.isNumber(attr.order)) {
                     throw "'name, value, order' attributes are required";

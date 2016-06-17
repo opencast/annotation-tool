@@ -121,13 +121,25 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
          * @return {Object} the filtered list 
          */
         filterAll: function (list, filters) {
-            var activeFilters = _.isUndefined(filters) ? this.filters : filters;
+            var activeFilters = _.map(_.isUndefined(filters) ? this.filters : filters,
+                                            function (item) {return item; },
+                                    this),
+                filterList = function (item) {
+                        var cFilter,
+                            i;
 
-            return _.filter(list, function (item) {
-                        return  _.every(activeFilters, function (filter) {
-                                    return filter.active ? filter.condition(item) : true;
-                                }, this);
-                    }, this);
+                        for (i = 0; i < activeFilters.length; i++) {
+                            cFilter = activeFilters[i];
+                            if (cFilter.active && !cFilter.condition(item)) {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    };
+
+
+            return _.filter(list, filterList, this);
         },
 
         /**
@@ -190,7 +202,6 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
 
         /**
          * Bind this instance to its master
-         * @return {[type]} [description]
          */
         bindToMaster: function () {
             this.isBindedToMaster = true;

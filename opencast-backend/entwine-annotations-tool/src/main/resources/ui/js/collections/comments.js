@@ -81,7 +81,7 @@ define(["jquery",
             /**
              * Define the url from the collection with the given video
              * @alias module:collections-comments.Comments#setUrl
-             * @param {{@linkcode module:models-track.Track}} Annotation containing the comments
+             * @param {@link module:models-track.Track} Annotation containing the comments
              */
             setUrl: function (annotation) {
                 if (!annotation) {

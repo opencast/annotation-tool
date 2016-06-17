@@ -13,10 +13,10 @@ define(["jquery",
         "backbone",
         "models/user",
         "collections/users",
-        "text!templates/user-login.tmpl",
+        "templates/user-login",
         "roles",
         "handlebars"],
-        function ($, Backbone, User, Users, LoginTmpl, ROLES, Handlebars) {
+        function ($, Backbone, User, Users, LoginTemplate, ROLES) {
 
             "use strict";
 
@@ -32,16 +32,16 @@ define(["jquery",
                 /**
                  * Main container of the login modal
                  * @alias module:views-login.Login#el
-                 * @type {DOM Element}
+                 * @type {DOMElement}
                  */
                 el: $("#user-login"),
 
                 /**
                  * Login modal template
                  * @alias module:views-login.Login#groupTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
-                loginTemplate: Handlebars.compile(LoginTmpl),
+                loginTemplate: LoginTemplate,
 
                 /**
                  * Events to handle
@@ -107,9 +107,9 @@ define(["jquery",
                  */
                 login: function () {
                     // Fields from the login form
-                    var userId          = annotationsTool.getUserExtId(),
-                        userNickname    = this.$el.find("#nickname"),
+                    var userNickname    = this.$el.find("#nickname"),
                         userEmail       = this.$el.find("#email"),
+                        userId          = annotationsTool.getUserExtId(userEmail.val()),
                         userRemember    = this.$el.find("#remember"),
                         userError       = this.$el.find(".alert"),
                         valid  = true, // Variable to keep the form status in memory

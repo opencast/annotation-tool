@@ -35,12 +35,14 @@
 define(["jquery",
         "prototypes/player_adapter",
         "models/annotation",
+        "models/track",
         "collections/annotations",
-        "text!templates/timeline-group.tmpl",
-        "text!templates/timeline-group-empty.tmpl",
-        "text!templates/timeline-item.tmpl",
-        "text!templates/timeline-modal-add-group.tmpl",
-        "text!templates/timeline-modal-update-group.tmpl",
+        "collections/tracks",
+        "templates/timeline-group",
+        "templates/timeline-group-empty",
+        "templates/timeline-item",
+        "templates/timeline-modal-add-group",
+        "templates/timeline-modal-update-group",
         "access",
         "roles",
         "FiltersManager",
@@ -52,7 +54,7 @@ define(["jquery",
         "jquery.appear"
     ],
 
-    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl,
+    function ($, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
         GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
 
         "use strict";
@@ -80,44 +82,44 @@ define(["jquery",
             /**
              * Main container of the timeline
              * @alias module:views-timeline.TimelineView#el
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             el: $("div#timeline-container")[0],
 
             /**
              * Group template
              * @alias module:views-timeline.TimelineView#groupTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            groupTemplate: Handlebars.compile(GroupTmpl),
+            groupTemplate: GroupTmpl,
 
             /**
              * Empty group template
              * @alias module:views-timeline.TimelineView#groupEmptyTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            groupEmptyTemplate: Handlebars.compile(GroupEmptyTmpl),
+            groupEmptyTemplate: GroupEmptyTmpl,
 
             /**
              * Item template
              * @alias module:views-timeline.TimelineView#itemTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            itemTemplate: Handlebars.compile(ItemTmpl),
+            itemTemplate: ItemTmpl,
 
             /**
              * Modal template for group insertion
              * @alias module:views-timeline.TimelineView#modalAddGroupTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            modalAddGroupTemplate: Handlebars.compile(ModalAddGroupTmpl),
+            modalAddGroupTemplate: ModalAddGroupTmpl,
 
             /**
              * Modal template for group update
              * @alias module:views-timeline.TimelineView#modalUpdateGroupTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            modalUpdateGroupTemplate: Handlebars.compile(ModalUpdateGroupTmpl),
+            modalUpdateGroupTemplate: ModalUpdateGroupTmpl,
 
             /**
              * Events to handle by the timeline view
@@ -125,14 +127,14 @@ define(["jquery",
              * @type {map}
              */
             events: {
-                "click #add-track": "initTrackCreation",
-                "click #reset-zoom": "onTimelineResetZoom",
-                "click #zoom-in": "zoomIn",
-                "click #zoom-out": "zoomOut",
-                "click #move-right": "moveRight",
-                "click #move-left": "moveLeft",
-                "click #filter-none": "disableFilter",
-                "click .filter": "switchFilter"
+                "click #add-track"   : "initTrackCreation",
+                "click #reset-zoom"  : "onTimelineResetZoom",
+                "click #zoom-in"     : "zoomIn",
+                "click #zoom-out"    : "zoomOut",
+                "click #move-right"  : "moveRight",
+                "click #move-left"   : "moveLeft",
+                "click #filter-none" : "disableFilter",
+                "click .filter"      : "switchFilter"
             },
 
             /**
@@ -331,12 +333,12 @@ define(["jquery",
                 links.events.addListener(this.timeline, "rangechange", this.timerangeChange);
 
                 this.tracks = annotationsTool.video.get("tracks");
-                this.listenTo(this.tracks, "add", this.addTrack);
+                this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTracksList);
                 this.listenTo(this.tracks, "change", this.changeTrack);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
 
                 this.$el.show();
-                this.addTracksList(this.tracks);
+                this.addTracksList(this.tracks.getVisibleTracks());
                 this.timeline.setCustomTime(this.startDate);
 
                 // Overwrite the redraw method
@@ -396,8 +398,6 @@ define(["jquery",
 
                     timelineHeight = this.$timeline.height();
 
-                    console.log("Timeline height: " + timelineHeight);
-
                     _.each(annotationsTool.getTracks().slice(0, (timelineHeight / 60).toFixed()), function (track) {
                         tracks[track.get("id")] = true;
                     }, this);
@@ -428,7 +428,6 @@ define(["jquery",
                         $tracks.on("appear", _.debounce(function () {
                             var id = this.dataset.trackid;
                             if (!tracks[id]) {
-                                console.log("Add track " + id);
                                 tracks[id] = true;
                                 self.filteredItems = self.filterItems();
                                 self.redraw();
@@ -438,7 +437,6 @@ define(["jquery",
                         $tracks.on("disappear", _.debounce(function () {
                             var id = this.dataset.trackid;
                             if (tracks[id]) {
-                                console.log("Remove track " + id);
                                 tracks[id] = false;
                                 self.filteredItems = self.filterItems();
                                 self.redraw();
@@ -658,7 +656,6 @@ define(["jquery",
                 if (!isList) {
                     this.filterItems();
                     this.redraw();
-                    annotationsTool.setSelection([annotation], false);
                     this.onPlayerTimeUpdate();
                 }
 
@@ -704,10 +701,16 @@ define(["jquery",
             /**
              * Add a list of tracks, creating a view for each of them
              * @alias module:views-timeline.TimelineView#addTracksList
-             * @param {Array or List} tracks The list of tracks to add
+             * @param {Array | List} tracks The list of tracks to add
              */
             addTracksList: function (tracks) {
-                tracks.each(this.addTrack, this);
+                this.allItems = {};
+                if (tracks.length === 0) {
+                    this.filterItems();
+                    this.redraw();
+                } else {
+                    _.each(tracks, this.addTrack, this);
+                }
             },
 
             /**
@@ -810,11 +813,10 @@ define(["jquery",
                     wait: true
                 });
 
-                // Select the new track
-                annotationsTool.selectedTrack = track;
 
-                this.redraw();
-                this.onTrackSelected(null, annotationsTool.selectedTrack.id);
+
+                //this.redraw();
+                //this.onTrackSelected(null, annotationsTool.selectedTrack.id);
             },
 
             /**
@@ -1022,7 +1024,6 @@ define(["jquery",
              * @param  {PlainObject} attr The plain object representing the updated filter
              */
             updateFiltersRender: function (attr) {
-                console.log("Change filter");
 
                 if (attr.active) {
                     this.$el.find("#filter-" + attr.id).addClass("checked");
@@ -1085,7 +1086,7 @@ define(["jquery",
                 var data = this.filteredItems;
 
                 // If no selection, we unselected elements currently selected and return
-                if (!annotationsTool.hasSelection()) {
+                if (selection.length === 0) {
                     this.timeline.unselectItem();
                     return;
                 }
@@ -1379,6 +1380,11 @@ define(["jquery",
              * @param  {PlainObject} [options] Options like silent: true to avoid a redraw (optionnal)
              */
             changeTrack: function (track, options) {
+                // If the track is not visible, we do nothing
+                if (!track.get(Track.FIELDS.VISIBLE)) {
+                    return;
+                }
+
                 var newGroup,
                     trackJSON = track.toJSON(),
                     redrawRequired = false;
@@ -1452,8 +1458,7 @@ define(["jquery",
                     return;
                 }
 
-                annotationsTool.selectedTrack = track;
-                this.tracks.trigger("selected_track", track);
+                annotationsTool.selectTrack(track);
 
                 this.$el.find("div.selected").removeClass("selected");
                 this.$el.find(".timeline-group[data-id='" + trackId + "']").parent().addClass("selected");
@@ -1514,7 +1519,6 @@ define(["jquery",
                     newTrack;
 
                 if (_.isUndefined(annotation) || _.isUndefined(this.allItems[annotation.get("id")])) {
-                    console.warn("No annotation selected!");
                     return;
                 }
 
@@ -1721,6 +1725,7 @@ define(["jquery",
                 links.events.removeListener(this.timeline, "timechanged", this.onTimelineMoved);
                 links.events.removeListener(this.timeline, "change", this.onTimelineItemChanged);
                 links.events.removeListener(this.timeline, "delete", this.onTimelineItemDeleted);
+                annotationsTool.removeTimeupdateListener(this.onPlayerTimeUpdate, 1);
                 $(window).unbind("resize", this.onWindowResize);
 
                 this.undelegateEvents();
@@ -1741,7 +1746,7 @@ define(["jquery",
                 // Remove all elements
                 this.allItems = {};
                 this.$el.find("#timeline").empty();
-                this.timeline.deleteAllItems();
+                //this.timeline.deleteAllItems();
                 this.timeline = null;
                 delete this.timeline;
                 this.filteredItems = [];

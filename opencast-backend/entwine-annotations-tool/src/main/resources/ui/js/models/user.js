@@ -59,14 +59,14 @@ define(["jquery",
             initialize: function (attr) {
                 if (_.isUndefined(attr.user_extid) || attr.user_extid === "" ||
                    _.isUndefined(attr.nickname) || attr.nickname === "") {
-                    throw "'user_extid' and 'nickanme' attributes are required";
+                    throw "'user_extid' and 'nickname' attributes are required";
                 }
 
                 // Check if the category has been initialized
                 if (!attr.id) {
                     // If local storage, we set the cid as id
                     if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
+                        attr.id = attr.user_extid;
                     }
                     this.toCreate = true;
                 }
@@ -128,7 +128,7 @@ define(["jquery",
                 }
 
                 if (_.isUndefined(attr.nickname) || !_.isString(attr.nickname)) {
-                    return {attribute: "nickname", message: "'nickanme' must be a valid string!"};
+                    return {attribute: "nickname", message: "'nickname' must be a valid string!"};
                 }
 
                 if (attr.email && !User.validateEmail(attr.email)) {
@@ -177,10 +177,12 @@ define(["jquery",
              * @param {String} email the email address to check
              * @return {Boolean} true if the address is valid
              */
+            /*jshint -W101 */
             validateEmail: function (email) {
                 var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 return re.test(email);
             }
+            /*jshint +W101 */
         }
     );
         return User;

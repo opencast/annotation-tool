@@ -179,15 +179,6 @@ define(["jquery",
                     attr.isPublic = false;
                 }
 
-                // Parse tags if present
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                if (attr.category) {
-                    attr.category = this.parseJSONString(attr.category.settings);
-                }
-
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
@@ -313,13 +304,22 @@ define(["jquery",
             /**
              * Override the default toJSON function to ensure complete JSONing.
              * @alias module:models-category.Category#toJSON
+             * @param {Boolean} stringifySub defines if the sub-object should be stringify
              * @return {JSON} JSON representation of the instance
              */
-            toJSON: function () {
+            toJSON: function (stringifySub) {
                 var json = Backbone.Model.prototype.toJSON.call(this);
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
+                
+                if (stringifySub) {
+                    if (json.tags) {
+                        json.tags = JSON.stringify(json.tags);
+                    }
+
+                    if (json.settings && _.isObject(json.settings)) {
+                        json.settings = JSON.stringify(this.attributes.settings);
+                    }
                 }
+
                 delete json.labels;
 
                 if (this.attributes.scale) {
@@ -404,16 +404,6 @@ define(["jquery",
                 }
 
                 return parameter;
-            },
-
-            /**
-             * Override the default save function
-             * @alias module:models-category.Category#save
-             * @return {object} options The given options for the save operation
-             */
-            save: function (options) {
-                this.attributes.settings = JSON.stringify(this.attributes.settings);
-                Backbone.Model.prototype.save.call(this, options);
             }
         });
         return Category;

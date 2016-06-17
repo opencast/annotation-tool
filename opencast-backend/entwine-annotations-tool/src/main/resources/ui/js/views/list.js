@@ -29,12 +29,13 @@ define(["jquery",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
+        "collections/tracks",
         "views/list-annotation",
         "backbone",
         "FiltersManager",
         "scrollspy"],
 
-    function ($, PlayerAdapter, Annotation, Annotations, AnnotationView, Backbone, FiltersManager) {
+    function ($, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone, FiltersManager) {
 
         "use strict";
 
@@ -50,7 +51,7 @@ define(["jquery",
             /**
              * Annotations list container of the appplication
              * @alias module:views-list.List#el
-             * @type {DOM element}
+             * @type {DOMElement}
              */
             el: $("div#list-container"),
 
@@ -61,6 +62,25 @@ define(["jquery",
              */
             annotationViews: [],
 
+            /**
+             * List of views of selected annotation
+             * @type {Array}
+             */
+            selectedAnnotations: [],
+
+            /**
+             * Old list of views of selected annotation
+             * @type {Array}
+             */
+            oldSelectedAnnotations: [],
+
+            /**
+             * Define if the selection have been updated
+             * @type {Boolean}
+             */
+            selectionUpdated: false,
+
+            visible: true,
 
             /**
              * Events to handle
@@ -83,20 +103,24 @@ define(["jquery",
             initialize: function () {
                 // Bind functions to the good context
                 _.bindAll(this, "render",
+                               "addTrackList",
                                "addTrack",
                                "addAnnotation",
                                "addList",
+                               "clearList",
                                "getPosition",
+                               "getViewFromAnnotation",
+                               "editAnnotationCallback",
                                "insertView",
                                "sortViewsbyTime",
                                "reset",
                                "select",
-                               "unselect",
                                "switchFilter",
                                "updateFiltersRender",
                                "toggleVisibility",
                                "disableFilter",
                                "expandAll",
+                               "renderSelect",
                                "collapseAll",
                                "updateView");
 
@@ -105,17 +129,32 @@ define(["jquery",
                 this.tracks          = annotationsTool.video.get("tracks");
                 this.playerAdapter   = annotationsTool.playerAdapter;
 
+                this.$list = this.$el.find("#content-list-scroll div#content-list");
+
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
                 this.listenTo(this.tracks, "change:access", this.render);
-                this.listenTo(this.tracks, "add", this.addTrack);
+                this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
-
-                this.tracks.each(this.addTrack, this);
 
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 
-                return this.render();
+                this.addTrackList(this.tracks.getVisibleTracks());
+
+                this.render();
+
+                window.requestAnimationFrame(this.renderSelect);
+
+                return this;
+            },
+
+            /**
+             * Tracks bulk insertion
+             * @param {array} tracks Tracks to insert
+             */
+            addTrackList: function (tracks) {
+                this.clearList();
+                _.each(tracks, this.addTrack, this);
             },
 
             /**
@@ -127,6 +166,8 @@ define(["jquery",
             addTrack: function (track, index) {
                 var ann = track.get("annotations"),
                     annotationTrack = track;
+
+                this.stopListening(ann);
 
                 this.listenTo(ann, "add", $.proxy(function (newAnnotation) {
                     this.addAnnotation(newAnnotation, annotationTrack);
@@ -156,10 +197,11 @@ define(["jquery",
                     return;
                 } else {
                     view = new AnnotationView({annotation: annotation, track: track});
+                    this.listenTo(view, "edit", this.editAnnotationCallback);
                     this.insertView(view);
 
                     if (!isPartofList) {
-                        view.selectVisually();
+                        annotationsTool.setSelection([annotation], false);
                     }
                 }
 
@@ -178,11 +220,24 @@ define(["jquery",
                 this.annotationViews.splice(index, 0, view);
 
                 if (index === 0) {
-                    this.$el.find("#content-list").prepend(view.render().$el);
+                    this.$list.prepend(view.render().$el);
                 } else {
                     this.annotationViews[index - 1].$el.after(view.render().$el);
                 }
 
+            },
+
+            editAnnotationCallback: function (editView) {
+                _.each(this.annotationViews, function (view) {
+                    if (view.id !== editView.id) {
+                        var state = view.getState();
+                        if (state === AnnotationView.STATES.EDIT) {
+                            view.toggleEditState();
+                        } else if (state === AnnotationView.STATES.COMMENTS) {
+                            view.toggleCommentsState();
+                        }
+                    }
+                }, this);
             },
 
             /**
@@ -208,9 +263,13 @@ define(["jquery",
              * @param {Boolean} sorting Defines if the list should be sorted after the list insertion
              */
             addList: function (annotationsList, track) {
-                _.each(annotationsList, function (annotation) {
+                var annotation,
+                    i;
+
+                for (i = 0; i < annotationsList.length; i++) {
+                    annotation = annotationsList[i];
                     this.addAnnotation(annotation, track, true);
-                }, this);
+                }
             },
 
             /**
@@ -219,43 +278,78 @@ define(["jquery",
              * @param  {Annotation} annotations The annotation to select
              */
             select: function (annotations) {
-                var view;
+                var annotation,
+                    i,
+                    view,
+                    selectedAnnotations = [];
 
-                this.unselect();
+                // only remove the annotations
+                for (i = 0; i < annotations.length; i++) {
+                    annotation = annotations[i];
+                    if (annotation) {
+                        view = this.getViewFromAnnotation(annotation.get("id"));
 
-                _.each(annotations, function (annotation, index) {
-                    view = this.getViewFromAnnotation(annotation.get("id"));
-
-                    if (view) {
-                        view.selectVisually();
-                        view.isSelected = true;
-
-                        // Only scroll the list to the first item of the selection
-                        if (index === 0) {
-                            location.hash = "#" + view.id;
+                        // If view not found, annotation has been newly created
+                        if (!_.isUndefined(view)) {
+                            selectedAnnotations[i] = view;
                         }
                     }
-                }, this);
+                }
+
+                this.oldSelectedAnnotations = this.selectedAnnotations;
+                this.selectedAnnotations = selectedAnnotations;
+
+                this.selectionUpdated = true;
+
+                if (this.scheduledAnimationFrame) {
+                    return;
+                }
+
+                this.scheduledAnimationFrame = true;
+                window.requestAnimationFrame(this.renderSelect);
             },
 
             /**
-             * Unselect all annotation views
-             * @alias module:views-list.List#unselect
+             * Render the annotations selection on the list
+             * @alias module:views-list.List#renderSelect
              */
-            unselect: function ()  {
-                var id,
+            renderSelect: function () {
+                var annotations = this.selectedAnnotations,
+                    oldAnnotations = this.oldSelectedAnnotations,
                     view,
-                    self = this;
+                    i;
 
-                this.$el.find(".selected").each(function () {
-                        id = $(this).attr("id"),
-                        view = self.getViewFromAnnotation(id);
-                        $(this).removeClass("selected");
+                // Display selection only if it has been updated
+                if (this.selectionUpdated) {
 
-                        if (view) {
-                            view.isSelected = false;
+                    for (i = 0; i < oldAnnotations.length; i++) {
+                        view = oldAnnotations[i];
+                        if (_.isUndefined(view)) {
+                            continue;
                         }
-                    });
+                        view.$el.removeClass("selected");
+                        view.isSelected = false;
+                    }
+
+                    for (i = 0; i < annotations.length; i++) {
+                        view = annotations[i];
+                        if (_.isUndefined(view)) {
+                            continue;
+                        }
+                        view.$el.addClass("selected");
+
+                        // Only scroll the list to the first item of the selection
+                        if (i === 0 && !view.isSelected) {
+                            location.hash = "#" + view.id;
+                        }
+
+                        view.isSelected = true;
+                    }
+
+                    this.selectionUpdated = false;
+                }
+
+                this.scheduledAnimationFrame = false;
             },
 
             /**
@@ -265,9 +359,16 @@ define(["jquery",
              * @return {ListAnnotation}            The view representing the annotation
              */
             getViewFromAnnotation: function (id) {
-                return _.find(this.annotationViews, function (view) {
-                            return view.model.get("id") == id;
-                        }, this);
+                var annotationViews = this.annotationViews,
+                    view,
+                    i;
+
+                for (i = 0; i < annotationViews.length; i++) {
+                    view = annotationViews[i];
+                    if (view.model.get("id") === id) {
+                        return view;
+                    }
+                }
             },
 
             /**
@@ -347,24 +448,30 @@ define(["jquery",
              * Expand all annotations in the list
              * @alias module:views-list.List#expandAll
              */
-            expandAll: function () {
-                _.each(this.annotationViews, function (annView) {
-                    if (annView.collapsed) {
-                        annView.onCollapse();
-                    }
-                }, this);
+            expandAll: function (event) {
+                var list = this.annotationViews,
+                    annView,
+                    i;
+
+                for (i = 0; i < list.length; i++) {
+                    annView = list[i];
+                    annView.toggleExpandedState(event, true);
+                }
             },
 
             /**
              * Collapse all annotations in the list
              * @alias module:views-list.List#collapseAll
              */
-            collapseAll: function () {
-                _.each(this.annotationViews, function (annView) {
-                    if (!annView.collapsed) {
-                        annView.onCollapse();
-                    }
-                }, this);
+            collapseAll: function (event) {
+                var list = this.annotationViews,
+                    annView,
+                    i;
+
+                for (i = 0; i < list.length; i++) {
+                    annView = list[i];
+                    annView.toggleCollapsedState(event, true);
+                }
             },
 
             /**
@@ -373,23 +480,48 @@ define(["jquery",
              */
             render: function () {
                 var list = this.annotationViews,
-                    $listContainer = this.$el.find("#content-list").detach();
+                    $listContainer = this.$list.detach(),
+                    annView,
+                    i;
 
-                _.each(list, function (annView) {
+                for (i = 0; i < list.length; i++) {
+                    annView = list[i];
                     annView.render().$el.detach();
-                }, this);
+                }
+
 
                 $listContainer.empty();
 
                 list = this.filtersManager.filterAll(list);
 
-                _.each(list, function (annView) {
+                for (i = 0; i < list.length; i++) {
+                    annView = list[i];
                     $listContainer.append(annView.$el);
-                }, this);
+                }
 
-                this.$el.append($listContainer);
+                this.$el.find("#content-list-scroll").append($listContainer);
 
                 return this;
+            },
+
+            clearList: function () {
+                this.tracks.each(function (track) {
+                    track.get("annotations").each(function (annotations) {
+                        this.stopListening(annotations);
+                        annotations.stopListening();
+                    }, this);
+                    this.stopListening(track);
+                    track.stopListening();
+                }, this);
+                //this.stopListening(this.tracks);
+
+                _.each(this.annotationViews, function (annView) {
+                    annView.undelegateEvents();
+                    annView.stopListening();
+                }, this);
+
+                this.annotationViews = [];
+                this.$el.find("#content-list").empty();
             },
 
             /**
@@ -399,33 +531,18 @@ define(["jquery",
             reset: function () {
                 this.$el.hide();
 
-                _.each(this.annotationViews, function (annView) {
-                    annView.undelegateEvents();
-                    annView.stopListening();
-                }, this);
-
                 this.stopListening();
 
-                this.annotationViews = [];
-                this.$el.find("#content-list").empty();
+                this.clearList();
 
                 delete this.annotationViews;
                 delete this.tracks;
                 this.undelegateEvents();
             },
 
-            toggleVisibility: function (event) {
-                var mainContainer = this.$el.find("#content-list");
-
-                if (mainContainer.css("display") === "none") {
-                    mainContainer.show();
-                    $("div#list-container").toggleClass("expanded");
-                    $(event.target).html("Collapse");
-                } else {
-                    mainContainer.hide();
-                    $("div#list-container").toggleClass("expanded");
-                    $(event.target).html("Expand");
-                }
+            toggleVisibility: function () {
+                this.visible = !this.visible;
+                this.$el.fadeToggle();
                 this.trigger("change-layout");
             }
 

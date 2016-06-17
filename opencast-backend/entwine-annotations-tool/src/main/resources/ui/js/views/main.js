@@ -44,15 +44,15 @@ define(["jquery",
         "views/timeline",
         "views/login",
         "views/scale-editor",
+        "views/tracks-selection",
         "collections/annotations",
         "collections/users",
         "collections/videos",
         "models/user",
         "models/track",
         "models/video",
-        "text!templates/categories-legend.tmpl",
+        "templates/categories-legend",
         "roles",
-        "FiltersManager",
         "backbone",
         "handlebars",
         "localstorage",
@@ -60,8 +60,8 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, FiltersManager, Backbone, Handlebars) {
+    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
 
@@ -77,7 +77,7 @@ define(["jquery",
             /**
              * Main container of the appplication
              * @alias module:views-main.MainView#el
-             * @type {Dom Element}
+             * @type {DOMElement}
              */
             el: $("body"),
 
@@ -91,7 +91,7 @@ define(["jquery",
             /**
              * jQuery element for the loading box
              * @alias module:views-main.MainView#loadingBox
-             * @type {jQuery Object}
+             * @type {DOMElement}
              */
             loadingBox: $("div#loading"),
 
@@ -99,9 +99,10 @@ define(["jquery",
             /**
              * Template for the categories legend
              * @alias module:views-main.MainView#categoriesLegendTmpl
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            categoriesLegendTmpl: Handlebars.compile(CategoriesLegendTmpl),
+            categoriesLegendTmpl: CategoriesLegendTmpl,
+
 
             /**
              * Events to handle by the main view
@@ -109,8 +110,10 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #logout": "logout",
-                "click #print" : "print"
+                "click #logout"              : "logout",
+                "click #print"               : "print",
+                "click .opt-layout"          : "layoutUpdate",
+                "click [class*='opt-tracks']": "tracksSelection"
             },
 
             /**
@@ -119,7 +122,8 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
-                _.bindAll(this, "checkUserAndLogin",
+                _.bindAll(this, "layoutUpdate",
+                                "checkUserAndLogin",
                                 "createViews",
                                 "generateCategoriesLegend",
                                 "logout",
@@ -128,6 +132,7 @@ define(["jquery",
                                 "onWindowResize",
                                 "print",
                                 "ready",
+                                "tracksSelection",
                                 "setLoadingProgress",
                                 "updateTitle");
                 var self = this;
@@ -168,14 +173,24 @@ define(["jquery",
                 $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
-                annotationsTool.filtersManager   = new FiltersManager();
                 annotationsTool.importCategories = this.importCategories;
 
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
                     this.updateTitle(annotationsTool.video);
+
+                    if (!annotationsTool.isFreeTextEnabled()) {
+                        $("#opt-annotate-text").parent().hide();
+                    }
+
+                    if (!annotationsTool.isStructuredAnnotationEnabled()) {
+                        $("#opt-annotate-categories").parent().hide();
+                    }
+
                 }, this);
+
+                this.$el.find(".opt-tracks-" + annotationsTool.getDefaultTracks().name).addClass("checked");
 
                 this.checkUserAndLogin();
             },
@@ -229,6 +244,8 @@ define(["jquery",
                 // Initialize the player
                 annotationsTool.playerAdapter.load();
                 this.setLoadingProgress(50, "Initializing the player.");
+
+                annotationsTool.views.main = this;
                 
                 /**
                  * Loading the video dependant views
@@ -358,7 +375,6 @@ define(["jquery",
 
                 this.loadingBox.find(".bar").width("0%");
                 this.loadingBox.show();
-                this.loginView.show();
 
                 annotationsTool.users.each(function (user) {
 
@@ -373,8 +389,12 @@ define(["jquery",
 
                 });
 
+                annotationsTool.modelsInitialized = false;
+
                 if (annotationsTool.logoutUrl) {
                     document.location = annotationsTool.logoutUrl;
+                } else {
+                    location.reload();
                 }
             },
 
@@ -393,6 +413,72 @@ define(["jquery",
                     }
                 } else {
                     setTimeout(this.print, 1000);
+                }
+            },
+
+            /**
+             * Filter the tracks following the option selected in the menu
+             * @alias module:views-main.MainView#tracksSelection
+             */
+            tracksSelection: function (event) {
+                var prefixFilter = "opt-tracks-";
+
+                if ($(event.target).hasClass(prefixFilter + "public")) {
+                    annotationsTool.getTracks().showAllPublic();
+                } else if ($(event.target).hasClass(prefixFilter + "mine")) {
+                    annotationsTool.getTracks().showMyTracks();
+                } else {
+                    if (_.isUndefined(this.tracksSelectionModal)) {
+                        this.tracksSelectionModal = new TracksSelectionView();
+                    }
+
+                    this.tracksSelectionModal.show();
+                }
+
+                $("[class*='opt-tracks']").removeClass("checked");
+                $("." + event.target.className).addClass("checked");
+            },
+
+            /**
+             * Set the layout of the tools following the option selected in the menu
+             * @alias module:views-main.MainView#layoutUpdate
+             */
+            layoutUpdate: function (event) {
+                var enabled = !$(event.target).hasClass("checked"),
+                    layoutElement = event.currentTarget.id.replace("opt-", ""),
+                    checkMainLayout = function () {
+                        if (!annotationsTool.views.annotate.visible && !annotationsTool.views.list.visible) {
+                            $("#left-column").removeClass("span6");
+                            $("#left-column").addClass("span12");
+                        } else {
+                            $("#left-column").addClass("span6");
+                            $("#left-column").removeClass("span12");
+                        }
+                        annotationsTool.views.timeline.redraw();
+                    };
+
+                if (enabled) {
+                    $(event.target).addClass("checked");
+                } else {
+                    $(event.target).removeClass("checked");
+                }
+
+                switch (layoutElement) {
+
+                case "annotate-text":
+                    this.annotateView.enableFreeTextLayout(enabled);
+                    break;
+                case "annotate-categories":
+                    this.annotateView.enableCategoriesLayout(enabled);
+                    break;
+                case "view-annotate":
+                    annotationsTool.views.annotate.toggleVisibility();
+                    checkMainLayout();
+                    break;
+                case "view-list":
+                    annotationsTool.views.list.toggleVisibility();
+                    checkMainLayout();
+                    break;
                 }
             },
 
@@ -452,18 +538,20 @@ define(["jquery",
             onWindowResize: function () {
                 var listContent,
                     windowHeight = $(window).height(),
-                    rest;
+                    annotationsContainerHeight = $("#annotate-container").height(),
+                    loopFunctionHeight = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ?
+                                            annotationsTool.loopFunction.$el.height() + 180 : 145,
+                    videoContainerHeight = $("#video-container").height();
+
 
                 // TODO: improve this part with a better layout management, more generic
-
                 if (this.annotateView && this.listView) {
-                    listContent = this.listView.$el.find("#content-list");
-                    listContent.css("max-height", windowHeight - $("#annotate-container").height() - 100);
+                    listContent = this.listView.$el.find("#content-list-scroll");
+                    listContent.css("max-height", windowHeight - annotationsContainerHeight - 120);
                 }
 
                 if (this.timelineView) {
-                    rest = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ? annotationsTool.loopFunction.$el.height() + 160 : 125;
-                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + rest));
+                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
                 }
             },
             /**

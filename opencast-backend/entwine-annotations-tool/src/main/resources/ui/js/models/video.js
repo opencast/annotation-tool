@@ -57,7 +57,10 @@ define(["jquery",
              */
             initialize: function (attr) {
 
-                _.bindAll(this, "getTrack", "getAnnotation");
+                _.bindAll(this,
+                        "getTrack",
+                        "getAnnotation",
+                        "loadTracks");
 
                 // Check if the video has been initialized
                 if (!attr.id) {
@@ -144,7 +147,6 @@ define(["jquery",
 
                 var tmpCreated,
                     categories,
-                    tracks,
                     scales,
                     self = this;
 
@@ -155,22 +157,9 @@ define(["jquery",
                         this.setUrl();
 
                         categories = this.attributes.categories;
-                        tracks     = this.attributes.tracks;
                         scales     = this.attributes.scales;
 
-                        if (tracks && (tracks.length) === 0) {
-                            tracks.fetch({
-                                async  : false,
-                                success: function () {
-                                    self.tracksReady = true;
-
-                                    if (self.tracksReady && self.categoriesReady && self.scalesReady) {
-                                        self.trigger("ready");
-                                        self.attributes.ready = true;
-                                    }
-                                }
-                            });
-                        }
+                        this.loadTracks();
 
                         if (scales && (scales.length) === 0) {
                             scales.fetch({
@@ -223,6 +212,27 @@ define(["jquery",
                     }
                 }
             },
+
+
+            loadTracks: function () {
+                var tracks = this.attributes.tracks,
+                    self = this;
+
+                if (tracks && (tracks.length) === 0) {
+                    tracks.fetch({
+                        async  : false,
+                        success: function () {
+                            self.tracksReady = true;
+
+                            if (self.tracksReady && self.categoriesReady && self.scalesReady) {
+                                self.trigger("ready");
+                                self.attributes.ready = true;
+                            }
+                        }
+                    });
+                }
+            },
+
             /**
              * Modify the current url for the tracks collection
              * @alias module:models-video.Video#setUrl

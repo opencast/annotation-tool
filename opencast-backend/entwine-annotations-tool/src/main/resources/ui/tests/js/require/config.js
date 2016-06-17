@@ -3,6 +3,7 @@ require.config({
     baseUrl: "./../js",
     paths: {
         "annotations-tool"               : "annotations-tool-configuration",
+        "annotations-tool-main"          : "annotations-tool",
         "annotations-tool-configuration" : "../tests/js/annotations-tool-configuration",
         "backbone"                       : "libs/backbone/backbone-0.9.9",
         "bootstrap"                      : "libs/bootstrap/bootstrap.min",
@@ -12,8 +13,10 @@ require.config({
         "handlebarsHelpers"              : "handlebarsHelpers",
         "jquery.colorPicker"             : "libs/jquery.colorPicker.min",
         "jquery.FileReader"              : "libs/jquery.FileReader",
+        "jquery.appear"                 : "libs/jquery.appear",
         "localstorage"                   : "libs/backbone/backbone.localStorage-1.0",
         "jquery"                         : "libs/jquery-1.7.2.min",
+        "popover"                       : "libs/bootstrap/popover",
         "scrollspy"                      : "libs/bootstrap/scrollspy",
         "sinon"                          : "libs/tests/sinon-1.7.3",
         "slider"                         : "libs/bootstrap/bootstrap-slider",
@@ -22,7 +25,7 @@ require.config({
         "templates"                      : "../templates",
         "text"                           : "libs/require/config/text",
         "tooltip"                        : "libs/bootstrap/tooltip",
-        "timeline"                       : "libs/timeline-min.js",
+        "timeline"                       : "libs/timeline-min",
         "underscore"                     : "libs/underscore-min-1.4.3"
     },
     waitSeconds: 10,
@@ -63,6 +66,11 @@ require.config({
         "jquery.colorPicker": {
             deps: ["jquery"],
             exports: "jQuery.fn.colorPicker"
+        },
+
+        "jquery.appear": {
+            deps: ["jquery"],
+            exports: "jQuery.fn.appear"
         },
 
         "bootstrap": ["jquery"],

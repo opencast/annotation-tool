@@ -36,13 +36,13 @@ define(["jquery",
         "collections/annotations",
         "collections/categories",
         "views/annotate-tab",
-        "text!templates/annotate-tab-title.tmpl",
+        "templates/annotate-tab-title",
         "roles",
         "access",
         "handlebarsHelpers",
         "backbone"],
 
-    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabTitleTemplate, ROLES, ACCESS, Handlebars, Backbone) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Handlebars, Backbone) {
 
         "use strict";
 
@@ -88,9 +88,9 @@ define(["jquery",
             Annotate = Backbone.View.extend({
 
                 /**
-                 * Main container of the timeline
-                 * @alias module:views-timeline.TimelineView#el
-                 * @type {DOM Element}
+                 * Main container of the annotate view
+                 * @alias module:views-annotate.Annotate#el
+                 * @type {DOMElement}
                  */
                 el: $("div#annotate-container"),
 
@@ -103,9 +103,6 @@ define(["jquery",
                 events: {
                     "keyup #new-annotation"             : "keydownOnAnnotate",
                     "click #insert"                     : "insert",
-                    "click #annotate-full"              : "setLayoutFull",
-                    "click #annotate-text"              : "setLayoutText",
-                    "click #annotate-categories"        : "setLayoutCategories",
                     "click .toggle-collapse"            : "toggleVisibility",
                     "keydown #new-annotation"           : "onFocusIn",
                     "focusout #new-annotation"          : "onFocusOut",
@@ -116,21 +113,21 @@ define(["jquery",
                 /**
                  * Template for tabs button
                  * @alias module:views-annotate.Category#tabsButtonTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
-                tabsButtonTemplate: Handlebars.compile(TabTitleTemplate),
+                tabsButtonTemplate: TabsButtonTemplate,
 
                 /**
                  * Element containing the tabs buttons
                  * @alias module:views-annotate.Category#tabsButtonsElement
-                 * @type {DOM Element}
+                 * @type {DOMElement}
                  */
                 tabsButtonsElement: $("ul#label-tabs-buttons"),
 
                 /**
                  * Element containing the tabs contents
                  * @alias module:views-annotate.Category#tabsContainerElement
-                 * @type {DOM Element}
+                 * @type {DOMElement}
                  */
                 tabsContainerElement: $("div#label-tabs-contents"),
 
@@ -155,6 +152,18 @@ define(["jquery",
                  */
                 DEFAULT_TAB_ON_EDIT: DEFAULT_TABS.MINE.id,
 
+
+                /**
+                 * Layout configuration
+                 * @type {Object}
+                 */
+                layout: {
+                    freeText   : true,
+                    categories : true
+                },
+
+                visible: true,
+
                 /**
                  * constructor
                  * @alias module:views-annotate.Category#initialize
@@ -175,8 +184,8 @@ define(["jquery",
                               "checkToContinueVideo",
                               "switchEditModus",
                               "keydownOnAnnotate",
-                              "setLayoutCategories",
-                              "setLayoutText",
+                              "enableCategoriesLayout",
+                              "enableFreeTextLayout",
                               "setLayoutFull",
                               "toggleVisibility");
 
@@ -185,7 +194,10 @@ define(["jquery",
 
                     // New annotation input
                     this.input = this.$("#new-annotation");
+                    this.freeTextElement = this.$el.find("#input-container");
+                    this.categoriesElement = this.$el.find("#categories");
 
+                    
                     // Print selected track
                     this.trackDIV = this.$el.find("div.currentTrack span.content");
                     this.changeTrack(annotationsTool.selectedTrack);
@@ -197,16 +209,20 @@ define(["jquery",
                     if (annotationsTool.isStructuredAnnotationEnabled()) {
                         categories = annotationsTool.video.get("categories");
 
+                        annotationsTool.colorsManager.updateColors(categories.models);
+
                         _.each(DEFAULT_TABS, function (params) {
                             this.addTab(categories, params);
                         }, this);
                     } else {
-                        this.$el.find("#categories").hide();
+                        this.layout.categories = false;
+                        this.categoriesElement.hide();
                         this.$el.find("#annotate-categories").parent().hide();
                     }
 
                     if (!annotationsTool.isFreeTextEnabled()) {
-                        this.$el.find("#input-container").hide();
+                        this.layout.freeText = false;
+                        this.freeTextElement.hide();
                         this.$el.find("#annotate-text").parent().hide();
                     }
 
@@ -271,7 +287,9 @@ define(["jquery",
                     }
 
                     this.input.val("");
-                    this.input.focus();
+                    setTimeout(function () {
+                        $("#new-annotation").focus();
+                    }, 500);
                 },
 
                 /**
@@ -283,11 +301,24 @@ define(["jquery",
                     // If the track is valid, we set it
                     if (track) {
                         this.input.attr("disabled", false);
+
+                        if (this.layout.freeText) {
+                            this.freeTextElement.show();
+                        }
+
+                        if (this.layout.categories) {
+                            this.categoriesElement.show();
+                        }
+
+                        this.$el.find(".no-track").hide();
                         this.trackDIV.html(track.get("name"));
                     } else {
                         // Otherwise, we disable the input and inform the user that no track is set
+                        this.freeTextElement.hide();
+                        this.categoriesElement.hide();
                         this.input.attr("disabled", true);
-                        this.trackDIV.html("<span class='notrack'>Select a track!</span>");
+                        this.$el.find(".no-track").show();
+                        this.trackDIV.html("<span>no track</span>");
                     }
                 },
 
@@ -340,11 +371,12 @@ define(["jquery",
                     tabId = tabId.replace(TAB_LINK_PREFIX, "");
 
                     $(event.currentTarget).one("shown", $.proxy(function () {
-                        this.categoriesTabs[tabId].render();
+                        //this.categoriesTabs[tabId].render();
                         this.categoriesTabs[tabId].initCarousel();
                     }, this));
 
                     $(event.currentTarget).tab("show");
+                    this.categoriesTabs[tabId].select();
                 },
 
                 /**
@@ -413,10 +445,10 @@ define(["jquery",
                 setLayoutFull: function (event) {
                     if (!$(event.target).hasClass("checked")) {
                         if (annotationsTool.isStructuredAnnotationEnabled()) {
-                            this.$el.find("#categories").show();
+                            this.categoriesElement.show();
                         }
                         if (annotationsTool.isFreeTextEnabled()) {
-                            this.$el.find("#input-container").show();
+                            this.freeTextElement.show();
                         }
                         this.$el.find("#annotate-text").removeClass("checked");
                         this.$el.find("#annotate-categories").removeClass("checked");
@@ -426,35 +458,61 @@ define(["jquery",
                 },
 
                 /**
-                 * Set layout for free text annotation only
-                 * @alias module:views-annotate.Annotate#setLayoutText
-                 * @param {Event} event Event object
+                 * Enable layout for free text annotation only
+                 * @alias module:views-annotate.Annotate#enableFreeTextLayout
+                 * @param {boolean} [enabled] Define if the layout must be enable or disable
                  */
-                setLayoutText: function (event) {
-                    if (!$(event.target).hasClass("checked")) {
-                        this.$el.find("#categories").hide();
-                        this.$el.find("#input-container").show();
-                        this.$el.find("#annotate-full").removeClass("checked");
-                        this.$el.find("#annotate-categories").removeClass("checked");
-                        $(event.target).addClass("checked");
-                        this.trigger("change-layout");
+                enableFreeTextLayout: function (enabled) {
+                    if (_.isUndefined(enabled)) {
+                        this.layout.freeText = !this.layout.freeText;
+                    } else if (this.layout.freeText == enabled) {
+                        return;
+                    } else {
+                        this.layout.freeText = enabled;
                     }
+
+                    if (this.layout.freeText && annotationsTool.isFreeTextEnabled()) {
+                        this.freeTextElement.show();
+                        if (!this.layout.categories) {
+                            $(".toggle-collapse").show();
+                        }
+                    } else {
+                        this.freeTextElement.hide();
+                        if (!this.layout.categories) {
+                            $(".toggle-collapse").hide();
+                        }
+                    }
+
+                    this.trigger("change-layout");
                 },
 
                 /**
-                 * Set layout for labels annotation only
-                 * @alias module:views-annotate.Annotate#setLayoutCategories
-                 * @param {Event} event Event object
+                 * Enable layout for labels annotation
+                 * @alias module:views-annotate.Annotate#enableCategoriesLayout
+                 * @param {boolean} [enabled] Define if the layout must be enable or disable
                  */
-                setLayoutCategories: function (event) {
-                    if (!$(event.target).hasClass("checked")) {
-                        this.$el.find("#categories").show();
-                        this.$el.find("#input-container").hide();
-                        this.$el.find("#annotate-text").removeClass("checked");
-                        this.$el.find("#annotate-full").removeClass("checked");
-                        $(event.target).addClass("checked");
-                        this.trigger("change-layout");
+                enableCategoriesLayout: function (enabled) {
+                    if (_.isUndefined(enabled)) {
+                        this.layout.categories = !this.layout.categories;
+                    } else if (this.layout.categories == enabled) {
+                        return;
+                    } else {
+                        this.layout.categories = enabled;
                     }
+
+                    if (this.layout.categories && annotationsTool.isStructuredAnnotationEnabled()) {
+                        this.categoriesElement.show();
+                        if (!this.layout.freeText) {
+                            $(".toggle-collapse").show();
+                        }
+                    } else {
+                        this.categoriesElement.hide();
+                        if (!this.layout.freeText) {
+                            $(".toggle-collapse").hide();
+                        }
+                    }
+
+                    this.trigger("change-layout");
                 },
 
                 /**
@@ -462,18 +520,9 @@ define(["jquery",
                  * @alias module:views-annotate.Annotate#toggleVisibility
                  * @param {Event} event Event object
                  */
-                toggleVisibility: function (event) {
-                    var mainContainer = this.$el.find(".control-group");
-
-                    if (mainContainer.css("display") === "none") {
-                        mainContainer.show();
-                        $("div#annotate-container").toggleClass("expanded");
-                        $(event.target).html("Collapse");
-                    } else {
-                        mainContainer.hide();
-                        $("div#annotate-container").toggleClass("expanded");
-                        $(event.target).html("Expand");
-                    }
+                toggleVisibility: function () {
+                    this.visible = !this.visible;
+                    this.$el.fadeToggle();
                     this.trigger("change-layout");
                 },
 

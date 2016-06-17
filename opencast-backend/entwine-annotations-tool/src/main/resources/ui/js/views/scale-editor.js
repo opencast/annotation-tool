@@ -32,12 +32,12 @@ define(["jquery",
         "models/scale",
         "collections/scales",
         "views/scalevalue-editor",
-        "text!templates/scale-editor.tmpl",
-        "text!templates/scale-editor-select.tmpl",
-        "text!templates/scale-editor-content.tmpl",
+        "templates/scale-editor",
+        "templates/scale-editor-select",
+        "templates/scale-editor-content",
         "access",
         "handlebars"],
-        function ($, Backbone, Scale, Scales, ScaleValueEditorView, ScaleEditorTmpl, ScaleEditorSelectTmpl, ScaleEditorContentTmpl, ACCESS, Handlebars) {
+        function ($, Backbone, Scale, Scales, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
 
             "use strict";
 
@@ -58,8 +58,7 @@ define(["jquery",
                 TITLES: {
                     CATEGORY_EDIT  : "Edit category scale",
                     STANDALONE_EDIT: "Edit scales",
-                    SAVE_BUTTON    : "Save",
-                    CREATE_BUTTON  : "Create"
+                    SAVE_BUTTON    : "Save"
                 },
 
                 /**
@@ -75,30 +74,30 @@ define(["jquery",
                 /**
                  * Main container of the editor modal
                  * @alias module:views-login.Login#el
-                 * @type {DOM Element}
+                 * @type {DOMElement}
                  */
                 el: $("#scale-editor"),
 
                 /**
                  * Main template for the scale editor
                  * @alias module:views-login.Login#scaleEditorTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
-                scaleEditorTemplate: Handlebars.compile(ScaleEditorTmpl),
+                scaleEditorTemplate: ScaleEditorTemplate,
 
                 /**
                  * Template for the select element of the editor
                  * @alias module:views-login.Login#scaleEditorSelectTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
-                scaleEditorSelectTemplate: Handlebars.compile(ScaleEditorSelectTmpl),
+                scaleEditorSelectTemplate: ScaleEditorSelectTemplate,
 
                 /**
                  * Template for the editor content
                  * @alias module:views-login.Login#scaleEditorContentTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
-                scaleEditorContentTemplate: Handlebars.compile(ScaleEditorContentTmpl),
+                scaleEditorContentTemplate: ScaleEditorContentTemplate,
 
                 /**
                  * Events to handle
@@ -255,16 +254,12 @@ define(["jquery",
                             description: description
                         });
 
-                        if (!this.currentScale.collection) {
-                            annotationsTool.video.get("scales").add(this.currentScale);
-                            this.currentScale.save({async: false});
-                            this.currentScale.setUrl();
-                            this.currentScale.get("scaleValues").each(function (scaleValue) {
-                                scaleValue.save();
-                            });
-                            this.currentScaleId = this.currentScale.get("id");
-                            this.$el.find("select#scale-id").removeAttr("disabled");
-                        }
+                        this.currentScale.save({async: false});
+                        this.currentScale.get("scaleValues").each(function (scaleValue) {
+                            scaleValue.save();
+                        });
+                        this.currentScaleId = this.currentScale.get("id");
+
                         this.isInEditMode = false;
                         this.renderScaleSelect();
                         this.changeScale();
@@ -337,13 +332,24 @@ define(["jquery",
                  */
                 createScale: function () {
                     this.isInEditMode = true;
-                    this.$el.find("a#save-scale").text(this.TITLES.CREATE_BUTTON);
+
                     this.currentScale = new Scale({
                         name  : "New scale",
                         access: this.currentCategory.get("access")
                     });
+
+                    this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
+
+                    annotationsTool.video.get("scales").add(this.currentScale);
+                    this.currentScale.save({async: false});
+                    this.currentScale.setUrl();
+                    this.currentScale.get("scaleValues").each(function (scaleValue) {
+                        scaleValue.save();
+                    });
+                    this.currentScaleId = this.currentScale.get("id");
+                    this.$el.find("select#scale-id").removeAttr("disabled");
+
                     this.renderEditContent(this.currentScale);
-                    this.$el.find("select#scale-id").attr("disabled", "disabled");
                     this.$el.find(".modal-body").show();
                 },
 

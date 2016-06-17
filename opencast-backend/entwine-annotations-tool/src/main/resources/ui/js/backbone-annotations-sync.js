@@ -66,15 +66,23 @@ define(["jquery",
                  * @param {boolean} withId Define if the id has to be included in the URI
                  */
                 this.getURI = function (resource, withId) {
+                    var tempUrl = "";
+
                     // If the resource has an id, it means that it's a model
                     if (typeof resource.collection !== "undefined") {
                         if (withId && (typeof resource.id !== "undefined")) {
-                            return resource.url();
+                            tempUrl = resource.url();
                         } else {
-                            return resource.collection.url;
+                            tempUrl = resource.collection.url;
                         }
                     } else {
-                        return _.isFunction(resource.url) ? resource.url() : resource.url;
+                        tempUrl = _.isFunction(resource.url) ? resource.url() : resource.url;
+                    }
+
+                    if (_.isUndefined(options.paging)) {
+                        return tempUrl;
+                    } else {
+                        return tempUrl + options.paging;
                     }
                 };
 
@@ -82,8 +90,10 @@ define(["jquery",
                  * Errors callback for jQuery Ajax method.
                  */
                 this.setError = function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.warn("Error during " + method + " of resource, " + XMLHttpRequest.status + ", " + textStatus);
-                    options.error(textStatus + ", " + errorThrown);
+                    //console.warn("Error during " + method + " of resource, " + XMLHttpRequest.status + ", " + textStatus);
+                    if (!_.isUndefined(options.error)) {
+                        options.error(textStatus + ", " + errorThrown);
+                    }
                 };
 
                 /**
@@ -107,7 +117,7 @@ define(["jquery",
                  * Method to send a POST request to the given url with the given resource
                  * @method
                  * @alias module:backbone-annotations-sync.AnnotationsSync#create
-                 * @param {Model, Collection} resource The resource to persist
+                 * @param {Model | Collection} resource The resource to persist
                  */
                 create = function (resource) {
                     $.ajax(_.extend(_.clone(options), {
@@ -116,7 +126,7 @@ define(["jquery",
                         async      : false,
                         url        : self.getURI(resource, false),
                         dataType   : "json",
-                        data       : resource.toJSON(),
+                        data       : resource.toJSON(true),
                         beforeSend : self.setHeaderParams,
                         success: function (data, textStatus, xmlHttpRequest) {
                             resource.toCreate = false;
@@ -140,7 +150,7 @@ define(["jquery",
                  * Method to send a POST request to the given url with the given resource for copy
                  * @inner
                  * @alias module:backbone-annotations-sync.AnnotationsSync#copy
-                 * @param {Model, Collection} resource The resource to copy
+                 * @param {Model | Collection} resource The resource to copy
                  */
                 copy = function (resource) {
                     $.ajax(_.extend(_.clone(options), {
@@ -149,7 +159,7 @@ define(["jquery",
                         async      : false,
                         url        : self.getURI(resource, false) + resource.get("copyUrl"),
                         dataType   : "json",
-                        data       : resource.toJSON(),
+                        data       : resource.toJSON(true),
                         beforeSend : self.setHeaderParams,
                         success: function (data, textStatus, xmlHttpRequest) {
                             resource.toCreate = false;
@@ -221,7 +231,7 @@ define(["jquery",
                         async      : false,
                         type       : "PUT",
                         url        : self.getURI(resource, (!resource.toCreate && !resource.noPOST)),
-                        data       : resource.toJSON(),
+                        data       : resource.toJSON(true),
                         beforeSend : self.setHeaderParams,
                         success    : function (data, textStatus, xmlHttpRequest) {
                             resource.toCreate = false;

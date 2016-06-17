@@ -118,7 +118,7 @@ define(function () {
      * @return {double} duration
      */
     PlayerAdapter.prototype.getStatus = function () {
-        throw "Function 'getDuration' must be implemented in player adapter!";
+        throw "Function 'getStatus' must be implemented in player adapter!";
     };
 
     /**

@@ -86,6 +86,20 @@ define(["jquery",
                     attr.tags = this.parseJSONString(attr.tags);
                 }
 
+                // If localStorage used, we have to save the video at each change on the children
+                if (window.annotationsTool.localStorage) {
+                    if (!attr.created_by) {
+                        attr.created_by = annotationsTool.user.get("id");
+                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                    }
+                }
+
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
+
                 this.set("category", attr.category);
 
                 this.set(attr);
@@ -107,6 +121,12 @@ define(["jquery",
 
                 if (attr.category && attr.category.settings) {
                     attr.category.settings = this.parseSettings(attr.category.settings);
+                }
+
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
                 }
 
                 if (data.attributes) {
