@@ -27,3 +27,6 @@ Test the tool with a large set of annotations.
 
 ## [Demo](http://entwinemedia.github.com/annotations)
 Demo of the annotation library hosted on github. Note that the demo stores annotations in the browser's local storage and not on a server backend. Therefore you will currently not see annotations made by others.
+
+## [Workflow for Publication](workflow.md)
+Workflow for Annotation Publication in Opencast 2.x
