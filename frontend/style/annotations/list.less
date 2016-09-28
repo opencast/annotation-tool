@@ -148,6 +148,10 @@
             display: inline-block;
         }
 
+        .comments .date:before{
+            content: "on ";
+        }
+
         .comment-amount {
             float:right;
             font-size: 9px;
@@ -315,6 +319,25 @@
 
             span.user, span.created, span.track {
                 font-style: italic;
+            }
+
+            span.user {
+                &:before {
+                    font-style: normal;
+                    content: " Created by ";
+                }
+
+                &:after {
+                    font-style: normal;
+                    content: " on ";
+                }
+            }
+
+            span.created {
+                &:after {
+                    font-style: normal;
+                    content: " on track ";
+                }
             }
         }
     }

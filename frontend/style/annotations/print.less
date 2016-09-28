@@ -96,6 +96,7 @@
 
       &:before {
         content: "-";
+        margin-right: 5px;
       }
 
       &.no-duration {
@@ -108,11 +109,13 @@
       border: none;
     }
 
-    span.freetext .read-only {
-      display: block
+    span.freetext.read-only {
+      display: none;
     }
 
     .category {
+      //margin-top: 30px;
+      //margin-bottom: -30px;
       color: grey !important;
       display: block;
 
@@ -120,6 +123,9 @@
       span {
         font-size: 11pt;
         display: inline-block;
+        color: black;
+        max-width: 75%;
+
         &:after {
           content: "|";
           margin-left: 5px;
@@ -129,19 +135,21 @@
           display: none;
         }
       }
-
-      .no-label{
-        display: none;
-      }
     }
 
-    .creator, .category-print, .creation-date {
+    .creator-info {
+      margin-top: -45px;
+      margin-bottom: 45px;
+      display: block;
+    }
+
+    .user, .category-print, .created, .track {
       font-size: 11pt;
       color: grey !important;
       display: inline-block;
     }
 
-    .creator:after, .category-print:after {
+    .user:after, .category-print:after, .created:after {
       content: "|";
       margin-left: 5px;
     }
@@ -149,6 +157,10 @@
     .scaling {
       font-style: oblique;
       float: right;
+    }
+
+    div.comments-container div.title {
+      display: none;
     }
 
     div.comment-list {
@@ -182,6 +194,12 @@
           }
         }
 
+        span.comment {
+          display: block;
+          margin-top: 4px;
+          margin-bottom: 4px;
+        }
+
         span.text {
           color: black !important;
           display: block;
@@ -193,10 +211,10 @@
 
   .user {
     color: grey !important;
-    font-weight: bold;
   }
 
   #categories-legend {
+    float: left;
     page-break-inside: avoid;
     margin-top: 80px;
     .category-legend {
@@ -214,6 +232,10 @@
             .scale-value:last-child:after {
               display: none;
             }
+        }
+
+        .name:before {
+          content: "Category ";
         }
 
         .label {

@@ -1,22 +1,5 @@
 <div class="{{state}}">
     <div class="left">
-        <a href="#{{id}}" class="proxy-anchor"></a>
-
-        <a class="collapse" title="collapse">
-            <i class="icon-chevron-down"></i>
-        </a>
-
-        <span class="start read-only">
-            {{time start}}
-        </span>
-
-        <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}} read-only">
-               {{end start duration}}
-        </span>
-
-        {{#if isMine}}
-        <i class="private icon-user" title="You own this annotation"></i>
-        {{/if}}
         
         {{#if scalevalue}}
         <span class="scaling">
@@ -24,8 +7,7 @@
                 <span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
                 {{/if}} 
         </span>
-        {{/if}} 
-        
+        {{/if}}         
         
         <span class="category" {{#if label}}title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"{{/if}}>
                 {{#if label}}
@@ -41,14 +23,6 @@
     </div>
 
     <div class="right">
-        {{#canBeDeleted}}
-        <i class="delete icon-trash" title="Delete annotation."></i>
-        {{/canBeDeleted}}
-
-        {{#if isMine}}
-        <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
-        {{/if}}
-
         <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{numberOfComments}} Comment(s)">
             {{#if numberOfComments}}
             <span class="comment-amount">{{numberOfComments}}</span>
@@ -58,16 +32,18 @@
 </div>
 
 <div id="text-container{{id}}" class="text-container">
+    <span class="start read-only">
+        {{time start}}
+    </span>
+
+    <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}} read-only">
+           {{end start duration}}
+    </span>
+
     <div class="creator-info">
+        <span class="category-print">{{#if label}}{{ label.category.name }}{{else}}Textannotation{{/if}}</span>
         <span class="user">{{created_by_nickname}}</span>
-        <span class="created">{{formatDate created_at}}</span> 
+        <span class="created">{{formatDate created_at}}</span>
         <span class="track">{{track}}</span>
     </div>
-    <span class="text freetext read-only">
-        {{#if label}} 
-            {{label.value}}
-        {{else}} 
-            {{{textReadOnly}}}
-        {{/if}}
-    </span>
 </div>
