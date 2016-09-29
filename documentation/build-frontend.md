@@ -20,7 +20,7 @@ Now you will need to initalize your NPM repository:
 You have now several options to build and deploy the webapp:
 
 * `demo` mode on a local webserver
-* `integration` to update the webapp within the Opencast backend __(currently not working)__.
+* `integration` to update the webapp within the Opencast backend
 * `build` to build the webapp and put in the the _target_ directory.
 * `dev` to start a webserver with grunt to test the current webapp
 

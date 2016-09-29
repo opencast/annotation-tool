@@ -209,6 +209,7 @@
     <module>modules/matterhorn-working-file-repository-service-impl</module>
     <module>modules/matterhorn-working-file-repository-service-remote</module>
     <module>modules/matterhorn-workspace-api</module>
+    <module>modules/matterhorn-workspace-impl</module>
     <module>modules/entwine-annotations-api</module>
     <module>modules/entwine-annotations-impl</module>
     <module>modules/entwine-annotations-tool</module>
