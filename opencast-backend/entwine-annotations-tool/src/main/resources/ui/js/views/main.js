@@ -41,6 +41,7 @@ define(["jquery",
         "prototypes/player_adapter",
         "views/annotate",
         "views/list",
+        "views/list-annotation",
         "views/timeline",
         "views/login",
         "views/scale-editor",
@@ -60,7 +61,7 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
+    function ($, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
               Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
@@ -403,6 +404,7 @@ define(["jquery",
              * @alias module:views-main.MainView#print
              */
             print: function () {
+                var oldStates = this.listView.setStateToAllViews(ListAnnotationView.STATES.PRINT);
                 window.focus();
                 if (document.readyState === "complete") {
                     window.print();
@@ -414,6 +416,7 @@ define(["jquery",
                 } else {
                     setTimeout(this.print, 1000);
                 }
+                this.listView.setStates(oldStates);
             },
 
             /**

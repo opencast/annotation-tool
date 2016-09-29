@@ -34,10 +34,11 @@ define(["jquery",
         "templates/list-annotation",
         "templates/list-annotation-expanded",
         "templates/list-annotation-edit",
+        "templates/list-annotation-print",
         "backbone",
         "handlebarsHelpers"],
 
-function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
+function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, TmplPrint, Backbone) {
 
     "use strict";
 
@@ -725,6 +726,12 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "dblclick span.text"         : "toggleEditState",
                         "dblclick span.category"     : "toggleEditState"
                     }
+                },
+                PRINT: {
+                    render: TmplPrint,
+                    withComments: true,
+                    id: "print",
+                    events: {}
                 }
             }
         });

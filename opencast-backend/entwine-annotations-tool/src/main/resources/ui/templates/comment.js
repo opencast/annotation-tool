@@ -29,7 +29,7 @@ function program5(depth0,data) {
   if (helper = helpers.creator) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.creator); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n	<span class=\"date\">on "
+    + "</span>\n	<span class=\"date\">"
     + escapeExpression((helper = helpers.formatDate || (depth0 && depth0.formatDate),options={hash:{},data:data},helper ? helper.call(depth0, (depth0 && depth0.creationdate), options) : helperMissing.call(depth0, "formatDate", (depth0 && depth0.creationdate), options)));
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.updateddate), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }

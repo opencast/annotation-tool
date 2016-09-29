@@ -66,18 +66,36 @@ define(["jquery",
                     throw "'name, value, order' attributes are required";
                 }
 
-                if (!attr.id) {
-                    this.toCreate = true;
-                }
-
-                // Check if the track has been initialized
+                // Check if the scale-value has been initialized
                 if (!attr.id) {
                     // If local storage, we set the cid as id
                     if (window.annotationsTool.localStorage) {
-                        this.set({id: this.cid});
+                        attr.id = this.cid;
                     }
+
                     this.toCreate = true;
                 }
+
+                if (window.annotationsTool.localStorage) {
+                    if (!attr.created_by) {
+                        attr.created_by = annotationsTool.user.get("id");
+                    }
+
+                    if (!attr.created_by_nickname) {
+                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                    }
+
+                    if (!attr.created_at) {
+                        attr.created_at = new Date();
+                    }
+                }
+
+                if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
+
                 this.set(attr);
             },
 
@@ -87,11 +105,34 @@ define(["jquery",
              * @param  {object} data Object literal containing the model attribute to parse.
              * @return {object}  The object literal with the list of parsed model attribute.
              */
-            parse: function (attr) {
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-                return attr;
+            parse: function (data) {
+                var attr = data.attributes ? data.attributes : data;
+
+                if (!_.isUndefined(attr.created_at)) {
+                    attr.created_at = Date.parse(attr.created_at);
+                }
+
+                if (!_.isUndefined(attr.updated_at)) {
+                    attr.updated_at = Date.parse(attr.updated_at);
+                }
+
+                if (!_.isUndefined(attr.deleted_at)) {
+                    attr.deleted_at = Date.parse(attr.deleted_at);
+                }
+
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
+
+                if (data.attributes) {
+                    data.attributes = attr;
+                } else {
+                    data = attr;
+                }
+
+                return data;
             },
 
             /**
@@ -127,9 +168,7 @@ define(["jquery",
 
                 if (attr.created_at) {
                     if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
+                        return "\"created_at\" attribute can not be modified after initialization!";
                     }
                 }
 
