@@ -187,6 +187,10 @@ define(["jquery",
                     self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
                 });
 
+                $(targetElement).bind("contextmenu", function (e) {
+                    e.preventDefault();
+                });
+
                 return this;
             };
 
