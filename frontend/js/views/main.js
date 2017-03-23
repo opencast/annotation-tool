@@ -314,7 +314,7 @@ define(["jquery",
             },
 
             /**
-             * Check if an user are logged into the tool, otherwise display the login modal
+             * Check if a user is logged into the tool, otherwise display the login modal
              * @alias module:views-main.MainView#checkUserAndLogin
              */
             checkUserAndLogin: function () {
