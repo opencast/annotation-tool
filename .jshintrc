@@ -40,6 +40,5 @@
         "equal"           : true,
         "asyncTest"       : true,
         "expect"          : true
-    },
-    "ignores": ["js/libs/**/*"]
+    }
 }
