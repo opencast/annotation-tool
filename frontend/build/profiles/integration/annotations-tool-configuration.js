@@ -272,6 +272,84 @@ define(["jquery",
                 },
 
                 /**
+                 * Extract user data from the current context.
+                 * The format has to be compatible with {@link module:models-user.User#initialize}.
+                 * @alias module:annotations-tool-configuration.Configuration.getUserExtData
+                 * @return {Object} Contextual user data
+                 */
+                getUserExtData: function () {
+                    var user;
+                    var roles;
+
+                    $.ajax({
+                        url: "/api/info/me",
+                        dataType: "json",
+                        async: false,
+                        success: function (response) {
+                            user = response;
+                        },
+                        error: function (error) {
+                            console.warn("Error getting user information from Opencast: " + error);
+                        }
+                    });
+
+                    if (!user) return undefined;
+
+                    $.ajax({
+                        url: "/api/info/me/roles",
+                        dataType: "json",
+                        async: false,
+                        success: function (response) {
+                            roles = response;;
+                        },
+                        error: function (error) {
+                            console.warn("Error getting user information from Opencast: " + error);
+                        }
+                    });
+
+                    return {
+                        user_extid: user.username,
+                        nickname: user.username,
+                        email: user.email,
+                        role: roles && this.getUserRoleFromExt(roles)
+                    };
+                },
+
+                /**
+                 * Maps a list of roles of the external user to a corresponding user role
+                 * @alias module:annotations-tool-configuration.Configuration.getUserRoleFromExt
+                 * @param {string[]} roles The roles of the external user
+                 * @return {ROLE} The corresponding user role in the annotations tool
+                 */
+                getUserRoleFromExt: function (roles) {
+                    var adminRole;
+
+                    $.ajax({
+                        url: "/api/info/organization",
+                        dataType: "json",
+                        async: false,
+                        success: function (response) {
+                            adminRole = response.adminRole;
+                        },
+                        error: function (error) {
+                            console.warn("Error getting user information from Opencast: " + error);
+                        }
+                    });
+
+                    var ROLE_ADMIN = "ROLE_ADMIN";
+
+                    if (adminRole && _.contains(roles, adminRole)) {
+                        return ROLES.ADMINISTRATOR;
+                    }
+
+                    if (_.contains(roles, ROLE_ADMIN)) {
+                        return ROLES.SUPERVISOR;
+                    }
+
+                    return ROLES.USER;
+                },
+
+                /**
                  * Get the role of the current user
                  * @alias module:annotations-tool-configuration.Configuration.getUserRole
                  * @return {ROLE} The current user role
