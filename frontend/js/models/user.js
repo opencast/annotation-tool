@@ -178,11 +178,9 @@ define(["jquery",
              * @param {String} email the email address to check
              * @return {Boolean} true if the address is valid
              */
-            /*jshint -W101 */
             validateEmail: function (email) {
                 return !!emailAddresses.parseOneAddress(email);
             }
-            /*jshint +W101 */
         }
     );
         return User;
