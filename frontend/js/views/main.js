@@ -320,6 +320,10 @@ define(["jquery",
             checkUserAndLogin: function () {
                 this.setLoadingProgress(30, "Get current user.");
 
+                if (!annotationsTool.modelsInitialized) {
+                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
+                }
+
                 // If a user has been saved locally, we take it as current user
                 if (annotationsTool.users.length > 0) {
                     annotationsTool.user = annotationsTool.users.at(0);
@@ -328,12 +332,8 @@ define(["jquery",
 
                     if (annotationsTool.modelsInitialized) {
                         this.createViews();
-                    } else {
-                        annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                     }
                 } else {
-                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
-
                     let userExtData = {};
                     if (annotationsTool.useUserExtData) {
                         userExtData = annotationsTool.getUserExtData();
