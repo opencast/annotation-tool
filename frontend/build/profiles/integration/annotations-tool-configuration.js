@@ -272,6 +272,15 @@ define(["jquery",
                 },
 
                 /**
+                 * Controls the behavior of the login form. For truthy values it is skipped
+                 * and user data is extracted from the current context.
+                 * @alias module:annotations-tool-configuration.Configuration.useUserExtData
+                 * @type {Boolean}
+                 * @see module:annotations-tool-configuration.Configuration.getUserExtData
+                 */
+                useUserExtData: true,
+
+                /**
                  * Extract user data from the current context.
                  * The format has to be compatible with {@link module:models-user.User#initialize}.
                  * @alias module:annotations-tool-configuration.Configuration.getUserExtData

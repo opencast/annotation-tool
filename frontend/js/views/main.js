@@ -333,7 +333,17 @@ define(["jquery",
                     }
                 } else {
                     annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
-                    this.loginView.show();
+
+                    if (annotationsTool.useUserExtData) {
+                        try {
+                            annotationsTool.login(annotationsTool.getUserExtData());
+                        } catch (error) {
+                            console.warn(error);
+                            this.loginView.show();
+                        }
+                    } else {
+                        this.loginView.show();
+                    }
                 }
             },
 
