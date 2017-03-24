@@ -77,8 +77,13 @@ define(["jquery",
                 /**
                  * Show the login modal
                  * @alias module:views-login.Login#show
+                 * @param {Object} options The options to prefill the form with
                  */
-                show: function () {
+                show: function (options) {
+                    var userNickname    = this.$el.find("#nickname");
+                    var userEmail       = this.$el.find("#email");
+                    userNickname.val(options.nickname);
+                    userEmail.val(options.email);
                     this.$el.modal("show");
                 },
 
