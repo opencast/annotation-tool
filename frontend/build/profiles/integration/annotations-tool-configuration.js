@@ -272,13 +272,21 @@ define(["jquery",
                 },
 
                 /**
-                 * Controls the behavior of the login form. For truthy values it is skipped
-                 * and user data is extracted from the current context.
+                 * Controls the behavior of the login form. For truthy values it is prepopulated
+                 * with user data from the current context.
                  * @alias module:annotations-tool-configuration.Configuration.useUserExtData
                  * @type {Boolean}
                  * @see module:annotations-tool-configuration.Configuration.getUserExtData
                  */
                 useUserExtData: true,
+
+                /**
+                 * Skip the login form if possible, for example because user data can be extracted from the context
+                 * @alias module:annotations-tool-configuration.Configuration.skipLoginFormIfPossible
+                 * @type {Boolean}
+                 * @see module:annotations-tool-configuration.Configuration.useUserExtData
+                 */
+                skipLoginFormIfPossible: true,
 
                 /**
                  * Extract user data from the current context.

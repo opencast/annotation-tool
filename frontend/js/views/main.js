@@ -334,16 +334,19 @@ define(["jquery",
                 } else {
                     annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
 
+                    let userExtData = {};
                     if (annotationsTool.useUserExtData) {
+                        userExtData = annotationsTool.getUserExtData();
+                    }
+                    if (annotationsTool.skipLoginFormIfPossible) {
                         try {
-                            annotationsTool.login(annotationsTool.getUserExtData());
+                            annotationsTool.login(userExtData);
+                            return;
                         } catch (error) {
                             console.warn(error);
-                            this.loginView.show();
                         }
-                    } else {
-                        this.loginView.show();
                     }
+                    this.loginView.show(userExtData);
                 }
             },
 
