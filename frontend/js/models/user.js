@@ -25,9 +25,10 @@
 define(["jquery",
         "roles",
         "access",
-        "backbone"],
+        "backbone",
+        "email-addresses"],
 
-    function ($, ROLES, ACCESS, Backbone) {
+    function ($, ROLES, ACCESS, Backbone, emailAddresses) {
 
         "use strict";
 
@@ -177,12 +178,9 @@ define(["jquery",
              * @param {String} email the email address to check
              * @return {Boolean} true if the address is valid
              */
-            /*jshint -W101 */
             validateEmail: function (email) {
-                var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                return re.test(email);
+                return !!emailAddresses.parseOneAddress(email);
             }
-            /*jshint +W101 */
         }
     );
         return User;
