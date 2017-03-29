@@ -77,8 +77,13 @@ define(["jquery",
                 /**
                  * Show the login modal
                  * @alias module:views-login.Login#show
+                 * @param {Object} options The options to prefill the form with
                  */
-                show: function () {
+                show: function (options) {
+                    var userNickname    = this.$el.find("#nickname");
+                    var userEmail       = this.$el.find("#email");
+                    userNickname.val(options.nickname);
+                    userEmail.val(options.email);
                     this.$el.modal("show");
                 },
 
@@ -112,40 +117,28 @@ define(["jquery",
                         userId          = annotationsTool.getUserExtId(userEmail.val()),
                         userRemember    = this.$el.find("#remember"),
                         userError       = this.$el.find(".alert"),
-                        valid  = true, // Variable to keep the form status in memory
                         user; // the new user
 
                     userError.find("#content").empty();
-                    // Try to create a new user
                     try {
-
-                        if (annotationsTool.localStorage) {
-                            user = annotationsTool.users.create({user_extid: userId,
-                                                              nickname: userNickname.val(),
-                                                              role: this.$el.find("#supervisor")[0].checked ? ROLES.SUPERVISOR : ROLES.USER},
-                                                              {wait: true});
-                        } else {
-                            user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()}, {wait: true});
-                        }
-                        // Bind the error user to a function to display the errors
-                        user.bind("error", $.proxy(function (model, error) {
-                            this.$el.find("#" + error.attribute).parentsUntil("form").addClass("error");
-                            userError.find("#content").append(error.message + "<br/>");
-                            valid = false;
-                        }, this));
-
+                        user = annotationsTool.login(
+                            {
+                                user_extid: userId,
+                                nickname: userNickname.val(),
+                                email: userEmail.val(),
+                                role: annotationsTool.localStorage && (
+                                    this.$el.find("#supervisor")[0].checked ? ROLES.SUPERVISOR : ROLES.USER
+                                )
+                            },
+                            {
+                                error: $.proxy(function (model, error) {
+                                    this.$el.find("#" + error.attribute).parentsUntil("form").addClass("error");
+                                    userError.find("#content").append(error.message + "<br/>");
+                                }, this)
+                            }
+                        );
                     } catch (error) {
-                        valid = false;
                         userError.find("#content").append(error + "<br/>");
-                    }
-
-                    // If email is given, we set it to the user
-                    if (user && userEmail.val()) {
-                        user.set({email: userEmail.val()});
-                    }
-
-                    // If user not valid
-                    if (!valid) {
                         this.$el.find(".alert").show();
                         return undefined;
                     }
@@ -163,12 +156,8 @@ define(["jquery",
                         });
                     }
 
-                    user.save();
-                    annotationsTool.user = user;
                     this.$el.modal("toggle");
-                    annotationsTool.users.trigger("login");
-                    annotationsTool.trigger(annotationsTool.EVENTS.USER_LOGGED);
-                    
+
                     return user;
                 },
 

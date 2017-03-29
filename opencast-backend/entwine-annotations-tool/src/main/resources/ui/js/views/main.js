@@ -314,11 +314,15 @@ define(["jquery",
             },
 
             /**
-             * Check if an user are logged into the tool, otherwise display the login modal
+             * Check if a user is logged into the tool, otherwise display the login modal
              * @alias module:views-main.MainView#checkUserAndLogin
              */
             checkUserAndLogin: function () {
                 this.setLoadingProgress(30, "Get current user.");
+
+                if (!annotationsTool.modelsInitialized) {
+                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
+                }
 
                 // If a user has been saved locally, we take it as current user
                 if (annotationsTool.users.length > 0) {
@@ -328,12 +332,21 @@ define(["jquery",
 
                     if (annotationsTool.modelsInitialized) {
                         this.createViews();
-                    } else {
-                        annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                     }
                 } else {
-                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
-                    this.loginView.show();
+                    let userExtData = {};
+                    if (annotationsTool.useUserExtData) {
+                        userExtData = annotationsTool.getUserExtData();
+                    }
+                    if (annotationsTool.skipLoginFormIfPossible) {
+                        try {
+                            annotationsTool.login(userExtData);
+                            return;
+                        } catch (error) {
+                            console.warn(error);
+                        }
+                    }
+                    this.loginView.show(userExtData);
                 }
             },
 

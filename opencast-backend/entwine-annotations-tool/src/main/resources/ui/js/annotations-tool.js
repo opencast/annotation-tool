@@ -213,6 +213,25 @@ define(["jquery",
                 },
 
                 /**
+                 * Log in the current user of the tool
+                 * @alias annotationsTool.login
+                 * @param {Object} The Attributes of the user that is to be logged in.
+                 * @param {Object} callbacks Callbacks for the user creation
+                 * @return {User} The logged in user
+                 * @see module:models-user.User#initialize
+                 */
+                login: function (attributes, callbacks) {
+                    var user = this.users.create(attributes, { wait: true });
+                    if (!user) throw "Invalid user";
+                    user.bind(callbacks);
+                    user.save();
+                    this.user = user;
+                    this.users.trigger("login");
+                    this.trigger(this.EVENTS.USER_LOGGED);
+                    return user;
+                },
+
+                /**
                  * Display an alert modal
                  * @alias   annotationsTool.alertError
                  * @param  {String} message The message to display
