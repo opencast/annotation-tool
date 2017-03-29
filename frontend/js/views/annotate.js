@@ -257,30 +257,13 @@ define(["jquery",
                         event.stopImmediatePropagation();
                     }
 
-                    var value = this.input.val(),
-                        time = Math.round(this.playerAdapter.getCurrentTime()),
-                        options = {},
-                        params,
-                        annotation;
+                    var value = this.input.val();
 
-                    if (!value || (!_.isNumber(time) || time < 0)) {
+                    if (!value) {
                         return;
                     }
 
-                    params = {
-                        text: value,
-                        start: time
-                    };
-
-                    if (annotationsTool.user) {
-                        params.created_by = annotationsTool.user.id;
-                    }
-
-                    if (!annotationsTool.localStorage) {
-                        options.wait = true;
-                    }
-
-                    annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
+                    annotationsTool.createAnnotation({ text: value });
 
                     if (this.continueVideo) {
                         annotationsTool.playerAdapter.play();
