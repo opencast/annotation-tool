@@ -335,7 +335,7 @@ define(["jquery",
                         this.createViews();
                     }
                 } else {
-                    let userExtData = {};
+                    var userExtData = {};
                     if (annotationsTool.useUserExtData) {
                         userExtData = annotationsTool.getUserExtData();
                     }
