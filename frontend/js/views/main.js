@@ -38,6 +38,7 @@
  * @requires boutstrap.tab
  */
 define(["jquery",
+        "underscore",
         "prototypes/player_adapter",
         "views/annotate",
         "views/list",
@@ -61,7 +62,7 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
+    function ($, _, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
               Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
