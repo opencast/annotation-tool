@@ -649,7 +649,7 @@ define(["jquery",
                 
                 /**
                  * Create an annotation on the given track or on the selected Track if no one is given
-                 * @alias   annotationsTool.createAnnotations
+                 * @alias   annotationsTool.createAnnotation
                  * @param  {Object} parameters The content of the new annotation
                  * @param  {Object} (track) The track on which the annotation should be created
                  * @param  {Object} (options) The options for the Backone.js options for the model creation
