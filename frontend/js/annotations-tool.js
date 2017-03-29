@@ -27,6 +27,7 @@
  * @requires handlebars
  */
 define(["jquery",
+        "underscore",
         "backbone",
         "backbone-annotations-sync",
         "collections/videos",
@@ -40,7 +41,7 @@ define(["jquery",
         "roles",
         "colors"],
 
-        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager) {
+       function ($, _, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager) {
 
             "use strict";
 
