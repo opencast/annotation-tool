@@ -94,7 +94,7 @@ define(["jquery",
              * @type {Object}
              */
             setDurationKeyEvent: {
-                key: "o",
+                key: "e",
                 ctrlKey: true
             },
 
