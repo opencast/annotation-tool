@@ -116,7 +116,7 @@ define(["jquery",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
                 "click [class*='opt-tracks']": "tracksSelection",
-                "keypress"                   : "onKeyPress"
+                "keydown"                    : "setActiveAnnotationDelay"
             },
 
             /**
@@ -583,7 +583,7 @@ define(["jquery",
                 this.loadingBox.find(".info").text(message);
             },
 
-            onKeyPress: function (event) {
+            setActiveAnnotationDelay: function (event) {
                 if (!annotationsTool.setDurationKeyEvent) return;
                 if (!annotationsTool.activeAnnotation) return;
 
