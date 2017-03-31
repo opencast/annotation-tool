@@ -526,6 +526,9 @@ define(["jquery",
                         i;
 
                     this.isManuallySelected = isManuallySelected;
+                    if (isManuallySelected) {
+                        this.activeAnnotation = selection[0];
+                    }
 
                     if (_.isArray(selection) && selection.length > 0) {
                         if (isEqual(selection)) {
