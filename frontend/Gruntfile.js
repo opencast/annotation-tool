@@ -14,7 +14,7 @@ module.exports = function (grunt) {
         currentWatchFile: '',
 
         /** Local directory for the tests */
-        webServerDir: '/var/www/html/annotation/',
+        webServerDir: 'www',
 
         buildDir: 'target',
 
