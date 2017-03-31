@@ -43,7 +43,7 @@ module.exports = function (grunt) {
                 sources: '<source src=\"/resources/aav1.mp4\" type=\"video/mp4\" />\n \
                           <source src=\"/resources/aav1.webm\" type=\"video/webm\" />\n \
                           <source src=\"/resources/aav1.ogv\" type=\"video/ogg\" /> ',
-                target : 'www',
+                target : '<%= webServerDir %>',
                 config : 'build/profiles/local/annotations-tool-configuration.js'
             },
 
