@@ -285,8 +285,7 @@ module.exports = function (grunt) {
                 src: ['js/views/*.js', 'js/collections/*.js', 'js/models/*.js', 'js/prototypes/*.js'],
                 options: {
                     destination: '<%= currentProfile.target %>/doc',
-                    template: 'node_modules/grunt-jsdoc/node_modules/ink-docstrap/template',
-                    configure: 'build/config/jsdoc-conf.json'
+                    template: 'node_modules/ink-docstrap/template'
                 }
             }
         },
@@ -381,7 +380,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-preprocess');
     grunt.loadNpmTasks('grunt-concurrent');
-    //grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mkdir');
     grunt.loadNpmTasks('assemble-less');
 
@@ -395,7 +394,7 @@ module.exports = function (grunt) {
     grunt.registerTask('baseDEV', ['handlebars:all', 'less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config']);
     //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseBUILD', ['blanket_qunit', 'handlebars:temp', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'handlebars:temp', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
     grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less:annotation', 'copy:integration', 'processhtml:dev', 'copy:config']);
     grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less:annotation', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
 
