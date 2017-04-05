@@ -115,7 +115,8 @@ define(["jquery",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
-                "click [class*='opt-tracks']": "tracksSelection"
+                "click [class*='opt-tracks']": "tracksSelection",
+                "keydown"                    : "setActiveAnnotationDelay"
             },
 
             /**
@@ -580,6 +581,26 @@ define(["jquery",
 
                 this.loadingBox.find(".bar").width(this.loadingPercent + "%");
                 this.loadingBox.find(".info").text(message);
+            },
+
+            setActiveAnnotationDelay: function (event) {
+                if (!annotationsTool.setDurationKeyEvent) return;
+                if (!annotationsTool.activeAnnotation) return;
+
+                var modifierKeys = ["altKey", "ctrlKey", "shiftKey", "metaKey"];
+                var configuredEvent = _.defaults(
+                    _.pick(annotationsTool.setDurationKeyEvent, modifierKeys, "key"),
+                    _.object(_.map(modifierKeys, function (k) { return [k, false]; }))
+                );
+                var actualEvent = _.pick(event, modifierKeys, "key");
+                if (!_.isEqual(configuredEvent, actualEvent)) return;
+
+                event.preventDefault();
+
+                var currentTime = annotationsTool.playerAdapter.getCurrentTime();
+                var start = annotationsTool.activeAnnotation.get("start");
+                annotationsTool.activeAnnotation.set("duration", currentTime - start);
+                annotationsTool.activeAnnotation.save();
             }
         });
         return MainView;

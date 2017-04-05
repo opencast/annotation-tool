@@ -526,6 +526,9 @@ define(["jquery",
                         i;
 
                     this.isManuallySelected = isManuallySelected;
+                    if (isManuallySelected) {
+                        this.activeAnnotation = selection[0];
+                    }
 
                     if (_.isArray(selection) && selection.length > 0) {
                         if (isEqual(selection)) {
@@ -649,22 +652,34 @@ define(["jquery",
                 },
                 
                 /**
-                 * Create an annotation on the given track or on the selected Track if no one is given
-                 * @alias   annotationsTool.createAnnotation
-                 * @param  {Object} parameters The content of the new annotation
-                 * @param  {Object} (track) The track on which the annotation should be created
-                 * @param  {Object} (options) The options for the Backone.js options for the model creation
-                 * @return {Object}  The created annotation
+                 * Create an annotation on the selected track.
+                 * If the `params` do not contain a user (`created_by`), the new annotation belongs to the current user.
+                 * If it does not specify a `start` time, the current time of the playhead is used.
+                 * This function also makes the new annotation the "active" annotation which is operated on
+                 * by global operations like keyboard shortcuts.
+                 * @alias annotationsTool.createAnnotation
+                 * @param {Object} params The content of the new annotation
+                 * @return {Object} The created annotation
                  */
-                createAnnotation: function (parameters, track, options) {
-                    var parentTrack = _.isUndefined(track) ? this.getSelectedTrack() : track,
-                        defaultOptions = {}; // TODO define default options for all annotations
-
-                    if (_.isUndefined(parentTrack)) {
-                        throw "Annotation with parameters '" + JSON.stringify(parameters) + "' can be created";
+                createAnnotation: function (params) {
+                    if (!params.created_by && this.user) {
+                        params.created_by = this.user.id;
+                    }
+                    if (!params.time) {
+                        var time = Math.round(this.playerAdapter.getCurrentTime());
+                        if (!_.isNumber(time) || time < 0) {
+                            return undefined;
+                        }
+                        params.start = time;
                     }
 
-                    return parentTrack.get("annotations").create(parameters, (_.isUndefined(options) ? defaultOptions : options));
+                    var options = {};
+                    if (!this.localStorage) {
+                        options.wait = true;
+                    }
+                    var annotation = this.selectedTrack.get("annotations").create(params, options);
+                    this.activeAnnotation = annotation;
+                    return annotation;
                 },
 
                 /////////////

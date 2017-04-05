@@ -237,31 +237,10 @@ define(["jquery",
                     return;
                 }
 
-                var time = Math.round(annotationsTool.playerAdapter.getCurrentTime()),
-                    options = {},
-                    params,
-                    annotation;
-
-                if (!_.isNumber(time) || time < 0) {
-                    return;
-                }
-
-                params = {
+                var annotation = annotationsTool.createAnnotation({
                     text : this.model.get("value"),
-                    start: time,
                     label: this.model
-                };
-
-                if (annotationsTool.user) {
-                    params.created_by = annotationsTool.user.id;
-                    params.created_by_nickname = annotationsTool.user.get("nickname");
-                }
-
-                if (!annotationsTool.localStorage) {
-                    options.wait = true;
-                }
-
-                annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
+                });
                 annotationsTool.setSelection([annotation], true);
             },
 
