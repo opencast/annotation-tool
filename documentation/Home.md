@@ -4,10 +4,10 @@
 The latest news about the annotations tool.
 
 ## [Installation](opencast-installation.md)
-The instruction on how to install the Annotation tool in Opencast 2.2 [can be found here](documentation/opencast-installation.md)
+The instruction on how to install the Annotation tool in Opencast 2.3+ [can be found here](documentation/opencast-installation.md)
 
 ## [Building the Frontend](build-frontend.md)
-Instructions on how to build the frontend webapp [can be found here](documentation/build-frontend.md). This is NOT 
+Instructions on how to build the frontend webapp [can be found here](documentation/build-frontend.md). This is NOT
 needed to install the Annotation Tool in Opencast!
 
 ## [General Overview](overview.md)
