@@ -59,14 +59,14 @@
                                   <arguments>install --registry ${nexus.npm}</arguments>
                                 </configuration>
                             </execution>
-
                             <execution>
-                                <id>frontend build</id>
+                                <id>grunt build</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>grunt</goal>
                                 </goals>
+
                                 <configuration>
-                                    <arguments>run integration --no-color</arguments>
+                                    <arguments>integration</arguments>
                                 </configuration>
                             </execution>
                         </executions>

@@ -42,6 +42,7 @@
   </properties>
 
   <modules>
+    <module>frontend</module>
     <module>opencast-backend/annotation-api</module>
     <module>opencast-backend/annotation-impl</module>
     <module>opencast-backend/annotation-tool</module>
