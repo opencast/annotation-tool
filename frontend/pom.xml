@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.opencast</groupId>
+  <artifactId>annotation-tool-frontent</artifactId>
+  <name>annotation-tool-frontend</name>
+  <parent>
+    <groupId>org.opencast</groupId>
+    <artifactId>annotation</artifactId>
+    <version>1.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <properties>
+    <matterhorn.basedir>${project.basedir}/../..</matterhorn.basedir>
+    <checkstyle.skip>true</checkstyle.skip>
+    <nexus.npm>${opencast.nexus.url}/nexus/content/repositories/npmjs/</nexus.npm>
+  </properties>
+    <dependencies/>
+
+    <profiles>
+        <profile>
+            <id>frontend</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>install node and npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>v6.10.2</nodeVersion>
+                                    <npmVersion>4.4.4</npmVersion>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>npm clean</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                  <arguments>cache clean</arguments>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>npm install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                  <arguments>install --registry ${nexus.npm}</arguments>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>frontend build</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>run integration --no-color</arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
+
