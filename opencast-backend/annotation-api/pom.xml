@@ -33,7 +33,7 @@
             <Bundle-SymbolicName> ${project.artifactId} </Bundle-SymbolicName>
             <Build-Number>${buildNumber}</Build-Number>
             <Export-Package>
-              org.opencast.contrib.annotation.api;version=${project.version}
+              org.opencast.annotation.api;version=${project.version}
             </Export-Package>
           </instructions>
         </configuration>
