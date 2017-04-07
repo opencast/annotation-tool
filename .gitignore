@@ -30,6 +30,8 @@ node/
 # Ignore mkdocs sites
 docs/guides/*/site
 
+# ignore directory with frontend copy
+
 # Ignore Makefiles
 # Sometimes they help, but they should never be tracked
 Makefile
