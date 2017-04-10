@@ -32,10 +32,10 @@ module.exports = function (grunt) {
         profiles: {
             // Default profile if no one is given
             default: 'local',
-             
+
             integration: {
                 sources : '',
-                target  : '../opencast-backend/entwine-annotations-tool/src/main/resources/ui/',
+                target  : '../opencast-backend/annotation-tool/src/main/resources/ui/',
                 config  : 'build/profiles/integration/annotations-tool-configuration.js'
             },
 
@@ -53,7 +53,7 @@ module.exports = function (grunt) {
                           <source src=\"/resources/Annotations_Video.theora.ogv\" type=\"video/ogg\" /> ',
                 target : '<%= buildDir %>',
                 config : 'build/profiles/local/annotations-tool-configuration.js'
-            },            
+            },
 
             demo: {
                 sources: '<source src=\"/annotation/resources/sinteltrailer.mp4\" type=\"video/mp4\" />\n \
@@ -145,7 +145,7 @@ module.exports = function (grunt) {
                 dest: '<%= currentProfile.target %>',
                 filter: 'isFile'
             }]
-          }, 
+          },
 
           all: {
             options: {
@@ -160,7 +160,7 @@ module.exports = function (grunt) {
                 dest: '<%= currentProfile.target %>'
             }]
           },
-          
+
           temp: {
             options: {
               namespace: false,
@@ -173,7 +173,7 @@ module.exports = function (grunt) {
                 src: 'templates/*.tmpl',
                 dest: 'target'
             }]
-          },          
+          },
         },
 
         /** Copy .. */
@@ -204,7 +204,7 @@ module.exports = function (grunt) {
                     dest : '<%= currentProfile.target %>/style/style.css'
                 }]
             },
-            // ... the index locally 
+            // ... the index locally
             'local-index': {
                 options: {
                     processContent: function (content) {
@@ -239,7 +239,7 @@ module.exports = function (grunt) {
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png',  'resources/*', 'style/**/*.css', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>',
-                }]  
+                }]
             },
             'integration': {
                 files: [{
@@ -247,9 +247,9 @@ module.exports = function (grunt) {
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>',
-                }]  
-            },            
-            // ... the index locally 
+                }]
+            },
+            // ... the index locally
             'index': {
                 options: {
                     processContent: function (content) {
@@ -259,7 +259,7 @@ module.exports = function (grunt) {
                 src: 'index.html',
                 dest: '<%= currentProfile.target %>/index.html'
             },
-            // ... the configuration 
+            // ... the configuration
             'config': {
                 src: '<%= currentProfile.config %>',
                 dest: '<%= currentProfile.target %>/js/annotations-tool-configuration.js'
@@ -445,7 +445,7 @@ module.exports = function (grunt) {
 
 
     /** ================================================
-     *  Listerers 
+     *  Listerers
      ==================================================*/
 
     // on watch events configure jshint:all to only run on changed file
@@ -458,7 +458,7 @@ module.exports = function (grunt) {
         grunt.config.set('currentProfile', grunt.config.get('profiles.' + grunt.option('profile')));
 
         if (target == 'multiple') {
-            // If the watch target is multiple, 
+            // If the watch target is multiple,
             // we manage the tasks to run following the touched file extension
             var ext = filepath.split('.').pop();
 

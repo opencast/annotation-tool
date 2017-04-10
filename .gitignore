@@ -30,6 +30,9 @@ node/
 # Ignore mkdocs sites
 docs/guides/*/site
 
+# ignore directory with frontend copy
+opencast-backend/annotation-tool/src/main/resources/ui/
+
 # Ignore Makefiles
 # Sometimes they help, but they should never be tracked
 Makefile
