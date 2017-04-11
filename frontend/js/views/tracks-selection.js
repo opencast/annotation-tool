@@ -17,16 +17,18 @@
  * A module representing the tracks selection modal
  * @module views-tracks-selection
  * @requires jQuery
+ * @requires underscore
  * @requires Backbone
  * @requires templates/tracks-selection-modal.tmpl
  * @requires ROLES
  * @requires hanldebars
  */
 define(["jquery",
+        "underscore",
         "backbone",
         "templates/tracks-selection-modal"],
 
-    function ($, Backbone, TracksSelectionTmpl) {
+    function ($, _, Backbone, TracksSelectionTmpl) {
 
         "use strict";
 
