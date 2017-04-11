@@ -58,7 +58,6 @@ define(["jquery",
             events: {
                 "click #cancel-selection" : "cancel",
                 "click #confirm-selection": "confirm",
-                "click li"                : "select",
                 "click span input"        : "selectAll",
                 "keyup #search-track"     : "search",
                 "click button.search-only": "clear"
@@ -76,7 +75,6 @@ define(["jquery",
                           "clear",
                           "confirm",
                           "search",
-                          "select",
                           "selectAll");
 
                 this.tracks = annotationsTool.getTracks();
@@ -138,16 +136,6 @@ define(["jquery",
                 this.tracks.showTracksByCreators(selectedIds);
 
                 this.hide();
-            },
-
-            /**
-             * Mark the target user as selected
-             * @alias module:views-tracks-selection.Alert#select
-             */
-            select: function (event) {
-                var $el = $(event.target).find("input");
-
-                $el.attr("checked", _.isUndefined($el.attr("checked")));
             },
 
             /**
