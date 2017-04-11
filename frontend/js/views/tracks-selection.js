@@ -74,7 +74,7 @@ define(["jquery",
                 "change .track-checkbox"   : "selectTrack",
                 "change .user-checkbox"    : "selectUser",
                 "change #select-all"       : "selectAll",
-                "keyup #search-track"      : "search",
+                "input #search-track"      : "search",
                 "click #clear-search"      : "clear"
             },
 
