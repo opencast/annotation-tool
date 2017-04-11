@@ -26,161 +26,160 @@ define(["jquery",
         "backbone",
         "templates/tracks-selection-modal"],
 
-        function ($, Backbone, TracksSelectionTmpl) {
+    function ($, Backbone, TracksSelectionTmpl) {
 
-            "use strict";
+        "use strict";
+
+        /**
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#View}
+         * @augments module:Backbone.View
+         * @memberOf module:views-tracks-selection
+         * @alias Alert
+         */
+        var TracksSelectionView = Backbone.View.extend({
+
+            tag: $("#tracks-selection"),
 
             /**
-             * @constructor
-             * @see {@link http://www.backbonejs.org/#View}
-             * @augments module:Backbone.View
-             * @memberOf module:views-tracks-selection
-             * @alias Alert
+             * Template
+             * @alias module:views-tracks-selection.Alert#alertTemplate
+             * @type {HandlebarsTemplate}
              */
-            var TracksSelectionView = Backbone.View.extend({
+            template: TracksSelectionTmpl,
 
-                tag: $("#tracks-selection"),
+            /**
+             * Events to handle
+             * @alias module:views-tracks-selection.Alert#events
+             * @type {object}
+             */
+            events: {
+                "click #cancel-selection" : "cancel",
+                "click #confirm-selection": "confirm",
+                "click li"                : "select",
+                "click span input"        : "selectAll",
+                "keyup #search-track"     : "search",
+                "click button.search-only": "clear"
+            },
 
-                /**
-                 * Template
-                 * @alias module:views-tracks-selection.Alert#alertTemplate
-                 * @type {HandlebarsTemplate}
-                 */
-                template: TracksSelectionTmpl,
+            /**
+             * Constructor
+             * @alias module:views-tracks-selection.Alert#initialize
+             */
+            initialize: function () {
+                _.bindAll(this,
+                          "show",
+                          "hide",
+                          "cancel",
+                          "clear",
+                          "confirm",
+                          "search",
+                          "select",
+                          "selectAll");
 
-                /**
-                 * Events to handle
-                 * @alias module:views-tracks-selection.Alert#events
-                 * @type {object}
-                 */
-                events: {
-                    "click #cancel-selection" : "cancel",
-                    "click #confirm-selection": "confirm",
-                    "click li"                : "select",
-                    "click span input"        : "selectAll",
-                    "keyup #search-track"     : "search",
-                    "click button.search-only": "clear"
-                },
+                this.tracks = annotationsTool.getTracks();
+            },
 
-                /**
-                 * Constructor
-                 * @alias module:views-tracks-selection.Alert#initialize
-                 */
-                initialize: function () {
-                    _.bindAll(this,
-                              "show",
-                              "hide",
-                              "cancel",
-                              "clear",
-                              "confirm",
-                              "search",
-                              "select",
-                              "selectAll");
+            /**
+             * Display the modal with the given message as the given alert type
+             * @alias module:views-tracks-selection.Alert#show
+             * @param  {String} message The message to display
+             * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-tracks-selection.Alert#TYPES}
+             */
+            show: function () {
+                this.$el.empty();
+                this.$el.append(this.template({
+                    users: this.tracks.getAllCreators()
+                }));
+                this.delegateEvents();
 
-                    this.tracks = annotationsTool.getTracks();
-                },
+                this.$el.modal({ show: true, backdrop: false, keyboard: false });
+            },
 
-                /**
-                 * Display the modal with the given message as the given alert type
-                 * @alias module:views-tracks-selection.Alert#show
-                 * @param  {String} message The message to display
-                 * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-tracks-selection.Alert#TYPES}
-                 */
-                show: function () {
-                    this.$el.empty();
-                    this.$el.append(this.template({
-                        users: this.tracks.getAllCreators()
-                    }));
-                    this.delegateEvents();
+            /**
+             * Hide the modal
+             * @alias module:views-tracks-selection.Alert#hide
+             */
+            hide: function () {
+                this.$el.modal("hide");
+            },
 
-                    this.$el.modal({show: true, backdrop: false, keyboard: false });
-                },
+            /**
+             * Clear the search field
+             * @alias module:views-tracks-selection.Alert#clear
+             */
+            clear: function () {
+                this.$el.find("#search-track").val("");
+                this.search();
+            },
 
-                /**
-                 * Hide the modal
-                 * @alias module:views-tracks-selection.Alert#hide
-                 */
-                hide: function () {
-                    this.$el.modal("hide");
-                },
+            /**
+             * Cancel the track selection
+             * @alias module:views-tracks-selection.Alert#cancel
+             */
+            cancel: function () {
+                this.hide();
+            },
 
-                /**
-                 * Clear the search field
-                 * @alias module:views-tracks-selection.Alert#clear
-                 */
-                clear: function () {
-                    this.$el.find("#search-track").val("");
-                    this.search();
-                },
+            /**
+             * Confirm the track selection
+             * @alias module:views-tracks-selection.Alert#confirm
+             */
+            confirm: function () {
+                var selection = this.$el.find("ul li :checked"),
+                    selectedIds = [];
 
-                /**
-                 * Cancel the track selection
-                 * @alias module:views-tracks-selection.Alert#cancel
-                 */
-                cancel: function () {
-                    this.hide();
-                },
+                _.each(selection, function (el) {
+                    selectedIds.push(el.value);
+                }, this);
 
-                /**
-                 * Confirm the track selection
-                 * @alias module:views-tracks-selection.Alert#confirm
-                 */
-                confirm: function () {
-                    var selection = this.$el.find("ul li :checked"),
-                        selectedIds = [];
-                    
-                    _.each(selection, function (el) {
-                        selectedIds.push(el.value);
-                    }, this);
+                this.tracks.showTracksByCreators(selectedIds);
 
-                    this.tracks.showTracksByCreators(selectedIds);
+                this.hide();
+            },
 
-                    this.hide();
-                },
+            /**
+             * Mark the target user as selected
+             * @alias module:views-tracks-selection.Alert#select
+             */
+            select: function (event) {
+                var $el = $(event.target).find("input");
 
-                /**
-                 * Mark the target user as selected
-                 * @alias module:views-tracks-selection.Alert#select
-                 */
-                select: function (event) {
-                    var $el = $(event.target).find("input");
+                $el.attr("checked", _.isUndefined($el.attr("checked")));
+            },
 
-                    $el.attr("checked", _.isUndefined($el.attr("checked")));
-                },
+            /**
+             * Mark all the users selected or unselected
+             * @alias module:views-tracks-selection.Alert#selectAll
+             */
+            selectAll: function (event) {
+                var checked = !_.isUndefined($(event.target).attr("checked"));
+                this.$el.find("ul li input").attr("checked", checked);
+            },
 
-                /**
-                 * Mark all the users selected or unselected
-                 * @alias module:views-tracks-selection.Alert#selectAll
-                 */
-                selectAll: function (event) {
-                    var checked = !_.isUndefined($(event.target).attr("checked"));
-                    this.$el.find("ul li input").attr("checked", checked);
-                },
+            /**
+             * Search for users with the given chars in the search input
+             * @alias module:views-tracks-selection.Alert#search
+             */
+            search: function (event) {
+                var text = "";
 
-                /**
-                 * Search for users with the given chars in the search input
-                 * @alias module:views-tracks-selection.Alert#search
-                 */
-                search: function (event) {
-                    var text = "";
-
-                    if (!_.isUndefined(event)) {
-                        text = event.target.value;
-                    }
-
-                    this.$el.find(".list-group-item").hide();
-
-                    if (!_.isUndefined(text) && text !== "") {
-                        this.$el.find("#modal-track-selection").addClass("search-mode");
-                        this.$el.find(".list-group-item:contains(" + text.toUpperCase() + ")").show();
-                    } else {
-                        this.$el.find("#modal-track-selection").removeClass("search-mode");
-                        this.$el.find(".list-group-item").show();
-                    }
+                if (!_.isUndefined(event)) {
+                    text = event.target.value;
                 }
-            });
 
-            return TracksSelectionView;
+                this.$el.find(".list-group-item").hide();
 
-        }
+                if (!_.isUndefined(text) && text !== "") {
+                    this.$el.find("#modal-track-selection").addClass("search-mode");
+                    this.$el.find(".list-group-item:contains(" + text.toUpperCase() + ")").show();
+                } else {
+                    this.$el.find("#modal-track-selection").removeClass("search-mode");
+                    this.$el.find(".list-group-item").show();
+                }
+            }
+        });
+
+        return TracksSelectionView;
+    }
 );
