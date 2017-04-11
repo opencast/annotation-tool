@@ -34,6 +34,7 @@ define(["jquery",
 
         var selectAllCheckbox;
         var userCheckboxes;
+        var trackCheckboxes;
         var checkboxGroupForUser;
         var checkboxGroupForTrack;
 
@@ -122,6 +123,7 @@ define(["jquery",
                 checkboxGroupForUser = {};
                 checkboxGroupForTrack = {};
                 userCheckboxes = this.$(".user-checkbox");
+                trackCheckboxes = this.$(".track-checkbox");
                 _.each(userCheckboxes, function (userCheckbox) {
                     var userID = userCheckbox.value;
                     var trackCheckboxes = $(userCheckbox).closest(".user-track-group").find(".track-checkbox");
@@ -173,14 +175,11 @@ define(["jquery",
              * @alias module:views-tracks-selection.Alert#confirm
              */
             confirm: function () {
-                var selection = this.$el.find("ul li :checked"),
-                    selectedIds = [];
-
-                _.each(selection, function (el) {
-                    selectedIds.push(el.value);
-                }, this);
-
-                this.tracks.showTracksByCreators(selectedIds);
+                this.tracks.showTracksById(
+                    trackCheckboxes.filter(":checked").map(function (index, checkbox) {
+                        return checkbox.value;
+                    })
+                );
 
                 this.hide();
             },
