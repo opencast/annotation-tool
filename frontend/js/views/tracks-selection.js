@@ -75,7 +75,7 @@ define(["jquery",
                 "change .user-checkbox"    : "selectUser",
                 "change #select-all"       : "selectAll",
                 "keyup #search-track"      : "search",
-                "click button.search-only" : "clear"
+                "click #clear-search"      : "clear"
             },
 
             /**
