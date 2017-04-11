@@ -18,6 +18,16 @@
                     {{this.nickname}}
                     {{/toUpperCase}}
                 </span>
+                <ul>
+                    {{#each this.tracks}}
+                    <li>
+                        <label>
+                            <input type="checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}>
+                            {{this.name}}
+                        </label>
+                    </li>
+                    {{/each}}
+                </ul>
             </li>
             {{/each}}
         </ul>
