@@ -58,7 +58,7 @@ define(["jquery",
             events: {
                 "click #cancel-selection" : "cancel",
                 "click #confirm-selection": "confirm",
-                "click span input"        : "selectAll",
+                "change #select-all"      : "selectAll",
                 "keyup #search-track"     : "search",
                 "click button.search-only": "clear"
             },
