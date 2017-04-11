@@ -121,7 +121,7 @@ define(["jquery",
                 selectAllCheckbox = this.$("#select-all")[0];
                 checkboxGroupForUser = {};
                 checkboxGroupForTrack = {};
-                userCheckboxes = this.$el.find(".user-checkbox");
+                userCheckboxes = this.$(".user-checkbox");
                 _.each(userCheckboxes, function (userCheckbox) {
                     var userID = userCheckbox.value;
                     var trackCheckboxes = $(userCheckbox).closest(".user-track-group").find(".track-checkbox");
@@ -156,7 +156,7 @@ define(["jquery",
              * @alias module:views-tracks-selection.Alert#clear
              */
             clear: function () {
-                this.$el.find("#search-track").val("");
+                this.$("#search-track").val("");
                 this.search();
             },
 
@@ -228,14 +228,14 @@ define(["jquery",
                     text = event.target.value;
                 }
 
-                this.$el.find(".list-group-item").hide();
+                this.$(".list-group-item").hide();
 
                 if (!_.isUndefined(text) && text !== "") {
-                    this.$el.find("#modal-track-selection").addClass("search-mode");
-                    this.$el.find(".list-group-item:contains(" + text.toUpperCase() + ")").show();
+                    this.$("#modal-track-selection").addClass("search-mode");
+                    this.$(".list-group-item:contains(" + text.toUpperCase() + ")").show();
                 } else {
-                    this.$el.find("#modal-track-selection").removeClass("search-mode");
-                    this.$el.find(".list-group-item").show();
+                    this.$("#modal-track-selection").removeClass("search-mode");
+                    this.$(".list-group-item").show();
                 }
             }
         });
