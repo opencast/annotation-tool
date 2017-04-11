@@ -71,11 +71,7 @@ define(["jquery",
                 _.bindAll(this,
                           "show",
                           "hide",
-                          "cancel",
-                          "clear",
-                          "confirm",
-                          "search",
-                          "selectAll");
+                          "search");
 
                 this.tracks = annotationsTool.getTracks();
             },
