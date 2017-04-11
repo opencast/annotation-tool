@@ -11,8 +11,8 @@
         </div>
         <ul class="list-group">
             {{#each users}}
-            <li class="list-group-item">
-                <label><input type="checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}> {{this.nickname}}</label>
+            <li class="list-group-item user-track-group">
+                <label><input type="checkbox" class="user-checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}> {{this.nickname}}</label>
                 <span class="search-fields">
                     {{#toUpperCase}}
                     {{this.nickname}}
@@ -22,7 +22,7 @@
                     {{#each this.tracks}}
                     <li>
                         <label>
-                            <input type="checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}>
+                            <input type="checkbox" class="track-checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}>
                             {{this.name}}
                         </label>
                     </li>
