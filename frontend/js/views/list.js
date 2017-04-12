@@ -194,7 +194,7 @@ define(["jquery",
                 // Wait that the id has be set to the model before to add it
                 if (_.isUndefined(annotation.get("id"))) {
                     annotation.once("ready", function () {
-                        this.addAnnotation(annotation, track);
+                        this.addAnnotation(annotation, track, isPartofList);
                     }, this);
                     return;
                 } else {
