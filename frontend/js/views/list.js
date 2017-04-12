@@ -198,7 +198,7 @@ define(["jquery",
                     }, this);
                     return;
                 }
-                view = new AnnotationView({annotation: annotation, track: track});
+                view = new AnnotationView({ annotation: annotation, track: track });
                 this.listenTo(view, "edit", this.editAnnotationCallback);
                 this.insertView(view);
 
