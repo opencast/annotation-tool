@@ -211,6 +211,12 @@ define(["jquery",
                         lastAddedAnnotationView.toggleCollapsedState(undefined, true);
                     }
                     view.toggleCollapsedState();
+                    view.once("change:state", function () {
+                        if (view === lastAddedAnnotationView) {
+                            lastAddedAnnotationView = undefined;
+                        }
+                    });
+
                     annotationsTool.setSelection([annotation], false);
                     lastAddedAnnotationView = view;
                 }

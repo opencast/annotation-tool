@@ -183,11 +183,14 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @param {State} fallbackState The fallback state if the new state is already set
              */
             setState: function (newState, fallbackState) {
+                var fallback = false;
                 if (!_.isUndefined(fallbackState) && this.getState() === newState) {
                     this.currentState = fallbackState;
+                    fallback = true;
                 } else {
                     this.currentState = newState;
                 }
+                this.trigger("change:state", this, { fallback: fallback });
             },
 
             /**
