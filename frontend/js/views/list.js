@@ -197,15 +197,10 @@ define(["jquery",
                         this.addAnnotation(annotation, track, isPartofList);
                     }, this);
                     return;
-                } else {
-                    view = new AnnotationView({annotation: annotation, track: track});
-                    this.listenTo(view, "edit", this.editAnnotationCallback);
-                    this.insertView(view);
-
-                    if (!isPartofList) {
-                        annotationsTool.setSelection([annotation], false);
-                    }
                 }
+                view = new AnnotationView({annotation: annotation, track: track});
+                this.listenTo(view, "edit", this.editAnnotationCallback);
+                this.insertView(view);
 
             },
 
