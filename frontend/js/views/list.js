@@ -202,6 +202,10 @@ define(["jquery",
                 this.listenTo(view, "edit", this.editAnnotationCallback);
                 this.insertView(view);
 
+                if (!isPartofList) {
+                    view.toggleCollapsedState();
+                    annotationsTool.setSelection([annotation], false);
+                }
             },
 
             /**
