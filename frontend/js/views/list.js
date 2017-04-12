@@ -41,6 +41,8 @@ define(["jquery",
 
         "use strict";
 
+        var lastAddedAnnotationView;
+
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#View}
@@ -205,8 +207,12 @@ define(["jquery",
                 this.insertView(view);
 
                 if (!isPartofList) {
+                    if (lastAddedAnnotationView) {
+                        lastAddedAnnotationView.toggleCollapsedState(undefined, true);
+                    }
                     view.toggleCollapsedState();
                     annotationsTool.setSelection([annotation], false);
+                    lastAddedAnnotationView = view;
                 }
             },
 
