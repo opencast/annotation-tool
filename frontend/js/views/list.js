@@ -18,6 +18,7 @@
  * A module representing the annotations list view
  * @module views-list
  * @requires jQuery
+ * @requires underscore
  * @requires prototype-player_adapter
  * @requires models-annotation
  * @requires views-list-annotation
@@ -26,6 +27,7 @@
  * @requires bootsrap.scrollspy
  */
 define(["jquery",
+        "underscore",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
@@ -35,7 +37,7 @@ define(["jquery",
         "FiltersManager",
         "scrollspy"],
 
-    function ($, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone, FiltersManager) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone, FiltersManager) {
 
         "use strict";
 
