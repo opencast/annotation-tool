@@ -4,6 +4,14 @@ div#modal-track-selection{
         width: 60%;
     }
 
+    label {
+        margin: 0;
+
+        input[type="checkbox"] {
+            display: inline;
+        }
+    }
+
     .search-only {
         display: none;
     }
@@ -18,15 +26,21 @@ div#modal-track-selection{
         margin-left: 0px;
     }
 
-
-
     ul.list-group {
         list-style: none;
         border: 1px solid @grayLight;
-        overflow: scroll;
+        overflow-y: auto;
         margin-left: 0px;
         max-height: 350px;
         box-shadow: inset 1px 1px 3px @grayLight;
+
+        ul {
+            list-style: none;
+
+            li:hover {
+                background-color: @grayLighter;
+            }
+        }
 
         li {
             padding: 2px 5px 2px 5px;
