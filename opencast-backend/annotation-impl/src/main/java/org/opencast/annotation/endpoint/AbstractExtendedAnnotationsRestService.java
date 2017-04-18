@@ -1183,8 +1183,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return postCategoryResponse(Option.<Long> none(), name, description, hasDuration, scaleId, settings, tags);
+          @DefaultValue("0") @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
+    return postCategoryResponse(Option.<Long> none(), name, description, hasDuration, scaleId, settings, access, tags);
   }
 
   @POST
@@ -1194,9 +1194,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("category_id") final Long id, @FormParam("tags") final String tags) {
+          @FormParam("category_id") final Long id, @DefaultValue("0") @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
     if (id == null)
-      return postCategoryResponse(option(videoId), name, description, hasDuration, scaleId, settings, tags);
+      return postCategoryResponse(option(videoId), name, description, hasDuration, scaleId, settings, access, tags);
 
     return run(array(id), new Function0<Response>() {
       @Override
@@ -1205,7 +1206,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
         if (eas().getVideo(videoId).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                access);
         Option<Category> categoryFromTemplate = eas().createCategoryFromTemplate(videoId, id, resource);
         return categoryFromTemplate.fold(new Option.Match<Category, Response>() {
 
@@ -1226,7 +1228,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
   }
 
   private Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
-          final boolean hasDuration, final Long scaleId, final String settings, final String tags) {
+          final boolean hasDuration, final Long scaleId, final String settings, final Integer access,
+          final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -1235,7 +1238,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                access);
         final Category category = eas().createCategory(videoId, option(scaleId), name, trimToNone(description),
                 hasDuration, trimToNone(settings), resource);
 
