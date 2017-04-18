@@ -401,7 +401,7 @@ define(["jquery",
                  * @param {Event} event Event related to this action
                  */
                 onSwitchEditModus: function (event) {
-                    var status = $(event.target).attr("checked") === "checked";
+                    var status = event.target.checked;
 
                     this.switchEditModus(status);
 

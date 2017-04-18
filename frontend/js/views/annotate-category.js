@@ -99,7 +99,7 @@ define(["jquery",
                 "click .catItem-header i.scale"    : "editScale",
                 "focusout .catItem-header input"   : "onFocusOut",
                 "keydown .catItem-header input"    : "onKeyDown",
-                "click   .catItem-add"             : "onCreateLabel"
+                "click .catItem-add"               : "onCreateLabel"
             },
 
             /**
