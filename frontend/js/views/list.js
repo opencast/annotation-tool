@@ -18,6 +18,7 @@
  * A module representing the annotations list view
  * @module views-list
  * @requires jQuery
+ * @requires underscore
  * @requires prototype-player_adapter
  * @requires models-annotation
  * @requires views-list-annotation
@@ -26,6 +27,7 @@
  * @requires bootsrap.scrollspy
  */
 define(["jquery",
+        "underscore",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
@@ -35,9 +37,11 @@ define(["jquery",
         "FiltersManager",
         "scrollspy"],
 
-    function ($, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone, FiltersManager) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone, FiltersManager) {
 
         "use strict";
+
+        var lastAddedAnnotationView;
 
         /**
          * @constructor
@@ -194,19 +198,28 @@ define(["jquery",
                 // Wait that the id has be set to the model before to add it
                 if (_.isUndefined(annotation.get("id"))) {
                     annotation.once("ready", function () {
-                        this.addAnnotation(annotation, track);
+                        this.addAnnotation(annotation, track, isPartofList);
                     }, this);
                     return;
-                } else {
-                    view = new AnnotationView({annotation: annotation, track: track});
-                    this.listenTo(view, "edit", this.editAnnotationCallback);
-                    this.insertView(view);
-
-                    if (!isPartofList) {
-                        annotationsTool.setSelection([annotation], false);
-                    }
                 }
+                view = new AnnotationView({ annotation: annotation, track: track });
+                this.listenTo(view, "edit", this.editAnnotationCallback);
+                this.insertView(view);
 
+                if (!isPartofList) {
+                    if (lastAddedAnnotationView) {
+                        lastAddedAnnotationView.toggleCollapsedState(undefined, true);
+                    }
+                    view.toggleCollapsedState();
+                    view.once("change:state", function () {
+                        if (view === lastAddedAnnotationView) {
+                            lastAddedAnnotationView = undefined;
+                        }
+                    });
+
+                    annotationsTool.setSelection([annotation], false);
+                    lastAddedAnnotationView = view;
+                }
             },
 
             /**
