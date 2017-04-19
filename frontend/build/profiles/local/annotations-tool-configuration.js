@@ -97,8 +97,7 @@ define(["jquery",
              */
             keyBindings: {
                 setActiveAnnotationDuration: {
-                    key: "e",
-                    ctrlKey: true
+                    key: '.'
                 }
             },
 
