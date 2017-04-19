@@ -116,7 +116,7 @@ define(["jquery",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
                 "click [class*='opt-tracks']": "tracksSelection",
-                "keydown"                    : "setActiveAnnotationDelay"
+                "keydown"                    : "handleKeyboardShortcuts"
             },
 
             /**
@@ -579,24 +579,46 @@ define(["jquery",
                 this.loadingBox.find(".info").text(message);
             },
 
-            setActiveAnnotationDelay: function (event) {
-                if (!annotationsTool.setDurationKeyEvent) return;
-                if (!annotationsTool.activeAnnotation) return;
+            /**
+             * Global actions that can be triggered using keyboard shortcuts
+             * @alias module:views-main.MainView#actions
+             * @type {Object}
+             * @see mdoule:annotations-tool-configuration.Configuration.keyBindings
+             */
+            actions: {
+                setActiveAnnotationDuration: function (event) {
+                    if (!annotationsTool.activeAnnotation) return;
 
+                    var currentTime = annotationsTool.playerAdapter.getCurrentTime();
+                    var start = annotationsTool.activeAnnotation.get("start");
+                    annotationsTool.activeAnnotation.set("duration", currentTime - start);
+                    annotationsTool.activeAnnotation.save();
+                }
+            },
+
+            /**
+             * Handle global actions bound to keyboard shortcuts.
+             * {@link module:annotations-tool-configuration.Configuration.keyBindings} contains a mapping from keys
+             * contained in {@link module:views-main.MainView#actions} to parts of a keyboard event,
+             * which are then compared with the current event. If it matches such a key, the corresponding action
+             * is triggered.
+             * @alias module:views-main.MainView#handleKeyboardShortcuts
+             */
+            handleKeyboardShortcuts: function (event) {
                 var modifierKeys = ["altKey", "ctrlKey", "shiftKey", "metaKey"];
-                var configuredEvent = _.defaults(
-                    _.pick(annotationsTool.setDurationKeyEvent, modifierKeys, "key"),
-                    _.object(_.map(modifierKeys, function (k) { return [k, false]; }))
-                );
-                var actualEvent = _.pick(event, modifierKeys, "key");
-                if (!_.isEqual(configuredEvent, actualEvent)) return;
+                var actualKeyEventProps = _.pick(event, modifierKeys, "key");
 
-                event.preventDefault();
+                _.each(annotationsTool.keyBindings, function (eventSpec, action) {
+                    var keyEventPropSpec = _.defaults(
+                        _.pick(eventSpec, modifierKeys, "key"),
+                        _.object(_.map(modifierKeys, function (k) { return [k, false]; }))
+                    );
 
-                var currentTime = annotationsTool.playerAdapter.getCurrentTime();
-                var start = annotationsTool.activeAnnotation.get("start");
-                annotationsTool.activeAnnotation.set("duration", currentTime - start);
-                annotationsTool.activeAnnotation.save();
+                    if (_.isEqual(actualKeyEventProps, keyEventPropSpec)) {
+                        event.preventDefault();
+                        this.actions[action].call(this, event);
+                    }
+                }, this);
             }
         });
         return MainView;

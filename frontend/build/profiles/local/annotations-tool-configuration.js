@@ -89,13 +89,17 @@ define(["jquery",
             CATEGORIES_PER_TAB: 7,
 
             /**
-             * Specify the attributes of the keyboard event that is supposed to trigger the setting
-             * of the duration of the currently active annotation.
+             * Specify the attributes of the keyboard event that is supposed to trigger
+             * certain actions in the annotation tool
              * @type {Object}
+             * @alias mdoule:annotations-tool-configuration.Configuration.keyBindings
+             * @see module:views-main.MainView#actions
              */
-            setDurationKeyEvent: {
-                key: "e",
-                ctrlKey: true
+            keyBindings: {
+                setActiveAnnotationDuration: {
+                    key: "e",
+                    ctrlKey: true
+                }
             },
 
             /**
