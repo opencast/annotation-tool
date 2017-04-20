@@ -25,7 +25,7 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 
 ### Building the Annotation Tool
 
-    mvn clean install -DdeployTo=<opencast-dir>
+    mvn clean install -DdeployTo=<opencast-dir> -Dopencast.version=<your Opencast version number>
 
 This should build the frontend, include it into the Opencast modules and copies the JARs to your Opencast installation.
 
