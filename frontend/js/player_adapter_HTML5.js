@@ -125,7 +125,7 @@ define(["jquery",
                         self.initialized = true;
                     }
 
-                    // If duration is valid, we chanded status
+                    // If duration is valid, we changed status
                     self.status =  PlayerAdapter.STATUS.PAUSED;
                     self.triggerEvent(PlayerAdapter.EVENTS.READY);
 
