@@ -409,13 +409,13 @@ define(["jquery",
                  */
                 loadVideo: function () {
                     var duration = 0,
-                       // Supported video formats
-                       videoTypes = ["video/webm", "video/ogg", "video/mp4"],
-                       videoTypeIE9 = "video/mp4",
-                       //var videoTypesForFallBack = ["video/x-flv"];
-                       videoTypesForFallBack = [],
-                       trackType = ["presenter/delivery", "presentation/delivery"],
-                       mediaPackageId = decodeURI((new RegExp("id=" + "(.+?)(&|$)").exec(location.search) || [,null])[1]);
+                        // Supported video formats
+                        videoTypes = ["video/webm", "video/ogg", "video/mp4"],
+                        videoTypeIE9 = "video/mp4",
+                        //var videoTypesForFallBack = ["video/x-flv"];
+                        videoTypesForFallBack = [],
+                        trackType = ["presenter/delivery", "presentation/delivery"],
+                        mediaPackageId = decodeURI((new RegExp("id=" + "(.+?)(&|$)").exec(location.search) || [,null])[1]);
 
                     // Enable cross-domain for jquery ajax query
                     $.support.cors = true;
