@@ -173,7 +173,7 @@ module.exports = function (grunt) {
                 src: 'templates/*.tmpl',
                 dest: 'target'
             }]
-          },
+          }
         },
 
         /** Copy .. */
@@ -194,7 +194,7 @@ module.exports = function (grunt) {
                     flatten : false,
                     expand  : true,
                     src     : ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
-                    dest    : '<%= currentProfile.target %>',
+                    dest    : '<%= currentProfile.target %>'
                 }]
             },
             // ... the stylesheet locally
@@ -220,7 +220,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
-                    dest: '<%= currentProfile.target %>',
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             // ... all the files for an optimized build
@@ -229,7 +229,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'js/libs/**/*'],
-                    dest: '<%= currentProfile.target %>',
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             // ... all the files for the demo
@@ -238,7 +238,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png',  'resources/*', 'style/**/*.css', 'tests/**/*'],
-                    dest: '<%= currentProfile.target %>',
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             'integration': {
@@ -246,7 +246,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
-                    dest: '<%= currentProfile.target %>',
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             // ... the index locally
