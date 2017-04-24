@@ -334,21 +334,14 @@ define(["jquery",
              * @param {object} [options] Options to define if the category should be filtered or not (skipTests)
              */
             addCategory: function (category, collection, options) {
-                var categoryView,
-                    testFilter = function () {
-                        return _.every(this.filter, function (value, attribute) {
-                            if (category.has(attribute) && category.get(attribute) === value) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        });
-                    };
+                var categoryView;
 
                 options = _.extend({}, options);
 
                 if (!options.skipTests) {
-                    if (!$.proxy(testFilter, this)()) {
+                    if (_.some(this.filter, function (value, attribute) {
+                        return category.get(attribute) !== value;
+                    })) {
                         return;
                     }
                 }
