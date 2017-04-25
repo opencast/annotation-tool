@@ -24,7 +24,8 @@ require.config({
         "tooltip"                       : "libs/bootstrap/tooltip",
         "timeline"                      : "libs/timeline-min",
         "underscore"                    : "libs/underscore-min-1.4.3",
-        "raf"                           : "libs/rAF"
+        "raf"                           : "libs/rAF",
+        "email-addresses"               : "libs/email-addresses.min"
     },
     waitSeconds: 10,
 
@@ -71,7 +72,11 @@ require.config({
         "scrollspy": ["bootstrap"],
         "carousel" : ["bootstrap"],
         "tab"      : ["bootstrap"],
-        "slider"   : ["jquery"]
+        "slider"   : ["jquery"],
+
+        "email-addresses": {
+            exports: "emailAddresses"
+        }
     }
 });
 
