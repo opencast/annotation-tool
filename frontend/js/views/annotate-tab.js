@@ -52,16 +52,17 @@ define(["jquery",
         "views/annotate-category",
         "templates/annotate-tab",
         "default_scale_set",
-        "handlebarsHelpers",
         "backbone",
+        "handlebars",
         "access",
+        "handlebarsHelpers",
         "libs/Blob",
         "libs/BlobBuilder",
         "libs/swfobject",
         "libs/FileSaver",
         "jquery.FileReader"],
 
-    function ($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, scalesSet, Handlebars, Backbone, ACCESS) {
+       function ($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, scalesSet, Backbone, Handlebars, ACCESS) {
 
         "use strict";
 

@@ -39,10 +39,10 @@ define(["jquery",
         "templates/annotate-tab-title",
         "roles",
         "access",
-        "handlebarsHelpers",
-        "backbone"],
+        "backbone",
+        "handlebarsHelpers"]
 
-    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Handlebars, Backbone) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
 
         "use strict";
 

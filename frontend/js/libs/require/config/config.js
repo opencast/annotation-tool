@@ -30,10 +30,7 @@ require.config({
     waitSeconds: 10,
 
     shim: {
-        "handlebarsHelpers": {
-            deps: ["handlebars"],
-            exports: "Handlebars"
-        },
+        "handlebarsHelpers": ["handlebars"],
 
         "handlebars": {
             exports: "Handlebars"
@@ -48,25 +45,13 @@ require.config({
             exports: "Backbone"
         },
 
-        "localstorage": {
-            deps: ["backbone"],
-            exports: "Backbone"
-        },
+        "localstorage": ["backbone"],
 
-        "jquery.FileReader": {
-            deps    : ["jquery"],
-            exports : "jQuery.fn.fileReader"
-        },
+        "jquery.FileReader": ["jquery"],
 
-        "jquery.colorPicker": {
-            deps: ["jquery"],
-            exports: "jQuery.fn.colorPicker"
-        },
+        "jquery.colorPicker": ["jquery"],
 
-        "jquery.appear": {
-            deps: ["jquery"],
-            exports: "jQuery.fn.appear"
-        },
+        "jquery.appear": ["jquery"],
 
         "bootstrap": ["jquery"],
         "scrollspy": ["bootstrap"],
