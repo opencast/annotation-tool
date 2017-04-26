@@ -376,7 +376,7 @@ define(["jquery",
                         hasScale: false
                     }
                 };
-                this.categories.create(_.extend(attributes, this.defaultCategoryAttributes));
+                this.categories.create(_.extend(attributes, this.defaultCategoryAttributes), { wait: true });
             },
 
             /**
