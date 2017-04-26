@@ -167,7 +167,30 @@ define(["jquery",
                 }
 
                 // Load the good storage module
-                Backbone.sync = this.localStorage ? Backbone.localSync : Backbone.ajaxSync;
+                Backbone.sync = this.localStorage
+                    ? Backbone.localSync
+                    : _.wrap(Backbone.ajaxSync, function (sync, method, model, options) {
+                        // TODO This is lifed from the Backbone source, which is not nice
+                        options.data = options.attrs || model.toJSON(options);
+                        options.processData = true;
+                        // TODO We should get ahold of the user in some cleaner way than through this global
+                        options.headers = {};
+                        if (annotationsTool.user) {
+                            options.headers["X-ANNOTATIONS-USER-ID"] = annotationsTool.user.id;
+                        }
+                        // TODO Is this even needed?
+                        // TODO Rename this `getUserAuthToken`?
+                        var authToken = _.result(annotationsTool, 'getUserAuthToken');
+                        if (authToken) {
+                            options.headers["X-ANNOTATIONS-USER-AUTH-TOKEN"] = authToken;
+                        }
+                        // TODO Oh my god this is a terrible hack that should not be necessary!
+                        //   Video is `save`d on the initial page load for whatever reason ...
+                        if (model && model.noPOST && method === "create") {
+                            method = "update";
+                        }
+                        return sync.call(this, method, model, options);
+                    });
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
