@@ -29,7 +29,6 @@
 define(["jquery",
         "underscore",
         "backbone",
-        "backbone-annotations-sync",
         "collections/videos",
         "views/main",
         "views/alert",
@@ -41,7 +40,7 @@ define(["jquery",
         "roles",
         "colors"],
 
-    function ($, _, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager) {
+    function ($, _, Backbone, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager) {
 
         "use strict";
 
@@ -168,7 +167,7 @@ define(["jquery",
                 }
 
                 // Load the good storage module
-                Backbone.sync = this.localStorage ? Backbone.localSync : AnnotationSync;
+                Backbone.sync = this.localStorage ? Backbone.localSync : Backbone.ajaxSync;
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();

@@ -28,7 +28,6 @@
  * @requires models-user
  * @requires models-track
  * @requires models-video
- * @requires backbone-annotations-sync
  * @requires roles
  * @requires filters-manager
  * @requires backbone
