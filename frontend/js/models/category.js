@@ -35,6 +35,16 @@ define(["jquery",
 
         "use strict";
 
+        function parseDate(date) {
+            if (_.isDate(date)) {
+                return date;
+            } else if (_.isNumber(date) || _.isString(date)) {
+                return new Date(date);
+            } else {
+                return null;
+            }
+        }
+
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#Model}
@@ -132,16 +142,7 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                var attr = data.attributes ? data.attributes : data,
-                    parseDate = function (date) {
-                        if (_.isNumber(date)) {
-                            return new Date(date);
-                        } else if (_.isString) {
-                            return Date.parse(date);
-                        } else {
-                            return null;
-                        }
-                    };
+                var attr = data.attributes ? data.attributes : data;
 
                 if (attr.created_at) {
                     attr.created_at = parseDate(attr.created_at);
@@ -199,7 +200,8 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated,
+                var currentCreatedAt,
+                    newCreatedAt,
                     self = this;
 
                 if (attr.id) {
@@ -243,19 +245,23 @@ define(["jquery",
                 }
 
                 if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "\"created_at\" attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "\"created_at\" attribute must be a number!";
+                    newCreatedAt = parseDate(attr.created_at);
+                    if (newCreatedAt) {
+                        currentCreatedAt = parseDate(this.get("created_at"));
+                        if (currentCreatedAt && newCreatedAt.getTime() !== currentCreatedAt.getTime()) {
+                            return "\"created_at\" attribute can not be modified after initialization!";
+                        }
+                    } else {
+                        return "\"created_at\" attribute must be a date!";
                     }
                 }
 
-                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
-                    return "\"updated_at\" attribute must be a number!";
+                if (attr.updated_at && !parseDate(attr.updated_at)) {
+                    return "\"updated_at\" attribute must be a date!";
                 }
 
-                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
-                    return "\"deleted_at\" attribute must be a number!";
+                if (attr.deleted_at && !parseDate(attr.deleted_at)) {
+                    return "\"deleted_at\" attribute must be a date!";
                 }
 
                 if (attr.labels) {
