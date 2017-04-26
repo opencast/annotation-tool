@@ -72,7 +72,7 @@ define(["jquery",
                 MINE: {
                     id        : "mine",
                     name      : "Mine",
-                    filter    : {isPublic: false},
+                    filter    : {isMine: true},
                     roles     : [ROLES.SUPERVISOR, ROLES.USER, ROLES.ADMINISTRATOR],
                     attributes: {access: ACCESS.PRIVATE}
                 }
