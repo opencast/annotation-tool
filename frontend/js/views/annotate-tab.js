@@ -355,7 +355,7 @@ define(["jquery",
 
                 if (options && options.isTemplate) { // category to add is a template
                     newCategory = this.categories.addCopyFromTemplate(category);
-                } else if (!this.categories.get(category.get("id"))) {// Add this category if new
+                } else if (!this.categories.get(category.get("id"))) { // Add this category if new
                     this.categories.add(newCategory, {silent: true});
                 } else {
                     _.find(this.categoryViews, function (catView) {

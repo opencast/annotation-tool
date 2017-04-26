@@ -309,7 +309,7 @@ define(["jquery",
              */
             toJSON: function (stringifySub) {
                 var json = Backbone.Model.prototype.toJSON.call(this);
-                
+
                 if (stringifySub) {
                     if (json.tags) {
                         json.tags = JSON.stringify(json.tags);
