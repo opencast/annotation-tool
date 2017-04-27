@@ -334,7 +334,6 @@ define(["jquery",
              */
             addCategory: function (category, collection, options) {
                 var categoryView,
-                    isPresent = false,
                     testFilter = function () {
                         return _.every(this.filter, function (value, attribute) {
                             if (category.has(attribute) && category.get(attribute) === value) {
@@ -354,18 +353,10 @@ define(["jquery",
 
                 if (options && options.isTemplate) { // category to add is a template
                     category = this.categories.addCopyFromTemplate(category);
-                } else if (!this.categories.get(category.get("id"))) { // Add this category if new
+                } else if (!this.categories.get(category.id)) { // Add this category if new
                     this.categories.add(category, {silent: true});
-                } else {
-                    _.find(this.categoryViews, function (catView) {
-                        if (category === catView.model) {
-                            isPresent = true;
-                            return true;
-                        }
-                    }, this);
-                    if (isPresent) {
-                        return;
-                    }
+                } else if (_.contains(_.pluck(this.categoryViews, "model"), category)) {
+                    return;
                 }
                 // Save new category
                 // newCategory.save({silent: true});
