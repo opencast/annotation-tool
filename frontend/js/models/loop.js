@@ -16,15 +16,17 @@
 /**
  * A module representing the loop model
  * @module models-loop
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "backbone",
         "localstorage"],
 
-    function ($, Backbone) {
+    function ($, _, Backbone) {
 
         "use strict";
 

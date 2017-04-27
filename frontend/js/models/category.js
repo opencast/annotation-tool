@@ -18,18 +18,20 @@
  * A module representing the category model
  * @module models-category
  * @requires jQuery
+ * @requires underscore
  * @requires collections-labels
  * @requires ACCESS
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "collections/labels",
         "access",
         "backbone",
         "localstorage"],
 
-    function ($, Labels, ACCESS, Backbone) {
+    function ($, _, Labels, ACCESS, Backbone) {
 
         "use strict";
 

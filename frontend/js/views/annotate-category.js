@@ -17,22 +17,24 @@
 /**
  * A module representing the category view in the annotate part
  * @module views-annotate-category
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
+ * @requires backbone
  * @requires views-annotate-label
  * @requires templates/annotate-category.tmpl
  * @requires handlebars
  * @requires jquery.colorPicker
- * @requires backbone
  */
 define(["jquery",
+        "underscore",
+        "backbone",
         "views/annotate-label",
         "templates/annotate-category",
         "handlebarsHelpers",
-        "jquery.colorPicker",
-        "backbone"],
+        "jquery.colorPicker"],
 
 
-    function ($, LabelView, Template) {
+    function ($, _, Backbone, LabelView, Template) {
 
         "use strict";
 
