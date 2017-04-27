@@ -330,7 +330,7 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#addCategory
              * @param {Category}  category The category to add
              * @param {Categories} [collection]    The collection, if the category is already part of one
-             * @param {object} [options] Options to define if the category should be filtered or not (skipTests) or if the category is a tempate (isTemplate).
+             * @param {object} [options] Options to define if the category should be filtered or not (skipTests)
              */
             addCategory: function (category, collection, options) {
                 var categoryView,
@@ -350,10 +350,7 @@ define(["jquery",
                     }
                 }
 
-
-                if (options && options.isTemplate) { // category to add is a template
-                    category = this.categories.addCopyFromTemplate(category);
-                } else if (!this.categories.get(category.id)) { // Add this category if new
+                if (!this.categories.get(category.id)) {// Add this category if new
                     this.categories.add(category, {silent: true});
                 } else if (_.contains(_.pluck(this.categoryViews, "model"), category)) {
                     return;

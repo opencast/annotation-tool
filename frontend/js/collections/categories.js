@@ -59,7 +59,6 @@ define(["jquery",
              */
             initialize: function (models, video) {
                 _.bindAll(this, "setUrl",
-                                "addCopyFromTemplate",
                                 "toExportJSON");
 
                 this.setUrl(video);
@@ -136,37 +135,6 @@ define(["jquery",
                 });
 
                 return categoriesForExport;
-            },
-
-            /**
-             * Add a copy from the given template to this collection
-             * @alias module:collections-categories.Categories#addCopyFromTemplate
-             * @param {Category} element template to copy
-             * @return {Category} A copy of the given category
-             */
-            addCopyFromTemplate: function (element) {
-                // Test if the given category is really a template
-                if (!this.isTemplate && !_.isArray(element) && element.id) {
-                    // Copy the element and remove useless parameters
-                    var copyJSON = element.toJSON();
-                    delete copyJSON.id;
-                    delete copyJSON.created_at;
-                    delete copyJSON.created_by;
-                    delete copyJSON.updated_at;
-                    delete copyJSON.updated_by;
-                    delete copyJSON.deleted_by;
-                    delete copyJSON.deleted_at;
-                    delete copyJSON.labels;
-                    // add the copy url parameter for the backend
-                    copyJSON.copyUrl = "?category_id=" + element.id;
-
-                    if (annotationsTool.localStorage) {
-                        return this.create(copyJSON);
-                    } else {
-                        return this.create(copyJSON, {wait: true});
-                    }
-                }
-                return null;
             }
         });
         return Categories;
