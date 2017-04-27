@@ -282,6 +282,27 @@ define(["jquery",
             },
 
             /**
+             * Save this category to the backend with the given attributes.
+             * We override this to control the serialization of the tags,
+             * Which need to be stringified for the communication with the server.
+             * @alias module:models-category.Category#save
+             */
+            save: function (key, value, options) {
+                var attributes;
+                // Imitate Backbones calling convention negotiation dance
+                if (key == null || _.isObject(key)) {
+                    attributes = key;
+                    options = value;
+                } else if (key != null) {
+                    (attributes = {})[key] = value;
+                }
+
+                options = _.defaults({ stringifySub: true }, options);
+
+                return Backbone.Model.prototype.save.call(this, attributes, options);
+            },
+
+            /**
              * Change category color
              * @alias module:models-category.Category#setColor
              * @param  {string} color the new color
@@ -306,13 +327,14 @@ define(["jquery",
             /**
              * Override the default toJSON function to ensure complete JSONing.
              * @alias module:models-category.Category#toJSON
+             * @param {Object} options The options to control the "JSONification" of this collection
              * @param {Boolean} stringifySub defines if the sub-object should be stringify
              * @return {JSON} JSON representation of the instance
              */
-            toJSON: function (stringifySub) {
-                var json = Backbone.Model.prototype.toJSON.call(this);
+            toJSON: function (options) {
+                var json = Backbone.Model.prototype.toJSON.call(this, options);
 
-                if (stringifySub) {
+                if (options && options.stringifySub) {
                     if (json.tags) {
                         json.tags = JSON.stringify(json.tags);
                     }
