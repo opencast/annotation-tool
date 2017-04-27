@@ -333,8 +333,7 @@ define(["jquery",
              * @param {object} [options] Options to define if the category should be filtered or not (skipTests) or if the category is a tempate (isTemplate).
              */
             addCategory: function (category, collection, options) {
-                var newCategory = category,
-                    categoryView,
+                var categoryView,
                     isPresent = false,
                     testFilter = function () {
                         return _.every(this.filter, function (value, attribute) {
@@ -354,9 +353,9 @@ define(["jquery",
 
 
                 if (options && options.isTemplate) { // category to add is a template
-                    newCategory = this.categories.addCopyFromTemplate(category);
+                    category = this.categories.addCopyFromTemplate(category);
                 } else if (!this.categories.get(category.get("id"))) { // Add this category if new
-                    this.categories.add(newCategory, {silent: true});
+                    this.categories.add(category, {silent: true});
                 } else {
                     _.find(this.categoryViews, function (catView) {
                         if (category === catView.model) {
@@ -372,7 +371,7 @@ define(["jquery",
                 // newCategory.save({silent: true});
 
                 categoryView = new CategoryView({
-                    category : newCategory,
+                    category : category,
                     editModus: this.editModus,
                     roles    : this.roles
                 });
