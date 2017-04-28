@@ -345,6 +345,8 @@ define(["jquery",
                         });
                     };
 
+                options = _.extend({}, options);
+
                 if (!options.skipTests) {
                     if (!$.proxy(testFilter, this)()) {
                         return;
