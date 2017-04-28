@@ -101,8 +101,6 @@ define(["jquery",
                     if (window.annotationsTool.localStorage) {
                         attr.id = this.cid;
                     }
-
-                    this.toCreate = true;
                 }
 
                 if (attr.tags) {

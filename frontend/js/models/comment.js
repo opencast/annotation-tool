@@ -64,8 +64,6 @@ define(["jquery",
                     if (window.annotationsTool.localStorage) {
                         attr.id = this.cid;
                     }
-
-                    this.toCreate = true;
                 }
 
                 if (window.annotationsTool.localStorage) {
@@ -149,7 +147,6 @@ define(["jquery",
                     if (this.get("id") !== attr.id) {
                         this.id = attr.id;
                         this.attributes.id = attr.id;
-                        this.toCreate = false;
                     }
                 }
 

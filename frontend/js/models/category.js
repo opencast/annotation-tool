@@ -80,8 +80,6 @@ define(["jquery",
                     if (window.annotationsTool.localStorage) {
                         this.attributes.id = this.cid;
                     }
-
-                    this.toCreate = true;
                 }
 
                 // If localStorage used, we have to save the video at each change on the children

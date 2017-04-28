@@ -69,7 +69,6 @@ define(["jquery",
                     if (window.annotationsTool.localStorage) {
                         attr.id = attr.user_extid;
                     }
-                    this.toCreate = true;
                 }
 
                 if (!attr.role && annotationsTool.getUserRole) {
