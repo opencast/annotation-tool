@@ -98,9 +98,6 @@ define(["jquery",
                 localStorage: false,
 
 
-                localStorageOnlyModel: [],
-
-
                 plugins: {
                     Loop: function () {
                             require(["views/loop"], function (Loop) {

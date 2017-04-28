@@ -106,13 +106,6 @@ define(["jquery",
              */
             localStorage: true,
 
-            /**
-             * List of models using only the localStory sync module
-             * @type {Array}
-             * @readOnly
-             */
-            localStorageOnlyModel: [],
-
 
             /**
              * List of plugins to load,

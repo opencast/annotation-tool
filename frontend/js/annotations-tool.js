@@ -175,6 +175,10 @@ define(["jquery",
                             processData: true
                         }, options);
 
+                        if (model.localStorageOnly) {
+                            return Backbone.localSync.call(this, method, model, options);
+                        }
+
                         options.data = options.attrs || model.toJSON(options);
 
                         if (annotationsTool.user) {
