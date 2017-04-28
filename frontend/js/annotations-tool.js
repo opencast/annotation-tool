@@ -25,6 +25,7 @@
  * @requires templates/delete-warning-content.tmpl
  * @requires player-adapter
  * @requires handlebars
+ * @requires annotation-sync
  */
 define(["jquery",
         "underscore",
@@ -38,9 +39,10 @@ define(["jquery",
         "handlebarsHelpers",
         "FiltersManager",
         "roles",
-        "colors"],
+        "colors",
+        "annotation-sync"],
 
-    function ($, _, Backbone, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager) {
+    function ($, _, Backbone, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager, annotationSync) {
 
         "use strict";
 
@@ -167,34 +169,7 @@ define(["jquery",
                 }
 
                 // Set up the storage layer
-                Backbone.sync = this.localStorage
-                    ? Backbone.localSync
-                    : function (method, model, options) {
-                        options = _.extend({
-                            headers: {},
-                            processData: true
-                        }, options);
-
-                        if (model.localStorageOnly) {
-                            return Backbone.localSync.call(this, method, model, options);
-                        }
-
-                        options.data = options.attrs || model.toJSON(options);
-
-                        if (annotationsTool.user) {
-                            options.headers["X-ANNOTATIONS-USER-ID"] = annotationsTool.user.id;
-                        }
-                        var authToken = _.result(annotationsTool, 'getUserAuthToken');
-                        if (authToken) {
-                            options.headers["X-ANNOTATIONS-USER-AUTH-TOKEN"] = authToken;
-                        }
-
-                        if (model.noPOST && method === "create") {
-                            method = "update";
-                        }
-
-                        return Backbone.ajaxSync.call(this, method, model, options);
-                    };
+                Backbone.sync = annotationSync;
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
