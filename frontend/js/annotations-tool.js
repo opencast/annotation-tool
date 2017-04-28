@@ -166,31 +166,31 @@ define(["jquery",
                     throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
                 }
 
-                // Load the good storage module
+                // Set up the storage layer
                 Backbone.sync = this.localStorage
                     ? Backbone.localSync
-                    : _.wrap(Backbone.ajaxSync, function (sync, method, model, options) {
-                        // TODO This is lifed from the Backbone source, which is not nice
+                    : function (method, model, options) {
+                        options = _.extend({
+                            headers: {},
+                            processData: true
+                        }, options);
+
                         options.data = options.attrs || model.toJSON(options);
-                        options.processData = true;
-                        // TODO We should get ahold of the user in some cleaner way than through this global
-                        options.headers = {};
+
                         if (annotationsTool.user) {
                             options.headers["X-ANNOTATIONS-USER-ID"] = annotationsTool.user.id;
                         }
-                        // TODO Is this even needed?
-                        // TODO Rename this `getUserAuthToken`?
                         var authToken = _.result(annotationsTool, 'getUserAuthToken');
                         if (authToken) {
                             options.headers["X-ANNOTATIONS-USER-AUTH-TOKEN"] = authToken;
                         }
-                        // TODO Oh my god this is a terrible hack that should not be necessary!
-                        //   Video is `save`d on the initial page load for whatever reason ...
-                        if (model && model.noPOST && method === "create") {
+
+                        if (model.noPOST && method === "create") {
                             method = "update";
                         }
-                        return sync.call(this, method, model, options);
-                    });
+
+                        return Backbone.ajaxSync.call(this, method, model, options);
+                    };
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
