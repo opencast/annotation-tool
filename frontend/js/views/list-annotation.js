@@ -477,7 +477,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 modelJSON.isEditEnable = this.isEditEnable;
                 modelJSON.numberOfComments = this.model.get("comments").length;
                 modelJSON.state = this.getState().id;
-                
+
                 this.$el.html($(this.currentState.render(modelJSON)));
 
                 this.el = this.$el[0];

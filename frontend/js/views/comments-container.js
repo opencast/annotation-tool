@@ -93,7 +93,7 @@ define(["jquery",
                 if (typeof attr.collapsed !== "undefined") {
                     this.collapsed = attr.collapsed;
                 }
-                
+
                 this.annotationId        = attr.id;
                 this.id                  = "comments-container" + attr.id;
                 this.el.id               = this.id;
