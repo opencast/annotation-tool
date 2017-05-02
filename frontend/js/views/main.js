@@ -597,10 +597,17 @@ define(["jquery",
 
                 addComment: function (event) {
                     if (!annotationsTool.activeAnnotation) return;
-                    this.listView.getViewFromAnnotation(
+                    var annotationView = this.listView.getViewFromAnnotation(
                         annotationsTool.activeAnnotation.get("id")
-                    ).setCommentState();
+                    );
+                    annotationView.setCommentState();
+                    var wasPlaying = annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
                     annotationsTool.playerAdapter.pause();
+                    annotationView.once("cancel", function () {
+                        if (wasPlaying) {
+                            annotationsTool.playerAdapter.play();
+                        }
+                    });
                 }
             },
 
