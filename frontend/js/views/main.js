@@ -357,15 +357,14 @@ define(["jquery",
              * @alias module:views-main.MainView#logout
              */
             logout: function () {
-                // Stop the video
+                // Stop and rewind the video
                 annotationsTool.playerAdapter.pause();
+                annotationsTool.playerAdapter.setCurrentTime(0);
 
                  // Hide logout button
                 $("a#logout").hide();
 
                 // Hide/remove the views
-                annotationsTool.playerAdapter.pause();
-                annotationsTool.playerAdapter.setCurrentTime(0);
                 $("#video-container").hide();
 
                 if (annotationsTool.getLayoutConfiguration().timeline) {

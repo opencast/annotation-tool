@@ -503,7 +503,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 }
 
 
-                // Hack for Firefox, add an button over it
+                // Hack for Firefox, add a button over it
                 if ($.browser.mozilla) {
                     if (modelJSON.duration > 0) {
                         this.$el.find(".end").append("<span class=\"end-btn\" title=\"Double click to edit\">&nbsp;</span>");
@@ -649,10 +649,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
             }
         }, {
 
-            /**
-             * List of the different states existing for 
-             * the annotation view in the list
-             */
+            /** List of the different states existing for the annotation view in the list */
             STATES: {
                 COLLAPSED: {
                     render: TmplCollapsed,

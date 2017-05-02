@@ -173,7 +173,7 @@ define(["jquery",
                     addState  : this.currentState === CommentsContainer.STATES.ADD
                 }));
 
-                this.commentList = this.$el.find("div#comment-list" + this.annotationId);
+                this.commentList = this.$("div#comment-list" + this.annotationId);
 
                 this.commentList.empty();
 
@@ -229,7 +229,7 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#insert
              */
             insert: function () {
-                var textValue = this.$el.find("textarea").val(),
+                var textValue = this.$("textarea").val(),
                     commentModel;
 
                 if (textValue === "") {
@@ -268,7 +268,7 @@ define(["jquery",
 
                 this.$el.parent().find(".comment-amount").text(this.comments.length);
 
-                this.$el.find("textarea").focus();
+                this.$("textarea").focus();
             },
 
             /**
@@ -278,9 +278,10 @@ define(["jquery",
              */
             onAddComment: function (event) {
                 event.stopImmediatePropagation();
-                this.$el.find("textarea").show();
-                this.$el.find("button").removeClass("hide");
-                this.$el.find("textarea").focus();
+                var textArea = this.$("textarea");
+                textArea.show();
+                textArea.focus();
+                this.$("button").removeClass("hide");
             },
 
             /**
@@ -298,7 +299,7 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#cancel
              */
             cancel: function () {
-                this.$el.find("textarea").val("");
+                this.$("textarea").val("");
                 this.cancelCallback();
             }
         }, {
