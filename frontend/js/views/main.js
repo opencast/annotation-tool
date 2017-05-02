@@ -593,6 +593,13 @@ define(["jquery",
                     var start = annotationsTool.activeAnnotation.get("start");
                     annotationsTool.activeAnnotation.set("duration", currentTime - start);
                     annotationsTool.activeAnnotation.save();
+                },
+
+                addComment: function (event) {
+                    if (!annotationsTool.activeAnnotation) return;
+                    this.listView.getViewFromAnnotation(
+                        annotationsTool.activeAnnotation.get("id")
+                    ).setCommentState();
                 }
             },
 

@@ -98,6 +98,9 @@ define(["jquery",
             keyBindings: {
                 setActiveAnnotationDuration: {
                     key: '.'
+                },
+                addComment: {
+                    key: "r"
                 }
             },
 
