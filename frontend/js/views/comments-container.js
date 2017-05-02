@@ -100,8 +100,6 @@ define(["jquery",
                 this.el.id               = this.id;
                 this.comments            = attr.comments;
                 this.commentViews        = [];
-                this.cancelCallback      = attr.cancel;
-                this.editCommentCallback = attr.edit;
 
                 // Bind function to the good context
                 _.bindAll(this,
@@ -113,6 +111,7 @@ define(["jquery",
                           "keyupInsertProxy",
                           "resetViews");
 
+                _.extend(this, Backbone.Events);
 
                 this.listenTo(this.comments, "destroy", this.deleteView);
                 this.listenTo(this.comments, "remove", this.deleteView);
@@ -237,21 +236,21 @@ define(["jquery",
              */
             addComment: function (comment) {
                 var self = this,
-                    commentModel = new CommentView({
-                        model: comment,
-                        cancel: function () {
-                            self.setState(CommentsContainer.STATES.ADD);
-                            self.cancelCallback();
-                            self.render();
-                        },
-                        edit: function () {
-                            self.setState(CommentsContainer.STATES.EDIT);
-                            self.editCommentCallback();
-                            self.render();
-                        }
-                    });
+                    commentView = new CommentView({ model: comment });
+                commentView.on({
+                    cancel: function () {
+                        self.setState(CommentsContainer.STATES.ADD);
+                        self.trigger("cancel");
+                        self.render();
+                    },
+                    edit: function () {
+                        self.setState(CommentsContainer.STATES.EDIT);
+                        self.trigger("edit");
+                        self.render();
+                    }
+                });
 
-                this.commentViews.push(commentModel);
+                this.commentViews.push(commentView);
 
                 this.$el.parent().find(".comment-amount").text(this.comments.length);
 
@@ -287,7 +286,7 @@ define(["jquery",
              */
             cancel: function () {
                 this.$("textarea").val("");
-                this.cancelCallback();
+                this.trigger("cancel");
             }
         }, {
             /**

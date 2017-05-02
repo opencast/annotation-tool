@@ -123,6 +123,8 @@ define(["jquery",
                                 "getState",
                                 "handleEsc");
 
+                _.extend(this, Backbone.Events);
+
                 this.model = attr.annotation;
 
                 this.id = this.model.get("id");
@@ -131,9 +133,14 @@ define(["jquery",
 
                 this.commentContainer = new CommentsContainer({
                     id       : this.id,
-                    comments : this.model.get("comments"),
-                    cancel   : this.toggleCommentsState,
-                    edit     : function () {
+                    comments : this.model.get("comments")
+                });
+                this.commentContainer.on({
+                    cancel: function () {
+                        self.trigger("cancel", self);
+                        self.toggleCommentsState();
+                    },
+                    edit: function () {
                         self.trigger("edit", self);
                         self.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
                         self.render();
