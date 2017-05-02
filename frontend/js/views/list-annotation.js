@@ -17,7 +17,8 @@
 /**
  * A module representing the view for an item of the annotations list
  * @module views-list-annotation
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires player-adapter
  * @requires models-annotation
  * @requires models-user
@@ -27,6 +28,7 @@
  * @requires handlebars
  */
 define(["jquery",
+        "underscore",
         "prototypes/player_adapter",
         "models/annotation",
         "models/user",
@@ -38,7 +40,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, TmplPrint, Backbone) {
+function ($, _, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, TmplPrint, Backbone) {
 
     "use strict";
 

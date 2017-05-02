@@ -24,12 +24,13 @@
  * @requires backbone
  */
 define(["jquery",
+        "underscore",
         "views/comment",
         "templates/comments-container",
         "handlebars",
         "backbone"],
 
-    function ($, CommentView, Template, Handlebars, Backbone) {
+    function ($, _, CommentView, Template, Handlebars, Backbone) {
 
         "use strict";
 
