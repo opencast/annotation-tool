@@ -221,6 +221,22 @@ define(["jquery",
                 timelineFollowPlayhead: true,
 
                 /**
+                * Specify the attributes of the keyboard event that is supposed to trigger
+                * certain actions in the annotation tool
+                * @type {Object}
+                * @alias mdoule:annotations-tool-configuration.Configuration.keyBindings
+                * @see module:views-main.MainView#actions
+                */
+                keyBindings: {
+                    setActiveAnnotationDuration: {
+                        key: '.'
+                    },
+                    addComment: {
+                        key: "r"
+                    }
+                },
+
+                /**
                  * Get the external parameters related to video. The supported parameters are now the following:
                  *     - video_extid: Required! Same as the value returned by getVideoExtId
                  *     - title: The title of the video
