@@ -600,6 +600,7 @@ define(["jquery",
                     this.listView.getViewFromAnnotation(
                         annotationsTool.activeAnnotation.get("id")
                     ).setCommentState();
+                    annotationsTool.playerAdapter.pause();
                 }
             },
 
