@@ -128,6 +128,11 @@ define(["jquery",
                 return this.render();
             },
 
+            /**
+             * Set the state of this view.
+             * For possible values, see {@link module:views-comments-container.CommentsContainer.STATES}.
+             * @param {String} state The new state
+             */
             setState: function (state) {
                 this.currentState = state;
             },
@@ -304,6 +309,10 @@ define(["jquery",
                 this.cancelCallback();
             }
         }, {
+            /**
+             * Possible states for this view
+             * @alias module:views-comments-container.CommentsContainer.STATES
+             */
             STATES: {
                 READ : "read",
                 ADD  : "add-comment",
