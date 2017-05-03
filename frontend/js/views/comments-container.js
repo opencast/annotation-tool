@@ -111,11 +111,8 @@ define(["jquery",
                           "insert",
                           "onCancelComment",
                           "keyupInsertProxy",
-                          "resetViews",
-                          "toggleAddState");
+                          "resetViews");
 
-                // Add backbone events to the model
-                _.extend(this.comments, Backbone.Events);
 
                 this.listenTo(this.comments, "destroy", this.deleteView);
                 this.listenTo(this.comments, "remove", this.deleteView);
@@ -135,22 +132,6 @@ define(["jquery",
              */
             setState: function (state) {
                 this.currentState = state;
-            },
-
-            toggleAddState: function (state) {
-                if (!_.isUndefined(state)) {
-                    this.currentState = state;
-                } else {
-                    this.currentState = !this.addState;
-                }
-            },
-
-            toggleEditState: function (state) {
-                if (!_.isUndefined(state)) {
-                    this.addState = state;
-                } else {
-                    this.addState = !this.addState;
-                }
             },
 
             /**
