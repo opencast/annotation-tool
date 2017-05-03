@@ -40,18 +40,18 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-function ($, _, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, TmplPrint, Backbone) {
+    function ($, _, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, TmplPrint, Backbone) {
 
-    "use strict";
+        "use strict";
 
-    /**
-     * @constructor
-     * @see {@link http://www.backbonejs.org/#View}
-     * @augments module:Backbone.View
-     * @memberOf module:views-list-annotation
-     * @alias module:views-list-annotation.ListAnnotation
-     */
-    var ListAnnotation = Backbone.View.extend({
+        /**
+        * @constructor
+        * @see {@link http://www.backbonejs.org/#View}
+        * @augments module:Backbone.View
+        * @memberOf module:views-list-annotation
+        * @alias module:views-list-annotation.ListAnnotation
+        */
+        var ListAnnotation = Backbone.View.extend({
 
             /**
              * Tag name from the view element
