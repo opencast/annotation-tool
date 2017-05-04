@@ -31,7 +31,7 @@
             <span class="icon-bar"></span>
           </a>
           <a class="brand" href="#">Annotating Academic video - <%= version %> </a>
-          
+
           <ul class="nav pull-right">
               <li class="dropdown" id="view-options">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
@@ -44,17 +44,17 @@
                   <li><a id="opt-view-annotate" class="opt-layout checked" href="#"><i class="check icon-check"></i> Annotate view</a></li>
                   <li><a id="opt-view-list" class="opt-layout checked" href="#"><i class="check icon-check"></i> List view</a></li>
                   <li role="presentation" class="divider"></li>
-                  
+
                   <span id="menu-plugins">
                       <!-- Place to add the menu elements from the plugins -->
                   </span>
-                  
+
                   <li role="presentation" class="divider"></li>
                   <li class="menu-category">Annotations visibility</li>
                   <li><a class="opt-tracks-mine" href="#"><i class="check icon-check"></i> My annotations only</a></li>
                   <li><a class="opt-tracks-select" href="#"><i class="check icon-check"></i> Other public annotations...</a></li>
                   <li><a class="opt-tracks-public" href="#"><i class="check icon-check"></i> All public annotations</a></li>
-                  
+
 
                 </ul>
               </li>
@@ -66,8 +66,8 @@
       </div>
     </div>
 
-    <div id="main-container" class="container-fluid">		
-    
+    <div id="main-container" class="container-fluid">
+
     <!-- Loading box -->
     <div class="hero-unit" id="loading">
         <h1>Loading</h1>
@@ -78,25 +78,25 @@
             </div>
         </p>
     </div>
-    
 
-    
+
+
     <div class="row-fluid">
-        <div class="span6" id="left-column"> 
+        <div class="span6" id="left-column">
 
             <div id="title-container">
                 <div id="video-title"></div>
                 <div id="video-owner"></div>
                 <div id="video-date"></div>
             </div>
-        
+
             <!-- container for the video -->
             <div id="video-container" class="window" style="display:none">
                 <video id="example" style="width:100%" controls >
                     <%= sources %>
                 </video>
             </div>
-            
+
             <!-- container for the timeline-->
             <div>
                 <div class="window" id="timeline-container" style="display:none">
@@ -108,7 +108,7 @@
                         </div>
                     </div>
                     <div id="timeline"></div>
-                    
+
                     <div id="timeline-custom-navigation">
                         <div class="timeline-bottom-controls">
                           <div class="btn-group dropup">
@@ -136,9 +136,9 @@
             </div>
 
         </div>
-        
+
         <div class="span6" id="right-column">
-        
+
             <!-- container for the annotations insertion box -->
             <div>
                 <div class="window expanded" id="annotate-container" style="display:none">
@@ -154,10 +154,10 @@
                           </div>
                         </div>
                     </div>
-    
+
                     <div class="control-group" id="annotate-form">
                         <div class="no-track">Select a track to start annotating</div>
-                        
+
                         <div id="input-container" class="insert-fields">
                             <textarea id="new-annotation" placeholder="Write a free text annotation. Use &raquo;shift + return&laquo; keys to create a new line." rows="3" title="Use &raquo;shift + return&laquo; keys to create a new line."></textarea>
                             <div class="controls stop-fields">
@@ -165,36 +165,36 @@
                                     <input id="pause-video" type="checkbox">Pause video during writing
                                 </label>
                             </div>
-                            <button id="insert" type="button" class="btn">Insert</button>                 
+                            <button id="insert" type="button" class="btn">Insert</button>
                         </div>
-    
-    
-                        
+
+
+
                         <div id="categories">
-                            
+
                             <ul class="nav nav-tabs" id="label-tabs-buttons">
                                   <label class="checkbox inline" id="editSwitch">
-                                  <input type="checkbox" value="option1"> Edit mode    
+                                  <input type="checkbox" value="option1"> Edit mode
                               </label>
                             </ul>
-                             
+
                             <div class="tab-content" id="label-tabs-contents">
                             </div>
-                                                              
+
                         </div>
-                    
+
                     </div>
-    
+
                 </div>
             </div>
-        
+
             <!-- container for the annotations list -->
             <div>
                 <div class="window expanded" id="list-container" style="display:none" data-spy="scroll">
                     <div class="navbar">
                         <div class="navbar-inner">
                           <div class="container">
-                         
+
                             <ul class="nav pull-right">
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Items visiblity<b class="caret"></b></a>
@@ -213,10 +213,10 @@
                     <div id="content-list-scroll">
                         <div id="content-list"></div>
                     </div>
-                    
+
                 </div>
             </div>
-            
+
         </div>
 
       </div>
