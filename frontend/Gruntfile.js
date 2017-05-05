@@ -7,9 +7,6 @@ module.exports = function (grunt) {
         /** Load informations from package.json */
         pkg: grunt.file.readJSON('package.json'),
 
-        /** JSHint properties */
-        jshintProperties: grunt.file.readJSON('build/jshint.json'),
-
         /** The current target file for the watch tasks */
         currentWatchFile: '',
 
@@ -66,8 +63,11 @@ module.exports = function (grunt) {
         currentProfile: { sources: 'test' },
 
         jshint: {
-            all     : '<%= currentWatchFile %>',
-            options : '<%= jshintProperties %>'
+            options: {
+                jshintrc: '.jshintrc'
+            },
+            all    : ['Gruntfile.js', '<%= srcPath.js %>'],
+            watch  : '<%= currentWatchFile %>'
         },
 
         /** Task to watch src files and process them */
@@ -78,7 +78,7 @@ module.exports = function (grunt) {
             // Watch Javascript files
             js: {
                 files: ['<%= srcPath.js %>', '<%= srcPath.test_js %>'],
-                tasks: ['jshint:all', 'copy:target']
+                tasks: ['jshint:watch', 'copy:target']
             },
             // Watch Templates files
             templates: {
@@ -447,7 +447,7 @@ module.exports = function (grunt) {
      *  Listerers
      ==================================================*/
 
-    // on watch events configure jshint:all to only run on changed file
+    // on watch events configure jshint:watch to only run on changed file
     grunt.event.on('watch', function (action, filepath, target) {
 
         // Set the current file processed for the different tasks
@@ -463,7 +463,7 @@ module.exports = function (grunt) {
 
             switch (ext) {
                 case 'js':
-                    grunt.task.run('jshint');
+                    grunt.task.run('jshint:watch');
                     grunt.task.run('blanket_qunit');
                     break;
                 case 'less':
