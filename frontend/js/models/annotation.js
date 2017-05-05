@@ -68,7 +68,7 @@ define(["jquery",
                 // Check if the category has been initialized
                 if (!attr.id) {
                     // If local storage, we set the cid as id
-                    this.toCreate = true;
+                    // TODO(julian) Do you, though?
                 }
 
                 if (attr.comments && _.isArray(attr.comments)) {
@@ -221,7 +221,6 @@ define(["jquery",
                     if (this.get("id") !== attr.id) {
                         this.id = attr.id;
                         this.attributes.id = attr.id;
-                        this.toCreate = false;
                         this.trigger("ready", this);
                         this.setUrl();
                     }

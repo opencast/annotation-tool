@@ -133,17 +133,6 @@ define(["jquery",
                 },
 
                 /**
-                 * Fetch collection with paging parameters
-                 * @param  {Number} page    The index the results should start with.
-                 * @param  {Number} limit   The maximal amount of results expected.
-                 * @param  {object} options The same options for the {@link http://www.backbonejs.org/#Collection-fetch} method.
-                 */
-                fetchPaging: function (page, limit, options) {
-                    options.paging = "?" + $.param({page: page, limit: limit});
-                    this.fetch(options);
-                },
-
-                /**
                  * Shows only the tracks of the current user
                  * @alias module:collections-tracks.Tracks#showMyTracks
                  */

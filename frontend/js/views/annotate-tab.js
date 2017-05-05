@@ -330,12 +330,10 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#addCategory
              * @param {Category}  category The category to add
              * @param {Categories} [collection]    The collection, if the category is already part of one
-             * @param {object} [options] Options to define if the category should be filtered or not (skipTests) or if the category is a tempate (isTemplate).
+             * @param {object} [options] Options to define if the category should be filtered or not (skipTests)
              */
             addCategory: function (category, collection, options) {
-                var newCategory = category,
-                    categoryView,
-                    isPresent = false,
+                var categoryView,
                     testFilter = function () {
                         return _.every(this.filter, function (value, attribute) {
                             if (category.has(attribute) && category.get(attribute) === value) {
@@ -352,27 +350,16 @@ define(["jquery",
                     }
                 }
 
-
-                if (options && options.isTemplate) { // category to add is a template
-                    newCategory = this.categories.addCopyFromTemplate(category);
-                } else if (!this.categories.get(category.get("id"))) {// Add this category if new
-                    this.categories.add(newCategory, {silent: true});
-                } else {
-                    _.find(this.categoryViews, function (catView) {
-                        if (category === catView.model) {
-                            isPresent = true;
-                            return true;
-                        }
-                    }, this);
-                    if (isPresent) {
-                        return;
-                    }
+                if (!this.categories.get(category.id)) {// Add this category if new
+                    this.categories.add(category, {silent: true});
+                } else if (_.contains(_.pluck(this.categoryViews, "model"), category)) {
+                    return;
                 }
                 // Save new category
                 // newCategory.save({silent: true});
 
                 categoryView = new CategoryView({
-                    category : newCategory,
+                    category : category,
                     editModus: this.editModus,
                     roles    : this.roles
                 });

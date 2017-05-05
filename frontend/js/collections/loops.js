@@ -17,17 +17,19 @@
 /**
  * A module representing an loop collection
  * @module collections-loops
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires models-loop
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "models/loop",
         "backbone",
         "localstorage"],
 
-    function ($, Loop, Backbone) {
+    function ($, _, Loop, Backbone) {
 
         "use strict";
 
@@ -39,9 +41,6 @@ define(["jquery",
          * @alias module:collections-loops.Loops
          */
         var Loops = Backbone.Collection.extend({
-
-            TYPE: "Loops",
-
             /**
              * Model of the instances contained in this collection
              * @alias module:collections-loops.Loops#initialize
@@ -55,13 +54,8 @@ define(["jquery",
              */
             localStorage: new Backbone.LocalStorage("Loops"),
 
-            /**
-             * constructor
-             * @alias module:collections-loops.Loops#initialize
-             */
-            initialize: function (models, video) {
-                annotationsTool.localStorageOnlyModel.push(this.TYPE);
-            },
+            /** Only save this collection locally and don't sync it with the server */
+            localStorageOnly: true,
 
             /**
              * Parse the given data

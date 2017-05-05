@@ -16,15 +16,17 @@
 /**
  * A module representing the loop model
  * @module models-loop
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "backbone",
         "localstorage"],
 
-    function ($, Backbone) {
+    function ($, _, Backbone) {
 
         "use strict";
 
@@ -36,9 +38,6 @@ define(["jquery",
          * @alias module:models-loop.Loop
          */
         var Loop = Backbone.Model.extend({
-
-            TYPE: "Loop",
-
             /**
              * Constructor
              * @alias module:models-loop.Loop#initialize
@@ -49,10 +48,11 @@ define(["jquery",
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 
-                annotationsTool.localStorageOnlyModel.push(this.TYPE);
-
                 this.set(attr);
             },
+
+            /** Only save this model locally and don't sync it with the server */
+            localStorageOnly: true,
 
             /**
              * Validate the attribute list passed to the model

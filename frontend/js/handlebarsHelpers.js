@@ -1,5 +1,5 @@
 define(["handlebars", "roles"], function (Handlebars, ROLES) {
-    
+
     /**
      * Handlebars helper to check if the annotations-tool is in private-only mode.
      * @alias module:Handlebars#isPrivateOnly

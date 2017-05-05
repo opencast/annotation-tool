@@ -18,18 +18,20 @@
  * A module representing the category model
  * @module models-category
  * @requires jQuery
+ * @requires underscore
  * @requires collections-labels
  * @requires ACCESS
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "collections/labels",
         "access",
         "backbone",
         "localstorage"],
 
-    function ($, Labels, ACCESS, Backbone) {
+    function ($, _, Labels, ACCESS, Backbone) {
 
         "use strict";
 
@@ -78,8 +80,6 @@ define(["jquery",
                     if (window.annotationsTool.localStorage) {
                         this.attributes.id = this.cid;
                     }
-
-                    this.toCreate = true;
                 }
 
                 // If localStorage used, we have to save the video at each change on the children
@@ -280,6 +280,27 @@ define(["jquery",
             },
 
             /**
+             * Save this category to the backend with the given attributes.
+             * We override this to control the serialization of the tags,
+             * Which need to be stringified for the communication with the server.
+             * @alias module:models-category.Category#save
+             */
+            save: function (key, value, options) {
+                var attributes;
+                // Imitate Backbones calling convention negotiation dance
+                if (key == null || _.isObject(key)) {
+                    attributes = key;
+                    options = value;
+                } else if (key != null) {
+                    (attributes = {})[key] = value;
+                }
+
+                options = _.defaults({ stringifySub: true }, options);
+
+                return Backbone.Model.prototype.save.call(this, attributes, options);
+            },
+
+            /**
              * Change category color
              * @alias module:models-category.Category#setColor
              * @param  {string} color the new color
@@ -304,13 +325,14 @@ define(["jquery",
             /**
              * Override the default toJSON function to ensure complete JSONing.
              * @alias module:models-category.Category#toJSON
+             * @param {Object} options The options to control the "JSONification" of this collection
              * @param {Boolean} stringifySub defines if the sub-object should be stringify
              * @return {JSON} JSON representation of the instance
              */
-            toJSON: function (stringifySub) {
-                var json = Backbone.Model.prototype.toJSON.call(this);
-                
-                if (stringifySub) {
+            toJSON: function (options) {
+                var json = Backbone.Model.prototype.toJSON.call(this, options);
+
+                if (options && options.stringifySub) {
                     if (json.tags) {
                         json.tags = JSON.stringify(json.tags);
                     }

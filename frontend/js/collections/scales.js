@@ -58,7 +58,7 @@ define(["jquery",
              * @alias module:collections-scales.Scales#initialize
              */
             initialize: function (models, video) {
-                _.bindAll(this, "setUrl", "addCopyFromTemplate", "toExportJSON");
+                _.bindAll(this, "setUrl", "toExportJSON");
                 this.setUrl(video);
             },
 
@@ -114,33 +114,6 @@ define(["jquery",
                 });
 
                 return scalesForExport;
-            },
-
-            /**
-             * Add a copy from the given template to this collection
-             * @alias module:collections-scales.Scales#addCopyFromTemplate
-             * @param {Scale} element template to copy
-             * @return {Scale} A copy of the given scale
-             */
-            addCopyFromTemplate: function (element) {
-                // Test if the given scale is really a template
-                if (!this.isTemplate && !_.isArray(element) && element.id) {
-                    // Copy the element and remove useless parameters
-                    var copyJSON = element.toJSON();
-                    delete copyJSON.id;
-                    delete copyJSON.created_at;
-                    delete copyJSON.created_by;
-                    delete copyJSON.updated_at;
-                    delete copyJSON.updated_by;
-                    delete copyJSON.deleted_by;
-                    delete copyJSON.deleted_at;
-                    delete copyJSON.labels;
-
-                    // add the copy url parameter for the backend
-                    copyJSON.copyUrl = "?scale_id=" + element.id;
-                    return this.create(copyJSON);
-                }
-                return null;
             }
         });
         return Scales;
