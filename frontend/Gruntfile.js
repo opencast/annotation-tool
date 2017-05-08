@@ -120,7 +120,7 @@ module.exports = function (grunt) {
                     strictImports: true,
                     compress: true,
                     imports: {
-                        less: ['style/bootstrap/less/mixins.less', 'style/bootstrap/variables.less']
+                        reference: ['style/bootstrap/less/mixins.less', 'style/bootstrap/variables.less']
                     }
                 },
                 files: {
