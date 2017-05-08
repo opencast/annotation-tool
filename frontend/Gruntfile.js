@@ -93,7 +93,7 @@ module.exports = function (grunt) {
             // Watch LESS files
             less: {
                 files: ['<%= srcPath.less %>'],
-                tasks: ['less:annotation', 'copy:style']
+                tasks: ['less:all', 'copy:style']
             },
             // Watch the LESS, Javascript, Templates and HTML at the same times
             // Use it for single core processor. It could stop working with an important number of files
@@ -113,12 +113,11 @@ module.exports = function (grunt) {
 
         /** Compile the less files into a CSS file */
         less: {
-            annotation: {
+            all: {
                 options: {
                     paths: ['style/bootstrap/css', 'style/annotations', 'style/timeline', 'style/bootstrap/less'],
                     syncImport: true,
                     strictImports: true,
-                    concat: true,
                     compress: true,
                     imports: {
                         less: ['style/bootstrap/less/mixins.less', 'style/bootstrap/variables.less']
@@ -389,13 +388,13 @@ module.exports = function (grunt) {
      ==================================================*/
 
     // Default task
-    grunt.registerTask('default', ['jshint:all', 'less:annotation', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config']);
-    //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'handlebars:temp', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less:annotation', 'copy:integration', 'processhtml:dev', 'copy:config']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less:annotation', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('default', ['jshint:all', 'less:all', 'copy:local-all', 'copy:local-index']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less:all', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:all', 'copy:demo', 'processhtml:dev', 'copy:config']);
+    //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:all', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'handlebars:temp', 'less:all', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less:all', 'copy:integration', 'processhtml:dev', 'copy:config']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less:all', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
@@ -467,7 +466,7 @@ module.exports = function (grunt) {
                     grunt.task.run('blanket_qunit');
                     break;
                 case 'less':
-                    grunt.task.run('less:annotation');
+                    grunt.task.run('less:all');
                     grunt.task.run('copy:style');
                     break;
             }
