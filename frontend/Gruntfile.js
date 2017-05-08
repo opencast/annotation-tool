@@ -119,6 +119,7 @@ module.exports = function (grunt) {
                     syncImport: true,
                     strictImports: true,
                     compress: true,
+                    sourceMap: true,
                     imports: {
                         reference: ['style/bootstrap/less/mixins.less', 'style/bootstrap/variables.less']
                     }
