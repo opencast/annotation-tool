@@ -303,26 +303,10 @@ define(["jquery",
              * @param {Categories} categories list of categories
              */
             addCategories: function (categories, filter) {
-                var filteredCategories;
-
-                if (categories.models) {
-                    if (filter) {
-                        filteredCategories = categories.where(filter);
-                    } else {
-                        filteredCategories = categories.models;
+                categories.each(function (category) {
+                    if (filter(category)) {
+                        this.addCategory(category, categories, {skipTests: true});
                     }
-                } else if (_.isArray(categories)) {
-                    if (filter) {
-                        _.where(categories, filter);
-                    } else {
-                        filteredCategories = categories;
-                    }
-                } else {
-                    return;
-                }
-
-                _.each(filteredCategories, function (category) {
-                    this.addCategory(category, categories, {skipTests: true});
                 }, this);
             },
 
@@ -338,12 +322,8 @@ define(["jquery",
 
                 options = _.extend({}, options);
 
-                if (!options.skipTests) {
-                    if (_.some(this.filter, function (value, attribute) {
-                        return category.get(attribute) !== value;
-                    })) {
-                        return;
-                    }
+                if (!options.skipTests && !this.filter(category)) {
+                    return;
                 }
 
                 if (!this.categories.get(category.id)) {// Add this category if new
@@ -565,7 +545,7 @@ define(["jquery",
                     return;
                 }
 
-                _.each(this.categories.where(this.filter), function (category) {
+                _.each(this.categories.filter(this.filter), function (category) {
                     tmpScaleId = category.attributes.scale_id;
 
                     if (tmpScaleId && !tmpScales[tmpScaleId]) {
