@@ -16,13 +16,15 @@
 /**
  * A module representing the loop modal
  * @module views-loop
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires Backbone
  * @requires templates/loop-modal.tmpl
  * @requires ROLES
  * @requires handlebars
  */
 define(["jquery",
+        "underscore",
         "collections/loops",
         "prototypes/player_adapter",
         "backbone",
@@ -30,7 +32,7 @@ define(["jquery",
         "handlebars",
         "slider"],
 
-        function ($, Loops, PlayerAdapter, Backbone, LoopTemplate, Handlebars) {
+        function ($, _, Loops, PlayerAdapter, Backbone, LoopTemplate, Handlebars) {
 
             "use strict";
 
