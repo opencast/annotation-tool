@@ -197,7 +197,6 @@ define(["jquery",
                     this.freeTextElement = this.$el.find("#input-container");
                     this.categoriesElement = this.$el.find("#categories");
 
-                    
                     // Print selected track
                     this.trackDIV = this.$el.find("div.currentTrack span.content");
                     this.changeTrack(annotationsTool.selectedTrack);
