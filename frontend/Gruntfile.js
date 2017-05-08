@@ -63,7 +63,7 @@ module.exports = function (grunt) {
             }
         },
 
-        currentProfile: {sources: 'test'},
+        currentProfile: { sources: 'test' },
 
         jshint: {
             all     : '<%= currentWatchFile %>',
