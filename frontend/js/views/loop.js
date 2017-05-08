@@ -383,10 +383,9 @@ define(["jquery",
              * @alias module:views-loop.Loop#createLoops
              */
             createLoops: function (loopLength) {
-                var duration    = this.playerAdapter.getDuration(),
-                    currentTime = this.playerAdapter.getCurrentTime(),
+                var duration  = this.playerAdapter.getDuration(),
+                    startTime = 0,
                     endTime,
-                    startTime   = currentTime % loopLength,
                     loop;
 
                 if (loopLength >= duration) {
@@ -397,13 +396,6 @@ define(["jquery",
                 this.resetLoops();
                 this.currentLoopLength = loopLength;
                 this.currentLoop = undefined;
-
-                if (startTime > 0) {
-                    this.addTimelineItem(this.loops.create({
-                        start: 0,
-                        end  : startTime
-                    }));
-                }
 
                 while (startTime < duration) {
 
