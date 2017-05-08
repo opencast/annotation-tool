@@ -16,19 +16,21 @@
 /**
  * A module representing the annotation model
  * @module models-annotation
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires collections-comments
  * @requires ACCESS
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "collections/comments",
         "access",
         "backbone",
         "localstorage"],
 
-    function ($, Comments, ACCESS, Backbone) {
+    function ($, _, Comments, ACCESS, Backbone) {
 
         "use strict";
 
