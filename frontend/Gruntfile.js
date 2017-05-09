@@ -124,9 +124,8 @@ module.exports = function (grunt) {
                         reference: ['style/bootstrap/less/mixins.less', 'style/bootstrap/variables.less']
                     }
                 },
-                files: {
-                    'style/style.css': 'style/style.less'
-                }
+                src: 'style/style.less',
+                dest: '<%= currentProfile.target %>/style/style.css'
             }
         },
 
