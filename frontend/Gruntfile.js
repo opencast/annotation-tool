@@ -117,7 +117,6 @@ module.exports = function (grunt) {
                 options: {
                     paths: ['style/annotations', 'style/timeline', 'style/bootstrap/less'],
                     syncImport: true,
-                    strictImports: true,
                     compress: true,
                     sourceMap: true,
                     imports: {
