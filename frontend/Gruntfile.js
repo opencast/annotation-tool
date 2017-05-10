@@ -115,13 +115,13 @@ module.exports = function (grunt) {
         less: {
             all: {
                 options: {
-                    paths: ['style/annotations', 'style/timeline', 'style/bootstrap/less'],
+                    paths: 'style',
                     version: 'node_modules/less',
                     syncImport: true,
                     compress: true,
                     sourceMap: true,
                     imports: {
-                        reference: ['style/bootstrap/less/mixins.less', 'style/bootstrap/variables.less']
+                        reference: ['bootstrap/mixins.less', 'bootstrap/variables.less', 'annotations/variables.less']
                     }
                 },
                 src: 'style/style.less',
