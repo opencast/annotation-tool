@@ -77,10 +77,6 @@ define(["jquery",
                     delete attr.comments;
                 }
 
-                if (_.isUndefined(attr.access) && !_.isUndefined(attr.access)) {
-                    attr.access = this.collection.access;
-                }
-
                 // If localStorage used, we have to save the video at each change on the children
                 if (window.annotationsTool.localStorage) {
                     if (!attr.created_by) {
