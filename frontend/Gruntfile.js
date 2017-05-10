@@ -93,7 +93,7 @@ module.exports = function (grunt) {
             // Watch LESS files
             less: {
                 files: ['<%= srcPath.less %>'],
-                tasks: ['less:all', 'copy:style']
+                tasks: ['less', 'copy:style']
             },
             // Watch the LESS, Javascript, Templates and HTML at the same times
             // Use it for single core processor. It could stop working with an important number of files
@@ -113,17 +113,17 @@ module.exports = function (grunt) {
 
         /** Compile the less files into a CSS file */
         less: {
-            all: {
-                options: {
-                    paths: 'style',
-                    version: 'node_modules/less',
-                    syncImport: true,
-                    compress: true,
-                    sourceMap: true,
-                    imports: {
-                        reference: ['bootstrap/mixins.less', 'bootstrap/variables.less', 'annotations/variables.less']
-                    }
-                },
+            options: {
+                paths: 'style',
+                version: 'node_modules/less',
+                syncImport: true,
+                compress: true,
+                sourceMap: true,
+                imports: {
+                    reference: ['bootstrap/mixins.less', 'bootstrap/variables.less', 'annotations/variables.less']
+                }
+            },
+            files: {
                 src: 'style/style.less',
                 dest: '<%= currentProfile.target %>/style/style.css'
             }
@@ -388,13 +388,13 @@ module.exports = function (grunt) {
      ==================================================*/
 
     // Default task
-    grunt.registerTask('default', ['jshint:all', 'less:all', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less:all', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:all', 'copy:demo', 'processhtml:dev', 'copy:config']);
-    //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:all', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'handlebars:temp', 'less:all', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less:all', 'copy:integration', 'processhtml:dev', 'copy:config']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less:all', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('default', ['jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config']);
+    //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
@@ -466,7 +466,7 @@ module.exports = function (grunt) {
                     grunt.task.run('blanket_qunit');
                     break;
                 case 'less':
-                    grunt.task.run('less:all');
+                    grunt.task.run('less');
                     grunt.task.run('copy:style');
                     break;
             }
