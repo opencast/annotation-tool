@@ -74,14 +74,6 @@ define(["jquery",
                     throw "\"name\" attribute is required";
                 }
 
-                // Check if the track has been initialized
-                if (!attr.id) {
-                    // If local storage, we set the cid as id
-                    if (window.annotationsTool.localStorage) {
-                        this.attributes.id = this.cid;
-                    }
-                }
-
                 // If localStorage used, we have to save the video at each change on the children
                 if (window.annotationsTool.localStorage) {
                     if (!attr.created_by) {

@@ -70,15 +70,6 @@ define(["jquery",
                 attr.visible = false;
                 attr.annotationsLoaded = false;
 
-
-                // Check if the track has been initialized
-                if (!attr.id) {
-                    // If local storage, we set the cid as id
-                    if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
-                    }
-                }
-
                 if (attr.annotations && _.isArray(attr.annotations)) {
                     this.set({annotations: new Annotations(attr.annotations, this)});
                 } else {

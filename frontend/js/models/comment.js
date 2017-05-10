@@ -58,14 +58,6 @@ define(["jquery",
                     throw "'text' attribute is required";
                 }
 
-                // Check if the comment has been initialized
-                if (!attr.id) {
-                    // If local storage, we set the cid as id
-                    if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
-                    }
-                }
-
                 if (window.annotationsTool.localStorage) {
                     if (!attr.created_by) {
                         attr.created_by = annotationsTool.user.get("id");

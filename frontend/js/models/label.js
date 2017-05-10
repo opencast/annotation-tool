@@ -69,14 +69,6 @@ define(["jquery",
 
                 attr.settings = this.parseSettings(attr.settings);
 
-                // Check if the track has been initialized
-                if (!attr.id) {
-                    // If local storage, we set the cid as id
-                    if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
-                    }
-                }
-
                 if (attr.category && attr.category.attributes) {
                     attr.category = attr.category.toJSON();
                 }

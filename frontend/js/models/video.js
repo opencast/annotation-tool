@@ -62,14 +62,6 @@ define(["jquery",
                         "getAnnotation",
                         "loadTracks");
 
-                // Check if the video has been initialized
-                if (!attr.id) {
-                    // If local storage, we set the cid as id
-                    if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
-                    }
-                }
-
                 // Check if tracks are given
                 if (attr.tracks && _.isArray(attr.tracks)) {
                     this.set({tracks: new Tracks(attr.tracks, this)});

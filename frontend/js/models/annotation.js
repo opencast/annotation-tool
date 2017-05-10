@@ -67,12 +67,6 @@ define(["jquery",
                     throw "\"start\" attribute is required";
                 }
 
-                // Check if the category has been initialized
-                if (!attr.id) {
-                    // If local storage, we set the cid as id
-                    // TODO(julian) Do you, though?
-                }
-
                 if (attr.comments && _.isArray(attr.comments)) {
                     this.attributes.comments = new Comments(attr.comments, this);
                     delete attr.comments;

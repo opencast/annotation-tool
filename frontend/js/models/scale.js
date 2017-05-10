@@ -95,14 +95,6 @@ define(["jquery",
                     attr.isMine = false;
                 }
 
-                // Check if the track has been initialized
-                if (!attr.id) {
-                    // If local storage, we set the cid as id
-                    if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
-                    }
-                }
-
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
