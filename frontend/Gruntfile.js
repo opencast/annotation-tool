@@ -118,10 +118,7 @@ module.exports = function (grunt) {
                 version: 'node_modules/less',
                 syncImport: true,
                 compress: true,
-                sourceMap: true,
-                imports: {
-                    reference: ['bootstrap/mixins.less', 'bootstrap/variables.less', 'annotations/variables.less']
-                }
+                sourceMap: true
             },
             files: {
                 src: 'style/style.less',
