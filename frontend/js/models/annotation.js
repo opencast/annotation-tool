@@ -77,7 +77,7 @@ define(["jquery",
                     this.attributes.comments = new Comments(attr.comments, this);
                     delete attr.comments;
                 } else if (!attr.comments) {
-                    this.attributes.comments  = new Comments([], this);
+                    this.attributes.comments = new Comments([], this);
                 } else {
                     this.attributes.comments = attr.comments;
                     delete attr.comments;
