@@ -29,21 +29,19 @@ define(["underscore", "backbone", "localstorage"], function (_, Backbone) {
      * @alias module:annotation-sync.annotationSync
      */
     var annotationSync = function (method, model, options) {
-        if (annotationsTool.localStorage) {
+        if (annotationsTool.localStorage || model.localStorageOnly) {
             return Backbone.localSync.call(this, method, model, options);
         }
 
-        options = _.extend({
-            headers: {},
-            processData: true
-        }, options);
+        options = _.extend({ headers: {}}, options);
 
-        if (model.localStorageOnly) {
-            return Backbone.localSync.call(this, method, model, options);
-        }
+        // The backend expects `application/x-www-form-urlencoded data
+        // with anything nested deeper than one level transformed to a JSON string
+        options.processData = true;
 
         options.data = options.attrs || model.toJSON(options);
 
+        // Path along authentication data
         if (annotationsTool.user) {
             options.headers["X-ANNOTATIONS-USER-ID"] = annotationsTool.user.id;
         }
@@ -52,6 +50,7 @@ define(["underscore", "backbone", "localstorage"], function (_, Backbone) {
             options.headers["X-ANNOTATIONS-USER-AUTH-TOKEN"] = authToken;
         }
 
+        // Some models (marked with `mPOST`) need to always be `PUT`, i.e. never be `POST`ed
         if (model.noPOST && method === "create") {
             method = "update";
         }
