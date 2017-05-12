@@ -40,7 +40,7 @@ define(["jquery",
         "roles",
         "access",
         "backbone",
-        "handlebarsHelpers"]
+        "handlebarsHelpers"],
 
     function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
 
