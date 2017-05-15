@@ -7,9 +7,6 @@ module.exports = function (grunt) {
         /** Load informations from package.json */
         pkg: grunt.file.readJSON('package.json'),
 
-        /** JSHint properties */
-        jshintProperties: grunt.file.readJSON('build/jshint.json'),
-
         /** The current target file for the watch tasks */
         currentWatchFile: '',
 
@@ -63,11 +60,14 @@ module.exports = function (grunt) {
             }
         },
 
-        currentProfile: {sources: 'test'},
+        currentProfile: { sources: 'test' },
 
         jshint: {
-            all     : '<%= currentWatchFile %>',
-            options : '<%= jshintProperties %>'
+            options: {
+                jshintrc: '.jshintrc'
+            },
+            all    : ['Gruntfile.js', '<%= srcPath.js %>'],
+            watch  : '<%= currentWatchFile %>'
         },
 
         /** Task to watch src files and process them */
@@ -78,7 +78,7 @@ module.exports = function (grunt) {
             // Watch Javascript files
             js: {
                 files: ['<%= srcPath.js %>', '<%= srcPath.test_js %>'],
-                tasks: ['jshint:all', 'copy:target']
+                tasks: ['jshint:watch', 'copy:target']
             },
             // Watch Templates files
             templates: {
@@ -93,7 +93,7 @@ module.exports = function (grunt) {
             // Watch LESS files
             less: {
                 files: ['<%= srcPath.less %>'],
-                tasks: ['less:annotation', 'copy:style']
+                tasks: ['less', 'copy:style']
             },
             // Watch the LESS, Javascript, Templates and HTML at the same times
             // Use it for single core processor. It could stop working with an important number of files
@@ -113,20 +113,16 @@ module.exports = function (grunt) {
 
         /** Compile the less files into a CSS file */
         less: {
-            annotation: {
-                options: {
-                    paths: ['style/bootstrap/css', 'style/annotations', 'style/timeline', 'style/bootstrap/less'],
-                    syncImport: true,
-                    strictImports: true,
-                    concat: true,
-                    compress: true,
-                    imports: {
-                        less: ['style/bootstrap/less/mixins.less', 'style/bootstrap/variables.less']
-                    }
-                },
-                files: {
-                    'style/style.css': 'style/style.less'
-                }
+            options: {
+                paths: 'style',
+                version: 'node_modules/less',
+                syncImport: true,
+                compress: true,
+                sourceMap: true
+            },
+            files: {
+                src: 'style/style.less',
+                dest: '<%= currentProfile.target %>/style/style.css'
             }
         },
 
@@ -173,7 +169,7 @@ module.exports = function (grunt) {
                 src: 'templates/*.tmpl',
                 dest: 'target'
             }]
-          },
+          }
         },
 
         /** Copy .. */
@@ -194,7 +190,7 @@ module.exports = function (grunt) {
                     flatten : false,
                     expand  : true,
                     src     : ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
-                    dest    : '<%= currentProfile.target %>',
+                    dest    : '<%= currentProfile.target %>'
                 }]
             },
             // ... the stylesheet locally
@@ -220,7 +216,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
-                    dest: '<%= currentProfile.target %>',
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             // ... all the files for an optimized build
@@ -229,7 +225,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'js/libs/**/*'],
-                    dest: '<%= currentProfile.target %>',
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             // ... all the files for the demo
@@ -238,7 +234,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png',  'resources/*', 'style/**/*.css', 'tests/**/*'],
-                    dest: '<%= currentProfile.target %>',
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             'integration': {
@@ -246,7 +242,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
-                    dest: '<%= currentProfile.target %>',
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             // ... the index locally
@@ -369,7 +365,6 @@ module.exports = function (grunt) {
         }
     });
 
-    // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -390,13 +385,13 @@ module.exports = function (grunt) {
      ==================================================*/
 
     // Default task
-    grunt.registerTask('default', ['jshint:all', 'less:annotation', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config']);
-    //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'handlebars:temp', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less:annotation', 'copy:integration', 'processhtml:dev', 'copy:config']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less:annotation', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('default', ['jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config']);
+    //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
@@ -448,7 +443,7 @@ module.exports = function (grunt) {
      *  Listerers
      ==================================================*/
 
-    // on watch events configure jshint:all to only run on changed file
+    // on watch events configure jshint:watch to only run on changed file
     grunt.event.on('watch', function (action, filepath, target) {
 
         // Set the current file processed for the different tasks
@@ -464,11 +459,11 @@ module.exports = function (grunt) {
 
             switch (ext) {
                 case 'js':
-                    grunt.task.run('jshint');
+                    grunt.task.run('jshint:watch');
                     grunt.task.run('blanket_qunit');
                     break;
                 case 'less':
-                    grunt.task.run('less:annotation');
+                    grunt.task.run('less');
                     grunt.task.run('copy:style');
                     break;
             }

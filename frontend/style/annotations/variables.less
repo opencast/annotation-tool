@@ -50,7 +50,7 @@
 @baseFontSize:          12px;
 @baseLineHeight:        16px;
 @baseFontFamily:        Verdana, sans-serif;
-@bodyBackground: 				#636363;
+@bodyBackground:        #636363;
 
 
 // Buttons
@@ -82,9 +82,11 @@
 
 
 .iconHover(@color1: fade(@blue,30%),@color2: fade(@blue,70%),@cursor: pointer,@radius: 3px) {
-	background-color: @color1;
-	box-shadow: 0 0 3px @color2 inset;
-	border-radius: @radius;
+  background-color: @color1;
+  box-shadow: 0 0 3px @color2 inset;
+  border-radius: @radius;
   cursor: @cursor;
-}	
+}
 
+// This is needed for `bootstrap-slider`
+@baseBorderRadius: 4px;
