@@ -274,6 +274,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return findById(toVideo, "Video.findByExtId", id);
   }
 
+
+  /**
+   * @see org.opencast.annotation.api.ExtendedAnnotationService#createTrack(long, String, Option, Option, Option, Resource)
+   */
   @Override
   public Track createTrack(final long videoId, final String name, final Option<String> description,
           final Option<Integer> access, final Option<String> settings, final Resource resource)
