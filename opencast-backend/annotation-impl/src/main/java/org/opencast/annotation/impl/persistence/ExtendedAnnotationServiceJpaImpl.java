@@ -274,7 +274,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return findById(toVideo, "Video.findByExtId", id);
   }
 
-
   /**
    * @see org.opencast.annotation.api.ExtendedAnnotationService#createTrack(long, String, Option, Option, Option, Resource)
    */
@@ -1053,10 +1052,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    */
   @Override
   public Resource createResource() {
-    final Option<Long> userId = getCurrentUserId();
-    final Option<Date> now = some(new Date());
-    return new ResourceImpl(option(Resource.PRIVATE), userId, userId, none(0L), now, now, none(Date.class),
-            new HashMap<String, String>());
+    return createResource(Option.<Map<String, String>> none());
   }
 
   /**
@@ -1064,14 +1060,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    */
   @Override
   public Resource createResource(final Option<Map<String, String>> tags) {
-    final Option<Long> userId = getCurrentUserId();
-    final Option<Date> now = some(new Date());
-    Map<String, String> tagsMap;
-    if (tags.isSome())
-      tagsMap = tags.get();
-    else
-      tagsMap = new HashMap<String, String>();
-    return new ResourceImpl(some(Resource.PRIVATE), userId, userId, none(0L), now, now, none(Date.class), tagsMap);
+    return createResource(tags, Resource.PRIVATE);
   }
 
   /**
@@ -1094,8 +1083,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    */
   @Override
   public Resource updateResource(final Resource r) {
-    return new ResourceImpl(option(r.getAccess()), r.getCreatedBy(), getCurrentUserId(), r.getDeletedBy(),
-            r.getCreatedAt(), some(new Date()), r.getDeletedAt(), r.getTags());
+    return updateResource(r, some(r.getTags()));
   }
 
   /**
