@@ -431,7 +431,7 @@ define(["jquery",
                         dataType: "json",
                         success: function (data) {
                             var result = data["search-results"].result,
-                                mediapackage = result.mediapackage,
+                                mediapackage,
                                 videos = {},
                                 videosFallback = {},
                                 nbNormalVideos = 0,
@@ -439,6 +439,11 @@ define(["jquery",
                                 tracks,
                                 selectedVideos = {},
                                 videoIE9;
+
+                            if (!result) {
+                                console.warn("Could not load video " + mediaPackageId);
+                            }
+                            mediapackage = result.mediapackage;
 
                             video_title = result.DcTitle;
                             video_creator = result.DcCreator;
