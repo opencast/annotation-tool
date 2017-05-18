@@ -561,30 +561,18 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(start), new Function0<Response>() {
       @Override
       public Response apply() {
-        // check if video exists
-        if (eas().getVideo(videoId).isSome()) {
-          return run(array(start), new Function0<Response>() {
-            @Override
-            public Response apply() {
-              final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-              if (tagsMap.isSome() && tagsMap.get().isNone())
-                return BAD_REQUEST;
+        if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()) {
+          final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
+          if (tagsMap.isSome() && tagsMap.get().isNone())
+            return BAD_REQUEST;
 
-              try {
-                Resource resource = eas().createResource(
-                        tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-                final Annotation a = eas().createAnnotation(trackId, trimToNone(text), start, option(duration),
-                        trimToNone(settings), option(labelId), option(scaleValueId), resource);
-                return Response.created(annotationLocationUri(videoId, a))
-                        .entity(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas(), a))).build();
-              } catch (ExtendedAnnotationException e) {
-                // here not_found (track) leads to a bad_request
-                return notFoundToBadRequest(e);
-              }
-            }
-          });
+          Resource resource = eas().createResource(
+                  tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+          final Annotation a = eas().createAnnotation(trackId, trimToNone(text), start, option(duration),
+                  trimToNone(settings), option(labelId), option(scaleValueId), resource);
+          return Response.created(annotationLocationUri(videoId, a))
+                  .entity(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas(), a))).build();
         } else {
-          // video does not exist
           return BAD_REQUEST;
         }
       }
