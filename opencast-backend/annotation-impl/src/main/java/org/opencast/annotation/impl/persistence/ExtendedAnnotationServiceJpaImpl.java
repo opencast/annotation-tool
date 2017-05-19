@@ -1143,7 +1143,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return resource.getCreatedBy().equals(currentUserId);
   }
 
-  public final Function<Resource, Boolean> hasResourceAccessF = new Function<Resource, Boolean>() {
+  public final Function<Resource, Boolean> hasResourceAccess = new Function<Resource, Boolean>() {
     @Override
     public Boolean apply(Resource resource) {
       return hasResourceAccess(resource);
@@ -1175,7 +1175,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   private <T extends Resource> List<T> filterByAccess(List<T> originalList) {
-    return mlist(originalList).filter(hasResourceAccessF).value();
+    return mlist(originalList).filter(hasResourceAccess).value();
   }
 
   private <T extends Resource> List<T> filterAndTags(final List<T> originalList, final Map<String, String> tags) {
