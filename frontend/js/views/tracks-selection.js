@@ -108,7 +108,7 @@ define(["jquery",
                             return {
                                 id: created_by,
                                 nickname: tracks[0].get("created_by_nickname"),
-                                tracks: tracks.toJSON(),
+                                tracks: _.invoke(tracks, "toJSON"),
                                 visible: _.every(tracks, function (track) { return track.get("visible"); })
                             };
                         }).value();
