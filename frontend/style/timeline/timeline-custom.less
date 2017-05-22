@@ -1,9 +1,9 @@
 .stacking-level (@level) {
     .stack-level-@{level} {
-        div.timeline-item{
-            margin-top: 18px-(@level*23px);
-        }
+    div.timeline-item {
+        margin-top: 18px-(@level*23px);
     }
+}
 }
 
 .track-max-level (@level) {
@@ -14,10 +14,10 @@
 
 
 #timeline-container {
-	background-color: @white;
-	
-	.navbar {
-		margin: 0;
+    background-color: @white;
+
+    .navbar {
+        margin: 0;
 
         span.time-header {
             margin-left: 10px;
@@ -27,19 +27,19 @@
                 color: white;
             }
         }
-	}
+    }
 }
 
 .item-id, .annotation-id, .group-id, .track-id, .timeline-navigation-new {
-   display: none;
-} 
+    display: none;
+}
 
 
-i.check{
+i.check {
     visibility: hidden;
 }
 
-.checked i.check{
+.checked i.check {
     visibility: visible;
 }
 
@@ -47,7 +47,7 @@ div.timeline-frame, div.timeline-groups-axis {
     overflow: visible!important;
 }
 
- 
+
 div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
     z-index: 2;
@@ -57,48 +57,48 @@ div.timeline-event-selected {
     background-color: rgba(245, 215, 115, 0.75);
 }
 
-div.timeline-groups-text{
+div.timeline-groups-text {
     text-transform: capitalize;
     font-size: 1.05em;
-    z-index: 1;  
+    z-index: 1;
     background-color: white;
     position: absolute;
     width: 2000px;
     top: -6px;
     padding: 0;
-    
-    div.content{
+
+    div.content {
         padding: 3px;
         text-decoration: none;
     }
-    
+
     div.timeline-group {
-    	padding: 4px;
+        padding: 4px;
         min-height: 60px;
         z-index: 3;
-        
-        &.mine:hover{
+
+        &.mine:hover {
             cursor: pointer;
             background-color: fade(@yellow, 15%);
         }
 
-        a:hover{
+        a:hover {
             text-decoration: none!important;
         }
-        
+
         a.content-overlay {
             display: inline-block;
             width: 150px;
             height: 100%;
         }
 
-        div.content{
-        	width: 105px;
+        div.content {
+            width: 105px;
             overflow: hidden;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: @gray; 
+            color: @gray;
 
             &:hover {
                 text-decoration: none!important;
@@ -112,26 +112,26 @@ div.timeline-groups-text{
         }
     }
 
-    &:nth-child(odd){
+    &:nth-child(odd) {
         // Currently no odd even highlighting
     }
-    
+
     &.selected {
         background-color: darken(@grayLighter, 10%);
-        
-        div.timeline-group:hover{
+
+        div.timeline-group:hover {
             background-color: inherit;
         }
     }
-    
+
     i.delete, i.update {
         z-index: 4;
         margin-right: 4px;
         position: relative;
         display: inline-block;
-        
+
         &:hover {
-          .iconHover();
+            .iconHover();
         }
     }
 
@@ -143,9 +143,9 @@ div.timeline-groups-text{
         position: relative;
         display: inline-block;
         padding: 0px 2px 0px 2px;
-        
+
         &:hover {
-          .iconHover();
+            .iconHover();
         }
     }
 
@@ -157,7 +157,6 @@ div.timeline-groups-text{
         position: relative;
         border: 2px solid transparent;
     }
-   
 }
 
 div.timeline-customtime {
@@ -168,52 +167,51 @@ div.timeline-customtime {
 
 div.timeline-navigation{
     display: block;
-    z-index: 4; 
-    height: 22px; 
+    z-index: 4;
+    height: 22px;
     border: none;
     //border-top: 2px solid @grayDark;
     //border-bottom: 2px solid @grayDark;
     border-radius: 0;
-    background-color: @grayLight;  
+    background-color: @grayLight;
     position: relative!important;
     left: 0px!important;
     right: 0px!important;
     top: 0px!important;
     bottom: 0px!important;
     display: none;
-  
+
     > [class^="timeline-navigation-"] {
-    	.btn();
-    	font-weight: bold;
+        .btn();
+        font-weight: bold;
     }
-    
+
     > [class^="timeline-navigation-"]:hover {
-    	.btn.hover();
+        .btn.hover();
     }
-    
+
     /* Todo: Should use Icons instead */
     .timeline-navigation-zoom-in:after {
-    	content: "+";
+        content: "+";
     }
     .timeline-navigation-zoom-out:after {
-    	content: "-";
+        content: "-";
     }
     .timeline-navigation-move-left:after {
-    	content: "<"
+        content: "<"
     }
-    .timeline-navigation-move-right:after{
-    	content: ">"
-    }   
-               
+    .timeline-navigation-move-right:after {
+        content: ">"
+    }
 }
 
-div#timeline-custom-navigation{
-    height: 20px; 
+div#timeline-custom-navigation {
+    height: 20px;
     border: none;
     border-top: 1px solid @grayDark;
     //border-bottom: 2px solid @grayDark;
     border-radius: 0;
-    background-color: @grayLight;  
+    background-color: @grayLight;
     position: relative!important;
     font-weight: normal!important;
     left: 0px!important;
@@ -229,7 +227,7 @@ div#timeline-custom-navigation{
     }
 
     a.btn:first-child {
-            border-left:none;
+        border-left:none;
     }
 
     #add-track {
@@ -252,33 +250,33 @@ div#timeline-custom-navigation{
     }
 }
 
-div#reset-zoom, div#move-left, div#move-right, div#zoom-in, div#zoom-out{
+div#reset-zoom, div#move-left, div#move-right, div#zoom-in, div#zoom-out {
     float: left;
 }
 
 div.timeline-frame {
-	border: none;
-	border-top: 1px solid @gray;
-	
-	> div:first-child{
+    border: none;
+    border-top: 1px solid @gray;
+
+    > div:first-child {
         z-index: 2;
         border-left: 2px solid @gray;
-	}
+    }
 }
 
-div.timeline-groups-axis{
-    
+div.timeline-groups-axis {
+
     z-index: 1;
-    
+
     overflow: visible;
-    
-    .timeline-axis-grid-minor{
+
+    .timeline-axis-grid-minor {
         border: none;
         display: none;
     }
 }
 
-div.timeline-axis-grid-minor{
+div.timeline-axis-grid-minor {
     z-index: 2;
 }
 
@@ -298,17 +296,17 @@ div.timeline-event-range {
     border: none;
 }
 
-div.timeline-navigation-delete{
+div.timeline-navigation-delete {
     display: none;
 }
 
 
-div.timeline-bottom-controls{
+div.timeline-bottom-controls {
     z-index: 50;
     display: block;
     position: relative;
-    float: right;   
-    &:hover{
+    float: right;
+    &:hover {
         cursor:pointer;
     }
 }
@@ -318,7 +316,7 @@ div.timeline-bottom-controls{
 .stacking-level(2);
 .stacking-level(3);
 .stacking-level(4);
-.stacking-level(5);  
+.stacking-level(5);
 
 .track-max-level(0);
 .track-max-level(1);
@@ -328,51 +326,50 @@ div.timeline-bottom-controls{
 .track-max-level(5);
 
 
-div.timeline-item{
-	background-color: fade(@grayLight,25%);
-	border: 1px solid transparent;
+div.timeline-item {
+    background-color: fade(@grayLight,25%);
+    border: 1px solid transparent;
     padding: 2px;
     overflow: hidden;
     min-width: 20px;
     z-index: 4;
-    
-    span{
+
+    span {
         float: left;
         width: 65%;
         overflow: hidden;
     }
 
-    &.at-end{
+    &.at-end {
         margin-left: -10px;
     }
-    
-    i.delete{
-            float: right;
-            display: none;
-            
-            &:hover{
-                cursor: pointer;
-                background-color: @blue;
-            }
+
+    i.delete {
+        float: right;
+        display: none;
+
+        &:hover {
+            cursor: pointer;
+            background-color: @blue;
+        }
     }
-    
-    &:hover{
+
+    &:hover {
         cursor:pointer;
     }
-    
 }
 
 div.timeline-event-selected {
     background: none;
     z-index: 2;
-    
-    div.timeline-item{
+
+    div.timeline-item {
         border: 1px solid @red;
         box-shadow: 0 0 2px @grayDark;
     }
 }
 
-div.timeline-event-range-drag-left, div.timeline-event-range-drag-left{
+div.timeline-event-range-drag-left, div.timeline-event-range-drag-left {
     height: 22px!important;
 }
 
@@ -387,13 +384,3 @@ div.timeline-frame > div:first-child > div:first-child {
     background-color: white;
     z-index: 5;
 }
-
-
-
-
-
-
-
-
-
-
