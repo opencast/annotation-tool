@@ -16,7 +16,8 @@
 /**
  * A module representing the timeline view
  * @module views-timeline
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires player-adapter
  * @requires models-annotation
  * @requires collections-annotations
@@ -33,6 +34,7 @@
  * @requires bootstrap.popover
  */
 define(["jquery",
+        "underscore",
         "prototypes/player_adapter",
         "models/annotation",
         "models/track",
@@ -54,8 +56,8 @@ define(["jquery",
         "jquery.appear"
     ],
 
-    function ($, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
-        GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
+    function ($, _, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
+        GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars, links) {
 
         "use strict";
 

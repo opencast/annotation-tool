@@ -61,6 +61,10 @@ require.config({
 
         "email-addresses": {
             exports: "emailAddresses"
+        },
+
+        "timeline": {
+            exports: "links"
         }
     }
 });
