@@ -124,7 +124,7 @@ define(["underscore", "backbone", "access"], function (_, Backbone, ACCESS) {
          */
         filterAll: function (list, filters) {
             var activeFilters = _.map(_.isUndefined(filters) ? this.filters : filters,
-                                            function (item) {return item; },
+                                            function (item) { return item; },
                                     this),
                 filterList = function (item) {
                         var cFilter,
@@ -175,7 +175,7 @@ define(["underscore", "backbone", "access"], function (_, Backbone, ACCESS) {
             if (_.isUndefined(this.filters[id])) {
                 return;
             }
-            
+
             this.filters[id].active = active;
             this.trigger("switch", {id: id, active: active});
         },
