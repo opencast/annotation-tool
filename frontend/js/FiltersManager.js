@@ -17,9 +17,11 @@
 /**
  * Module for the filters manager
  * @module filters-manager
+ * @requires underscore
  * @requires backbone
+ * @requires access
  */
-define(["backbone", "access"], function (Backbone, ACCESS) {
+define(["underscore", "backbone", "access"], function (_, Backbone, ACCESS) {
 
     "use strict";
 
