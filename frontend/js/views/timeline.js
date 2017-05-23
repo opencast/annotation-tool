@@ -204,7 +204,8 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                _.bindAll(this, "addTrack",
+                _.bindAll(this,
+                    "addTrack",
                     "addTracksList",
                     "createTrack",
                     "changeTitleFromCustomPlayhead",
