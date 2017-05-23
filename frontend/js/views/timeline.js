@@ -555,7 +555,7 @@ define(["jquery",
                     }
                 }
 
-                
+
 
                 if (currentChartRange.start.getTime() != start.getTime() || currentChartRange.end.getTime() !== end.getTime()) {
                     this.timeline.setVisibleChartRange(start, end);
