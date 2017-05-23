@@ -1521,7 +1521,7 @@ define(["jquery",
                     newTrack;
 
                 if (_.isUndefined(annotation) || _.isUndefined(this.allItems[annotation.get("id")])) {
-                    return;
+                    return undefined;
                 }
 
                 itemId = annotation.get("id");
