@@ -2,9 +2,9 @@
     <a id="track{{id}}"
        class="content-overlay"
        {{#if isMine}}onclick="annotationsTool.views.timeline.onTrackSelected(event,'{{id}}');" ondblclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');"{{/if}}
-       title="{{secure name}}" 
+       title="{{secure name}}"
        rel="popover"
-       data-trigger="manual" 
+       data-trigger="manual"
        data-content="<p>{{#if description}}{{secure description}}{{else}}No description{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>"
        onmouseleave="$('div.popover.fade.right.in').remove();"
        onmouseenter="$(this).popover('show');">
@@ -18,13 +18,13 @@
         <div class="group-edit">
             <i onclick="annotationsTool.views.timeline.onDeleteTrack(event,'{{id}}');" class="delete icon-trash" title="Delete  track"></i>
             {{#if isMine}}<i onclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');" class="update  icon-pencil" title="Update  track"></i>{{/if}}
-            {{#if isMine}}<span class="visibility" 
+            {{#if isMine}}<span class="visibility"
                   onmouseup="{{#isPrivateOnly}}{{else}}$(this).parent().parent().popover('show');{{/isPrivateOnly}}"
                   onmousedown="{{#isPrivateOnly}}
                                       annotationsTool.alertWarning('Public tracks have been disallowed for this video.');
                               {{else}}
                                       annotationsTool.views.timeline.onUpdateTrack(event,'{{id}}');
-                              {{/isPrivateOnly}}" 
+                              {{/isPrivateOnly}}"
                   title="{{#isPrivateOnly}}No public track allowed in private-only mode!{{else}}Make {{#if isPublic}}in{{/if}}visible to others{{/isPrivateOnly}}">
                     <i class="icon-dark-grey {{#isPrivateOnly}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/isPrivateOnly}}"></i> {{#isPrivateOnly}}Private{{else}}{{#if isPublic}}Public{{else}}Private{{/if}}{{/isPrivateOnly}}</span>{{/if}}
         </div>
