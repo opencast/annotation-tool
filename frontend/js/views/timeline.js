@@ -371,15 +371,9 @@ define(["jquery",
              * @return {Object} The search group/track as timeline-group if found, or undefined
              */
             findGroup: function (groupName) {
-                var searchedGroup;
-
-                _.each(this.groups, function (group) {
-                    if ($(group.content).find("div.content").text().toUpperCase() === groupName.toUpperCase()) {
-                        searchedGroup = group;
-                    }
+                return _.find(this.groups, function (group) {
+                    return $(group.content).find("div.content").text().toUpperCase() === groupName.toUpperCase();
                 });
-
-                return searchedGroup;
             },
 
             /**
