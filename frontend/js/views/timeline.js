@@ -1246,7 +1246,7 @@ define(["jquery",
                     };
 
                     values.annotation.destroy({
-                        success: destroyCallback,
+                        success: destroyCallback
                     });
 
                 } else {
