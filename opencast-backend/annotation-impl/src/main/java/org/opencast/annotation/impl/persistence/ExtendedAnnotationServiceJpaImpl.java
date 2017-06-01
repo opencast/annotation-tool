@@ -38,6 +38,7 @@ import org.opencastproject.util.data.Effect;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Option;
+import org.opencastproject.util.data.Option.Match;
 import org.opencastproject.util.data.Predicate;
 import org.opencastproject.util.data.Tuple;
 import org.opencastproject.util.data.functions.Functions;
@@ -460,6 +461,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
     if (tagsOr.isSome())
       annotations = filterOrTags(annotations, tagsOr.get());
+
+    // Filter out structured annotations from categories the current user cannot access
+    annotations = filterByCategoryAccess(annotations);
 
     return annotations;
     // return since.fold(new Option.Match<Date, List<Annotation>>() {
@@ -1150,6 +1154,41 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     }
   };
 
+  private boolean hasCategoryAccess(Annotation annotation) {
+    return annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
+      @Override
+      public Option<Label> apply(Long labelId) {
+        boolean includeDeletedLabels = true;
+        return getLabel(labelId, includeDeletedLabels);
+      }
+    }).bind(new Function<Label, Option<Category>>() {
+      @Override
+      public Option<Category> apply(Label label) {
+        boolean includeDeletedCategories = true;
+        return getCategory(label.getCategoryId(), includeDeletedCategories);
+      }
+    // TODO It would be nice if we could use the second overload of `fold` here
+    // TODO Create a helper function to create `Match` objects that enables type inference ...
+    }).fold(new Match<Category, Boolean>() {
+      // annotations without category are always accessible
+      @Override
+      public Boolean none() {
+        return true;
+      }
+      @Override
+      public Boolean some(Category category) {
+        return hasResourceAccess(category);
+      }
+    });
+  }
+
+  private final Function<Annotation, Boolean> hasCategoryAccess = new Function<Annotation, Boolean>() {
+    @Override
+    public Boolean apply(Annotation annotation) {
+      return hasCategoryAccess(annotation);
+    }
+  };
+
   public <T> List<T> apply(T bla) {
     return new ArrayList<T>();
   }
@@ -1176,6 +1215,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   private <T extends Resource> List<T> filterByAccess(List<T> originalList) {
     return mlist(originalList).filter(hasResourceAccess).value();
+  }
+
+  private <T extends Annotation> List<T> filterByCategoryAccess(List<T> originalList) {
+    return mlist(originalList).filter(hasCategoryAccess).value();
   }
 
   private <T extends Resource> List<T> filterAndTags(final List<T> originalList, final Map<String, String> tags) {

@@ -303,26 +303,10 @@ define(["jquery",
              * @param {Categories} categories list of categories
              */
             addCategories: function (categories, filter) {
-                var filteredCategories;
-
-                if (categories.models) {
-                    if (filter) {
-                        filteredCategories = categories.where(filter);
-                    } else {
-                        filteredCategories = categories.models;
+                categories.each(function (category) {
+                    if (filter(category)) {
+                        this.addCategory(category, categories, {skipTests: true});
                     }
-                } else if (_.isArray(categories)) {
-                    if (filter) {
-                        _.where(categories, filter);
-                    } else {
-                        filteredCategories = categories;
-                    }
-                } else {
-                    return;
-                }
-
-                _.each(filteredCategories, function (category) {
-                    this.addCategory(category, categories, {skipTests: true});
                 }, this);
             },
 
@@ -334,21 +318,12 @@ define(["jquery",
              * @param {object} [options] Options to define if the category should be filtered or not (skipTests)
              */
             addCategory: function (category, collection, options) {
-                var categoryView,
-                    testFilter = function () {
-                        return _.every(this.filter, function (value, attribute) {
-                            if (category.has(attribute) && category.get(attribute) === value) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        });
-                    };
+                var categoryView;
 
-                if (!options.skipTests) {
-                    if (!$.proxy(testFilter, this)()) {
-                        return;
-                    }
+                options = _.extend({}, options);
+
+                if (!options.skipTests && !this.filter(category)) {
+                    return;
                 }
 
                 if (!this.categories.get(category.id)) {// Add this category if new
@@ -381,7 +356,7 @@ define(["jquery",
                         hasScale: false
                     }
                 };
-                this.categories.create(_.extend(attributes, this.defaultCategoryAttributes));
+                this.categories.create(_.extend(attributes, this.defaultCategoryAttributes), { wait: true });
             },
 
             /**
@@ -570,7 +545,7 @@ define(["jquery",
                     return;
                 }
 
-                _.each(this.categories.where(this.filter), function (category) {
+                _.each(this.categories.filter(this.filter), function (category) {
                     tmpScaleId = category.attributes.scale_id;
 
                     if (tmpScaleId && !tmpScales[tmpScaleId]) {

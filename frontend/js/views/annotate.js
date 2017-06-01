@@ -58,21 +58,28 @@ define(["jquery",
              */
             DEFAULT_TABS = {
                 ALL: {
-                    id   : "all",
-                    name : "All",
-                    roles: []
+                    id    : "all",
+                    name  : "All",
+                    filter: function (category) {
+                        return category.get("isPublic") || category.get("isMine");
+                    },
+                    roles : []
                 },
                 PUBLIC: {
                     id        : "public",
                     name      : "Public",
-                    filter    : {isPublic: true},
+                    filter    : function (category) {
+                        return category.get("isPublic");
+                    },
                     roles     : [ROLES.SUPERVISOR, ROLES.ADMINISTRATOR],
                     attributes: {access: ACCESS.PUBLIC}
                 },
                 MINE: {
                     id        : "mine",
                     name      : "Mine",
-                    filter    : {isPublic: false},
+                    filter    : function (category) {
+                        return category.get("isMine") && !category.get("isPublic");
+                    },
                     roles     : [ROLES.SUPERVISOR, ROLES.USER, ROLES.ADMINISTRATOR],
                     attributes: {access: ACCESS.PRIVATE}
                 }
