@@ -19,6 +19,7 @@ import static org.opencastproject.rest.RestServiceTestEnv.localhostRandomPort;
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
+import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.User;
@@ -49,6 +50,11 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
     return eas;
+  }
+
+  @Override
+  protected AuthorizationService getAuthorizationService() {
+    return null;
   }
 
   private static SecurityService getSecurityService() {

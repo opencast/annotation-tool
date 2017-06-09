@@ -21,6 +21,8 @@ import static org.opencastproject.util.RestUtil.getEndpointUrl;
 import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
 
+import org.opencastproject.security.api.AuthorizationService;
+
 import org.opencast.annotation.api.ExtendedAnnotationService;
 
 import org.osgi.service.component.ComponentContext;
@@ -34,6 +36,7 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   private static final Logger logger = LoggerFactory.getLogger(ExtendedAnnotationsRestService.class);
 
   private ExtendedAnnotationService eas;
+  private AuthorizationService authorizationService;
   private String endpointBaseUrl;
 
   /** OSGi callback. */
@@ -53,9 +56,19 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
     this.eas = eas;
   }
 
+  /** OSGi callback */
+  public void setAuthorizationService(AuthorizationService authorizationService) {
+    this.authorizationService = authorizationService;
+  }
+
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
     return eas;
+  }
+
+  @Override
+  protected AuthorizationService getAuthorizationService() {
+    return authorizationService;
   }
 
   @Override
