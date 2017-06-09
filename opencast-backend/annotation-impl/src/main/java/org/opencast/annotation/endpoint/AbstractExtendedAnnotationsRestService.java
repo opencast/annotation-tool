@@ -22,6 +22,8 @@ import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.functions.Strings.trimToNone;
 
+import static org.opencast.annotation.endpoint.util.Responses.buildOk;
+
 import org.opencastproject.util.IoSupport;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
@@ -29,8 +31,6 @@ import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
-
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
@@ -45,25 +45,19 @@ import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
 
-import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CategoryImpl;
-import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.LabelImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.ScaleImpl;
 import org.opencast.annotation.impl.ScaleValueImpl;
-import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.UserImpl;
 import org.opencast.annotation.impl.VideoImpl;
 
 import org.opencast.annotation.impl.persistence.AbstractResourceDto;
-import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
-import org.opencast.annotation.impl.persistence.CommentDto;
 import org.opencast.annotation.impl.persistence.LabelDto;
 import org.opencast.annotation.impl.persistence.ScaleDto;
 import org.opencast.annotation.impl.persistence.ScaleValueDto;
-import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.UserDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
@@ -314,401 +308,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
   @Path("/videos/{id}")
-  public Response getVideo(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        return eas().getVideo(id).fold(new Option.Match<Video, Response>() {
-          @Override
-          public Response some(Video v) {
-            if (!eas().hasResourceAccess(v))
-              return UNAUTHORIZED;
-            return buildOk(VideoDto.toJson.apply(eas(), v));
-          }
-
-          @Override
-          public Response none() {
-            return NOT_FOUND;
-          }
-        });
-      }
-    });
-  }
-
-  @DELETE
-  @Path("/videos/{id}")
-  public Response deleteVideo(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        return eas().getVideo(id).fold(new Option.Match<Video, Response>() {
-          @Override
-          public Response some(Video v) {
-            if (!eas().hasResourceAccess(v))
-              return UNAUTHORIZED;
-            return eas().deleteVideo(v) ? NO_CONTENT : NOT_FOUND;
-          }
-
-          @Override
-          public Response none() {
-            return NOT_FOUND;
-          }
-        });
-      }
-    });
-  }
-
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks")
-  public Response postTrack(@PathParam("videoId") final long videoId, @FormParam("name") final String name,
-          @FormParam("description") final String description, @FormParam("settings") final String settings,
-          @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
-
-    return run(array(name), new Function0<Response>() {
-      @Override
-      public Response apply() {
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
-          return BAD_REQUEST;
-
-        try {
-
-          Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-          final Track t = eas().createTrack(videoId, name, trimToNone(description), Option.option(access),
-                  trimToNone(settings), resource);
-
-          return Response.created(trackLocationUri(t))
-                  .entity(Strings.asStringNull().apply(TrackDto.toJson.apply(eas(), t))).build();
-        } catch (ExtendedAnnotationException e) {
-          // here not_found leads to a bad_request
-          return notFoundToBadRequest(e);
-        }
-      }
-    });
-  }
-
-  @PUT
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{id}")
-  public Response putTrack(@PathParam("videoId") final long videoId, @PathParam("id") final long id,
-          @FormParam("name") final String name, @FormParam("description") final String description,
-          @FormParam("settings") final String settings, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return run(array(name), new Function0<Response>() {
-      @Override
-      public Response apply() {
-        // check if video exists
-        if (eas().getVideo(videoId).isSome()) {
-          return eas().getTrack(id).fold(new Option.Match<Track, Response>() {
-            // update track
-            @Override
-            public Response some(Track track) {
-              if (!eas().hasResourceAccess(track))
-                return UNAUTHORIZED;
-
-              final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-              if (tagsMap.isSome() && tagsMap.get().isNone())
-                return BAD_REQUEST;
-
-              Resource resource = eas().updateResource(track,
-                      tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-
-              final Track updated = new TrackImpl(id, videoId, name, trimToNone(description), trimToNone(settings),
-                      new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-                              .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource
-                              .getDeletedAt(), resource.getTags()));
-              if (!track.equals(updated)) {
-                eas().updateTrack(updated);
-                track = updated;
-              }
-              return Response.ok(Strings.asStringNull().apply(TrackDto.toJson.apply(eas(), track)))
-                      .header(LOCATION, trackLocationUri(updated)).build();
-            }
-
-            @Override
-            public Response none() {
-              return NOT_FOUND;
-            }
-          });
-        } else {
-          return BAD_REQUEST;
-        }
-      }
-    });
-  }
-
-  @DELETE
-  @Path("/videos/{videoId}/tracks/{trackId}")
-  public Response deleteTrack(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId) {
-    // TODO optimize querying for the existence of video and track
-    if (eas().getVideo(videoId).isSome()) {
-      return run(nil, new Function0<Response>() {
-        @Override
-        public Response apply() {
-          return eas().getTrack(trackId).fold(new Option.Match<Track, Response>() {
-            @Override
-            public Response some(Track t) {
-              if (!eas().hasResourceAccess(t))
-                return UNAUTHORIZED;
-              return eas().deleteTrack(t) ? NO_CONTENT : NOT_FOUND;
-            }
-
-            @Override
-            public Response none() {
-              return NOT_FOUND;
-            }
-          });
-        }
-      });
-    } else {
-      return BAD_REQUEST;
-    }
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{id}")
-  public Response getTrack(@PathParam("videoId") final long videoId, @PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        if (eas().getVideo(videoId).isSome()) {
-          return eas().getTrack(id).fold(new Option.Match<Track, Response>() {
-            @Override
-            public Response some(Track t) {
-              if (!eas().hasResourceAccess(t))
-                return UNAUTHORIZED;
-              return buildOk(TrackDto.toJson.apply(eas(), t));
-            }
-
-            @Override
-            public Response none() {
-              return NOT_FOUND;
-            }
-          });
-        } else {
-          return BAD_REQUEST;
-        }
-      }
-    });
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks")
-  public Response getTracks(@PathParam("videoId") final long videoId, @QueryParam("limit") final int limit,
-          @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
-        final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
-        final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
-        final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
-
-        if ((datem.isSome() && datem.get().isNone()) || eas().getVideo(videoId).isNone()
-                || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
-                || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
-          return BAD_REQUEST;
-        } else {
-          return buildOk(TrackDto.toJson(
-                  eas(),
-                  offset,
-                  eas().getTracks(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                          tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                          tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
-        }
-      }
-    });
-  }
-
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations")
-  public Response postAnnotation(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @FormParam("text") final String text, @FormParam("start") final Double start,
-          @FormParam("duration") final Double duration, @FormParam("settings") final String settings,
-          @FormParam("label_id") final Long labelId, @FormParam("scale_value_id") final Long scaleValueId,
-          @FormParam("tags") final String tags) {
-    return run(array(start), new Function0<Response>() {
-      @Override
-      public Response apply() {
-        if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()) {
-          final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-          if (tagsMap.isSome() && tagsMap.get().isNone())
-            return BAD_REQUEST;
-
-          Resource resource = eas().createResource(
-                  tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-          final Annotation a = eas().createAnnotation(trackId, trimToNone(text), start, option(duration),
-                  trimToNone(settings), option(labelId), option(scaleValueId), resource);
-          return Response.created(annotationLocationUri(videoId, a))
-                  .entity(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas(), a))).build();
-        } else {
-          return BAD_REQUEST;
-        }
-      }
-    });
-  }
-
-  @PUT
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations/{id}")
-  public Response putAnnotation(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @PathParam("id") final long id, @FormParam("text") final String text, @FormParam("start") final double start,
-          @FormParam("duration") final Double duration, @FormParam("settings") final String settings,
-          @FormParam("label_id") final Long labelId, @FormParam("scale_value_id") final Long scaleValueId,
-          @FormParam("tags") final String tags) {
-    return run(array(start), new Function0<Response>() {
-      @Override
-      public Response apply() {
-        Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
-          return BAD_REQUEST;
-
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
-
-        // check if video and track exist
-        if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()) {
-          return eas().getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
-            // update annotation
-            @Override
-            public Response some(Annotation annotation) {
-              if (!eas().hasResourceAccess(annotation))
-                return UNAUTHORIZED;
-
-              Resource resource = eas().updateResource(annotation, tags);
-              final Annotation updated = new AnnotationImpl(id, trackId, trimToNone(text), start, option(duration),
-                      trimToNone(settings), option(labelId), option(scaleValueId), resource);
-              if (!annotation.equals(updated)) {
-                eas().updateAnnotation(updated);
-                annotation = updated;
-              }
-              return Response.ok(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas(), annotation)))
-                      .header(LOCATION, annotationLocationUri(videoId, updated)).build();
-            }
-
-            // create a new one
-            @Override
-            public Response none() {
-              Resource resource = eas().createResource(tags);
-              final Annotation a = eas().createAnnotation(
-                      new AnnotationImpl(id, trackId, trimToNone(text), start, option(duration), trimToNone(settings),
-                              option(labelId), option(scaleValueId), resource));
-              return Response.created(annotationLocationUri(videoId, a))
-                      .entity(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas(), a))).build();
-            }
-          });
-        } else {
-          return BAD_REQUEST;
-        }
-      }
-    });
-
-  }
-
-  @DELETE
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations/{id}")
-  public Response deleteAnnotation(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @PathParam("id") final long id) {
-    if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()) {
-      return run(nil, new Function0<Response>() {
-        @Override
-        public Response apply() {
-          return eas().getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
-            @Override
-            public Response some(Annotation a) {
-              if (!eas().hasResourceAccess(a))
-                return UNAUTHORIZED;
-              return eas().deleteAnnotation(a) ? NO_CONTENT : NOT_FOUND;
-            }
-
-            @Override
-            public Response none() {
-              return NOT_FOUND;
-            }
-          });
-        }
-      });
-    } else {
-      return BAD_REQUEST;
-    }
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations/{id}")
-  public Response getAnnotation(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @PathParam("id") final long id) {
-    // TODO optimize querying for the existence of video and track
-    if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()) {
-      return run(nil, new Function0<Response>() {
-        @Override
-        public Response apply() {
-          return eas().getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
-            @Override
-            public Response some(Annotation a) {
-              if (!eas().hasResourceAccess(a))
-                return UNAUTHORIZED;
-              return buildOk(AnnotationDto.toJson.apply(eas(), a));
-            }
-
-            @Override
-            public Response none() {
-              return NOT_FOUND;
-            }
-          });
-        }
-      });
-    } else {
-      // track and/or video do not exist
-      return BAD_REQUEST;
-    }
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations")
-  public Response getAnnotations(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
-          @QueryParam("start") final double start, @QueryParam("end") final double end,
-          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        if (eas().getVideo(videoId).isSome()) {
-          final Option<Double> startm = start > 0 ? some(start) : Option.<Double> none();
-          final Option<Double> endm = end > 0 ? some(end) : Option.<Double> none();
-          final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-          final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
-          final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
-          final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
-          final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
-
-          if ((datem.isSome() && datem.get().isNone()) || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
-                  || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
-            return BAD_REQUEST;
-          } else {
-            return buildOk(AnnotationDto.toJson(
-                    eas(),
-                    offset,
-                    eas().getAnnotations(trackId, startm, endm, offsetm, limitm,
-                            datem.bind(Functions.<Option<Date>> identity()),
-                            tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                            tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
-          }
-        } else {
-          return NOT_FOUND;
-        }
-      }
-    });
+  public VideoEndpoint video(@PathParam("id") final long id) {
+    return new VideoEndpoint(id, this, eas());
   }
 
   @POST
@@ -719,32 +321,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return createScale(Option.<Long> none(), name, description, tags);
   }
 
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/scales")
-  public Response postScale(@PathParam("videoId") final Long videoId, @FormParam("name") final String name,
-          @FormParam("description") final String description, @FormParam("scale_id") final Long scaleId,
-          @FormParam("tags") final String tags) {
-    if (scaleId == null)
-      return createScale(option(videoId), name, description, tags);
-
-    return run(array(scaleId), new Function0<Response>() {
-      @Override
-      public Response apply() {
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (eas().getScale(scaleId, false).isNone() || eas().getVideo(videoId).isNone()
-                || (tagsMap.isSome() && tagsMap.get().isNone()))
-          return BAD_REQUEST;
-
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-        final Scale scale = eas().createScaleFromTemplate(videoId, scaleId, resource);
-        return Response.created(scaleLocationUri(scale, true))
-                .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), scale))).build();
-      }
-    });
-  }
-
-  private Response createScale(final Option<Long> videoId, final String name, final String description,
+  Response createScale(final Option<Long> videoId, final String name, final String description,
           final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
@@ -770,16 +347,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return updateScale(Option.<Long> none(), id, name, description, tags);
   }
 
-  @PUT
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/scales/{scaleId}")
-  public Response putScale(@PathParam("videoId") final Long videoId, @PathParam("scaleId") final long id,
-          @FormParam("name") final String name, @FormParam("description") final String description,
-          @FormParam("tags") final String tags) {
-    return updateScale(option(videoId), id, name, description, tags);
-  }
-
-  private Response updateScale(final Option<Long> videoId, final long id, final String name, final String description,
+  Response updateScale(final Option<Long> videoId, final long id, final String name, final String description,
           final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
@@ -826,14 +394,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getScaleResponse(Option.<Long> none(), id);
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/scales/{scaleId}")
-  public Response getScale(@PathParam("videoId") final Long videoId, @PathParam("scaleId") final long id) {
-    return getScaleResponse(option(videoId), id);
-  }
-
-  private Response getScaleResponse(final Option<Long> videoId, final long id) {
+  Response getScaleResponse(final Option<Long> videoId, final long id) {
     if (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
       return BAD_REQUEST;
 
@@ -859,15 +420,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/scales")
-  public Response getScales(@PathParam("videoId") final Long videoId, @QueryParam("limit") final int limit,
-          @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return getScalesResponse(option(videoId), limit, offset, date, tagsAnd, tagsOr);
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
   @Path("/scales")
   public Response getScales(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
@@ -875,7 +427,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getScalesResponse(Option.<Long> none(), limit, offset, date, tagsAnd, tagsOr);
   }
 
-  private Response getScalesResponse(final Option<Long> videoId, final int limit, final int offset, final String date,
+  Response getScalesResponse(final Option<Long> videoId, final int limit, final int offset, final String date,
           final String tagsAnd, final String tagsOr) {
     return run(nil, new Function0<Response>() {
       @Override
@@ -908,13 +460,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return deleteScaleResponse(Option.<Long> none(), id);
   }
 
-  @DELETE
-  @Path("/videos/{videoId}/scales/{scaleId}")
-  public Response deleteScale(@PathParam("videoId") final Long videoId, @PathParam("scaleId") final long id) {
-    return deleteScaleResponse(option(videoId), id);
-  }
-
-  private Response deleteScaleResponse(final Option<Long> videoId, final long id) {
+  Response deleteScaleResponse(final Option<Long> videoId, final long id) {
     if (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
       return BAD_REQUEST;
     return run(nil, new Function0<Response>() {
@@ -946,16 +492,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return postScaleValueResponse(Option.<Long> none(), scaleId, name, value, order, tags);
   }
 
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/scales/{scaleId}/scalevalues")
-  public Response postScaleValue(@PathParam("videoId") final Long videoId, @PathParam("scaleId") final long scaleId,
-          @FormParam("name") final String name, @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("tags") final String tags) {
-    return postScaleValueResponse(option(videoId), scaleId, name, value, order, tags);
-  }
-
-  private Response postScaleValueResponse(final Option<Long> videoId, final long scaleId, final String name,
+  Response postScaleValueResponse(final Option<Long> videoId, final long scaleId, final String name,
           final double value, final int order, final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
@@ -983,17 +520,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return putScaleValueResponse(Option.<Long> none(), scaleId, id, name, value, order, tags);
   }
 
-  @PUT
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}")
-  public Response putScaleValue(@PathParam("videoId") final Long videoId, @PathParam("scaleId") final long scaleId,
-          @PathParam("scaleValueId") final long id, @FormParam("name") final String name,
-          @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("tags") final String tags) {
-    return putScaleValueResponse(option(videoId), scaleId, id, name, value, order, tags);
-  }
-
-  private Response putScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id,
+  Response putScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id,
           final String name, final double value, final int order, final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
@@ -1040,15 +567,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getScaleValueResponse(Option.<Long> none(), scaleId, id);
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}")
-  public Response getScaleValue(@PathParam("videoId") final long videoId, @PathParam("scaleId") final long scaleId,
-          @PathParam("scaleValueId") final long id) {
-    return getScaleValueResponse(option(videoId), scaleId, id);
-  }
-
-  private Response getScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id) {
+  Response getScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, false).isNone())
       return BAD_REQUEST;
 
@@ -1081,17 +600,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getScaleValuesResponse(Option.<Long> none(), scaleId, limit, offset, date, tagsAnd, tagsOr);
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/scales/{scaleId}/scalevalues")
-  public Response getScaleValues(@PathParam("videoId") final long videoId, @PathParam("scaleId") final long scaleId,
-          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
-          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return getScaleValuesResponse(option(videoId), scaleId, limit, offset, date, tagsAnd, tagsOr);
-  }
-
-  private Response getScaleValuesResponse(final Option<Long> videoId, final long scaleId, final int limit,
+  Response getScaleValuesResponse(final Option<Long> videoId, final long scaleId, final int limit,
           final int offset, final String date, final String tagsAnd, final String tagsOr) {
     return run(nil, new Function0<Response>() {
       @Override
@@ -1123,14 +632,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return deleteScaleValueResponse(Option.<Long> none(), scaleId, id);
   }
 
-  @DELETE
-  @Path("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}")
-  public Response deleteScaleValue(@PathParam("videoId") final long videoId, @PathParam("scaleId") final long scaleId,
-          @PathParam("scaleValueId") final long id) {
-    return deleteScaleValueResponse(option(videoId), scaleId, id);
-  }
-
-  private Response deleteScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id) {
+  Response deleteScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, false).isNone())
       return BAD_REQUEST;
 
@@ -1165,47 +667,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return postCategoryResponse(Option.<Long> none(), name, description, hasDuration, scaleId, settings, access, tags);
   }
 
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/categories")
-  public Response postCategory(@PathParam("videoId") final long videoId, @FormParam("name") final String name,
-          @FormParam("description") final String description,
-          @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
-          @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("category_id") final Long id, @DefaultValue("0") @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    if (id == null)
-      return postCategoryResponse(option(videoId), name, description, hasDuration, scaleId, settings, access, tags);
-
-    return run(array(id), new Function0<Response>() {
-      @Override
-      public Response apply() {
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (eas().getVideo(videoId).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
-          return BAD_REQUEST;
-
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                access);
-        Option<Category> categoryFromTemplate = eas().createCategoryFromTemplate(videoId, id, resource);
-        return categoryFromTemplate.fold(new Option.Match<Category, Response>() {
-
-          @Override
-          public Response some(Category c) {
-            return Response.created(categoryLocationUri(c, true))
-                    .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), c))).build();
-          }
-
-          @Override
-          public Response none() {
-            return BAD_REQUEST;
-          }
-
-        });
-      }
-    });
-  }
-
-  private Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
+  Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
           final boolean hasDuration, final Long scaleId, final String settings, final Integer access,
           final String tags) {
     return run(array(name), new Function0<Response>() {
@@ -1239,18 +701,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             tags);
   }
 
-  @PUT
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/categories/{categoryId}")
-  public Response putCategory(@PathParam("videoId") final long videoId, @PathParam("categoryId") final long id,
-          @FormParam("name") final String name, @FormParam("description") final String description,
-          @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
-          @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return putCategoryResponse(option(videoId), id, name, description, hasDuration, option(scaleId), settings, tags);
-  }
-
-  private Response putCategoryResponse(final Option<Long> videoId, final long id, final String name,
+  Response putCategoryResponse(final Option<Long> videoId, final long id, final String name,
           final String description, final boolean hasDuration, final Option<Long> scaleId, final String settings,
           final String tags) {
     return run(array(name), new Function0<Response>() {
@@ -1300,14 +751,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getCategoryResponse(Option.<Long> none(), id);
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/categories/{categoryId}")
-  public Response getCategory(@PathParam("videoId") final long videoId, @PathParam("categoryId") final long id) {
-    return getCategoryResponse(some(videoId), id);
-  }
-
-  private Response getCategoryResponse(final Option<Long> videoId, final long id) {
+  Response getCategoryResponse(final Option<Long> videoId, final long id) {
     if (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
       return BAD_REQUEST;
 
@@ -1340,16 +784,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getCategoriesResponse(Option.<Long> none(), limit, offset, date, tagsAnd, tagsOr);
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/categories")
-  public Response getCategories(@PathParam("videoId") final long videoId, @QueryParam("limit") final int limit,
-          @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return getCategoriesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr);
-  }
-
-  private Response getCategoriesResponse(final Option<Long> videoId, final int limit, final int offset,
+  Response getCategoriesResponse(final Option<Long> videoId, final int limit, final int offset,
           final String date, final String tagsAnd, final String tagsOr) {
     return run(nil, new Function0<Response>() {
       @Override
@@ -1382,14 +817,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return deleteCategoryResponse(Option.<Long> none(), categoryId);
   }
 
-  @DELETE
-  @Path("/videos/{videoId}/categories/{categoryId}")
-  public Response deleteCategory(@PathParam("videoId") final long videoId,
-          @PathParam("categoryId") final long categoryId) {
-    return deleteCategoryResponse(some(videoId), categoryId);
-  }
-
-  private Response deleteCategoryResponse(final Option<Long> videoId, final long categoryId) {
+  Response deleteCategoryResponse(final Option<Long> videoId, final long categoryId) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getCategory(categoryId, false).isNone())
       return BAD_REQUEST;
 
@@ -1422,17 +850,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return postLabelResponse(Option.<Long> none(), categoryId, value, abbreviation, description, settings, tags);
   }
 
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/categories/{categoryId}/labels")
-  public Response postLabel(@PathParam("videoId") final Long videoId, @PathParam("categoryId") final long categoryId,
-          @FormParam("value") final String value, @FormParam("abbreviation") final String abbreviation,
-          @FormParam("description") final String description, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return postLabelResponse(option(videoId), categoryId, value, abbreviation, description, settings, tags);
-  }
-
-  private Response postLabelResponse(final Option<Long> videoId, final long categoryId, final String value,
+  Response postLabelResponse(final Option<Long> videoId, final long categoryId, final String value,
           final String abbreviation, final String description, final String settings, final String tags) {
     return run(array(value, abbreviation), new Function0<Response>() {
       @Override
@@ -1462,17 +880,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return putLabelResponse(Option.<Long> none(), categoryId, id, value, abbreviation, description, settings, tags);
   }
 
-  @PUT
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/categories/{categoryId}/labels/{labelId}")
-  public Response putLabel(@PathParam("videoId") final Long videoId, @PathParam("categoryId") final long categoryId,
-          @PathParam("labelId") final long id, @FormParam("value") final String value,
-          @FormParam("abbreviation") final String abbreviation, @FormParam("description") final String description,
-          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
-    return putLabelResponse(option(videoId), categoryId, id, value, abbreviation, description, settings, tags);
-  }
-
-  private Response putLabelResponse(final Option<Long> videoId, final long categoryId, final long id,
+  Response putLabelResponse(final Option<Long> videoId, final long categoryId, final long id,
           final String value, final String abbreviation, final String description, final String settings,
           final String tags) {
     return run(array(value, abbreviation), new Function0<Response>() {
@@ -1522,15 +930,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getLabelResponse(Option.<Long> none(), categoryId, id);
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/categories/{categoryId}/labels/{labelId}")
-  public Response getLabel(@PathParam("videoId") final long videoId, @PathParam("categoryId") final long categoryId,
-          @PathParam("labelId") final long id) {
-    return getLabelResponse(some(videoId), categoryId, id);
-  }
-
-  private Response getLabelResponse(final Option<Long> videoId, final long categoryId, final long id) {
+  Response getLabelResponse(final Option<Long> videoId, final long categoryId, final long id) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getCategory(categoryId, false).isNone())
       return BAD_REQUEST;
 
@@ -1563,17 +963,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getLabelsResponse(Option.<Long> none(), categoryId, limit, offset, date, tagsAnd, tagsOr);
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/categories/{categoryId}/labels")
-  public Response getLabels(@PathParam("videoId") final long videoId, @PathParam("categoryId") final long categoryId,
-          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
-          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return getLabelsResponse(some(videoId), categoryId, limit, offset, date, tagsAnd, tagsOr);
-  }
-
-  private Response getLabelsResponse(final Option<Long> videoId, final long categoryId, final int limit,
+  Response getLabelsResponse(final Option<Long> videoId, final long categoryId, final int limit,
           final int offset, final String date, final String tagsAnd, final String tagsOr) {
     return run(nil, new Function0<Response>() {
       @Override
@@ -1606,14 +996,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return deleteLabelResponse(Option.<Long> none(), categoryId, id);
   }
 
-  @DELETE
-  @Path("/videos/{videoId}/categories/{categoryId}/labels/{labelId}")
-  public Response deleteLabel(@PathParam("videoId") final long videoId, @PathParam("categoryId") final long categoryId,
-          @PathParam("labelId") final long id) {
-    return deleteLabelResponse(some(videoId), categoryId, id);
-  }
-
-  private Response deleteLabelResponse(final Option<Long> videoId, final long categoryId, final long id) {
+  Response deleteLabelResponse(final Option<Long> videoId, final long categoryId, final long id) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getCategory(categoryId, false).isNone())
       return BAD_REQUEST;
 
@@ -1635,181 +1018,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
         });
       }
     });
-  }
-
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments")
-  public Response postComment(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @PathParam("annotationId") final long annotationId, @FormParam("text") final String text,
-          @FormParam("tags") final String tags) {
-    if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()
-            && eas().getAnnotation(annotationId).isSome()) {
-      return run(array(text), new Function0<Response>() {
-        @Override
-        public Response apply() {
-          final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-          if (tagsMap.isSome() && tagsMap.get().isNone())
-            return BAD_REQUEST;
-
-          Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-          final Comment comment = eas().createComment(annotationId, text, resource);
-
-          return Response.created(commentLocationUri(comment, videoId, trackId))
-                  .entity(Strings.asStringNull().apply(CommentDto.toJson.apply(eas(), comment))).build();
-        }
-      });
-    } else {
-      // track, video and/or annotation does not exist
-      return BAD_REQUEST;
-    }
-  }
-
-  @PUT
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}")
-  public Response putComment(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @PathParam("annotationId") final long annotationId, @PathParam("commentId") final long commentId,
-          @FormParam("text") final String text, @FormParam("tags") final String tags) {
-    if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()
-            && eas().getAnnotation(annotationId).isSome()) {
-      return run(array(text), new Function0<Response>() {
-        @Override
-        public Response apply() {
-          final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-          if (tagsMap.isSome() && tagsMap.get().isNone())
-            return BAD_REQUEST;
-
-          final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
-
-          return eas().getComment(commentId).fold(new Option.Match<Comment, Response>() {
-            @Override
-            public Response some(Comment c) {
-              if (!eas().hasResourceAccess(c))
-                return UNAUTHORIZED;
-              Resource resource = eas().updateResource(c, tags);
-              final Comment updated = new CommentImpl(commentId, annotationId, text, resource);
-              if (!c.equals(updated)) {
-                eas().updateComment(updated);
-                c = updated;
-              }
-              return Response.ok(Strings.asStringNull().apply(CommentDto.toJson.apply(eas(), c)))
-                      .header(LOCATION, commentLocationUri(c, videoId, trackId)).build();
-            }
-
-            @Override
-            public Response none() {
-              Resource resource = eas().createResource(tags);
-              final Comment comment = eas().createComment(annotationId, text, resource);
-
-              return Response.created(commentLocationUri(comment, videoId, trackId))
-                      .entity(Strings.asStringNull().apply(CommentDto.toJson.apply(eas(), comment))).build();
-            }
-          });
-        }
-      });
-
-    } else {
-      // track, video and/or annotation does not exist
-      return BAD_REQUEST;
-    }
-  }
-
-  @DELETE
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{id}")
-  public Response deleteComment(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @PathParam("annotationId") final long annotationId, @PathParam("id") final long commentId) {
-    if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()
-            && eas().getAnnotation(annotationId).isSome()) {
-      return run(nil, new Function0<Response>() {
-        @Override
-        public Response apply() {
-          return eas().getComment(commentId).fold(new Option.Match<Comment, Response>() {
-            @Override
-            public Response some(Comment c) {
-              if (!eas().hasResourceAccess(c))
-                return UNAUTHORIZED;
-              return eas().deleteComment(c) ? NO_CONTENT : NOT_FOUND;
-            }
-
-            @Override
-            public Response none() {
-              return NOT_FOUND;
-            }
-          });
-        }
-      });
-    } else {
-      // track, video and/or annotation does not exist
-      return BAD_REQUEST;
-    }
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{id}")
-  public Response getComment(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @PathParam("annotationId") final long annotationId, @PathParam("id") final long id) {
-    if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()
-            && eas().getAnnotation(annotationId).isSome()) {
-      return run(nil, new Function0<Response>() {
-        @Override
-        public Response apply() {
-          return eas().getComment(id).fold(new Option.Match<Comment, Response>() {
-            @Override
-            public Response some(Comment c) {
-              if (!eas().hasResourceAccess(c))
-                return UNAUTHORIZED;
-              return buildOk(CommentDto.toJson.apply(eas(), c));
-            }
-
-            @Override
-            public Response none() {
-              return NOT_FOUND;
-            }
-          });
-        }
-      });
-    } else {
-      // track, video and/or annotation does not exist
-      return BAD_REQUEST;
-    }
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments")
-  public Response getComments(@PathParam("videoId") final long videoId, @PathParam("trackId") final long trackId,
-          @PathParam("annotationId") final long annotationId, @QueryParam("limit") final int limit,
-          @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    if (eas().getVideo(videoId).isSome() && eas().getTrack(trackId).isSome()
-            && eas().getAnnotation(annotationId).isSome()) {
-      return run(nil, new Function0<Response>() {
-        @Override
-        public Response apply() {
-          final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-          final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
-          final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
-          Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
-          Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
-
-          if ((datem.isSome() && datem.get().isNone()) || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
-                  || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
-            return BAD_REQUEST;
-
-          return buildOk(CommentDto.toJson(
-                  eas(),
-                  offset,
-                  eas().getComments(annotationId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                          tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                          tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
-        }
-      });
-    } else {
-      // track, video and/or annotation does not exist
-      return BAD_REQUEST;
-    }
   }
 
   @GET
@@ -1964,15 +1172,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return uri(getEndpointBaseUrl(), "videos", v.getId());
   }
 
-  private URI trackLocationUri(Track t) {
-    return uri(getEndpointBaseUrl(), "videos", t.getVideoId(), "tracks", t.getId());
-  }
-
-  private URI annotationLocationUri(long videoId, Annotation a) {
-    return uri(getEndpointBaseUrl(), "videos", videoId, "tracks", a.getTrackId(), "annotations", a.getId());
-  }
-
-  private URI scaleLocationUri(Scale s, boolean hasVideo) {
+  URI scaleLocationUri(Scale s, boolean hasVideo) {
     if (hasVideo) {
       return uri(getEndpointBaseUrl(), "videos", s.getVideoId(), "scales", s.getId());
     } else {
@@ -1988,7 +1188,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     }
   }
 
-  private URI categoryLocationUri(Category c, boolean hasVideo) {
+  URI categoryLocationUri(Category c, boolean hasVideo) {
     if (hasVideo && c.getVideoId().isSome()) {
       return uri(getEndpointBaseUrl(), "videos", c.getVideoId().get(), "categories", c.getId());
     } else {
@@ -2001,19 +1201,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
       return uri(getEndpointBaseUrl(), "videos", videoId.get(), "categories", l.getCategoryId(), "labels", l.getId());
     } else {
       return uri(getEndpointBaseUrl(), "categories", l.getCategoryId(), "labels", l.getId());
-    }
-  }
-
-  private URI commentLocationUri(Comment c, long videoId, long trackId) {
-    return uri(getEndpointBaseUrl(), "videos", videoId, "tracks", trackId, "annotations", c.getAnnotationId(),
-            "comments", c.getId());
-  }
-
-  private static Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
-    if (e.getCauseCode() == ExtendedAnnotationException.Cause.NOT_FOUND) {
-      return BAD_REQUEST;
-    } else {
-      throw e;
     }
   }
 
