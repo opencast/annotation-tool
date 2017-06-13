@@ -21,6 +21,7 @@ import static org.opencastproject.util.RestUtil.getEndpointUrl;
 import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
 
+import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -37,6 +38,7 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
 
   private ExtendedAnnotationService eas;
   private AuthorizationService authorizationService;
+  private SearchService searchService;
   private String endpointBaseUrl;
 
   /** OSGi callback. */
@@ -61,6 +63,11 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
     this.authorizationService = authorizationService;
   }
 
+  /** OSGi callback. */
+  public void setSearchService(SearchService searchService) {
+    this.searchService = searchService;
+  }
+
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
     return eas;
@@ -69,6 +76,10 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   @Override
   protected AuthorizationService getAuthorizationService() {
     return authorizationService;
+  }
+
+  protected SearchService getSearchService() {
+    return searchService;
   }
 
   @Override

@@ -32,6 +32,7 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
+import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 
 import org.opencast.annotation.api.Annotation;
@@ -113,6 +114,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
   protected abstract String getEndpointBaseUrl();
 
   protected abstract AuthorizationService getAuthorizationService();
+
+  protected abstract SearchService getSearchService();
 
   // short hand
   private ExtendedAnnotationService eas() {

@@ -19,6 +19,7 @@ import static org.opencastproject.rest.RestServiceTestEnv.localhostRandomPort;
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
+import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
@@ -59,6 +60,11 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
             EasyMock.anyObject(String.class))).andReturn(true).anyTimes();
     EasyMock.replay(authorizationService);
     return authorizationService;
+  }
+
+  @Override
+  protected SearchService getSearchService() {
+    return null;
   }
 
   private static SecurityService getSecurityService() {
