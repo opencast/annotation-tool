@@ -40,7 +40,7 @@ define(["jquery",
          * @memberOf module:views-alert
          * @alias Alert
          */
-        var alertView = Backbone.View.extend({
+        var Alert = Backbone.View.extend({
 
             el: $("#alert"),
 
@@ -126,7 +126,7 @@ define(["jquery",
             }
         });
 
-        return alertView;
+        return Alert;
 
     }
 );
