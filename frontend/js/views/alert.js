@@ -46,10 +46,10 @@ define(["jquery",
 
             /**
              * Alert template
-             * @alias module:views-alert.Alert#alertTemplate
+             * @alias module:views-alert.Alert#template
              * @type {HandlebarsTemplate}
              */
-            alertTemplate: AlertTemplate,
+            template: AlertTemplate,
 
             /**
              * Events to handle
@@ -111,7 +111,7 @@ define(["jquery",
                 }
 
                 this.$el.empty();
-                this.$el.append(this.alertTemplate(params));
+                this.$el.append(this.template(params));
                 this.delegateEvents();
 
                 this.$el.modal({show: true, backdrop: false, keyboard: false });
