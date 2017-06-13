@@ -61,27 +61,6 @@ define(["jquery",
             },
 
             /**
-             * Supported type of alert. Each of the type is represented as object and must have a title and a class property.
-             * @alias module:views-alert.Alert#TYPES
-             * @type {PlainObject}
-             * @constant
-             */
-            TYPES: {
-                ERROR: {
-                    title    : "Error!",
-                    className: "alert-error"
-                },
-                WARNING: {
-                    title    : "Warning!",
-                    className: ""
-                },
-                INFO : {
-                    title    : "Information",
-                    className: "alert-info"
-                }
-            },
-
-            /**
              * Constructor
              * @alias module:views-alert.Alert#initialize
              */
@@ -99,13 +78,13 @@ define(["jquery",
                 var params;
 
                 if (_.isUndefined(message) || _.isUndefined(type) ||
-                    (_.isString(type) && _.isUndefined(this.TYPES[type.toUpperCase()])) ||
+                    (_.isString(type) && _.isUndefined(Alert.TYPES[type.toUpperCase()])) ||
                     (_.isObject(type) && (_.isUndefined(type.title)  || _.isUndefined(type.className)))) {
                     throw "Alert modal requires a valid type and a message!";
                 }
 
                 if (_.isString(type)) {
-                    params = _.extend(this.TYPES[type.toUpperCase()], {message: message});
+                    params = _.extend(Alert.TYPES[type.toUpperCase()], {message: message});
                 } else {
                     params = _.extend(type, {message: message});
                 }
@@ -123,6 +102,27 @@ define(["jquery",
              */
             hide: function () {
                 this.$el.modal("hide");
+            }
+        }, {
+            /**
+             * Supported type of alert. Each of the type is represented as object and must have a title and a class property.
+             * @alias module:views-alert.Alert.TYPES
+             * @type {PlainObject}
+             * @constant
+             */
+            TYPES: {
+                ERROR: {
+                    title    : "Error!",
+                    className: "alert-error"
+                },
+                WARNING: {
+                    title    : "Warning!",
+                    className: ""
+                },
+                INFO : {
+                    title    : "Information",
+                    className: "alert-info"
+                }
             }
         });
 

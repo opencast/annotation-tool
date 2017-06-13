@@ -238,7 +238,7 @@ define(["jquery",
              * @param  {String} message The message to display
              */
             alertError: function (message) {
-                this.alertModal.show(message, this.alertModal.TYPES.ERROR);
+                this.alertModal.show(message, AlertView.TYPES.ERROR);
             },
 
             /**
@@ -247,7 +247,7 @@ define(["jquery",
              * @param  {String} message The message to display
              */
             alertWarning: function (message) {
-                this.alertModal.show(message, this.alertModal.TYPES.WARNING);
+                this.alertModal.show(message, AlertView.TYPES.WARNING);
             },
 
             /**
@@ -256,7 +256,7 @@ define(["jquery",
              * @param  {String} message The message to display
              */
             alertInfo: function (message) {
-                this.alertModal.show(message, this.alertModal.TYPES.INFO);
+                this.alertModal.show(message, AlertView.TYPES.INFO);
             },
 
             /**
