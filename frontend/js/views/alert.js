@@ -16,18 +16,20 @@
 /**
  * A module representing the alert modal
  * @module views-alert
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires Backbone
  * @requires templates/alert-modal.tmpl
  * @requires ROLES
  * @requires hanldebars
  */
 define(["jquery",
+        "underscore",
         "backbone",
         "templates/alert-modal",
         "handlebarsHelpers"],
 
-        function ($, Backbone, AlertTemplate) {
+        function ($, _, Backbone, AlertTemplate) {
 
             "use strict";
 
