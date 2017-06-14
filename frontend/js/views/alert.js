@@ -112,15 +112,15 @@ define(["jquery",
              */
             TYPES: {
                 ERROR: {
-                    title    : "Error!",
+                    title: "Error!",
                     className: "alert-error"
                 },
                 WARNING: {
-                    title    : "Warning!",
+                    title: "Warning!",
                     className: ""
                 },
                 INFO : {
-                    title    : "Information",
+                    title: "Information",
                     className: "alert-info"
                 }
             }
