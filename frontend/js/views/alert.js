@@ -86,13 +86,13 @@ define(["jquery",
                     throw "Alert modal requires a valid type and a message!";
                 }
 
-                params = _.extend(type, {message: message});
+                params = _.extend(type, { message: message });
 
                 this.$el.empty();
                 this.$el.append(this.template(params));
                 this.delegateEvents();
 
-                this.$el.modal({show: true, backdrop: false, keyboard: false });
+                this.$el.modal({ show: true, backdrop: false, keyboard: false });
             },
 
             /**
