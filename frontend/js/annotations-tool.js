@@ -259,6 +259,17 @@ define(["jquery",
             },
 
             /**
+             * Display a fatal error.
+             * In addition to what {@link alertError} does, this also disables user interaction.
+             * It effectively "crashes" the application with a (hopefully useful) error message.
+             * @alias annotationsTool.alertFatal
+             * @param {String} message The error message to display
+             */
+            alertFatal: function (message) {
+                this.alertModal.show(message, AlertView.TYPES.FATAL);
+            },
+
+            /**
              * Display an warning modal
              * @alias   annotationsTool.alertWarning
              * @param  {String} message The message to display
