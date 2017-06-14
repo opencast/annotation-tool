@@ -137,10 +137,8 @@ define(["jquery",
                                 "tracksSelection",
                                 "setLoadingProgress",
                                 "updateTitle");
-                var self = this;
-
                 annotationsTool.bind(annotationsTool.EVENTS.NOTIFICATION, function (message) {
-                    self.setLoadingProgress(this.loadingPercent, message);
+                    this.setLoadingProgress(this.loadingPercent, message);
                 }, this);
 
                 this.setLoadingProgress(10, "Starting tool.");
