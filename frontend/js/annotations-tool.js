@@ -1038,7 +1038,14 @@ define(["jquery",
                     video = videos.at(0);
                     this.video = video;
                     video.set(self.getVideoParameters());
-                    video.save();
+                    video.save({}, {
+                        error: _.bind(function (model, response, options) {
+                            if (response.status === 403) {
+                                this.alertFatal('You are not allowed to annotate this video!');
+                                this.views.main.loadingBox.hide();
+                            }
+                        }, this)
+                    });
                     if (video.get("ready")) {
                         createDefaultTrack();
                     } else {
