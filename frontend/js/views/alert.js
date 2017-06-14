@@ -94,7 +94,7 @@ define(["jquery",
                 this.$el.append(this.template(params));
                 this.delegateEvents();
 
-                this.$el.modal({ show: true, backdrop: false, keyboard: false });
+                this.$el.modal(_.defaults(type.modalOptions || {}, { show: true, backdrop: true, keyboard: false }));
             },
 
             /**
