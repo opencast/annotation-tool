@@ -116,6 +116,15 @@ define(["jquery",
                     title: i18next.t("alert.error.title"),
                     className: "alert-error"
                 },
+                FATAL: {
+                    title: "Fatal Error!",
+                    className: "alert-error",
+                    hideButtons: true,
+                    modalOptions: {
+                        backdrop: "static",
+                        keyboard: false
+                    }
+                },
                 WARNING: {
                     title: i18next.t("alert.warning.title"),
                     className: ""
