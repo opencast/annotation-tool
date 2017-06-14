@@ -77,17 +77,16 @@ define(["jquery",
             show: function (message, type) {
                 var params;
 
+                if (_.isString(type)) {
+                    type = Alert.TYPES[type.toUpperCase()];
+                }
+
                 if (_.isUndefined(message) || _.isUndefined(type) ||
-                    (_.isString(type) && _.isUndefined(Alert.TYPES[type.toUpperCase()])) ||
-                    (_.isObject(type) && (_.isUndefined(type.title)  || _.isUndefined(type.className)))) {
+                    _.isUndefined(type.title)  || _.isUndefined(type.className)) {
                     throw "Alert modal requires a valid type and a message!";
                 }
 
-                if (_.isString(type)) {
-                    params = _.extend(Alert.TYPES[type.toUpperCase()], {message: message});
-                } else {
-                    params = _.extend(type, {message: message});
-                }
+                params = _.extend(type, {message: message});
 
                 this.$el.empty();
                 this.$el.append(this.template(params));
