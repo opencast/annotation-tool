@@ -290,7 +290,6 @@ define(["jquery",
                 } else {
                     $(annotationsTool.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
                 }
-                
             },
 
             /**
