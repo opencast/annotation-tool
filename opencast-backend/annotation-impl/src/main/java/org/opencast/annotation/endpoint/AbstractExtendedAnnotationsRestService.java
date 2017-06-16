@@ -30,6 +30,8 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
+import static org.opencast.annotation.endpoint.util.Responses.buildOk;
+
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
@@ -70,7 +72,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,7 +234,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!eas().hasResourceAccess(u))
               return UNAUTHORIZED;
 
-            return buildOk.apply(UserDto.toJson.apply(eas(), u));
+            return buildOk(UserDto.toJson.apply(eas(), u));
           }
 
           @Override
@@ -348,7 +349,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Video v) {
             if (!eas().hasResourceAccess(v))
               return UNAUTHORIZED;
-            return buildOk.apply(VideoDto.toJson.apply(eas(), v));
+            return buildOk(VideoDto.toJson.apply(eas(), v));
           }
 
           @Override
@@ -504,7 +505,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             public Response some(Track t) {
               if (!eas().hasResourceAccess(t))
                 return UNAUTHORIZED;
-              return buildOk.apply(TrackDto.toJson.apply(eas(), t));
+              return buildOk(TrackDto.toJson.apply(eas(), t));
             }
 
             @Override
@@ -539,7 +540,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
           return BAD_REQUEST;
         } else {
-          return buildOk.apply(TrackDto.toJson(
+          return buildOk(TrackDto.toJson(
                   eas(),
                   offset,
                   eas().getTracks(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
@@ -678,7 +679,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             public Response some(Annotation a) {
               if (!eas().hasResourceAccess(a))
                 return UNAUTHORIZED;
-              return buildOk.apply(AnnotationDto.toJson.apply(eas(), a));
+              return buildOk(AnnotationDto.toJson.apply(eas(), a));
             }
 
             @Override
@@ -718,7 +719,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                   || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
             return BAD_REQUEST;
           } else {
-            return buildOk.apply(AnnotationDto.toJson(
+            return buildOk(AnnotationDto.toJson(
                     eas(),
                     offset,
                     eas().getAnnotations(trackId, startm, endm, offsetm, limitm,
@@ -867,7 +868,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Scale s) {
             if (!eas().hasResourceAccess(s))
               return UNAUTHORIZED;
-            return buildOk.apply(ScaleDto.toJson.apply(eas(), s));
+            return buildOk(ScaleDto.toJson.apply(eas(), s));
           }
 
           @Override
@@ -913,7 +914,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
           return BAD_REQUEST;
         } else {
-          return buildOk.apply(ScaleDto.toJson(
+          return buildOk(ScaleDto.toJson(
                   eas(),
                   offset,
                   eas().getScales(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
@@ -1082,7 +1083,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
               return UNAUTHORIZED;
-            return buildOk.apply(ScaleValueDto.toJson.apply(eas(), s));
+            return buildOk(ScaleValueDto.toJson.apply(eas(), s));
           }
 
           @Override
@@ -1129,7 +1130,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
           return BAD_REQUEST;
 
-        return buildOk.apply(ScaleValueDto.toJson(
+        return buildOk(ScaleValueDto.toJson(
                 eas(),
                 offset,
                 eas().getScaleValues(scaleId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
@@ -1341,7 +1342,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Category c) {
             if (!eas().hasResourceAccess(c))
               return UNAUTHORIZED;
-            return buildOk.apply(CategoryDto.toJson.apply(eas(), c));
+            return buildOk(CategoryDto.toJson.apply(eas(), c));
           }
 
           @Override
@@ -1387,7 +1388,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
           return BAD_REQUEST;
         } else {
-          return buildOk.apply(CategoryDto.toJson(
+          return buildOk(CategoryDto.toJson(
                   eas(),
                   offset,
                   eas().getCategories(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
@@ -1564,7 +1565,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Label l) {
             if (!eas().hasResourceAccess(l))
               return UNAUTHORIZED;
-            return buildOk.apply(LabelDto.toJson.apply(eas(), l));
+            return buildOk(LabelDto.toJson.apply(eas(), l));
           }
 
           @Override
@@ -1612,7 +1613,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
           return BAD_REQUEST;
 
-        return buildOk.apply(LabelDto.toJson(
+        return buildOk(LabelDto.toJson(
                 eas(),
                 offset,
                 eas().getLabels(categoryId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
@@ -1782,7 +1783,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             public Response some(Comment c) {
               if (!eas().hasResourceAccess(c))
                 return UNAUTHORIZED;
-              return buildOk.apply(CommentDto.toJson.apply(eas(), c));
+              return buildOk(CommentDto.toJson.apply(eas(), c));
             }
 
             @Override
@@ -1820,7 +1821,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                   || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
             return BAD_REQUEST;
 
-          return buildOk.apply(CommentDto.toJson(
+          return buildOk(CommentDto.toJson(
                   eas(),
                   offset,
                   eas().getComments(annotationId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
@@ -2038,18 +2039,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
       throw e;
     }
   }
-
-  private static <A> Function<A, Response> buildOk() {
-    return new Function<A, Response>() {
-      @Override
-      public Response apply(A a) {
-        return Response.ok(a).build();
-      }
-    };
-  }
-
-  private static Function<JSONObject, Response> buildOk = AbstractExtendedAnnotationsRestService.<String> buildOk().o(
-          Strings.<JSONObject> asStringNull());
 
   public static final Function<String, Option<Date>> parseDate = new Function<String, Option<Date>>() {
     @Override
