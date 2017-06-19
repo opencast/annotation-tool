@@ -78,7 +78,7 @@ define(["jquery",
              */
             events: {
                 "click a.add-comment"                      : "onAddComment",
-                "keyup textarea.create"                    : "keyupInsertProxy",
+                "keyup textarea.create"                    : "handleInsertCancelButtonShortcuts",
                 "click button[type=submit].add-comment"    : "insert",
                 "click button[type=button].cancel-comment" : "onCancelComment"
             },
@@ -198,13 +198,16 @@ define(["jquery",
             },
 
             /**
-             * Proxy to insert comments by pressing the "return" key
-             * @alias module:views-comments-container.CommentsContainer#keyupInsertProxy
+             * Handle keyboard shortcuts to control the insert and cancel buttons in the new comment form.
+             * @alias module:views-comments-container.CommentsContainer#handleInsertCancelButtonShortcuts
              * @param  {event} event Event object
              */
-            keyupInsertProxy: function (event) {
-                // If enter is pressed but not shift, we insert a new comment
-                if (event.keyCode === 13 && !event.shiftKey) {
+            handleInsertCancelButtonShortcuts: function (event) {
+                if (event.keyCode === 27) {
+                    // If escape is pressed, we cancel
+                    this.cancel();
+                } else if (event.keyCode === 13 && !event.shiftKey) {
+                    // If enter is pressed but not shift, we insert a new comment
                     this.insert();
                 }
             },
