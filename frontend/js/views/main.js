@@ -118,8 +118,7 @@ define(["jquery",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
-                "click [class*='opt-tracks']": "tracksSelection",
-                "keydown"                    : "handleKeyboardShortcuts"
+                "click [class*='opt-tracks']": "tracksSelection"
             },
 
             /**
@@ -612,31 +611,6 @@ define(["jquery",
                         }
                     });
                 }
-            },
-
-            /**
-             * Handle global actions bound to keyboard shortcuts.
-             * {@link module:annotations-tool-configuration.Configuration.keyBindings} contains a mapping from keys
-             * contained in {@link module:views-main.MainView#actions} to parts of a keyboard event,
-             * which are then compared with the current event. If it matches such a key, the corresponding action
-             * is triggered.
-             * @alias module:views-main.MainView#handleKeyboardShortcuts
-             */
-            handleKeyboardShortcuts: function (event) {
-                var modifierKeys = ["altKey", "ctrlKey", "shiftKey", "metaKey"];
-                var actualKeyEventProps = _.pick(event, modifierKeys, "key");
-
-                _.each(annotationsTool.keyBindings, function (eventSpec, action) {
-                    var keyEventPropSpec = _.defaults(
-                        _.pick(eventSpec, modifierKeys, "key"),
-                        _.object(_.map(modifierKeys, function (k) { return [k, false]; }))
-                    );
-
-                    if (_.isEqual(actualKeyEventProps, keyEventPropSpec)) {
-                        event.preventDefault();
-                        this.actions[action].call(this, event);
-                    }
-                }, this);
             }
         });
         return MainView;
