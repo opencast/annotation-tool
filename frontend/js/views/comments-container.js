@@ -205,7 +205,7 @@ define(["jquery",
              * @param  {event} event Event object
              */
             keyupInsertProxy: function (event) {
-                  // If enter is pressed and shit not, we insert a new annotation
+                // If enter is pressed but not shift, we insert a new comment
                 if (event.keyCode === 13 && !event.shiftKey) {
                     this.insert();
                 }
