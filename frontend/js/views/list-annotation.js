@@ -115,7 +115,6 @@ define(["jquery",
                                 "toggleEditState",
                                 "toggleCollapsedState",
                                 "toggleExpandedState",
-                                "setCommentState",
                                 "toggleCommentsState",
                                 "setCurrentTimeAsStart",
                                 "setCurrentTimeAsEnd",
@@ -626,24 +625,6 @@ define(["jquery",
             },
 
             /**
-             * Bring the view into a state where a new comment can be entered.
-             * This does not cancel editing of the annotation or any of its comments, though,
-             * in order to avoid losing any data.
-             * @alias module:views-list-annotation.ListAnnotation#setCommentState
-             */
-            setCommentState: function () {
-                if (
-                       this.currentState !== ListAnnotation.STATES.EDIT
-                    && this.commentContainer.currentState !== CommentsContainer.STATES.EDIT
-                ) {
-                    this.setState(ListAnnotation.STATES.COMMENTS);
-                    this.commentContainer.setState(CommentsContainer.STATES.ADD);
-                    this.render();
-                    this.commentContainer.$("textarea").focus();
-                }
-            },
-
-            /**
              * Toggle the comments state
              * @alias module:views-list-annotation.ListAnnotation#toggleCommentsState
              * @param  {event} event Event object
@@ -662,6 +643,7 @@ define(["jquery",
 
                 this.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
                 this.render();
+                this.commentContainer.$("textarea").focus();
             },
 
             /**
