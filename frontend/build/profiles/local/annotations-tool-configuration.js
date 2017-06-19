@@ -89,22 +89,6 @@ define(["jquery",
             CATEGORIES_PER_TAB: 7,
 
             /**
-             * Specify the attributes of the keyboard event that is supposed to trigger
-             * certain actions in the annotation tool
-             * @type {Object}
-             * @alias mdoule:annotations-tool-configuration.Configuration.keyBindings
-             * @see module:views-main.MainView#actions
-             */
-            keyBindings: {
-                setActiveAnnotationDuration: {
-                    key: '.'
-                },
-                addComment: {
-                    key: "r"
-                }
-            },
-
-            /**
              * Define if the localStorage should be used or not
              * @alias module:annotations-tool-configuration.Configuration.localStorage
              * @type {boolean}
