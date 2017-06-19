@@ -598,7 +598,7 @@ define(["jquery",
              * @see mdoule:annotations-tool-configuration.Configuration.keyBindings
              */
             actions: {
-                setActiveAnnotationDuration: function (event) {
+                setActiveAnnotationDuration: function () {
                     if (!annotationsTool.activeAnnotation) return;
 
                     var currentTime = annotationsTool.playerAdapter.getCurrentTime();
@@ -607,7 +607,7 @@ define(["jquery",
                     annotationsTool.activeAnnotation.save();
                 },
 
-                addComment: function (event) {
+                addComment: function () {
                     if (!annotationsTool.activeAnnotation) return;
                     var annotationView = this.listView.getViewFromAnnotation(
                         annotationsTool.activeAnnotation.get("id")
