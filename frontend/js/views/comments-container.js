@@ -108,7 +108,6 @@ define(["jquery",
                           "onAddComment",
                           "insert",
                           "onCancelComment",
-                          "keyupInsertProxy",
                           "resetViews");
 
                 _.extend(this, Backbone.Events);
