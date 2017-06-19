@@ -17,7 +17,8 @@
 /**
  * A module representing the main view
  * @module views-main
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires prototype-player_adapter
  * @requires collections-annotations
  * @requires views-annotate
