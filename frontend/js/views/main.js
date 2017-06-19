@@ -19,6 +19,7 @@
  * @module views-main
  * @requires jquery
  * @requires underscore
+ * @requires mousetrap
  * @requires prototype-player_adapter
  * @requires collections-annotations
  * @requires views-annotate
@@ -39,6 +40,7 @@
  */
 define(["jquery",
         "underscore",
+        "mousetrap",
         "prototypes/player_adapter",
         "views/annotate",
         "views/list",
@@ -62,8 +64,9 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, _, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, Backbone) {
+    function ($, _, Mousetrap, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView,
+              ScaleEditorView, TracksSelectionView, Annotations, Users, Videos, User, Track, Video,
+              CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
 
