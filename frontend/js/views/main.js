@@ -137,6 +137,7 @@ define(["jquery",
                                 "onWindowResize",
                                 "print",
                                 "ready",
+                                "setupKeyboardShortcuts",
                                 "tracksSelection",
                                 "setLoadingProgress",
                                 "updateTitle");
@@ -304,6 +305,8 @@ define(["jquery",
                 this.loadingBox.hide();
                 this.onWindowResize();
 
+                this.setupKeyboardShortcuts();
+
                 // Show logout button
                 $("a#logout").css("display", "block");
 
@@ -312,6 +315,13 @@ define(["jquery",
                 }
 
                 annotationsTool.trigger(annotationsTool.EVENTS.READY);
+            },
+
+            /**
+             * Initialize global keyboard shortcuts
+             * @alias module:views-main.MainView#setupKeyboardShortcuts
+             */
+            setupKeyboardShortcuts: function () {
             },
 
             /**
