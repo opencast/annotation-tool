@@ -77,7 +77,6 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click a.add-comment"                      : "onAddComment",
                 "keyup textarea.create"                    : "handleInsertCancelButtonShortcuts",
                 "click button[type=submit].add-comment"    : "insert",
                 "click button[type=button].cancel-comment" : "onCancelComment"
@@ -105,7 +104,6 @@ define(["jquery",
                 _.bindAll(this,
                           "render",
                           "deleteView",
-                          "onAddComment",
                           "insert",
                           "onCancelComment",
                           "resetViews");
@@ -257,19 +255,6 @@ define(["jquery",
                 this.$el.parent().find(".comment-amount").text(this.comments.length);
 
                 this.$("textarea").focus();
-            },
-
-            /**
-             * Start the insertion of a new comment, display the textarea for it.
-             * @alias module:views-comments-container.CommentsContainer#onAddComment
-             * @param  {event} event Event object
-             */
-            onAddComment: function (event) {
-                event.stopImmediatePropagation();
-                var textArea = this.$("textarea");
-                textArea.show();
-                textArea.focus();
-                this.$("button").removeClass("hide");
             },
 
             /**
