@@ -78,7 +78,7 @@ module.exports = function (grunt) {
             // Watch Javascript files
             js: {
                 files: ['<%= srcPath.js %>', '<%= srcPath.test_js %>'],
-                tasks: ['jshint:watch', 'copy:target']
+                tasks: ['copy:target']
             },
             // Watch Templates files
             templates: {
@@ -368,7 +368,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-blanket-qunit');
+    //grunt.loadNpmTasks('grunt-blanket-qunit');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
@@ -389,7 +389,7 @@ module.exports = function (grunt) {
     grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config']);
     //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
     grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config']);
     grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
 

@@ -31,21 +31,21 @@ and gave your current user write access to this directory. You can adjust pathes
 
     cp -rf /opt/annotation/annotation-tool/frontend/resources /var/www/html/annotation
     cd /opt/annotation/annotation-tool/frontend/
-    grunt demo --force
+    grunt demo
 
 Open your webbrowser with the URL `http://localhost/annotation/`
 
 ## Building __build__
 
     cd /opt/annotation/annotation-tool/frontend/
-    grunt build --force
+    grunt build
 
 You will find the webapp in `/opt/annotation/annotation-tool/frontend/`.
 
 ## Building __integration__
 
     cd /opt/annotation/annotation-tool/frontend/
-    grunt integration --force
+    grunt integration
 
 The files in `/opt/annotation/annotation-tool/opencast-backend/entwine-annotations-tool/src/main/resources/ui/` should
 have been updated. Use the [installation guide for Opencast](opencast-installation.md) to update Opencast with the new frontend.
@@ -53,6 +53,6 @@ have been updated. Use the [installation guide for Opencast](opencast-installati
 ## Building __dev__
 
     cd /opt/annotation/annotation-tool/frontend/
-    grunt dev --force
+    grunt dev
 
 See the console output for the URL and port that you can open in your webserver.
