@@ -322,6 +322,39 @@ define(["jquery",
              * @alias module:views-main.MainView#setupKeyboardShortcuts
              */
             setupKeyboardShortcuts: function () {
+
+                var setActiveAnnotationDuration = _.bind(function () {
+                    if (!annotationsTool.activeAnnotation) return;
+
+                    var currentTime = annotationsTool.playerAdapter.getCurrentTime();
+                    var start = annotationsTool.activeAnnotation.get("start");
+                    annotationsTool.activeAnnotation.set("duration", currentTime - start);
+                    annotationsTool.activeAnnotation.save();
+                }, this);
+
+                var addComment = _.bind(function () {
+                    if (!annotationsTool.activeAnnotation) return;
+                    var annotationView = this.listView.getViewFromAnnotation(
+                        annotationsTool.activeAnnotation.get("id")
+                    );
+                    annotationView.setCommentState();
+                    var wasPlaying = annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
+                    annotationsTool.playerAdapter.pause();
+                    annotationView.once("cancel", function () {
+                        if (wasPlaying) {
+                            annotationsTool.playerAdapter.play();
+                        }
+                    });
+                }, this);
+
+                Mousetrap.bind('.', setActiveAnnotationDuration);
+                Mousetrap.bind('r', function (event) {
+                    // We prevent the default behavior, i.e. inserting the letter "r", here,
+                    // because otherwise the newly created comment would be prepopulated with,
+                    // well, an "r".
+                    event.preventDefault();
+                    addComment();
+                });
             },
 
             /**
@@ -589,38 +622,6 @@ define(["jquery",
 
                 this.loadingBox.find(".bar").width(this.loadingPercent + "%");
                 this.loadingBox.find(".info").text(message);
-            },
-
-            /**
-             * Global actions that can be triggered using keyboard shortcuts
-             * @alias module:views-main.MainView#actions
-             * @type {Object}
-             * @see mdoule:annotations-tool-configuration.Configuration.keyBindings
-             */
-            actions: {
-                setActiveAnnotationDuration: function () {
-                    if (!annotationsTool.activeAnnotation) return;
-
-                    var currentTime = annotationsTool.playerAdapter.getCurrentTime();
-                    var start = annotationsTool.activeAnnotation.get("start");
-                    annotationsTool.activeAnnotation.set("duration", currentTime - start);
-                    annotationsTool.activeAnnotation.save();
-                },
-
-                addComment: function () {
-                    if (!annotationsTool.activeAnnotation) return;
-                    var annotationView = this.listView.getViewFromAnnotation(
-                        annotationsTool.activeAnnotation.get("id")
-                    );
-                    annotationView.setCommentState();
-                    var wasPlaying = annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
-                    annotationsTool.playerAdapter.pause();
-                    annotationView.once("cancel", function () {
-                        if (wasPlaying) {
-                            annotationsTool.playerAdapter.play();
-                        }
-                    });
-                }
             }
         });
         return MainView;
