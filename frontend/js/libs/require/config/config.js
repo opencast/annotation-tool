@@ -25,7 +25,8 @@ require.config({
         "timeline"                      : "libs/timeline-min",
         "underscore"                    : "libs/underscore-min-1.4.3",
         "raf"                           : "libs/rAF",
-        "email-addresses"               : "libs/email-addresses.min"
+        "email-addresses"               : "libs/email-addresses.min",
+        "mousetrap"                     : "libs/mousetrap.min"
     },
     waitSeconds: 10,
 
