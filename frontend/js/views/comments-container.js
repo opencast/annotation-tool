@@ -77,8 +77,7 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click a.add-comment"                      : "onAddComment",
-                "keyup textarea.create"                    : "keyupInsertProxy",
+                "keyup textarea.create"                    : "handleInsertCancelButtonShortcuts",
                 "click button[type=submit].add-comment"    : "insert",
                 "click button[type=button].cancel-comment" : "onCancelComment"
             },
@@ -100,19 +99,16 @@ define(["jquery",
                 this.el.id               = this.id;
                 this.comments            = attr.comments;
                 this.commentViews        = [];
-                this.cancelCallback      = attr.cancel;
-                this.editCommentCallback = attr.edit;
 
                 // Bind function to the good context
                 _.bindAll(this,
                           "render",
                           "deleteView",
-                          "onAddComment",
                           "insert",
                           "onCancelComment",
-                          "keyupInsertProxy",
                           "resetViews");
 
+                _.extend(this, Backbone.Events);
 
                 this.listenTo(this.comments, "destroy", this.deleteView);
                 this.listenTo(this.comments, "remove", this.deleteView);
@@ -200,13 +196,16 @@ define(["jquery",
             },
 
             /**
-             * Proxy to insert comments by pressing the "return" key
-             * @alias module:views-comments-container.CommentsContainer#keyupInsertProxy
+             * Handle keyboard shortcuts to control the insert and cancel buttons in the new comment form.
+             * @alias module:views-comments-container.CommentsContainer#handleInsertCancelButtonShortcuts
              * @param  {event} event Event object
              */
-            keyupInsertProxy: function (event) {
-                // If enter is pressed but not shift, we insert a new comment
-                if (event.keyCode === 13 && !event.shiftKey) {
+            handleInsertCancelButtonShortcuts: function (event) {
+                if (event.keyCode === 27) {
+                    // If escape is pressed, we cancel
+                    this.cancel();
+                } else if (event.keyCode === 13 && !event.shiftKey) {
+                    // If enter is pressed but not shift, we insert a new comment
                     this.insert();
                 }
             },
@@ -237,38 +236,25 @@ define(["jquery",
              */
             addComment: function (comment) {
                 var self = this,
-                    commentModel = new CommentView({
-                        model: comment,
-                        cancel: function () {
-                            self.setState(CommentsContainer.STATES.ADD);
-                            self.cancelCallback();
-                            self.render();
-                        },
-                        edit: function () {
-                            self.setState(CommentsContainer.STATES.EDIT);
-                            self.editCommentCallback();
-                            self.render();
-                        }
-                    });
+                    commentView = new CommentView({ model: comment });
+                commentView.on({
+                    cancel: function () {
+                        self.setState(CommentsContainer.STATES.ADD);
+                        self.trigger("cancel");
+                        self.render();
+                    },
+                    edit: function () {
+                        self.setState(CommentsContainer.STATES.EDIT);
+                        self.trigger("edit");
+                        self.render();
+                    }
+                });
 
-                this.commentViews.push(commentModel);
+                this.commentViews.push(commentView);
 
                 this.$el.parent().find(".comment-amount").text(this.comments.length);
 
                 this.$("textarea").focus();
-            },
-
-            /**
-             * Start the insertion of a new comment, display the textarea for it.
-             * @alias module:views-comments-container.CommentsContainer#onAddComment
-             * @param  {event} event Event object
-             */
-            onAddComment: function (event) {
-                event.stopImmediatePropagation();
-                var textArea = this.$("textarea");
-                textArea.show();
-                textArea.focus();
-                this.$("button").removeClass("hide");
             },
 
             /**
@@ -287,7 +273,7 @@ define(["jquery",
              */
             cancel: function () {
                 this.$("textarea").val("");
-                this.cancelCallback();
+                this.trigger("cancel");
             }
         }, {
             /**

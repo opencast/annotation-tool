@@ -19,6 +19,7 @@
  * @module views-main
  * @requires jquery
  * @requires underscore
+ * @requires mousetrap
  * @requires prototype-player_adapter
  * @requires collections-annotations
  * @requires views-annotate
@@ -39,6 +40,7 @@
  */
 define(["jquery",
         "underscore",
+        "mousetrap",
         "prototypes/player_adapter",
         "views/annotate",
         "views/list",
@@ -62,8 +64,9 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, _, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, Backbone) {
+    function ($, _, Mousetrap, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView,
+              ScaleEditorView, TracksSelectionView, Annotations, Users, Videos, User, Track, Video,
+              CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
 
@@ -115,8 +118,7 @@ define(["jquery",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
-                "click [class*='opt-tracks']": "tracksSelection",
-                "keydown"                    : "setActiveAnnotationDelay"
+                "click [class*='opt-tracks']": "tracksSelection"
             },
 
             /**
@@ -135,6 +137,7 @@ define(["jquery",
                                 "onWindowResize",
                                 "print",
                                 "ready",
+                                "setupKeyboardShortcuts",
                                 "tracksSelection",
                                 "setLoadingProgress",
                                 "updateTitle");
@@ -302,6 +305,8 @@ define(["jquery",
                 this.loadingBox.hide();
                 this.onWindowResize();
 
+                this.setupKeyboardShortcuts();
+
                 // Show logout button
                 $("a#logout").css("display", "block");
 
@@ -310,6 +315,46 @@ define(["jquery",
                 }
 
                 annotationsTool.trigger(annotationsTool.EVENTS.READY);
+            },
+
+            /**
+             * Initialize global keyboard shortcuts
+             * @alias module:views-main.MainView#setupKeyboardShortcuts
+             */
+            setupKeyboardShortcuts: function () {
+
+                var setActiveAnnotationDuration = _.bind(function () {
+                    if (!annotationsTool.activeAnnotation) return;
+
+                    var currentTime = annotationsTool.playerAdapter.getCurrentTime();
+                    var start = annotationsTool.activeAnnotation.get("start");
+                    annotationsTool.activeAnnotation.set("duration", currentTime - start);
+                    annotationsTool.activeAnnotation.save();
+                }, this);
+
+                var addComment = _.bind(function () {
+                    if (!annotationsTool.activeAnnotation) return;
+                    var annotationView = this.listView.getViewFromAnnotation(
+                        annotationsTool.activeAnnotation.get("id")
+                    );
+                    annotationView.toggleCommentsState();
+                    var wasPlaying = annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
+                    annotationsTool.playerAdapter.pause();
+                    annotationView.once("cancel", function () {
+                        if (wasPlaying) {
+                            annotationsTool.playerAdapter.play();
+                        }
+                    });
+                }, this);
+
+                Mousetrap.bind('.', setActiveAnnotationDuration);
+                Mousetrap.bind('r', function (event) {
+                    // We prevent the default behavior, i.e. inserting the letter "r", here,
+                    // because otherwise the newly created comment would be prepopulated with,
+                    // well, an "r".
+                    event.preventDefault();
+                    addComment();
+                });
             },
 
             /**
@@ -577,26 +622,6 @@ define(["jquery",
 
                 this.loadingBox.find(".bar").width(this.loadingPercent + "%");
                 this.loadingBox.find(".info").text(message);
-            },
-
-            setActiveAnnotationDelay: function (event) {
-                if (!annotationsTool.setDurationKeyEvent) return;
-                if (!annotationsTool.activeAnnotation) return;
-
-                var modifierKeys = ["altKey", "ctrlKey", "shiftKey", "metaKey"];
-                var configuredEvent = _.defaults(
-                    _.pick(annotationsTool.setDurationKeyEvent, modifierKeys, "key"),
-                    _.object(_.map(modifierKeys, function (k) { return [k, false]; }))
-                );
-                var actualEvent = _.pick(event, modifierKeys, "key");
-                if (!_.isEqual(configuredEvent, actualEvent)) return;
-
-                event.preventDefault();
-
-                var currentTime = annotationsTool.playerAdapter.getCurrentTime();
-                var start = annotationsTool.activeAnnotation.get("start");
-                annotationsTool.activeAnnotation.set("duration", currentTime - start);
-                annotationsTool.activeAnnotation.save();
             }
         });
         return MainView;

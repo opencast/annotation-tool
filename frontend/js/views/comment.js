@@ -90,8 +90,6 @@ define(["jquery",
                 this.commentId      = attr.model.get("id");
                 this.id             = "comment" + this.commentId;
                 this.el.id          = this.id;
-                this.cancelCallback = attr.cancel;
-                this.editCallback   = attr.edit;
 
                 // Bind function to the good context
                 _.bindAll(this,
@@ -103,6 +101,8 @@ define(["jquery",
                           "onCancel",
                           "stopPropagation",
                           "render");
+
+                _.extend(this, Backbone.Events);
 
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.COMMENT;
@@ -150,8 +150,8 @@ define(["jquery",
                     event.stopImmediatePropagation();
                 }
 
-                this.editCallback();
-   
+                this.trigger("edit");
+
                 this.$el.html(this.editTemplate({text: this.model.get("text")}));
                 this.delegateEvents(this.events);
                 this.isEditEnable = true;
@@ -209,9 +209,7 @@ define(["jquery",
             cancel: function () {
                 this.isEditEnable = false;
                 this.render();
-                if (!_.isUndefined(this.cancelCallback)) {
-                    this.cancelCallback();
-                }
+                this.trigger("cancel");
             },
 
             /**

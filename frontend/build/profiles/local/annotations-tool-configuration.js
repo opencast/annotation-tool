@@ -89,16 +89,6 @@ define(["jquery",
             CATEGORIES_PER_TAB: 7,
 
             /**
-             * Specify the attributes of the keyboard event that is supposed to trigger the setting
-             * of the duration of the currently active annotation.
-             * @type {Object}
-             */
-            setDurationKeyEvent: {
-                key: "e",
-                ctrlKey: true
-            },
-
-            /**
              * Define if the localStorage should be used or not
              * @alias module:annotations-tool-configuration.Configuration.localStorage
              * @type {boolean}
