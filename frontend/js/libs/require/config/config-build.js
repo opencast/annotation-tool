@@ -23,7 +23,7 @@ require.config({
         "text"                          : "libs/require/config/text",
         "tooltip"                       : "libs/bootstrap/tooltip",
         "timeline"                      : "libs/timeline-min",
-        "underscore"                    : "libs/underscore-min-1.4.3",
+        "underscore"                    : "libs/underscore-min",
         "raf"                           : "libs/rAF",
         "email-addresses"               : "libs/email-addresses.min",
         "mousetrap"                     : "libs/mousetrap.min"
@@ -35,10 +35,6 @@ require.config({
 
         "handlebars": {
             exports: "Handlebars"
-        },
-
-        "underscore": {
-            exports: "_"
         },
 
         "backbone": {
