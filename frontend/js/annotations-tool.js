@@ -983,6 +983,7 @@ define(["jquery",
                     videos.add({video_extid: this.getVideoExtId()});
                     video = videos.at(0);
                     this.video = video;
+                    video.set(self.getVideoParameters());
                     video.save();
                     if (video.get("ready")) {
                         createDefaultTrack();
