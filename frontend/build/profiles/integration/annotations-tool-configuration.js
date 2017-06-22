@@ -445,9 +445,9 @@ define(["jquery",
                             }
                             mediapackage = result.mediapackage;
 
-                            video_title = result.DcTitle;
-                            video_creator = result.DcCreator;
-                            video_creation_date = result.DcCreated;
+                            video_title = result.dcTitle;
+                            video_creator = result.dcCreator;
+                            video_creation_date = result.dcCreated;
 
                             $.each(videoTypesForFallBack, function (idx, mimetype) {
                                 videosFallback[mimetype] = {};
