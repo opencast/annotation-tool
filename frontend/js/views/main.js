@@ -49,6 +49,7 @@ define(["jquery",
         "views/login",
         "views/scale-editor",
         "views/tracks-selection",
+        "views/print",
         "collections/annotations",
         "collections/users",
         "collections/videos",
@@ -65,7 +66,7 @@ define(["jquery",
         "tab"],
 
     function ($, _, Mousetrap, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView,
-              ScaleEditorView, TracksSelectionView, Annotations, Users, Videos, User, Track, Video,
+              ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos, User, Track, Video,
               CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
@@ -461,9 +462,13 @@ define(["jquery",
                 var oldStates = this.listView.setStateToAllViews(ListAnnotationView.STATES.PRINT);
                 window.focus();
                 if (document.readyState === "complete") {
+                    var printView = new PrintView(annotationsTool);
+                    printView.render();
                     window.print();
+                    printView.remove();
 
                     // If is Chrome, we need to refresh the window
+                    // TODO WHY??!?!
                     if (/chrome/i.test(navigator.userAgent)) {
                         document.location.reload(false);
                     }
