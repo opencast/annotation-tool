@@ -26,6 +26,6 @@
     "grunt-processhtml": "^0.3.0",
     "grunt-uncss": "~0.1.9",
     "ink-docstrap": "~1.3.0",
-    "less": "~1.3.3"
+    "less": "~1.5.0"
   }
 }

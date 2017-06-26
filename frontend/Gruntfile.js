@@ -93,7 +93,7 @@ module.exports = function (grunt) {
             // Watch LESS files
             less: {
                 files: ['<%= srcPath.less %>'],
-                tasks: ['less', 'copy:style']
+                tasks: ['less', 'copy:less', 'copy:style']
             },
             // Watch the LESS, Javascript, Templates and HTML at the same times
             // Use it for single core processor. It could stop working with an important number of files
@@ -118,7 +118,8 @@ module.exports = function (grunt) {
                 version: 'node_modules/less',
                 syncImport: true,
                 compress: true,
-                sourceMap: true
+                sourceMap: { outputSourceFiles: true },
+                sourceMapBasepath: 'style'
             },
             files: {
                 src: 'style/style.less',
@@ -255,6 +256,14 @@ module.exports = function (grunt) {
                 src: 'index.html',
                 dest: '<%= currentProfile.target %>/index.html'
             },
+            // ... the less sources for the sourcemaps to reference during development
+            'less': {
+                files: [{
+                    src: '<%= srcPath.less %>',
+                    dest: '<%= currentProfile.target %>',
+                    expand: true
+                }]
+            },
             // ... the configuration
             'config': {
                 src: '<%= currentProfile.config %>',
@@ -386,7 +395,7 @@ module.exports = function (grunt) {
 
     // Default task
     grunt.registerTask('default', ['jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config']);
     //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
     grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
@@ -464,6 +473,7 @@ module.exports = function (grunt) {
                     break;
                 case 'less':
                     grunt.task.run('less');
+                    grunt.task.run('copy:less');
                     grunt.task.run('copy:style');
                     break;
             }
