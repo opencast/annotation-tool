@@ -36,6 +36,15 @@ define(["jquery",
 
         "use strict";
 
+        function currentLoopConstraints() {
+            var start = this.currentLoop.get("start"),
+                end = this.currentLoop.get("end");
+            return {
+                start: start,
+                duration: end - start
+            };
+        }
+
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#View}
@@ -119,7 +128,8 @@ define(["jquery",
                 "click #enableLoop": "toggle",
                 "click .next": "nextLoop",
                 "click .previous": "previousLoop",
-                "change #loop-length": "typeLoopLength"
+                "change #loop-length": "typeLoopLength",
+                "change #constrain-annotations": "toggleConstrainAnnotations"
             },
 
             /**
@@ -325,6 +335,20 @@ define(["jquery",
             },
 
             /**
+             * Tell the annotation tool to (not) constrain new annotations to the current loop
+             * in response to clicking the corresponding checkbox in the loop controller.
+             * @alias module:views-loop.Loop#toggleConstrainAnnotations
+             * @param {Event} event The event fired by the checkbox
+             */
+            toggleConstrainAnnotations: function (event) {
+                if (event.target.checked) {
+                    annotationsTool.annotationConstraints = currentLoopConstraints.call(this);
+                } else {
+                    annotationsTool.annotationConstraints = undefined;
+                }
+            },
+
+            /**
              * Set the given loop as the current one
              * @param {Object | Integer} loop The new loop object or its index
              * @param {Boolean} moveTo Define if yes or no the playhead must be moved at the beginning of the loop
@@ -363,6 +387,9 @@ define(["jquery",
                         this.playerAdapter.play();
                     }
                 }
+
+                // Update the global annotation constraints.
+                _.extend(annotationsTool.annotationConstraints, currentLoopConstraints.call(this));
             },
 
             /**
