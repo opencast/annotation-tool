@@ -23,7 +23,8 @@ module.exports = function (grunt) {
             html    : '**/*.html',
             tmpl    : 'templates/*.tmpl',
             tests   : 'tests/',
-            www     : '<%= webServerDir %>/**/*'
+            www     : '<%= webServerDir %>/**/*',
+            locales : 'locales/**/*.json'
         },
 
         profiles: {
@@ -100,6 +101,10 @@ module.exports = function (grunt) {
             multiple: {
                 files: ['<%= srcPath.less %>', '<%= srcPath.js %>', '<%= srcPath.html %>', '<%= srcPath.tmpl %>'],
                 tasks: ['copy:target']
+            },
+            locales: {
+                files: ['<%= srcPath.locales %>'],
+                tasks: ['copy:locales']
             },
             // Watch file on web server for live reload
             www: {
@@ -265,6 +270,14 @@ module.exports = function (grunt) {
             'config': {
                 src: '<%= currentProfile.config %>',
                 dest: '<%= currentProfile.target %>/js/annotations-tool-configuration.js'
+            },
+            // ... the translations
+            'locales': {
+                files: [{
+                    src: '<%= srcPath.locales %>',
+                    dest: '<%= currentProfile.target %>',
+                    expand: true
+                }]
             }
         },
 
@@ -296,10 +309,10 @@ module.exports = function (grunt) {
         /** Task to run tasks in parrallel */
         concurrent: {
             dev: {
-                tasks: ['watch:js', 'watch:html', 'watch:less', 'watch:templates', 'watch:www', 'connect:dev'],
+                tasks: ['watch:js', 'watch:html', 'watch:less', 'watch:templates', 'watch:locales', 'watch:www', 'connect:dev'],
                 options: {
                     logConcurrentOutput: true,
-                    limit: 6
+                    limit: 7
                 }
             }
         },
@@ -391,12 +404,12 @@ module.exports = function (grunt) {
 
     // Default task
     grunt.registerTask('default', ['jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:locales']);
     //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'requirejs']);
+    grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'copy:locales', 'requirejs']);
+    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
