@@ -26,7 +26,8 @@ require.config({
         "underscore": "libs/underscore-min",
         "raf": "libs/rAF",
         "email-addresses": "libs/email-addresses.min",
-        "mousetrap": "libs/mousetrap.min"
+        "mousetrap": "libs/mousetrap.min",
+        "i18next": "libs/i18next.min"
     },
     waitSeconds: 10,
 
