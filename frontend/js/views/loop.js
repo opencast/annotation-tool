@@ -116,9 +116,9 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click #enableLoop"  : "toggle",
-                "click .next"        : "nextLoop",
-                "click .previous"    : "previousLoop",
+                "click #enableLoop": "toggle",
+                "click .next": "nextLoop",
+                "click .previous": "previousLoop",
                 "change #loop-length": "typeLoopLength"
             },
 
