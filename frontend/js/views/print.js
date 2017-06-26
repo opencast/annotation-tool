@@ -1,17 +1,67 @@
+/**
+ *  Copyright 2017, ELAN e.V., Germany
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ */
+
+/**
+ * A module to print annotations to be able to compare them nicely.
+ * @module views-print
+ * @requires underscore
+ * @requires backbone
+ * @requires templates/print
+ */
 define(["underscore", "backbone", "templates/print"], function (_, Backbone, printTemplate) {
 
     "use strict";
 
+
+    /**
+     * @constructor
+     * @see {@link http://www.backbonejs.org/#View}
+     * @augments module:Backbone.View
+     * @memberOf module:views-print
+     * @alias PrintView
+     */
     var PrintView = Backbone.View.extend({
+        /**
+         * The element in which the print view is displayed.
+         * @alias module:views-print.PrintView#el
+         */
         el: '#print-view',
+        /**
+         * The template to render the print view with.
+         * @alias module:views-print.PrintView#template
+         */
         template: printTemplate,
 
+
+        /**
+         * Constructor
+         * @alias module:views-print.PrintView#initialize
+         * @param {Object} model The model managing all the annotations and related data. See {@link annotations-tool}.
+         */
         initialize: function (model) {
-            // TODO Maybe only accept the video?
             this.model = model;
             this.render();
         },
 
+        /**
+         * Actually render the print view.
+         * This also collects and reformats lots of data from the model,
+         * which could be expensive, but this should be okay,
+         * as a print view should not be generated all that often
+         * (in comparison to other views).
+         */
         render: function () {
             var video = this.model.video;
 
