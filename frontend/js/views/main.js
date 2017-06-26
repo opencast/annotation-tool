@@ -56,7 +56,6 @@ define(["jquery",
         "models/user",
         "models/track",
         "models/video",
-        "templates/categories-legend",
         "roles",
         "backbone",
         "handlebars",
@@ -67,7 +66,7 @@ define(["jquery",
 
     function ($, _, Mousetrap, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView,
               ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos, User, Track, Video,
-              CategoriesLegendTmpl, ROLES, Backbone) {
+              ROLES, Backbone) {
 
         "use strict";
 
@@ -103,14 +102,6 @@ define(["jquery",
 
 
             /**
-             * Template for the categories legend
-             * @alias module:views-main.MainView#categoriesLegendTmpl
-             * @type {HandlebarsTemplate}
-             */
-            categoriesLegendTmpl: CategoriesLegendTmpl,
-
-
-            /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
              * @type {Map}
@@ -131,7 +122,6 @@ define(["jquery",
                 _.bindAll(this, "layoutUpdate",
                                 "checkUserAndLogin",
                                 "createViews",
-                                "generateCategoriesLegend",
                                 "logout",
                                 "loadPlugins",
                                 "onDeletePressed",
@@ -140,8 +130,7 @@ define(["jquery",
                                 "ready",
                                 "setupKeyboardShortcuts",
                                 "tracksSelection",
-                                "setLoadingProgress",
-                                "updateTitle");
+                                "setLoadingProgress");
                 annotationsTool.bind(annotationsTool.EVENTS.NOTIFICATION, function (message) {
                     this.setLoadingProgress(this.loadingPercent, message);
                 }, this);
@@ -180,8 +169,6 @@ define(["jquery",
 
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
-                    this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
-                    this.updateTitle(annotationsTool.video);
 
                     if (!annotationsTool.isFreeTextEnabled()) {
                         $("#opt-annotate-text").parent().hide();
@@ -207,30 +194,6 @@ define(["jquery",
                 _.each(plugins, function (plugin) {
                     plugin();
                 }, this);
-            },
-
-            /**
-             * Updates the title of the page for print mode
-             * @param  {object} video The video model
-             * @alias module:views-main.MainView#updateTitle
-             */
-            updateTitle: function (video) {
-                this.$el.find("#video-title").html(video.get("title"));
-                this.$el.find("#video-owner").html("Owner: " + video.get("src_owner"));
-                if (_.isUndefined(video.get("src_creation_date"))) {
-                    this.$el.find("#video-date").remove();
-                } else {
-                    this.$el.find("#video-date").html("Date: " + video.get("src_creation_date"));
-                }
-            },
-
-            /**
-             * Generates the legend for all the categories (for printing)
-             * @param  {array} categories The array containing all the categories
-             * @alias module:views-main.MainView#generateCategoriesLegend
-             */
-            generateCategoriesLegend: function (categories) {
-                this.$el.find("#categories-legend").html(this.categoriesLegendTmpl(categories));
             },
 
             /**
@@ -459,7 +422,6 @@ define(["jquery",
              * @alias module:views-main.MainView#print
              */
             print: function () {
-                var oldStates = this.listView.setStateToAllViews(ListAnnotationView.STATES.PRINT);
                 window.focus();
                 if (document.readyState === "complete") {
                     var printView = new PrintView(annotationsTool);
@@ -475,7 +437,6 @@ define(["jquery",
                 } else {
                     setTimeout(this.print, 1000);
                 }
-                this.listView.setStates(oldStates);
             },
 
             /**
