@@ -1,4 +1,4 @@
-define(["handlebars", "roles"], function (Handlebars, ROLES) {
+define(["handlebars", "i18next", "roles"], function (Handlebars, i18next, ROLES) {
 
     /**
      * Handlebars helper to check if the annotations-tool is in private-only mode.
@@ -82,6 +82,17 @@ define(["handlebars", "roles"], function (Handlebars, ROLES) {
      */
     Handlebars.registerHelper("formatDate", function (date) {
         return annotationsTool.formatDate(date);
+    });
+
+    /**
+     * Translate a string using `i18next`
+     * @see module:i18next
+     * @alias module:Handlebars#t
+     */
+    Handlebars.registerHelper("t", function (translationKey, options) {
+        return new Handlebars.SafeString(
+            i18next.t(translationKey, options.hash)
+        );
     });
 
     return Handlebars;
