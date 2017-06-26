@@ -27,7 +27,8 @@ require.config({
         "raf": "libs/rAF",
         "email-addresses": "libs/email-addresses.min",
         "mousetrap": "libs/mousetrap.min",
-        "i18next": "libs/i18next.min"
+        "i18next": "libs/i18next.min",
+        "i18next-xhr-backend": "libs/i18nextXHRBackend.min"
     },
     waitSeconds: 10,
 
