@@ -4,7 +4,7 @@ require.config({
     paths: {
         "annotations-tool"              : "annotations-tool",
         "annotations-tool-configuration": "annotations-tool-configuration",
-        "backbone"                      : "libs/backbone/backbone-min-0.9.9",
+        "backbone"                      : "libs/backbone/backbone-0.9.9",
         "bootstrap"                     : "libs/bootstrap/bootstrap.min",
         "carousel"                      : "libs/bootstrap/carousel2.2",
         "domReady"                      : "libs/require/config/domReady",
