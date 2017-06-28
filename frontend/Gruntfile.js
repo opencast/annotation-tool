@@ -353,7 +353,6 @@ module.exports = function (grunt) {
             compile: {
                 options: {
                     baseUrl                    : './js',
-                    name                       : 'annotations',
                     mainConfigFile             : './js/libs/require/config/config-build.js',
                     name                       : 'main',
                     optimizeAllPluginResources : false,
