@@ -16,7 +16,11 @@
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="style/style.css">
     <!-- build:[data-main]:build optimized.js-->
-    <script src="js/libs/require/require.js" data-main="js/libs/require/config/config"></script>
+    <script src="js/libs/require/require.js"></script>
+    <!-- /build -->
+    <!-- build:remove:build -->
+    <script src="js/libs/require/config/config.js"></script>
+    <script src="js/main.js"></script>
     <!-- /build -->
 </head>
 <body>

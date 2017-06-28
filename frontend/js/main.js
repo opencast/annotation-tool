@@ -1,5 +1,5 @@
 /**
- * Bootstrap file for the require.js optimization
+ * Bootstrap file for require.js
  */
 require(["domReady",
          "annotations-tool-configuration",
