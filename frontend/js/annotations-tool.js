@@ -676,6 +676,11 @@ define(["jquery",
                 if (!this.localStorage) {
                     options.wait = true;
                 }
+
+                // The loop controller can constrain annotations to the current loop using this.
+                // @see module:views-loop.Loop#toggleConstrainAnnotations
+                _.extend(params, this.annotationConstraints);
+
                 var annotation = this.selectedTrack.get("annotations").create(params, options);
                 this.activeAnnotation = annotation;
                 return annotation;

@@ -199,29 +199,14 @@ define(["jquery",
 
                 var id = event.target.getAttribute("value"),
                     scalevalue = this.scaleValues.get(id),
-                    time = Math.round(annotationsTool.playerAdapter.getCurrentTime()),
                     annotation,
-                    options = {},
                     params = {
                         text: this.model.get("value"),
-                        start: time,
                         label: this.model,
                         scalevalue: scalevalue.toJSON()
                     };
 
-                if (this.editModus || (!_.isNumber(time) || time < 0)) {
-                    return;
-                }
-
-                if (annotationsTool.user) {
-                    params.created_by = annotationsTool.user.id;
-                }
-
-                if (!annotationsTool.localStorage) {
-                    options.wait = true;
-                }
-
-                annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
+                annotation = annotationsTool.createAnnotation(params);
                 annotationsTool.setSelection([annotation], true);
             },
 
