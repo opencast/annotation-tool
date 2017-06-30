@@ -149,23 +149,6 @@ define(["jquery",
             tracksToImport: undefined,
 
             /**
-             * Formats the given date in 
-             * @alias module:annotations-tool-configuration.Configuration.formatDate
-             * @type {module:player-adapter.formatDate}
-             */
-            formatDate: function (date) {
-                if (_.isNumber(date)) {
-                    date = new Date(date);
-                }
-
-                if (_.isDate(date)) {
-                    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
-                } else {
-                    return "Unvalid date";
-                }
-            },
-
-            /**
              * Get the tool layout configuration
              * @return {object} The tool layout configuration
              */

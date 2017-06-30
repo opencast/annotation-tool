@@ -217,6 +217,23 @@ define(["jquery",
             },
 
             /**
+             * Formats the given date in 
+             * @alias annotationsTool.formatDate
+             */
+            formatDate: function (date) {
+                if (_.isNumber(date)) {
+                    date = new Date(date);
+                }
+
+                if (_.isDate(date)) {
+                    // TODO What about this
+                    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+                } else {
+                    return "Unvalid date";
+                }
+            },
+
+            /**
              * Log in the current user of the tool
              * @alias annotationsTool.login
              * @param {Object} The Attributes of the user that is to be logged in.
