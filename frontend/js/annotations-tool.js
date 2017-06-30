@@ -217,7 +217,7 @@ define(["jquery",
             },
 
             /**
-             * Formats the given date in 
+             * Formats the given date
              * @alias annotationsTool.formatDate
              */
             formatDate: function (date) {
