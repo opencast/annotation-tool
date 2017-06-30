@@ -1,17 +1,17 @@
-<h1>Name of the video: {{title}}</h1>
+<h1>{{t "print.title" title}}</h1>
 
-<h2>Used categories</h2>
+<h2>{{t "print.categories.header"}}</h2>
 
 <table>
   <thead>
     <tr>
-      <th>Categories</th>
+      <th>{{t "print.categories.table.header"}}</th>
       {{#each categories}}
         <th>{{name}}</th>
       {{/each}}
     </tr>
     <tr>
-      <th>Scales</th>
+      <th>{{t "print.categories.table.scales.header"}}</th>
       {{#each categories}}
         <th>{{scale}}</th>
       {{/each}}
@@ -31,21 +31,21 @@
   </tbody>
 </table>
 
-<h2>Annotations</h2>
+<h2>{{t "print.annotations.header"}}</h2>
 
 <table>
   <thead>
     <tr>
-      <th>User/Track</th>
+      <th>{{t "print.annotations.table.user and track.header"}}</th>
       {{#each tracks}}
         <th colspan="2">{{owner}}/{{name}}</th>
       {{/each}}
     </tr>
     <tr>
-      <th>Timecode</th>
+      <th>{{t "print.annotations.table.timecode.header"}}</th>
       {{#each tracks}}
-        <th>Codes</th>
-        <th>Annotation/Comments</th>
+        <th>{{t "print.annotations.table.codes.header"}}</th>
+        <th>{{t "print.annotations.table.annotation and comments.header"}}</th>
       {{/each}}
     </tr>
   </thead>
@@ -59,13 +59,13 @@
               <td>{{codes}}</td>
               <td>
                 {{#if free}}
-                  <h4>Free annotation</h4>
+                  <h4>{{t "print.annotations.table.annotation and comments.free text.header"}}</h4>
                   <p>
                     {{free}}
                   </p>
                 {{/if}}
                 {{#each comments}}
-                  <h4>Comment by {{author}}</h4>
+                  <h4>{{t "print.annotations.table.annotation and comments.comment by" author=author}}</h4>
                   <p>
                     {{text}}
                   </p>

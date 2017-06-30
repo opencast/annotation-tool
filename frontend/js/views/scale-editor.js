@@ -19,6 +19,7 @@
  * @module views-scale-editor
  * @requires jQuery
  * @requires backbone
+ * @requires i18next
  * @requires models-scale
  * @requires collections-scales
  * @requires templates/scale-editor.tmpl
@@ -29,6 +30,7 @@
  */
 define(["jquery",
         "backbone",
+        "i18next",
         "models/scale",
         "collections/scales",
         "views/scalevalue-editor",
@@ -36,8 +38,9 @@ define(["jquery",
         "templates/scale-editor-select",
         "templates/scale-editor-content",
         "access",
-        "handlebars"],
-        function ($, Backbone, Scale, Scales, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
+        "handlebars",
+        "handlebarsHelpers"],
+    function ($, Backbone, i18next, Scale, Scales, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
 
             "use strict";
 
@@ -56,9 +59,9 @@ define(["jquery",
                  * @type {map}
                  */
                 TITLES: {
-                    CATEGORY_EDIT  : "Edit category scale",
-                    STANDALONE_EDIT: "Edit scales",
-                    SAVE_BUTTON    : "Save"
+                    CATEGORY_EDIT  : i18next.t("scale editor.edit category scale"),
+                    STANDALONE_EDIT: i18next.t("scale editor.edit scales"),
+                    SAVE_BUTTON    : i18next.t("scale editor.save")
                 },
 
                 /**
@@ -67,7 +70,7 @@ define(["jquery",
                  * @type {Object}
                  */
                 EMPTY_SCALE: {
-                    name: "-- NO SCALE --",
+                    name: i18next.t("scale editor.no scale"),
                     id  : "NO"
                 },
 
@@ -334,7 +337,7 @@ define(["jquery",
                     this.isInEditMode = true;
 
                     this.currentScale = new Scale({
-                        name  : "New scale",
+                        name  : i18next.t("scale editor.new scale.name"),
                         access: this.currentCategory.get("access")
                     });
 
@@ -360,7 +363,7 @@ define(["jquery",
                 createScaleValue: function () {
                     this.currentScale.get("scaleValues").create({
                             order: this.$el.find(".scale-value").length,
-                            name : "New scale value",
+                            name : i18next.t("scale editor.new scale.value"),
                             value: 0,
                             access: this.currentCategory.get("access")
                         });

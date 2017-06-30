@@ -20,6 +20,7 @@
  * @requires jquery
  * @requires underscore
  * @requires backbone
+ * @requires i18next
  * @requires views-annotate-label
  * @requires templates/annotate-category.tmpl
  * @requires handlebars
@@ -28,13 +29,14 @@
 define(["jquery",
         "underscore",
         "backbone",
+        "i18next",
         "views/annotate-label",
         "templates/annotate-category",
         "handlebarsHelpers",
         "jquery.colorPicker"],
 
 
-    function ($, _, Backbone, LabelView, Template) {
+    function ($, _, Backbone, i18next, LabelView, Template) {
 
         "use strict";
 
@@ -287,8 +289,8 @@ define(["jquery",
              */
             onCreateLabel: function () {
                 this.model.get("labels").create({
-                    value       : "New",
-                    abbreviation: "NEW",
+                    value       : i18next.t("new label defaults.description"),
+                    abbreviation: i18next.t("new label defaults.abbreviation"),
                     category    : this.model
                 },
                   {wait: true}

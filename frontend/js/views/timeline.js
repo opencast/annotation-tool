@@ -18,6 +18,7 @@
  * @module views-timeline
  * @requires jquery
  * @requires underscore
+ * @requires i18next
  * @requires player-adapter
  * @requires models-annotation
  * @requires collections-annotations
@@ -35,6 +36,7 @@
  */
 define(["jquery",
         "underscore",
+        "i18next",
         "prototypes/player_adapter",
         "models/annotation",
         "models/track",
@@ -53,10 +55,11 @@ define(["jquery",
         "timeline",
         "tooltip",
         "popover",
-        "jquery.appear"
+        "jquery.appear",
+        "handlebarsHelpers"
     ],
 
-    function ($, _, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
+    function ($, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
         GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars, links) {
 
         "use strict";
@@ -156,8 +159,8 @@ define(["jquery",
             VOID_TRACK: {
                 isMine      : true,
                 id          : "empty-timeline",
-                name        : "No track available",
-                description : "No track corresponding with the current filter(s)."
+                name        : i18next.t("timeline.no track available.short"),
+                description : i18next.t("timeline.no track available.long")
             },
 
             /**
@@ -830,11 +833,11 @@ define(["jquery",
                         description = self.createGroupModal.find("#description")[0].value;
 
                         if (name === "") {
-                            self.createGroupModal.find(".alert #content").html("Name is required!");
+                            self.createGroupModal.find(".alert #content").html(i18next.t("timeline.name required"));
                             self.createGroupModal.find(".alert").show();
                             return;
                         } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
-                            self.createGroupModal.find(".alert #content").html("Scripts are not allowed!");
+                            self.createGroupModal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
                             self.createGroupModal.find(".alert").show();
                             return;
                         }
@@ -907,11 +910,11 @@ define(["jquery",
                         description = self.updateGroupModal.find("#description")[0].value;
 
                         if (name === "") {
-                            self.updateGroupModal.find(".alert #content").html("Name is required!");
+                            self.updateGroupModal.find(".alert #content").html(i18next.t("timeline.name required"));
                             self.updateGroupModal.find(".alert").show();
                             return;
                         } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
-                            self.updateGroupModal.find(".alert #content").html("Scripts are not allowed!");
+                            self.updateGroupModal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
                             self.updateGroupModal.find(".alert").show();
                             return;
                         }

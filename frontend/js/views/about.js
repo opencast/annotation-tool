@@ -19,8 +19,19 @@
  * @requires version
  * @requires backbone
  * @requires templates/about
+ * @requires handlebarsHelpers
  */
-define(["version", "backbone", "templates/about"], function (VERSION, Backbone, aboutTemplate) { "use strict";
+define([
+    "version",
+    "backbone",
+    "templates/about",
+    "handlebarsHelpers"
+], function (
+    VERSION,
+    Backbone,
+    aboutTemplate/*,
+    handlebarsHelpers*/
+) { "use strict";
 
 /**
  * @constructor

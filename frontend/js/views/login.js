@@ -3,6 +3,7 @@
  * @module views-login
  * @requires jQuery
  * @requires backbone
+ * @requires i18next
  * @requires models-user
  * @requires collections-users
  * @requires templates/user-login.tmpl
@@ -11,12 +12,14 @@
  */
 define(["jquery",
         "backbone",
+        "i18next",
         "models/user",
         "collections/users",
         "templates/user-login",
         "roles",
-        "handlebars"],
-        function ($, Backbone, User, Users, LoginTemplate, ROLES) {
+        "handlebars",
+        "handlebarsHelpers"],
+    function ($, Backbone, i18next, User, Users, LoginTemplate, ROLES) {
 
             "use strict";
 
@@ -133,12 +136,12 @@ define(["jquery",
                             {
                                 error: $.proxy(function (model, error) {
                                     this.$el.find("#" + error.attribute).parentsUntil("form").addClass("error");
-                                    userError.find("#content").append(error.message + "<br/>");
+                                    userError.find("#content").append(i18next.t("login.error", { error: error.message }) + "<br/>");
                                 }, this)
                             }
                         );
                     } catch (error) {
-                        userError.find("#content").append(error + "<br/>");
+                        userError.find("#content").append(i18next.t("login.error", { error: error }) + "<br/>");
                         this.$el.find(".alert").show();
                         return undefined;
                     }

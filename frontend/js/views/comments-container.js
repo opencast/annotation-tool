@@ -28,7 +28,8 @@ define(["jquery",
         "views/comment",
         "templates/comments-container",
         "handlebars",
-        "backbone"],
+        "backbone",
+        "handlebarsHelpers"],
 
     function ($, _, CommentView, Template, Handlebars, Backbone) {
 

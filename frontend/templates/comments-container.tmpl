@@ -1,11 +1,11 @@
-<div class="title">Comments</div>
+<div class="title">{{t "annotation.comments.title"}}</div>
 <div id="comment-list{{id}}" class="comment-list"></div>
 {{#if addState}}
 <div class="comment-header">
-    <textarea class="input-block-level focused create" placeholder="Write a comment for this annotation."></textarea>
+    <textarea class="input-block-level focused create" placeholder="{{t "annotation.comments.placeholder"}}"></textarea>
     <div class="button-bar">
-        <button type="button" class="btn cancel-comment">Cancel</button>
-        <button type="submit" class="btn btn-primary add-comment">Insert</button>
+        <button type="button" class="btn cancel-comment">{{t "annotation.comments.cancel"}}</button>
+        <button type="submit" class="btn btn-primary add-comment">{{t "annotation.comments.insert"}}</button>
     </div>
 </div>
 {{/if}}

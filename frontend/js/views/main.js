@@ -20,6 +20,7 @@
  * @requires jquery
  * @requires underscore
  * @requires mousetrap
+ * @requires i18next
  * @requires prototype-player_adapter
  * @requires collections-annotations
  * @requires views-annotate
@@ -41,6 +42,7 @@
 define(["jquery",
         "underscore",
         "mousetrap",
+        "i18next",
         "prototypes/player_adapter",
         "views/about",
         "views/annotate",
@@ -65,9 +67,9 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, _, Mousetrap, PlayerAdapter, AboutDialog, AnnotateView, ListView, ListAnnotationView, TimelineView,
-              LoginView, ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos, User, Track,
-              Video, ROLES, Backbone) {
+    function ($, _, Mousetrap, i18next, PlayerAdapter, AboutDialog, AnnotateView, ListView, ListAnnotationView,
+              TimelineView, LoginView, ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos,
+              User, Track, Video, ROLES, Backbone) {
 
         "use strict";
 
@@ -137,10 +139,10 @@ define(["jquery",
                     this.setLoadingProgress(this.loadingPercent, message);
                 }, this);
 
-                this.setLoadingProgress(10, "Starting tool.");
+                this.setLoadingProgress(10, i18next.t("startup.starting"));
 
 
-                this.setLoadingProgress(20, "Get users saved locally.");
+                this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
                 // Create a new users collection and get exciting local user
                 annotationsTool.users = new Users();
 
@@ -205,7 +207,7 @@ define(["jquery",
              * @alias module:views-main.MainView#updateTitle
              */
             updateTitle: function (video) {
-                this.$el.find("#video-title").text(video.get("title") || "Untitled video");
+                this.$el.find("#video-title").text(video.get("title") || i18next.t("untitled video"));
             },
 
             /**
@@ -213,15 +215,15 @@ define(["jquery",
              * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
-                this.setLoadingProgress(40, "Start creating views.");
+                this.setLoadingProgress(40, i18next.t("startup.creating views"));
 
                 $("#video-container").show();
 
-                this.setLoadingProgress(45, "Start loading video.");
+                this.setLoadingProgress(45, i18next.t("startup.loading video"));
 
                 // Initialize the player
                 annotationsTool.playerAdapter.load();
-                this.setLoadingProgress(50, "Initializing the player.");
+                this.setLoadingProgress(50, i18next.t("startup.initializing the player"));
 
                 annotationsTool.views.main = this;
 
@@ -234,18 +236,18 @@ define(["jquery",
                         return;
                     }
 
-                    this.setLoadingProgress(60, "Start creating views.");
+                    this.setLoadingProgress(60, i18next.t("startup.creating views"));
 
                     if (annotationsTool.getLayoutConfiguration().timeline) {
                         // Create views with Timeline
-                        this.setLoadingProgress(70, "Creating timeline.");
+                        this.setLoadingProgress(70, i18next.t("startup.creating timeline"));
                         this.timelineView = new TimelineView({playerAdapter: annotationsTool.playerAdapter});
                         annotationsTool.views.timeline = this.timelineView;
                     }
 
                     if (annotationsTool.getLayoutConfiguration().annotate) {
                         // Create view to annotate
-                        this.setLoadingProgress(80, "Creating annotate view.");
+                        this.setLoadingProgress(80, i18next.t("startup.creating annotation view"));
                         this.annotateView = new AnnotateView({playerAdapter: annotationsTool.playerAdapter});
                         this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
                         this.annotateView.$el.show();
@@ -254,7 +256,7 @@ define(["jquery",
 
                     if (annotationsTool.getLayoutConfiguration().list) {
                         // Create annotations list view
-                        this.setLoadingProgress(90, "Creating list view.");
+                        this.setLoadingProgress(90, i18next.t("startup.creating list view"));
                         this.listView = new ListView();
                         this.listenTo(this.listView, "change-layout", this.onWindowResize);
                         this.listView.$el.show();
@@ -277,7 +279,7 @@ define(["jquery",
              * @alias module:views-main.MainView#ready
              */
             ready: function () {
-                this.setLoadingProgress(100, "Ready.");
+                this.setLoadingProgress(100, i18next.t("startup.ready"));
                 this.loadingBox.hide();
                 this.onWindowResize();
 
@@ -338,7 +340,7 @@ define(["jquery",
              * @alias module:views-main.MainView#checkUserAndLogin
              */
             checkUserAndLogin: function () {
-                this.setLoadingProgress(30, "Get current user.");
+                this.setLoadingProgress(30, i18next.t("startup.get current user"));
 
                 if (!annotationsTool.modelsInitialized) {
                     annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);

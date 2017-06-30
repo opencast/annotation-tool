@@ -10,8 +10,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Annotating Academic Video</title>
-    <meta name="description" content="Video annotations tool">
+    <title data-i18n="title">Annotating Academic Video</title>
+    <meta name="description" data-i18n="[content]description" content="Video annotations tool">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="style/style.css">
@@ -34,20 +34,20 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a id="video-title" class="brand" href="#">Annotating Academic video - <%= version %> </a>
+          <a id="video-title" class="brand" href="#"><span data-i18n="title"></span> - <%= version %> </a>
 
           <ul class="nav pull-right">
-              <li><a href="#" id="about">About</a></li>
+              <li><a href="#" id="about" data-i18n="menu.about"></a></li>
               <li class="dropdown" id="view-options">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span data-i18n="menu.view.head"></span> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li class="menu-category">Annotate</li>
-                  <li><a id="opt-annotate-text" class="opt-layout checked" href="#"><i class="check icon-check"></i> Text annotations</a></li>
-                  <li><a id="opt-annotate-categories" class="opt-layout checked" href="#"><i class="check icon-check"></i> Structured annotations</a></li>
+                  <li class="menu-category" data-i18n="menu.view.annotate.head"></li>
+                  <li><a id="opt-annotate-text" class="opt-layout checked" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.annotate.text annotations"></span></a></li>
+                  <li><a id="opt-annotate-categories" class="opt-layout checked" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.annotate.structured annotations"></span></a></li>
                   <li role="presentation" class="divider"></li>
-                  <li class="menu-category">Views</li>
-                  <li><a id="opt-view-annotate" class="opt-layout checked" href="#"><i class="check icon-check"></i> Annotate view</a></li>
-                  <li><a id="opt-view-list" class="opt-layout checked" href="#"><i class="check icon-check"></i> List view</a></li>
+                  <li class="menu-category" data-i18n="menu.view.views.head"></li>
+                  <li><a id="opt-view-annotate" class="opt-layout checked" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.views.annotate view"></span></a></li>
+                  <li><a id="opt-view-list" class="opt-layout checked" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.views.list view"></span></a></li>
                   <li role="presentation" class="divider"></li>
 
                   <li>
@@ -57,17 +57,17 @@
                   </li>
 
                   <li role="presentation" class="divider"></li>
-                  <li class="menu-category">Annotations visibility</li>
-                  <li><a class="opt-tracks-mine" href="#"><i class="check icon-check"></i> My annotations only</a></li>
-                  <li><a class="opt-tracks-select" href="#"><i class="check icon-check"></i> Other public annotations...</a></li>
-                  <li><a class="opt-tracks-public" href="#"><i class="check icon-check"></i> All public annotations</a></li>
+                  <li class="menu-category" data-i18n="menu.view.annotation visibility.head"></li>
+                  <li><a class="opt-tracks-mine" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.annotation visibility.only mine"></span></a></li>
+                  <li><a class="opt-tracks-select" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.annotation visibility.other public"></span></a></li>
+                  <li><a class="opt-tracks-public" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.annotation visibility.all public"></span></a></li>
 
 
                 </ul>
               </li>
-              <li><a href="#" id="export">Export for statistics</a></li>
-              <li><a href="#" id="print">Print</a></li>
-              <li><a href="#" id="logout">Logout</a></li>
+              <li><a href="#" id="export" data-i18n="menu.export"></a></li>
+              <li><a href="#" id="print" data-i18n="menu.print"></a></li>
+              <li><a href="#" id="logout" data-i18n="menu.logout"></a></li>
           </ul>
         </div>
       </div>
@@ -77,8 +77,8 @@
 
     <!-- Loading box -->
     <div class="hero-unit" id="loading">
-        <h1>Loading</h1>
-        <p class='info'>The annotations tool create the views</p>
+        <h1 data-i18n="startup.loading"></h1>
+        <p class='info' data-i18n="startup.creating views"></p>
         <p>
             <div class="progress progress-striped active">
                 <div class="bar" style="width: 10%;"></div>
@@ -115,19 +115,19 @@
                           <div class="btn-group dropup">
                              <!-- <button class="btn">Other annotations</button> -->
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
-                              Other annotations <span class="caret"></span>
+                              <span data-i18n="timeline.other annotations.head"></span> <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                              <li><a class="opt-tracks-mine" href="#"><i class="check icon-check"></i> My annotations only</a></li>
-                              <li><a class="opt-tracks-select" href="#"><i class="check icon-check"></i> Other public annotations...</a></li>
-                              <li><a class="opt-tracks-public" href="#"><i class="check icon-check"></i> All public annotations</a></li>
+                              <li><a class="opt-tracks-mine" href="#"><i class="check icon-check"></i> <span data-i18n="timeline.other annotations.only mine"></span></a></li>
+                              <li><a class="opt-tracks-select" href="#"><i class="check icon-check"></i> <span data-i18n="timeline.other annotations.other public"></span></a></li>
+                              <li><a class="opt-tracks-public" href="#"><i class="check icon-check"></i> <span data-i18n="timeline.other annotations.all public"></span></a></li>
                             </ul>
                           </div>
-                          <a id="add-track" class="btn">+ Add track</a>
+                          <a id="add-track" class="btn">+ <span data-i18n="timeline.add track.button"></span></a>
                         </div>
 
 
-                        <div class="timeline-bottom-controls" id="reset-zoom"><a class="btn"><i class="icon-eye-open"></i> Reset zoom</a></div>
+                        <div class="timeline-bottom-controls" id="reset-zoom"><a class="btn"><i class="icon-eye-open"></i> <span data-i18n="timeline.reset zoom"></span></a></div>
                         <div class="timeline-bottom-controls" id="move-left"><a class="btn">&lt;</a></div>
                         <div class="timeline-bottom-controls" id="zoom-in"><a class="btn">+</a></div>
                         <div class="timeline-bottom-controls" id="zoom-out"><a class="btn">-</a></div>
@@ -145,28 +145,27 @@
                 <div class="window expanded" id="annotate-container" style="display:none">
 
                     <div class="navbar">
-                      <div class="navbar-inner">
-                        <div class="container">
-                          <span class="window-title">Annotate</span>
-                          <span class="title">on</span>
-                          <span class='currentTrack'>
-                            <span class="content"></span>
-                          </span>
-                        </div>
+                        <div class="navbar-inner">
+                          <div class="container">
+                            <span class="window-title" data-i18n="annotate on"></span>
+                            <span class='currentTrack'>
+                              <span class="content" data-i18n="annotate.no selected track"></span>
+                            </span>
+                          </div>
                       </div>
                     </div>
 
                     <div class="control-group" id="annotate-form">
-                        <div class="no-track">Select a track to start annotating</div>
+                        <div class="no-track" data-i18n="annotate.select track prompt"></div>
 
                         <div id="input-container" class="insert-fields">
-                            <textarea id="new-annotation" placeholder="Write a free text annotation. Use &raquo;shift + return&laquo; keys to create a new line." rows="3" title="Use &raquo;shift + return&laquo; keys to create a new line."></textarea>
+                            <textarea id="new-annotation" data-i18n="[placeholder]annotate.new.placeholder;[title]annotate.new.title" rows="3"></textarea>
                             <div class="controls stop-fields">
                                 <label class="checkbox inline">
-                                    <input id="pause-video" type="checkbox">Pause video during writing
+                                    <input id="pause-video" type="checkbox"> <span data-i18n="annotate.pause while editing"></span>
                                 </label>
                             </div>
-                            <button id="insert" type="button" class="btn">Insert</button>
+                            <button id="insert" type="button" class="btn" data-i18n="annotate.insert"></button>
                         </div>
 
 
@@ -175,7 +174,7 @@
 
                             <ul class="nav nav-tabs" id="label-tabs-buttons">
                                   <label class="checkbox inline" id="editSwitch">
-                                  <input type="checkbox" value="option1"> Edit mode
+                                  <input type="checkbox" value="option1"> <span data-i18n="annotate.edit mode"></span>
                               </label>
                             </ul>
 
@@ -198,10 +197,10 @@
 
                             <ul class="nav pull-right">
                                 <li class="dropdown">
-                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Items visiblity<b class="caret"></b></a>
+                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span data-i18n="annotate.items visibility.head"></span><b class="caret"></b></a>
                                   <ul class="dropdown-menu">
-                                    <li><a href="#" class="collapse-all">Collapse All</a></i></li>
-                                    <li><a href="#" class="expand-all">Expand All</a></i></li>
+                                    <li><a href="#" class="collapse-all" data-i18n="annotate.items visibility.collapse all"></a></i></li>
+                                    <li><a href="#" class="expand-all" data-i18n="annotate.items visibility.expand all"></a></i></li>
                                   </ul>
                                 </li>
                             </ul>

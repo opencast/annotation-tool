@@ -22,6 +22,7 @@
  * @module views-annotate-tab
  * @requires jQuery
  * @requires underscore
+ * @requires i18next
  * @requires models-label
  * @requires models-scale
  * @requires models-scalevalue
@@ -42,6 +43,7 @@
  */
 define(["jquery",
         "underscore",
+        "i18next",
         "models/category",
         "models/label",
         "models/scale",
@@ -62,7 +64,7 @@ define(["jquery",
         "libs/FileSaver",
         "jquery.FileReader"],
 
-       function ($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, scalesSet, Backbone, Handlebars, ACCESS) {
+    function ($, _, i18next, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, scalesSet, Backbone, Handlebars, ACCESS) {
 
         "use strict";
 
@@ -350,7 +352,7 @@ define(["jquery",
              */
             onAddCategory: function () {
                 var attributes = {
-                    name    : "NEW CATEGORY",
+                    name    : i18next.t("annotate.new category name"),
                     settings: {
                         color   : "#" + annotationsTool.colorsManager.getNextColor(),
                         hasScale: false
@@ -538,10 +540,10 @@ define(["jquery",
 
                 // If the used browser is Safari, we display a warning message
                 if (annotationsTool.isBrowserSafari6()) {
-                    annotationsTool.alertWarning("This version of Safari does not currently support the export function. Try it on another browser.");
+                    annotationsTool.alertWarning(i18next.t("annotate.export not supported", { browser: "Safari" }));
                     return;
                 } else if (annotationsTool.isBrowserIE9()) {
-                    annotationsTool.alertWarning("This version of Internet Explorer does not support the export function. Try it on another browser.");
+                    annotationsTool.alertWarning(i18next.t("annotate.export not supported", { browser: "Internet Explorer" }));
                     return;
                 }
 

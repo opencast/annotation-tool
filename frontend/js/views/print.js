@@ -19,8 +19,9 @@
  * @requires underscore
  * @requires backbone
  * @requires templates/print
+ * @requires handlebarsHelpers
  */
-define(["underscore", "backbone", "templates/print"], function (_, Backbone, printTemplate) {
+define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], function (_, Backbone, printTemplate) {
 
     "use strict";
 
