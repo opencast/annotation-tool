@@ -20,6 +20,7 @@
  * @requires jQuery
  * @requires backbone
  * @requires i18next
+ * @requires moment
  * @requires views-main
  * @requires views-alert
  * @requires templates/delete-modal.tmpl
@@ -32,6 +33,7 @@ define(["jquery",
         "underscore",
         "backbone",
         "i18next",
+        "moment",
         "collections/videos",
         "views/main",
         "views/alert",
@@ -44,7 +46,7 @@ define(["jquery",
         "annotation-sync",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
+    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
 
         "use strict";
 
@@ -221,16 +223,7 @@ define(["jquery",
              * @alias annotationsTool.formatDate
              */
             formatDate: function (date) {
-                if (_.isNumber(date)) {
-                    date = new Date(date);
-                }
-
-                if (_.isDate(date)) {
-                    // TODO What about this
-                    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
-                } else {
-                    return "Unvalid date";
-                }
+                return moment(date).format("L");
             },
 
             /**
