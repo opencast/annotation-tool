@@ -203,11 +203,6 @@ module.exports = function (grunt) {
             },
             // ... the index locally
             'local-index': {
-                options: {
-                    processContent: function (content) {
-                        return grunt.template.process(content);
-                    }
-                },
                 src: 'index.html',
                 dest: '<%= webServerDir %>/index.html'
             },
