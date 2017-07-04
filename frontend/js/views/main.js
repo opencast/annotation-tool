@@ -169,6 +169,7 @@ define(["jquery",
 
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
+                    this.updateTitle(annotationsTool.video);
 
                     if (!annotationsTool.isFreeTextEnabled()) {
                         $("#opt-annotate-text").parent().hide();
@@ -194,6 +195,15 @@ define(["jquery",
                 _.each(plugins, function (plugin) {
                     plugin();
                 }, this);
+            },
+
+            /**
+             * Updates the title of the page to reflect the video title
+             * @param  {object} video The video model
+             * @alias module:views-main.MainView#updateTitle
+             */
+            updateTitle: function (video) {
+                this.$el.find("#video-title").text(video.get("title") || "Untitled video");
             },
 
             /**
