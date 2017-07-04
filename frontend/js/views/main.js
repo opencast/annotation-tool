@@ -42,6 +42,7 @@ define(["jquery",
         "underscore",
         "mousetrap",
         "prototypes/player_adapter",
+        "views/about",
         "views/annotate",
         "views/list",
         "views/list-annotation",
@@ -64,9 +65,9 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, _, Mousetrap, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView,
-              ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos, User, Track, Video,
-              ROLES, Backbone) {
+    function ($, _, Mousetrap, PlayerAdapter, AboutDialog, AnnotateView, ListView, ListAnnotationView, TimelineView,
+              LoginView, ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos, User, Track,
+              Video, ROLES, Backbone) {
 
         "use strict";
 
@@ -107,6 +108,7 @@ define(["jquery",
              * @type {Map}
              */
             events: {
+                "click #about"               : "about",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
@@ -366,6 +368,20 @@ define(["jquery",
                     }
                     this.loginView.show(userExtData);
                 }
+            },
+
+            /**
+             * The about dialog
+             * @alias module:views-main.MainView#aboutDialog
+             */
+            aboutDialog: new AboutDialog(),
+
+            /**
+             * Show a dialog with information about the tool
+             * @alias module:views-main.MainView#about
+             */
+            about: function () {
+                this.aboutDialog.show();
             },
 
             /**
