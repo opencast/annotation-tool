@@ -1,0 +1,83 @@
+<h1>Name of the video: {{title}}</h1>
+
+<h2>Used categories</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Categories</th>
+      {{#each categories}}
+        <th>{{name}}</th>
+      {{/each}}
+    </tr>
+    <tr>
+      <th>Scales</th>
+      {{#each categories}}
+        <th>{{scale}}</th>
+      {{/each}}
+    </tr>
+  </thead>
+  <tbody>
+    {{#each labelRows}}
+      <tr>
+        <th>{{#if first}}Labels{{/if}}</th>
+        {{#each labels}}
+          <td>
+            {{abbreviation}}
+          </td>
+        {{/each}}
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<h2>Annotations</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>User/Track</th>
+      {{#each tracks}}
+        <th colspan="2">{{owner}}/{{name}}</th>
+      {{/each}}
+    </tr>
+    <tr>
+      <th>Timecode</th>
+      {{#each tracks}}
+        <th>Codes</th>
+        <th>Annotation/Comments</th>
+      {{/each}}
+    </tr>
+  </thead>
+  <tbody>
+    {{#each annotations}}
+      <tr>
+        <td>{{timecode}}</td>
+        {{#each ../tracks}}
+          {{#ifEq id ../track}}
+            {{#with ../..}}
+              <td>{{codes}}</td>
+              <td>
+                {{#if free}}
+                  <h4>Free annotation</h4>
+                  <p>
+                    {{free}}
+                  </p>
+                {{/if}}
+                {{#each comments}}
+                  <h4>Comment by {{author}}</h4>
+                  <p>
+                    {{text}}
+                  </p>
+                {{/each}}
+              </td>
+            {{/with}}
+          {{else}}
+            <td></td>
+            <td></td>
+          {{/ifEq}}
+        {{/each}}
+      {{/each}}
+    </tr>
+  </tbody>
+</table>

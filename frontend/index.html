@@ -25,7 +25,7 @@
 </head>
 <body>
 <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
-
+  <div id="screen">
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -87,12 +87,6 @@
 
     <div class="row-fluid">
         <div class="span6" id="left-column">
-
-            <div id="title-container">
-                <div id="video-title"></div>
-                <div id="video-owner"></div>
-                <div id="video-date"></div>
-            </div>
 
             <!-- container for the video -->
             <div id="video-container" class="window" style="display:none">
@@ -232,7 +226,7 @@
     <div class="modal" id="scale-editor" style="display:none"></div>
     <div class="modal" id="alert" style="display:none"></div>
     <div class="modal" id="tracks-selection" style="display:none"></div>
-    <!-- Containter for the categories legend, only displayed in print mode -->
-    <div id="categories-legend" class="print"></div>
+  </div>
+  <div id="print-view"></div>
 </body>
 </html>

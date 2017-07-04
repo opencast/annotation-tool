@@ -1,257 +1,33 @@
-  // Default print stylesheet taken from HTML5 boilerplate: https://github.com/h5bp/html5-boilerplate/blob/master/css/main.css
-  * { background: transparent !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; -webkit-print-color-adjust: exact;} /* Black prints faster: h5bp.com/s */
-  a, a:visited {}
-  a[href]:after { content: " (" attr(href) ")";}
-  abbr[title]:after { content: " (" attr(title) ")"; }
-  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }  /* Don't show links for images, or javascript/internal links */
-  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
-  thead { display: table-header-group; } /* h5bp.com/t */
-  tr, img { page-break-inside: avoid; }
-  img { max-width: 100% !important; visibility: visible;}
-  @page { margin: 1cm; }
-  p, h2, h3 { orphans: 3; widows: 3; }
-  h2, h3 { page-break-after: avoid; }
-
-
-  @color1: grey;
-
-  div#error-container > div, div#video-container > div, div#annotate-container > div, div#timeline-container > div, .navbar, div#loop, span.scaling {
+#screen {
     display: none;
-  }
+}
 
-  div#content-list {
-    max-height: none !important;
-  }
+@page {
+    size: landscape;
+}
 
-  source:before {
-    display: block;
-    content: " (" attr(src) ")";
-  }
+table {
+    border-collapse: collapse;
+}
 
-    div#title-container {
-    div#video-title {
-      font-size: 20pt;
-    }
+table, th, td {
+    border: 1px solid black;
+}
 
-    div#title-owner {
-      font-size: 14pt;
-    }
+th, td {
+    padding: 0.2em 0.5em;
+    vertical-align: top;
+}
 
-    border-bottom: 1px solid black;
-    padding-bottom: 20px;
-    margin-bottom: 5px;
-  }
+th {
+    text-align: left;
+}
 
-  // Annotation list
-  div#list-container {
+td h4 {
+    margin: 0;
+}
 
-    .annotation {
-      padding: 0px;
-      border-bottom: solid 1px black;
-      margin: 8px 0px 8px 0px;
-
-      > div {
-        margin: 4px;
-      }
-
-      .icon-comment-amount, .add-comment, .button-bar {
-        display: none;
-      }
-    }
-
-    .edit {
-      display: none;
-    }
-
-    .label-abr {
-      font-weight: bold;
-    }
-
-    .start,.end {
-      color: grey !important;
-      background: transparent !important;
-      border: none;
-      float: right;
-      width: 100px;
-      text-align: right;
-
-      input {
-        color: grey !important;
-        width: 70px;
-        font-size: 11pt;
-
-        font-family: 'Times';
-        font-size: 11pt;
-        color: grey !important;
-        display: inline-block;
-      }
-    }
-
-    .start {
-      margin-right: 80px;
-    }
-
-    .end {
-      margin-right: -182px;
-
-      &:before {
-        content: "-";
-        margin-right: 5px;
-      }
-
-      &.no-duration {
-        display: none;
-      }
-    }
-
-    input {
-      // åbackground: transparent !important;
-      border: none;
-    }
-
-    span.freetext.read-only {
-      display: none;
-    }
-
-    .category {
-      //margin-top: 30px;
-      //margin-bottom: -30px;
-      color: grey !important;
-      display: block;
-
-
-      span {
-        font-size: 11pt;
-        display: inline-block;
-        color: black;
-        max-width: 75%;
-
-        &:after {
-          content: "|";
-          margin-left: 5px;
-        }
-
-        &:last-child:after{
-          display: none;
-        }
-      }
-    }
-
-    .creator-info {
-      margin-top: -45px;
-      margin-bottom: 45px;
-      display: block;
-    }
-
-    .user, .category-print, .created, .track {
-      font-size: 11pt;
-      color: grey !important;
-      display: inline-block;
-    }
-
-    .user:after, .category-print:after, .created:after {
-      content: "|";
-      margin-left: 5px;
-    }
-
-    .scaling {
-      font-style: oblique;
-      float: right;
-    }
-
-    div.comments-container div.title {
-      display: none;
-    }
-
-    div.comment-list {
-      background-color: transparent !important;
-
-      > div {
-        // background-color: transparent !important;
-        background-image: url("../img/arrow-right.png") !important;
-        background-size: 20px !important;
-        background-repeat: no-repeat !important;
-        background-position: 25px top !important;
-        margin: 8px 0px 0px 0px;
-        padding-left: 60px;
-
-        span.header {
-          font-size: 11pt;
-          color: grey !important;
-          display: inline-block;
-
-          span {
-            color: grey !important;
-            
-            &:after {
-              content: "|";
-              margin-left: 5px;
-            }
-
-            &.date:after {
-              display: none;
-            }
-          }
-        }
-
-        span.comment {
-          display: block;
-          margin-top: 4px;
-          margin-bottom: 4px;
-        }
-
-        span.text {
-          color: black !important;
-          display: block;
-          border:none;
-        }
-      }
-    }
-  }
-
-  .user {
-    color: grey !important;
-  }
-
-  #categories-legend {
-    float: left;
-    page-break-inside: avoid;
-    margin-top: 80px;
-    .category-legend {
-        margin-top: 20px;
-
-        .name, .scale {
-            display: inline-block;
-            font-style: italic;
-            margin-right: 5px;
-
-            .scale-value:after {
-              content: ", ";
-            }
-
-            .scale-value:last-child:after {
-              display: none;
-            }
-        }
-
-        .name:before {
-          content: "Category ";
-        }
-
-        .label {
-          .abbreviation {
-            width: 40px;
-            display: inline-block;
-          }
-
-          .value:before {
-            content: "|";
-            margin-right: 5px;
-          }
-        }
-    }
-  }
-
-
-
-
+td p {
+    margin: 0;
+    margin-bottom: 0.6em;
+}
