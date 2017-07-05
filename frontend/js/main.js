@@ -6,14 +6,19 @@ require(["domReady",
          "i18next",
          "i18next-xhr-backend",
          "jquery-i18next",
+         "i18next-browser-language-detector",
          "annotations-tool-configuration"],
 
-    function (domReady, $, i18next, i18nextXHRBackend, $i18next, config) {
-        i18next.use(i18nextXHRBackend)
+    function (domReady, $, i18next, i18nextXHRBackend, $i18next, LngDetector, config) {
+        i18next
+            .use(i18nextXHRBackend)
+            .use(LngDetector)
             .init({
-                lng: "en",
                 backend: {
                     loadPath: "locales/{{lng}}/translation.json"
+                },
+                detection: {
+                    caches: []
                 }
             }, function () {
                 $i18next.init(i18next, $, { parseDefaultValueFromContent: false });
