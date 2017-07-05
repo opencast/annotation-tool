@@ -175,6 +175,15 @@ module.exports = function (grunt) {
 
         /** Copy .. */
         copy: {
+            options: {
+                processContent: function (content, srcPath) {
+                    if (srcPath === 'js/version.js') {
+                        return grunt.template.process(content, { data: { version: grunt.config.get('pkg').version } });
+                    }
+                    return content;
+                },
+                processContentExclude: ["img/**/*"]
+            },
             // ... a single file locally
             'target': {
                 files: [{

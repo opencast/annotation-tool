@@ -42,6 +42,7 @@ define(["jquery",
         "underscore",
         "mousetrap",
         "prototypes/player_adapter",
+        "views/about",
         "views/annotate",
         "views/list",
         "views/list-annotation",
@@ -64,9 +65,9 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, _, Mousetrap, PlayerAdapter, AnnotateView, ListView, ListAnnotationView, TimelineView, LoginView,
-              ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos, User, Track, Video,
-              ROLES, Backbone) {
+    function ($, _, Mousetrap, PlayerAdapter, AboutDialog, AnnotateView, ListView, ListAnnotationView, TimelineView,
+              LoginView, ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos, User, Track,
+              Video, ROLES, Backbone) {
 
         "use strict";
 
@@ -107,6 +108,7 @@ define(["jquery",
              * @type {Map}
              */
             events: {
+                "click #about"               : "about",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
@@ -169,6 +171,7 @@ define(["jquery",
 
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
+                    this.updateTitle(annotationsTool.video);
 
                     if (!annotationsTool.isFreeTextEnabled()) {
                         $("#opt-annotate-text").parent().hide();
@@ -194,6 +197,15 @@ define(["jquery",
                 _.each(plugins, function (plugin) {
                     plugin();
                 }, this);
+            },
+
+            /**
+             * Updates the title of the page to reflect the video title
+             * @param  {object} video The video model
+             * @alias module:views-main.MainView#updateTitle
+             */
+            updateTitle: function (video) {
+                this.$el.find("#video-title").text(video.get("title") || "Untitled video");
             },
 
             /**
@@ -356,6 +368,20 @@ define(["jquery",
                     }
                     this.loginView.show(userExtData);
                 }
+            },
+
+            /**
+             * The about dialog
+             * @alias module:views-main.MainView#aboutDialog
+             */
+            aboutDialog: new AboutDialog(),
+
+            /**
+             * Show a dialog with information about the tool
+             * @alias module:views-main.MainView#about
+             */
+            about: function () {
+                this.aboutDialog.show();
             },
 
             /**

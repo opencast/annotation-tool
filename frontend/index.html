@@ -34,9 +34,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">Annotating Academic video - <%= version %> </a>
+          <a id="video-title" class="brand" href="#">Annotating Academic video - <%= version %> </a>
 
           <ul class="nav pull-right">
+              <li><a href="#" id="about">About</a></li>
               <li class="dropdown" id="view-options">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -222,6 +223,7 @@
     </div> <!-- /container -->
 
     <div id="dialogs"></div>
+    <div class="modal" id="about-dialog" style="display:none"></div>
     <div class="modal" id="user-login" style="display:none"></div>
     <div class="modal" id="scale-editor" style="display:none"></div>
     <div class="modal" id="alert" style="display:none"></div>
