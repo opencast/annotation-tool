@@ -29,6 +29,7 @@ require.config({
         "mousetrap": "libs/mousetrap.min",
         "i18next": "libs/i18next.min",
         "i18next-xhr-backend": "libs/i18nextXHRBackend.min",
+        "i18next-browser-language-detector": "libs/i18nextBrowserLanguageDetector.min",
         "jquery-i18next": "libs/jquery-i18next.min"
     },
     waitSeconds: 10,
