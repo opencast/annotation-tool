@@ -93,7 +93,7 @@ module.exports = function (grunt) {
             // Watch LESS files
             less: {
                 files: ['<%= srcPath.less %>'],
-                tasks: ['less', 'copy:less', 'copy:style']
+                tasks: ['less', 'copy:less']
             },
             // Watch the LESS, Javascript, Templates and HTML at the same times
             // Use it for single core processor. It could stop working with an important number of files
@@ -201,13 +201,6 @@ module.exports = function (grunt) {
                     expand  : true,
                     src     : ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
                     dest    : '<%= currentProfile.target %>'
-                }]
-            },
-            // ... the stylesheet locally
-            'style': {
-                files: [{
-                    src  : 'style/style.css',
-                    dest : '<%= currentProfile.target %>/style/style.css'
                 }]
             },
             // ... the index locally
@@ -477,7 +470,6 @@ module.exports = function (grunt) {
                 case 'less':
                     grunt.task.run('less');
                     grunt.task.run('copy:less');
-                    grunt.task.run('copy:style');
                     break;
             }
         }
