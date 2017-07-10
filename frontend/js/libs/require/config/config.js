@@ -31,7 +31,8 @@ require.config({
         "i18next-xhr-backend": "libs/i18nextXHRBackend.min",
         "i18next-browser-language-detector": "libs/i18nextBrowserLanguageDetector.min",
         "jquery-i18next": "libs/jquery-i18next.min",
-        "moment": "libs/moment-with-locales"
+        "moment": "libs/moment-with-locales",
+        "mediaelementplayer": "libs/mediaelement/mediaelement-and-player.min"
     },
     waitSeconds: 10,
 
@@ -67,6 +68,11 @@ require.config({
 
         "timeline": {
             exports: "links"
+        },
+
+        "mediaelementplayer": {
+            exports: "mejs",
+            deps: ["jquery"]
         }
     }
 });
