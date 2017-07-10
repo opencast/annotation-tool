@@ -21,9 +21,11 @@
  * @module player-adapter-HTML5
  * @requires jQuery
  * @requires player-adapter
+ * @requires mediaelementplayer
  */
 define(["jquery",
-        "prototypes/player_adapter"],
+        "prototypes/player_adapter",
+        "mediaelementplayer"],
 
     function ($, PlayerAdapter) {
 
@@ -36,7 +38,7 @@ define(["jquery",
          * @augments {module:player-adapter.PlayerAdapter}
          * @param {DOMElement} targetElement DOM Element representing the player
          */
-        var PlayerAdapterHTML5 = function (targetElement) {
+        var PlayerAdapterHTML5 = function (targetElement, sources) {
             var HTMLElement,
                 self = this;
 
@@ -90,6 +92,14 @@ define(["jquery",
              * @inner
              */
             this.init = function () {
+
+                $(targetElement).mediaelementplayer({
+                    success: function (mediaElement) {
+                        if (sources) {
+                            mediaElement.setSrc(sources);
+                        }
+                    }
+                });
 
                 // Create the HTML representation of the adapter
                 $(targetElement).wrap(self.getHTMLTemplate(self.id));
