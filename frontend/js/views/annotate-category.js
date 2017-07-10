@@ -219,7 +219,7 @@ define(["jquery",
                 } else {
                     this.$el.find("input").attr("disabled", "disabled");
                 }
-                
+
                 // Wait that style are applied
                 setTimeout(this.updateInputWidth, 20);
             },
