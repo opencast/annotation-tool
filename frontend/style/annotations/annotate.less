@@ -150,6 +150,8 @@ i.check {
 				//min-width: 150px!important;
 
 				.catItem-header {
+					display: flex;
+					align-items: center;
 					text-align: left;
 					height: 25px;
 					padding: 1px 3px;
@@ -164,13 +166,12 @@ i.check {
 					}
 
 					input {
-						width: 100%;
+						min-width: 0;
 						margin: 0 0 3px 0;
 						padding: 1px;
 						font-weight: bold;
 						text-overflow: clip;
 						color: @black;
-						// min-width: 72px!important;
 
 						&[disabled] {
 							margin: 0;
@@ -187,6 +188,10 @@ i.check {
 						display: inline-block;
 						background-image: url("@{iconGreySpritePath}");
 						background-position: -384px -168px;
+					}
+
+					[class*="icon-"] {
+						flex-shrink: 0;
 					}
 				}
 
@@ -402,6 +407,10 @@ i.check {
 	}
 
 	&.edit-on {
+
+		i:not(.edit) {
+			display: none;
+		}
 
 		i.edit {
 			background-color: none;
