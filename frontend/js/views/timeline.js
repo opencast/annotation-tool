@@ -343,6 +343,11 @@ define(["jquery",
                 this.listenTo(this.tracks, "change", this.changeTrack);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
 
+                this.listenTo(annotationsTool.video.get("categories"), "change:visible", _.bind(function () {
+                    this.filterItems();
+                    this.redraw();
+                }, this));
+
                 this.$el.show();
                 this.addTracksList(this.tracks.getVisibleTracks());
                 this.timeline.setCustomTime(this.startDate);
@@ -986,10 +991,18 @@ define(["jquery",
                 var tempList = _.values(this.allItems);
 
                 tempList = this.filtersManager.filterAll(tempList);
-
-                this.filteredItems = _.sortBy(tempList, function (item) {
-                    return _.isUndefined(item.model) ? 0 : item.model.get("name");
-                }, this);
+                this.filteredItems = _.chain(tempList)
+                    .filter(function (item) {
+                        if (!item.id) return true;
+                        var annotation = annotationsTool.getAnnotation(item.id);
+                        var category = annotation.category();
+                        if (!category) return true;
+                        return category.get("visible");
+                    })
+                    .sortBy(function (item) {
+                        return _.isUndefined(item.model) ? 0 : item.model.get("name");
+                    })
+                    .value();
 
                 if (this.filteredItems.length === 0) {
                     this.filteredItems.push({
