@@ -127,6 +127,43 @@ i.check {
 
 	#label-tabs-contents
 
+	&.edit-on {
+
+		i:not(.edit) {
+			display: none;
+		}
+
+		.colorPicker-picker {
+			display: inline-block;
+		}
+
+		i.edit {
+			background-color: none;
+			border: none;
+			margin-left: 5px;
+			float: right;
+			display: inline-block!important;
+
+			&:hover {
+				.iconHover();
+			}
+		}
+
+		.nav i.edit {
+			float: none;
+		}
+
+		ul.nav-tabs {
+			.edit {
+				visibility: hidden;
+			}
+
+			li.edit-on .edit {
+				 visibility: visible;
+			}
+		}
+	}
+
 	div {
 		padding: 0px;
 		&.carousel {
@@ -185,7 +222,6 @@ i.check {
 					}
 
 					.colorPicker-picker {
-						display: inline-block;
 						background-image: url("@{iconGreySpritePath}");
 						background-position: -384px -168px;
 					}
@@ -402,39 +438,6 @@ i.check {
 					background-color: @white;
 					background-image: none;
 				}
-			}
-		}
-	}
-
-	&.edit-on {
-
-		i:not(.edit) {
-			display: none;
-		}
-
-		i.edit {
-			background-color: none;
-			border: none;
-			margin-left: 5px;
-			float: right;
-			display: inline-block!important;
-
-			&:hover {
-				.iconHover();
-			}
-		}
-
-		.nav i.edit {
-			float: none;
-		}
-
-		ul.nav-tabs {
-			.edit {
-				visibility: hidden;
-			}
-
-			li.edit-on .edit {
-				 visibility: visible;
 			}
 		}
 	}
