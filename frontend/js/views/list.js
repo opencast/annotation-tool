@@ -147,6 +147,8 @@ define(["jquery",
 
                 this.addTrackList(this.tracks.getVisibleTracks());
 
+                this.listenTo(annotationsTool.video.get("categories"), "change:visible", this.render);
+
                 this.render();
 
                 window.requestAnimationFrame(this.renderSelect);
@@ -511,6 +513,8 @@ define(["jquery",
 
                 for (i = 0; i < list.length; i++) {
                     annView = list[i];
+                    var category = annView.model.category();
+                    if (category && !category.get("visible")) continue;
                     $listContainer.append(annView.$el);
                 }
 
