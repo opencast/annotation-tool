@@ -789,7 +789,7 @@ define(["jquery",
              */
             getAnnotation: function (annotationId, trackId) {
                 var track,
-                    tmpAnnotation;
+                    annotation;
 
                 if (!_.isUndefined(trackId)) {
                     // If the track id is given, we only search for the annotation on it
@@ -810,12 +810,12 @@ define(["jquery",
                         return;
                     } else {
                         this.video.get("tracks").each(function (trackItem) {
-                            tmpAnnotation = trackItem.getAnnotation(annotationId);
+                            var tmpAnnotation = trackItem.getAnnotation(annotationId);
                             if (!_.isUndefined(tmpAnnotation)) {
-                                return tmpAnnotation;
+                                annotation = tmpAnnotation;
                             }
                         }, this);
-                        return tmpAnnotation;
+                        return annotation;
                     }
                 }
             },
