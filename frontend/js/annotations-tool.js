@@ -397,19 +397,21 @@ define(["jquery",
                     //this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
 
                     // Check if the interval needs to be added to list
-                    for (i = 0; i < annotationsTool.timeupdateIntervals.length; i++) {
-                        value = annotationsTool.timeupdateIntervals[i];
+                    (function () {
+                        for (i = 0; i < annotationsTool.timeupdateIntervals.length; i++) {
+                            value = annotationsTool.timeupdateIntervals[i];
 
-                        if (value.interval === interval) {
-                            return;
+                            if (value.interval === interval) {
+                                return;
+                            }
                         }
-                    }
 
-                    // Add interval to list
-                    annotationsTool.timeupdateIntervals.push({
-                        interval: interval,
-                        lastUpdate: 0
-                    });
+                        // Add interval to list
+                        annotationsTool.timeupdateIntervals.push({
+                            interval: interval,
+                            lastUpdate: 0
+                        });
+                    })();
                 }
 
                 this.listenTo(annotationsTool, timeupdateEvent, callback);
