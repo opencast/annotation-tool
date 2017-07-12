@@ -23,6 +23,7 @@
  * @requires moment
  * @requires views-main
  * @requires views-alert
+ * @requires views-list-annotation
  * @requires templates/delete-modal.tmpl
  * @requires templates/delete-warning-content.tmpl
  * @requires player-adapter
@@ -37,6 +38,7 @@ define(["jquery",
         "collections/videos",
         "views/main",
         "views/alert",
+        "views/list-annotation",
         "templates/delete-modal",
         "templates/delete-warning-content",
         "prototypes/player_adapter",
@@ -46,7 +48,7 @@ define(["jquery",
         "annotation-sync",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
+    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
 
         "use strict";
 
@@ -159,7 +161,8 @@ define(["jquery",
                           "setSelectionById",
                           "addTimeupdateListener",
                           "removeTimeupdateListener",
-                          "updateSelectionOnTimeUpdate");
+                          "updateSelectionOnTimeUpdate",
+                          "potentiallyOpenCurrentItems");
 
                 _.extend(this, config);
 
@@ -179,6 +182,7 @@ define(["jquery",
                 this.initDeleteModal();
 
                 this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
+                this.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
                 this.currentSelection = [];
 
@@ -644,8 +648,29 @@ define(["jquery",
                 }
 
                 this.setSelection(this.getCurrentAnnotations(), false);
-
             },
+
+            /**
+             * Listener for player "timeupdate" event to open the current annotations in the list view
+             * @alias   annotationsTool.potentiallyOpenCurrentItems
+             */
+            potentiallyOpenCurrentItems: function () {
+                var previousAnnotations = [];
+
+                return function () {
+                    var listView = this.views.main.listView;
+                    if (!listView) return;
+
+                    _.each(previousAnnotations, function (annotation) {
+                        listView.getViewFromAnnotation(annotation.id).collapse(true);
+                    });
+                    var currentAnnotations = this.getCurrentAnnotations();
+                    _.each(currentAnnotations, function (annotation) {
+                        listView.getViewFromAnnotation(annotation.id).expand(true);
+                    });
+                    previousAnnotations = currentAnnotations;
+                };
+            }(),
 
             //////////////
             // CREATORs //

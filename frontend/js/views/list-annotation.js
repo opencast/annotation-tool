@@ -201,6 +201,8 @@ define(["jquery",
                     this.currentState = newState;
                 }
                 this.trigger("change:state", this, { fallback: fallback });
+
+                this.manuallyExpanded = this.currentState === ListAnnotation.STATES.EXPANDED;
             },
 
             /**
@@ -623,6 +625,28 @@ define(["jquery",
                     this.setState(ListAnnotation.STATES.EXPANDED, ListAnnotation.STATES.COLLAPSED);
                 }
                 this.render();
+            },
+
+            /**
+             * Expand the text container
+             * @alias module:views-list-annotation.ListAnnotation#expand
+             * @param  {Boolean} auto Is this an automatic expansion as opposed to one initiated by the user?
+             */
+            expand: function (auto) {
+                var wasManuallyExpanded = this.manuallyExpanded;
+                this.toggleExpandedState(undefined, true);
+                this.manuallyExpanded = wasManuallyExpanded || !auto;
+            },
+
+            /**
+             * Collapse the text container
+             * @alias module:views-list-annotation.ListAnnotation#collapse
+             * @param  {Boolean} autoOnly Only really collapse the view when it was opened automatically.
+             *                            See {@link expand}.
+             */
+            collapse: function (autoOnly) {
+                if (autoOnly && this.manuallyExpanded) return;
+                this.toggleCollapsedState(undefined, true);
             },
 
             /**
