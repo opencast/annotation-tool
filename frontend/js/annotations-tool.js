@@ -609,6 +609,23 @@ define(["jquery",
             },
 
             /**
+             * Get all annotations that cover a given point in time.
+             * @alias   annotationsTool.getCurrentAnnotations
+             * @param {Number} [time] The time you are interested in or the current player time if omitted
+             */
+            getCurrentAnnotations: function (time) {
+                if (!time) {
+                    time = this.playerAdapter.getCurrentTime();
+                }
+                return this.video.get("tracks")
+                    .chain()
+                    .map(function (track) { return track.get("annotations").models; })
+                    .flatten()
+                    .filter(function (annotation) { return annotation.covers(time, this.MINIMAL_DURATION); }, this)
+                    .value();
+            },
+
+            /**
              * Listener for player "timeupdate" event to highlight the current annotations
              * @alias   annotationsTool.updateSelectionOnTimeUpdate
              */
@@ -626,24 +643,8 @@ define(["jquery",
                     return;
                 }
 
-                this.video.get("tracks").each(function (track) {
-                    annotations = annotations.concat(track.get("annotations").models);
-                }, this);
+                this.setSelection(this.getCurrentAnnotations(), false);
 
-                for (i = 0; i < annotations.length; i++) {
-                    annotation = annotations[i];
-
-                    start    = annotation.get("start");
-                    duration = annotation.get("duration");
-                    end      = start + (duration < this.MINIMAL_DURATION ? this.MINIMAL_DURATION : duration);
-
-                    if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
-                        selection.push(annotation);
-                    }
-
-                }
-
-                this.setSelection(selection, false);
             },
 
             //////////////

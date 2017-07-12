@@ -360,6 +360,21 @@ define(["jquery",
                 }
                 delete json.annotations;
                 return json;
+            },
+
+            /**
+             * Check whether the annotation covers a given point in time
+             * @alias module:models-annotation.Annotation#covers
+             * @param {Number} time The point in time you are interested in
+             * @param {Number} minDuration Minimal duration to base this answer on
+             * @return {Boolean} true if this annotation covers the given timestamp, potentially
+             *                   taking into account the given minimal duration
+             */
+            covers: function (time, minDuration) {
+                var start = this.get("start");
+                var duration = Math.max(minDuration, this.get("duration") || 0);
+                var end = start + duration;
+                return start <= time && time <= end;
             }
         });
 
