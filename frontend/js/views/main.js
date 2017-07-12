@@ -114,7 +114,8 @@ define(["jquery",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
-                "click [class*='opt-tracks']": "tracksSelection"
+                "click [class*='opt-tracks']": "tracksSelection",
+                "click #opt-auto-expand"     : "toggleAutoExpand"
             },
 
             /**
@@ -533,6 +534,15 @@ define(["jquery",
                     checkMainLayout();
                     break;
                 }
+            },
+
+            /**
+             * Toggle the automatic expanding/collapsing of the annotations relevant to the current player time
+             * @alias module:views-main.MainView#toggleAutoExpand
+             */
+            toggleAutoExpand: function (event) {
+                $(event.currentTarget).toggleClass("checked");
+                annotationsTool.autoExpand = !annotationsTool.autoExpand;
             },
 
             /**

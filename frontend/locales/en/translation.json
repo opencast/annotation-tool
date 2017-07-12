@@ -123,7 +123,8 @@
         "annotate view": "Annotate view",
         "head": "Views",
         "list view": "List view"
-      }
+      },
+      "auto expand": "Automatically expand active annotations"
     }
   },
   "new label defaults": {

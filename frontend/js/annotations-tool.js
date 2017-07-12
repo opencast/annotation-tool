@@ -658,6 +658,8 @@ define(["jquery",
                 var previousAnnotations = [];
 
                 return function () {
+                    if (!this.autoExpand) return;
+
                     var listView = this.views.main.listView;
                     if (!listView) return;
 
