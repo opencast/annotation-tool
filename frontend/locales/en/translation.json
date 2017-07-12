@@ -41,7 +41,9 @@
     "no selected track": "No tracak selected",
     "pause while editing": "Pause video during writing",
     "select track prompt": "Select a track to start annotating",
-    "upload categories": "Upload categories"
+    "upload categories": "Upload categories",
+    "hide category": "Hide category",
+    "show category": "Show category"
   },
   "annotation": {
     "comments": {
