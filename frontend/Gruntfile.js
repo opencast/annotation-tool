@@ -182,7 +182,7 @@ module.exports = function (grunt) {
                     }
                     return content;
                 },
-                processContentExclude: ["img/**/*"]
+                processContentExclude: ['img/**/*', 'resources/**/*']
             },
             // ... a single file locally
             'target': {
