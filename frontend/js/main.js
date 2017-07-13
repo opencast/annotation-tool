@@ -15,6 +15,7 @@ require(["domReady",
             .use(i18nextXHRBackend)
             .use(LngDetector)
             .init({
+                fallbackLng: "en",
                 backend: {
                     loadPath: "locales/{{lng}}/translation.json"
                 },
