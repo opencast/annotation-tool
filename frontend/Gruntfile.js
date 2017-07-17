@@ -369,6 +369,7 @@ module.exports = function (grunt) {
                     preserveLicenseComments    : false,
                     optimize                   : 'uglify',
                     useStrict                  : true,
+                    findNestedDependencies     : true,
                     out                        : '<%= currentProfile.target %>/optimized.js'
                 }
             }
