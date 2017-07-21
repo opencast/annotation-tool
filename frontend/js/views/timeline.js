@@ -190,6 +190,13 @@ define(["jquery",
             filteredItems: [],
 
             /**
+             * Map from annotation id to stacking level
+             * @alias module:views-timeline.TimelineView#stackingLevel
+             * @type {object}
+             */
+            stackingLevel: {},
+
+            /**
              * Constructor
              * @alias module:views-timeline.TimelineView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
@@ -736,10 +743,6 @@ define(["jquery",
                     start,
                     end;
 
-                annotation.set("level", this.PREFIX_STACKING_CLASS + this.getStackLevel(annotation), {
-                    silent: true
-                });
-
                 annotationJSON = annotation.toJSON();
                 annotationJSON.id = annotation.id;
                 annotationJSON.track = track.id;
@@ -763,6 +766,8 @@ define(["jquery",
                 // If annotation is at the end of the video, we mark it for styling
                 annotationJSON.atEnd = (videoDuration - endTime) < 3;
 
+                var stackingLevel = this.stackingLevel[annotation.id] = this.getStackLevel(annotation);
+
                 return {
                     model: track,
                     id: annotation.id,
@@ -774,7 +779,7 @@ define(["jquery",
                     end: end,
                     content: this.itemTemplate(annotationJSON),
                     group: this.groupTemplate(trackJSON),
-                    className: annotationJSON.level
+                    className: this.PREFIX_STACKING_CLASS + stackingLevel
                 };
             },
 
@@ -1192,11 +1197,8 @@ define(["jquery",
                         }
                     },
                     successCallback = function (newAnnotation) {
-                        newAnnotation.set({
-                            level: self.PREFIX_STACKING_CLASS + self.getStackLevel(newAnnotation)
-                        }, {
-                            silent: true
-                        });
+                        console.log(newAnnotation.id);
+                        var stackingLevel = self.stackingLevel[newAnnotation.id] = self.getStackLevel(newAnnotation);
                         newAnnotation.unset("oldId", {
                             silent: true
                         });
@@ -1204,7 +1206,6 @@ define(["jquery",
 
                         annJSON.id = newAnnotation.get("id");
                         annJSON.track = values.newTrack.id;
-                        annJSON.level = newAnnotation.get("level");
 
                         if (annJSON.label && annJSON.label.category && annJSON.label.category.settings) {
                             annJSON.category = annJSON.label.category;
@@ -1219,7 +1220,7 @@ define(["jquery",
                             trackId: values.newTrack.id,
                             isPublic: values.newTrack.get("isPublic"),
                             isMine: values.newTrack.get("isMine"),
-                            className: annJSON.level,
+                            className: self.PREFIX_STACKING_CLASS + stackingLevel,
                             model: values.newTrack
                         }, false);
 
@@ -1584,92 +1585,51 @@ define(["jquery",
             },
 
             /**
+            * Return the duration of an annotation for rendering in the timeline.
+            * If the duration is not defined or less than a certain threshold,
+            * a minimal duration will be returned so that the annotation is still visible in the timeline.
+            * @alias module:views-timeline.TimelineView#annotationItemDuration
+            * @param {Annotation} annotation The annotation to get the duration of.
+            * @returns {Number} The duration of the annotation in the timeline.
+            */
+            annotationItemDuration: function (annotation) {
+                var duration = annotation.get("duration");
+                return duration && duration > this.DEFAULT_DURATION ? duration : this.DEFAULT_DURATION;
+            },
+
+            /**
              * Get the top value from the annotations to avoid overlapping
              * @alias module:views-timeline.TimelineView#getStackLevel
              * @param {Annotation} annotation The target annotation
              * @returns {Integer} top for the target annotation
              */
             getStackLevel: function (annotation) {
-                // Target annotation values
-                var tStart = annotation.get("start"),
-                    tEnd = tStart + annotation.get("duration"),
-                    maxLevelTrack = 0, // Higher level for the whole track, no matter if the annotations are in the given annotation slot
-                    newLevel = 0, // the new level to return
-                    maxLevel, // Higher stack level
-                    elLevel = 0, // stack level for the element in context
-                    levelUsed = [],
-                    annotations,
-                    classesStr,
-                    indexClass,
-                    i,
+                // TODO Should we really check this and then work with the collection?
+                if (!annotation.collection) return 0;
 
-                    // Function to filter annotation
-                    rangeForAnnotation = function (a) {
-                        var start = a.get("start"),
-                            end = start + a.get("duration");
+                var start = annotation.get("start");
+                var end = start + this.annotationItemDuration(annotation);
 
-                        if (start === end) {
-                            end += this.DEFAULT_DURATION;
-                        }
+                var usedLevels = annotation.collection.chain()
+                    .filter(function (other) {
+                        var otherStart = other.get("start");
+                        var otherEnd = otherStart + this.annotationItemDuration(other);
 
-                        // Get the stacking level of the current item
-                        classesStr = a.get("level");
-                        if (typeof classesStr !== "undefined") {
-                            indexClass = classesStr.search(this.PREFIX_STACKING_CLASS) + this.PREFIX_STACKING_CLASS.length;
-                            elLevel = parseInt(classesStr.substr(indexClass, classesStr.length - indexClass), 10) || 0;
-                        } else {
-                            elLevel = 0;
-                        }
+                        return annotation.id !== other.id &&
+                            otherStart <= end &&
+                            otherEnd >= start &&
+                            this.allItems[other.id];
+                    }, this)
+                    .map(function (annotation) {
+                        return this.stackingLevel[annotation.id];
+                    }, this)
+                    .sortBy();
 
-                        if (elLevel > maxLevelTrack) {
-                            maxLevelTrack = elLevel;
-                        }
-
-                        // Test if the annotation is overlapping the target annotation
-                        if ((a.id !== annotation.id) && // do not take the target annotation into account
-                            // Positions check
-                            ((start >= tStart && start <= tEnd) ||
-                                (end > tStart && end <= tEnd) ||
-                                (start <= tStart && end >= tEnd)) &&
-                            this.allItems[a.id] // Test if view exist
-                        ) {
-
-                            levelUsed[elLevel] = true;
-
-                            return true;
-                        }
-                        return false;
-                    };
-
-                if (annotation.get("duration") === 0) {
-                    tEnd += this.DEFAULT_DURATION;
-                }
-
-                if (annotation.collection) {
-                    annotations = _.sortBy(annotation.collection.models, function (annotation) {
-                        return annotation.get("start");
-                    }, this);
-
-                    _.filter(annotations, rangeForAnnotation, this);
-                }
-
-                for (i = 0; i < levelUsed.length; i++) {
-                    if (!levelUsed[i]) {
-                        maxLevel = i;
-                    }
-                }
-
-                if (typeof maxLevel === "undefined") {
-                    newLevel = levelUsed.length;
-                } else {
-                    newLevel = maxLevel;
-                }
-
-                if (newLevel > maxLevelTrack) {
-                    maxLevelTrack = newLevel;
-                }
-
-                return newLevel;
+                return usedLevels.find(function (level, index) {
+                    // The used levels are sorted at this point,
+                    // so the first discontinuity we find is a hole where we can place an annotation.
+                    return level === index;
+                }).value() || usedLevels.value().length;
             },
 
 
