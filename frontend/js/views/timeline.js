@@ -244,7 +244,6 @@ define(["jquery",
                     "moveLeft",
                     "zoomIn",
                     "zoomOut",
-                    "stopZoomScrolling",
                     "timerangeChange",
                     "repaintCustomTime",
                     "redraw",
@@ -589,16 +588,6 @@ define(["jquery",
                 this.timeline.zoom(-0.4, this.timeline.getCustomTime());
                 this.timeline.trigger("rangechange");
                 this.timeline.trigger("rangechanged");
-            },
-
-            /**
-             * Stop the zoom through scrolling
-             * @alias module:views-timeline.TimelineView#stopZoomScrolling
-             */
-            stopZoomScrolling: function () {
-                this.$el.find(".timeline-frame > div").first()[0].addEventListener("mousewheel", function (event) {
-                    event.stopPropagation();
-                }, true);
             },
 
             /**
