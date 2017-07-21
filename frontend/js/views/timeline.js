@@ -51,7 +51,6 @@ define(["jquery",
         "roles",
         "FiltersManager",
         "backbone",
-        "handlebars",
         "timeline",
         "tooltip",
         "popover",
@@ -59,21 +58,10 @@ define(["jquery",
         "handlebarsHelpers"
     ],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
-        GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars, links) {
+       function ($, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl, GroupEmptyTmpl,
+            ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, links) {
 
         "use strict";
-
-        /**
-         * Handlebars helper to secure the text field
-         * @alias module:Handlebars#secure
-         * @param  {string} text The text to secure
-         * @return {string}      The securized text
-         */
-        Handlebars.registerHelper("secure", function (text) {
-            // Add security for XSS
-            return _.unescape(text).replace(/\"/g, "'").replace(/<\/?script>/gi, "NO-SCRIPT");
-        });
 
         /**
          * @constructor

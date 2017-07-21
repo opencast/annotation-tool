@@ -2,12 +2,12 @@
     <div class="track-id">{{id}}</div>
     <a id="track{{id}}"
        class="content-overlay"
-       title="{{secure name}}"
+       title="{{name}}"
        rel="popover"
-       data-content="<p>{{#if description}}{{secure description}}{{else}}{{t "timeline.no description"}}{{/if}}</p>"
+       data-content="<p>{{#if description}}{{description}}{{else}}{{t "timeline.no description"}}{{/if}}</p>"
       >
         <div class="content empty">
-            {{secure name}}
+            {{name}}
         </div>
     </a>
 </div>
