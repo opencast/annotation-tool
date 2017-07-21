@@ -1586,7 +1586,7 @@ define(["jquery",
             /**
              * Get the top value from the annotations to avoid overlapping
              * @alias module:views-timeline.TimelineView#getStackLevel
-             * @param {Annotation} the target annotation
+             * @param {Annotation} annotation The target annotation
              * @returns {Integer} top for the target annotation
              */
             getStackLevel: function (annotation) {
