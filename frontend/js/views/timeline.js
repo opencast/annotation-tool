@@ -1593,14 +1593,12 @@ define(["jquery",
                 // Target annotation values
                 var tStart = annotation.get("start"),
                     tEnd = tStart + annotation.get("duration"),
-                    //annotationItem = this.allItems[annotation.get("id")],
                     maxLevelTrack = 0, // Higher level for the whole track, no matter if the annotations are in the given annotation slot
                     newLevel = 0, // the new level to return
                     maxLevel, // Higher stack level
                     elLevel = 0, // stack level for the element in context
                     levelUsed = [],
                     annotations,
-                    //trackEl,
                     classesStr,
                     indexClass,
                     i,
@@ -1671,13 +1669,6 @@ define(["jquery",
                     maxLevelTrack = newLevel;
                 }
 
-                /*if (annotationItem && annotationItem.model && annotationItem.model.get("timelineMaxLevel") !== maxLevelTrack) {
-                    annotationItem.model.set("timelineMaxLevel", maxLevelTrack, {silent: true});
-                    this.changeTrack(annotationItem.model, {silent: true});
-                    trackEl = this.$el.find(".timeline-group .track-id:contains(" + annotationItem.trackId + ")").parent();
-                    trackEl.removeClass("track-max-level-" + (annotationItem.model.get("timelineMaxLevel") || 0));
-                    trackEl.addClass("track-max-level-" + maxLevelTrack);
-                }*/
                 return newLevel;
             },
 
