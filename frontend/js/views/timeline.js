@@ -1472,7 +1472,9 @@ define(["jquery",
             ----------------------------------------*/
 
             /**
-             * Get the formated date for the timeline with the given seconds
+             * Get the formated date for the timeline with the given seconds.
+             * The timeline displays dates/times in local time,
+             * which is why we bias the time towards UTC.
              * @alias module:views-timeline.TimelineView#getFormatedDate
              * @param {Double} seconds The time in seconds to convert to Date
              * @returns {Date} Formated date for the timeline
@@ -1487,7 +1489,7 @@ define(["jquery",
              * Transform the given date into a time in seconds
              * @alias module:views-timeline.TimelineView#getTimeInSeconds
              * @param {Date} date The formated date from timeline
-             * @returns {Double} Date converted to time in seconds
+             * @returns {Number} Date converted to time in seconds
              */
             getTimeInSeconds: function (date) {
                 var time = date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds() + date.getMilliseconds() / 1000;
