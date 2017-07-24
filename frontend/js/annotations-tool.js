@@ -42,13 +42,12 @@ define(["jquery",
         "templates/delete-modal",
         "templates/delete-warning-content",
         "prototypes/player_adapter",
-        "FiltersManager",
         "roles",
         "colors",
         "annotation-sync",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
+    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ROLES, ColorsManager, annotationSync) {
 
         "use strict";
 
@@ -212,9 +211,6 @@ define(["jquery",
                 }, this);
 
                 this.colorsManager = new ColorsManager();
-
-                this.filtersManager   = new FiltersManager();
-                this.tracksFiltersManager   = new FiltersManager();
 
                 this.views.main = new MainView(this.playerAdapter);
 

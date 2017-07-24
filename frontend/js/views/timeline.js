@@ -49,17 +49,15 @@ define(["jquery",
         "templates/timeline-modal-update-group",
         "access",
         "roles",
-        "FiltersManager",
         "backbone",
         "timeline",
         "tooltip",
         "popover",
-        "jquery.appear",
         "handlebarsHelpers"
     ],
 
        function ($, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl, GroupEmptyTmpl,
-            ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, links) {
+            ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, Backbone, links) {
 
         "use strict";
 
@@ -125,9 +123,7 @@ define(["jquery",
                 "click #zoom-in"     : "zoomIn",
                 "click #zoom-out"    : "zoomOut",
                 "click #move-right"  : "moveRight",
-                "click #move-left"   : "moveLeft",
-                "click #filter-none" : "disableFilter",
-                "click .filter"      : "switchFilter"
+                "click #move-left"   : "moveLeft"
             },
 
             /**
@@ -230,9 +226,6 @@ define(["jquery",
                     "initTrackCreation",
                     "initTrackUpdate",
                     "filterItems",
-                    "switchFilter",
-                    "updateFiltersRender",
-                    "disableFilter",
                     "updateDraggingCtrl",
                     "moveToCurrentTime",
                     "moveRight",
@@ -246,28 +239,6 @@ define(["jquery",
                     "updateHeader");
 
                 this.playerAdapter = attr.playerAdapter;
-
-                this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
-                this.filtersManager.filters.timerange.end = attr.playerAdapter.getDuration();
-                this.filtersManager.filters.timerange.active = true;
-                this.filtersManager.filters.visibleTracks = {
-                    active: true,
-                    tracks: {},
-                    condition: function (item) {
-                        if (_.isUndefined(item.model) || !_.isUndefined(item.voidItem)) {
-                            return true;
-                        }
-
-                        return this.tracks[item.model.get("id")];
-                    },
-                    filter: function (list) {
-                        return _.filter(list, function (item) {
-                            return this.condition(item);
-                        }, this);
-                    }
-                };
-
-                this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
 
                 // Type use for delete operation
                 this.typeForDeleteAnnotation = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
@@ -383,66 +354,7 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#redraw
              */
             redraw: function () {
-                var visibleTracksFilter = this.filtersManager.filters.visibleTracks,
-                    tracks,
-                    $tracks,
-                    timelineHeight,
-                    self = this;
-
                 this.timeline.draw(this.filteredItems, this.option);
-
-                // If no tracks have been added to the tracks filters (if enable), we search which one are visisble
-                if (!_.isUndefined(visibleTracksFilter) && visibleTracksFilter.active && _.size(visibleTracksFilter.tracks) === 0) {
-                    tracks = visibleTracksFilter.tracks;
-
-                    timelineHeight = this.$timeline.height();
-
-                    _.each(annotationsTool.getTracks().slice(0, (timelineHeight / 60).toFixed()), function (track) {
-                        tracks[track.get("id")] = true;
-                    }, this);
-
-                    self.filteredItems = self.filterItems();
-                    self.redraw();
-                } else {
-                    if (annotationsTool.hasSelection()) {
-                        this.onSelectionUpdate(annotationsTool.getSelection());
-                        this.updateDraggingCtrl();
-                    }
-
-                    if (annotationsTool.selectedTrack) {
-                        this.onTrackSelected(null, annotationsTool.selectedTrack.id);
-                    }
-
-                    // Remove the popover div from old track elements
-                    $("div.popover.fade.right.in").remove();
-
-                    // If the visisble tracks filter is enable, we check where tracks are visible
-                    if (!_.isUndefined(visibleTracksFilter) && visibleTracksFilter.active) {
-                        tracks = visibleTracksFilter.tracks;
-
-                        $tracks = this.$timeline.find(".timeline-groups-text").appear({
-                            context: this.$timeline
-                        });
-
-                        $tracks.on("appear", _.debounce(function () {
-                            var id = this.dataset.trackid;
-                            if (!tracks[id]) {
-                                tracks[id] = true;
-                                self.filteredItems = self.filterItems();
-                                self.redraw();
-                            }
-                        }, 200));
-
-                        $tracks.on("disappear", _.debounce(function () {
-                            var id = this.dataset.trackid;
-                            if (tracks[id]) {
-                                tracks[id] = false;
-                                self.filteredItems = self.filterItems();
-                                self.redraw();
-                            }
-                        }, 200));
-                    }
-                }
             },
 
             /**
@@ -450,12 +362,7 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#timerangeChange
              */
             timerangeChange: function () {
-                var timerange = this.timeline.getVisibleChartRange();
-
-                this.filtersManager.filters.timerange.start = new Date(timerange.start).getTime();
-                this.filtersManager.filters.timerange.end = new Date(timerange.end).getTime();
-
-                this.filteredItems = this.filterItems();
+                this.filterItems();
                 this.redraw();
             },
 
@@ -678,10 +585,6 @@ define(["jquery",
                 annotations.each(annotationWithList, this);
                 annotations.bind("add", proxyToAddAnnotation, this);
                 annotations.bind("change", this.changeItem, this);
-
-                if (!_.isUndefined(this.filtersManager.filters.visibleTracks)) {
-                    this.filtersManager.filters.visibleTracks.tracks[track.get("id")] = true;
-                }
 
                 this.filterItems();
                 this.redraw();
@@ -970,20 +873,13 @@ define(["jquery",
              * @return {Array} The list of filtered items
              */
             filterItems: function () {
-                var tempList = _.values(this.allItems);
-
-                tempList = this.filtersManager.filterAll(tempList);
-                this.filteredItems = _.chain(tempList)
+                var visibleRange = this.timeline.getVisibleChartRange();
+                var startTime = visibleRange.start;
+                var endTime = visibleRange.end;
+                this.filteredItems = _.chain(this.allItems)
+                    .values(this.allItems)
                     .filter(function (item) {
-                        if (!item.id) return true;
-                        var annotation = annotationsTool.getAnnotation(item.id);
-                        if (!annotation) return true;
-                        var category = annotation.category();
-                        if (!category) return true;
-                        return category.get("visible");
-                    })
-                    .sortBy(function (item) {
-                        return _.isUndefined(item.model) ? 0 : item.model.get("name");
+                        return startTime <= item.end && item.start <= endTime;
                     })
                     .value();
 
@@ -998,48 +894,6 @@ define(["jquery",
                         group: this.groupEmptyTemplate(this.VOID_TRACK)
                     });
                 }
-
-                return this.filteredItems;
-            },
-
-            /**
-             * Switch on/off the filter related to the given event
-             * @alias module:views-list.List#switchFilter
-             * @param  {Event} event
-             */
-            switchFilter: function (event) {
-                var active = !$(event.target).hasClass("checked"),
-                    id = event.target.id.replace("filter-", "");
-
-                this.filtersManager.switchFilter(id, active);
-            },
-
-            /**
-             * Update the DOM elements related to the filters on filters update.
-             * @alias module:views-timeline.TimelineView#updateFilterRender
-             * @param  {PlainObject} attr The plain object representing the updated filter
-             */
-            updateFiltersRender: function (attr) {
-
-                if (attr.active) {
-                    this.$el.find("#filter-" + attr.id).addClass("checked");
-                } else {
-                    this.$el.find("#filter-" + attr.id).removeClass("checked");
-                }
-
-                this.filterItems();
-                this.redraw();
-            },
-
-            /**
-             * Disable all the list filter
-             * @alias module:views-list.List#disableFilter
-             */
-            disableFilter: function () {
-                this.$el.find(".filter").removeClass("checked");
-                this.filtersManager.disableFilters();
-                this.filterItems();
-                this.redraw();
             },
 
             /**

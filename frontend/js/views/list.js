@@ -34,10 +34,9 @@ define(["jquery",
         "collections/tracks",
         "views/list-annotation",
         "backbone",
-        "FiltersManager",
         "scrollspy"],
 
-    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone, FiltersManager) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone) {
 
         "use strict";
 
@@ -92,8 +91,6 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click #filter-none"    : "disableFilter",
-                "click .filter"         : "switchFilter",
                 "click .toggle-collapse": "toggleVisibility",
                 "click .collapse-all"   : "collapseAll",
                 "click .expand-all"     : "expandAll"
@@ -119,10 +116,7 @@ define(["jquery",
                                "sortViewsbyTime",
                                "reset",
                                "select",
-                               "switchFilter",
-                               "updateFiltersRender",
                                "toggleVisibility",
-                               "disableFilter",
                                "expandAll",
                                "renderSelect",
                                "collapseAll",
@@ -131,13 +125,11 @@ define(["jquery",
                                "setStateToAllViews");
 
                 this.annotationViews = [];
-                this.filtersManager  = new FiltersManager(annotationsTool.filtersManager);
                 this.tracks          = annotationsTool.video.get("tracks");
                 this.playerAdapter   = annotationsTool.playerAdapter;
 
                 this.$list = this.$el.find("#content-list-scroll div#content-list");
 
-                this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
                 this.listenTo(this.tracks, "change:access", this.render);
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
@@ -429,39 +421,6 @@ define(["jquery",
             },
 
             /**
-             * Switch on/off the filter related to the given event
-             * @alias module:views-list.List#switchFilter
-             * @param  {Event} event
-             */
-            switchFilter: function (event) {
-                var active = !$(event.target).hasClass("checked"),
-                    id = event.target.id.replace("filter-", "");
-
-                this.filtersManager.switchFilter(id, active);
-            },
-
-            updateFiltersRender: function (attr) {
-                if (attr.active) {
-                    this.$el.find("#filter-" + attr.id).addClass("checked");
-                } else {
-                    this.$el.find("#filter-" + attr.id).removeClass("checked");
-                }
-                this.render();
-            },
-
-            /**
-             * Disable all the list filter
-             * @alias module:views-list.List#disableFilter
-             */
-            disableFilter: function () {
-                this.$el.find("#filter").removeClass("checked");
-
-                this.filtersManager.disableFilters();
-
-                this.render();
-            },
-
-            /**
              * Expand all annotations in the list
              * @alias module:views-list.List#expandAll
              */
@@ -508,8 +467,6 @@ define(["jquery",
 
 
                 $listContainer.empty();
-
-                list = this.filtersManager.filterAll(list);
 
                 for (i = 0; i < list.length; i++) {
                     annView = list[i];
