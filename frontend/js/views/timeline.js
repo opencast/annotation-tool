@@ -273,8 +273,8 @@ define(["jquery",
                 this.typeForDeleteAnnotation = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
                 this.typeForDeleteTrack = annotationsTool.deleteOperation.targetTypes.TRACK;
 
+                this.startDate = this.getFormatedDate(0);
                 this.endDate = this.getFormatedDate(this.playerAdapter.getDuration());
-                this.startDate = new Date(this.endDate.getFullYear(), this.endDate.getMonth(), this.endDate.getDate(), 0, 0, 0);
 
                 // Options for the links timeline
                 this.options = {
@@ -1481,7 +1481,7 @@ define(["jquery",
              */
             getFormatedDate: function (seconds) {
                 var newDate = new Date(seconds * 1000);
-                newDate.setHours(newDate.getHours() - 1);
+                newDate.setTime(newDate.getTime() + newDate.getTimezoneOffset() * 60 * 1000);
                 return newDate;
             },
 
@@ -1492,8 +1492,7 @@ define(["jquery",
              * @returns {Number} Date converted to time in seconds
              */
             getTimeInSeconds: function (date) {
-                var time = date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds() + date.getMilliseconds() / 1000;
-                return Math.round(Number(time)); // Ensue that is really a number
+                return date.getTime() / 1000 - date.getTimezoneOffset() * 60;
             },
 
             /**
