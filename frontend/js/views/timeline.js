@@ -1126,6 +1126,7 @@ define(["jquery",
                     values = this.getSelectedItemAndAnnotation(),
                     oldItemId,
                     duration,
+                    end,
                     start,
                     annJSON,
                     successCallback,
@@ -1142,13 +1143,14 @@ define(["jquery",
                     return;
                 }
 
-                duration = this.getTimeInSeconds(values.item.end) - this.getTimeInSeconds(values.item.start);
                 start = this.getTimeInSeconds(values.item.start);
+                end = this.getTimeInSeconds(values.item.end);
+                duration = end - start;
 
                 // If the annotation is not owned by the current user or the annotation is moved outside the timeline,
                 // the update is canceled
                 if (!values.newTrack.get("isMine") || !values.annotation.get("isMine") ||
-                    this.getTimeInSeconds(values.item.end) > this.playerAdapter.getDuration() ||
+                    end > this.playerAdapter.getDuration() ||
                     start > this.playerAdapter.getDuration()) {
                     this.timeline.cancelChange();
 
