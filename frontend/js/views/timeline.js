@@ -662,7 +662,7 @@ define(["jquery",
 
                 // Calculate start/end time
                 startTime = annotation.get("start");
-                endTime = startTime + annotation.get("duration");
+                endTime = startTime + this.annotationItemDuration(annotation);
                 start = this.getFormatedDate(startTime);
                 end = this.getFormatedDate(endTime);
 
