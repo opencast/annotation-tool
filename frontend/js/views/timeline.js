@@ -673,6 +673,7 @@ define(["jquery",
 
                 return {
                     model: track,
+                    annotation: annotation,
                     id: annotation.id,
                     trackId: track.id,
                     isPublic: track.get("isPublic"),
