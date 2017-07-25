@@ -874,18 +874,22 @@ define(["jquery",
              * @return {Array} The list of filtered items
              */
             filterItems: function () {
+                // First, filter items down to those visible in the currently displayed timespan
                 var visibleRange = this.timeline.getVisibleChartRange();
                 var startTime = visibleRange.start;
                 var endTime = visibleRange.end;
-                this.filteredItems = _.chain(this.allItems)
+                var allItems = _.chain(this.allItems).values();
+                var filteredItems = _.chain(this.allItems)
                     .values(this.allItems)
                     .filter(function (item) {
-                        return startTime <= item.end && item.start <= endTime;
-                    })
-                    .value();
+                        return !item.voidItem && startTime <= item.end && item.start <= endTime;
+                    });
+                // To facilitate further processing, we separete the void/track items from the rest.
+                // we will add them back at the end.
+                var voidItems = allItems.filter("voidItem").value();
 
-                if (this.filteredItems.length === 0) {
-                    this.filteredItems.push({
+                if (filteredItems.value().length === 0) {
+                    this.filteredItems = [{
                         trackId: this.VOID_TRACK.id,
                         isMine: this.VOID_TRACK.isMine,
                         isPublic: true,
@@ -893,8 +897,72 @@ define(["jquery",
                         end: this.startDate - 4500,
                         content: this.VOID_ITEM_TMPL,
                         group: this.groupEmptyTemplate(this.VOID_TRACK)
-                    });
+                    }];
+                    return;
                 }
+
+                // By default only three annotations are supposed to be visible at any given point in time,
+                // so here we pick some representatives.
+                filteredItems = filteredItems
+                    // We sort by creation date to get a deterministic selection of annotations
+                    .sortBy(function (item) {
+                        return item.annotation.get("created_at");
+                    })
+                    .reduce(function (representatives, item) {
+                        var representativesChain = _.chain(representatives);
+                        // Get all the annotations that overlap the current one on the same track
+                        var overlapping = representativesChain.filter(function (representative) {
+                            return representative.trackId === item.trackId
+                                && representative.start <= item.end
+                                && item.start <= representative.end;
+                        });
+
+                        function getLabelValue(item) {
+                            var label = item.annotation.get("label");
+                            if (!label) return undefined;
+                            // Unfortunately sometimes the label is a POJO and sometimes it is a Backbone model,
+                            // for reasons that are not 100% clear to me yet.
+                            return label.get ? label.get("value") : label.value;
+                        }
+                        var itemLabelValue = getLabelValue(item);
+                        // When we have a label, we have the added constraint that we want only one item per label
+                        // at any point in time. In addition to that, we want that annotation to be the longest.
+                        if (itemLabelValue || itemLabelValue === "") {
+                            var withSameLabel = overlapping
+                                .filter(function (other) {
+                                    return itemLabelValue === getLabelValue(other);
+                                });
+
+                            if (withSameLabel.value().length) {
+                                var longestSameLabel = withSameLabel
+                                    .max(function (item) {
+                                        return this.annotationItemDuration(item.annotation);
+                                    }, this)
+                                    .value();
+                                if (
+                                    this.annotationItemDuration(item.annotation)
+                                        > this.annotationItemDuration(longestSameLabel.annotation)
+                                ) {
+                                    var longestSameLabelIndex = representativesChain.indexOf(longestSameLabel).value();
+                                    var previousClassName = representatives[longestSameLabelIndex].className;
+                                    representatives[longestSameLabelIndex] = item;
+                                    representatives[longestSameLabelIndex].className = previousClassName;
+                                }
+                                return representatives;
+                            }
+                        }
+
+                        var overlappingCount = overlapping.value().length;
+                        if (overlappingCount < 3) {
+                            item.className = this.PREFIX_STACKING_CLASS + overlappingCount;
+                            representatives.push(item);
+                        }
+                        return representatives;
+                    }, [], this)
+                    .value();
+
+                // Add back the void items
+                this.filteredItems = filteredItems.concat(voidItems);
             },
 
             /**
