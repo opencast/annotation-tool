@@ -186,13 +186,6 @@ define(["jquery",
             filteredItems: [],
 
             /**
-             * Map from annotation id to stacking level
-             * @alias module:views-timeline.TimelineView#stackingLevel
-             * @type {object}
-             */
-            stackingLevel: {},
-
-            /**
              * Constructor
              * @alias module:views-timeline.TimelineView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
@@ -219,7 +212,6 @@ define(["jquery",
                     "changeTrack",
                     "getFormatedDate",
                     "getSelectedItemAndAnnotation",
-                    "getStackLevel",
                     "getTrack",
                     "onWindowResize",
                     "onTimelineResetZoom",
@@ -669,8 +661,6 @@ define(["jquery",
                 // If annotation is at the end of the video, we mark it for styling
                 annotationJSON.atEnd = (videoDuration - endTime) < 3;
 
-                var stackingLevel = this.stackingLevel[annotation.id] = this.getStackLevel(annotation);
-
                 return {
                     model: track,
                     annotation: annotation,
@@ -683,7 +673,6 @@ define(["jquery",
                     end: end,
                     content: this.itemTemplate(annotationJSON),
                     group: this.groupTemplate(trackJSON),
-                    className: this.PREFIX_STACKING_CLASS + stackingLevel
                 };
             },
 
@@ -1122,8 +1111,6 @@ define(["jquery",
                         }
                     },
                     successCallback = function (newAnnotation) {
-                        console.log(newAnnotation.id);
-                        var stackingLevel = self.stackingLevel[newAnnotation.id] = self.getStackLevel(newAnnotation);
                         newAnnotation.unset("oldId", {
                             silent: true
                         });
@@ -1145,7 +1132,6 @@ define(["jquery",
                             trackId: values.newTrack.id,
                             isPublic: values.newTrack.get("isPublic"),
                             isMine: values.newTrack.get("isMine"),
-                            className: self.PREFIX_STACKING_CLASS + stackingLevel,
                             model: values.newTrack
                         }, false);
 
@@ -1522,42 +1508,6 @@ define(["jquery",
                 var duration = annotation.get("duration");
                 return duration && duration > this.DEFAULT_DURATION ? duration : this.DEFAULT_DURATION;
             },
-
-            /**
-             * Get the top value from the annotations to avoid overlapping
-             * @alias module:views-timeline.TimelineView#getStackLevel
-             * @param {Annotation} annotation The target annotation
-             * @returns {Integer} top for the target annotation
-             */
-            getStackLevel: function (annotation) {
-                // TODO Should we really check this and then work with the collection?
-                if (!annotation.collection) return 0;
-
-                var start = annotation.get("start");
-                var end = start + this.annotationItemDuration(annotation);
-
-                var usedLevels = annotation.collection.chain()
-                    .filter(function (other) {
-                        var otherStart = other.get("start");
-                        var otherEnd = otherStart + this.annotationItemDuration(other);
-
-                        return annotation.id !== other.id &&
-                            otherStart <= end &&
-                            otherEnd >= start &&
-                            this.allItems[other.id];
-                    }, this)
-                    .map(function (annotation) {
-                        return this.stackingLevel[annotation.id];
-                    }, this)
-                    .sortBy();
-
-                return usedLevels.find(function (level, index) {
-                    // The used levels are sorted at this point,
-                    // so the first discontinuity we find is a hole where we can place an annotation.
-                    return level === index;
-                }).value() || usedLevels.value().length;
-            },
-
 
             /**
              * Get track with the given track id. Fallback method include if issues with the standard one.
