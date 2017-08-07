@@ -472,9 +472,11 @@ define(["jquery",
             tracksSelection: function (event) {
                 var prefixFilter = "opt-tracks-";
 
-                if ($(event.target).hasClass(prefixFilter + "public")) {
+                var optionElement = $(event.target).closest("[class*='" + prefixFilter + "']");
+
+                if (optionElement.hasClass(prefixFilter + "public")) {
                     annotationsTool.getTracks().showAllPublic();
-                } else if ($(event.target).hasClass(prefixFilter + "mine")) {
+                } else if (optionElement.hasClass(prefixFilter + "mine")) {
                     annotationsTool.getTracks().showMyTracks();
                 } else {
                     if (_.isUndefined(this.tracksSelectionModal)) {
@@ -485,7 +487,7 @@ define(["jquery",
                 }
 
                 $("[class*='opt-tracks']").removeClass("checked");
-                $("." + event.target.className).addClass("checked");
+                $("." + optionElement[0].className).addClass("checked");
             },
 
             /**
