@@ -16,6 +16,7 @@
 /**
  * A module representing the timeline view
  * @module views-timeline
+ * @requires util
  * @requires jquery
  * @requires underscore
  * @requires i18next
@@ -34,7 +35,8 @@
  * @requires bootstrap.tooltip
  * @requires bootstrap.popover
  */
-define(["jquery",
+define(["util",
+        "jquery",
         "underscore",
         "i18next",
         "prototypes/player_adapter",
@@ -56,7 +58,7 @@ define(["jquery",
         "handlebarsHelpers"
     ],
 
-       function ($, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl, GroupEmptyTmpl,
+       function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl, GroupEmptyTmpl,
             ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, Backbone, links) {
 
         "use strict";
