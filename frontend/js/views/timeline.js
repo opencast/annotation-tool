@@ -120,12 +120,12 @@ define(["util",
              * @type {map}
              */
             events: {
-                "click #add-track"   : "initTrackCreation",
-                "click #reset-zoom"  : "onTimelineResetZoom",
-                "click #zoom-in"     : "zoomIn",
-                "click #zoom-out"    : "zoomOut",
-                "click #move-right"  : "moveRight",
-                "click #move-left"   : "moveLeft"
+                "click #add-track": "initTrackCreation",
+                "click #reset-zoom": "onTimelineResetZoom",
+                "click #zoom-in": "zoomIn",
+                "click #zoom-out": "zoomOut",
+                "click #move-right": "moveRight",
+                "click #move-left": "moveLeft",
             },
 
             /**
