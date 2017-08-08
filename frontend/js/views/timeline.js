@@ -25,6 +25,7 @@
  * @requires collections-annotations
  * @requires templates/timeline-group.tmpl
  * @requires templates/timeline-item.tmpl
+ * @requires templates/timeline-placeholder.tmpl
  * @requires templates/timeline-modal-group.tmpl
  * @requires ACCESS
  * @requires ROLES
@@ -47,6 +48,7 @@ define(["util",
         "templates/timeline-group",
         "templates/timeline-group-empty",
         "templates/timeline-item",
+        "templates/timeline-placeholder",
         "templates/timeline-modal-add-group",
         "templates/timeline-modal-update-group",
         "access",
@@ -59,7 +61,7 @@ define(["util",
     ],
 
        function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl, GroupEmptyTmpl,
-            ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, Backbone, links) {
+            ItemTmpl, PlaceholderTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, Backbone, links) {
 
         "use strict";
 
