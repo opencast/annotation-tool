@@ -695,11 +695,6 @@ define(["util",
                 track = this.tracks.create(param, {
                     wait: true
                 });
-
-
-
-                //this.redraw();
-                //this.onTrackSelected(null, annotationsTool.selectedTrack.id);
             },
 
             /**
