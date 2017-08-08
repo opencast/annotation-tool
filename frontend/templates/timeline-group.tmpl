@@ -9,24 +9,24 @@
        onmouseleave="$('div.popover.fade.right.in').remove();"
        onmouseenter="$(this).popover('show');">
     {{#if isMine}}
-        <i class="private icon-user" title="You own this track"></i>
+        <i class="private icon-user" title="{{t "timeline.track.you own"}}"></i>
     {{/if}}
         <div class="content">
             {{secure name}}
         </div>
     {{#canBeDeleted}}
         <div class="group-edit">
-            <i onclick="annotationsTool.views.timeline.onDeleteTrack(event,'{{id}}');" class="delete icon-trash" title="Delete  track"></i>
-            {{#if isMine}}<i onclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');" class="update  icon-pencil" title="Update  track"></i>{{/if}}
+            <i onclick="annotationsTool.views.timeline.onDeleteTrack(event,'{{id}}');" class="delete icon-trash" title="{{t "timeline.delete track"}}"></i>
+            {{#if isMine}}<i onclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');" class="update  icon-pencil" title="{{t "timeline.update track.button"}}"></i>{{/if}}
             {{#if isMine}}<span class="visibility"
                   onmouseup="{{#isPrivateOnly}}{{else}}$(this).parent().parent().popover('show');{{/isPrivateOnly}}"
                   onmousedown="{{#isPrivateOnly}}
-                                      annotationsTool.alertWarning('Public tracks have been disallowed for this video.');
+                                      annotationsTool.alertWarning('{{t "timeline.private only.no public tracks allowed"}}');
                               {{else}}
                                       annotationsTool.views.timeline.onUpdateTrack(event,'{{id}}');
                               {{/isPrivateOnly}}"
-                  title="{{#isPrivateOnly}}No public track allowed in private-only mode!{{else}}Make {{#if isPublic}}in{{/if}}visible to others{{/isPrivateOnly}}">
-                    <i class="icon-dark-grey {{#isPrivateOnly}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/isPrivateOnly}}"></i> {{#isPrivateOnly}}Private{{else}}{{#if isPublic}}Public{{else}}Private{{/if}}{{/isPrivateOnly}}</span>{{/if}}
+                  title="{{#isPrivateOnly}}{{t "timeline.private only.no public tracks allowed"}}{{else}}{{#if isPublic}}{{t "timeline.change visibility.to private"}}{{else}}{{t "timeline.change visibility.to public"}}{{/if}}{{/isPrivateOnly}}">
+                    <i class="icon-dark-grey {{#isPrivateOnly}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/isPrivateOnly}}"></i> {{#isPrivateOnly}}{{t "timeline.track.private"}}{{else}}{{#if isPublic}}{{t "timeline.track.public"}}{{else}}{{t "timeline.track.private"}}{{/if}}{{/isPrivateOnly}}</span>{{/if}}
         </div>
     {{/canBeDeleted}}
     </a>

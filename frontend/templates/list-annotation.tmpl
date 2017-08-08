@@ -15,24 +15,24 @@
         </span>
 
         {{#if isMine}}
-        <i class="private icon-user" title="You own this annotation"></i>
+        <i class="private icon-user" title="{{t "annotation.you own"}}"></i>
         {{/if}}
 
         {{#if scalevalue}}
         <span class="scaling">
                 {{#if scalevalue}}
                 <span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
-                {{/if}} 
+                {{/if}}
         </span>
         {{/if}}
-        
+
         <span class="category" {{#if label}}title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"{{/if}}>
                 {{#if label}}
                     <span class="abbreviation">{{label.abbreviation}}</span>
                     <span class="label-value print">{{label.value}}</span>
                     {{#if scalevalue}}
                         <span class="scalevalue print">{{scalevalue.name}} ({{scalevalue.value}})</span>
-                    {{/if}} 
+                    {{/if}}
                 {{else}}
                     <span class="no-label">{{text}}</span>
                 {{/if}}
@@ -40,7 +40,7 @@
     </div>
 
     <div class="right">
-        <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{numberOfComments}} Comment(s)">
+        <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{t "annotation.comments.count" count=numberOfComments}}">
             {{#if numberOfComments}}
             <span class="comment-amount">{{numberOfComments}}</span>
             {{/if}}

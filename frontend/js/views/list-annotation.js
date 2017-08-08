@@ -19,6 +19,7 @@
  * @module views-list-annotation
  * @requires jquery
  * @requires underscore
+ * @requires i18next
  * @requires player-adapter
  * @requires models-annotation
  * @requires models-user
@@ -29,6 +30,7 @@
  */
 define(["jquery",
         "underscore",
+        "i18next",
         "prototypes/player_adapter",
         "models/annotation",
         "models/user",
@@ -39,7 +41,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
+    function ($, _, i18next, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
 
         "use strict";
 
@@ -514,9 +516,9 @@ define(["jquery",
                 // Hack for Firefox, add a button over it
                 if ($.browser.mozilla) {
                     if (modelJSON.duration > 0) {
-                        this.$el.find(".end").append("<span class=\"end-btn\" title=\"Double click to edit\">&nbsp;</span>");
+                        this.$el.find(".end").append("<span class=\"end-btn\" title=\"" + i18next.t("list annotation.double click to edit") + "\">&nbsp;</span>");
                     }
-                    this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
+                    this.$el.find(".start").append("<span class=\"start-btn\" title=\"" + i18next.t("list annotation.double click to edit") + "\">&nbsp;</span>");
                 }
 
 

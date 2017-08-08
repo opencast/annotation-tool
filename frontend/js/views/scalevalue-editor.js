@@ -26,7 +26,8 @@
 define(["jquery",
         "backbone",
         "models/scalevalue",
-        "templates/scale-value-editor"],
+        "templates/scale-value-editor",
+        "handlebarsHelpers"],
         function ($, Backbone, ScaleValue, ScaleValueEditorTmpl) {
 
             "use strict";

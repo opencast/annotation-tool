@@ -19,6 +19,7 @@
  * @module views-annotate
  * @requires jQuery
  * @requires underscore
+ * @requires i18next
  * @requires player-adapter
  * @requires models-annotation
  * @requires collections-annotations
@@ -31,6 +32,7 @@
  */
 define(["jquery",
         "underscore",
+        "i18next",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
@@ -42,7 +44,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
+    function ($, _, i18next, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
 
         "use strict";
 
@@ -59,7 +61,7 @@ define(["jquery",
             DEFAULT_TABS = {
                 ALL: {
                     id    : "all",
-                    name  : "All",
+                    name  : i18next.t("annotate.categories.all"),
                     filter: function (category) {
                         return category.get("isPublic") || category.get("isMine");
                     },
@@ -67,7 +69,7 @@ define(["jquery",
                 },
                 PUBLIC: {
                     id        : "public",
-                    name      : "Public",
+                    name      : i18next.t("annotate.categories.public"),
                     filter    : function (category) {
                         return category.get("isPublic");
                     },
@@ -76,7 +78,7 @@ define(["jquery",
                 },
                 MINE: {
                     id        : "mine",
-                    name      : "Mine",
+                    name      : i18next.t("annotate.categories.mine"),
                     filter    : function (category) {
                         return category.get("isMine") && !category.get("isPublic");
                     },
@@ -205,7 +207,7 @@ define(["jquery",
                     this.categoriesElement = this.$el.find("#categories");
 
                     // Print selected track
-                    this.trackDIV = this.$el.find("div.currentTrack span.content");
+                    this.trackDIV = this.$el.find("span.currentTrack");
                     this.changeTrack(annotationsTool.selectedTrack);
 
                     this.tracks = annotationsTool.video.get("tracks");
@@ -307,7 +309,7 @@ define(["jquery",
                         this.categoriesElement.hide();
                         this.input.attr("disabled", true);
                         this.$el.find(".no-track").show();
-                        this.trackDIV.html("<span>no track</span>");
+                        this.trackDIV.html("<span>" + i18next.t("annotate.no selected track") + "</span>");
                     }
                 },
 

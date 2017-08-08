@@ -1,13 +1,13 @@
 <div class="modal" id="modal-track-selection">
     <div class="modal-header">
-        <h3>Other public annotations</h3>
+        <h3>{{t "track selection.header"}}</h3>
     </div>
 
     <div class="modal-body">
-        Users with public annotations:
+        {{t "track selection.search.hint"}}
         <div class="input-append">
-            <input class="span12" type="text" id="search-track" placeholder="Type here to search &hellip;">
-            <button id="clear-search" class="btn search-only" type="button">Clear</button>
+            <input class="span12" type="text" id="search-track" placeholder="{{t "track selection.search.placeholder"}}">
+            <button id="clear-search" class="btn search-only" type="button">{{t "track selection.search.clear"}}</button>
         </div>
         <ul class="list-group">
             {{#each users}}
@@ -32,11 +32,11 @@
             {{/each}}
         </ul>
 
-        <label><input id="select-all" type="checkbox" value=""> Select/unselect all</label>
+        <label><input id="select-all" type="checkbox" value=""> {{t "track selection.(un-)select all"}}</label>
     </div>
 
     <div class="modal-footer">
-        <a id="cancel-selection" href="#" class="btn">Cancel</a>
-        <a id="confirm-selection" href="#" class="btn btn-primary">Ok</a>
+        <a id="cancel-selection" href="#" class="btn">{{t "track selection.cancel"}}</a>
+        <a id="confirm-selection" href="#" class="btn btn-primary">{{t "track selection.ok"}}</a>
     </div>
 </div>

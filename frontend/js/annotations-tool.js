@@ -19,6 +19,8 @@
  * @module annotations-tool
  * @requires jQuery
  * @requires backbone
+ * @requires i18next
+ * @requires moment
  * @requires views-main
  * @requires views-alert
  * @requires templates/delete-modal.tmpl
@@ -30,6 +32,8 @@
 define(["jquery",
         "underscore",
         "backbone",
+        "i18next",
+        "moment",
         "collections/videos",
         "views/main",
         "views/alert",
@@ -39,9 +43,10 @@ define(["jquery",
         "FiltersManager",
         "roles",
         "colors",
-        "annotation-sync"],
+        "annotation-sync",
+        "handlebarsHelpers"],
 
-    function ($, _, Backbone, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
+    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
 
         "use strict";
 
@@ -211,6 +216,14 @@ define(["jquery",
                 $(window).bind("mouseup", this.onMouseUp);
 
                 return this;
+            },
+
+            /**
+             * Formats the given date
+             * @alias annotationsTool.formatDate
+             */
+            formatDate: function (date) {
+                return moment(date).format("L");
             },
 
             /**
@@ -949,8 +962,8 @@ define(["jquery",
 
                         if (tracks.getMine().length === 0) {
                             tracks.create({
-                                name        : "Default " + annotationsTool.user.get("nickname"),
-                                description : "Default track for user " + annotationsTool.user.get("nickname")
+                                name        : i18next.t("default track.name", { nickname: annotationsTool.user.get("nickname") }),
+                                description : i18next.t("default track.description", { nickname: annotationsTool.user.get("nickname") })
                             },
                                           {
                                               wait    : true,

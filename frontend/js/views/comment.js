@@ -29,7 +29,8 @@ define(["jquery",
         "templates/comment",
         "templates/edit-comment",
         "handlebars",
-        "backbone"],
+        "backbone",
+        "handlebarsHelpers"],
 
     function ($, _, Template, EditTemplate, Handlebars, Backbone) {
 

@@ -1,36 +1,36 @@
 
-	  <div class="modal-header">
-	    <h3>User login</h3>
-	  </div>
-	  <div class="modal-body">
+	<div class="modal-header">
+		<h3>{{t "user login.header"}}</h3>
+	</div>
+	<div class="modal-body">
 		<form class="form-horizontal">
 			<fieldset>
-			        <div class="alert alert-error" style="display:none">
+				<div class="alert alert-error" style="display:none">
 					<span><i class="icon-exclamation-sign"></i></span>
 					<span id="content"></span>
-					
+
 				</div>
-				
+
 				<div class="alert alert-info">
-					Create a new nickname for the user you are logged with in current context (LTI tool or other).
+					 {{t "user login.nickname.hint"}}
 				</div>
-				
+
 				<div class="control-group">
-					<label class="control-label" for="nickname"><b>*</b> Nickname: </label>
+					<label class="control-label" for="nickname"><b>*</b> {{t "user login.nickname.label"}}: </label>
 					<div class="controls">
-						<input type="text" class="input-xlarge" placeholder="Insert your nickname" id="nickname">
+						<input type="text" class="input-xlarge" placeholder="{{t "user login.nickname.placeholder"}}" id="nickname">
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="email">Email: </label>
+					<label class="control-label" for="email">{{t "user login.email.label"}}: </label>
 					<div class="controls">
-						<input type="text" class="input-xlarge" placeholder="Insert your email address" id="email">
+						<input type="text" class="input-xlarge" placeholder="{{t "user login.email.placeholder"}}" id="email">
 					</div>
 				</div>
 
 				{{#if localStorage}}
 				<div class="control-group">
-					<label class="control-label" for="supervisor">Log as supervisor: </label>
+					<label class="control-label" for="supervisor">{{t "user login.login as supervisor"}}: </label>
 					<div class="controls">
 						<input type="checkbox" id="supervisor">
 					</div>
@@ -38,17 +38,17 @@
 				{{/if}}
 
 				<div class="control-group">
-					<label class="control-label">Remember me: </label>
+					<label class="control-label">{{t "user login.remember me"}}: </label>
 					<div class="controls">
 						<input type="checkbox" id="remember" name="remember" value="remember">
 					</div>
 				</div>
 
 
-				<div style="float:right"><b>* required fields</b></div>
+				<div style="float:right"><b>* {{t "required fields"}}</b></div>
 			</fieldset>
 		</form>
-	  </div>
-	  <div class="modal-footer">
-	    <a id="save-user" href="#" class="btn btn-primary">Login</a>
-	  </div>
+	</div>
+	<div class="modal-footer">
+		<a id="save-user" href="#" class="btn btn-primary">{{t "user login.login"}}</a>
+	</div>

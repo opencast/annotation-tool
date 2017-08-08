@@ -26,7 +26,12 @@ require.config({
         "underscore": "libs/underscore-min",
         "raf": "libs/rAF",
         "email-addresses": "libs/email-addresses.min",
-        "mousetrap": "libs/mousetrap.min"
+        "mousetrap": "libs/mousetrap.min",
+        "i18next": "libs/i18next.min",
+        "i18next-xhr-backend": "libs/i18nextXHRBackend.min",
+        "i18next-browser-language-detector": "libs/i18nextBrowserLanguageDetector.min",
+        "jquery-i18next": "libs/jquery-i18next.min",
+        "moment": "libs/moment-with-locales"
     },
     waitSeconds: 10,
 

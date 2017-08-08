@@ -19,6 +19,7 @@
  * @requires jquery
  * @requires underscore
  * @requires Backbone
+ * @requires i18next
  * @requires templates/alert-modal.tmpl
  * @requires ROLES
  * @requires hanldebars
@@ -26,10 +27,11 @@
 define(["jquery",
         "underscore",
         "backbone",
+        "i18next",
         "templates/alert-modal",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, AlertTemplate) {
+    function ($, _, Backbone, i18next, AlertTemplate) {
 
         "use strict";
 
@@ -111,15 +113,15 @@ define(["jquery",
              */
             TYPES: {
                 ERROR: {
-                    title: "Error!",
+                    title: i18next.t("alert.error.title"),
                     className: "alert-error"
                 },
                 WARNING: {
-                    title: "Warning!",
+                    title: i18next.t("alert.warning.title"),
                     className: ""
                 },
                 INFO : {
-                    title: "Information",
+                    title: i18next.t("alert.info.title"),
                     className: "alert-info"
                 }
             }

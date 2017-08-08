@@ -15,18 +15,18 @@
         </span>
 
         {{#if isMine}}
-        <i class="private icon-user" title="You own this annotation"></i>
+        <i class="private icon-user" title="{{t "annotation.you own"}}"></i>
         {{/if}}
-        
+
         {{#if scalevalue}}
         <span class="scaling">
                 {{#if scalevalue}}
                 <span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
-                {{/if}} 
+                {{/if}}
         </span>
-        {{/if}} 
-        
-        
+        {{/if}}
+
+
         <span class="category" {{#if label}}title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"{{/if}}>
                 {{#if label}}
                     <span class="abbreviation">{{label.abbreviation}}</span>
@@ -42,14 +42,14 @@
 
     <div class="right">
         {{#canBeDeleted}}
-        <i class="delete icon-trash" title="Delete annotation."></i>
+        <i class="delete icon-trash" title="{{t "annotation.edit.delete"}}"></i>
         {{/canBeDeleted}}
 
         {{#if isMine}}
-        <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
+        <i class="toggle-edit icon-pencil" title="{{t "annotation.edit.edit"}}"></i>
         {{/if}}
 
-        <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{numberOfComments}} Comment(s)">
+        <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{t "annotation.comments.count" count=numberOfComments}}">
             {{#if numberOfComments}}
             <span class="comment-amount">{{numberOfComments}}</span>
             {{/if}}
@@ -60,13 +60,13 @@
 <div id="text-container{{id}}" class="text-container">
     <div class="creator-info">
         <span class="user">{{created_by_nickname}}</span>
-        <span class="created">{{formatDate created_at}}</span> 
+        <span class="created">{{formatDate created_at}}</span>
         <span class="track">{{track}}</span>
     </div>
     <span class="text freetext read-only">
-        {{#if label}} 
+        {{#if label}}
             {{label.value}}
-        {{else}} 
+        {{else}}
             {{{textReadOnly}}}
         {{/if}}
     </span>

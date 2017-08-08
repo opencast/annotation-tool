@@ -19,20 +19,23 @@
  * @requires jquery
  * @requires underscore
  * @requires Backbone
+ * @requires i18next
  * @requires templates/loop-modal.tmpl
  * @requires ROLES
  * @requires handlebars
  */
 define(["jquery",
         "underscore",
+        "i18next",
         "collections/loops",
         "prototypes/player_adapter",
         "backbone",
         "templates/loop-control",
         "handlebars",
-        "slider"],
+        "slider",
+        "handlebarsHelpers"],
 
-    function ($, _, Loops, PlayerAdapter, Backbone, LoopTemplate, Handlebars) {
+    function ($, _, i18next, Loops, PlayerAdapter, Backbone, LoopTemplate, Handlebars) {
 
         "use strict";
 
@@ -99,8 +102,9 @@ define(["jquery",
              */
             LAYOUT_MENU_TMPL:   "<li>\
                                         <a id=\"enableLoops\" href=\"#\" class=\"checked\">\
-                                            <i class=\"check icon-check\"></i> Loop Controller\
-                                        </a>\
+                                            <i class=\"check icon-check\"></i>"
+                                            + i18next.t("menu.view.loop controller") +
+                                        "</a>\
                                     </li>",
 
             /**
@@ -312,7 +316,7 @@ define(["jquery",
                     newValue = parseInt(loopInput.val(), 10);
 
                 if (_.isNaN(newValue) || newValue > this.playerAdapter.getDuration() || newValue < 0) {
-                    annotationsTool.alertWarning("The given value for the loop length is not valid!");
+                    annotationsTool.alertWarning(i18next.t("loop controller.invalid loop length"));
                     loopInput.val(this.currentLoopLength);
                     return;
                 }
