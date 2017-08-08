@@ -128,6 +128,7 @@ define(["util",
                 "click #zoom-out": "zoomOut",
                 "click #move-right": "moveRight",
                 "click #move-left": "moveLeft",
+                "click .timeline-placeholder": "expandTrack"
             },
 
             /**
@@ -177,17 +178,48 @@ define(["util",
 
             /**
              * Map containing all the items
-             * @alias module:views-timeline.TimelineView#allItems
+             * @alias module:views-timeline.TimelineView#annotationItems
              * @type {map}
              */
-            allItems: {},
+            annotationItems: {},
 
             /**
-             * Array containing only the items who passed the filters
+             * Placeholder items to keep tracks visible even when there is no annotation item in them
+             * @alias module:views-timeline.TimelineView#trackItems
+             * @type {map}
+             */
+            trackItems: {},
+
+            /**
+             * Items from external sources.
+             * @see module:views-loop
+             * @alias module:views-timeline.TimelineView#trackItems
+             * @type {map}
+             */
+            extraItems: {},
+
+            /**
+             * Cache for the timeline items after some preprocessing indexed by track id
+             * @alias module:views-timeline.TimelineView#preprocessedItems
+             * @type {map}
+             * @see preprocessTrack
+             */
+            preprocessedItems: {},
+
+            /**
+             * Array containing only the items displayed in the timeline
              * @alias module:views-timeline.TimelineView#filteredItems
              * @type {array}
              */
             filteredItems: [],
+
+            /**
+             * Set of currently expanded tracks, i.e. tracks that show all their items without preprocessing.
+             * @alias module:views-timeline.TimelineView#trackExpanded
+             * @type {object}
+             * @see preprocessTrack
+             */
+            trackExpanded: {},
 
             /**
              * Constructor
@@ -221,7 +253,6 @@ define(["util",
                     "onTimelineResetZoom",
                     "initTrackCreation",
                     "initTrackUpdate",
-                    "filterItems",
                     "updateDraggingCtrl",
                     "moveToCurrentTime",
                     "moveRight",
@@ -351,7 +382,34 @@ define(["util",
              * @alias module:views-timeline.TimelineView#redraw
              */
             redraw: function () {
-                this.timeline.draw(this.filteredItems, this.option);
+                var timedItems = _.chain(this.preprocessedItems)
+                    .values()
+                    .flatten()
+                    .value()
+                    .concat(_.values(this.extraItems));
+
+                var visibleRange = this.timeline.getVisibleChartRange();
+                var startTime = visibleRange.start;
+                var endTime = visibleRange.end;
+                var filteredItems = _.filter(timedItems, function (item) {
+                    return startTime <= item.end && item.start <= endTime;
+                });
+
+                if (!filteredItems.length) {
+                    filteredItems = [{
+                        trackId: this.VOID_TRACK.id,
+                        isMine: this.VOID_TRACK.isMine,
+                        isPublic: true,
+                        start: this.startDate - 5000,
+                        end: this.startDate - 4500,
+                        content: this.VOID_ITEM_TMPL,
+                        group: this.groupEmptyTemplate(this.VOID_TRACK)
+                    }];
+                }
+
+                // We save the actually displayed items here to access them later, for example in `onSelectionUpdate`
+                this.filteredItems = filteredItems.concat(_.values(this.trackItems));
+                this.timeline.draw(this.filteredItems);
             },
 
             /**
@@ -359,7 +417,6 @@ define(["util",
              * @alias module:views-timeline.TimelineView#timerangeChange
              */
             timerangeChange: function () {
-                this.filterItems();
                 this.redraw();
             },
 
@@ -497,9 +554,8 @@ define(["util",
              * @alias module:views-timeline.TimelineView#addItem
              */
             addItem: function (id, item, isPartOfList) {
-                this.allItems[id] = item;
+                this.extraItems[id] = item;
                 if (!isPartOfList) {
-                    this.filterItems();
                     this.redraw();
                 }
             },
@@ -510,9 +566,8 @@ define(["util",
              * @alias module:views-timeline.TimelineView#removeItem
              */
             removeItem: function (id, refresh) {
-                delete this.allItems[id];
+                delete this.extraItems[id];
                 if (refresh) {
-                    this.filterItems();
                     this.redraw();
                 }
             },
@@ -544,10 +599,10 @@ define(["util",
                     return;
                 }
 
-                this.allItems[annotation.id] = this.generateItem(annotation, track);
+                this.annotationItems[annotation.id] = this.generateItem(annotation, track);
 
                 if (!isList) {
-                    this.filterItems();
+                    this.preprocessTrack(track.id);
                     this.redraw();
                     this.onPlayerTimeUpdate();
                 }
@@ -576,14 +631,14 @@ define(["util",
                 }
 
                 // Add void item
-                this.allItems["track_" + track.id] = this.generateVoidItem(track);
+                this.trackItems[track.id] = this.generateVoidItem(track);
 
                 annotations = track.get("annotations");
                 annotations.each(annotationWithList, this);
                 annotations.bind("add", proxyToAddAnnotation, this);
                 annotations.bind("change", this.changeItem, this);
 
-                this.filterItems();
+                this.preprocessTrack(track.id);
                 this.redraw();
             },
 
@@ -593,9 +648,11 @@ define(["util",
              * @param {Array | List} tracks The list of tracks to add
              */
             addTracksList: function (tracks) {
-                this.allItems = {};
+                this.trackItems = {};
+                this.annotationItems = {};
+                this.preprocessedItems = {};
                 if (tracks.length === 0) {
-                    this.filterItems();
+                    //this.preprocessAllTracks();
                     this.redraw();
                 } else {
                     _.each(tracks, this.addTrack, this);
@@ -623,7 +680,7 @@ define(["util",
                     start: this.startDate - 5000,
                     end: this.startDate - 4500,
                     content: this.VOID_ITEM_TMPL,
-                    group: this.groupTemplate(trackJSON)
+                    groupContent: this.groupTemplate(trackJSON)
                 };
             },
 
@@ -676,8 +733,8 @@ define(["util",
                     editable: track.get("isMine"),
                     start: start,
                     end: end,
-                    content: this.itemTemplate(annotationJSON),
-                    group: this.groupTemplate(trackJSON),
+                    itemContent: this.itemTemplate(annotationJSON),
+                    groupContent: this.groupTemplate(trackJSON)
                 };
             },
 
@@ -858,100 +915,253 @@ define(["util",
             },
 
             /**
-             * Go through the list of items with the current active filter and save it in the filtered items array.
-             * @alias module:views-timeline.TimelineView#filterItems
-             * @return {Array} The list of filtered items
+             * Expand a track, i.e. show all annotations in it, without any clustering or aggregation.
+             * This might also make the track higher.
+             * @alias module:views-timeline.TimelineView#expandTrack
+             * @param {Event} event The event that causes the expansion. Usually clicking on a placeholder item
+             * @see preprocessTrack
              */
-            filterItems: function () {
-                // First, filter items down to those visible in the currently displayed timespan
-                var visibleRange = this.timeline.getVisibleChartRange();
-                var startTime = visibleRange.start;
-                var endTime = visibleRange.end;
-                var allItems = _.chain(this.allItems).values();
-                var filteredItems = _.chain(this.allItems)
-                    .values(this.allItems)
-                    .filter(function (item) {
-                        return !item.voidItem && startTime <= item.end && item.start <= endTime;
-                    });
-                // To facilitate further processing, we separete the void/track items from the rest.
-                // we will add them back at the end.
-                var voidItems = allItems.filter("voidItem").value();
+            expandTrack: function (event) {
+                var track = $(event.target).data("track");
+                this.trackExpanded[track] = true;
+                this.preprocessTrack(track);
+                this.redraw();
+            },
 
-                if (filteredItems.value().length === 0) {
-                    this.filteredItems = [{
-                        trackId: this.VOID_TRACK.id,
-                        isMine: this.VOID_TRACK.isMine,
-                        isPublic: true,
-                        start: this.startDate - 5000,
-                        end: this.startDate - 4500,
-                        content: this.VOID_ITEM_TMPL,
-                        group: this.groupEmptyTemplate(this.VOID_TRACK)
-                    }];
-                    return;
-                }
+            /**
+             * Do some preprocessing on the timeline items in a given track.
+             * This groups items together, when there are more than the track can display
+             * and also ensures that only the longest item of any label is displayed
+             * at any given time in this situation.
+             * @alias module:views-timeline.TimelineView#preprocessTrack
+             * @param trackId The id of the track to preprocess
+             */
+            preprocessTrack: function (trackId) {
+                delete this.preprocessedItems[trackId];
 
-                // By default only three annotations are supposed to be visible at any given point in time,
-                // so here we pick some representatives.
-                filteredItems = filteredItems
-                    // We sort by creation date to get a deterministic selection of annotations
-                    .sortBy(function (item) {
-                        return item.annotation.get("created_at");
-                    })
-                    .reduce(function (representatives, item) {
-                        var representativesChain = _.chain(representatives);
-                        // Get all the annotations that overlap the current one on the same track
-                        var overlapping = representativesChain.filter(function (representative) {
-                            return representative.trackId === item.trackId
-                                && representative.start <= item.end
-                                && item.start <= representative.end;
-                        });
+                var items = _.filter(this.annotationItems, function (item) {
+                    return item.trackId === trackId;
+                });
 
-                        function getLabelValue(item) {
-                            var label = item.annotation.get("label");
-                            if (!label) return undefined;
-                            // Unfortunately sometimes the label is a POJO and sometimes it is a Backbone model,
-                            // for reasons that are not 100% clear to me yet.
-                            return label.get ? label.get("value") : label.value;
-                        }
-                        var itemLabelValue = getLabelValue(item);
-                        // When we have a label, we have the added constraint that we want only one item per label
-                        // at any point in time. In addition to that, we want that annotation to be the longest.
-                        if (itemLabelValue || itemLabelValue === "") {
-                            var withSameLabel = overlapping
-                                .filter(function (other) {
-                                    return itemLabelValue === getLabelValue(other);
+                // The height of the track in stack levels. We need (and potentially calculate) that later.
+                // For now, tracks are at least 3 stacking levels high.
+                var height = 3;
+                // A mapping from annotation id to stacking level. We will will this later
+                // and then use it to place the items on the proper height within their track.
+                var stackLevels = {};
+
+                // When there are no items in this track,
+                // there is nothing to do, so return early,
+                // so that we can assume `items` is not empty in the following code.
+                if (!items.length) {
+                    this.preprocessedItems[trackId] = [];
+                } else {
+
+                    // We sort the items by their start time.
+                    // This will come in handy multiple times in the following algorithms
+                    // and also ensures a deterministic outcome.
+                    items = _.sortBy(items, "start");
+
+                    if (!this.trackExpanded[trackId]) {
+                        // First we will need to determine which items to display for any label that we have.
+                        // The selected items for each label will be the subset of items with that label
+                        // with the most coverage of the timeline.
+                        // To find this subset, we will use a dynamic programming approach.
+                        var labelSelection = _.chain(items)
+                            .filter(function (item) { return item.annotation.get("label"); })
+                            .groupBy(function (item) { return item.annotation.get("label").id; })
+                            .reduce(function (labelSelection, items) {
+                                // The dynamic program will output `items.len` possible solutions,
+                                // namely the disjoint subsets of annotations that have the greatest coverage
+                                // and whose last annotation is the i-th when sorted by their end time.
+                                items = _.sortBy(items, "end");
+                                var selectedAnnotations = _.chain(items)
+                                    .reduce(function (potentialSolutions, item, i) {
+                                        // In each step we want to find the best solution ending in item i.
+                                        // These are collected in `potentialSolutions`
+
+                                        // We clearly get the next one
+                                        // by combining one of the previous best solutions
+                                        // with the i-th item.
+                                        // Because of the disjunctiveness condition, though,
+                                        // not all previous solutions are viable.
+                                        var viablePreviousSolutions = _.filter(potentialSolutions, function (_, j) {
+                                            // Only those which do not overlap the current item can be considered.
+                                            return items[j].end < items[i].start;
+                                        });
+                                        var bestPreviousSolution = viablePreviousSolutions.length
+                                            ? _.max(viablePreviousSolutions, "value")
+                                            : {
+                                                value: 0,
+                                                items: []
+                                            };
+                                        potentialSolutions.push({
+                                            value: item.end - item.start + bestPreviousSolution.value,
+                                            items: bestPreviousSolution.items.concat(item)
+                                        });
+                                        return potentialSolutions;
+                                    }, [])
+                                    // The best of these partial solutions constitutes our final selection
+                                    .max("value")
+                                    .value()
+                                    .items;
+
+                                _.each(selectedAnnotations, function (item) {
+                                    labelSelection[item.id] = true;
                                 });
 
-                            if (withSameLabel.value().length) {
-                                var longestSameLabel = withSameLabel
-                                    .max(function (item) {
-                                        return this.annotationItemDuration(item.annotation);
-                                    }, this)
-                                    .value();
-                                if (
-                                    this.annotationItemDuration(item.annotation)
-                                        > this.annotationItemDuration(longestSameLabel.annotation)
-                                ) {
-                                    var longestSameLabelIndex = representativesChain.indexOf(longestSameLabel).value();
-                                    var previousClassName = representatives[longestSameLabelIndex].className;
-                                    representatives[longestSameLabelIndex] = item;
-                                    representatives[longestSameLabelIndex].className = previousClassName;
-                                }
-                                return representatives;
+                                return labelSelection;
+                            }, {})
+                            .value();
+                    }
+
+                    // Now we determining the stacking level for each item,
+                    // while also noting which items are together in a stack,
+                    // i.e. a connected component of a graph where the nodes are the items
+                    // and an edge exists if the items overlap in time.
+
+                    // The latter functionality will be needed again later,
+                    // so we write a function for this.
+                    function stackItems(items) {
+                        if (!items.length) return [];
+
+                        var firstItem = items.splice(0, 1)[0];
+                        var currentStack = {
+                            items: [firstItem],
+                            start: firstItem.start,
+                            end: firstItem.end
+                        };
+                        var stacks = [currentStack];
+
+                        _.each(items, function (item) {
+                            // If this item does not belong to the current stack anymore,
+                            // we need to start a new one.
+                            if (item.start > currentStack.end) {
+                                currentStack = {
+                                    items: [item],
+                                    start: item.start,
+                                    end: item.end
+                                };
+                                stacks.push(currentStack);
+                                return;
                             }
-                        }
 
-                        var overlappingCount = overlapping.value().length;
-                        if (overlappingCount < 3) {
-                            item.className = this.PREFIX_STACKING_CLASS + overlappingCount;
-                            representatives.push(item);
-                        }
-                        return representatives;
-                    }, [], this)
-                    .value();
+                            // Otherwise add the item to the current stack
+                            currentStack.end = Math.max(currentStack.end, item.end);
+                            currentStack.items.push(item);
+                        });
+                        return stacks;
+                    }
+                    var stacks = stackItems(items);
 
-                // Add back the void items
-                this.filteredItems = filteredItems.concat(voidItems);
+                    // Now within each stack, we assign items to different levels.
+                    // We also determine the necessary height of the track on the way, when it is expanded.
+                    _.each(stacks, function (stack) {
+                        _.each(stack.items, function (item, i) {
+                            var items = stack.items;
+
+                            // We don't need to place labeled items that have not been selected by the first step
+                            // but if we find an item like that, we need to show a placeholder.
+                            var label = item.annotation.get("label");
+                            if (!this.trackExpanded[trackId] && label && !labelSelection[item.id]) {
+                                stack.hasHiddenItems = true;
+                                return;
+                            };
+
+                            // Find the stack level of the stack where this item fits in.
+                            // We just collect all the levels that are already occupied at this time ...
+                            var usedLevels = [];
+                            var level;
+                            for (var j = 0; j < i; ++j) {
+                                level = stackLevels[items[j].id];
+                                if ((level || level === 0) && util.overlaps(item, items[j])) {
+                                    usedLevels[level] = true;
+                                }
+                            }
+                            // ... and then look for the first free one.
+                            for (level = 0; level < usedLevels.length && usedLevels[level]; ++level);
+
+                            if (level > 2) stack.hasHiddenItems = true;
+                            stackLevels[item.id] = level;
+                            if (this.trackExpanded[trackId] && level >= height) height = level + 1;
+                            item.className = this.PREFIX_STACKING_CLASS + level;
+                        }, this);
+                    }, this);
+
+                    // Now we just cut each stack to contain only three levels if it is not expanded
+                    this.preprocessedItems[trackId] = _.chain(stacks)
+                        .map(function (stack) {
+                            // If the track is expanded, we need to give each item a class representing the stack height,
+                            // so that the CSS can adjust the top margin.
+                            if (this.trackExpanded[trackId]) {
+                                _.each(stack.items, function (item) {
+                                    item.className += " height-" + height;
+                                });
+                                return stack.items;
+                            }
+                            if (!stack.hasHiddenItems) return stack.items;
+                            // If the stack is three levels or less, everything is fine
+                            // and we can just display all items in the stack.
+                            if (this.trackExpanded[trackId] || !stack.hasHiddenItems) return stack.items;
+
+                            // Otherwise we aggregate the spilled items into one or more placeholders
+                            var items = _.partition(stack.items, function (item) {
+                                return stackLevels[item.id] < 2;
+                            });
+                            var spilled = items[1];
+                            var placeholders = _.map(stackItems(spilled), function (spilledStack) {
+                                var trackId = spilledStack.items[0].trackId;
+                                return {
+                                    isPlaceholder: true,
+                                    start: spilledStack.start,
+                                    end: spilledStack.end,
+                                    groupContent: spilledStack.items[0].groupContent,
+                                    trackId: trackId,
+                                    itemContent: PlaceholderTmpl({
+                                        count: spilledStack.items.length,
+                                        track: trackId
+                                    }),
+                                    className: this.PREFIX_STACKING_CLASS + 2,
+                                    editable: false
+                                };
+                            }, this);
+                            return items[0].concat(placeholders);
+                        }, this)
+                        .flatten()
+                        .value();
+                }
+
+                _.each(this.preprocessedItems[trackId].concat(this.trackItems[trackId]), function (item) {
+                    // We need to change the group of each item to add some indicator of the height of the track
+                    // We also need to, **in front of that**, add some indicator for the track,
+                    // as to preserve the ordering.
+                    item.group = "<div style=\"height: " + height * 23 + "px;\">" + item.groupContent + "</div>";
+                    item.group = "<!-- " + trackId + " -->" + item.group;
+
+                    // We also need to set the margin of all the items to shift them to their stacking level
+                    function wrap(item, level) {
+                        return "<div style=\"margin-top: " +
+                            (-51 + (height - level) * 23) +
+                            "px;\">" +
+                            item +
+                            "</div>";
+                    }
+                    if (item.isPlaceholder) {
+                        item.content = wrap(item.itemContent, 2);
+                    } else if (item.id) {
+                        item.content = wrap(item.itemContent, stackLevels[item.id]);
+                    }
+                });
+            },
+
+            /**
+             * Do preprocessing on all tracks.
+             * @alias module:views-timeline.TimelineView#preprocessAllTracks
+             */
+            preprocessAllTracks: function () {
+                _.each(this.trackItems, function (_, trackId) {
+                    this.preprocessTrack(trackId);
+                }, this);
             },
 
             /**
@@ -964,8 +1174,8 @@ define(["util",
 
                 if (!_.isUndefined(value)) {
                     // Only update annotation view if the item has already been created
-                    this.allItems[annotation.id] = this.generateItem(annotation, value.model);
-                    this.filterItems();
+                    this.annotationItems[annotation.id] = this.generateItem(annotation, value.model);
+                    this.preprocessTrack(value.trackId);
                     this.redraw();
                 }
             },
@@ -1066,18 +1276,19 @@ define(["util",
                     start > this.playerAdapter.getDuration()) {
                     this.timeline.cancelChange();
 
-                    this.allItems[values.annotation.id] = {
+                    this.annotationItems[values.annotation.id] = {
                         start: values.item.start,
                         end: values.item.end,
-                        content: values.item.content,
-                        group: this.groupTemplate(values.oldTrack.toJSON()),
+                        itemContent: values.item.content,
+                        groupContent: this.groupTemplate(values.oldTrack.toJSON()),
                         id: values.annotation.id,
                         trackId: values.oldTrack.id,
                         model: values.oldTrack,
                         className: values.item.className
                     };
 
-                    this.filterItems();
+                    this.preprocessTrack(values.oldTrack.id);
+                    this.preprocessTrack(values.newTrack.id);
                     this.redraw();
 
                     if (hasToPlay) {
@@ -1123,19 +1334,19 @@ define(["util",
                             annJSON.category = annJSON.label.category;
                         }
 
-                        self.addItem(annJSON.id, {
+                        self.annotationItems[annJSON.id] = {
                             start: values.item.start,
                             end: values.item.end,
-                            group: values.item.group,
-                            content: self.itemTemplate(annJSON),
+                            groupContent: values.item.groupContent,
+                            itemContent: self.itemTemplate(annJSON),
                             id: annJSON.id,
                             trackId: values.newTrack.id,
                             isPublic: values.newTrack.get("isPublic"),
                             isMine: values.newTrack.get("isMine"),
                             model: values.newTrack
-                        }, false);
+                        };
 
-                        self.removeItem(annJSON.oldId, false);
+                        delete self.annotationItems[annJSON.oldId];
 
                         annotationsTool.setSelection([newAnnotation], true, true, true);
 
@@ -1143,7 +1354,8 @@ define(["util",
                             access: values.newTrack.get("access")
                         });
 
-                        self.filterItems();
+                        this.preprocessTrack(values.oldTrack.id);
+                        this.preprocessTrack(values.newTrack.id);
                         self.redraw();
 
                         if (hasToPlay) {
@@ -1156,7 +1368,7 @@ define(["util",
                     });
 
                 } else {
-                    this.allItems[values.annotation.id] = values.item;
+                    this.annotationItems[values.annotation.id] = values.item;
                     values.annotation.set({
                         start: start,
                         duration: duration
@@ -1164,7 +1376,7 @@ define(["util",
                     values.annotation.save();
 
                     annotationsTool.playerAdapter.setCurrentTime(values.annotation.get("start"));
-                    this.filterItems();
+                    this.preprocessTrack(values.item.trackId);
                     this.redraw();
 
 
@@ -1203,9 +1415,14 @@ define(["util",
                     return;
                 }
 
-                if (this.allItems[annotation.id]) {
-                    this.removeItem(annotation.id, true);
-                }
+                // This function can be called multiple times per deletion so we might not have to do anything
+                var annotationItem = this.annotationItems[annotation.id];
+                if (!annotationItem) return;
+
+                var track = annotationItem.trackId;
+                delete this.annotationItems[annotation.id];
+                this.preprocessTrack(track);
+                this.redraw();
             },
 
             /**
@@ -1241,11 +1458,9 @@ define(["util",
                     // delete track popover
                     $("#track" + trackId).popover("disable");
 
-                    values = _.values(this.allItems);
-
-                    _.each(values, function (item) {
+                    _.each(this.annotationItems, function (item) {
                         if (item.trackId === track.id) {
-                            delete this.allItems[item.id];
+                            delete this.annotationItems[item.id];
                         }
                     }, this);
 
@@ -1265,11 +1480,8 @@ define(["util",
                         self.onTrackSelected(null, annotationsTool.selectedTrack.id);
                     }
 
-                    if (this.allItems["track_" + track.id]) {
-                        delete this.allItems["track_" + track.id];
-                    }
+                    delete this.trackItems[track.id];
 
-                    this.filterItems();
                     this.redraw();
                 }, this);
 
@@ -1295,16 +1507,15 @@ define(["util",
                 trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
                 newGroup = this.groupTemplate(trackJSON);
 
-                _.each(this.allItems, function (item) {
-                    if (item.trackId === track.get("id") && item.group !== newGroup) {
-                        item.group = newGroup;
+                _.each(this.annotationItems, function (item) {
+                    if (item.trackId === track.get("id") && item.groupContent !== newGroup) {
+                        item.groupContent = newGroup;
                         item.isPublic = track.get("isPublic");
                         redrawRequired = true;
                     }
                 }, this);
 
                 if (!(options && options.silent) && redrawRequired) {
-                    this.filterItems();
                     this.redraw();
                 }
             },
@@ -1364,7 +1575,8 @@ define(["util",
                 annotationsTool.selectTrack(track);
 
                 this.$el.find("div.selected").removeClass("selected");
-                this.$el.find(".timeline-group[data-id='" + trackId + "']").parent().addClass("selected");
+                this.$el.find(".timeline-group[data-id='" + trackId + "']")
+                    .closest(".timeline-groups-text").addClass("selected");
             },
 
             /**
@@ -1372,6 +1584,7 @@ define(["util",
              * @alias module:views-timeline.TimelineView#onWindowsResize
              */
             onWindowResize: function () {
+                this.preprocessAllTracks();
                 this.redraw();
                 if (annotationsTool.selectedTrack) {
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
@@ -1422,22 +1635,22 @@ define(["util",
                     oldTrack,
                     newTrack;
 
-                if (_.isUndefined(annotation) || _.isUndefined(this.allItems[annotation.get("id")])) {
+                if (_.isUndefined(annotation) || _.isUndefined(this.annotationItems[annotation.get("id")])) {
                     return undefined;
                 }
 
                 itemId = annotation.get("id");
 
-                item = this.allItems[itemId];
+                item = this.annotationItems[itemId];
                 newTrackId = item.trackId;
-                oldTrackId = $(item.content)[0].dataset.trackid;
+                oldTrackId = $(item.itemContent)[0].dataset.trackid;
                 oldTrack = annotationsTool.getTrack(oldTrackId);
                 newTrack = annotationsTool.getTrack(newTrackId);
                 annotation = annotationsTool.getAnnotation(itemId, oldTrack);
 
                 return {
                     annotation: annotation,
-                    item: this.allItems[itemId],
+                    item: item,
                     annotationId: itemId,
                     trackId: newTrackId,
                     newTrack: newTrack,
@@ -1493,7 +1706,7 @@ define(["util",
              * @returns {Object} an item object extend by an index parameter
              */
             getTimelineItemFromAnnotation: function (annotation) {
-                return this.allItems[annotation.id];
+                return this.annotationItems[annotation.id];
             },
 
             /**
@@ -1562,7 +1775,10 @@ define(["util",
                 }, this);
 
                 // Remove all elements
-                this.allItems = {};
+                this.annotationItems = {};
+                this.trackItems = {};
+                this.extraItems = {};
+                this.preprocessedItems = {};
                 this.$el.find("#timeline").empty();
                 //this.timeline.deleteAllItems();
                 this.timeline = null;
