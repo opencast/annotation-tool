@@ -30,10 +30,10 @@
  * @requires ROLES
  * @requires filters-manager
  * @requires backbone
- * @requires handlebars
  * @requires timeline
  * @requires bootstrap.tooltip
  * @requires bootstrap.popover
+ * @requires handlebarsHelpers
  */
 define(["util",
         "jquery",
