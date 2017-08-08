@@ -277,7 +277,8 @@ define(["util",
                 // Create the timeline
                 this.$timeline = this.$el.find("#timeline");
                 this.timeline = new links.Timeline(this.$timeline[0]);
-                this.timeline.draw(this.filteredItems, this.options);
+                // Draw the timeline initially, so that it's HTML elements are available for attaching listeners, etc.
+                this.timeline.draw([], this.options);
 
                 // Ensure that the timeline is redraw on window resize
                 $(window).bind("resize", this.onWindowResize);
