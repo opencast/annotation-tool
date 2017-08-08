@@ -245,6 +245,8 @@
       "only mine": "$t(annotation visibility.only mine)",
       "other public": "$t(annotation visibility.other public)"
     },
+    "hidden items": "One hidden item",
+    "hidden items_plural": "{{count}} hidden items",
     "private only": {
       "no public tracks allowed": "Public tracks have been disallowed for this video."
     },
