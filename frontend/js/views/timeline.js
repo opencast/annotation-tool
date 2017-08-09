@@ -554,6 +554,7 @@ define(["util",
              * @alias module:views-timeline.TimelineView#addItem
              */
             addItem: function (id, item, isPartOfList) {
+                item.group = "<!-- extra -->" + item.group;
                 this.extraItems[id] = item;
                 if (!isPartOfList) {
                     this.redraw();
@@ -1136,7 +1137,7 @@ define(["util",
                     // We also need to, **in front of that**, add some indicator for the track,
                     // as to preserve the ordering.
                     item.group = "<div style=\"height: " + height * 23 + "px;\">" + item.groupContent + "</div>";
-                    item.group = "<!-- " + trackId + " -->" + item.group;
+                    item.group = "<!-- track: " + trackId + " -->" + item.group;
 
                     // We also need to set the margin of all the items to shift them to their stacking level
                     function wrap(item, level) {
