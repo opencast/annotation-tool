@@ -23,6 +23,7 @@
  * @requires moment
  * @requires views-main
  * @requires views-alert
+ * @requires views-list-annotation
  * @requires templates/delete-modal.tmpl
  * @requires templates/delete-warning-content.tmpl
  * @requires player-adapter
@@ -37,6 +38,7 @@ define(["jquery",
         "collections/videos",
         "views/main",
         "views/alert",
+        "views/list-annotation",
         "templates/delete-modal",
         "templates/delete-warning-content",
         "prototypes/player_adapter",
@@ -46,7 +48,7 @@ define(["jquery",
         "annotation-sync",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
+    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, FiltersManager, ROLES, ColorsManager, annotationSync) {
 
         "use strict";
 
@@ -159,7 +161,8 @@ define(["jquery",
                           "setSelectionById",
                           "addTimeupdateListener",
                           "removeTimeupdateListener",
-                          "updateSelectionOnTimeUpdate");
+                          "updateSelectionOnTimeUpdate",
+                          "potentiallyOpenCurrentItems");
 
                 _.extend(this, config);
 
@@ -179,6 +182,7 @@ define(["jquery",
                 this.initDeleteModal();
 
                 this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
+                this.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
                 this.currentSelection = [];
 
@@ -397,19 +401,21 @@ define(["jquery",
                     //this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
 
                     // Check if the interval needs to be added to list
-                    for (i = 0; i < annotationsTool.timeupdateIntervals.length; i++) {
-                        value = annotationsTool.timeupdateIntervals[i];
+                    (function () {
+                        for (i = 0; i < annotationsTool.timeupdateIntervals.length; i++) {
+                            value = annotationsTool.timeupdateIntervals[i];
 
-                        if (value.interval === interval) {
-                            return;
+                            if (value.interval === interval) {
+                                return;
+                            }
                         }
-                    }
 
-                    // Add interval to list
-                    annotationsTool.timeupdateIntervals.push({
-                        interval: interval,
-                        lastUpdate: 0
-                    });
+                        // Add interval to list
+                        annotationsTool.timeupdateIntervals.push({
+                            interval: interval,
+                            lastUpdate: 0
+                        });
+                    })();
                 }
 
                 this.listenTo(annotationsTool, timeupdateEvent, callback);
@@ -607,6 +613,23 @@ define(["jquery",
             },
 
             /**
+             * Get all annotations that cover a given point in time.
+             * @alias   annotationsTool.getCurrentAnnotations
+             * @param {Number} [time] The time you are interested in or the current player time if omitted
+             */
+            getCurrentAnnotations: function (time) {
+                if (!time) {
+                    time = this.playerAdapter.getCurrentTime();
+                }
+                return this.video.get("tracks")
+                    .chain()
+                    .map(function (track) { return track.get("annotations").models; })
+                    .flatten()
+                    .filter(function (annotation) { return annotation.covers(time, this.MINIMAL_DURATION); }, this)
+                    .value();
+            },
+
+            /**
              * Listener for player "timeupdate" event to highlight the current annotations
              * @alias   annotationsTool.updateSelectionOnTimeUpdate
              */
@@ -624,25 +647,32 @@ define(["jquery",
                     return;
                 }
 
-                this.video.get("tracks").each(function (track) {
-                    annotations = annotations.concat(track.get("annotations").models);
-                }, this);
-
-                for (i = 0; i < annotations.length; i++) {
-                    annotation = annotations[i];
-
-                    start    = annotation.get("start");
-                    duration = annotation.get("duration");
-                    end      = start + (duration < this.MINIMAL_DURATION ? this.MINIMAL_DURATION : duration);
-
-                    if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
-                        selection.push(annotation);
-                    }
-
-                }
-
-                this.setSelection(selection, false);
+                this.setSelection(this.getCurrentAnnotations(), false);
             },
+
+            /**
+             * Listener for player "timeupdate" event to open the current annotations in the list view
+             * @alias   annotationsTool.potentiallyOpenCurrentItems
+             */
+            potentiallyOpenCurrentItems: function () {
+                var previousAnnotations = [];
+
+                return function () {
+                    if (!this.autoExpand) return;
+
+                    var listView = this.views.main.listView;
+                    if (!listView) return;
+
+                    _.each(previousAnnotations, function (annotation) {
+                        listView.getViewFromAnnotation(annotation.id).collapse(true);
+                    });
+                    var currentAnnotations = this.getCurrentAnnotations();
+                    _.each(currentAnnotations, function (annotation) {
+                        listView.getViewFromAnnotation(annotation.id).expand(true);
+                    });
+                    previousAnnotations = currentAnnotations;
+                };
+            }(),
 
             //////////////
             // CREATORs //
