@@ -337,7 +337,7 @@ define(["util",
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
 
                 this.listenTo(annotationsTool.video.get("categories"), "change:visible", _.bind(function () {
-                    this.filterItems();
+                    this.preprocessAllTracks();
                     this.redraw();
                 }, this));
 
@@ -941,7 +941,8 @@ define(["util",
                 delete this.preprocessedItems[trackId];
 
                 var items = _.filter(this.annotationItems, function (item) {
-                    return item.trackId === trackId;
+                    var category = item.annotation.category();
+                    return item.trackId === trackId && (!category || category.get("visible"));
                 });
 
                 // The height of the track in stack levels. We need (and potentially calculate) that later.
