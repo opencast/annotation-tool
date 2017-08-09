@@ -1211,13 +1211,21 @@ define(["util",
                     return;
                 }
 
-                if (!this.isAnnotationSelectedonTimeline(selection[0])) {
-                    _.each(data, function (item, index) {
-                        if (selection[0].get("id") === item.id) {
-                            this.timeline.selectItem(index, false, true);
-                        }
-                    }, this);
-                }
+                // We look for the first item in the selection, that is actually currently visible
+                var indexToSelect;
+                var alreadySelected;
+                _.find(selection, function (annotation) {
+                    if (this.isAnnotationSelectedonTimeline(annotation)) {
+                        alreadySelected = true;
+                        return true;
+                    }
+                    indexToSelect = _.findIndex(data, function (item) {
+                        return item.id === annotation.id;
+                    });
+                    return indexToSelect >= 0;
+                }, this);
+                if (alreadySelected) return;
+                if (indexToSelect >= 0) this.timeline.selectItem(indexToSelect, false, true);
             },
 
             /**
