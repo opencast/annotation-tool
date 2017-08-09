@@ -128,7 +128,8 @@ define(["util",
                 "click #zoom-out": "zoomOut",
                 "click #move-right": "moveRight",
                 "click #move-left": "moveLeft",
-                "click .timeline-placeholder": "expandTrack"
+                "click .timeline-placeholder": "expandTrack",
+                "click .toggle-expansion": "toggleTrackExpansion"
             },
 
             /**
@@ -934,6 +935,19 @@ define(["util",
             expandTrack: function (event) {
                 var track = $(event.target).data("track");
                 this.trackExpanded[track] = true;
+                this.preprocessTrack(track);
+                this.redraw();
+            },
+
+            /**
+             * Toggle a tracks expanstion status.
+             * @alias module:views-timeline.TimelineView#toggleTrack
+             * @param {Event} event The event triggering the toggle
+             * @see expandTrack
+             */
+            toggleTrackExpansion: function (event) {
+                var track = $(event.target).closest(".timeline-group").data("id");
+                this.trackExpanded[track] = !this.trackExpanded[track];
                 this.preprocessTrack(track);
                 this.redraw();
             },

@@ -29,5 +29,6 @@
                     <i class="icon-dark-grey {{#isPrivateOnly}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/isPrivateOnly}}"></i> {{#isPrivateOnly}}{{t "timeline.track.private"}}{{else}}{{#if isPublic}}{{t "timeline.track.public"}}{{else}}{{t "timeline.track.private"}}{{/if}}{{/isPrivateOnly}}</span>{{/if}}
         </div>
     {{/canBeDeleted}}
+    <span class="toggle-expansion" href="#">Expand/Collapse</span>
     </a>
 </div>
