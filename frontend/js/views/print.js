@@ -71,7 +71,12 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
             var annotations = tracks.chain()
                 .invoke('get', 'annotations')
                 .pluck("models")
-                .flatten();
+                .flatten()
+                .filter(function (annotation) {
+                    var category = annotation.category();
+                    if (!category) return true;
+                    return category.get("visible");
+                });
 
             var users = annotations
                 .invoke("get", "created_by_nickname")

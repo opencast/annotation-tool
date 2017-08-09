@@ -375,6 +375,16 @@ define(["jquery",
                 var duration = Math.max(minDuration, this.get("duration") || 0);
                 var end = start + duration;
                 return start <= time && time <= end;
+            },
+
+            /**
+             * Access an annotations category, if it has any.
+             * @alias module:models-annotation.Annotation#category
+             * @return {Category} The category this annotations label belongs to, if it has a label
+             */
+            category: function () {
+                var label = this.get("label");
+                return label && annotationsTool.video.get("categories").get(label.category.id);
             }
         });
 

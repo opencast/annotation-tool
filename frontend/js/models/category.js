@@ -78,7 +78,7 @@ define(["jquery",
              */
             initialize: function (attr) {
 
-                _.bindAll(this, "setUrl", "validate", "toExportJSON");
+                _.bindAll(this, "toggleVisibility", "setUrl", "validate", "toExportJSON");
 
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "\"name\" attribute is required";
@@ -131,6 +131,8 @@ define(["jquery",
                 if (attr.id) {
                     this.attributes.labels.fetch({async: false});
                 }
+
+                this.attributes.visible = true;
 
                 //this.set(attr);
             },
@@ -296,6 +298,14 @@ define(["jquery",
                 options = _.defaults({ stringifySub: true }, options);
 
                 return Backbone.Model.prototype.save.call(this, attributes, options);
+            },
+
+            /**
+             * Show/hide the category in the UI
+             * @alias module:models-category.Category#toggleVisibility
+             */
+            toggleVisibility: function () {
+                this.set("visible", !this.get("visible"));
             },
 
             /**
