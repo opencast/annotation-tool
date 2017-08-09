@@ -410,6 +410,15 @@ define(["util",
                 // We save the actually displayed items here to access them later, for example in `onSelectionUpdate`
                 this.filteredItems = filteredItems.concat(_.values(this.trackItems));
                 this.timeline.draw(this.filteredItems);
+
+                // Restore the selections and co.
+                if (annotationsTool.hasSelection()) {
+                    this.onSelectionUpdate(annotationsTool.getSelection());
+                    this.updateDraggingCtrl();
+                }
+                if (annotationsTool.selectedTrack) {
+                    this.onTrackSelected(null, annotationsTool.selectedTrack.id);
+                }
             },
 
             /**
