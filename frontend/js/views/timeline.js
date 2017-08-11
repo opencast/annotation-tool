@@ -1310,6 +1310,7 @@ define(["util",
                     this.timeline.cancelChange();
 
                     this.annotationItems[values.annotation.id] = {
+                        annotation: values.annotation,
                         start: values.item.start,
                         end: values.item.end,
                         itemContent: values.item.content,
@@ -1368,6 +1369,7 @@ define(["util",
                         }
 
                         self.annotationItems[annJSON.id] = {
+                            annotation: values.annotation,
                             start: values.item.start,
                             end: values.item.end,
                             groupContent: values.item.groupContent,
