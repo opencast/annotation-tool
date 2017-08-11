@@ -25,7 +25,7 @@ require(["domReady",
             }, function () {
                 moment.locale(i18next.language);
                 $i18next.init(i18next, $, { parseDefaultValueFromContent: false });
-                domReady(function(){
+                domReady(function () {
                     $('[data-i18n]').localize();
                     require(["annotations-tool"], function (app) {
                         app.start(config);
