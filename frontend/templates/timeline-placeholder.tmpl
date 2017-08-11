@@ -1,3 +1,20 @@
-<div class="timeline-item timeline-placeholder" data-track="{{track}}">
-  {{t "timeline.hidden items" count=count}}
+<div
+  class="timeline-item timeline-placeholder"
+  data-track="{{track}}"
+  data-placement="top"
+  title="{{t "timeline.hidden items" count=hiddenItems.length}}"
+>
+  {{t "timeline.hidden items" count=hiddenItems.length}}
+  <dl class="hidden-items">
+    {{#each hiddenItems}}
+      {{#with annotation.attributes}}
+        <dt>
+          {{time this.start}}{{#if this.duration}}&ndash;{{end this.start this.duration}}{{/if}}
+        </dt>
+      {{/with}}
+      <dd>
+        {{{itemContent}}}
+      </dd>
+    {{/each}}
+  </dl>
 </div>

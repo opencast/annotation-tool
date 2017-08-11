@@ -410,7 +410,18 @@ define(["util",
 
                 // We save the actually displayed items here to access them later, for example in `onSelectionUpdate`
                 this.filteredItems = filteredItems.concat(_.values(this.trackItems));
+
+                // Dispose of all placeholder popovers to avoid displaying stale information
+                $(".timeline-placeholder").popover("hide");
+
                 this.timeline.draw(this.filteredItems);
+
+                // Enable the preview popover for all the placeholder items
+                $(".timeline-placeholder").popover({
+                    content: function () {
+                        return $(this).find(".hidden-items").html();
+                    }
+                });
 
                 // Restore the selections and co.
                 if (annotationsTool.hasSelection()) {
@@ -933,6 +944,7 @@ define(["util",
              * @see preprocessTrack
              */
             expandTrack: function (event) {
+                $(event.target).popover("hide");
                 var track = $(event.target).data("track");
                 this.trackExpanded[track] = true;
                 this.preprocessTrack(track);
@@ -1143,8 +1155,8 @@ define(["util",
                                     groupContent: spilledStack.items[0].groupContent,
                                     trackId: trackId,
                                     itemContent: PlaceholderTmpl({
-                                        count: spilledStack.items.length,
-                                        track: trackId
+                                        track: trackId,
+                                        hiddenItems: spilledStack.items
                                     }),
                                     className: this.PREFIX_STACKING_CLASS + 2,
                                     editable: false
