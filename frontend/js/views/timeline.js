@@ -1540,7 +1540,7 @@ define(["util",
                 trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
                 newGroup = this.groupTemplate(trackJSON);
 
-                _.each(this.annotationItems, function (item) {
+                _.each(_.values(this.annotationItems).concat(_.values(this.trackItems)), function (item) {
                     if (item.trackId === track.get("id") && item.groupContent !== newGroup) {
                         item.groupContent = newGroup;
                         item.isPublic = track.get("isPublic");
@@ -1549,6 +1549,7 @@ define(["util",
                 }, this);
 
                 if (!(options && options.silent) && redrawRequired) {
+                    this.preprocessTrack(track.id);
                     this.redraw();
                 }
             },
