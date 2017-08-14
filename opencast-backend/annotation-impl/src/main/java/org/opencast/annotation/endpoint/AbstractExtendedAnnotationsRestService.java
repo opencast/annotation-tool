@@ -246,29 +246,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
-  // Get all users has been REMOVED from the API
-  // @GET
-  // @Produces(MediaType.APPLICATION_JSON)
-  // @Path("/users")
-  // public Response getUsers(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
-  // @QueryParam("since") final String date) {
-  // return run(nil, new Function0<Response>() {
-  // @Override
-  // public Response apply() {
-  // final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-  // final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
-  // final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
-  // if (datem.isSome() && datem.get().isNone()) {
-  // // date could not be parsed
-  // return BAD_REQUEST;
-  // } else {
-  // return buildOk.apply(UserDto.toJson(offset,
-  // eas().getUsers(offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()))));
-  // }
-  // }
-  // });
-  // }
-
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/videos")
