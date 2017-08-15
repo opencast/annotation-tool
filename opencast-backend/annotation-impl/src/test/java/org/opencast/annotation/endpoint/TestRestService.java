@@ -19,7 +19,11 @@ import static org.opencastproject.rest.RestServiceTestEnv.localhostRandomPort;
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
+import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.search.api.SearchResult;
+import org.opencastproject.search.api.SearchResultItem;
 import org.opencastproject.search.api.SearchService;
+import org.opencastproject.search.api.SearchQuery;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
@@ -64,7 +68,21 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
 
   @Override
   protected SearchService getSearchService() {
-    return null;
+    MediaPackage mediaPackage = EasyMock.createNiceMock(MediaPackage.class);
+
+    SearchResultItem searchResultItem = EasyMock.createNiceMock(SearchResultItem.class);
+    EasyMock.expect(searchResultItem.getMediaPackage()).andReturn(mediaPackage).anyTimes();
+    EasyMock.replay(searchResultItem);
+
+    SearchResult searchResult = EasyMock.createNiceMock(SearchResult.class);
+    EasyMock.expect(searchResult.getItems()).andReturn(new SearchResultItem[] { searchResultItem }).anyTimes();
+    EasyMock.replay(searchResult);
+
+    SearchService searchService = EasyMock.createNiceMock(SearchService.class);
+    EasyMock.expect(searchService.getByQuery(EasyMock.anyObject(SearchQuery.class)))
+            .andReturn(searchResult).anyTimes();
+    EasyMock.replay(searchService);
+    return searchService;
   }
 
   private static SecurityService getSecurityService() {
