@@ -35,4 +35,23 @@ To use the Annotation Tool you need to open it with the event-ID:
 
     http://my.opencast.tld:8080/annotation-tool/index.html?id=<my-event-id>
 
+Note that the tool uses [custom ACL actions](https://docs.opencast.org/develop/admin/configuration/acl/#additional-acl-actions)
+to control access to its videos. These actions are `annotate` and `annotate-admin` and they need to be installed
+in your Opencast setup via a list provider. A template for this is provided with the source tree under
+`/opencast-backend/etc/listproviders/acl.additional.actions.properties`.
+To install it, please follow the instructions in the link above, or if you already have an ACL action list provider,
+just append the following snippet to it:
 
+```
+# Allow users to simply use the annotation tool with a video,
+# i.e. to create their own annotations, tracks, categories, etc.
+Annotate=annotate
+# Allow users to manage the annotation tool environment for a video.
+# Also gives them access to other people's annotations.
+Manage\ annotations=annotate-admin
+```
+
+For a user to access a video using the annotation tool, they (or any role they inhabit) have to have at least one
+of these actions enabled on the video in question.
+
+Also note that the annotation tool currently does not work with the fast testing workflow, that Opencast provides.
