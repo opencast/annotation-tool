@@ -54,7 +54,11 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
 
   @Override
   protected AuthorizationService getAuthorizationService() {
-    return null;
+    AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
+    EasyMock.expect(authorizationService.hasPermission(EasyMock.anyObject(MediaPackage.class),
+            EasyMock.anyObject(String.class))).andReturn(true).anyTimes();
+    EasyMock.replay(authorizationService);
+    return authorizationService;
   }
 
   private static SecurityService getSecurityService() {
