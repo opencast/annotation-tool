@@ -16,7 +16,10 @@ import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.TrackImpl;
 
 import static org.opencast.annotation.endpoint.util.Responses.buildOk;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.ANNOTATE_ADMIN_ACTION;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.ANNOTATE_ACTION;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.FORBIDDEN;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
@@ -33,6 +36,9 @@ import org.opencast.annotation.impl.persistence.ScaleDto;
 import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
+import org.opencastproject.mediapackage.MediaPackage;
+
+import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
@@ -54,6 +60,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -68,10 +75,50 @@ public class VideoEndpoint {
 
   private final long videoId;
 
+  private static class VideoData {
+
+    static enum Access {
+        NONE,
+        ANNOTATE,
+        ANNOTATE_ADMIN
+    }
+
+    final Video video;
+    final Access access;
+
+    VideoData(final Video video, final Access access) {
+      this.video = video;
+      this.access = access;
+    }
+  }
+
+  private final Option<VideoData> videoData;
+
+  private VideoData.Access getVideoAccess(MediaPackage mediaPackage) {
+    if (host.hasVideoAccess(mediaPackage, ANNOTATE_ADMIN_ACTION)) return VideoData.Access.ANNOTATE_ADMIN;
+    if (host.hasVideoAccess(mediaPackage, ANNOTATE_ACTION)) return VideoData.Access.ANNOTATE;
+    return VideoData.Access.NONE;
+  }
+
   public VideoEndpoint(final long videoId, AbstractExtendedAnnotationsRestService host, ExtendedAnnotationService eas) {
     this.videoId = videoId;
     this.host = host;
     this.eas = eas;
+
+    this.videoData = this.eas.getVideo(videoId).map(new Function<Video, VideoData>() {
+      @Override
+      public VideoData apply(final Video video) {
+        MediaPackage mediaPackage = VideoEndpoint.this.host.findMediaPackage(video.getExtId()).get();
+        VideoData.Access access = getVideoAccess(mediaPackage);
+        return new VideoData(video, access);
+      }
+    });
+
+    for (VideoData videoData: this.videoData) {
+      if (videoData.access == VideoData.Access.NONE) {
+        throw new WebApplicationException(FORBIDDEN);
+      }
+    }
   }
 
   @GET
@@ -80,12 +127,12 @@ public class VideoEndpoint {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas.getVideo(videoId).fold(new Option.Match<Video, Response>() {
+        return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
-          public Response some(Video v) {
-            if (!eas.hasResourceAccess(v))
+          public Response some(VideoData v) {
+            if (!eas.hasResourceAccess(v.video))
               return UNAUTHORIZED;
-            return buildOk(VideoDto.toJson.apply(eas, v));
+            return buildOk(VideoDto.toJson.apply(eas, v.video));
           }
 
           @Override
@@ -102,12 +149,12 @@ public class VideoEndpoint {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas.getVideo(videoId).fold(new Option.Match<Video, Response>() {
+        return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
-          public Response some(Video v) {
-            if (!eas.hasResourceAccess(v))
+          public Response some(VideoData v) {
+            if (!eas.hasResourceAccess(v.video))
               return UNAUTHORIZED;
-            return eas.deleteVideo(v) ? NO_CONTENT : NOT_FOUND;
+            return eas.deleteVideo(v.video) ? NO_CONTENT : NOT_FOUND;
           }
 
           @Override
@@ -159,7 +206,7 @@ public class VideoEndpoint {
       @Override
       public Response apply() {
         // check if video exists
-        if (eas.getVideo(videoId).isSome()) {
+        if (videoData.isSome()) {
           return eas.getTrack(id).fold(new Option.Match<Track, Response>() {
             // update track
             @Override
@@ -202,7 +249,7 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}")
   public Response deleteTrack(@PathParam("trackId") final long trackId) {
     // TODO optimize querying for the existence of video and track
-    if (eas.getVideo(videoId).isSome()) {
+    if (videoData.isSome()) {
       return run(nil, new Function0<Response>() {
         @Override
         public Response apply() {
@@ -233,7 +280,7 @@ public class VideoEndpoint {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        if (eas.getVideo(videoId).isSome()) {
+        if (videoData.isSome()) {
           return eas.getTrack(id).fold(new Option.Match<Track, Response>() {
             @Override
             public Response some(Track t) {
@@ -269,7 +316,7 @@ public class VideoEndpoint {
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
 
-        if ((datem.isSome() && datem.get().isNone()) || eas.getVideo(videoId).isNone()
+        if ((datem.isSome() && datem.get().isNone()) || videoData.isNone()
                 || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
           return BAD_REQUEST;
@@ -295,7 +342,7 @@ public class VideoEndpoint {
     return run(array(start), new Function0<Response>() {
       @Override
       public Response apply() {
-        if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()) {
+        if (videoData.isSome() && eas.getTrack(trackId).isSome()) {
           final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
           if (tagsMap.isSome() && tagsMap.get().isNone())
             return BAD_REQUEST;
@@ -331,7 +378,7 @@ public class VideoEndpoint {
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
 
         // check if video and track exist
-        if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()) {
+        if (videoData.isSome() && eas.getTrack(trackId).isSome()) {
           return eas.getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
             // update annotation
             @Override
@@ -372,7 +419,7 @@ public class VideoEndpoint {
   @DELETE
   @Path("tracks/{trackId}/annotations/{id}")
   public Response deleteAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id) {
-    if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()) {
+    if (videoData.isSome() && eas.getTrack(trackId).isSome()) {
       return run(nil, new Function0<Response>() {
         @Override
         public Response apply() {
@@ -401,7 +448,7 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations/{id}")
   public Response getAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id) {
     // TODO optimize querying for the existence of video and track
-    if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()) {
+    if (videoData.isSome() && eas.getTrack(trackId).isSome()) {
       return run(nil, new Function0<Response>() {
         @Override
         public Response apply() {
@@ -436,7 +483,7 @@ public class VideoEndpoint {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        if (eas.getVideo(videoId).isSome()) {
+        if (videoData.isSome()) {
           final Option<Double> startm = start > 0 ? some(start) : Option.<Double> none();
           final Option<Double> endm = end > 0 ? some(end) : Option.<Double> none();
           final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
@@ -476,7 +523,7 @@ public class VideoEndpoint {
       @Override
       public Response apply() {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (eas.getScale(scaleId, false).isNone() || eas.getVideo(videoId).isNone()
+        if (eas.getScale(scaleId, false).isNone() || videoData.isNone()
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
@@ -574,7 +621,7 @@ public class VideoEndpoint {
       @Override
       public Response apply() {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (eas.getVideo(videoId).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
+        if (videoData.isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
         Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
@@ -677,7 +724,7 @@ public class VideoEndpoint {
   public Response postComment(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @FormParam("text") final String text,
           @FormParam("tags") final String tags) {
-    if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()
+    if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
       return run(array(text), new Function0<Response>() {
         @Override
@@ -705,7 +752,7 @@ public class VideoEndpoint {
   public Response putComment(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @PathParam("commentId") final long commentId,
           @FormParam("text") final String text, @FormParam("tags") final String tags) {
-    if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()
+    if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
       return run(array(text), new Function0<Response>() {
         @Override
@@ -753,7 +800,7 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations/{annotationId}/comments/{id}")
   public Response deleteComment(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @PathParam("id") final long commentId) {
-    if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()
+    if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
       return run(nil, new Function0<Response>() {
         @Override
@@ -784,7 +831,7 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations/{annotationId}/comments/{id}")
   public Response getComment(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @PathParam("id") final long id) {
-    if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()
+    if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
       return run(nil, new Function0<Response>() {
         @Override
@@ -817,7 +864,7 @@ public class VideoEndpoint {
           @PathParam("annotationId") final long annotationId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
           @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    if (eas.getVideo(videoId).isSome() && eas.getTrack(trackId).isSome()
+    if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
       return run(nil, new Function0<Response>() {
         @Override
