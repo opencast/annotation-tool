@@ -40,10 +40,17 @@ define(["jquery",
         var checkboxGroupForTrack;
 
         function aggregateCheckboxes(source, target) {
-            var checked = _.filter(source, function (checkbox) { return checkbox.checked; });
-            var difference = source.length - checked.length;
-            target.checked = difference === 0;
-            target.indeterminate = difference > 0 && checked.length !== 0;
+            target.checked = true;
+            target.indeterminate = false;
+            _.each(source, function (checkbox) {
+                if (!checkbox.checked) {
+                    target.checked = false;
+                }
+                if (checkbox.checked || checkbox.indeterminate) {
+                    target.indeterminate = true;
+                }
+            });
+            if (target.checked) target.indeterminate = false;
         }
 
         /**
