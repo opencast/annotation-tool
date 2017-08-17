@@ -33,6 +33,7 @@ define(["jquery",
         var video_title,
             video_creator,
             video_creation_date,
+            video_extid,
             /**
              * Annotations tool configuration object
              * @alias module:annotations-tool-configuration.Configuration
@@ -182,7 +183,7 @@ define(["jquery",
                  * @return {string} video external id
                  */
                 getVideoExtId: function () {
-                    return $("video")[0].id;
+                    return video_extid;
                 },
 
                 /**
@@ -392,11 +393,8 @@ define(["jquery",
                  * @alias module:annotations-tool-configuration.Configuration.loadVideo
                  */
                 loadVideo: function () {
-                    var duration = 0,
-                        // Supported video formats
+                    var // Supported video formats
                         videoTypes = ["video/webm", "video/ogg", "video/mp4"],
-                        videoTypeIE9 = "video/mp4",
-                        //var videoTypesForFallBack = ["video/x-flv"];
                         videoTypesForFallBack = [],
                         trackType = ["presenter/delivery", "presentation/delivery"],
                         mediaPackageId = decodeURI((new RegExp("id=" + "(.+?)(&|$)").exec(location.search) || [,null])[1]);
@@ -421,14 +419,14 @@ define(["jquery",
                                 nbNormalVideos = 0,
                                 nbFallbackVideos = {},
                                 tracks,
-                                selectedVideos = {},
-                                videoIE9;
+                                selectedVideos = {};
 
                             if (!result) {
                                 console.warn("Could not load video " + mediaPackageId);
                             }
                             mediapackage = result.mediapackage;
 
+                            video_extid = mediapackage.id;
                             video_title = result.dcTitle;
                             video_creator = result.dcCreator;
                             video_creation_date = result.dcCreated;
@@ -453,10 +451,6 @@ define(["jquery",
 
                             $.each(tracks, function (index, track) {
                                 selectedVideos = null;
-
-                                if (track.mimetype === videoTypeIE9 &&  $.inArray(track.type, trackType) !== -1) {
-                                    videoIE9 = track;
-                                }
 
                                 // If type not supported, go to next track
                                 if ($.inArray(track.mimetype, videoTypes) !== -1) {
@@ -488,25 +482,18 @@ define(["jquery",
                                 selectedVideos = videos;
                             }
 
-                            if (annotationsTool.isBrowserIE9()) {
-                                $("video").attr("src", videoIE9.url).attr("type", videoTypeIE9);
-                            } else {
-                                $.each(selectedVideos, function (index, type) {
-                                    if (type.length !== 0) {
-                                        var videoSrc = "";
-                                        $.each(type, function (idx, track) {
-                                            if (duration === 0) {
-                                                duration = track.duration;
-                                            }
-                                            videoSrc += "<source src=\"" + track.url + "\" type=\"" + track.mimetype + "\"></source>";
-                                        });
-                                        if (videoSrc !== "") {
-                                            $("video").append(videoSrc);
-                                            $("video").attr("id", mediaPackageId);
-                                        }
+                            $.each(selectedVideos, function (index, type) {
+                                if (type.length !== 0) {
+                                    var videoSrc = "";
+                                    $.each(type, function (idx, track) {
+                                        videoSrc += "<source src=\"" + track.url + "\" type=\"" + track.mimetype + "\"></source>";
+                                    });
+                                    if (videoSrc !== "") {
+                                        $("video").append(videoSrc);
+                                        $("video").attr("id", mediaPackageId);
                                     }
-                                });
-                            }
+                                }
+                            });
                         }
                     });
                 }

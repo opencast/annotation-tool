@@ -56,7 +56,7 @@ define(["jquery",
          * The main object of the annotations tool
          * @namespace annotationsTool
          */
-        window.annotationsTool = _.extend({
+        var annotationsTool = window.annotationsTool = _.extend({
 
             EVENTS: {
                 ANNOTATION_SELECTION : "at:annotation-selection",
@@ -172,7 +172,7 @@ define(["jquery",
 
                 if ((this.isBrowserIE9() && !(this.playerAdapter.__proto__ instanceof this.PlayerAdapter)) ||
                     (!this.isBrowserIE9() && !(this.playerAdapter instanceof PlayerAdapter))) {
-                    throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
+                    throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
                 }
 
                 // Set up the storage layer
@@ -195,14 +195,17 @@ define(["jquery",
                             this.importTracks(this.tracksToImport());
                             trackImported = true;
                         } else {
-                            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, function () {
-                                if (trackImported) {
-                                    return false;
-                                }
+                            $(this.playerAdapter).one(
+                                PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,
+                                _.bind(function () {
+                                    if (trackImported) {
+                                        return;
+                                    }
 
-                                annotationsTool.importTracks(annotationsTool.tracksToImport());
-                                trackImported = true;
-                            });
+                                    this.importTracks(this.tracksToImport());
+                                    trackImported = true;
+                                }, this)
+                            );
                         }
                     }
                 }, this);
@@ -403,18 +406,17 @@ define(["jquery",
              * @param {Number} (interval) the interval between each timeupdate event
              */
             addTimeupdateListener: function (callback, interval) {
-                var timeupdateEvent = annotationsTool.EVENTS.TIMEUPDATE,
+                var timeupdateEvent = this.EVENTS.TIMEUPDATE,
                     value,
                     i = 0;
 
                 if (!_.isUndefined(interval)) {
                     timeupdateEvent += ":" + interval;
-                    //this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
 
                     // Check if the interval needs to be added to list
-                    (function () {
-                        for (i = 0; i < annotationsTool.timeupdateIntervals.length; i++) {
-                            value = annotationsTool.timeupdateIntervals[i];
+                    _.bind(function () {
+                        for (i = 0; i < this.timeupdateIntervals.length; i++) {
+                            value = this.timeupdateIntervals[i];
 
                             if (value.interval === interval) {
                                 return;
@@ -422,14 +424,14 @@ define(["jquery",
                         }
 
                         // Add interval to list
-                        annotationsTool.timeupdateIntervals.push({
+                        this.timeupdateIntervals.push({
                             interval: interval,
                             lastUpdate: 0
                         });
-                    })();
+                    }, this)();
                 }
 
-                this.listenTo(annotationsTool, timeupdateEvent, callback);
+                this.listenTo(this, timeupdateEvent, callback);
             },
 
             /**
@@ -439,13 +441,13 @@ define(["jquery",
              * @param {Number} (interval) the interval between each timeupdate event
              */
             removeTimeupdateListener: function (callback, interval) {
-                var timeupdateEvent = annotationsTool.EVENTS.TIMEUPDATE;
+                var timeupdateEvent = this.EVENTS.TIMEUPDATE;
 
                 if (!_.isUndefined(interval)) {
                     timeupdateEvent += ":" + interval;
                 }
 
-                this.stopListening(annotationsTool, timeupdateEvent, callback);
+                this.stopListening(this, timeupdateEvent, callback);
             },
 
             ///////////////////////////////////////////////
@@ -753,6 +755,7 @@ define(["jquery",
             getTrack: function (id) {
                 if (_.isUndefined(this.video)) {
                     console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                    return undefined;
                 } else {
                     return this.video.getTrack(id);
                 }
@@ -766,6 +769,7 @@ define(["jquery",
             getTracks: function () {
                 if (_.isUndefined(this.video)) {
                     console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                    return undefined;
                 } else {
                     return this.video.get("tracks");
                 }
@@ -887,8 +891,8 @@ define(["jquery",
              * @param {PlainObject} defaultCategoryAttributes The default attributes to use to insert the imported categories (like access)
              */
             importCategories: function (imported, defaultCategoryAttributes) {
-                var videoCategories = annotationsTool.video.get("categories"),
-                    videoScales = annotationsTool.video.get("scales"),
+                var videoCategories = this.video.get("categories"),
+                    videoScales = this.video.get("scales"),
                     labelsToAdd,
                     newCat,
                     newScale,
@@ -944,10 +948,10 @@ define(["jquery",
              */
             deleteAnnotation: function (annotationId, trackId) {
                 var annotation,
-                    self = annotationsTool;
+                    self = this;
 
                 if (typeof trackId === "undefined") {
-                    annotationsTool.video.get("tracks").each(function (track) {
+                    this.video.get("tracks").each(function (track) {
                         if (track.get("annotations").get(annotationId)) {
                             trackId = track.get("id");
                         }
@@ -975,7 +979,7 @@ define(["jquery",
                     selectedTrack,
 
                     // function to conclude the retrieve of annotations
-                    concludeInitialization = $.proxy(function () {
+                    concludeInitialization = _.bind(function () {
 
                         // At least one private track should exist, we select the first one
                         selectedTrack = tracks.getMine()[0];
@@ -983,39 +987,37 @@ define(["jquery",
                         if (!selectedTrack.get("id")) {
                             selectedTrack.bind("ready", concludeInitialization(), this);
                         } else {
-                            annotationsTool.selectedTrack = selectedTrack;
+                            this.selectedTrack = selectedTrack;
                         }
 
-                        annotationsTool.modelsInitialized = true;
-                        annotationsTool.trigger(annotationsTool.EVENTS.MODELS_INITIALIZED);
+                        this.modelsInitialized = true;
+                        this.trigger(this.EVENTS.MODELS_INITIALIZED);
                     }, this),
 
                     /**
                      * Create a default track for the current user if no private track is present
                      */
-                    createDefaultTrack = function () {
+                    createDefaultTrack = _.bind(function () {
 
-                        tracks = annotationsTool.video.get("tracks");
+                        tracks = this.video.get("tracks");
 
-                        if (annotationsTool.localStorage) {
+                        if (this.localStorage) {
                             tracks = tracks.getTracksForLocalStorage();
                         }
 
                         if (tracks.getMine().length === 0) {
                             tracks.create({
-                                name        : i18next.t("default track.name", { nickname: annotationsTool.user.get("nickname") }),
-                                description : i18next.t("default track.description", { nickname: annotationsTool.user.get("nickname") })
-                            },
-                                          {
-                                              wait    : true,
-                                              success : concludeInitialization
-                                          }
-                                         );
+                                name        : i18next.t("default track.name", { nickname: this.user.get("nickname") }),
+                                description : i18next.t("default track.description", { nickname: this.user.get("nickname") })
+                            }, {
+                                wait    : true,
+                                success : concludeInitialization
+                            });
                         } else {
-                            tracks.showTracks(_.first(tracks.filter(annotationsTool.getDefaultTracks().filter), annotationsTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE));
+                            tracks.showTracks(_.first(tracks.filter(this.getDefaultTracks().filter), this.MAX_VISIBLE_TRACKS || Number.MAX_VALUE));
                             concludeInitialization();
                         }
-                    };
+                    }, this);
 
                 // If we are using the localstorage
                 if (this.localStorage) {
@@ -1072,7 +1074,7 @@ define(["jquery",
          *   }
          * }
          */
-        annotationsTool.deleteOperation.targetTypes  = {
+        annotationsTool.deleteOperation.targetTypes = {
 
             ANNOTATION: {
                 name: "annotation",
