@@ -94,7 +94,7 @@ define(["jquery",
                 this.$el.append(this.template(params));
                 this.delegateEvents();
 
-                this.$el.modal({ show: true, backdrop: false, keyboard: false });
+                this.$el.modal(_.defaults(type.modalOptions || {}, { show: true, backdrop: true, keyboard: false }));
             },
 
             /**
@@ -115,6 +115,15 @@ define(["jquery",
                 ERROR: {
                     title: i18next.t("alert.error.title"),
                     className: "alert-error"
+                },
+                FATAL: {
+                    title: "Fatal Error!",
+                    className: "alert-error",
+                    hideButtons: true,
+                    modalOptions: {
+                        backdrop: "static",
+                        keyboard: false
+                    }
                 },
                 WARNING: {
                     title: i18next.t("alert.warning.title"),

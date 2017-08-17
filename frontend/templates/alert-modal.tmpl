@@ -6,7 +6,9 @@
                   {{message}}
             </div>
       </div>
+      {{#unless hideButtons}}
       <div class="modal-footer">
             <a id="confirm-alert" href="#" class="btn btn-primary">{{t "alert.ok"}}</a>
       </div>
+      {{/unless}}
 </div>
