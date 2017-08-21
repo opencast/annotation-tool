@@ -219,6 +219,8 @@ define(["jquery",
                 $(window).bind("mousedown", this.onMouseDown);
                 $(window).bind("mouseup", this.onMouseUp);
 
+                this.tracksOrder = this.getTracks().map("id");
+
                 return this;
             },
 
