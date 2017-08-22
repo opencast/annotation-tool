@@ -9,33 +9,40 @@
             <input class="span12" type="text" id="search-track" placeholder="{{t "track selection.search.placeholder"}}">
             <button id="clear-search" class="btn search-only" type="button">{{t "track selection.search.clear"}}</button>
         </div>
-        <ul class="list-group">
-            {{#each users}}
-            <li class="list-group-item user-track-group">
-                <label><input type="checkbox" class="user-checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}> {{this.nickname}}</label>
-                <span class="search-fields">
-                    {{#toUpperCase}}
-                    {{this.nickname}}
-                    {{/toUpperCase}}
-                </span>
-                <ul>
-                    {{#each this.tracks}}
-                    <li>
-                        <label>
-                            <input type="checkbox" class="track-checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}>
-                            {{this.name}}
-                        </label>
+        <div class="row-fluid">
+            <div class="span6">
+                <h4>{{t "track selection.selection header"}}</h4>
+                <ul class="list-group">
+                    {{#each users}}
+                    <li class="list-group-item user-track-group">
+                        <label><input type="checkbox" class="user-checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}> {{this.nickname}}</label>
+                        <span class="search-fields">
+                            {{#toUpperCase}}
+                            {{this.nickname}}
+                            {{/toUpperCase}}
+                        </span>
+                        <ul>
+                            {{#each this.tracks}}
+                            <li>
+                                <label>
+                                    <input type="checkbox" class="track-checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}>
+                                    {{this.name}}
+                                </label>
+                            </li>
+                            {{/each}}
+                        </ul>
                     </li>
                     {{/each}}
                 </ul>
-            </li>
-            {{/each}}
-        </ul>
 
-        <label><input id="select-all" type="checkbox" value=""> {{t "track selection.(un-)select all"}}</label>
+                <label><input id="select-all" type="checkbox" value=""> {{t "track selection.(un-)select all"}}</label>
+            </div>
 
-        <ul id="track-selection">
-        </ul>
+            <div class="span6">
+                <h4>{{t "track selection.ordering header"}}</h4>
+                <ul id="track-selection" class="list-group"></ul>
+            </div>
+        </div>
     </div>
 
     <div class="modal-footer">
