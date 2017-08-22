@@ -283,7 +283,9 @@
       "clear": "Clear",
       "hint": "Users with public annotations",
       "placeholder": "Type here to search …"
-    }
+    },
+    "selection header": "Select visible tracks",
+    "ordering header": "Order tracks"
   },
   "untitled video": "Untitled video",
   "user login": {
