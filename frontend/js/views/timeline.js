@@ -995,6 +995,7 @@ define(["jquery",
                     .filter(function (item) {
                         if (!item.id) return true;
                         var annotation = annotationsTool.getAnnotation(item.id);
+                        if (!annotation) return true;
                         var category = annotation.category();
                         if (!category) return true;
                         return category.get("visible");
