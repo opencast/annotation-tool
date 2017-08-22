@@ -30,6 +30,27 @@ define(["backbone"], function (Backbone) {
  * @alias module:models-resource.Resource
  */
 var Resource = Backbone.Model.extend({
+
+    /**
+     * Constructor
+     * @alias module:models-resource.Resource#initialize
+     * @param {object} attr Object literal containing the model initialion attributes.
+     */
+    initialize: function (attr) {
+        if (window.annotationsTool.localStorage) {
+            if (annotationsTool.user) {
+                if (!attr.created_by) {
+                    this.set("created_by", annotationsTool.user.id);
+                }
+                if (!attr.created_by_nickname) {
+                    this.set("created_by_nickname", annotationsTool.user.get("nickname"));
+                }
+            }
+            if (!attr.created_at) {
+                this.set("created_at", new Date());
+            }
+        }
+    }
 });
 
 return Resource;

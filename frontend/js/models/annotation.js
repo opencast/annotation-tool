@@ -81,21 +81,6 @@ define(["jquery",
                     delete attr.comments;
                 }
 
-                // If localStorage used, we have to save the video at each change on the children
-                if (window.annotationsTool.localStorage) {
-                    if (!attr.created_by) {
-                        attr.created_by = annotationsTool.user.get("id");
-                    }
-
-                    if (!attr.created_by_nickname) {
-                        attr.created_by_nickname = annotationsTool.user.get("nickname");
-                    }
-
-                    if (!attr.created_at) {
-                        attr.created_at = new Date();
-                    }
-                }
-
                 if (annotationsTool.user.get("id") === attr.created_by) {
                     attr.isMine = true;
                 } else {

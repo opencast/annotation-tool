@@ -60,19 +60,6 @@ define(["jquery",
                     throw "'text' attribute is required";
                 }
 
-                if (window.annotationsTool.localStorage) {
-                    if (!attr.created_by) {
-                        attr.created_by = annotationsTool.user.get("id");
-                    }
-
-                    if (!attr.created_by_nickname) {
-                        attr.created_by_nickname = annotationsTool.user.get("nickname");
-                    }
-
-                    if (!attr.created_at) {
-                        attr.created_at = new Date();
-                    }
-                }
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {

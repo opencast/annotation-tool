@@ -86,13 +86,6 @@ define(["jquery",
                     throw "\"name\" attribute is required";
                 }
 
-                // If localStorage used, we have to save the video at each change on the children
-                if (window.annotationsTool.localStorage) {
-                    if (!attr.created_by) {
-                        this.attributes.created_by = annotationsTool.user.get("id");
-                        this.attributes.created_by_nickname = annotationsTool.user.get("nickname");
-                    }
-                }
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.tags) {
