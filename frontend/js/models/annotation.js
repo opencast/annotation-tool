@@ -21,6 +21,7 @@
  * @requires collections-comments
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  * @requires localstorage
  */
 define(["jquery",
@@ -28,9 +29,10 @@ define(["jquery",
         "collections/comments",
         "access",
         "backbone",
+        "models/resource",
         "localstorage"],
 
-    function ($, _, Comments, ACCESS, Backbone) {
+    function ($, _, Comments, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -41,7 +43,7 @@ define(["jquery",
          * @memberOf module:models-annotation
          * @alias module:models-annotation.Annotation
          */
-        var Annotation = Backbone.Model.extend({
+        var Annotation = Resource.extend({
 
             /**
              * Default models value
@@ -66,6 +68,8 @@ define(["jquery",
                 if (!attr || _.isUndefined(attr.start)) {
                     throw "\"start\" attribute is required";
                 }
+
+                Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.comments && _.isArray(attr.comments)) {
                     this.attributes.comments = new Comments(attr.comments, this);

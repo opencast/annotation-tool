@@ -20,12 +20,14 @@
  * @requires jQuery
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, ACCESS, Backbone) {
+    function ($, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -36,7 +38,7 @@ define(["jquery",
          * @memberOf module:models-label
          * @alias module:models-label.Label
          */
-        var Label = Backbone.Model.extend({
+        var Label = Resource.extend({
 
             /**
              * Default models value
@@ -66,6 +68,8 @@ define(["jquery",
                 if (!attr || _.isUndefined(attr.category)) {
                     throw "'category' attribute is required";
                 }
+
+                Resource.prototype.initialize.apply(this, arguments);
 
                 attr.settings = this.parseSettings(attr.settings);
 

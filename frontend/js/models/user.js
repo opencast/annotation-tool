@@ -21,14 +21,17 @@
  * @requires ROLES
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
+ * @requires email-addresses
  */
 define(["jquery",
         "roles",
         "access",
         "backbone",
+        "models/resource",
         "email-addresses"],
 
-    function ($, ROLES, ACCESS, Backbone, emailAddresses) {
+    function ($, ROLES, ACCESS, Backbone, Resource, emailAddresses) {
 
         "use strict";
 
@@ -39,7 +42,7 @@ define(["jquery",
          * @memberOf module:models-user
          * @alias module:models-user.User
          */
-        var User = Backbone.Model.extend({
+        var User = Resource.extend({
 
             /**
              * Default models value
@@ -62,6 +65,8 @@ define(["jquery",
                    _.isUndefined(attr.nickname) || attr.nickname === "") {
                     throw "'user_extid' and 'nickname' attributes are required";
                 }
+
+                Resource.prototype.initialize.apply(this, arguments);
 
                 if (!attr.role && annotationsTool.getUserRole) {
                     attr.role = annotationsTool.getUserRole();

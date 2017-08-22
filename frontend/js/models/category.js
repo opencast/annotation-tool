@@ -22,6 +22,7 @@
  * @requires collections-labels
  * @requires ACCESS
  * @requires backbone
+ * @requires modles/resource
  * @requires localstorage
  */
 define(["jquery",
@@ -29,9 +30,10 @@ define(["jquery",
         "collections/labels",
         "access",
         "backbone",
+        "models/resource",
         "localstorage"],
 
-    function ($, _, Labels, ACCESS, Backbone) {
+    function ($, _, Labels, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -52,7 +54,7 @@ define(["jquery",
          * @memberOf module:models-category
          * @alias module:models-category.Category
          */
-        var Category = Backbone.Model.extend({
+        var Category = Resource.extend({
 
             /**
              * Default models value
@@ -91,6 +93,7 @@ define(["jquery",
                         this.attributes.created_by_nickname = annotationsTool.user.get("nickname");
                     }
                 }
+                Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.tags) {
                     this.attributes.tags = this.parseJSONString(attr.tags);

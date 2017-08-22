@@ -20,12 +20,14 @@
  * @requires jQuery
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, ACCESS, Backbone) {
+    function ($, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -36,7 +38,7 @@ define(["jquery",
          * @memberOf module:models-comment
          * @alias module:models-comment.Comment
          */
-        var Comment = Backbone.Model.extend({
+        var Comment = Resource.extend({
 
             /**
              * Default models value
@@ -71,6 +73,7 @@ define(["jquery",
                         attr.created_at = new Date();
                     }
                 }
+                Resource.prototype.initialize.apply(this, arguments);
 
                 if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
                     attr.isMine = true;

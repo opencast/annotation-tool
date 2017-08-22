@@ -20,16 +20,18 @@
  * @requires collections-categories
  * @requires collections-scales
  * @requires ACCESS
- * @requires backbone.js
+ * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
         "collections/tracks",
         "collections/categories",
         "collections/scales",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, Tracks, Categories, Scales, ACCESS, Backbone) {
+    function ($, Tracks, Categories, Scales, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -40,7 +42,7 @@ define(["jquery",
          * @memberOf module:models-video
          * @alias module:models-video.Video
          */
-        var Video = Backbone.Model.extend({
+        var Video = Resource.extend({
 
             /**
              * Default models value
@@ -61,6 +63,8 @@ define(["jquery",
                         "getTrack",
                         "getAnnotation",
                         "loadTracks");
+
+                Resource.prototype.initialize.apply(this, arguments);
 
                 // Check if tracks are given
                 if (attr.tracks && _.isArray(attr.tracks)) {

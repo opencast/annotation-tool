@@ -21,13 +21,15 @@
  * @requires collections-annotations
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
         "collections/annotations",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, Annotations, ACCESS, Backbone) {
+    function ($, Annotations, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -38,7 +40,7 @@ define(["jquery",
          * @memberOf module:models-track
          * @alias module:models-track.Track
          */
-        var Track = Backbone.Model.extend(
+        var Track = Resource.extend(
             /** @lends module:models-track~Track.prototype */
             {
 
@@ -65,6 +67,8 @@ define(["jquery",
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
                 }
+
+                Resource.prototype.initialize.apply(this, arguments);
 
                 // the tack is not visible at initialisation
                 attr.visible = false;

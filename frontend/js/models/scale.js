@@ -21,13 +21,15 @@
  * @requires ACCESS
  * @requires collections-scalevalues
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
         "access",
         "collections/scalevalues",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, ACCESS, ScaleValues, Backbone) {
+    function ($, ACCESS, ScaleValues, Backbone, Resource) {
 
         "use strict";
 
@@ -38,7 +40,7 @@ define(["jquery",
          * @memberOf module:models-scale
          * @alias module:models-scale.Scale
          */
-        var Scale = Backbone.Model.extend({
+        var Scale = Resource.extend({
 
             /**
              * Default models value
@@ -67,6 +69,8 @@ define(["jquery",
                 if (!attr  || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
                 }
+
+                Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.scaleValues && _.isArray(attr.scaleValues)) {
                     this.set({scaleValues: new ScaleValues(attr.scaleValues, this)});

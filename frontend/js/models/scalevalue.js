@@ -20,12 +20,14 @@
  * @requires jQuery
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, ACCESS, Backbone) {
+    function ($, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -36,7 +38,7 @@ define(["jquery",
          * @memberOf module:models-scalevalue
          * @alias module:models-scalevalue.Scalevalue
          */
-        var ScaleValue = Backbone.Model.extend({
+        var ScaleValue = Resource.extend({
 
             /**
              * Default models value
@@ -79,6 +81,7 @@ define(["jquery",
                         attr.created_at = new Date();
                     }
                 }
+                Resource.prototype.initialize.apply(this, arguments);
 
                 if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
                     attr.isMine = true;
