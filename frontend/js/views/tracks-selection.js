@@ -19,6 +19,7 @@
  * @requires jQuery
  * @requires underscore
  * @requires Backbone
+ * @requires Sortable
  * @requires templates/tracks-selection-modal.tmpl
  * @requires ROLES
  * @requires hanldebars
@@ -26,10 +27,11 @@
 define(["jquery",
         "underscore",
         "backbone",
+        "sortable",
         "templates/tracks-selection-modal",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, TracksSelectionTmpl) {
+    function ($, _, Backbone, Sortable, TracksSelectionTmpl) {
 
         "use strict";
 
@@ -82,6 +84,7 @@ define(["jquery",
                 "change .track-checkbox": "selectTrack",
                 "change .user-checkbox": "selectUser",
                 "change #select-all": "selectAll",
+                "change .list-group input, #select-all": "updateSelection",
                 "input #search-track": "search",
                 "click #clear-search": "clear"
             },
@@ -150,6 +153,10 @@ define(["jquery",
 
                 this.delegateEvents();
 
+                this.trackSelection = this.$el.find("#track-selection");
+                this.order = annotationsTool.tracksOrder;
+                this.renderSelection();
+
                 this.$el.modal({ show: true, backdrop: false, keyboard: false });
             },
 
@@ -189,6 +196,8 @@ define(["jquery",
                     })
                 );
 
+                annotationsTool.orderTracks(this.sortableTrackSelection.toArray());
+
                 this.hide();
             },
 
@@ -222,6 +231,34 @@ define(["jquery",
                     checkboxGroup.userCheckbox.checked = event.target.checked;
                     checkboxGroup.trackCheckboxes.prop("checked", event.target.checked);
                 });
+            },
+
+            renderSelection: function () {
+                this.trackSelection.html(
+                    trackCheckboxes.filter(":checked").map(_.bind(function (index, checkbox) {
+                        var track = this.tracks.get(checkbox.value);
+                        return "<li data-id=\""
+                            + track.id
+                            + "\">"
+                            + track.get("name")
+                            + " ("
+                            + track.get("created_by_nickname")
+                            + ")"
+                            + "</li>";
+                    }, this)).get().join('')
+                );
+                this.sortableTrackSelection = new Sortable(this.trackSelection[0]);
+                this.sortableTrackSelection.sort(this.order);
+            },
+
+            /**
+             * Update the list of selected tracks based on the current values of the track checkboxes.
+             * @alias module:views-tracks-selection.Alert#updateSelection
+             */
+            updateSelection: function () {
+                this.order = this.sortableTrackSelection.toArray();
+                this.sortableTrackSelection.destroy();
+                this.renderSelection();
             },
 
             /**

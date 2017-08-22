@@ -625,6 +625,16 @@ define(["jquery",
             },
 
             /**
+             * Update the ordering of the tracks and alert everyone who is interested.
+             * @alias  annotationsTool.orderTracks
+             * @param {Array} order The new track order
+             */
+            orderTracks: function (order) {
+                this.tracksOrder = order;
+                this.trigger("order", order);
+            },
+
+            /**
              * Get all annotations that cover a given point in time.
              * @alias   annotationsTool.getCurrentAnnotations
              * @param {Number} [time] The time you are interested in or the current player time if omitted
