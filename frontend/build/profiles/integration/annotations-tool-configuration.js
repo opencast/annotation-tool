@@ -402,8 +402,6 @@ define(["jquery",
                     // Enable cross-domain for jquery ajax query
                     $.support.cors = true;
 
-                    annotationsTool.playerAdapter = new HTML5PlayerAdapter($("video")[0]);
-
                     // Get the mediapackage and fill the player element with the videos
                     $.ajax({
                         url: "/search/episode.json",
@@ -411,7 +409,7 @@ define(["jquery",
                         crossDomain: true,
                         data: "id=" + mediaPackageId + "&limit=1",
                         dataType: "json",
-                        success: function (data) {
+                        success: $.proxy(function (data) {
                             var result = data["search-results"].result,
                                 mediapackage,
                                 videos = {},
@@ -482,19 +480,13 @@ define(["jquery",
                                 selectedVideos = videos;
                             }
 
-                            $.each(selectedVideos, function (index, type) {
-                                if (type.length !== 0) {
-                                    var videoSrc = "";
-                                    $.each(type, function (idx, track) {
-                                        videoSrc += "<source src=\"" + track.url + "\" type=\"" + track.mimetype + "\"></source>";
-                                    });
-                                    if (videoSrc !== "") {
-                                        $("video").append(videoSrc);
-                                        $("video").attr("id", mediaPackageId);
-                                    }
-                                }
+                            var sources = $.map(selectedVideos, function (type) {
+                                return $.map(type, function (track) {
+                                    return { src: track.url, type: track.mimetype };
+                                });
                             });
-                        }
+                            this.playerAdapter = new HTML5PlayerAdapter($("video")[0], sources);
+                        }, this)
                     });
                 }
             };

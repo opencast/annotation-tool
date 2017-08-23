@@ -204,7 +204,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten : false,
                     expand  : true,
-                    src     : ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
+                    src     : ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
                     dest    : '<%= currentProfile.target %>'
                 }]
             },
@@ -218,7 +218,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -227,7 +227,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'js/libs/**/*'],
+                    src: ['img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'js/libs/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -236,7 +236,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.png',  'resources/*', 'style/**/*.css', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png',  'resources/*', 'style/**/*.css', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -244,7 +244,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },

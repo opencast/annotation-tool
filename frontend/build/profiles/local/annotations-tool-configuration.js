@@ -277,7 +277,7 @@ define(["jquery",
              * @alias module:annotations-tool-configuration.Configuration.loadVideo
              */
             loadVideo: function () {
-                annotationsTool.playerAdapter = new HTML5PlayerAdapter($("video")[0]);
+                this.playerAdapter = new HTML5PlayerAdapter($("video")[0]);
             }
         };
 
