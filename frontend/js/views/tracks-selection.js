@@ -228,6 +228,7 @@ define(["jquery",
              */
             selectAll: function (event) {
                 _.each(checkboxGroupForUser, function (checkboxGroup) {
+                    checkboxGroup.userCheckbox.indeterminate = false;
                     checkboxGroup.userCheckbox.checked = event.target.checked;
                     checkboxGroup.trackCheckboxes.prop("checked", event.target.checked);
                 });
