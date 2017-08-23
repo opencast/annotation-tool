@@ -1,18 +1,18 @@
-<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" data-id="{{id}}">
+<div class="timeline-group{{#if isMine}} mine{{/if}}" data-id="{{id}}">
     <a id="track{{id}}"
        class="content-overlay"
        {{#if isMine}}onclick="annotationsTool.views.timeline.onTrackSelected(event,'{{id}}');" ondblclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');"{{/if}}
-       title="{{secure name}}"
+       title="{{name}}"
        rel="popover"
        data-trigger="manual"
-       data-content="<p>{{#if description}}{{secure description}}{{else}}No description{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>"
+       data-content="<p>{{#if description}}{{description}}{{else}}No description{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>"
        onmouseleave="$('div.popover.fade.right.in').remove();"
        onmouseenter="$(this).popover('show');">
     {{#if isMine}}
         <i class="private icon-user" title="{{t "timeline.track.you own"}}"></i>
     {{/if}}
         <div class="content">
-            {{secure name}}
+            {{name}}
         </div>
     {{#canBeDeleted}}
         <div class="group-edit">
@@ -29,5 +29,6 @@
                     <i class="icon-dark-grey {{#isPrivateOnly}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/isPrivateOnly}}"></i> {{#isPrivateOnly}}{{t "timeline.track.private"}}{{else}}{{#if isPublic}}{{t "timeline.track.public"}}{{else}}{{t "timeline.track.private"}}{{/if}}{{/isPrivateOnly}}</span>{{/if}}
         </div>
     {{/canBeDeleted}}
+    <span class="toggle-expansion" href="#">Expand/Collapse</span>
     </a>
 </div>

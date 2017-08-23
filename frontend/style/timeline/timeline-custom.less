@@ -1,18 +1,3 @@
-.stacking-level (@level) {
-    .stack-level-@{level} {
-    div.timeline-item {
-        margin-top: 18px-(@level*23px);
-    }
-}
-}
-
-.track-max-level (@level) {
-    .track-max-level-@{level} {
-        height: (@level)*23px;
-    }
-}
-
-
 #timeline-container {
     background-color: @white;
 
@@ -311,27 +296,11 @@ div.timeline-bottom-controls {
     }
 }
 
-.stacking-level(0);
-.stacking-level(1);
-.stacking-level(2);
-.stacking-level(3);
-.stacking-level(4);
-.stacking-level(5);
-
-.track-max-level(0);
-.track-max-level(1);
-.track-max-level(2);
-.track-max-level(3);
-.track-max-level(4);
-.track-max-level(5);
-
-
 div.timeline-item {
     background-color: fade(@grayLight,25%);
     border: 1px solid transparent;
     padding: 2px;
     overflow: hidden;
-    min-width: 20px;
     z-index: 4;
 
     span {
@@ -383,4 +352,13 @@ div#timeline {
 div.timeline-frame > div:first-child > div:first-child {
     background-color: white;
     z-index: 5;
+}
+
+.timeline-item.timeline-placeholder {
+    text-overflow: ellipsis;
+    background-color: black;
+    color: white;
+    .hidden-items {
+        display: none;
+    }
 }
