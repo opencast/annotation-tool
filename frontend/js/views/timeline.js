@@ -401,6 +401,7 @@ define(["util",
                     return startTime <= item.end && item.start <= endTime;
                 });
 
+                // TODO This should only happen when there are no tracks
                 if (!filteredItems.length) {
                     filteredItems = [{
                         trackId: this.VOID_TRACK.id,
