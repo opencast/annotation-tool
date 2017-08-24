@@ -60,6 +60,8 @@ var Resource = Backbone.Model.extend({
         this.listenTo(this, "change:access", function (self, access) {
             updateIsPublic.call(self, access);
         });
+
+        this.set("isMine", !attr.created_by || attr.created_by === annotationsTool.user.id);
     },
 
     /**

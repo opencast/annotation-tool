@@ -101,12 +101,6 @@ define(["jquery",
                     this.attributes.settings = {hasScale: true};
                 }
 
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    this.attributes.isMine = true;
-                } else {
-                    this.attributes.isMine = false;
-                }
-
                 if (attr.labels && _.isArray(attr.labels)) {
                     this.attributes.labels  = new Labels(attr.labels, this);
                     delete attr.labels;

@@ -69,14 +69,6 @@ define(["jquery",
                 }
 
                 Resource.prototype.initialize.apply(this, arguments);
-
-                if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                this.set(attr);
             },
 
             /**

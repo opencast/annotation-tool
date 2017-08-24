@@ -81,12 +81,6 @@ define(["jquery",
                     attr.tags = this.parseJSONString(attr.tags);
                 }
 
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
                 this.set("category", attr.category);
 
                 this.set(attr);

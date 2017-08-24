@@ -87,12 +87,6 @@ define(["jquery",
                     attr.tags = this.parseJSONString(attr.tags);
                 }
 
-                if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 

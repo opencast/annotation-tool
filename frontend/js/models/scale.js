@@ -82,12 +82,6 @@ define(["jquery",
                     this.attributes.scaleValues.fetch({async: false});
                 }
 
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
