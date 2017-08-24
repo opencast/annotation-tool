@@ -107,12 +107,6 @@ define(["jquery",
                     this.attributes.isMine = false;
                 }
 
-                if (attr.access === ACCESS.PUBLIC) {
-                    this.attributes.isPublic = true;
-                } else {
-                    this.attributes.isPublic = false;
-                }
-
                 if (attr.labels && _.isArray(attr.labels)) {
                     this.attributes.labels  = new Labels(attr.labels, this);
                     delete attr.labels;

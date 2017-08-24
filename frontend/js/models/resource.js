@@ -52,6 +52,14 @@ var Resource = Backbone.Model.extend({
                 this.set("created_at", new Date());
             }
         }
+
+        function updateIsPublic(access) {
+            this.set("isPublic", access === ACCESS.PUBLIC);
+        }
+        if (attr.access) updateIsPublic.call(this, attr.access);
+        this.listenTo(this, "change:access", function (self, access) {
+            updateIsPublic.call(self, access);
+        });
     },
 
     /**
@@ -79,16 +87,8 @@ var Resource = Backbone.Model.extend({
             return "\"settings\" attribute must be a string or a JSON object";
         }
 
-        if (!_.isUndefined(attr.access)) {
-            if (!_.include(ACCESS, attr.access)) {
-                return "\"access\" attribute is not valid.";
-            } else if (this.attributes.access !== attr.access) {
-                if (attr.access === ACCESS.PUBLIC) {
-                    this.attributes.isPublic = true;
-                } else {
-                    this.attributes.isPublic = false;
-                }
-            }
+        if (!_.isUndefined(attr.access) && !_.include(ACCESS, attr.access)) {
+            return "\"access\" attribute is not valid.";
         }
 
         if (attr.created_at) {
