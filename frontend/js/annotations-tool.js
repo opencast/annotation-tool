@@ -186,8 +186,21 @@ define(["jquery",
 
                 this.currentSelection = [];
 
+                this.tracksOrder = [];
+
                 this.once(this.EVENTS.USER_LOGGED, this.fetchData);
                 this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+
+                    var updateTracksOrder = _.bind(function (tracks) {
+                        this.tracksOrder = _.chain(tracks.getVisibleTracks())
+                            .map("id")
+                            .sortBy(function (trackId) {
+                                return _.indexOf(this.tracksOrder, trackId);
+                            }, this).value();
+                    }, this);
+                    this.listenTo(this.video, "change:tracks", updateTracksOrder);
+                    updateTracksOrder(this.getTracks());
+
                     var trackImported = false;
 
                     if (!_.isUndefined(this.tracksToImport)) {
@@ -218,8 +231,6 @@ define(["jquery",
 
                 $(window).bind("mousedown", this.onMouseDown);
                 $(window).bind("mouseup", this.onMouseUp);
-
-                this.tracksOrder = this.getTracks().map("id");
 
                 return this;
             },

@@ -85,6 +85,9 @@ define(["jquery",
                 "change .user-checkbox": "selectUser",
                 "change #select-all": "selectAll",
                 "change .list-group input, #select-all": "updateSelection",
+                "focus .track-order-item": "selectOrderItem",
+                "click #move-up": "moveUp",
+                "click #move-down": "moveDown",
                 "input #search-track": "search",
                 "click #clear-search": "clear"
             },
@@ -235,18 +238,17 @@ define(["jquery",
             },
 
             renderSelection: function () {
-                this.trackSelection.html(
+                this.trackSelection.append.apply(this.trackSelection,
                     trackCheckboxes.filter(":checked").map(_.bind(function (index, checkbox) {
                         var track = this.tracks.get(checkbox.value);
-                        return "<li data-id=\""
-                            + track.id
-                            + "\">"
-                            + track.get("name")
-                            + " ("
-                            + track.get("created_by_nickname")
-                            + ")"
-                            + "</li>";
-                    }, this)).get().join('')
+                        var listItem = $("<li></li>");
+                        listItem.attr("tabindex", 0);
+                        listItem.addClass("track-order-item");
+                        listItem.toggleClass("selected", this.selected === track.id);
+                        listItem.attr("data-id", track.id);
+                        listItem.html(track.get("name") + " (" + track.get("created_by_nickname") + ")");
+                        return listItem;
+                    }, this))
                 );
                 this.sortableTrackSelection = new Sortable(this.trackSelection[0]);
                 this.sortableTrackSelection.sort(this.order);
@@ -257,9 +259,70 @@ define(["jquery",
              * @alias module:views-tracks-selection.Alert#updateSelection
              */
             updateSelection: function () {
-                this.order = this.sortableTrackSelection.toArray();
+                this.order = _.sortBy(
+                    this.tracks.chain()
+                        .filter(function (track) {
+                            return this.$el.find(".track-checkbox[value=\"" + track.id + "\"]").attr("checked");
+                        }, this)
+                        .map("id")
+                        .value(),
+                    /*
+                    this.$el.find(".track-checkbox:checked").map(function (index, checkbox) {
+                        return checkbox.value;
+                    }),
+                    */
+                    function (trackId) {
+                        return _.indexOf(this.order, trackId);
+                    },
+                    this
+                );
                 this.sortableTrackSelection.destroy();
+                this.trackSelection.empty();
                 this.renderSelection();
+            },
+
+            /**
+             * Mark one of the order items as selected.
+             * The selected item is the one manipulated by other ordering related functions.
+             * @alias module:views-tracks-selection.Alert#selectOrderItem
+             */
+            selectOrderItem: function (event) {
+                $("#track-selection .selected").toggleClass("selected");
+                var selectedElement = $(event.target);
+                this.selected = selectedElement.data("id");
+                selectedElement.toggleClass("selected");
+            },
+
+            /**
+             * Move the currently selected track up in the ordering.
+             * @alias module:views-tracks-selection.Alert#moveUp
+             */
+            moveUp: function () {
+                if (!this.selected) return;
+
+                var selectedPosition = _.indexOf(this.order, this.selected);
+                if (selectedPosition === 0) return;
+
+                this.order[selectedPosition] = this.order[selectedPosition - 1];
+                this.order[selectedPosition - 1] = this.selected;
+
+                this.sortableTrackSelection.sort(this.order);
+            },
+
+            /**
+             * Move the currently selected track up in the ordering.
+             * @alias module:views-tracks-selection.Alert#moveUp
+             */
+            moveDown: function () {
+                if (!this.selected) return;
+
+                var selectedPosition = _.indexOf(this.order, this.selected);
+                if (selectedPosition === this.order.length - 1) return;
+
+                this.order[selectedPosition] = this.order[selectedPosition + 1];
+                this.order[selectedPosition + 1] = this.selected;
+
+                this.sortableTrackSelection.sort(this.order);
             },
 
             /**
