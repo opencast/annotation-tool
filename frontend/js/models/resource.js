@@ -17,9 +17,11 @@
 /**
  * A module representing a generic annotation tool resource.
  * @module models-resource
+ * @requires underscore
  * @requires backbone
+ * @requires access
  */
-define(["backbone"], function (Backbone) {
+define(["underscore", "backbone", "access"], function (_, Backbone, ACCESS) {
 "use strict";
 
 /**
@@ -50,6 +52,82 @@ var Resource = Backbone.Model.extend({
                 this.set("created_at", new Date());
             }
         }
+    },
+
+    /**
+     * Validate the attribute list passed to the model
+     * @alias module:models-resource.Resource#validate
+     * @param  {object} data Object literal containing the model attribute to validate.
+     * @return {string}  If the validation failed, an error message will be returned.
+     */
+    validate: function (attr, callbacks) {
+        var created = this.get("created_at");
+
+        if (attr.id) {
+            if (this.get("id") !== attr.id) {
+                this.id = attr.id;
+                this.attributes.id = attr.id;
+                if (callbacks && callbacks.onIdChange) callbacks.onIdChange.call(this);
+            }
+        }
+
+        if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
+            return "\"tags\" attribute must be a string or a JSON object";
+        }
+
+        if (attr.settings && (!_.isObject(attr.settings) && !_.isString(attr.settings))) {
+            return "\"settings\" attribute must be a string or a JSON object";
+        }
+
+        if (!_.isUndefined(attr.access)) {
+            if (!_.include(ACCESS, attr.access)) {
+                return "\"access\" attribute is not valid.";
+            } else if (this.attributes.access !== attr.access) {
+                if (attr.access === ACCESS.PUBLIC) {
+                    this.attributes.isPublic = true;
+                } else {
+                    this.attributes.isPublic = false;
+                }
+            }
+        }
+
+        if (attr.created_at) {
+            if (created && created !== attr.created_at) {
+                return "\"created_at\" attribute can not be modified after initialization!";
+            } else if (!(_.isNumber(attr.created_at) || _.isDate(attr.created_at))) {
+                return "\"created_at\" attribute must be a number or date!";
+            }
+        }
+
+        if (attr.updated_at && !(_.isNumber(attr.updated_at) || _.isDate(attr.updated_at))) {
+            return "\"updated_at\" attribute must be a number or date!";
+        }
+
+        if (attr.deleted_at && !(_.isNumber(attr.deleted_at) || _.isDate(attr.deleted_at))) {
+            return "\"deleted_at\" attribute must be a number or date!";
+        }
+    },
+
+    /**
+     * Parse the given parameter to JSON if given as String
+     * @alias module:models-resource.Resource#parseJSONString
+     * @param  {string} parameter the parameter as String
+     * @return {JSON} parameter as JSON object
+     */
+    parseJSONString: function (parameter) {
+        if (parameter && _.isString(parameter)) {
+            try {
+                parameter = JSON.parse(parameter);
+
+            } catch (e) {
+                console.warn("Can not parse parameter \"" + parameter + "\": " + e);
+                return undefined;
+            }
+        } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+            return undefined;
+        }
+
+        return parameter;
     }
 });
 

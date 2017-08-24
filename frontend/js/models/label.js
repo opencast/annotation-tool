@@ -132,13 +132,8 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                    }
-                }
+                var invalidResource = Resource.prototype.validate.call(this, attr);
+                if (invalidResource) return invalidResource;
 
                 if (attr.value &&  !_.isString(attr.value)) {
                     return "'value' attribute must be a string!";
@@ -152,36 +147,8 @@ define(["jquery",
                     return "'description' attribute must be a string!";
                 }
 
-                if (attr.settings &&  !_.isString(attr.settings)) {
-                    return "'settings' attribute must be a string!";
-                }
-
                 if (attr.category &&  !_.isObject(attr.category)) {
                     return "'category' attribute must be a JSON Object!";
-                }
-
-                if (attr.access && !_.include(ACCESS, attr.access)) {
-                    return "'access' attribute is not valid.";
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.updated_at) {
-                    if (!_.isNumber(attr.updated_at)) {
-                        return "'updated_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.deleted_at) {
-                    if (!_.isNumber(attr.deleted_at)) {
-                        return "'deleted_at' attribute must be a number!";
-                    }
                 }
             },
 
@@ -229,27 +196,6 @@ define(["jquery",
                 }
 
                 return json;
-            },
-
-            /**
-             * Parse the given parameter to JSON if given as String
-             * @alias module:models-label.Label#parseJSONString
-             * @param  {string} parameter the parameter as String
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-                    } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
             },
 
             /**

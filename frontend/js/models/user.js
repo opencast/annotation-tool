@@ -76,8 +76,6 @@ define(["jquery",
                     }
                 }
 
-                this.set(attr);
-
                 // Define that all post operation have to been done through PUT method
                 // see in wiki
                 this.noPOST = true;
@@ -112,13 +110,8 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                    }
-                }
+                var invalidResource = Resource.prototype.validate.call(this, attr);
+                if (invalidResource) return invalidResource;
 
                 if (_.isUndefined(attr.user_extid) || (!_.isString(attr.user_extid) && !_.isNumber(attr.user_extid))) {
                     return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};
@@ -130,38 +123,6 @@ define(["jquery",
 
                 if (attr.email && !User.validateEmail(attr.email)) {
                     return {attribute: "email", message: "Given email is not valid!"};
-                }
-
-                if (attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User)) {
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-                }
-
-                if (attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User)) {
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                }
-
-                if (attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User)) {
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.updated_at) {
-                    if (!_.isNumber(attr.updated_at)) {
-                        return "'updated_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.deleted_at) {
-                    if (!_.isNumber(attr.deleted_at)) {
-                        return "'deleted_at' attribute must be a number!";
-                    }
                 }
             }
         },
@@ -177,8 +138,7 @@ define(["jquery",
             validateEmail: function (email) {
                 return !!emailAddresses.parseOneAddress(email);
             }
-        }
-    );
+        });
         return User;
     }
 );

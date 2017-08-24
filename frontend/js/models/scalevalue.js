@@ -122,13 +122,8 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        attr.id = this.cid;
-                    }
-                }
+                var invalidResource = Resource.prototype.validate.call(this, attr);
+                if (invalidResource) return invalidResource;
 
                 if (attr.name && !_.isString(attr.name)) {
                     return "'name' attribute must be a string";
@@ -140,24 +135,6 @@ define(["jquery",
 
                 if (attr.order && !_.isNumber(attr.order)) {
                     return "'order' attribute must be a number";
-                }
-
-                if (attr.access && !_.include(ACCESS, attr.access)) {
-                    return "'access' attribute is not valid.";
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "\"created_at\" attribute can not be modified after initialization!";
-                    }
-                }
-
-                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
-                    return "'updated_at' attribute must be a number!";
-                }
-
-                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
-                    return "'deleted_at' attribute must be a number!";
                 }
             },
 

@@ -146,56 +146,17 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                        this.attributes.id = attr.id;
+                var invalidResource = Resource.prototype.validate.call(this, attr, {
+                    onIdChange: function () {
                         this.setUrl();
                         this.attributes.ready = true;
                         this.trigger("ready", this);
                     }
-                }
+                });
+                if (invalidResource) return invalidResource;
 
                 if (attr.description && !_.isString(attr.description)) {
                     return "'description' attribute must be a string";
-                }
-
-                if (attr.settings && _.isUndefined(this.parseJSONString(attr.settings))) {
-                    return "'settings' attribute must be a string or a JSON object";
-                }
-
-                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
-                    return "'tags' attribute must be a string or a JSON object";
-                }
-
-                if (!_.isUndefined(attr.access)) {
-                    if (!_.include(ACCESS, attr.access)) {
-                        return "'access' attribute is not valid.";
-                    } else if (this.attributes.access !== attr.access) {
-                        if (attr.access === ACCESS.PUBLIC) {
-                            this.attributes.isPublic = true;
-                        } else {
-                            this.attributes.isPublic = false;
-                        }
-                    }
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
-                    return "'updated_at' attribute must be a number!";
-                }
-
-                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
-                    return "'deleted_at' attribute must be a number!";
                 }
             },
 
@@ -272,27 +233,6 @@ define(["jquery",
                 delete json.annotations;
 
                 return json;
-            },
-
-            /**
-             * Parse the given parameter to JSON if given as string
-             * @alias module:models-track.Track#parseJSONString
-             * @param  {string} parameter the parameter as string
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-                    } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
             }
         }, {
             FIELDS: {

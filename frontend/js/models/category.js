@@ -101,7 +101,6 @@ define(["jquery",
                     this.attributes.settings = {hasScale: true};
                 }
 
-
                 if (annotationsTool.user.get("id") === attr.created_by) {
                     this.attributes.isMine = true;
                 } else {
@@ -198,16 +197,16 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var currentCreatedAt,
-                    newCreatedAt,
-                    self = this;
+                var self = this;
 
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
+                var invalidResource = Resource.prototype.validate.call(this, attr, {
+                    onIdChange: function () {
                         this.setUrl(attr.labels);
                     }
+                });
+                if (invalidResource) return invalidResource;
 
+                if (attr.id) {
                     if (!this.ready && attr.labels && attr.labels.url && (attr.labels.length) === 0) {
                         attr.labels.fetch({
                             async: false,
@@ -220,46 +219,6 @@ define(["jquery",
 
                 if (attr.description && !_.isString(attr.description)) {
                     return "\"description\" attribute must be a string";
-                }
-
-                if (attr.settings && (!_.isObject(attr.settings) && !_.isString(attr.settings))) {
-                    return "\"description\" attribute must be a string or a JSON object";
-                }
-
-                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
-                    return "\"tags\" attribute must be a string or a JSON object";
-                }
-
-                if (!_.isUndefined(attr.access)) {
-                    if (!_.include(ACCESS, attr.access)) {
-                        return "\"access\" attribute is not valid.";
-                    } else if (this.attributes.access !== attr.access) {
-                        if (attr.access === ACCESS.PUBLIC) {
-                            this.attributes.isPublic = true;
-                        } else {
-                            this.attributes.isPublic = false;
-                        }
-                    }
-                }
-
-                if (attr.created_at) {
-                    newCreatedAt = parseDate(attr.created_at);
-                    if (newCreatedAt) {
-                        currentCreatedAt = parseDate(this.get("created_at"));
-                        if (currentCreatedAt && newCreatedAt.getTime() !== currentCreatedAt.getTime()) {
-                            return "\"created_at\" attribute can not be modified after initialization!";
-                        }
-                    } else {
-                        return "\"created_at\" attribute must be a date!";
-                    }
-                }
-
-                if (attr.updated_at && !parseDate(attr.updated_at)) {
-                    return "\"updated_at\" attribute must be a date!";
-                }
-
-                if (attr.deleted_at && !parseDate(attr.deleted_at)) {
-                    return "\"deleted_at\" attribute must be a date!";
                 }
 
                 if (attr.labels) {
@@ -409,28 +368,6 @@ define(["jquery",
 
                 return json;
             },
-
-            /**
-             * Parse the given parameter to JSON if given as String
-             * @alias module:models-category.Category#parseJSONString
-             * @param  {string} parameter the parameter as String
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-
-                    } catch (e) {
-                        console.warn("Can not parse parameter \"" + parameter + "\": " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
-            }
         });
         return Category;
     }

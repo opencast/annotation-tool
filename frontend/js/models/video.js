@@ -139,16 +139,12 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-
-                var tmpCreated,
-                    categories,
+                var categories,
                     scales,
                     self = this;
 
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                        this.attributes.id = attr.id;
+                var invalidResource = Resource.prototype.validate.call(this, attr, {
+                    onIdChange: function () {
                         this.setUrl();
 
                         categories = this.attributes.categories;
@@ -180,34 +176,13 @@ define(["jquery",
                             });
                         }
                     }
-                }
+                });
+                if (invalidResource) return invalidResource;
+
                 if (attr.tracks && !(attr.tracks instanceof Tracks)) {
                     return "'tracks' attribute must be an instance of 'Tracks'";
                 }
-
-                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
-                    return "'tags' attribute must be a string or a JSON object";
-                }
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-                if (attr.updated_at) {
-                    if (!_.isNumber(attr.updated_at)) {
-                        return "'updated_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.deleted_at) {
-                    if (!_.isNumber(attr.deleted_at)) {
-                        return "'deleted_at' attribute must be a number!";
-                    }
-                }
             },
-
 
             loadTracks: function () {
                 var tracks = this.attributes.tracks,
@@ -282,27 +257,6 @@ define(["jquery",
                     }, this);
                     return tmpAnnotation;
                 }
-            },
-
-            /**
-             * Parse the given parameter to JSON if given as String
-             * @alias module:models-video.Video#parseJSONString
-             * @param  {string} parameter the parameter as String
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-                    } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
             },
 
             /**
