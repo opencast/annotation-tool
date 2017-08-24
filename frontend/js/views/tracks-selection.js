@@ -70,13 +70,13 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click #cancel-selection"  : "cancel",
-                "click #confirm-selection" : "confirm",
-                "change .track-checkbox"   : "selectTrack",
-                "change .user-checkbox"    : "selectUser",
-                "change #select-all"       : "selectAll",
-                "input #search-track"      : "search",
-                "click #clear-search"      : "clear"
+                "click #cancel-selection": "cancel",
+                "click #confirm-selection": "confirm",
+                "change .track-checkbox": "selectTrack",
+                "change .user-checkbox": "selectUser",
+                "change #select-all": "selectAll",
+                "input #search-track": "search",
+                "click #clear-search": "clear"
             },
 
             /**
