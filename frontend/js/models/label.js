@@ -73,15 +73,9 @@ define(["jquery",
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                attr.settings = this.parseSettings(attr.settings);
-
                 if (attr.category && attr.category.attributes) {
-                    attr.category = attr.category.toJSON();
+                    this.set("category", attr.category.toJSON());
                 }
-
-                this.set("category", attr.category);
-
-                this.set(attr);
             },
 
             /**
@@ -96,10 +90,10 @@ define(["jquery",
                 attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-                attr.settings = this.parseSettings(attr.settings);
+                attr.settings = this.parseJSONString(attr.settings);
 
                 if (attr.category && attr.category.settings) {
-                    attr.category.settings = this.parseSettings(attr.category.settings);
+                    attr.category.settings = this.parseJSONString(attr.category.settings);
                 }
 
                 if (annotationsTool.user.get("id") === attr.created_by) {
@@ -188,19 +182,6 @@ define(["jquery",
                 }
 
                 return json;
-            },
-
-            /**
-             * Parse the given settings to JSON if given as string
-             * @alias module:models-label.Label#parseSettings
-             * @param  {string} settings the settings as String
-             * @return {JSON} settings as JSON object
-             */
-            parseSettings: function (settings) {
-                if (settings && _.isString(settings)) {
-                    settings = JSON.parse(settings);
-                }
-                return settings;
             }
         });
         return Label;

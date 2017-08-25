@@ -88,14 +88,7 @@ define(["jquery",
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                if (attr.settings) {
-                    this.attributes.settings = this.parseJSONString(attr.settings);
-                    if (this.attributes.settings.hasScale === undefined) {
-                        this.attributes.settings.hasScale = true;
-                    }
-                } else {
-                    this.attributes.settings = {hasScale: true};
-                }
+                this.set("settings", _.extend({ hasScale: true }, this.get("settings")));
 
                 if (attr.labels && _.isArray(attr.labels)) {
                     this.attributes.labels  = new Labels(attr.labels, this);

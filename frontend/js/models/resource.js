@@ -66,6 +66,10 @@ var Resource = Backbone.Model.extend({
         if (attr.tags) {
             this.set("tags", this.parseJSONString(attr.tags));
         }
+
+        if (attr.settings) {
+            this.set("settings", this.parseJSONString(attr.settings));
+        }
     },
 
     /**
