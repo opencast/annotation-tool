@@ -114,7 +114,7 @@ define(["jquery",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
-                "click [class*='opt-tracks']": "tracksSelection",
+                "click .opt-tracks-select"   : "tracksSelection",
                 "click #opt-auto-expand"     : "toggleAutoExpand"
             },
 
@@ -175,6 +175,7 @@ define(["jquery",
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
                     this.updateTitle(annotationsTool.video);
+                    this.tracksSelectionModal    = new TracksSelectionView();
 
                     if (!annotationsTool.isFreeTextEnabled()) {
                         $("#opt-annotate-text").parent().hide();
@@ -185,8 +186,6 @@ define(["jquery",
                     }
 
                 }, this);
-
-                this.$el.find(".opt-tracks-" + annotationsTool.getDefaultTracks().name).addClass("checked");
 
                 this.checkUserAndLogin();
             },
@@ -469,28 +468,11 @@ define(["jquery",
             },
 
             /**
-             * Filter the tracks following the option selected in the menu
+             * Show the track management dialog
              * @alias module:views-main.MainView#tracksSelection
              */
             tracksSelection: function (event) {
-                var prefixFilter = "opt-tracks-";
-
-                var optionElement = $(event.target).closest("[class*='" + prefixFilter + "']");
-
-                if (optionElement.hasClass(prefixFilter + "public")) {
-                    annotationsTool.getTracks().showAllPublic();
-                } else if (optionElement.hasClass(prefixFilter + "mine")) {
-                    annotationsTool.getTracks().showMyTracks();
-                } else {
-                    if (_.isUndefined(this.tracksSelectionModal)) {
-                        this.tracksSelectionModal = new TracksSelectionView();
-                    }
-
-                    this.tracksSelectionModal.show();
-                }
-
-                $("[class*='opt-tracks']").removeClass("checked");
-                $("." + optionElement[0].className).addClass("checked");
+                this.tracksSelectionModal.show();
             },
 
             /**

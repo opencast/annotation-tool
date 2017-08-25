@@ -186,8 +186,21 @@ define(["jquery",
 
                 this.currentSelection = [];
 
+                this.tracksOrder = [];
+
                 this.once(this.EVENTS.USER_LOGGED, this.fetchData);
                 this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+
+                    var updateTracksOrder = _.bind(function (tracks) {
+                        this.tracksOrder = _.chain(tracks.getVisibleTracks())
+                            .map("id")
+                            .sortBy(function (trackId) {
+                                return _.indexOf(this.tracksOrder, trackId);
+                            }, this).value();
+                    }, this);
+                    this.listenTo(this.video, "change:tracks", updateTracksOrder);
+                    updateTracksOrder(this.getTracks());
+
                     var trackImported = false;
 
                     if (!_.isUndefined(this.tracksToImport)) {
@@ -620,6 +633,16 @@ define(["jquery",
              */
             hasSelection: function () {
                 return (typeof this.currentSelection !== "undefined" && (_.isArray(this.currentSelection) && this.currentSelection.length > 0));
+            },
+
+            /**
+             * Update the ordering of the tracks and alert everyone who is interested.
+             * @alias  annotationsTool.orderTracks
+             * @param {Array} order The new track order
+             */
+            orderTracks: function (order) {
+                this.tracksOrder = order;
+                this.trigger("order", order);
             },
 
             /**

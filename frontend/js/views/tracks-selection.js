@@ -19,6 +19,7 @@
  * @requires jQuery
  * @requires underscore
  * @requires Backbone
+ * @requires Sortable
  * @requires templates/tracks-selection-modal.tmpl
  * @requires ROLES
  * @requires hanldebars
@@ -26,10 +27,11 @@
 define(["jquery",
         "underscore",
         "backbone",
+        "sortable",
         "templates/tracks-selection-modal",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, TracksSelectionTmpl) {
+    function ($, _, Backbone, Sortable, TracksSelectionTmpl) {
 
         "use strict";
 
@@ -40,10 +42,17 @@ define(["jquery",
         var checkboxGroupForTrack;
 
         function aggregateCheckboxes(source, target) {
-            var checked = _.filter(source, function (checkbox) { return checkbox.checked; });
-            var difference = source.length - checked.length;
-            target.checked = difference === 0;
-            target.indeterminate = difference > 0 && checked.length !== 0;
+            target.checked = true;
+            target.indeterminate = false;
+            _.each(source, function (checkbox) {
+                if (!checkbox.checked) {
+                    target.checked = false;
+                }
+                if (checkbox.checked || checkbox.indeterminate) {
+                    target.indeterminate = true;
+                }
+            });
+            if (target.checked) target.indeterminate = false;
         }
 
         /**
@@ -70,13 +79,17 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click #cancel-selection"  : "cancel",
-                "click #confirm-selection" : "confirm",
-                "change .track-checkbox"   : "selectTrack",
-                "change .user-checkbox"    : "selectUser",
-                "change #select-all"       : "selectAll",
-                "input #search-track"      : "search",
-                "click #clear-search"      : "clear"
+                "click #cancel-selection": "cancel",
+                "click #confirm-selection": "confirm",
+                "change .track-checkbox": "selectTrack",
+                "change .user-checkbox": "selectUser",
+                "change #select-all": "selectAll",
+                "change .list-group input, #select-all": "updateSelection",
+                "focus .track-order-item": "selectOrderItem",
+                "click #move-up": "moveUp",
+                "click #move-down": "moveDown",
+                "input #search-track": "search",
+                "click #clear-search": "clear"
             },
 
             /**
@@ -143,6 +156,10 @@ define(["jquery",
 
                 this.delegateEvents();
 
+                this.trackSelection = this.$el.find("#track-selection");
+                this.order = annotationsTool.tracksOrder;
+                this.renderSelection();
+
                 this.$el.modal({ show: true, backdrop: false, keyboard: false });
             },
 
@@ -182,6 +199,8 @@ define(["jquery",
                     })
                 );
 
+                annotationsTool.orderTracks(this.sortableTrackSelection.toArray());
+
                 this.hide();
             },
 
@@ -212,9 +231,98 @@ define(["jquery",
              */
             selectAll: function (event) {
                 _.each(checkboxGroupForUser, function (checkboxGroup) {
+                    checkboxGroup.userCheckbox.indeterminate = false;
                     checkboxGroup.userCheckbox.checked = event.target.checked;
                     checkboxGroup.trackCheckboxes.prop("checked", event.target.checked);
                 });
+            },
+
+            renderSelection: function () {
+                this.trackSelection.append.apply(this.trackSelection,
+                    trackCheckboxes.filter(":checked").map(_.bind(function (index, checkbox) {
+                        var track = this.tracks.get(checkbox.value);
+                        var listItem = $("<li></li>");
+                        listItem.attr("tabindex", 0);
+                        listItem.addClass("track-order-item");
+                        listItem.toggleClass("selected", this.selected === track.id);
+                        listItem.attr("data-id", track.id);
+                        listItem.html(track.get("name") + " (" + track.get("created_by_nickname") + ")");
+                        return listItem;
+                    }, this))
+                );
+                this.sortableTrackSelection = new Sortable(this.trackSelection[0]);
+                this.sortableTrackSelection.sort(this.order);
+            },
+
+            /**
+             * Update the list of selected tracks based on the current values of the track checkboxes.
+             * @alias module:views-tracks-selection.Alert#updateSelection
+             */
+            updateSelection: function () {
+                this.order = _.sortBy(
+                    this.tracks.chain()
+                        .filter(function (track) {
+                            return this.$el.find(".track-checkbox[value=\"" + track.id + "\"]").attr("checked");
+                        }, this)
+                        .map("id")
+                        .value(),
+                    /*
+                    this.$el.find(".track-checkbox:checked").map(function (index, checkbox) {
+                        return checkbox.value;
+                    }),
+                    */
+                    function (trackId) {
+                        return _.indexOf(this.order, trackId);
+                    },
+                    this
+                );
+                this.sortableTrackSelection.destroy();
+                this.trackSelection.empty();
+                this.renderSelection();
+            },
+
+            /**
+             * Mark one of the order items as selected.
+             * The selected item is the one manipulated by other ordering related functions.
+             * @alias module:views-tracks-selection.Alert#selectOrderItem
+             */
+            selectOrderItem: function (event) {
+                $("#track-selection .selected").toggleClass("selected");
+                var selectedElement = $(event.target);
+                this.selected = selectedElement.data("id");
+                selectedElement.toggleClass("selected");
+            },
+
+            /**
+             * Move the currently selected track up in the ordering.
+             * @alias module:views-tracks-selection.Alert#moveUp
+             */
+            moveUp: function () {
+                if (!this.selected) return;
+
+                var selectedPosition = _.indexOf(this.order, this.selected);
+                if (selectedPosition === 0) return;
+
+                this.order[selectedPosition] = this.order[selectedPosition - 1];
+                this.order[selectedPosition - 1] = this.selected;
+
+                this.sortableTrackSelection.sort(this.order);
+            },
+
+            /**
+             * Move the currently selected track up in the ordering.
+             * @alias module:views-tracks-selection.Alert#moveUp
+             */
+            moveDown: function () {
+                if (!this.selected) return;
+
+                var selectedPosition = _.indexOf(this.order, this.selected);
+                if (selectedPosition === this.order.length - 1) return;
+
+                this.order[selectedPosition] = this.order[selectedPosition + 1];
+                this.order[selectedPosition + 1] = this.selected;
+
+                this.sortableTrackSelection.sort(this.order);
             },
 
             /**

@@ -113,12 +113,7 @@
         "structured annotations": "Structured annotations",
         "text annotations": "Text annotations"
       },
-      "annotation visibility": {
-        "all public": "$t(annotation visibility.all public)",
-        "head": "Annotation visibility",
-        "only mine": "$t(annotation visibility.only mine)",
-        "other public": "$t(annotation visibility.other public)"
-      },
+      "track management": "$t(track management)",
       "head": "View",
       "loop controller": "Loop controller",
       "views": {
@@ -239,12 +234,7 @@
       "short": "No track available",
       "long": "No track corresponding with the current filter(s)."
     },
-    "other annotations": {
-      "all public": "$t(annotation visibility.all public)",
-      "head": "Other annotations",
-      "only mine": "$t(annotation visibility.only mine)",
-      "other public": "$t(annotation visibility.other public)"
-    },
+    "track management": "$t(track management)",
     "hidden items": "One hidden item",
     "hidden items_plural": "{{count}} hidden items",
     "private only": {
@@ -274,6 +264,7 @@
     }
   },
   "title": "Annotating Academic Video",
+  "track management": "Track management",
   "track selection": {
     "(un-)select all": "Select/unselect all",
     "cancel": "$t(common actions.cancel)",
@@ -283,7 +274,11 @@
       "clear": "Clear",
       "hint": "Users with public annotations",
       "placeholder": "Type here to search …"
-    }
+    },
+    "selection header": "Select visible tracks",
+    "ordering header": "Order tracks",
+    "move up": "Move up",
+    "move down": "Move down"
   },
   "untitled video": "Untitled video",
   "user login": {

@@ -33,7 +33,8 @@ require.config({
         "jquery-i18next": "libs/jquery-i18next.min",
         "moment": "libs/moment-with-locales",
         "mediaelementplayer": "libs/mediaelement/mediaelement-and-player.min",
-        "mediaelement/lang": "libs/mediaelement/lang"
+        "mediaelement/lang": "libs/mediaelement/lang",
+        "sortable": "libs/Sortable.min"
     },
     waitSeconds: 10,
 

@@ -360,6 +360,11 @@ define(["util",
                     event.stopPropagation();
                 }, true);
 
+                this.listenTo(annotationsTool, "order", function () {
+                    this.preprocessAllTracks();
+                    this.redraw();
+                });
+
                 this.timerangeChange();
                 this.$timeline.scroll(this.updateHeader);
                 this.onPlayerTimeUpdate();
@@ -396,6 +401,7 @@ define(["util",
                     return startTime <= item.end && item.start <= endTime;
                 });
 
+                // TODO This should only happen when there are no tracks
                 if (!filteredItems.length) {
                     filteredItems = [{
                         trackId: this.VOID_TRACK.id,
@@ -1173,7 +1179,7 @@ define(["util",
                     // We also need to, **in front of that**, add some indicator for the track,
                     // as to preserve the ordering.
                     item.group = "<div style=\"height: " + height * 23 + "px;\">" + item.groupContent + "</div>";
-                    item.group = "<!-- track: " + trackId + " -->" + item.group;
+                    item.group = "<!-- track: " + annotationsTool.tracksOrder.indexOf(trackId) + " -->" + item.group;
 
                     // We also need to set the margin of all the items to shift them to their stacking level
                     function wrap(item, level) {

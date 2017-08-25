@@ -68,7 +68,10 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
 
             // Get all the tracks
             var tracks = video.get("tracks");
-            var annotations = tracks.chain()
+            tracks = _.map(this.model.tracksOrder, function (trackId) {
+                return tracks.get(trackId);
+            });
+            var annotations = _.chain(tracks)
                 .invoke('get', 'annotations')
                 .pluck("models")
                 .flatten()
@@ -181,7 +184,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 }).value();
 
             // Format tracks
-            tracks = tracks.map(function (track) {
+            tracks = _.map(tracks, function (track) {
                 return {
                     name: track.get("name"),
                     owner: track.get("created_by_nickname"),

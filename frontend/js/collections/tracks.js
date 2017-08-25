@@ -79,7 +79,6 @@ define(["jquery",
                                     "isTrackVisible",
                                     "getTracksForLocalStorage",
                                     "getAllCreators",
-                                    "showMyTracks",
                                     "showTracksByCreators");
                     this.setUrl(video);
 
@@ -132,22 +131,6 @@ define(["jquery",
                  */
                 getVisibleTracks: function () {
                     return this.visibleTracks;
-                },
-
-                /**
-                 * Shows only the tracks of the current user
-                 * @alias module:collections-tracks.Tracks#showMyTracks
-                 */
-                showMyTracks: function () {
-                    this.showTracks(this.getMine(), false);
-                },
-
-                /**
-                 * Shows all the publics tracks
-                 * @alias module:collections-tracks.Tracks#showAllPublic
-                 */
-                showAllPublic: function () {
-                    this.showTracks(this.where({access: ACCESS.PUBLIC}), false);
                 },
 
                 /**
