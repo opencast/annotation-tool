@@ -154,7 +154,7 @@ define(["jquery",
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
-                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
+                var json = Backbone.Model.prototype.toJSON.call(this);
                 if (json.tags) {
                     json.tags = JSON.stringify(json.tags);
                 }
