@@ -18,6 +18,7 @@
  * A module representing the user model
  * @module models-user
  * @requires jQuery
+ * @requires underscore
  * @requires ROLES
  * @requires ACCESS
  * @requires backbone
@@ -25,13 +26,14 @@
  * @requires email-addresses
  */
 define(["jquery",
+        "underscore",
         "roles",
         "access",
         "backbone",
         "models/resource",
         "email-addresses"],
 
-    function ($, ROLES, ACCESS, Backbone, Resource, emailAddresses) {
+    function ($, _, ROLES, ACCESS, Backbone, Resource, emailAddresses) {
 
         "use strict";
 

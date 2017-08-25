@@ -18,16 +18,18 @@
  * A module representing the comment model
  * @module models-comment
  * @requires jQuery
+ * @requires underscore
  * @requires ACCESS
  * @requires backbone
  * @requires models/resource
  */
 define(["jquery",
+        "underscore",
         "access",
         "backbone",
         "models/resource"],
 
-    function ($, ACCESS, Backbone, Resource) {
+    function ($, _, ACCESS, Backbone, Resource) {
 
         "use strict";
 

@@ -18,18 +18,20 @@
  * A module representing the scale model
  * @module models-scale
  * @requires jQuery
+ * @requires underscore
  * @requires ACCESS
  * @requires collections-scalevalues
  * @requires backbone
  * @requires models/resource
  */
 define(["jquery",
+        "underscore",
         "access",
         "collections/scalevalues",
         "backbone",
         "models/resource"],
 
-    function ($, ACCESS, ScaleValues, Backbone, Resource) {
+    function ($, _, ACCESS, ScaleValues, Backbone, Resource) {
 
         "use strict";
 
