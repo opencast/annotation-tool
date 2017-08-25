@@ -276,7 +276,9 @@
       "placeholder": "Type here to search …"
     },
     "selection header": "Select visible tracks",
-    "ordering header": "Order tracks"
+    "ordering header": "Order tracks",
+    "move up": "Move up",
+    "move down": "Move down"
   },
   "untitled video": "Untitled video",
   "user login": {
