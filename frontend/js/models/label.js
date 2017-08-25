@@ -79,10 +79,6 @@ define(["jquery",
                     attr.category = attr.category.toJSON();
                 }
 
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
                 this.set("category", attr.category);
 
                 this.set(attr);

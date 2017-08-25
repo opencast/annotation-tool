@@ -88,10 +88,6 @@ define(["jquery",
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                if (attr.tags) {
-                    this.attributes.tags = this.parseJSONString(attr.tags);
-                }
-
                 if (attr.settings) {
                     this.attributes.settings = this.parseJSONString(attr.settings);
                     if (this.attributes.settings.hasScale === undefined) {

@@ -62,6 +62,10 @@ var Resource = Backbone.Model.extend({
         });
 
         this.set("isMine", !attr.created_by || attr.created_by === annotationsTool.user.id);
+
+        if (attr.tags) {
+            this.set("tags", this.parseJSONString(attr.tags));
+        }
     },
 
     /**

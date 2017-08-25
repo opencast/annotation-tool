@@ -81,10 +81,6 @@ define(["jquery",
                     delete attr.comments;
                 }
 
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 

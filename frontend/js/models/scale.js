@@ -83,12 +83,6 @@ define(["jquery",
                 if (attr.id) {
                     this.attributes.scaleValues.fetch({async: false});
                 }
-
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                this.set(attr);
             },
 
             /**

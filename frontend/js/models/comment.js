@@ -63,12 +63,6 @@ define(["jquery",
                 }
 
                 Resource.prototype.initialize.apply(this, arguments);
-
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                this.set(attr);
             },
 
             /**

@@ -90,10 +90,6 @@ define(["jquery",
                     this.set({scales: new Scales([], this)});
                 }
 
-                if (attr.tags) {
-                    this.set({tags: this.parseJSONString(attr.tags)});
-                }
-
                 if (attr.id) {
                     this.get("categories").fetch({async: false});
                     this.get("tracks").fetch({async: false});
