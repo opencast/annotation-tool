@@ -91,22 +91,6 @@ define(["jquery",
             },
 
             /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-track.Track#parse
-             * @param  {Object} data Object literal containing the model attribute to parse.
-             * @return {Object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (attr.access === ACCESS.PUBLIC) {
-                        attr.isPublic = true;
-                    } else {
-                        attr.isPublic = false;
-                    }
-                });
-            },
-
-            /**
              * Validate the attribute list passed to the model
              * @alias module:models-track.Track#validate
              * @param  {Object} data Object literal containing the model attribute to validate.

@@ -107,12 +107,6 @@ define(["jquery",
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (attr.access === ACCESS.PUBLIC) {
-                        attr.isPublic = true;
-                    } else {
-                        attr.isPublic = false;
-                    }
-
                     if (annotationsTool.localStorage && _.isArray(attr.labels)) {
                         attr.labels = new Labels(attr.labels, this);
                     }
