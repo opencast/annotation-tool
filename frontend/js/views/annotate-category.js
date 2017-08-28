@@ -316,7 +316,7 @@ define(["jquery",
                         if (delLabel === labelView.model) {
                             labelView.remove();
                             this.labelViews.splice(index, 1);
-                            return;
+                            return true;
                         }
                     }, this);
             },
