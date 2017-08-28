@@ -112,11 +112,11 @@ define(["jquery",
                     }
 
                     if (attr.label) {
-                        if (attr.label.category && (tempSettings = this.parseJSONString(attr.label.category.settings))) {
+                        if (attr.label.category && (tempSettings = Resource.parseJSONString(attr.label.category.settings))) {
                             attr.label.category.settings = tempSettings;
                         }
 
-                        if ((tempSettings = this.parseJSONString(attr.label.settings))) {
+                        if ((tempSettings = Resource.parseJSONString(attr.label.settings))) {
                             attr.label.settings = tempSettings;
                         }
                     }

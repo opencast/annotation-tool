@@ -64,11 +64,11 @@ var Resource = Backbone.Model.extend({
         this.set("isMine", !attr.created_by || attr.created_by === annotationsTool.user.id);
 
         if (attr.tags) {
-            this.set("tags", this.parseJSONString(attr.tags));
+            this.set("tags", Resource.parseJSONString(attr.tags));
         }
 
         if (attr.settings) {
-            this.set("settings", this.parseJSONString(attr.settings));
+            this.set("settings", Resource.parseJSONString(attr.settings));
         }
     },
 
@@ -89,7 +89,7 @@ var Resource = Backbone.Model.extend({
             }
         }
 
-        if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
+        if (attr.tags && _.isUndefined(Resource.parseJSONString(attr.tags))) {
             return "\"tags\" attribute must be a string or a JSON object";
         }
 
@@ -119,28 +119,6 @@ var Resource = Backbone.Model.extend({
     },
 
     /**
-     * Parse the given parameter to JSON if given as String
-     * @alias module:models-resource.Resource#parseJSONString
-     * @param  {string} parameter the parameter as String
-     * @return {JSON} parameter as JSON object
-     */
-    parseJSONString: function (parameter) {
-        if (parameter && _.isString(parameter)) {
-            try {
-                parameter = JSON.parse(parameter);
-
-            } catch (e) {
-                console.warn("Can not parse parameter \"" + parameter + "\": " + e);
-                return undefined;
-            }
-        } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-            return undefined;
-        }
-
-        return parameter;
-    },
-
-    /**
      * Parse the attribute list passed to the model
      * @alias module:models-resource.Resource#parse
      * @param  {object} data Object literal containing the model attribute to parse.
@@ -163,11 +141,11 @@ var Resource = Backbone.Model.extend({
         }
 
         if (attr.tags) {
-            attr.tags = this.parseJSONString(attr.tags);
+            attr.tags = Resource.parseJSONString(attr.tags);
         }
 
         if (attr.settings) {
-            attr.settings = this.parseJSONString(attr.settings);
+            attr.settings = Resource.parseJSONString(attr.settings);
         }
 
         attr.isMine = annotationsTool.user.id === attr.created_by;
@@ -188,6 +166,28 @@ var Resource = Backbone.Model.extend({
     parseDate: function (value) {
         var date = new Date(value);
         return _.isNaN(date.getTime()) ? undefined : date;
+    }
+}, {
+    /**
+     * Parse the given parameter to JSON if given as String
+     * @alias module:models-resource.Resource.parseJSONString
+     * @param  {string} parameter the parameter as String
+     * @return {JSON} parameter as JSON object
+     */
+    parseJSONString: function (parameter) {
+        if (parameter && _.isString(parameter)) {
+            try {
+                parameter = JSON.parse(parameter);
+
+            } catch (e) {
+                console.warn("Can not parse parameter \"" + parameter + "\": " + e);
+                return undefined;
+            }
+        } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+            return undefined;
+        }
+
+        return parameter;
     }
 });
 

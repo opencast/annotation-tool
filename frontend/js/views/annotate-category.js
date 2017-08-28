@@ -21,6 +21,7 @@
  * @requires underscore
  * @requires backbone
  * @requires i18next
+ * @requires models/resource
  * @requires views-annotate-label
  * @requires templates/annotate-category.tmpl
  * @requires handlebars
@@ -30,13 +31,14 @@ define(["jquery",
         "underscore",
         "backbone",
         "i18next",
+        "models/resource",
         "views/annotate-label",
         "templates/annotate-category",
         "handlebarsHelpers",
         "jquery.colorPicker"],
 
 
-    function ($, _, Backbone, i18next, LabelView, Template) {
+    function ($, _, Backbone, i18next, Resource, LabelView, Template) {
 
         "use strict";
 
@@ -412,7 +414,7 @@ define(["jquery",
                 this.nameInput = this.$el.find(".catItem-header input");
 
                 if (_.isString(this.model.attributes.settings)) {
-                    this.model.attributes.settings = this.model.parseJSONString(this.model.attributes.settings);
+                    this.model.attributes.settings = Resource.parseJSONString(this.model.attributes.settings);
                 }
 
                 this.$el.find(".colorpicker").colorPicker({

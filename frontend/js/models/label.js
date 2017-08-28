@@ -87,7 +87,7 @@ define(["jquery",
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
                     if (attr.category && attr.category.settings) {
-                        attr.category.settings = this.parseJSONString(attr.category.settings);
+                        attr.category.settings = Resource.parseJSONString(attr.category.settings);
                     }
                 });
             },
