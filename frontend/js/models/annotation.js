@@ -100,11 +100,6 @@ define(["jquery",
                         tempLabel,
                         label;
 
-                    // Parse tags if present
-                    if (attr.tags) {
-                        attr.tags = this.parseJSONString(attr.tags);
-                    }
-
                     if (attr.scaleValue) {
                         attr.scalevalue = attr.scaleValue;
                         delete attr.scaleValue;

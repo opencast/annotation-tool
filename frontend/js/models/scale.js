@@ -98,10 +98,6 @@ define(["jquery",
                     } else {
                         attr.isMine = false;
                     }
-
-                    if (attr.tags) {
-                        attr.tags = this.parseJSONString(attr.tags);
-                    }
                 });
             },
 

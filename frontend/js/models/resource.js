@@ -162,6 +162,10 @@ var Resource = Backbone.Model.extend({
             attr.deleted_at = this.parseDate(attr.deleted_at);
         }
 
+        if (attr.tags) {
+            attr.tags = this.parseJSONString(attr.tags);
+        }
+
         if (callback) callback.call(this, attr);
 
         return data;

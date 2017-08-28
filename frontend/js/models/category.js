@@ -123,10 +123,6 @@ define(["jquery",
                         attr.isPublic = false;
                     }
 
-                    if (attr.tags) {
-                        attr.tags = this.parseJSONString(attr.tags);
-                    }
-
                     if (annotationsTool.localStorage && _.isArray(attr.labels)) {
                         attr.labels = new Labels(attr.labels, this);
                     }

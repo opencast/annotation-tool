@@ -111,11 +111,6 @@ define(["jquery",
                     } else {
                         attr.isPublic = false;
                     }
-
-                    // Parse tags if present
-                    if (attr.tags) {
-                        attr.tags = this.parseJSONString(attr.tags);
-                    }
                 });
             },
 

@@ -112,11 +112,6 @@ define(["jquery",
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
                     attr.settings   = this.parseJSONString(attr.settings);
-
-                    // Parse tags if present
-                    if (attr.tags) {
-                        attr.tags = this.parseJSONString(attr.tags);
-                    }
                 });
             },
 
