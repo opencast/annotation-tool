@@ -104,18 +104,6 @@ define(["jquery",
             },
 
             /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-video.Video#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    attr.settings   = this.parseJSONString(attr.settings);
-                });
-            },
-
-            /**
              * Validate the attribute list passed to the model
              * @alias module:models-video.Video#validate
              * @param  {object} data Object literal containing the model attribute to validate.

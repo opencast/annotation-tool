@@ -166,6 +166,10 @@ var Resource = Backbone.Model.extend({
             attr.tags = this.parseJSONString(attr.tags);
         }
 
+        if (attr.settings) {
+            attr.settings = this.parseJSONString(attr.settings);
+        }
+
         if (callback) callback.call(this, attr);
 
         return data;

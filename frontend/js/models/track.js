@@ -98,8 +98,6 @@ define(["jquery",
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    attr.settings = this.parseJSONString(attr.settings);
-
                     if (annotationsTool.user.get("id") === attr.created_by) {
                         attr.isMine = true;
                     } else {

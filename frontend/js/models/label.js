@@ -86,8 +86,6 @@ define(["jquery",
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    attr.settings = this.parseJSONString(attr.settings);
-
                     if (attr.category && attr.category.settings) {
                         attr.category.settings = this.parseJSONString(attr.category.settings);
                     }
