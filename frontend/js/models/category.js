@@ -220,17 +220,7 @@ define(["jquery",
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function (options) {
-                var json = Backbone.Model.prototype.toJSON.call(this, options);
-
-                if (options && options.stringifySub) {
-                    if (json.tags) {
-                        json.tags = JSON.stringify(json.tags);
-                    }
-
-                    if (json.settings && _.isObject(json.settings)) {
-                        json.settings = JSON.stringify(this.attributes.settings);
-                    }
-                }
+                var json = Resource.prototype.toJSON.call(this, options);
 
                 delete json.labels;
 

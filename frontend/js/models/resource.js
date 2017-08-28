@@ -160,6 +160,23 @@ var Resource = Backbone.Model.extend({
         if (callback) callback.call(this, attr);
 
         return data;
+    },
+
+    /**
+     * Override the default toJSON function to ensure complete JSONing.
+     * @alias module:models-annotation.Annotation#toJSON
+     * @param {options} options Potential options influencing the JSONing process
+     * @return {JSON} JSON representation of the instance
+     */
+    toJSON: function (options) {
+        var json = Backbone.Model.prototype.toJSON.call(this, options);
+
+        if (options && options.stringifySub) {
+            if (json.tags) json.tags = JSON.stringify(json.tags);
+            if (json.settings && _.isObject(json.settings)) json.settings = JSON.stringify(json.settings);
+        }
+
+        return json;
     }
 }, {
     /**

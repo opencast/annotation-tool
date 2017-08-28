@@ -102,7 +102,7 @@ define(["jquery",
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
-                var json = Backbone.Model.prototype.toJSON.call(this);
+                var json = Resource.prototype.toJSON.call(this);
 
                 if (json.scale && json.scale.attributes) {
                     json.scale = this.attributes.scale.toJSON();

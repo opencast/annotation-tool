@@ -78,19 +78,6 @@ define(["jquery",
                 if (attr.text &&  !_.isString(attr.text)) {
                     return "\"text\" attribute must be a string!";
                 }
-            },
-
-            /**
-             * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-comment.Comment#toJSON
-             * @return {JSON} JSON representation of the instance
-             */
-            toJSON: function () {
-                var json = Backbone.Model.prototype.toJSON.call(this);
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
-                }
-                return json;
             }
         });
         return Comment;
