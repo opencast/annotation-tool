@@ -155,8 +155,6 @@ var Resource = Backbone.Model.extend({
 
         attr.isMine = annotationsTool.user.id === attr.created_by;
 
-        attr.isPublic = attr.access === ACCESS.PUBLIC;
-
         if (callback) callback.call(this, attr);
 
         return data;
