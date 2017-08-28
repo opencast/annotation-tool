@@ -128,16 +128,21 @@ var Resource = Backbone.Model.extend({
      * @return {object}  The object literal with the list of parsed model attribute.
      */
     parse: function (data, callback) {
+        function parseDate(value) {
+            var date = new Date(value);
+            return _.isNaN(date.getTime()) ? undefined : date;
+        }
+
         var attr = data.attributes || data;
 
         if (attr.created_at) {
-            attr.created_at = this.parseDate(attr.created_at);
+            attr.created_at = parseDate(attr.created_at);
         }
         if (attr.updated_at) {
-            attr.updated_at = this.parseDate(attr.updated_at);
+            attr.updated_at = parseDate(attr.updated_at);
         }
         if (attr.deleted_at) {
-            attr.deleted_at = this.parseDate(attr.deleted_at);
+            attr.deleted_at = parseDate(attr.deleted_at);
         }
 
         if (attr.tags) {
@@ -155,17 +160,6 @@ var Resource = Backbone.Model.extend({
         if (callback) callback.call(this, attr);
 
         return data;
-    },
-
-    /**
-     * Parse many different types of values into a date or fail in an easily detectable manner.
-     * @alias module:models-resource.Resource#parseDate
-     * @param value The supposed date
-     * @return {Date} <tt>value</tt> converted to a <tt>Date</tt> or <tt>undefined</tt> if that failed
-     */
-    parseDate: function (value) {
-        var date = new Date(value);
-        return _.isNaN(date.getTime()) ? undefined : date;
     }
 }, {
     /**
