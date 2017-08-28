@@ -98,12 +98,6 @@ define(["jquery",
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (annotationsTool.user.get("id") === attr.created_by) {
-                        attr.isMine = true;
-                    } else {
-                        attr.isMine = false;
-                    }
-
                     if (attr.access === ACCESS.PUBLIC) {
                         attr.isPublic = true;
                     } else {

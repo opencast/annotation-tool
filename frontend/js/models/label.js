@@ -89,12 +89,6 @@ define(["jquery",
                     if (attr.category && attr.category.settings) {
                         attr.category.settings = this.parseJSONString(attr.category.settings);
                     }
-
-                    if (annotationsTool.user.get("id") === attr.created_by) {
-                        attr.isMine = true;
-                    } else {
-                        attr.isMine = false;
-                    }
                 });
             },
 

@@ -66,22 +66,6 @@ define(["jquery",
             },
 
             /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-comment.Comment#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (annotationsTool.user.get("id") === attr.created_by) {
-                        attr.isMine = true;
-                    } else {
-                        attr.isMine = false;
-                    }
-                });
-            },
-
-            /**
              * Validate the attribute list passed to the model
              * @alias module:models-comment.Comment#validate
              * @param  {object} data Object literal containing the model attribute to validate.

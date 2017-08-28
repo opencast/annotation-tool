@@ -170,6 +170,8 @@ var Resource = Backbone.Model.extend({
             attr.settings = this.parseJSONString(attr.settings);
         }
 
+        attr.isMine = annotationsTool.user.id === attr.created_by;
+
         if (callback) callback.call(this, attr);
 
         return data;
