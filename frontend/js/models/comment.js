@@ -73,18 +73,6 @@ define(["jquery",
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (!_.isUndefined(attr.created_at)) {
-                        attr.created_at = Date.parse(attr.created_at);
-                    }
-
-                    if (!_.isUndefined(attr.updated_at)) {
-                        attr.updated_at = Date.parse(attr.updated_at);
-                    }
-
-                    if (!_.isUndefined(attr.deleted_at)) {
-                        attr.deleted_at = Date.parse(attr.deleted_at);
-                    }
-
                     if (annotationsTool.user.get("id") === attr.created_by) {
                         attr.isMine = true;
                     } else {

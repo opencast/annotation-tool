@@ -84,20 +84,6 @@ define(["jquery",
             },
 
             /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-user.User#parse
-             * @param  {Object} data Object literal containing the model attribute to parse.
-             * @return {Object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                    attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                    attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-                });
-            },
-
-            /**
              * Validate the attribute list passed to the model
              * @alias module:models-user.User#validate
              * @param  {Object} data Object literal containing the model attribute to validate.

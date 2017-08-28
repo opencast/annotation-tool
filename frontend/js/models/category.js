@@ -107,18 +107,6 @@ define(["jquery",
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (attr.created_at) {
-                        attr.created_at = this.parseDate(attr.created_at);
-                    }
-
-                    if (attr.updated_at) {
-                        attr.updated_at = this.parseDate(attr.updated_at);
-                    }
-
-                    if (attr.deleted_at) {
-                        attr.deleted_at = this.parseDate(attr.deleted_at);
-                    }
-
                     if (attr.settings) {
                         attr.settings = this.parseJSONString(attr.settings);
                     }

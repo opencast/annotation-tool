@@ -152,7 +152,17 @@ var Resource = Backbone.Model.extend({
     parse: function (data, callback) {
         var attr = data.attributes || data;
 
-        callback.call(this, attr);
+        if (attr.created_at) {
+            attr.created_at = this.parseDate(attr.created_at);
+        }
+        if (attr.updated_at) {
+            attr.updated_at = this.parseDate(attr.updated_at);
+        }
+        if (attr.deleted_at) {
+            attr.deleted_at = this.parseDate(attr.deleted_at);
+        }
+
+        if (callback) callback.call(this, attr);
 
         return data;
     },

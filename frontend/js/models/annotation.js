@@ -100,18 +100,6 @@ define(["jquery",
                         tempLabel,
                         label;
 
-                    if (attr.created_at) {
-                        attr.created_at = this.parseDate(attr.created_at);
-                    }
-
-                    if (attr.updated_at) {
-                        attr.updated_at = this.parseDate(attr.updated_at);
-                    }
-
-                    if (attr.deleted_at) {
-                        attr.deleted_at = this.parseDate(attr.deleted_at);
-                    }
-
                     // Parse tags if present
                     if (attr.tags) {
                         attr.tags = this.parseJSONString(attr.tags);
