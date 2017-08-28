@@ -97,37 +97,29 @@ define(["jquery",
              * @return {Object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
+                return Resource.prototype.parse.call(this, data, function (attr) {
+                    attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                    attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                    attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                    attr.settings = this.parseJSONString(attr.settings);
 
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-                attr.settings = this.parseJSONString(attr.settings);
+                    if (annotationsTool.user.get("id") === attr.created_by) {
+                        attr.isMine = true;
+                    } else {
+                        attr.isMine = false;
+                    }
 
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
+                    if (attr.access === ACCESS.PUBLIC) {
+                        attr.isPublic = true;
+                    } else {
+                        attr.isPublic = false;
+                    }
 
-                if (attr.access === ACCESS.PUBLIC) {
-                    attr.isPublic = true;
-                } else {
-                    attr.isPublic = false;
-                }
-
-                // Parse tags if present
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
+                    // Parse tags if present
+                    if (attr.tags) {
+                        attr.tags = this.parseJSONString(attr.tags);
+                    }
+                });
             },
 
             /**

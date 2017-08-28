@@ -85,30 +85,23 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
+                return Resource.prototype.parse.call(this, data, function (attr) {
 
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-                attr.settings = this.parseJSONString(attr.settings);
+                    attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                    attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                    attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                    attr.settings = this.parseJSONString(attr.settings);
 
-                if (attr.category && attr.category.settings) {
-                    attr.category.settings = this.parseJSONString(attr.category.settings);
-                }
+                    if (attr.category && attr.category.settings) {
+                        attr.category.settings = this.parseJSONString(attr.category.settings);
+                    }
 
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
+                    if (annotationsTool.user.get("id") === attr.created_by) {
+                        attr.isMine = true;
+                    } else {
+                        attr.isMine = false;
+                    }
+                });
             },
 
             /**

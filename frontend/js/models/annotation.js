@@ -94,89 +94,73 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                var attr = data.attributes ? data.attributes : data,
-                    parseDate = function (date) {
-                        if (_.isNumber(date)) {
-                            return new Date(date);
-                        } else if (_.isString) {
-                            return Date.parse(date);
-                        } else {
-                            return null;
-                        }
-                    },
-                    tempSettings,
-                    categories,
-                    tempLabel,
-                    label;
+                return Resource.prototype.parse.call(this, data, function (attr) {
+                    var tempSettings,
+                        categories,
+                        tempLabel,
+                        label;
 
-                if (attr.created_at) {
-                    attr.created_at = parseDate(attr.created_at);
-                }
-
-                if (attr.updated_at) {
-                    attr.updated_at = parseDate(attr.updated_at);
-                }
-
-                if (attr.deleted_at) {
-                    attr.deleted_at = parseDate(attr.deleted_at);
-                }
-
-                // Parse tags if present
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                if (attr.scaleValue) {
-                    attr.scalevalue = attr.scaleValue;
-                    delete attr.scaleValue;
-                }
-
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                if (attr.label) {
-                    if (attr.label.category && (tempSettings = this.parseJSONString(attr.label.category.settings))) {
-                        attr.label.category.settings = tempSettings;
+                    if (attr.created_at) {
+                        attr.created_at = this.parseDate(attr.created_at);
                     }
 
-                    if ((tempSettings = this.parseJSONString(attr.label.settings))) {
-                        attr.label.settings = tempSettings;
+                    if (attr.updated_at) {
+                        attr.updated_at = this.parseDate(attr.updated_at);
                     }
-                }
 
-                if (annotationsTool.localStorage && _.isArray(attr.comments)) {
-                    attr.comments = new Comments(attr.comments, this);
-                }
+                    if (attr.deleted_at) {
+                        attr.deleted_at = this.parseDate(attr.deleted_at);
+                    }
 
-                if (!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
-                    categories = annotationsTool.video.get("categories");
+                    // Parse tags if present
+                    if (attr.tags) {
+                        attr.tags = this.parseJSONString(attr.tags);
+                    }
 
-                    categories.each(function (cat) {
+                    if (attr.scaleValue) {
+                        attr.scalevalue = attr.scaleValue;
+                        delete attr.scaleValue;
+                    }
 
-                        if ((tempLabel = cat.attributes.labels.get(attr.label_id))) {
-                            label = tempLabel;
-                            return true;
+                    if (annotationsTool.user.get("id") === attr.created_by) {
+                        attr.isMine = true;
+                    } else {
+                        attr.isMine = false;
+                    }
+
+                    if (attr.label) {
+                        if (attr.label.category && (tempSettings = this.parseJSONString(attr.label.category.settings))) {
+                            attr.label.category.settings = tempSettings;
                         }
 
-                    }, this);
+                        if ((tempSettings = this.parseJSONString(attr.label.settings))) {
+                            attr.label.settings = tempSettings;
+                        }
+                    }
 
-                    attr.label = label;
-                }
+                    if (annotationsTool.localStorage && _.isArray(attr.comments)) {
+                        attr.comments = new Comments(attr.comments, this);
+                    }
 
-                if (!annotationsTool.localStorage &&  attr.scalevalue) {
-                    attr.scaleValue = attr.scalevalue;
-                }
+                    if (!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
+                        categories = annotationsTool.video.get("categories");
 
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
+                        categories.each(function (cat) {
 
-                return data;
+                            if ((tempLabel = cat.attributes.labels.get(attr.label_id))) {
+                                label = tempLabel;
+                                return true;
+                            }
+
+                        }, this);
+
+                        attr.label = label;
+                    }
+
+                    if (!annotationsTool.localStorage &&  attr.scalevalue) {
+                        attr.scaleValue = attr.scalevalue;
+                    }
+                });
             },
 
             /**

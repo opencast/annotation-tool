@@ -138,6 +138,34 @@ var Resource = Backbone.Model.extend({
         }
 
         return parameter;
+    },
+
+    /**
+     * Parse the attribute list passed to the model
+     * @alias module:models-resource.Resource#parse
+     * @param  {object} data Object literal containing the model attribute to parse.
+     * @param {function} callback Callback function that parses and potentially modifies <tt>data</tt>
+     *   It does not need to worry about whether a POJO or a Backbone model was passed
+     *   and it does not have to return anything. It works directly on the passed hash
+     * @return {object}  The object literal with the list of parsed model attribute.
+     */
+    parse: function (data, callback) {
+        var attr = data.attributes || data;
+
+        callback.call(this, attr);
+
+        return data;
+    },
+
+    /**
+     * Parse many different types of values into a date or fail in an easily detectable manner.
+     * @alias module:models-resource.Resource#parseDate
+     * @param value The supposed date
+     * @return {Date} <tt>value</tt> converted to a <tt>Date</tt> or <tt>undefined</tt> if that failed
+     */
+    parseDate: function (value) {
+        var date = new Date(value);
+        return _.isNaN(date.getTime()) ? undefined : date;
     }
 });
 

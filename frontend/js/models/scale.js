@@ -92,21 +92,21 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (attr) {
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                return Resource.prototype.parse.call(this, attr, function (attr) {
+                    attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                    attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                    attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
 
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
+                    if (annotationsTool.user.get("id") === attr.created_by) {
+                        attr.isMine = true;
+                    } else {
+                        attr.isMine = false;
+                    }
 
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                return attr;
+                    if (attr.tags) {
+                        attr.tags = this.parseJSONString(attr.tags);
+                    }
+                });
             },
 
 

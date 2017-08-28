@@ -37,16 +37,6 @@ define(["jquery",
 
         "use strict";
 
-        function parseDate(date) {
-            if (_.isDate(date)) {
-                return date;
-            } else if (_.isNumber(date) || _.isString(date)) {
-                return new Date(date);
-            } else {
-                return null;
-            }
-        }
-
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#Model}
@@ -116,55 +106,47 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
+                return Resource.prototype.parse.call(this, data, function (attr) {
+                    if (attr.created_at) {
+                        attr.created_at = this.parseDate(attr.created_at);
+                    }
 
-                if (attr.created_at) {
-                    attr.created_at = parseDate(attr.created_at);
-                }
+                    if (attr.updated_at) {
+                        attr.updated_at = this.parseDate(attr.updated_at);
+                    }
 
-                if (attr.updated_at) {
-                    attr.updated_at = parseDate(attr.updated_at);
-                }
+                    if (attr.deleted_at) {
+                        attr.deleted_at = this.parseDate(attr.deleted_at);
+                    }
 
-                if (attr.deleted_at) {
-                    attr.deleted_at = parseDate(attr.deleted_at);
-                }
+                    if (attr.settings) {
+                        attr.settings = this.parseJSONString(attr.settings);
+                    }
 
-                if (attr.settings) {
-                    attr.settings = this.parseJSONString(attr.settings);
-                }
+                    if (annotationsTool.user.get("id") === attr.created_by) {
+                        attr.isMine = true;
+                    } else {
+                        attr.isMine = false;
+                    }
 
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
+                    if (attr.access === ACCESS.PUBLIC) {
+                        attr.isPublic = true;
+                    } else {
+                        attr.isPublic = false;
+                    }
 
-                if (attr.access === ACCESS.PUBLIC) {
-                    attr.isPublic = true;
-                } else {
-                    attr.isPublic = false;
-                }
+                    if (attr.tags) {
+                        attr.tags = this.parseJSONString(attr.tags);
+                    }
 
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
+                    if (annotationsTool.localStorage && _.isArray(attr.labels)) {
+                        attr.labels = new Labels(attr.labels, this);
+                    }
 
-                if (annotationsTool.localStorage && _.isArray(attr.labels)) {
-                    attr.labels = new Labels(attr.labels, this);
-                }
-
-                if (!annotationsTool.localStorage &&  attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
-                    attr.scale = annotationsTool.video.get("scales").get(attr.scale_id);
-                }
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
+                    if (!annotationsTool.localStorage &&  attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
+                        attr.scale = annotationsTool.video.get("scales").get(attr.scale_id);
+                    }
+                });
             },
 
             /**
