@@ -16,13 +16,14 @@
 /**
  * A module containing helper functions needed in many different places
  * @module util
+ * @requires underscore
  */
 define(
-    [],
-    function () {
+    ["underscore"],
+    function (_) {
         "use strict";
 
-        return {
+        var util = {
             /**
             * Check whether two closed intervals overlap.
             * Nothe that the <code>start</code> and <code>end</code> properties of the given objects
@@ -36,7 +37,30 @@ define(
             */
             overlaps: function (interval1, interval2) {
                 return interval1.start <= interval2.end && interval2.start <= interval1.end;
+            },
+
+            /**
+             * Tries to parse many different things to a date.
+             * @param value A thing hopefully representing a date
+             * @returns {Date|undefined} <code>value</code> interpreted as a <code>Date</code> or <code>undefined</code> if that failed
+             */
+            parseDate: function (value) {
+                var date = new Date(value);
+                return _.isNaN(date.getTime()) ? undefined : date;
+            },
+
+            /**
+             * Test whether two values represent the same date.
+             * The values are converted to dates using {@link parseDate} before comparing their respective timestamps.
+             * @param value1 The first value
+             * @param value2 The second value
+             * @returns {Boolean} <code>true</code> if the values represent the same date, <code>false</code> otherwise
+             */
+            datesEqual: function (value1, value2) {
+                return util.parseDate(value1).getTime() === util.parseDate(value2).getTime();
             }
         };
+
+        return util;
     }
 );

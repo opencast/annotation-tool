@@ -19,15 +19,11 @@
  * @module models-resource
  * @requires underscore
  * @requires backbone
+ * @requires util
  * @requires access
  */
-define(["underscore", "backbone", "access"], function (_, Backbone, ACCESS) {
+define(["underscore", "backbone", "util", "access"], function (_, Backbone, util, ACCESS) {
 "use strict";
-
-function parseDate(value) {
-    var date = new Date(value);
-    return _.isNaN(date.getTime()) ? undefined : date;
-}
 
 /**
  * @constructor
@@ -106,23 +102,19 @@ var Resource = Backbone.Model.extend({
             return "\"access\" attribute is not valid.";
         }
 
-        function isSameDate(date1, date2) {
-            return parseDate(date1).getTime() === parseDate(date2).getTime();
-        }
-
         if (attr.created_at) {
-            if (!parseDate(attr.created_at)) {
+            if (!util.parseDate(attr.created_at)) {
                 return "\"created_at\" attribute must represent a date!";
-            } else if (created && !isSameDate(created, attr.created_at)) {
+            } else if (created && !util.datesEqual(created, attr.created_at)) {
                 return "\"created_at\" attribute can not be modified after initialization!";
             }
         }
 
-        if (attr.updated_at && !parseDate(attr.updated_at)) {
+        if (attr.updated_at && !util.parseDate(attr.updated_at)) {
             return "\"updated_at\" attribute must represent a date!";
         }
 
-        if (attr.deleted_at && !parseDate(attr.deleted_at)) {
+        if (attr.deleted_at && !util.parseDate(attr.deleted_at)) {
             return "\"deleted_at\" attribute must represent a date!";
         }
     },
@@ -140,13 +132,13 @@ var Resource = Backbone.Model.extend({
         var attr = data.attributes || data;
 
         if (attr.created_at) {
-            attr.created_at = parseDate(attr.created_at);
+            attr.created_at = util.parseDate(attr.created_at);
         }
         if (attr.updated_at) {
-            attr.updated_at = parseDate(attr.updated_at);
+            attr.updated_at = util.parseDate(attr.updated_at);
         }
         if (attr.deleted_at) {
-            attr.deleted_at = parseDate(attr.deleted_at);
+            attr.deleted_at = util.parseDate(attr.deleted_at);
         }
 
         if (attr.tags) {
