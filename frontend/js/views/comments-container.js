@@ -180,7 +180,7 @@ define(["jquery",
                         this.commentViews.splice(index, 1);
                         commentView.deleteView();
                         this.render();
-                        return;
+                        return true;
                     }
                 }, this);
             },
