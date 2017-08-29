@@ -983,7 +983,8 @@ define(["util",
 
                 var items = _.filter(this.annotationItems, function (item) {
                     var category = item.annotation.category();
-                    return item.trackId === trackId && (!category || category.get("visible"));
+                    // Mind the lose comparison! IDs might be either strings or numbers, but we don't care here.
+                    return item.trackId == trackId && (!category || category.get("visible"));
                 });
 
                 // The height of the track in stack levels. We need (and potentially calculate) that later.
