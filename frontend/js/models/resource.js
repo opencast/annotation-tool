@@ -24,6 +24,11 @@
 define(["underscore", "backbone", "access"], function (_, Backbone, ACCESS) {
 "use strict";
 
+function parseDate(value) {
+    var date = new Date(value);
+    return _.isNaN(date.getTime()) ? undefined : date;
+}
+
 /**
  * @constructor
  * @see {@link http://www.backbonejs.org/#Model}
@@ -101,20 +106,24 @@ var Resource = Backbone.Model.extend({
             return "\"access\" attribute is not valid.";
         }
 
+        function isSameDate(date1, date2) {
+            return parseDate(date1).getTime() === parseDate(date2).getTime();
+        }
+
         if (attr.created_at) {
-            if (created && created !== attr.created_at) {
+            if (!parseDate(attr.created_at)) {
+                return "\"created_at\" attribute must represent a date!";
+            } else if (created && !isSameDate(created, attr.created_at)) {
                 return "\"created_at\" attribute can not be modified after initialization!";
-            } else if (!(_.isNumber(attr.created_at) || _.isDate(attr.created_at))) {
-                return "\"created_at\" attribute must be a number or date!";
             }
         }
 
-        if (attr.updated_at && !(_.isNumber(attr.updated_at) || _.isDate(attr.updated_at))) {
-            return "\"updated_at\" attribute must be a number or date!";
+        if (attr.updated_at && !parseDate(attr.updated_at)) {
+            return "\"updated_at\" attribute must represent a date!";
         }
 
-        if (attr.deleted_at && !(_.isNumber(attr.deleted_at) || _.isDate(attr.deleted_at))) {
-            return "\"deleted_at\" attribute must be a number or date!";
+        if (attr.deleted_at && !parseDate(attr.deleted_at)) {
+            return "\"deleted_at\" attribute must represent a date!";
         }
     },
 
@@ -128,11 +137,6 @@ var Resource = Backbone.Model.extend({
      * @return {object}  The object literal with the list of parsed model attribute.
      */
     parse: function (data, callback) {
-        function parseDate(value) {
-            var date = new Date(value);
-            return _.isNaN(date.getTime()) ? undefined : date;
-        }
-
         var attr = data.attributes || data;
 
         if (attr.created_at) {
