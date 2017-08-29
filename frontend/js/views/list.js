@@ -389,7 +389,7 @@ define(["jquery",
                 _.find(this.annotationViews, function (annotationView, index) {
                     if (delAnnotation === annotationView.model) {
                         this.annotationViews.splice(index, 1);
-                        return;
+                        return true;
                     }
                 }, this);
             },
