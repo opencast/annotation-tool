@@ -373,7 +373,7 @@ define(["jquery",
                         this.categoryViews.splice(index, 1);
                         this.initCarousel();
                         this.render();
-                        return;
+                        return true;
                     }
                 }, this);
             },
