@@ -3,6 +3,16 @@
 	<span class="username">{{creator}}</span>
 	<span class="date">{{formatDate creationdate}}{{#if updateddate}} | {{t "annotation.comments.modified" date=(formatDate updateddate)}}{{/if}}</span>
 </span>
-{{#if canEdit}}<i class="delete-comment icon-trash" title="{{t "annotation.comments.delete"}}"></i>{{/if}}
-{{#if canEdit}}<i class="edit-comment icon-pencil" title="{{t "annotation.comments.edit.button"}}"></i>{{/if}}
+<div class="edit-buttons">
+	{{#if canEdit}}
+		<i class="edit-comment icon-pencil" title="{{t "annotation.comments.edit.button"}}"></i>
+		<i class="delete-comment icon-trash" title="{{t "annotation.comments.delete"}}"></i>
+	{{/if}}
+</div>
 <span class="comment">{{{text}}}</span>
+
+<ul class="replies">
+	{{#each replies}}
+		{{{this}}}
+	{{/each}}
+</ul>

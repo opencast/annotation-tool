@@ -3,3 +3,9 @@
 	<button type="button" class="btn">{{t "annotation.comments.edit.cancel"}}</button>
 	<button type="submit" class="btn btn-primary">{{t "annotation.comments.edit.save"}}</button>
 </div>
+
+<ul>
+    {{#each replies}}
+        {{{this}}}
+    {{/each}}
+</ul>

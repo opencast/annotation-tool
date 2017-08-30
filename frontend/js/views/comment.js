@@ -106,6 +106,8 @@ define(["jquery",
 
                 _.extend(this, Backbone.Events);
 
+                this.listenTo(this.model.replies, "add remove reset", this.render);
+
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.COMMENT;
 
@@ -154,7 +156,7 @@ define(["jquery",
 
                 this.trigger("edit");
 
-                this.$el.html(this.editTemplate({text: this.model.get("text")}));
+                this.$el.html(this.editTemplate({ text: this.model.get("text"), replies: this.replies }));
                 this.delegateEvents(this.events);
                 this.isEditEnable = true;
             },
@@ -232,6 +234,9 @@ define(["jquery",
                     data.updateddate = updatedAt;
                 }
                 this.$el.html(this.template(data));
+                this.model.replies.each(function (reply) {
+                    this.$el.find(".replies").first().append(new CommentView({ model: reply }).render().$el);
+                }, this);
                 this.delegateEvents(this.events);
                 return this;
             }
