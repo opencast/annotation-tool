@@ -19,17 +19,19 @@
  * @module models-label
  * @requires jQuery
  * @requires underscore
+ * @requires util
  * @requires ACCESS
  * @requires backbone
  * @requires models/resource
  */
 define(["jquery",
         "underscore",
+        "util",
         "access",
         "backbone",
         "models/resource"],
 
-    function ($, _, ACCESS, Backbone, Resource) {
+    function ($, _, util, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -87,7 +89,7 @@ define(["jquery",
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
                     if (attr.category && attr.category.settings) {
-                        attr.category.settings = Resource.parseJSONString(attr.category.settings);
+                        attr.category.settings = util.parseJSONString(attr.category.settings);
                     }
                 });
             },

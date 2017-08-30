@@ -58,6 +58,27 @@ define(
              */
             datesEqual: function (value1, value2) {
                 return util.parseDate(value1).getTime() === util.parseDate(value2).getTime();
+            },
+
+            /**
+            * Parse the given parameter to JSON if given as String
+            * @alias module:models-resource.Resource.parseJSONString
+            * @param  parameter the parameter as String
+            * @return {Object} parameter as JSON object
+            */
+            parseJSONString: function (parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+                    } catch (e) {
+                        console.warn("Can not parse parameter \"" + parameter + "\": " + e);
+                        return undefined;
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
+
+                return parameter;
             }
         };
 

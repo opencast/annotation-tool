@@ -18,6 +18,7 @@
  * @module models-annotation
  * @requires jquery
  * @requires underscore
+ * @requires util
  * @requires collections-comments
  * @requires ACCESS
  * @requires backbone
@@ -26,13 +27,14 @@
  */
 define(["jquery",
         "underscore",
+        "util",
         "collections/comments",
         "access",
         "backbone",
         "models/resource",
         "localstorage"],
 
-    function ($, _, Comments, ACCESS, Backbone, Resource) {
+    function ($, _, util, Comments, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -112,11 +114,11 @@ define(["jquery",
                     }
 
                     if (attr.label) {
-                        if (attr.label.category && (tempSettings = Resource.parseJSONString(attr.label.category.settings))) {
+                        if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
                             attr.label.category.settings = tempSettings;
                         }
 
-                        if ((tempSettings = Resource.parseJSONString(attr.label.settings))) {
+                        if ((tempSettings = util.parseJSONString(attr.label.settings))) {
                             attr.label.settings = tempSettings;
                         }
                     }
