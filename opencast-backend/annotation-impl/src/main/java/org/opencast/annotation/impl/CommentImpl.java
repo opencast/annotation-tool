@@ -29,14 +29,16 @@ public final class CommentImpl extends ResourceImpl implements Comment {
   private final long id;
   private final long annotationId;
   private final String text;
+  private final Option<Long> replyToId;
 
-  public CommentImpl(long id, long annotationId, String text, Resource resource) {
+  public CommentImpl(long id, long annotationId, String text, Option<Long> replyToId, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
             .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
             .getTags());
     this.id = id;
     this.annotationId = annotationId;
     this.text = text;
+    this.replyToId = replyToId;
   }
 
   /**
@@ -61,6 +63,14 @@ public final class CommentImpl extends ResourceImpl implements Comment {
   @Override
   public String getText() {
     return text;
+  }
+
+  /**
+   * @see org.opencast.annotation.api.Comment#getReplyToId()
+   */
+  @Override
+  public Option<Long> getReplyToId() {
+    return Option.none();
   }
 
   @Override

@@ -767,6 +767,135 @@ public class ExtendedAnnotationsRestServiceTest {
             .body(containsString("category")).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
   }
 
+  @Test
+  public void testReply() {
+    JSONObject json = new JSONObject();
+    json.put("channel", "33");
+
+    // create user, video, annotation and comment
+    given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
+    final String videoId = extractLocationId(given().formParam("video_extid", "lecture").expect().statusCode(CREATED)
+            .when().post(host("/videos")));
+    final String trackId = extractLocationId(given().pathParam("videoId", videoId).formParam("name", "track")
+            .formParam("settings", "{\"type\":\"lecture\"}").formParam("description", "just a track").expect()
+            .statusCode(CREATED).header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+"))).when()
+            .post(host("/videos/{videoId}/tracks")));
+    final String annotationId = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .formParam("text", "cool video").formParam("start", 40).formParam("settings", "{\"type\":\"test\"}")
+            .expect().statusCode(CREATED)
+            .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+")))
+            .body("text", equalTo("cool video")).body("settings", equalTo("{\"type\":\"test\"}")).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations")));
+
+    final String commentId = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).formParam("text", "New comment")
+            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
+            .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+/comments/[0-9]+")))
+            .body("text", equalTo("New comment")).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments")));
+
+    // post
+    final String id = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).pathParam("commentId", commentId).formParam("text", "New reply")
+            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
+            .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+/comments/[0-9]+")))
+            .body("text", equalTo("New reply")).body("tags", equalTo(json)).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies")));
+    given().pathParam("videoId", 323233).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", commentId).formParam("text", "New reply").formParam("tags", json.toJSONString())
+            .expect().statusCode(BAD_REQUEST).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
+    given().pathParam("videoId", videoId).pathParam("trackId", 242332).pathParam("annotationId", annotationId)
+            .pathParam("commentId", commentId).formParam("text", "New reply").formParam("tags", json.toJSONString())
+            .expect().statusCode(BAD_REQUEST).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", 4232423)
+            .pathParam("commentId", commentId).formParam("text", "New reply").formParam("tags", json.toJSONString())
+            .expect().statusCode(BAD_REQUEST).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
+
+    // put
+    json.put("channel", "33");
+    given().pathParam("videoId", 323233).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", 32423234).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", 32323)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).formParam("text", "Updated reply").formParam("tags", json.toJSONString())
+            .expect().statusCode(OK).body("text", equalTo("Updated reply")).body("tags", equalTo(json)).when()
+            .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+
+    // get
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).expect().statusCode(OK).body("text", equalTo("Updated reply"))
+            .body("tags", equalTo(json)).when()
+            .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", 42323).expect().statusCode(NOT_FOUND).when()
+            .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", 3232).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", 5567).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", 8542)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+
+    // get all comments from annotation, excluding replies
+    final String commentId2 = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).formParam("text", "Second comment").expect()
+            .statusCode(CREATED).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments")));
+
+    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).expect().statusCode(OK).log().all()
+            .body("comments", iterableWithSize(2)).when()
+            .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments"));
+
+    // get all replies to a comment
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", commentId).formParam("text", "Another reply").expect().statusCode(CREATED).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", commentId2).formParam("text", "Reply to second comment").expect()
+            .statusCode(CREATED).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
+
+    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).pathParam("commentId", commentId).expect().statusCode(OK).log()
+            .all().body("comments", iterableWithSize(2)).when()
+            .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
+    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).pathParam("commentId", commentId2).expect().statusCode(OK).log()
+            .all().body("comments", iterableWithSize(1)).when()
+            .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
+
+    // delete
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", 42323).expect().statusCode(NOT_FOUND).when()
+            .delete(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).expect().statusCode(NO_CONTENT).when()
+            .delete(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", 67243).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .delete(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", 5252).pathParam("annotationId", annotationId)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .delete(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", 5472)
+            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .delete(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+  }
+
   // --
 
   private static final RestServiceTestEnv rt = testEnvForClasses(TestRestService.BASE_URL, TestRestService.class);

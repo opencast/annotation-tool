@@ -15,6 +15,8 @@
  */
 package org.opencast.annotation.api;
 
+import org.opencastproject.util.data.Option;
+
 /** A class representing a comment of an annotation. */
 public interface Comment extends Resource {
 
@@ -27,4 +29,6 @@ public interface Comment extends Resource {
   /** The comment text */
   String getText();
 
+  /** The id of another comment that this one is a reply to */
+  Option<Long> getReplyToId();
 }

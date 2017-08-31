@@ -29,6 +29,8 @@ import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestSe
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
 
+import org.opencast.annotation.impl.Jsons;
+
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
 import org.opencast.annotation.impl.persistence.CommentDto;
@@ -724,6 +726,11 @@ public class VideoEndpoint {
   public Response postComment(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @FormParam("text") final String text,
           @FormParam("tags") final String tags) {
+    return postCommentResponse(trackId, annotationId, Option.<Long> none(), text, tags);
+  }
+
+  public Response postCommentResponse(final long trackId, final long annotationId, final Option<Long> replyToId,
+          final String text, final String tags) {
     if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
       return run(array(text), new Function0<Response>() {
@@ -734,7 +741,7 @@ public class VideoEndpoint {
             return BAD_REQUEST;
 
           Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-          final Comment comment = eas.createComment(annotationId, text, resource);
+          final Comment comment = eas.createComment(annotationId, replyToId, text, resource);
 
           return Response.created(commentLocationUri(comment, videoId, trackId))
                   .entity(Strings.asStringNull().apply(CommentDto.toJson.apply(eas, comment))).build();
@@ -769,7 +776,7 @@ public class VideoEndpoint {
               if (!eas.hasResourceAccess(c))
                 return UNAUTHORIZED;
               Resource resource = eas.updateResource(c, tags);
-              final Comment updated = new CommentImpl(commentId, annotationId, text, resource);
+              final Comment updated = new CommentImpl(commentId, annotationId, text, Option.<Long> none(), resource);
               if (!c.equals(updated)) {
                 eas.updateComment(updated);
                 c = updated;
@@ -781,7 +788,7 @@ public class VideoEndpoint {
             @Override
             public Response none() {
               Resource resource = eas.createResource(tags);
-              final Comment comment = eas.createComment(annotationId, text, resource);
+              final Comment comment = eas.createComment(annotationId, Option.<Long> none(), text, resource);
 
               return Response.created(commentLocationUri(comment, videoId, trackId))
                       .entity(Strings.asStringNull().apply(CommentDto.toJson.apply(eas, comment))).build();
@@ -864,6 +871,11 @@ public class VideoEndpoint {
           @PathParam("annotationId") final long annotationId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
           @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
+    return getCommentsResponse(trackId, annotationId, Option.<Long> none(), limit, offset, date, tagsAnd, tagsOr);
+  }
+
+  public Response getCommentsResponse(final long trackId, final long annotationId, final Option<Long> replyToId,
+          final int limit, final int offset, final String date, final String tagsAnd, final String tagsOr) {
     if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
       return run(nil, new Function0<Response>() {
@@ -882,7 +894,8 @@ public class VideoEndpoint {
           return buildOk(CommentDto.toJson(
                   eas,
                   offset,
-                  eas.getComments(annotationId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
+                  eas.getComments(annotationId, replyToId, offsetm, limitm,
+                          datem.bind(Functions.<Option<Date>> identity()),
                           tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
                           tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
         }
@@ -891,6 +904,31 @@ public class VideoEndpoint {
       // track, video and/or annotation does not exist
       return BAD_REQUEST;
     }
+  }
+
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies")
+  public Response postReply(@PathParam("trackId") final long trackId,
+          @PathParam("annotationId") final long annotationId, @PathParam("commentId") final long commentId,
+          @FormParam("text") final String text, @FormParam("tags") final String tags) {
+    Option<Comment> comment = eas.getComment(commentId);
+    if (comment.isNone()) return BAD_REQUEST;
+    return postCommentResponse(trackId, annotationId, Option.some(comment.get().getId()), text, tags);
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies")
+  public Response getReplies(@PathParam("trackId") final long trackId,
+          @PathParam("annotationId") final long annotationId, @PathParam("commentId") final long commentId,
+          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
+          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
+          @QueryParam("tags-or") final String tagsOr) {
+    Option<Comment> comment = eas.getComment(commentId);
+    if (comment.isNone()) return BAD_REQUEST;
+    return getCommentsResponse(trackId, annotationId, some(commentId), limit, offset, date, tagsAnd,
+            tagsOr);
   }
 
   private URI trackLocationUri(Track t) {
