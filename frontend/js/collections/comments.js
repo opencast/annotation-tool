@@ -18,16 +18,18 @@
  * A module representing a comments collection
  * @module collections-comments
  * @requires jQuery
+ * @requires underscore
  * @requires models-comment
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "models/comment",
         "backbone",
         "localstorage"],
 
-        function ($, Comment, Backbone) {
+    function ($, _, Comment, Backbone) {
 
         "use strict";
 
