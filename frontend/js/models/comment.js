@@ -22,14 +22,16 @@
  * @requires ACCESS
  * @requires backbone
  * @requires models/resource
+ * @requires collections/comments
  */
 define(["jquery",
         "underscore",
         "access",
         "backbone",
-        "models/resource"],
+        "models/resource",
+        "collections/comments"],
 
-    function ($, _, ACCESS, Backbone, Resource) {
+    function ($, _, ACCESS, Backbone, Resource, Comments) {
 
         "use strict";
 
