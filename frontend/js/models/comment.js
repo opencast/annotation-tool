@@ -80,6 +80,7 @@ define(["jquery",
                 }
             }
         });
+
         return Comment;
     }
 );
