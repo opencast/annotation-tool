@@ -220,10 +220,10 @@ define(["jquery",
              */
             render: function () {
                 var data = {
-                        creator     : this.model.get("created_by_nickname"),
+                        creator: this.model.get("created_by_nickname"),
                         creationdate: this.model.get("created_at"),
-                        text        : _.escape(this.model.get("text")).replace(/\n/g, "<br/>"),
-                        canEdit     : this.model.get("isMine")
+                        text: _.escape(this.model.get("text")).replace(/\n/g, "<br/>"),
+                        canEdit: this.model.get("isMine")
                     },
                     updatedAt = this.model.get("updated_at");
 
