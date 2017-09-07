@@ -74,7 +74,20 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var invalidResource = Resource.prototype.validate.call(this, attr);
+                // Fix up circular dependency
+                if (!Comments) Comments = require("collections/comments");
+
+                if (!this.replies) this.replies = new Comments(null, {
+                    annotation: this.collection.annotation,
+                    replyTo: this
+                });
+
+                var invalidResource = Resource.prototype.validate.call(this, attr, {
+                    onIdChange: function () {
+                        this.replies.setUrl(this.collection.annotation, this);
+                        this.replies.fetch();
+                    }
+                });
                 if (invalidResource) return invalidResource;
 
                 if (attr.text &&  !_.isString(attr.text)) {
