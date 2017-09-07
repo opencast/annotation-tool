@@ -7,9 +7,9 @@
 // @import "../bootstrap/less/sprites.less";
 // @import "variables.less";
 // @import "base_style.less";
- 
 
-#list-container{
+
+#list-container {
 
     @min-height: 300px;
     @content-padding: 5px;
@@ -19,12 +19,12 @@
         box-shadow: 0 0 1px @color2 inset;
         border-radius: @radius;
         cursor: @cursor;
-    }   
+    }
 
     .navbar .dropdown {
         visibility: hidden;
     }
-    
+
     &.expanded {
         //min-height: @min-height;
         .navbar .dropdown {
@@ -42,28 +42,28 @@
         background-color: black;
     }
 
-    #content-list{
+    #content-list {
         background-color: #4b4b4b;
         overflow-y: auto;
         overflow-x: hidden;
         min-height: 55px;
         width: 100%; 
     }
-    
-    a.proxy-anchor{
+
+    a.proxy-anchor {
         display: none;
     }
 
-    i.check{
+    i.check {
         visibility: hidden;
     }
 
-    .checked i.check{
+    .checked i.check {
         visibility: visible;
     }
-    
+
     div.annotation {
-        @headerHeight: 16px; 
+        @headerHeight: 16px;
         @headerPadding: 2px;
         @headerSumHeight: @headerHeight + (2 * @headerPadding);
 
@@ -74,29 +74,27 @@
         }
 
         background-color: @white;
-        border-left: 1px solid @gray;      
-        border-right: 1px solid @gray;    
-        border-top: 1px solid @gray; 
-
+        border-left: 1px solid @gray;
+        border-right: 1px solid @gray;
+        border-top: 1px solid @gray;
 
         margin: 0;
         padding: 0 5px;
         background-color: @grayLighter;
 
-
         .creator {
             display: none;
-        }       
-                       
-        &:hover{
-          cursor: pointer;   
         }
-               
+
+        &:hover {
+            cursor: pointer;
+        }
+
         &.first-child {
             border-top: none;
         }
 
-        &.selected{
+        &.selected {
 
             tr:first-child {
                 //background-position: top;
@@ -107,9 +105,9 @@
 
             box-shadow: inset 0px 0px 2px 1px red;
 
-            //border: 1px solid @red;      
-            //border-bottom: 2px solid @red;    
-            //border-top: 2px solid @red;    
+            //border: 1px solid @red;
+            //border-bottom: 2px solid @red;
+            //border-top: 2px solid @red;
         }
 
         .right {
@@ -117,48 +115,47 @@
             width: 30%;
             height: @headerSumHeight;
             text-align: right;
-        }   
-        
+        }
+
         .left {
             float: left;
-            overflow:hidden;
+            overflow: hidden;
             width: 68%;
             text-overflow: ellipsis;
             white-space: nowrap;
             height: @headerSumHeight;
-        }               
-        
+        }
+
         button {
             height: @headerSumHeight;
             border: 1px solid @btnBorder;
             .box-sizing(border-box);
             padding: @headerPadding;
             vertical-align: top;
-            line-height: headerHeight;        
+            line-height: headerHeight;
         }
 
         .text-container {
             padding-bottom: 2px;
-        }        
-                
-                
+        }
+
         /* Content Elements in headerbar*/
 
         .read-only {
             display: inline-block;
         }
 
-        .comments .date:before{
+        .comments .date:before {
             content: "on ";
         }
 
         .comment-amount {
-            float:right;
+            float: right;
             font-size: 9px;
             line-height: 10px;
             text-align: center;
             width: 15px;
-            font-style:normal;   
+            font-style :normal;
         }
 
         .add-comment {
@@ -172,22 +169,26 @@
                 .iconStateSelected();
             }
         }
-        
-        i{    
-            &.delete, &.toggle-edit{
-               visibility: visible;
+
+        i {
+            &.delete, &.toggle-edit {
+                visibility: visible;
             }
-            
-            //Highlight clickable icons on mouseover           
-            &.icon-chevron-down, &.icon-chevron-right, &.icon-trash, &.icon-pencil, &.icon-comment, &.icon-comment-amount {
+
+            //Highlight clickable icons on mouseover
+            &.icon-chevron-down,
+            &.icon-chevron-right,
+            &.icon-trash,
+            &.icon-pencil,
+            &.icon-comment,
+            &.icon-comment-amount {
                 &:hover {
                     .iconHover();
                 }
             }
         }
-        
 
-        .start,.end{
+        .start,.end {
             display: inline-block;
             position: relative;
             color: @black;
@@ -201,7 +202,7 @@
                 position: relative;
                 z-index: 300;
                 margin: 0;
-                padding: 0;             
+                padding: 0;
                 box-shadow: none;
                 color: @black;
                 text-align: center;
@@ -213,19 +214,19 @@
                 cursor: pointer;
 
             }
-                        
-            input{
+
+            input {
                 width: 65px;
                 border: none;
                 position: relative;
                 z-index: 300;
                 margin: 0;
-                padding: 0;             
+                padding: 0;
                 box-shadow: none;
                 color: @black;
                 text-align: center;
                 font-family: monospace;
-                background:@white;
+                background: @white;
 
                 &.error {
                     color: @red;
@@ -237,14 +238,14 @@
                 position: absolute;
                 left: 0%;
                 right: 0%;
-                top:0;
+                top: 0;
                 z-index: 150;
                 width: 65px;
                 height: @headerHeight;
             }
         }
-                
-        span.scaling{
+
+        span.scaling {
 
             select {
                 width: 60px;
@@ -254,15 +255,15 @@
                 font-size: 0.85em;
                 color: @white;
                 background-color: @black;
-                border: none; 
-                vertical-align:top;                                        
+                border: none;
+                vertical-align:top;
             }
 
             span {
                 background-color: @black;
                 color: @white;
                 height: @headerHeight;
-                padding: @headerPadding;                
+                padding: @headerPadding;
                 font-weight: bold;
                 min-width: @headerHeight;
                 max-width: 4*@headerHeight;
@@ -271,24 +272,23 @@
                 font-size: 0.9em;
                 display: inline-block;
                 text-align: center;
-                vertical-align:top;
+                vertical-align: top;
             }
-        }               
-                
-        span.category{
-                    color: @gray;
+        }
 
-                    span.abbreviation {
-                        color: @black;
-                    } 
+        span.category {
+            color: @gray;
 
-                    span.category-name {
-                        display: none;
-                    }              
-        }               
+            span.abbreviation {
+                color: @black;
+            }
+
+            span.category-name {
+                display: none;
+            }
+        }
 
         /* Content elements in body*/
-            
         span.text{
             display: block;
             padding: @content-padding;
@@ -299,19 +299,19 @@
         span.freetext {
             textarea {
                 width: 97.5%;
-                resize:vertical;
+                resize: vertical;
             }
         }
-       
-        // span.track{
+
+        // span.track {
         //     display:none;
         //     background-color: lighten(#005580,20%);
         //     color: white;
         //     padding: 3px;
-        //     font-size: 0.90em;  
+        //     font-size: 0.90em;
         // }
-        
-        div.creator-info{
+
+        div.creator-info {
             padding: @content-padding;
             font-size: 10px;
             width: 100%;
@@ -343,95 +343,90 @@
     }
 
     .button-bar {
-            text-align: right;
-            button {
-                margin-bottom: 5px;
-            }
+        text-align: right;
+        button {
+            margin-bottom: 5px;
+        }
     }
 
-
     div.comments-container {
-      //background-color: @grayLight;
-      color: @black;
-      clear: both;
-      padding-bottom: 2px;
+        //background-color: @grayLight;
+        color: @black;
+        clear: both;
+        padding-bottom: 2px;
 
-      
-      textarea { 
-                resize:vertical;  
+        textarea {
+            resize: vertical;
         }
 
         div.title {
             background-color: @grayLight;
             padding: 2px;
         }
-            
-      
-      .comment-header {
 
-                padding: 2px;
-                    
-                span.add-comment {
-                    line-height: 16px;
-                    min-height: 16px;
+        .comment-header {
+
+            padding: 2px;
+
+            span.add-comment {
+                line-height: 16px;
+                min-height: 16px;
+                display: block;
+                text-align:right;
+                margin-right: 10px;
+
+                a.add-comment {
+                    color: @grayDark;
+                }
+            }
+        }
+
+        .comment-list {
+
+            font-size: 0.92em;
+
+            > div[id^="comment"] {
+                padding: @content-padding;
+
+                span.header {
                     display: block;
-                    text-align:right;
-                    margin-right: 10px;    
+                    font-size: 1em;
 
-                    a.add-comment {     
-                        color: @grayDark;
+                    .username {
+                        color: @black;
+                        font-weight: bold;
+                    }
+                    .date {
+                        color: #707070;
                     }
                 }
-                
-
+                span.text {
+                    background-color: transparent;
+                    margin: 0;
+                }
             }
-            
-        .comment-list {
-        
-          font-size: 0.92em;
+        }
 
-                > div[id^="comment"] {
-                    padding: @content-padding;
-                        
-                    span.header {
-                        display: block;
-                        font-size: 1em;
-                        
-                        .username {
-                            color: @black;
-                            font-weight: bold;
-                        }
-                        .date {
-                            color: #707070;
-                        }
-                    }           
-                    span.text {
-                        background-color: transparent;
-                        margin: 0;
-                    } 
-                }   
-            }
+        &.collapse {
+            padding: 0px;
+        }
+
+        i.delete-comment {
+            float: right;
+            margin-left: 5px;
+        }
+
+        i.edit-comment {
+            float: right;
+            margin-left: 5px;
+        }
     }
 
-    .comments-container.collapse {
-      padding: 0px;
+    .collapse-comment {
+        //.collapse();
+        i {
+            float: left;
+            margin-right: 5px;
+        }
     }
-
-    i.delete-comment {
-      float: right;
-      margin-left: 5px;
-    }
-    i.edit-comment {
-      float: right;
-      margin-left: 5px;
-    }
-
-}
-
-.collapse-comment i {
-  float: left;
-  margin-right: 5px;
-}
-.collapse-comment {
-    //.collapse();
 }
