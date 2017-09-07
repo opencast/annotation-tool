@@ -78,6 +78,7 @@ define(["jquery",
                 "click i.delete-comment"    : "onDeleteComment",
                 "dblclick span.comment"     : "onEditComment",
                 "click i.edit-comment"      : "onEditComment",
+                "click i.add-reply"         : "onAddReply",
                 "keyup textarea"            : "keyupInsertProxy",
                 "click button[type=submit]" : "onSubmit",
                 "click button[type=button]" : "onCancel"
@@ -162,6 +163,14 @@ define(["jquery",
             },
 
             /**
+             * Allow the user to enter a new reply to this views comment
+             * @alias module:views-comment.Comment#onAddReply
+             */
+            onAddReply: function () {
+                console.log("Not implemented");
+            },
+
+            /**
              * Submit the modifications on the comment
              * @alias module:views-comment.Comment#onSubmit
              */
@@ -225,7 +234,8 @@ define(["jquery",
                         creator: this.model.get("created_by_nickname"),
                         creationdate: this.model.get("created_at"),
                         text: _.escape(this.model.get("text")).replace(/\n/g, "<br/>"),
-                        canEdit: this.model.get("isMine")
+                        canEdit: this.model.get("isMine"),
+                        numberOfReplies: this.model.replies.length
                     },
                     updatedAt = this.model.get("updated_at");
 
