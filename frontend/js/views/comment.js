@@ -19,6 +19,7 @@
  * @module views-comment
  * @requires jQuery
  * @requires underscore
+ * @requires util
  * @requires templates/comment.tmpl
  * @requires templates/edit-comment.tmpl
  * @requires handlebars
@@ -26,13 +27,14 @@
  */
 define(["jquery",
         "underscore",
+        "util",
         "templates/comment",
         "templates/edit-comment",
         "handlebars",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, Template, EditTemplate, Handlebars, Backbone) {
+    function ($, _, util, Template, EditTemplate, Handlebars, Backbone) {
 
         "use strict";
 
@@ -218,16 +220,17 @@ define(["jquery",
              * @alias module:views-comment.Comment#render
              */
             render: function () {
-                var modelJSON = this.model.toJSON(),
-                    data = {
-                        creator     : modelJSON.created_by_nickname,
-                        creationdate: new Date(modelJSON.created_at),
-                        text        : _.escape(modelJSON.text).replace(/\n/g, "<br/>"),
-                        canEdit     : annotationsTool.user.get("id") === modelJSON.created_by
-                    };
-                if (!_.isUndefined(modelJSON.updated_at) && modelJSON.created_at !== modelJSON.updated_at) {
-                    data.updator = modelJSON.updated_by_nickname;
-                    data.updateddate = new Date(modelJSON.updated_at);
+                var data = {
+                        creator     : this.model.get("created_by_nickname"),
+                        creationdate: this.model.get("created_at"),
+                        text        : _.escape(this.model.get("text")).replace(/\n/g, "<br/>"),
+                        canEdit     : this.model.get("isMine")
+                    },
+                    updatedAt = this.model.get("updated_at");
+
+                if (updatedAt && !util.datesEqual(updatedAt, data.creationdate)) {
+                    data.updator = this.model.get("updated_by_nickname");
+                    data.updateddate = updatedAt;
                 }
                 this.$el.html(this.template(data));
                 this.delegateEvents(this.events);

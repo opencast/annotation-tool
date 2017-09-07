@@ -18,16 +18,20 @@
  * A module representing the scale model
  * @module models-scale
  * @requires jQuery
+ * @requires underscore
  * @requires ACCESS
  * @requires collections-scalevalues
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
+        "underscore",
         "access",
         "collections/scalevalues",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, ACCESS, ScaleValues, Backbone) {
+    function ($, _, ACCESS, ScaleValues, Backbone, Resource) {
 
         "use strict";
 
@@ -38,7 +42,7 @@ define(["jquery",
          * @memberOf module:models-scale
          * @alias module:models-scale.Scale
          */
-        var Scale = Backbone.Model.extend({
+        var Scale = Resource.extend({
 
             /**
              * Default models value
@@ -68,6 +72,8 @@ define(["jquery",
                     throw "'name' attribute is required";
                 }
 
+                Resource.prototype.initialize.apply(this, arguments);
+
                 if (attr.scaleValues && _.isArray(attr.scaleValues)) {
                     this.set({scaleValues: new ScaleValues(attr.scaleValues, this)});
                 } else {
@@ -77,55 +83,7 @@ define(["jquery",
                 if (attr.id) {
                     this.attributes.scaleValues.fetch({async: false});
                 }
-
-                // If localStorage used, we have to save the video at each change on the children
-                if (window.annotationsTool.localStorage) {
-                    if (!attr.created_by) {
-                        attr.created_by = annotationsTool.user.get("id");
-                    }
-
-                    if (!attr.created_by_nickname) {
-                        attr.created_by_nickname = annotationsTool.user.get("nickname");
-                    }
-                }
-
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                this.set(attr);
             },
-
-            /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-scale.Scale#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (attr) {
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                return attr;
-            },
-
 
             /**
              * Validate the attribute list passed to the model
@@ -134,12 +92,10 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated,
-                    scalevalues;
+                var scalevalues;
 
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
+                var invalidResource = Resource.prototype.validate.call(this, attr, {
+                    onIdChange: function () {
                         this.setUrl();
 
                         scalevalues = this.attributes.scaleValues;
@@ -148,7 +104,8 @@ define(["jquery",
                             scalevalues.fetch({async: false});
                         }
                     }
-                }
+                });
+                if (invalidResource) return invalidResource;
 
                 if (attr.name && !_.isString(attr.name)) {
                     return "'name' attribute must be a string";
@@ -156,26 +113,6 @@ define(["jquery",
 
                 if (attr.description && !_.isString(attr.description)) {
                     return "'description' attribute must be a string";
-                }
-
-                if (attr.access && !_.include(ACCESS, attr.access)) {
-                    return "'access' attribute is not valid.";
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
-                    return "'updated_at' attribute must be a number!";
-                }
-
-                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
-                    return "'deleted_at' attribute must be a number!";
                 }
             },
 
@@ -185,11 +122,8 @@ define(["jquery",
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
-                var json = Backbone.Model.prototype.toJSON.call(this);
+                var json = Resource.prototype.toJSON.call(this);
 
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
-                }
                 delete json.scaleValues;
 
                 return json;
@@ -216,28 +150,6 @@ define(["jquery",
                 }
 
                 return json;
-            },
-
-
-            /**
-             * Parse the given parameter to JSON if given as String
-             * @alias module:models-scale.Scale#parseJSONString
-             * @param  {string} parameter the parameter as String
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-                    } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
             },
 
             /**

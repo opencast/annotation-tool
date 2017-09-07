@@ -18,16 +18,20 @@
  * A module representing the track model
  * @module models-track
  * @requires jQuery
+ * @requires underscore
  * @requires collections-annotations
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
+        "underscore",
         "collections/annotations",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, Annotations, ACCESS, Backbone) {
+    function ($, _, Annotations, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -38,7 +42,7 @@ define(["jquery",
          * @memberOf module:models-track
          * @alias module:models-track.Track
          */
-        var Track = Backbone.Model.extend(
+        var Track = Resource.extend(
             /** @lends module:models-track~Track.prototype */
             {
 
@@ -66,6 +70,8 @@ define(["jquery",
                     throw "'name' attribute is required";
                 }
 
+                Resource.prototype.initialize.apply(this, arguments);
+
                 // the tack is not visible at initialisation
                 attr.visible = false;
                 attr.annotationsLoaded = false;
@@ -76,71 +82,12 @@ define(["jquery",
                     this.set({annotations: new Annotations([], this)});
                 }
 
-                // If localStorage used, we have to save the video at each change on the children
-                if (window.annotationsTool.localStorage) {
-                    if (!attr.created_by) {
-                        attr.created_by = annotationsTool.user.get("id");
-                        attr.created_by_nickname = annotationsTool.user.get("nickname");
-                    }
-                }
-
                 delete attr.annotations;
-
-
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
 
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 
                 this.set(attr);
-            },
-
-            /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-track.Track#parse
-             * @param  {Object} data Object literal containing the model attribute to parse.
-             * @return {Object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
-
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-                attr.settings = this.parseJSONString(attr.settings);
-
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                if (attr.access === ACCESS.PUBLIC) {
-                    attr.isPublic = true;
-                } else {
-                    attr.isPublic = false;
-                }
-
-                // Parse tags if present
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
             },
 
             /**
@@ -150,56 +97,17 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                        this.attributes.id = attr.id;
+                var invalidResource = Resource.prototype.validate.call(this, attr, {
+                    onIdChange: function () {
                         this.setUrl();
                         this.attributes.ready = true;
                         this.trigger("ready", this);
                     }
-                }
+                });
+                if (invalidResource) return invalidResource;
 
                 if (attr.description && !_.isString(attr.description)) {
                     return "'description' attribute must be a string";
-                }
-
-                if (attr.settings && _.isUndefined(this.parseJSONString(attr.settings))) {
-                    return "'settings' attribute must be a string or a JSON object";
-                }
-
-                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
-                    return "'tags' attribute must be a string or a JSON object";
-                }
-
-                if (!_.isUndefined(attr.access)) {
-                    if (!_.include(ACCESS, attr.access)) {
-                        return "'access' attribute is not valid.";
-                    } else if (this.attributes.access !== attr.access) {
-                        if (attr.access === ACCESS.PUBLIC) {
-                            this.attributes.isPublic = true;
-                        } else {
-                            this.attributes.isPublic = false;
-                        }
-                    }
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
-                    return "'updated_at' attribute must be a number!";
-                }
-
-                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
-                    return "'deleted_at' attribute must be a number!";
                 }
             },
 
@@ -269,34 +177,10 @@ define(["jquery",
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function () {
-                var json = Backbone.Model.prototype.toJSON.call(this);
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
-                }
+                var json = Resource.prototype.toJSON.call(this);
                 delete json.annotations;
 
                 return json;
-            },
-
-            /**
-             * Parse the given parameter to JSON if given as string
-             * @alias module:models-track.Track#parseJSONString
-             * @param  {string} parameter the parameter as string
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-                    } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
             }
         }, {
             FIELDS: {

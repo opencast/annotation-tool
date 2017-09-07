@@ -18,14 +18,18 @@
  * A module representing the comment model
  * @module models-comment
  * @requires jQuery
+ * @requires underscore
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
+        "underscore",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, ACCESS, Backbone) {
+    function ($, _, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -36,7 +40,7 @@ define(["jquery",
          * @memberOf module:models-comment
          * @alias module:models-comment.Comment
          */
-        var Comment = Backbone.Model.extend({
+        var Comment = Resource.extend({
 
             /**
              * Default models value
@@ -58,72 +62,7 @@ define(["jquery",
                     throw "'text' attribute is required";
                 }
 
-                if (window.annotationsTool.localStorage) {
-                    if (!attr.created_by) {
-                        attr.created_by = annotationsTool.user.get("id");
-                    }
-
-                    if (!attr.created_by_nickname) {
-                        attr.created_by_nickname = annotationsTool.user.get("nickname");
-                    }
-
-                    if (!attr.created_at) {
-                        attr.created_at = new Date();
-                    }
-                }
-
-                if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                this.set(attr);
-            },
-
-            /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-comment.Comment#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
-
-                if (!_.isUndefined(attr.created_at)) {
-                    attr.created_at = Date.parse(attr.created_at);
-                }
-
-                if (!_.isUndefined(attr.updated_at)) {
-                    attr.updated_at = Date.parse(attr.updated_at);
-                }
-
-                if (!_.isUndefined(attr.deleted_at)) {
-                    attr.deleted_at = Date.parse(attr.deleted_at);
-                }
-
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                // Parse tags if present
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
+                Resource.prototype.initialize.apply(this, arguments);
             },
 
             /**
@@ -133,66 +72,12 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                        this.attributes.id = attr.id;
-                    }
-                }
+                var invalidResource = Resource.prototype.validate.call(this, attr);
+                if (invalidResource) return invalidResource;
 
                 if (attr.text &&  !_.isString(attr.text)) {
                     return "\"text\" attribute must be a string!";
                 }
-
-                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
-                    return "\"tags\" attribute must be a string or a JSON object";
-                }
-
-                if (attr.access && !_.include(ACCESS, attr.access)) {
-                    return "\"access\" attribute is not valid.";
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "\"created_at\" attribute can not be modified after initialization!";
-                    }
-                }
-            },
-
-            /**
-             * Parse the given parameter to JSON if given as String
-             * @alias module:models-comment.Comment#parseJSONString
-             * @param  {string} parameter the parameter as String
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-                    } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
-            },
-
-            /**
-             * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-comment.Comment#toJSON
-             * @return {JSON} JSON representation of the instance
-             */
-            toJSON: function () {
-                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
-                }
-                return json;
             }
         });
         return Comment;

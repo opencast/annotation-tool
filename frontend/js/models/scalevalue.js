@@ -18,14 +18,18 @@
  * A module representing the scalevalue model
  * @module models-scalevalue
  * @requires jQuery
+ * @requires underscore
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
+        "underscore",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, ACCESS, Backbone) {
+    function ($, _, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -36,7 +40,7 @@ define(["jquery",
          * @memberOf module:models-scalevalue
          * @alias module:models-scalevalue.Scalevalue
          */
-        var ScaleValue = Backbone.Model.extend({
+        var ScaleValue = Resource.extend({
 
             /**
              * Default models value
@@ -66,63 +70,7 @@ define(["jquery",
                     throw "'name, value, order' attributes are required";
                 }
 
-                if (window.annotationsTool.localStorage) {
-                    if (!attr.created_by) {
-                        attr.created_by = annotationsTool.user.get("id");
-                    }
-
-                    if (!attr.created_by_nickname) {
-                        attr.created_by_nickname = annotationsTool.user.get("nickname");
-                    }
-
-                    if (!attr.created_at) {
-                        attr.created_at = new Date();
-                    }
-                }
-
-                if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                this.set(attr);
-            },
-
-            /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-scalevalue.Scalevalue#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
-
-                if (!_.isUndefined(attr.created_at)) {
-                    attr.created_at = Date.parse(attr.created_at);
-                }
-
-                if (!_.isUndefined(attr.updated_at)) {
-                    attr.updated_at = Date.parse(attr.updated_at);
-                }
-
-                if (!_.isUndefined(attr.deleted_at)) {
-                    attr.deleted_at = Date.parse(attr.deleted_at);
-                }
-
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
+                Resource.prototype.initialize.apply(this, arguments);
             },
 
             /**
@@ -132,13 +80,8 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        attr.id = this.cid;
-                    }
-                }
+                var invalidResource = Resource.prototype.validate.call(this, attr);
+                if (invalidResource) return invalidResource;
 
                 if (attr.name && !_.isString(attr.name)) {
                     return "'name' attribute must be a string";
@@ -151,24 +94,6 @@ define(["jquery",
                 if (attr.order && !_.isNumber(attr.order)) {
                     return "'order' attribute must be a number";
                 }
-
-                if (attr.access && !_.include(ACCESS, attr.access)) {
-                    return "'access' attribute is not valid.";
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "\"created_at\" attribute can not be modified after initialization!";
-                    }
-                }
-
-                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
-                    return "'updated_at' attribute must be a number!";
-                }
-
-                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
-                    return "'deleted_at' attribute must be a number!";
-                }
             },
 
             /**
@@ -177,7 +102,7 @@ define(["jquery",
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
-                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
+                var json = Resource.prototype.toJSON.call(this);
 
                 if (json.scale && json.scale.attributes) {
                     json.scale = this.attributes.scale.toJSON();

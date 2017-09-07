@@ -18,14 +18,20 @@
  * A module representing the label model
  * @module models-label
  * @requires jQuery
+ * @requires underscore
+ * @requires util
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
+        "underscore",
+        "util",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, ACCESS, Backbone) {
+    function ($, _, util, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -36,7 +42,7 @@ define(["jquery",
          * @memberOf module:models-label
          * @alias module:models-label.Label
          */
-        var Label = Backbone.Model.extend({
+        var Label = Resource.extend({
 
             /**
              * Default models value
@@ -67,33 +73,11 @@ define(["jquery",
                     throw "'category' attribute is required";
                 }
 
-                attr.settings = this.parseSettings(attr.settings);
+                Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.category && attr.category.attributes) {
-                    attr.category = attr.category.toJSON();
+                    this.set("category", attr.category.toJSON());
                 }
-
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                // If localStorage used, we have to save the video at each change on the children
-                if (window.annotationsTool.localStorage) {
-                    if (!attr.created_by) {
-                        attr.created_by = annotationsTool.user.get("id");
-                        attr.created_by_nickname = annotationsTool.user.get("nickname");
-                    }
-                }
-
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                this.set("category", attr.category);
-
-                this.set(attr);
             },
 
             /**
@@ -103,30 +87,11 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
-
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-                attr.settings = this.parseSettings(attr.settings);
-
-                if (attr.category && attr.category.settings) {
-                    attr.category.settings = this.parseSettings(attr.category.settings);
-                }
-
-                if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
-                } else {
-                    attr.isMine = false;
-                }
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
+                return Resource.prototype.parse.call(this, data, function (attr) {
+                    if (attr.category && attr.category.settings) {
+                        attr.category.settings = util.parseJSONString(attr.category.settings);
+                    }
+                });
             },
 
             /**
@@ -136,13 +101,8 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                    }
-                }
+                var invalidResource = Resource.prototype.validate.call(this, attr);
+                if (invalidResource) return invalidResource;
 
                 if (attr.value &&  !_.isString(attr.value)) {
                     return "'value' attribute must be a string!";
@@ -156,36 +116,8 @@ define(["jquery",
                     return "'description' attribute must be a string!";
                 }
 
-                if (attr.settings &&  !_.isString(attr.settings)) {
-                    return "'settings' attribute must be a string!";
-                }
-
                 if (attr.category &&  !_.isObject(attr.category)) {
                     return "'category' attribute must be a JSON Object!";
-                }
-
-                if (attr.access && !_.include(ACCESS, attr.access)) {
-                    return "'access' attribute is not valid.";
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.updated_at) {
-                    if (!_.isNumber(attr.updated_at)) {
-                        return "'updated_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.deleted_at) {
-                    if (!_.isNumber(attr.deleted_at)) {
-                        return "'deleted_at' attribute must be a number!";
-                    }
                 }
             },
 
@@ -195,10 +127,7 @@ define(["jquery",
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
-                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
-                }
+                var json = Resource.prototype.toJSON.call(this);
                 if (json.category && json.category.toJSON) {
                     json.category = json.category.toJSON();
                 }
@@ -233,40 +162,6 @@ define(["jquery",
                 }
 
                 return json;
-            },
-
-            /**
-             * Parse the given parameter to JSON if given as String
-             * @alias module:models-label.Label#parseJSONString
-             * @param  {string} parameter the parameter as String
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-                    } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
-            },
-
-            /**
-             * Parse the given settings to JSON if given as string
-             * @alias module:models-label.Label#parseSettings
-             * @param  {string} settings the settings as String
-             * @return {JSON} settings as JSON object
-             */
-            parseSettings: function (settings) {
-                if (settings && _.isString(settings)) {
-                    settings = JSON.parse(settings);
-                }
-                return settings;
             }
         });
         return Label;

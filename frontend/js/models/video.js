@@ -17,19 +17,24 @@
 /**
  * A module representing the video model
  * @module models-video
+ * @requires jquery
+ * @requires underscore
  * @requires collections-categories
  * @requires collections-scales
  * @requires ACCESS
- * @requires backbone.js
+ * @requires backbone
+ * @requires models/resource
  */
 define(["jquery",
+        "underscore",
         "collections/tracks",
         "collections/categories",
         "collections/scales",
         "access",
-        "backbone"],
+        "backbone",
+        "models/resource"],
 
-    function ($, Tracks, Categories, Scales, ACCESS, Backbone) {
+    function ($, _, Tracks, Categories, Scales, ACCESS, Backbone, Resource) {
 
         "use strict";
 
@@ -40,7 +45,7 @@ define(["jquery",
          * @memberOf module:models-video
          * @alias module:models-video.Video
          */
-        var Video = Backbone.Model.extend({
+        var Video = Resource.extend({
 
             /**
              * Default models value
@@ -61,6 +66,8 @@ define(["jquery",
                         "getTrack",
                         "getAnnotation",
                         "loadTracks");
+
+                Resource.prototype.initialize.apply(this, arguments);
 
                 // Check if tracks are given
                 if (attr.tracks && _.isArray(attr.tracks)) {
@@ -83,10 +90,6 @@ define(["jquery",
                     this.set({scales: new Scales([], this)});
                 }
 
-                if (attr.tags) {
-                    this.set({tags: this.parseJSONString(attr.tags)});
-                }
-
                 if (attr.id) {
                     this.get("categories").fetch({async: false});
                     this.get("tracks").fetch({async: false});
@@ -101,50 +104,18 @@ define(["jquery",
             },
 
             /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-video.Video#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
-
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-                attr.settings   = this.parseJSONString(attr.settings);
-
-                // Parse tags if present
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
-            },
-
-            /**
              * Validate the attribute list passed to the model
              * @alias module:models-video.Video#validate
              * @param  {object} data Object literal containing the model attribute to validate.
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-
-                var tmpCreated,
-                    categories,
+                var categories,
                     scales,
                     self = this;
 
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                        this.attributes.id = attr.id;
+                var invalidResource = Resource.prototype.validate.call(this, attr, {
+                    onIdChange: function () {
                         this.setUrl();
 
                         categories = this.attributes.categories;
@@ -176,34 +147,13 @@ define(["jquery",
                             });
                         }
                     }
-                }
+                });
+                if (invalidResource) return invalidResource;
+
                 if (attr.tracks && !(attr.tracks instanceof Tracks)) {
                     return "'tracks' attribute must be an instance of 'Tracks'";
                 }
-
-                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
-                    return "'tags' attribute must be a string or a JSON object";
-                }
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-                if (attr.updated_at) {
-                    if (!_.isNumber(attr.updated_at)) {
-                        return "'updated_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.deleted_at) {
-                    if (!_.isNumber(attr.deleted_at)) {
-                        return "'deleted_at' attribute must be a number!";
-                    }
-                }
             },
-
 
             loadTracks: function () {
                 var tracks = this.attributes.tracks,
@@ -281,36 +231,12 @@ define(["jquery",
             },
 
             /**
-             * Parse the given parameter to JSON if given as String
-             * @alias module:models-video.Video#parseJSONString
-             * @param  {string} parameter the parameter as String
-             * @return {JSON} parameter as JSON object
-             */
-            parseJSONString: function (parameter) {
-                if (parameter && _.isString(parameter)) {
-                    try {
-                        parameter = JSON.parse(parameter);
-                    } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
-                    }
-                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
-                    return undefined;
-                }
-
-                return parameter;
-            },
-
-            /**
              * Override the default toJSON function to ensure complete JSONing.
              * @alias module:models-video.Video#toJSON
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function () {
-                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
-                }
+                var json = Resource.prototype.toJSON.call(this);
                 delete json.tracks;
                 delete json.categories;
                 delete json.scales;

@@ -18,17 +18,22 @@
  * A module representing the user model
  * @module models-user
  * @requires jQuery
+ * @requires underscore
  * @requires ROLES
  * @requires ACCESS
  * @requires backbone
+ * @requires models/resource
+ * @requires email-addresses
  */
 define(["jquery",
+        "underscore",
         "roles",
         "access",
         "backbone",
+        "models/resource",
         "email-addresses"],
 
-    function ($, ROLES, ACCESS, Backbone, emailAddresses) {
+    function ($, _, ROLES, ACCESS, Backbone, Resource, emailAddresses) {
 
         "use strict";
 
@@ -39,7 +44,7 @@ define(["jquery",
          * @memberOf module:models-user
          * @alias module:models-user.User
          */
-        var User = Backbone.Model.extend({
+        var User = Resource.extend({
 
             /**
              * Default models value
@@ -63,6 +68,8 @@ define(["jquery",
                     throw "'user_extid' and 'nickname' attributes are required";
                 }
 
+                Resource.prototype.initialize.apply(this, arguments);
+
                 if (!attr.role && annotationsTool.getUserRole) {
                     attr.role = annotationsTool.getUserRole();
 
@@ -71,33 +78,9 @@ define(["jquery",
                     }
                 }
 
-                this.set(attr);
-
                 // Define that all post operation have to been done through PUT method
                 // see in wiki
                 this.noPOST = true;
-            },
-
-            /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-user.User#parse
-             * @param  {Object} data Object literal containing the model attribute to parse.
-             * @return {Object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
-
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-
-                if (data.attributes) {
-                    data.attributes = attr;
-                } else {
-                    data = attr;
-                }
-
-                return data;
             },
 
             /**
@@ -107,13 +90,8 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated;
-
-                if (attr.id) {
-                    if (this.get("id") !== attr.id) {
-                        this.id = attr.id;
-                    }
-                }
+                var invalidResource = Resource.prototype.validate.call(this, attr);
+                if (invalidResource) return invalidResource;
 
                 if (_.isUndefined(attr.user_extid) || (!_.isString(attr.user_extid) && !_.isNumber(attr.user_extid))) {
                     return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};
@@ -125,38 +103,6 @@ define(["jquery",
 
                 if (attr.email && !User.validateEmail(attr.email)) {
                     return {attribute: "email", message: "Given email is not valid!"};
-                }
-
-                if (attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User)) {
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-                }
-
-                if (attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User)) {
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                }
-
-                if (attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User)) {
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
-                }
-
-                if (attr.created_at) {
-                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.updated_at) {
-                    if (!_.isNumber(attr.updated_at)) {
-                        return "'updated_at' attribute must be a number!";
-                    }
-                }
-
-                if (attr.deleted_at) {
-                    if (!_.isNumber(attr.deleted_at)) {
-                        return "'deleted_at' attribute must be a number!";
-                    }
                 }
             }
         },
@@ -172,8 +118,7 @@ define(["jquery",
             validateEmail: function (email) {
                 return !!emailAddresses.parseOneAddress(email);
             }
-        }
-    );
+        });
         return User;
     }
 );
