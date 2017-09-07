@@ -14,7 +14,7 @@ require.config({
         "jquery.FileReader": "libs/jquery.FileReader",
         "jquery.appear": "libs/jquery.appear",
         "localstorage": "libs/backbone/backbone.localStorage-1.0",
-        "jquery": "libs/jquery-1.7.2.min",
+        "jquery": "libs/jquery-1.7.2",
         "popover": "libs/bootstrap/popover",
         "scrollspy": "libs/bootstrap/scrollspy",
         "slider": "libs/bootstrap/bootstrap-slider",
