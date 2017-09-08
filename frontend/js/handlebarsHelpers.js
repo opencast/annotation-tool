@@ -1,4 +1,4 @@
-define(["handlebars", "i18next", "roles"], function (Handlebars, i18next, ROLES) {
+define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _, i18next, ROLES) {
 
     /**
      * Handlebars helper to check if the annotations-tool is in private-only mode.
@@ -92,6 +92,16 @@ define(["handlebars", "i18next", "roles"], function (Handlebars, i18next, ROLES)
     Handlebars.registerHelper("t", function (translationKey, options) {
         return new Handlebars.SafeString(
             i18next.t(translationKey, options.hash)
+        );
+    });
+
+    /**
+     * Trnasform newlines into HTML break tags for display and escape.
+     * @alias module:Handlebars#displayRaw
+     */
+    Handlebars.registerHelper("displayRaw", function (text) {
+        return new Handlebars.SafeString(
+            _.escape(text).replace(/\n/g, "<br/>")
         );
     });
 
