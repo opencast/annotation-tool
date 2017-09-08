@@ -89,7 +89,6 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                this.model          = attr.model;
                 this.commentId      = attr.model.get("id");
                 this.id             = "comment" + this.commentId;
                 this.el.id          = this.id;
