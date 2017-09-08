@@ -167,7 +167,9 @@ define(["jquery",
              * @alias module:views-comment.Comment#onAddReply
              */
             onAddReply: function () {
-                console.log("Not implemented");
+                this.model.replies.create({
+                    text: "yeah!"
+                });
             },
 
             /**
