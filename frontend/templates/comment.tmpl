@@ -1,20 +1,28 @@
-<span class="comments header">
-	<span class="caption print">Comment</span>
-	<span class="username">{{creator}}</span>
-	<span class="date">{{formatDate creationdate}}{{#if updateddate}} | {{t "annotation.comments.modified" date=(formatDate updateddate)}}{{/if}}</span>
-</span>
-<div class="edit-buttons">
-	<i class="add-reply {{#if numberOfReplies}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{t "annotation.comments.replies.count" count=numberOfReplies}}">
-		{{#if numberOfReplies}}
-			<span class="comment-amount">{{numberOfReplies}}</span>
+{{#unless isEditEnable}}
+	<span class="comments header">
+		<span class="caption print">Comment</span>
+		<span class="username">{{creator}}</span>
+		<span class="date">{{formatDate creationdate}}{{#if updateddate}} | {{t "annotation.comments.modified" date=(formatDate updateddate)}}{{/if}}</span>
+	</span>
+	<div class="edit-buttons">
+		<i class="add-reply {{#if numberOfReplies}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{t "annotation.comments.replies.count" count=numberOfReplies}}">
+			{{#if numberOfReplies}}
+				<span class="comment-amount">{{numberOfReplies}}</span>
+			{{/if}}
+		</i>
+		{{#if canEdit}}
+			<i class="edit-comment icon-pencil" title="{{t "annotation.comments.edit.button"}}"></i>
+			<i class="delete-comment icon-trash" title="{{t "annotation.comments.delete"}}"></i>
 		{{/if}}
-	</i>
-	{{#if canEdit}}
-		<i class="edit-comment icon-pencil" title="{{t "annotation.comments.edit.button"}}"></i>
-		<i class="delete-comment icon-trash" title="{{t "annotation.comments.delete"}}"></i>
-	{{/if}}
-</div>
-<span class="comment">{{{text}}}</span>
+	</div>
+	<span class="comment">{{displayRaw text}}</span>
+{{else}}
+	<textarea class="input-block-level focused">{{text}}</textarea>
+	<div class="button-bar">
+		<button type="button" class="btn">{{t "annotation.comments.edit.cancel"}}</button>
+		<button type="submit" class="btn btn-primary">{{t "annotation.comments.edit.save"}}</button>
+	</div>
+{{/unless}}
 
 <ul class="replies">
 	{{#each replies}}

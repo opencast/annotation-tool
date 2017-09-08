@@ -21,7 +21,6 @@
  * @requires underscore
  * @requires util
  * @requires templates/comment.tmpl
- * @requires templates/edit-comment.tmpl
  * @requires handlebars
  * @requires backbone
  */
@@ -29,12 +28,11 @@ define(["jquery",
         "underscore",
         "util",
         "templates/comment",
-        "templates/edit-comment",
         "handlebars",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, util, Template, EditTemplate, Handlebars, Backbone) {
+    function ($, _, util, Template, Handlebars, Backbone) {
 
         "use strict";
 
@@ -60,13 +58,6 @@ define(["jquery",
              * @type {HandlebarsTemplate}
              */
             template: Template,
-
-            /**
-             * View template for edit modus
-             * @alias module:views-comment.Comment#template
-             * @type {HandlebarsTemplate}
-             */
-            editTemplate: EditTemplate,
 
             /**
              * Events to handle
@@ -106,6 +97,8 @@ define(["jquery",
                           "render");
 
                 _.extend(this, Backbone.Events);
+
+                this.isEditEnable = !!attr.isEditEnable;
 
                 this.listenTo(this.model.replies, "add remove reset", this.render);
 
@@ -156,10 +149,8 @@ define(["jquery",
                 }
 
                 this.trigger("edit");
-
-                this.$el.html(this.editTemplate({ text: this.model.get("text"), replies: this.replies }));
-                this.delegateEvents(this.events);
                 this.isEditEnable = true;
+                this.render();
             },
 
             /**
@@ -235,9 +226,10 @@ define(["jquery",
                 var data = {
                         creator: this.model.get("created_by_nickname"),
                         creationdate: this.model.get("created_at"),
-                        text: _.escape(this.model.get("text")).replace(/\n/g, "<br/>"),
+                        text: this.model.get("text"),
                         canEdit: this.model.get("isMine"),
-                        numberOfReplies: this.model.replies.length
+                        numberOfReplies: this.model.replies.length,
+                        isEditEnable: this.isEditEnable
                     },
                     updatedAt = this.model.get("updated_at");
 
