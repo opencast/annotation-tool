@@ -35,13 +35,14 @@ define(["jquery",
         "models/annotation",
         "models/user",
         "views/comments-container",
+        "templates/comments-container-header",
         "templates/list-annotation",
         "templates/list-annotation-expanded",
         "templates/list-annotation-edit",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
+    function ($, _, i18next, PlayerAdapter, Annotation, User, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
 
         "use strict";
 
@@ -530,7 +531,10 @@ define(["jquery",
                     }
 
                     if (this.getState() === ListAnnotation.STATES.COMMENTS || this.model.get("comments").length > 0) {
-                        this.$el.find("> div:last").after(this.commentContainer.render().$el);
+                        this.$el.find(".comments").append(
+                            commentsContainerHeader(),
+                            this.commentContainer.render().$el
+                        );
                     }
                 }
 
