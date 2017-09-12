@@ -66,13 +66,6 @@ define(["jquery",
             template: Template,
 
             /**
-             * Define if the view is or not collapsed
-             * @alias module:views-comments-container.CommentsContainer#collapsed
-             * @type {boolean}
-             */
-            collapsed: true, //Todo: Collapse function needs to be completely removed.
-
-            /**
              * Events to handle
              * @alias module:views-comments-container.CommentsContainer#events
              * @type {object}
@@ -91,10 +84,6 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                if (typeof attr.collapsed !== "undefined") {
-                    this.collapsed = attr.collapsed;
-                }
-
                 this.annotationId        = attr.id;
                 this.id                  = "comments-container" + attr.id;
                 this.el.id               = this.id;
