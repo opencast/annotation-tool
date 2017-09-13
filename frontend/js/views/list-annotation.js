@@ -207,7 +207,7 @@ define(["jquery",
 
             /**
              * Returns the state of the list annotation view
-             * @alias module:views-list-annotation.ListAnnotation#setState
+             * @alias module:views-list-annotation.ListAnnotation#getState
              * @return {State} The current state of the list annotation view
              */
             getState: function () {
