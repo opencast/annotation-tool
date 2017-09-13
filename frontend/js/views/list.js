@@ -120,9 +120,7 @@ define(["jquery",
                                "expandAll",
                                "renderSelect",
                                "collapseAll",
-                               "updateView",
-                               "setStates",
-                               "setStateToAllViews");
+                               "updateView");
 
                 this.annotationViews = [];
                 this.tracks          = annotationsTool.video.get("tracks");
@@ -498,56 +496,6 @@ define(["jquery",
 
                 this.annotationViews = [];
                 this.$el.find("#content-list").empty();
-            },
-
-            /**
-             * Change the states of the annotation view with the given one
-             * @param {array} newStates The states to change
-             */
-            setStates: function (newStates) {
-                if (_.isUndefined(newStates)) {
-                    return;
-                }
-
-                var getStateById = function (annView) {
-                        return function (value) {
-                            return value.id === annView.id;
-                        };
-                    },
-                    newState,
-                    annView,
-                    i;
-
-                for (i = 0; i < this.annotationViews.length; i++) {
-                    annView = this.annotationViews[i];
-                    newState = _.find(newStates, getStateById(annView), this);
-
-                    if (!_.isUndefined(newState)) {
-                        annView.setState(newState.state);
-                    }
-                }
-
-                this.render();
-            },
-
-            /**
-             * Set the given state to all the annotations views
-             * @param {object} newState The new state to set
-             */
-            setStateToAllViews: function (newState) {
-                var oldStates = [];
-
-                _.each(this.annotationViews, function (annView) {
-                    oldStates.push({
-                        id: annView.id,
-                        state: annView.currentState
-                    });
-                    annView.setState(newState);
-                }, this);
-
-                this.render();
-
-                return oldStates;
             },
 
             /**
