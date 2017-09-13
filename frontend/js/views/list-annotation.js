@@ -132,8 +132,8 @@ define(["jquery",
                 this.isEditEnable = false;
 
                 this.commentContainer = new CommentsContainer({
-                    id       : this.id,
-                    comments : this.model.get("comments")
+                    id: this.id,
+                    collection: this.model.get("comments")
                 });
                 this.commentContainer.on({
                     cancel: function () {

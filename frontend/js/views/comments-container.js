@@ -98,7 +98,6 @@ define(["jquery",
                 this.annotationId        = attr.id;
                 this.id                  = "comments-container" + attr.id;
                 this.el.id               = this.id;
-                this.comments            = attr.comments;
                 this.commentViews        = [];
 
                 // Bind function to the good context
@@ -111,9 +110,9 @@ define(["jquery",
 
                 _.extend(this, Backbone.Events);
 
-                this.listenTo(this.comments, "destroy", this.deleteView);
-                this.listenTo(this.comments, "remove", this.deleteView);
-                this.listenTo(this.comments, "reset", this.resetViews);
+                this.listenTo(this.collection, "destroy", this.deleteView);
+                this.listenTo(this.collection, "remove", this.deleteView);
+                this.listenTo(this.collection, "reset", this.resetViews);
 
                 this.currentState = CommentsContainer.STATES.READ;
 
@@ -141,7 +140,7 @@ define(["jquery",
                     commentView.deleteView();
                 }, this);
 
-                _.each(this.comments.toArray(), function (comment) {
+                _.each(this.collection.toArray(), function (comment) {
                     this.addComment(comment);
                 }, this);
             },
@@ -153,7 +152,7 @@ define(["jquery",
             render: function () {
                 this.$el.html(this.template({
                     id        : this.annotationId,
-                    comments  : this.comments.models,
+                    comments  : this.collection.models,
                     addState  : this.currentState === CommentsContainer.STATES.ADD
                 }));
 
@@ -223,7 +222,7 @@ define(["jquery",
                     return;
                 }
 
-                commentModel = this.comments.create({text: textValue});
+                commentModel = this.collection.create({text: textValue});
 
                 this.cancel();
                 this.addComment(commentModel);
@@ -253,7 +252,7 @@ define(["jquery",
 
                 this.commentViews.push(commentView);
 
-                this.$el.parent().find(".comment-amount").text(this.comments.length);
+                this.$el.parent().find(".comment-amount").text(this.collection.length);
 
                 this.$("textarea").focus();
             },
