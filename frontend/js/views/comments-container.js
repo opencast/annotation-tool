@@ -84,9 +84,6 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                this.annotationId        = attr.id;
-                this.id                  = "comments-container" + attr.id;
-                this.el.id               = this.id;
                 this.commentViews        = [];
 
                 // Bind function to the good context
@@ -140,12 +137,11 @@ define(["jquery",
              */
             render: function () {
                 this.$el.html(this.template({
-                    id        : this.annotationId,
                     comments  : this.collection.models,
                     addState  : this.currentState === CommentsContainer.STATES.ADD
                 }));
 
-                this.commentList = this.$("div#comment-list" + this.annotationId);
+                this.commentList = this.$("div.comment-list");
 
                 this.commentList.empty();
 
