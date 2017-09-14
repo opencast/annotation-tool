@@ -423,14 +423,9 @@ define(["jquery",
              * @alias module:views-list.List#expandAll
              */
             expandAll: function (event) {
-                var list = this.annotationViews,
-                    annView,
-                    i;
-
-                for (i = 0; i < list.length; i++) {
-                    annView = list[i];
+                _.each(this.annotationViews, function (annView) {
                     annView.toggleExpandedState(event, true);
-                }
+                });
             },
 
             /**
@@ -438,14 +433,9 @@ define(["jquery",
              * @alias module:views-list.List#collapseAll
              */
             collapseAll: function (event) {
-                var list = this.annotationViews,
-                    annView,
-                    i;
-
-                for (i = 0; i < list.length; i++) {
-                    annView = list[i];
+                _.each(this.annotationViews, function (annView) {
                     annView.toggleCollapsedState(event, true);
-                }
+                });
             },
 
             /**
@@ -453,25 +443,19 @@ define(["jquery",
              * @alias module:views-list.List#render
              */
             render: function () {
-                var list = this.annotationViews,
-                    $listContainer = this.$list.detach(),
-                    annView,
-                    i;
+                var $listContainer = this.$list.detach();
 
-                for (i = 0; i < list.length; i++) {
-                    annView = list[i];
+                _.each(this.annotationViews, function (annView) {
                     annView.render().$el.detach();
-                }
-
+                });
 
                 $listContainer.empty();
 
-                for (i = 0; i < list.length; i++) {
-                    annView = list[i];
+                _.each(this.annotationViews, function (annView) {
                     var category = annView.model.category();
-                    if (category && !category.get("visible")) continue;
+                    if (category && !category.get("visible")) return;
                     $listContainer.append(annView.$el);
-                }
+                });
 
                 this.$el.find("#content-list-scroll").append($listContainer);
 
