@@ -130,8 +130,6 @@ define(["jquery",
 
                 this.id = this.model.get("id");
 
-                this.isEditEnable = false;
-
                 this.commentContainer = new CommentsContainer({
                     collection: this.model.get("comments")
                 });
@@ -486,7 +484,6 @@ define(["jquery",
                     modelJSON.scalevalues = scaleValues;
                 }
 
-                modelJSON.isEditEnable = this.isEditEnable;
                 modelJSON.numberOfComments = this.model.get("comments").length;
                 modelJSON.state = this.getState().id;
 
@@ -504,7 +501,7 @@ define(["jquery",
                     title = modelJSON.text;
                 }
 
-                if (this.isEditEnable) {
+                if (this.getState() == ListAnnotation.STATES.EDIT) {
                     title += " edit-on";
                 }
 
@@ -578,7 +575,6 @@ define(["jquery",
                     event.stopImmediatePropagation();
                 }
 
-                this.isEditEnable = !this.isEditEnable;
                 this.commentContainer.setState(CommentsContainer.STATES.READ);
                 this.setState(ListAnnotation.STATES.EDIT, ListAnnotation.STATES.EXPANDED);
 
