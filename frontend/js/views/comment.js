@@ -23,6 +23,7 @@
  * @requires templates/comment.tmpl
  * @requires handlebars
  * @requires backbone
+ * @requires views/comments-container
  */
 define(["jquery",
         "underscore",
@@ -30,9 +31,10 @@ define(["jquery",
         "templates/comment",
         "handlebars",
         "backbone",
+        "views/comments-container",
         "handlebarsHelpers"],
 
-    function ($, _, util, Template, Handlebars, Backbone) {
+    function ($, _, util, Template, Handlebars, Backbone, CommentsContainer) {
 
         "use strict";
 
@@ -100,10 +102,13 @@ define(["jquery",
 
                 this.isEditEnable = !!attr.isEditEnable;
 
-                this.listenTo(this.model.replies, "add remove reset", this.render);
-
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.COMMENT;
+
+                // Fix up circular dependency
+                if (!CommentsContainer) CommentsContainer = require("views/comments-container");
+
+                this.replyContainer = new CommentsContainer({ collection: this.model.replies });
 
                 return this;
             },
@@ -157,10 +162,10 @@ define(["jquery",
              * Allow the user to enter a new reply to this views comment
              * @alias module:views-comment.Comment#onAddReply
              */
-            onAddReply: function () {
-                this.model.replies.create({
-                    text: "yeah!"
-                });
+            onAddReply: function (event) {
+                event.stopImmediatePropagation();
+                this.replyContainer.setState(CommentsContainer.STATES.ADD);
+                this.render();
             },
 
             /**
@@ -238,9 +243,7 @@ define(["jquery",
                     data.updateddate = updatedAt;
                 }
                 this.$el.html(this.template(data));
-                this.model.replies.each(function (reply) {
-                    this.$el.find(".replies").first().append(new CommentView({ model: reply }).render().$el);
-                }, this);
+                this.$el.find(".replies").first().append(this.replyContainer.render().el);
                 this.delegateEvents(this.events);
                 return this;
             }

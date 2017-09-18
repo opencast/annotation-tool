@@ -114,6 +114,8 @@ define(["jquery",
              */
             setState: function (state) {
                 this.currentState = state;
+                this.render();
+                this.trigger(state);
             },
 
             /**
@@ -191,15 +193,18 @@ define(["jquery",
                     this.cancel();
                 } else if (event.keyCode === 13 && !event.shiftKey) {
                     // If enter is pressed but not shift, we insert a new comment
-                    this.insert();
+                    this.insert(event);
                 }
             },
 
             /**
              * Submit a comment to the backend
              * @alias module:views-comments-container.CommentsContainer#insert
+             * @param  {event} event Event object
              */
-            insert: function () {
+            insert: function (event) {
+                event.stopImmediatePropagation();
+
                 var textValue = this.$("textarea").val(),
                     commentModel;
 
@@ -223,11 +228,6 @@ define(["jquery",
                 var self = this,
                     commentView = new CommentView({ model: comment });
                 commentView.on({
-                    cancel: function () {
-                        self.setState(CommentsContainer.STATES.ADD);
-                        self.trigger("cancel");
-                        self.render();
-                    },
                     edit: function () {
                         self.setState(CommentsContainer.STATES.EDIT);
                         self.trigger("edit");
@@ -259,6 +259,7 @@ define(["jquery",
             cancel: function () {
                 this.$("textarea").val("");
                 this.trigger("cancel");
+                this.setState(CommentsContainer.STATES.READ);
             }
         }, {
             /**
@@ -267,8 +268,8 @@ define(["jquery",
              */
             STATES: {
                 READ : "read",
-                ADD  : "add-comment",
-                EDIT : "edit-comment"
+                ADD  : "add",
+                EDIT : "edit"
             }
         });
         return CommentsContainer;
