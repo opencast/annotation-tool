@@ -8,7 +8,7 @@ require.config({
         "bootstrap": "libs/bootstrap/bootstrap.min",
         "carousel": "libs/bootstrap/carousel2.2",
         "domReady": "libs/require/config/domReady",
-        "handlebars": "libs/handlebars-v1.3.0",
+        "handlebars": "libs/handlebars",
         "handlebarsHelpers": "handlebarsHelpers",
         "jquery.colorPicker": "libs/jquery.colorPicker.min",
         "jquery.FileReader": "libs/jquery.FileReader",
