@@ -1,35 +1,37 @@
 <h1>{{t "print.title" title}}</h1>
 
-<h2>{{t "print.categories.header"}}</h2>
+{{#if labelRows.length}}
+  <h2>{{t "print.categories.header"}}</h2>
 
-<table>
-  <thead>
-    <tr>
-      <th>{{t "print.categories.table.header"}}</th>
-      {{#each categories}}
-        <th>{{name}}</th>
-      {{/each}}
-    </tr>
-    <tr>
-      <th>{{t "print.categories.table.scales.header"}}</th>
-      {{#each categories}}
-        <th>{{scale}}</th>
-      {{/each}}
-    </tr>
-  </thead>
-  <tbody>
-    {{#each labelRows}}
+  <table>
+    <thead>
       <tr>
-        <th>{{#if first}}Labels{{/if}}</th>
-        {{#each labels}}
-          <td>
-            {{abbreviation}}
-          </td>
+        <th>{{t "print.categories.table.header"}}</th>
+        {{#each categories}}
+          <th>{{name}}</th>
         {{/each}}
       </tr>
-    {{/each}}
-  </tbody>
-</table>
+      <tr>
+        <th>{{t "print.categories.table.scales.header"}}</th>
+        {{#each categories}}
+          <th>{{scale}}</th>
+        {{/each}}
+      </tr>
+    </thead>
+    <tbody>
+      {{#each labelRows}}
+        <tr>
+          <th>{{#if @first}}Labels{{/if}}</th>
+          {{#each labels}}
+            <td>
+              {{abbreviation}}
+            </td>
+          {{/each}}
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
 
 <h2>{{t "print.annotations.header"}}</h2>
 

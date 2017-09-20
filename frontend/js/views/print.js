@@ -121,11 +121,6 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                         labels: labels
                     };
                 }).value();
-            if (labelRows.length === 0) {
-                labelRows.push({ first: true, labels: categories.map(_.constant({})) });
-            } else {
-                labelRows[0].first = true;
-            }
 
             // Transform annotations to the format needed in the template
             annotations = annotations
