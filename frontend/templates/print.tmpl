@@ -63,14 +63,23 @@
                 {{#if free}}
                   <h4>{{t "print.annotations.table.annotation and comments.free text.header"}}</h4>
                   <p>
-                    {{free}}
+                    {{displayRaw free}}
                   </p>
                 {{/if}}
                 {{#each comments}}
-                  <h4>{{t "print.annotations.table.annotation and comments.comment by" author=author}}</h4>
-                  <p>
-                    {{text}}
-                  </p>
+                  {{#*inline "commentWithReplies"}}
+                    <h4>{{t "print.annotations.table.annotation and comments.comment by" author=author}}</h4>
+                    <p>
+                      {{displayRaw text}}
+                    </p>
+
+                    <div class="replies">
+                      {{#each replies}}
+                        {{> commentWithReplies}}
+                      {{/each}}
+                    </div>
+                  {{/inline}}
+                  {{> commentWithReplies}}
                 {{/each}}
               </td>
             {{/with}}
@@ -79,7 +88,7 @@
             <td></td>
           {{/ifEq}}
         {{/each}}
-      {{/each}}
-    </tr>
+      </tr>
+    {{/each}}
   </tbody>
 </table>

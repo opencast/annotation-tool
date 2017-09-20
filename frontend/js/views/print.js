@@ -165,13 +165,14 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                     if (!annotation.areCommentsLoaded()) {
                         annotation.fetchComments();
                     }
-                    result.comments = annotation.get("comments")
-                        .map(function (comment) {
-                            return {
-                                author: comment.get("created_by_nickname"),
-                                text: comment.get("text")
-                            };
-                        });
+                    function commentWithReplies(comment) {
+                        return {
+                            author: comment.get("created_by_nickname"),
+                            text: comment.get("text"),
+                            replies: comment.replies.map(commentWithReplies)
+                        };
+                    }
+                    result.comments = annotation.get("comments").map(commentWithReplies);
 
                     result.track = annotation.collection.track.id;
 
