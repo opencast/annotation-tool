@@ -94,7 +94,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 .invoke("get", "label")
                 .uniq("id");
             var categories = labels.pluck("category")
-                .sort("name")
+                .sortBy("name")
                 .uniq("id")
                 .map(function (category) {
                     // Construct the scale string
@@ -113,7 +113,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
             var labelRows = labels
                 .groupBy(function (label) { return label.category.name; })
                 .pairs()
-                .sort(0)
+                .sortBy(0)
                 .map(1)
                 .unzip()
                 .map(function (labels) {
