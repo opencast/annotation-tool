@@ -1197,10 +1197,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     }
   };
 
-  public <T> List<T> apply(T bla) {
-    return new ArrayList<T>();
-  }
-
   private <T extends Resource> List<T> filterOrTags(List<T> originalList, Map<String, String> tags) {
     if (tags.size() < 1)
       return originalList;
