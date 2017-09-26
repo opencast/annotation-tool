@@ -127,6 +127,21 @@ define(["jquery",
             create: function (model, options) {
                 options = fixUrlForReplies.call(this, options);
                 return Backbone.Collection.prototype.create.call(this, model, options);
+            },
+
+            /**
+             * Count the number of comments in this collection together with all of their replies.
+             * @alias module:collections-comments.Comments#countCommentsAndReplies
+             * @return {number} recursive sum of the number of comments and all their replies
+             */
+            countCommentsAndReplies: function () {
+                return this.chain()
+                    .map("replies")
+                    .invoke("countCommentsAndReplies")
+                    .reduce(function (sum, summand) {
+                        return sum + summand;
+                    }, this.length)
+                    .value();
             }
         });
         return Comments;

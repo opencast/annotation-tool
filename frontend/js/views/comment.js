@@ -233,7 +233,7 @@ define(["jquery",
                         creationdate: this.model.get("created_at"),
                         text: this.model.get("text"),
                         canEdit: this.model.get("isMine"),
-                        numberOfReplies: this.model.replies.length,
+                        numberOfReplies: this.model.replies.countCommentsAndReplies(),
                         isEditEnable: this.isEditEnable
                     },
                     updatedAt = this.model.get("updated_at");

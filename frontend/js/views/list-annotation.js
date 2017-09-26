@@ -484,7 +484,7 @@ define(["jquery",
                     modelJSON.scalevalues = scaleValues;
                 }
 
-                modelJSON.numberOfComments = this.model.get("comments").length;
+                modelJSON.numberOfComments = this.model.get("comments").countCommentsAndReplies();
                 modelJSON.state = this.getState().id;
 
                 this.$el.html($(this.currentState.render(modelJSON)));
