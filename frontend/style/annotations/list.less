@@ -135,10 +135,6 @@
             line-height: headerHeight;
         }
 
-        .text-container {
-            padding-bottom: 2px;
-        }
-
         /* Content Elements in headerbar*/
 
         .read-only {
@@ -290,7 +286,7 @@
         }
 
         /* Content elements in body*/
-        span.text{
+        span.text {
             display: block;
             padding: @content-padding;
             background-color: white;
@@ -350,18 +346,18 @@
         }
     }
 
-    .comments {
+    div.comments {
         div.title {
             background-color: @grayLight;
             padding: 2px;
         }
+        padding-bottom: 2px;
     }
 
     div.comments-container {
         //background-color: @grayLight;
         color: @black;
         clear: both;
-        padding-bottom: 2px;
 
         textarea {
             resize: vertical;
@@ -389,7 +385,8 @@
             font-size: 0.92em;
 
             > div[id^="comment"] {
-                padding: @content-padding;
+                padding-left: @content-padding;
+                margin-bottom: @content-padding;
 
                 span.header {
                     display: block;
@@ -415,18 +412,14 @@
         }
 
         .edit-buttons {
-            float: right;
             i {
                 margin-left: 5px;
+                float: right;
             }
         }
     }
+}
 
-    .collapse-comment {
-        //.collapse();
-        i {
-            float: left;
-            margin-right: 5px;
-        }
-    }
+.replies {
+    background-color: rgba(0, 0, 0, 0.1);
 }
