@@ -9,7 +9,7 @@ The software devides currently into two parts:
   frontend is already included in the entwine-annotations-tool module. 
 
 ## [Installation](documentation/opencast-installation.md)
-The instruction on how to install the Annotation tool in Opencast 2.2 [can be found here](documentation/opencast-installation.md)
+The instruction on how to install the Annotation tool in Opencast 2.3+ [can be found here](documentation/opencast-installation.md)
 
 ## [Building the Frontend](documentation/build-frontend.md)
 Instructions on how to build the frontend webapp [can be found here](documentation/build-frontend.md). 
@@ -30,11 +30,11 @@ You can find the latest news about the annotation tool on [this page](documentat
 * [Claudio Beffa](beffa.ch)
 
 ### Current Development of this branch
-* [virtUOS, UniversitÃ¤t OsnabrÃ¼ck](http://www.virtuos.uni-osnabrueck.de)
+* [virtUOS, Universität Osnabrück](http://www.virtuos.uni-osnabrueck.de)
 * [ELAN e.V.](http://elan-ev.de)
 
 ### Contact
-* RÃ¼diger Rolf, [rrolf@uni-osnabrueck.de](mailto://rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
+* Rüdiger Rolf, [rrolf@uni-osnabrueck.de](mailto://rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
 
 ## [DEMO](http://entwinemedia.github.com/annotations/)
 A demo is available [here](http://entwinemedia.github.com/annotations/). It works with localStorage and no real backend communication. Therefore all the functionalities related to rights management / authorisations are not working on this version.
