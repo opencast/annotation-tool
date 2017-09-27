@@ -599,7 +599,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource(tags);
 
-    final Comment c = eas.createComment(32, "New comment", resource);
+    final Comment c = eas.createComment(32, none(Long.class), "New comment", resource);
     Option<Comment> comment = eas.getComment(c.getId());
 
     assertTrue(comment.isSome());
@@ -617,15 +617,15 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateComment(new CommentImpl(323, 29, "comment", resource));
+        eas.updateComment(new CommentImpl(323, 29, "comment", none(Long.class), resource));
       }
     });
     // create
-    final Comment c = eas.createComment(32, "New comment", resource);
+    final Comment c = eas.createComment(32, none(Long.class), "New comment", resource);
     assertEquals("New comment", eas.getComment(c.getId()).get().getText());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateComment(new CommentImpl(c.getId(), 11, "new text", updatedResource));
+    eas.updateComment(new CommentImpl(c.getId(), 11, "new text", none(Long.class), updatedResource));
     assertEquals(32, eas.getComment(c.getId()).get().getAnnotationId());
     assertEquals("new text", eas.getComment(c.getId()).get().getText());
     assertEquals(tags.get(), eas.getComment(c.getId()).get().getTags());
@@ -636,7 +636,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     // create
-    final Comment c = eas.createComment(32, "New comment", resource);
+    final Comment c = eas.createComment(32, none(Long.class), "New comment", resource);
     assertTrue(eas.getComment(c.getId()).isSome());
     // delete
     eas.deleteComment(c);

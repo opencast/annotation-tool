@@ -21,10 +21,12 @@ import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.p;
 
 import static org.opencastproject.util.data.Monadics.mlist;
+import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
 
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function2;
+import org.opencastproject.util.data.Option;
 
 import org.opencast.annotation.api.Comment;
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -57,8 +59,10 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Comment.findByIdIncludeDeleted", query = "select a from Comment a where a.id = :id"),
         @NamedQuery(name = "Comment.findById", query = "select a from Comment a where a.id = :id and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Comment.findAllOfAnnotation", query = "select a from Comment a where a.annotationId = :id and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Comment.findAllOfAnnotationSince", query = "select a from Comment a where a.annotationId = :id and a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
+        @NamedQuery(name = "Comment.findAllOfAnnotation", query = "select a from Comment a where a.annotationId = :id and a.deletedAt IS NULL AND a.replyToId IS NULL"),
+        @NamedQuery(name = "Comment.findAllOfAnnotationSince", query = "select a from Comment a where a.annotationId = :id AND a.replyToId IS NULL AND a.deletedAt IS NULL AND ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
+        @NamedQuery(name = "Comment.findAllReplies", query = "select a from Comment a where a.replyToId = :id and a.deletedAt IS NULL"),
+        @NamedQuery(name = "Comment.findAllRepliesSince", query = "select a from Comment a where a.replyToId = :id AND a.deletedAt IS NULL AND ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
         @NamedQuery(name = "Comment.deleteById", query = "delete from Comment a where a.id = :id"),
         @NamedQuery(name = "Comment.count", query = "select count(a) from Comment a where a.deletedAt IS NULL"),
         @NamedQuery(name = "Comment.clear", query = "delete from Comment") })
@@ -71,9 +75,12 @@ public class CommentDto extends AbstractResourceDto {
   @Column(name = "text", nullable = false)
   private String text;
 
-  // Foreign key
+  // Foreign keys
   @Column(name = "annotation_id", nullable = false)
   private long annotationId;
+
+  @Column(name = "reply_to_id")
+  private Long replyToId;
 
   @ElementCollection
   @MapKeyColumn(name = "name")
@@ -81,9 +88,10 @@ public class CommentDto extends AbstractResourceDto {
   @CollectionTable(name = "xannotations_comment_tags", joinColumns = @JoinColumn(name = "comment_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
-  public static CommentDto create(long annotationId, String text, Resource resource) {
+  public static CommentDto create(long annotationId, String text, Option<Long> replyToId, Resource resource) {
     CommentDto dto = new CommentDto().update(text, resource);
     dto.annotationId = annotationId;
+    dto.replyToId = replyToId.getOrElseNull();
     return dto;
   }
 
@@ -96,7 +104,7 @@ public class CommentDto extends AbstractResourceDto {
   }
 
   public Comment toComment() {
-    return new CommentImpl(id, annotationId, text, new ResourceImpl(option(access), option(createdBy),
+    return new CommentImpl(id, annotationId, text, none(Long.class), new ResourceImpl(option(access), option(createdBy),
             option(updatedBy), option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), tags));
   }
 

@@ -74,10 +74,10 @@ define(["jquery",
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.comments && _.isArray(attr.comments)) {
-                    this.attributes.comments = new Comments(attr.comments, this);
+                    this.attributes.comments = new Comments(attr.comments, { annotation: this });
                     delete attr.comments;
                 } else if (!attr.comments) {
-                    this.attributes.comments = new Comments([], this);
+                    this.attributes.comments = new Comments([], { annotation: this });
                 } else {
                     this.attributes.comments = attr.comments;
                     delete attr.comments;
@@ -124,7 +124,7 @@ define(["jquery",
                     }
 
                     if (annotationsTool.localStorage && _.isArray(attr.comments)) {
-                        attr.comments = new Comments(attr.comments, this);
+                        attr.comments = new Comments(attr.comments, { annotation: this });
                     }
 
                     if (!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {

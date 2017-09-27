@@ -694,13 +694,15 @@ public interface ExtendedAnnotationService {
    * 
    * @param annotationId
    *          the annotation id
+   * @param replyToId
+   *          the id of the comment that the new comment is a reply to
    * @param text
    *          the comment text
    * @param resource
    *          the resource
    * @return the created comment
    */
-  Comment createComment(long annotationId, String text, Resource resource);
+  Comment createComment(long annotationId, Option<Long> replyToId, String text, Resource resource);
 
   /**
    * Get a comment by id.
@@ -716,6 +718,8 @@ public interface ExtendedAnnotationService {
    * 
    * @param annotationId
    *          the annotation id
+   * @param replyToId
+   *          id of the comment to ge the replies to
    * @param offset
    *          pagination offset
    * @param limit
@@ -728,8 +732,8 @@ public interface ExtendedAnnotationService {
    *          the tags logical OR Map
    * @return the comment list or an empty list if no comments has been found
    */
-  List<Comment> getComments(long annotationId, Option<Integer> offset, Option<Integer> limit, Option<Date> since,
-          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr);
+  List<Comment> getComments(long annotationId, Option<Long> replyToId, Option<Integer> offset, Option<Integer> limit,
+          Option<Date> since, Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr);
 
   /**
    * Update a comment

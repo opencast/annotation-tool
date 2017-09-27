@@ -22,14 +22,16 @@
  * @requires ACCESS
  * @requires backbone
  * @requires models/resource
+ * @requires collections/comments
  */
 define(["jquery",
         "underscore",
         "access",
         "backbone",
-        "models/resource"],
+        "models/resource",
+        "collections/comments"],
 
-    function ($, _, ACCESS, Backbone, Resource) {
+    function ($, _, ACCESS, Backbone, Resource, Comments) {
 
         "use strict";
 
@@ -72,7 +74,20 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var invalidResource = Resource.prototype.validate.call(this, attr);
+                // Fix up circular dependency
+                if (!Comments) Comments = require("collections/comments");
+
+                if (!this.replies) this.replies = new Comments(null, {
+                    annotation: this.collection.annotation,
+                    replyTo: this
+                });
+
+                var invalidResource = Resource.prototype.validate.call(this, attr, {
+                    onIdChange: function () {
+                        this.replies.setUrl(this.collection.annotation, this);
+                        this.replies.fetch();
+                    }
+                });
                 if (invalidResource) return invalidResource;
 
                 if (attr.text &&  !_.isString(attr.text)) {

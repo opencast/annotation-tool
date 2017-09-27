@@ -8,11 +8,11 @@
 
         <button class="btn in" title="{{t "annotation.edit.set start to playhead.long"}}">{{t "annotation.edit.set start to playhead.short"}}</button>
         <span class="start">
-                <input title="{{t "annotation.edit.start time"}} {{#if isMine}}({{t "annotation.edit.double click to edit"}}){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+                <input title="{{t "annotation.edit.start time"}} {{#if isMine}}({{t "annotation.edit.double click to edit"}}){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}"></input>
         </span>
 
         <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}}">
-                <input title="{{t "annotation.edit.end time"}}{{#if isMine}} ({{t "annotation.edit.double click to edit"}}){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+                <input title="{{t "annotation.edit.end time"}}{{#if isMine}} ({{t "annotation.edit.double click to edit"}}){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}"></input>
         </span>
         <button class="btn out" title="{{t "annotation.edit.set end to playhead.long"}}">{{t "annotation.edit.set end to playhead.short"}}</button>
 
@@ -78,3 +78,5 @@
     </span>
 </div>
 {{/unless}}
+
+<div class="comments"></div>

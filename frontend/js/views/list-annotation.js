@@ -35,13 +35,14 @@ define(["jquery",
         "models/annotation",
         "models/user",
         "views/comments-container",
+        "templates/comments-container-header",
         "templates/list-annotation",
         "templates/list-annotation-expanded",
         "templates/list-annotation-edit",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
+    function ($, _, i18next, PlayerAdapter, Annotation, User, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
 
         "use strict";
 
@@ -129,10 +130,7 @@ define(["jquery",
 
                 this.id = this.model.get("id");
 
-                this.isEditEnable = false;
-
                 this.commentContainer = new CommentsContainer({
-                    id: this.id,
                     collection: this.model.get("comments")
                 });
                 this.commentContainer.on({
@@ -486,8 +484,7 @@ define(["jquery",
                     modelJSON.scalevalues = scaleValues;
                 }
 
-                modelJSON.isEditEnable = this.isEditEnable;
-                modelJSON.numberOfComments = this.model.get("comments").length;
+                modelJSON.numberOfComments = this.model.get("comments").countCommentsAndReplies();
                 modelJSON.state = this.getState().id;
 
                 this.$el.html($(this.currentState.render(modelJSON)));
@@ -504,7 +501,7 @@ define(["jquery",
                     title = modelJSON.text;
                 }
 
-                if (this.isEditEnable) {
+                if (this.getState() == ListAnnotation.STATES.EDIT) {
                     title += " edit-on";
                 }
 
@@ -530,7 +527,10 @@ define(["jquery",
                     }
 
                     if (this.getState() === ListAnnotation.STATES.COMMENTS || this.model.get("comments").length > 0) {
-                        this.$el.find("> div:last").after(this.commentContainer.render().$el);
+                        this.$el.find(".comments").append(
+                            commentsContainerHeader(),
+                            this.commentContainer.render().$el
+                        );
                     }
                 }
 
@@ -575,7 +575,6 @@ define(["jquery",
                     event.stopImmediatePropagation();
                 }
 
-                this.isEditEnable = !this.isEditEnable;
                 this.commentContainer.setState(CommentsContainer.STATES.READ);
                 this.setState(ListAnnotation.STATES.EDIT, ListAnnotation.STATES.EXPANDED);
 

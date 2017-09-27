@@ -21,20 +21,20 @@
  * @requires underscore
  * @requires util
  * @requires templates/comment.tmpl
- * @requires templates/edit-comment.tmpl
  * @requires handlebars
  * @requires backbone
+ * @requires views/comments-container
  */
 define(["jquery",
         "underscore",
         "util",
         "templates/comment",
-        "templates/edit-comment",
         "handlebars",
         "backbone",
+        "views/comments-container",
         "handlebarsHelpers"],
 
-    function ($, _, util, Template, EditTemplate, Handlebars, Backbone) {
+    function ($, _, util, Template, Handlebars, Backbone, CommentsContainer) {
 
         "use strict";
 
@@ -62,13 +62,6 @@ define(["jquery",
             template: Template,
 
             /**
-             * View template for edit modus
-             * @alias module:views-comment.Comment#template
-             * @type {HandlebarsTemplate}
-             */
-            editTemplate: EditTemplate,
-
-            /**
              * Events to handle
              * @alias module:views-comment.Comment#events
              * @type {object}
@@ -78,6 +71,7 @@ define(["jquery",
                 "click i.delete-comment"    : "onDeleteComment",
                 "dblclick span.comment"     : "onEditComment",
                 "click i.edit-comment"      : "onEditComment",
+                "click i.add-reply"         : "onAddReply",
                 "keyup textarea"            : "keyupInsertProxy",
                 "click button[type=submit]" : "onSubmit",
                 "click button[type=button]" : "onCancel"
@@ -106,8 +100,15 @@ define(["jquery",
 
                 _.extend(this, Backbone.Events);
 
+                this.isEditEnable = !!attr.isEditEnable;
+
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.COMMENT;
+
+                // Fix up circular dependency
+                if (!CommentsContainer) CommentsContainer = require("views/comments-container");
+
+                this.replyContainer = new CommentsContainer({ collection: this.model.replies });
 
                 return this;
             },
@@ -153,10 +154,18 @@ define(["jquery",
                 }
 
                 this.trigger("edit");
-
-                this.$el.html(this.editTemplate({text: this.model.get("text")}));
-                this.delegateEvents(this.events);
                 this.isEditEnable = true;
+                this.render();
+            },
+
+            /**
+             * Allow the user to enter a new reply to this views comment
+             * @alias module:views-comment.Comment#onAddReply
+             */
+            onAddReply: function (event) {
+                event.stopImmediatePropagation();
+                this.replyContainer.setState(CommentsContainer.STATES.ADD);
+                this.render();
             },
 
             /**
@@ -222,8 +231,10 @@ define(["jquery",
                 var data = {
                         creator: this.model.get("created_by_nickname"),
                         creationdate: this.model.get("created_at"),
-                        text: _.escape(this.model.get("text")).replace(/\n/g, "<br/>"),
-                        canEdit: this.model.get("isMine")
+                        text: this.model.get("text"),
+                        canEdit: this.model.get("isMine"),
+                        numberOfReplies: this.model.replies.countCommentsAndReplies(),
+                        isEditEnable: this.isEditEnable
                     },
                     updatedAt = this.model.get("updated_at");
 
@@ -232,6 +243,7 @@ define(["jquery",
                     data.updateddate = updatedAt;
                 }
                 this.$el.html(this.template(data));
+                this.$el.find(".replies").first().append(this.replyContainer.render().el);
                 this.delegateEvents(this.events);
                 return this;
             }

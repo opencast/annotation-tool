@@ -33,6 +33,13 @@ define(["jquery",
 
         "use strict";
 
+        function fixUrlForReplies(options) {
+            if (!this.replyTo) return options;
+            return _.extend({
+                url: _.result(this, "url") + "/" + this.replyTo.id + "/replies"
+            }, options);
+        }
+
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#Collection}
@@ -59,9 +66,11 @@ define(["jquery",
              * constructor
              * @alias module:collections-comments.Comments#initialize
              */
-            initialize: function (models, annotation) {
+            initialize: function (models, options) {
                 _.bindAll(this, "setUrl");
-                this.setUrl(annotation);
+                this.annotation = options.annotation;
+                this.replyTo = options.replyTo;
+                this.setUrl(this.annotation);
             },
 
             /**
@@ -84,8 +93,9 @@ define(["jquery",
              * Define the url from the collection with the given video
              * @alias module:collections-comments.Comments#setUrl
              * @param {@link module:models-annotation.Annotation} annotation The annotation containing the comments
+             * @param {@link module:models-comment.Comment} replyTo The comment that this collection holds the replies to
              */
-            setUrl: function (annotation) {
+            setUrl: function (annotation, replyTo) {
                 if (!annotation) {
                     throw "The parent annotation of the comments must be given!";
                 } else if (annotation.collection) {
@@ -93,8 +103,45 @@ define(["jquery",
                 }
 
                 if (window.annotationsTool && annotationsTool.localStorage) {
-                    this.localStorage = new Backbone.LocalStorage(this.url);
+                    var localStorageUrl = this.url;
+                    if (replyTo) {
+                        localStorageUrl += this.replyTo.id + "/replies";
+                    }
+                    this.localStorage = new Backbone.LocalStorage(localStorageUrl);
                 }
+            },
+
+            /**
+             * Override in order to use the right URL for replies.
+             * @alias module:collections-comments.Comments#fetch
+             */
+            fetch: function (options) {
+                options = fixUrlForReplies.call(this, options);
+                return Backbone.Collection.prototype.fetch.call(this, options);
+            },
+
+            /**
+             * Override in order to use the right URL for replies.
+             * @alias module:collections-comments.Comments#fetch
+             */
+            create: function (model, options) {
+                options = fixUrlForReplies.call(this, options);
+                return Backbone.Collection.prototype.create.call(this, model, options);
+            },
+
+            /**
+             * Count the number of comments in this collection together with all of their replies.
+             * @alias module:collections-comments.Comments#countCommentsAndReplies
+             * @return {number} recursive sum of the number of comments and all their replies
+             */
+            countCommentsAndReplies: function () {
+                return this.chain()
+                    .map("replies")
+                    .invoke("countCommentsAndReplies")
+                    .reduce(function (sum, summand) {
+                        return sum + summand;
+                    }, this.length)
+                    .value();
             }
         });
         return Comments;

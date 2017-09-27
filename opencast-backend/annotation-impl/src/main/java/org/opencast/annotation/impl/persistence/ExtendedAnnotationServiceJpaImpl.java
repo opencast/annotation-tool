@@ -897,8 +897,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    * @see org.opencast.annotation.api.ExtendedAnnotationService#createComment(long, String, Resource)
    */
   @Override
-  public Comment createComment(long annotationId, String text, Resource resource) {
-    final CommentDto dto = CommentDto.create(annotationId, text, resource);
+  public Comment createComment(long annotationId, Option<Long> replyToId, String text, Resource resource) {
+    final CommentDto dto = CommentDto.create(annotationId, text, replyToId, resource);
     return tx(Queries.persist(dto)).toComment();
   }
 
@@ -914,17 +914,27 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    * @see org.opencast.annotation.api.ExtendedAnnotationService#getComments(long, Option, Option, Option, Option, Option)
    */
   @Override
-  public List<Comment> getComments(final long annotationId, final Option<Integer> offset, final Option<Integer> limit,
-          Option<Date> since, Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr) {
+  public List<Comment> getComments(final long annotationId, final Option<Long> replyToId, final Option<Integer> offset,
+          final Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
+          Option<Map<String, String>> tagsOr) {
 
     List<Comment> comments = null;
 
-    if (since.isSome())
-      comments = findAllWithParams(toComment, offset, limit, "Comment.findAllOfAnnotationSince", annotationId,
-              tuple("since", since.get()), tuple("id", annotationId));
-    else
-      comments = findAllWithParams(toComment, offset, limit, "Comment.findAllOfAnnotation", annotationId,
-              tuple("id", annotationId));
+    if (replyToId.isSome()) {
+      if (since.isSome())
+        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllRepliesSince", annotationId,
+                tuple("since", since.get()), tuple("id", replyToId.get()));
+      else
+        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllReplies", annotationId,
+                tuple("id", replyToId.get()));
+    } else {
+      if (since.isSome())
+        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllOfAnnotationSince", annotationId,
+                tuple("since", since.get()), tuple("id", annotationId));
+      else
+        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllOfAnnotation", annotationId,
+                tuple("id", annotationId));
+    }
 
     if (tagsAnd.isSome())
       comments = filterAndTags(comments, tagsAnd.get());
@@ -955,7 +965,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public boolean deleteComment(Comment comment) {
     Resource deleteResource = deleteResource(comment);
     final Comment updated = new CommentImpl(comment.getId(), comment.getAnnotationId(), comment.getText(),
-            deleteResource);
+            none(Long.class), deleteResource);
     updateComment(updated);
     // return deleteById("Comment.deleteById", comment.getId());
     return true;
