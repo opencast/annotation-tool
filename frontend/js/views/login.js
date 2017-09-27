@@ -85,8 +85,10 @@ define(["jquery",
                 show: function (options) {
                     var userNickname    = this.$el.find("#nickname");
                     var userEmail       = this.$el.find("#email");
-                    userNickname.val(options.nickname);
-                    userEmail.val(options.email);
+                    if (options) {
+                        userNickname.val(options.nickname);
+                        userEmail.val(options.email);
+                    }
                     this.$el.modal("show");
                 },
 
