@@ -29,13 +29,11 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 
 This should build the frontend, include it into the Opencast modules and copies the JARs to your Opencast installation.
 
-## Using the Tool
+## Configuration of Opencast
 
-To use the Annotation Tool you need to open it with the event-ID:
+### Adding ACL Actions
 
-    http://my.opencast.tld:8080/annotation-tool/index.html?id=<my-event-id>
-
-Note that the tool uses [custom ACL actions](https://docs.opencast.org/develop/admin/configuration/acl/#additional-acl-actions)
+The Annotation Tool uses [custom ACL actions](https://docs.opencast.org/develop/admin/configuration/acl/#additional-acl-actions)
 to control access to its videos. These actions are `annotate` and `annotate-admin` and they need to be installed
 in your Opencast setup via a list provider. A template for this is provided with the source tree under
 `/opencast-backend/etc/listproviders/acl.additional.actions.properties`.
@@ -51,7 +49,39 @@ Annotate=annotate
 Manage\ annotations=annotate-admin
 ```
 
+Users are only allowed to access the annotation tool if the have the action `annotate` or `annotate-admin` set for this recording.
+
+### Adding Distribution to Annotation Tool to the Workflow
+
+Although the Annotation Tool can access a recording when it shows up in the Opencast search service, the Annotation Tool can also be added to the list of publications for an event. 
+
+Within the `etc/workflows/ng-partial-publish` you need to add this operation to the `<operations>` section. It is recommended to add it after the "publish-engage" operation.
+
+     <operation
+        id="publish-configure"
+          exception-handler-workflow="ng-partial-error"
+          description="Publish to preview publication channel">
+          <configurations>
+            <configuration key="source-tags">preview</configuration>
+            <configuration key="channel-id">annotation</configuration>
+            <configuration key="url-pattern">http://localhost:8080/annotations-tool/index.html?id=${event_id}</configuration>
+          </configurations>
+        </operation>
+
+You can add this operation also to every other workflow definition that should distribute videos to the Annotation Tool.
+
+Additionally you must set the label for the annotation publication channel. Add to the file `etc/listproviders/publication.channel.labels.properties` the following line:
+
+    annotation=Annotation Tool
+
+
+## Using the Tool
+
+To use the Annotation Tool you need to open it with the event-ID:
+
+    http://my.opencast.tld:8080/annotation-tool/index.html?id=<my-event-id>
+
 For a user to access a video using the annotation tool, they (or any role they inhabit) have to have at least one
-of these actions enabled on the video in question.
+of these ACL actions `annotate` or `annotate-admin` enabled on the video in question.
 
 Also note that the annotation tool currently does not work with the fast testing workflow, that Opencast provides.
