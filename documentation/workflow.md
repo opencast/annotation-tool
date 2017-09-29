@@ -20,7 +20,7 @@ Example Workflow to Publish Annotation to "annotation" publication-channel.
           <configurations>
             <configuration key="source-tags">preview</configuration>
             <configuration key="channel-id">annotation</configuration>
-            <configuration key="url-pattern">http://localhost:8080/annotations-tool/index.html?id=${event_id}</configuration>
+            <configuration key="url-pattern">http://localhost:8080/annotation-tool/index.html?id=${event_id}</configuration>
           </configurations>
         </operation>
 
