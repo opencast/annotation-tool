@@ -188,7 +188,7 @@ define(["jquery",
 
                 /**
                  * Returns the time interval between each timeupdate event to take into account.
-                 * It can improve a bit the performance if the amount of annotations is important. 
+                 * It can improve a bit the performance if the amount of annotations is important.
                  * @alias module:annotations-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
                  * @return {number} The interval
                  */
@@ -276,7 +276,7 @@ define(["jquery",
                  * @alias module:annotations-tool-configuration.Configuration.getUserExtData
                  * @return {Object} Contextual user data
                  */
-                getUserExtData: function () {
+/*                getUserExtData: function () {
                     var user;
                     var roles;
 
@@ -312,6 +312,31 @@ define(["jquery",
                         email: user.email,
                         role: roles && this.getUserRoleFromExt(roles)
                     };
+                },*/
+
+                getUserExtData: function () {
+                    var user;
+
+                    $.ajax({
+                        url: "/info/me.json",
+                        dataType: "json",
+                        async: false,
+                        success: function (response) {
+                            user = response;
+                        },
+                        error: function (error) {
+                            console.warn("Error getting user information from Opencast: " + error);
+                        }
+                    });
+
+                    if (!user) return undefined;
+
+                    return {
+                        user_extid: user.user.username,
+                        nickname: user.user.username,
+                        email: user.user.email,
+                        role: user.roles && this.getUserRoleFromExt(user.roles)
+                    };
                 },
 
                 /**
@@ -321,7 +346,7 @@ define(["jquery",
                  * @return {ROLE} The corresponding user role in the annotations tool
                  */
                 getUserRoleFromExt: function (roles) {
-                    var adminRole;
+/*                    var adminRole;
 
                     $.ajax({
                         url: "/api/info/organization",
@@ -333,13 +358,13 @@ define(["jquery",
                         error: function (error) {
                             console.warn("Error getting user information from Opencast: " + error);
                         }
-                    });
+                    });*/
 
                     var ROLE_ADMIN = "ROLE_ADMIN";
 
-                    if (adminRole && _.contains(roles, adminRole)) {
+/*                    if (adminRole && _.contains(roles, adminRole)) {
                         return ROLES.ADMINISTRATOR;
-                    }
+                    }*/
 
                     if (_.contains(roles, ROLE_ADMIN)) {
                         return ROLES.SUPERVISOR;
