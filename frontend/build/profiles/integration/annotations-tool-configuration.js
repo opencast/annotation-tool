@@ -34,6 +34,7 @@ define(["jquery",
             video_creator,
             video_creation_date,
             video_extid,
+            annotate_admin_roles = [],
             /**
              * Annotations tool configuration object
              * @alias module:annotations-tool-configuration.Configuration
@@ -366,7 +367,14 @@ define(["jquery",
                         return ROLES.ADMINISTRATOR;
                     }*/
 
-                    if (_.contains(roles, ROLE_ADMIN)) {
+                    if (annotate_admin_roles.length > 0) {
+                      for (var i = 0; i < annotate_admin_roles.length; i++) {
+                        if (_.contains(roles, annotate_admin_roles[i])) {
+                            return ROLES.SUPERVISOR;
+                        }
+                      }
+                    } else if (_.contains(roles, ROLE_ADMIN)) {
+                        console.log("Using admin role as default supervisor");
                         return ROLES.SUPERVISOR;
                     }
 
@@ -422,6 +430,7 @@ define(["jquery",
                         videoTypes = ["video/webm", "video/ogg", "video/mp4"],
                         videoTypesForFallBack = [],
                         trackType = ["presenter/delivery", "presentation/delivery"],
+                        xacmlType = ["security/xacml+episode"],
                         mediaPackageId = decodeURI((new RegExp("id=" + "(.+?)(&|$)").exec(location.search) || [,null])[1]);
 
                     // Enable cross-domain for jquery ajax query
@@ -442,7 +451,9 @@ define(["jquery",
                                 nbNormalVideos = 0,
                                 nbFallbackVideos = {},
                                 tracks,
-                                selectedVideos = {};
+                                attachments,
+                                selectedVideos = {},
+                                selectedXACML = {};
 
                             if (!result) {
                                 console.warn("Could not load video " + mediaPackageId);
@@ -511,8 +522,45 @@ define(["jquery",
                                 });
                             });
                             this.playerAdapter = new HTML5PlayerAdapter($("video")[0], sources);
+
+                            // Load the security XACML file for the episode
+                            attachments = mediapackage.attachments.attachment;
+                            if (!$.isArray(attachments)) {
+                                attachments = [];
+                                attachments.push(mediapackage.attachments.attachment);
+                            }
+
+                            selectedXACML = null;
+                            $.each(attachments, function (index, attachment) {
+
+                                if ($.inArray(attachment.type, xacmlType) !== -1) {
+                                    selectedXACML = attachment;
+                                }
+                            });
+                            this.loadXACML(selectedXACML);
+
                         }, this)
                     });
+                },
+
+                loadXACML: function (file) {
+
+                  $.ajax({
+                        url: file.url,
+                        async: false,
+                        crossDomain: true,
+                        dataType: "xml",
+                        success: function (xml) {
+                            var $rules = $(xml).find("Rule");
+
+                                $rules.each(function(i, element){
+                                  if ($(element).find("Action").find("AttributeValue").text() === "annotate-admin") {
+                                    annotate_admin_roles.push($(element).find("Condition").find("AttributeValue").text());
+                                  }
+                                });
+
+                        }
+                  });
                 }
             };
 
