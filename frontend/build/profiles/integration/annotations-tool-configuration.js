@@ -431,6 +431,7 @@ define(["jquery",
                         videoTypesForFallBack = [],
                         trackType = ["presenter/delivery", "presentation/delivery"],
                         xacmlType = ["security/xacml+episode"],
+                        xacmlSeriesType = ["security/xacml+series"],
                         mediaPackageId = decodeURI((new RegExp("id=" + "(.+?)(&|$)").exec(location.search) || [,null])[1]);
 
                     // Enable cross-domain for jquery ajax query
@@ -531,12 +532,16 @@ define(["jquery",
                             }
 
                             selectedXACML = null;
-                            $.each(attachments, function (index, attachment) {
-
-                                if ($.inArray(attachment.type, xacmlType) !== -1) {
-                                    selectedXACML = attachment;
+                            for (var i = 0; i < attachments.length; i++) {
+                                if ($.inArray(attachments[i].type, xacmlType) !== -1) {
+                                    selectedXACML = attachments[i];
+                                    break;
                                 }
-                            });
+                                if ($.inArray(attachments[i].type, xacmlSeriesType) !== -1) {
+                                    selectedXACML = attachments[i];
+                                    // continue in case an episode XACML can be found, otherwiese use this as fallback
+                                }
+                            }
                             this.loadXACML(selectedXACML);
 
                         }, this)
