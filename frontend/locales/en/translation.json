@@ -304,6 +304,7 @@
   },
   "common actions": {
     "cancel": "Cancel",
+    "close": "Close",
     "ok": "OK",
     "insert": "Insert",
     "save": "Save",
