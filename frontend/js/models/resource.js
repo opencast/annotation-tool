@@ -58,7 +58,7 @@ var Resource = Backbone.Model.extend({
             this.set("isPublic", access === ACCESS.PUBLIC);
         }
         if (attr.access) updateIsPublic.call(this, attr.access);
-        this.listenTo(this, "change:access", function (self, access) {
+        this.on("change:access", function (self, access) {
             updateIsPublic.call(self, access);
         });
 
