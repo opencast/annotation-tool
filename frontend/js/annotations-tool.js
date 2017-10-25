@@ -930,7 +930,7 @@ define(["jquery",
                     delete scale.id;
                     delete scale.scaleValues;
 
-                    newScale = videoScales.create(scale, {async: false});
+                    newScale = videoScales.create(scale, { async: false });
                     scalesIdMap[scaleOldId] = newScale.get("id");
 
                     if (scaleValuesToAdd) {
@@ -945,7 +945,7 @@ define(["jquery",
                     labelsToAdd = category.labels;
                     category.scale_id = scalesIdMap[category.scale_id];
                     delete category.labels;
-                    newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes));
+                    newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes), { async: false });
 
                     if (labelsToAdd) {
                         _.each(labelsToAdd, function (label) {
