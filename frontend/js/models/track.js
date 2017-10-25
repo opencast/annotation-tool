@@ -158,7 +158,7 @@ define(["jquery",
                 }
                 this.attributes.access = newAccess;
                 this.attributes.annotations.updateAccess();
-                this.trigger("change:access");
+                this.trigger("change:access", this, newAccess);
             },
 
             /**
