@@ -127,7 +127,6 @@ define(["jquery",
                   "addLabel",
                   "render",
                   "switchEditModus",
-                  "onChange",
                   "onFocusOut",
                   "onKeyDown",
                   "onColorChange",
@@ -283,8 +282,7 @@ define(["jquery",
                 var labelView = new LabelView({
                     label        : label,
                     editModus    : this.editModus,
-                    roles        : this.roles,
-                    isScaleEnable: this.model.get("settings").hasScale
+                    roles        : this.roles
                 });
 
                 this.labelViews.push(labelView);

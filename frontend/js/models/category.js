@@ -179,7 +179,7 @@ define(["jquery",
 
                 options = _.defaults({ stringifySub: true }, options);
 
-                return Backbone.Model.prototype.save.call(this, attributes, options);
+                return Resource.prototype.save.call(this, attributes, options);
             },
 
             /**

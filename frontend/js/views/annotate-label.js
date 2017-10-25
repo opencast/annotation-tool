@@ -138,7 +138,6 @@ define(["jquery",
                                 "onKeyDown",
                                 "onDeleteLabel",
                                 "annnotateWithScaling",
-                                "changeCategory",
                                 "updateAbbreviation",
                                 "updateInputWidth");
 
@@ -161,17 +160,7 @@ define(["jquery",
 
                 this.listenTo(this.model, "change", this.render);
 
-                scaleId = this.model.get("category").scale_id;
-
-                if (!scaleId && this.model.get("category").scale) {
-                    scaleId = this.model.get("category").scale.id;
-                }
-
-                this.scaleValues = annotationsTool.video.get("scales").get(scaleId);
-
-                if (this.scaleValues) {
-                    this.scaleValues = this.scaleValues.get("scaleValues");
-                }
+                this.setupScaling(this.model.get("category"));
 
                 if (_.contains(this.roles, annotationsTool.user.get("role"))) {
                     this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
@@ -250,21 +239,27 @@ define(["jquery",
             /**
              * Listener for "change" event on the label category
              * @alias module:views-annotate-label.LabelView#changeCategory
-             * @param  {Category} category The updated category
+             * @param {object} category The updated category
              */
             changeCategory: function (category) {
-                var scale;
+                this.setupScaling(category);
+                this.render();
+            },
 
-                if (category.scale_id) {
-                    scale = annotationsTool.video.get("scales").get(category.scale_id);
-                    if (scale) {
-                        this.scaleValues = scale.get("scaleValues");
-                    }
+            /**
+             * Set up scale values according to category
+             * @alias module:views-annotate-label.LabelView#setupScaling
+             * @param {object} category The updated category
+             */
+            setupScaling: function (category) {
+                var scaleId = category.scale_id || (category.scale && category.scale.id),
+                    scale = scaleId && annotationsTool.video.get("scales").get(scaleId);
+
+                if (scale) {
+                    this.scaleValues = scale.get("scaleValues");
                 }
 
                 this.isScaleEnable = (category.settings && category.settings.hasScale);
-                this.model.set("category", category);
-                this.model.save();
             },
 
             /**
