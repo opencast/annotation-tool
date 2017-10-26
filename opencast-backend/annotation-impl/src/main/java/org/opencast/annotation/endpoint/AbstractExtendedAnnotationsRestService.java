@@ -357,12 +357,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/scales")
   public Response postScaleTemplate(@FormParam("name") final String name,
-          @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return createScale(Option.<Long> none(), name, description, tags);
+          @FormParam("description") final String description, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return createScale(Option.<Long> none(), name, description, access, tags);
   }
 
   Response createScale(final Option<Long> videoId, final String name, final String description,
-          final String tags) {
+          final Integer access, final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -371,7 +372,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                access);
         final Scale scale = eas().createScale(videoId, name, trimToNone(description), resource);
         return Response.created(scaleLocationUri(scale, videoId.isSome()))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), scale))).build();

@@ -517,10 +517,12 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales")
   public Response postScale(@FormParam("name") final String name, @FormParam("description") final String description,
-          @FormParam("scale_id") final Long scaleId, @FormParam("tags") final String tags) {
+          @FormParam("scale_id") final Long scaleId, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
     if (scaleId == null)
-      return host.createScale(option(videoId), name, description, tags);
+      return host.createScale(option(videoId), name, description, access, tags);
 
+    // TODO Why does this not use `createScale`?
     return run(array(scaleId), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -529,7 +531,8 @@ public class VideoEndpoint {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                access);
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();
