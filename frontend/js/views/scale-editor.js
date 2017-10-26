@@ -17,7 +17,8 @@
 /**
  * A module representing the scale editor
  * @module views-scale-editor
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires backbone
  * @requires i18next
  * @requires models-scale
@@ -29,6 +30,7 @@
  * @requires handlebars
  */
 define(["jquery",
+        "underscore",
         "backbone",
         "i18next",
         "models/scale",
@@ -40,7 +42,7 @@ define(["jquery",
         "access",
         "handlebars",
         "handlebarsHelpers"],
-    function ($, Backbone, i18next, Scale, Scales, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
+    function ($, _, Backbone, i18next, Scale, Scales, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
 
             "use strict";
 
