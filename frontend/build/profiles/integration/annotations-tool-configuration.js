@@ -34,6 +34,7 @@ define(["jquery",
             video_creator,
             video_creation_date,
             video_extid,
+            annotate_admin_roles = [],
             /**
              * Annotations tool configuration object
              * @alias module:annotations-tool-configuration.Configuration
@@ -188,7 +189,7 @@ define(["jquery",
 
                 /**
                  * Returns the time interval between each timeupdate event to take into account.
-                 * It can improve a bit the performance if the amount of annotations is important. 
+                 * It can improve a bit the performance if the amount of annotations is important.
                  * @alias module:annotations-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
                  * @return {number} The interval
                  */
@@ -270,18 +271,11 @@ define(["jquery",
                  */
                 skipLoginFormIfPossible: true,
 
-                /**
-                 * Extract user data from the current context.
-                 * The format has to be compatible with {@link module:models-user.User#initialize}.
-                 * @alias module:annotations-tool-configuration.Configuration.getUserExtData
-                 * @return {Object} Contextual user data
-                 */
                 getUserExtData: function () {
                     var user;
-                    var roles;
 
                     $.ajax({
-                        url: "/api/info/me",
+                        url: "/info/me.json",
                         dataType: "json",
                         async: false,
                         success: function (response) {
@@ -294,23 +288,11 @@ define(["jquery",
 
                     if (!user) return undefined;
 
-                    $.ajax({
-                        url: "/api/info/me/roles",
-                        dataType: "json",
-                        async: false,
-                        success: function (response) {
-                            roles = response;;
-                        },
-                        error: function (error) {
-                            console.warn("Error getting user information from Opencast: " + error);
-                        }
-                    });
-
                     return {
-                        user_extid: user.username,
-                        nickname: user.username,
-                        email: user.email,
-                        role: roles && this.getUserRoleFromExt(roles)
+                        user_extid: user.user.username,
+                        nickname: user.user.username,
+                        email: user.user.email,
+                        role: user.roles && this.getUserRoleFromExt(user.roles)
                     };
                 },
 
@@ -321,27 +303,17 @@ define(["jquery",
                  * @return {ROLE} The corresponding user role in the annotations tool
                  */
                 getUserRoleFromExt: function (roles) {
-                    var adminRole;
-
-                    $.ajax({
-                        url: "/api/info/organization",
-                        dataType: "json",
-                        async: false,
-                        success: function (response) {
-                            adminRole = response.adminRole;
-                        },
-                        error: function (error) {
-                            console.warn("Error getting user information from Opencast: " + error);
-                        }
-                    });
 
                     var ROLE_ADMIN = "ROLE_ADMIN";
 
-                    if (adminRole && _.contains(roles, adminRole)) {
-                        return ROLES.ADMINISTRATOR;
-                    }
-
-                    if (_.contains(roles, ROLE_ADMIN)) {
+                    if (annotate_admin_roles.length > 0) {
+                      for (var i = 0; i < annotate_admin_roles.length; i++) {
+                        if (_.contains(roles, annotate_admin_roles[i])) {
+                            return ROLES.SUPERVISOR;
+                        }
+                      }
+                    } else if (_.contains(roles, ROLE_ADMIN)) {
+                        console.log("Using admin role as default supervisor");
                         return ROLES.SUPERVISOR;
                     }
 
@@ -397,6 +369,8 @@ define(["jquery",
                         videoTypes = ["video/webm", "video/ogg", "video/mp4"],
                         videoTypesForFallBack = [],
                         trackType = ["presenter/delivery", "presentation/delivery"],
+                        xacmlType = ["security/xacml+episode"],
+                        xacmlSeriesType = ["security/xacml+series"],
                         mediaPackageId = decodeURI((new RegExp("id=" + "(.+?)(&|$)").exec(location.search) || [,null])[1]);
 
                     // Enable cross-domain for jquery ajax query
@@ -417,7 +391,9 @@ define(["jquery",
                                 nbNormalVideos = 0,
                                 nbFallbackVideos = {},
                                 tracks,
-                                selectedVideos = {};
+                                attachments,
+                                selectedVideos = {},
+                                selectedXACML = {};
 
                             if (!result) {
                                 console.warn("Could not load video " + mediaPackageId);
@@ -486,8 +462,49 @@ define(["jquery",
                                 });
                             });
                             this.playerAdapter = new HTML5PlayerAdapter($("video")[0], sources);
+
+                            // Load the security XACML file for the episode
+                            attachments = mediapackage.attachments.attachment;
+                            if (!$.isArray(attachments)) {
+                                attachments = [];
+                                attachments.push(mediapackage.attachments.attachment);
+                            }
+
+                            selectedXACML = null;
+                            for (var i = 0; i < attachments.length; i++) {
+                                if ($.inArray(attachments[i].type, xacmlType) !== -1) {
+                                    selectedXACML = attachments[i];
+                                    break;
+                                }
+                                if ($.inArray(attachments[i].type, xacmlSeriesType) !== -1) {
+                                    selectedXACML = attachments[i];
+                                    // continue in case an episode XACML can be found, otherwiese use this as fallback
+                                }
+                            }
+                            this.loadXACML(selectedXACML);
+
                         }, this)
                     });
+                },
+
+                loadXACML: function (file) {
+
+                  $.ajax({
+                        url: file.url,
+                        async: false,
+                        crossDomain: true,
+                        dataType: "xml",
+                        success: function (xml) {
+                            var $rules = $(xml).find("Rule");
+
+                                $rules.each(function(i, element){
+                                  if ($(element).find("Action").find("AttributeValue").text() === "annotate-admin") {
+                                    annotate_admin_roles.push($(element).find("Condition").find("AttributeValue").text());
+                                  }
+                                });
+
+                        }
+                  });
                 }
             };
 
