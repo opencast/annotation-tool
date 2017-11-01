@@ -352,7 +352,7 @@ define(["jquery",
                 if (this.editModus) {
                     width -= this.$el.find("i.delete").outerWidth();
                 }
-                
+
                 this.$el.find("input.item-value").width(width);
 
                 this.delegateEvents(this.events);

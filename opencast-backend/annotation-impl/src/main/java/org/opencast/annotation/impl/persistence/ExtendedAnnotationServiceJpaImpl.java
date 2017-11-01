@@ -811,7 +811,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     for (Label l : getLabelsByCategoryId(category.getId())) {
       deleteLabel(l);
     }
-    // return deleteById("Video.deleteById", video.getId());
     return true;
   }
 
