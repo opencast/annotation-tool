@@ -87,7 +87,7 @@
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
     "title": "Delete",
-      "warning": "Do you really want to delete the {{type}} \"{{content}}\"?"
+      "warning": "Do you really want to delete the {{context}} \"{{content}}\"?"
   },
   "description": "Video annotation tool",
   "list annotation": {
