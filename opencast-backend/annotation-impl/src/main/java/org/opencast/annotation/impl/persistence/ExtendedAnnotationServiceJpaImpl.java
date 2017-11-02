@@ -1146,9 +1146,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     org.opencastproject.security.api.User currentUser = securityService.getUser();
     Option<Long> currentUserId = getCurrentUserId();
 
-    if (resource.getAccess() == Resource.PUBLIC
-            || currentUser.hasRole(securityService.getOrganization().getAdminRole())
-            || currentUser.hasRole(SecurityConstants.GLOBAL_ADMIN_ROLE))
+    if (resource.getAccess() == Resource.PUBLIC)
       return true;
 
     if (resource.getCreatedBy().isNone() || currentUserId.isNone())
