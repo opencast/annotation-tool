@@ -81,7 +81,7 @@ define(["jquery",
                 }
 
                 if (attr.id) {
-                    this.attributes.scaleValues.fetch({async: false});
+                    this.attributes.scaleValues.fetch({ async: true });
                 }
             },
 
@@ -101,7 +101,7 @@ define(["jquery",
                         scalevalues = this.attributes.scaleValues;
 
                         if (scalevalues && (scalevalues.length) === 0) {
-                            scalevalues.fetch({async: false});
+                            scalevalues.fetch({ async: true });
                         }
                     }
                 });
