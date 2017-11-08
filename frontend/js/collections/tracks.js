@@ -224,7 +224,7 @@ define(["jquery",
                     if (tracks.length > max) {
                         console.warn("The list of tracks to show is higher than the maximum number of visible tracks. \
                                       Only the first " + max + " will be displayed.");
-                        
+
                         for (i = tracks.length - 1; i >= max; i--) {
                             tracks.splice(i, 1);
                         }
@@ -253,7 +253,7 @@ define(["jquery",
                                         }, this);
                         annotationsTool.selectTrack(selectedTrack);
                     }
-                    
+
                     annotationsTool.selectTrack(selectedTrack);
 
                     this.trigger(EVENTS.VISIBILITY, this.visibleTracks);
