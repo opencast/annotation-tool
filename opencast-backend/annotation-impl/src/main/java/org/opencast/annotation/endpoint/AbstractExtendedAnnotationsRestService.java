@@ -1065,13 +1065,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   @GET
   @Path("/export.csv")
-  public Response getExportStatistics() throws IOException {
+  public Response getExportStatistics(@QueryParam("track") final List<Long> tracks,
+          @QueryParam("category") final List<Long> categories) throws IOException {
     ResponseBuilder response = Response.ok(new StreamingOutput() {
+
       public void write(OutputStream os) throws IOException, WebApplicationException {
         CSVWriter writer = null;
         try {
           writer = new CSVWriter(new OutputStreamWriter(os));
-          writeExport(writer);
+          writeExport(writer, tracks, categories);
           writer.close();
         } finally {
           IOUtils.closeQuietly(os);
@@ -1084,7 +1086,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return response.build();
   }
 
-  private void writeExport(CSVWriter writer) {
+  private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport) {
     // Write headers
     List<String> header = new ArrayList<String>();
     header.add("ID");
@@ -1109,10 +1111,22 @@ public abstract class AbstractExtendedAnnotationsRestService {
       List<Track> tracks = eas().getTracks(video.getId(), Option.<Integer> none(), Option.<Integer> none(),
               Option.<Date> none(), Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
       for (Track track : tracks) {
+        if (!tracksToExport.contains(track.getId())) continue;
         List<Annotation> annotations = eas().getAnnotations(track.getId(), none(Double.class), none(Double.class),
                 none(Integer.class), none(Integer.class), none(Date.class), Option.<Map<String, String>> none(),
                 Option.<Map<String, String>> none());
         for (Annotation annotation : annotations) {
+          Option<Label> label = annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
+            @Override
+            public Option<Label> apply(Long labelId) {
+              final boolean includeDeleted = true;
+              return eas().getLabel(labelId, includeDeleted);
+            }
+          });
+          if (label.isSome()) {
+            if (!categoriesToExport.contains(label.get().getCategoryId())) continue;
+          }
+
           List<String> line = new ArrayList<String>();
 
           line.add(Long.toString(annotation.getId()));
@@ -1135,16 +1149,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           }
           line.add(annotation.getText().getOrElse(""));
 
-          if (annotation.getLabelId().isSome()) {
-            Option<Label> label = eas().getLabel(annotation.getLabelId().get(), false);
-            line.add(label.map(getCategoryName.curry(eas())).getOrElse(""));
-            line.add(label.map(getLabelName).getOrElse(""));
-            line.add(label.map(getLabelAbbreviation).getOrElse(""));
-          } else {
-            line.add("");
-            line.add("");
-            line.add("");
-          }
+          line.add(label.map(getCategoryName.curry(eas())).getOrElse(""));
+          line.add(label.map(getLabelName).getOrElse(""));
+          line.add(label.map(getLabelAbbreviation).getOrElse(""));
 
           if (annotation.getScaleValueId().isSome()) {
             Option<ScaleValue> scaleValue = eas().getScaleValue(annotation.getScaleValueId().get());
