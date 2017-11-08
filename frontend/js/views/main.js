@@ -110,6 +110,7 @@ define(["jquery",
              * @type {Map}
              */
             events: {
+                "click #export"              : "export",
                 "click #about"               : "about",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
@@ -150,8 +151,6 @@ define(["jquery",
                 if (annotationsTool.localStorage) {
                     // Remove link for statistics exports, work only with backend implementation
                     this.$el.find("#export").parent().remove();
-                } else {
-                    this.$el.find("#export").attr("href", annotationsTool.exportUrl);
                 }
 
                 Backbone.localSync("read", annotationsTool.users, {
@@ -377,6 +376,18 @@ define(["jquery",
              * @alias module:views-main.MainView#aboutDialog
              */
             aboutDialog: new AboutDialog(),
+
+            /**
+             * Offer the user a spreadsheet version of the annotations for download.
+             * @alias module:views-main.Main#export
+             */
+            export: function () {
+                var tracksToExport = annotationsTool.video.get("tracks").getVisibleTracks();
+                var categoriesToExport = annotationsTool.video.get("categories").filter(function (category) {
+                    return category.get("visible");
+                });
+                annotationsTool.export(tracksToExport, categoriesToExport);
+            },
 
             /**
              * Show a dialog with information about the tool

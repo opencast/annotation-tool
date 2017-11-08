@@ -128,14 +128,6 @@ define(["jquery",
             logoutUrl: undefined,
 
             /**
-             * Url from the export function for statistics usage
-             * @alias module:annotations-tool-configuration.Configuration.exportUrl
-             * @type {string}
-             * @readOnly
-             */
-            exportUrl: "",
-
-            /**
              * Player adapter implementation to use for the annotations tool
              * @alias module:annotations-tool-configuration.Configuration.playerAdapter
              * @type {module:player-adapter.PlayerAdapter}
