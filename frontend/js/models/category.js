@@ -91,7 +91,7 @@ define(["jquery",
                 }
 
                 if (attr.id) {
-                    this.attributes.labels.fetch({async: false});
+                    this.attributes.labels.fetch({ async: true });
                 }
 
                 this.attributes.visible = true;
@@ -136,7 +136,7 @@ define(["jquery",
                 if (attr.id) {
                     if (!this.ready && attr.labels && attr.labels.url && (attr.labels.length) === 0) {
                         attr.labels.fetch({
-                            async: false,
+                            async: true,
                             success: function () {
                                 self.ready = true;
                             }
