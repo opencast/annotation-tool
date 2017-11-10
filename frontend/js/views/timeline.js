@@ -159,7 +159,7 @@ define(["util",
              * @type {Integer}
              * @constant
              */
-            DEFAULT_DURATION: 5,
+            DEFAULT_DURATION: 1,
 
             /**
              * Class prefix for stack level
