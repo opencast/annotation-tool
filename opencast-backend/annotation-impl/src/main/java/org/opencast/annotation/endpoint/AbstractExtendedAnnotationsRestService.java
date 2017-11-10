@@ -75,6 +75,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -373,7 +374,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return BAD_REQUEST;
 
         Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                access);
+                option(access));
         final Scale scale = eas().createScale(videoId, name, trimToNone(description), resource);
         return Response.created(scaleLocationUri(scale, videoId.isSome()))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), scale))).build();
@@ -705,7 +706,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @DefaultValue("0") @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
+          @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
     return postCategoryResponse(Option.<Long> none(), name, description, hasDuration, scaleId, settings, access, tags);
   }
 
@@ -721,7 +722,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return BAD_REQUEST;
 
         Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                access);
+                option(access));
         final Category category = eas().createCategory(videoId, option(scaleId), name, trimToNone(description),
                 hasDuration, trimToNone(settings), resource);
 

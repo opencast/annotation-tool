@@ -278,7 +278,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateAndFindAnnotation() throws Exception {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, Resource.PUBLIC);
+    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
     final Video v = eas.createVideo("lecture", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(""), some(1), none(""), resource);
     // create

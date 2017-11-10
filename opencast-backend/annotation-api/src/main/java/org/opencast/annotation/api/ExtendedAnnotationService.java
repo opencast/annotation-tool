@@ -778,7 +778,7 @@ public interface ExtendedAnnotationService {
    *          the access level from the resource
    * @return the base resource
    */
-  Resource createResource(Option<Map<String, String>> tags, Integer access);
+  Resource createResource(Option<Map<String, String>> tags, Option<Integer> access);
 
   /**
    * Update the resource update information

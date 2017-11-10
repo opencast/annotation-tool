@@ -532,7 +532,7 @@ public class VideoEndpoint {
           return BAD_REQUEST;
 
         Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                access);
+                option(access));
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();
@@ -616,7 +616,7 @@ public class VideoEndpoint {
   public Response postCategory(@FormParam("name") final String name, @FormParam("description") final String description,
           @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("category_id") final Long id, @DefaultValue("0") @FormParam("access") final Integer access,
+          @FormParam("category_id") final Long id, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
     if (id == null)
       return host.postCategoryResponse(option(videoId), name, description, hasDuration, scaleId, settings, access,
