@@ -211,19 +211,19 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testTrack() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags);
+    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
     final Video v = eas.createVideo("lecture1", resource);
-    final Track t = eas.createTrack(v.getId(), "track1", none(""), some(1), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track1", none(""), none(""), resource);
     // try adding a track to a non existing video
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.createTrack(999, "track1", none(""), some(1), none(""), resource);
+        eas.createTrack(999, "track1", none(""), none(""), resource);
       }
     });
     // add another video
-    eas.createTrack(v.getId(), "track2", none(""), some(1), none(""), resource);
-    eas.createTrack(v.getId(), "track3", none(""), some(1), none(""), resource);
+    eas.createTrack(v.getId(), "track2", none(""), none(""), resource);
+    eas.createTrack(v.getId(), "track3", none(""), none(""), resource);
 
     assertTrue(eas.getTrack(3478813).isNone());
     assertTrue(eas.getTrack(t.getId()).isSome());
@@ -257,7 +257,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track1", none(""), none(0), some("{color:blue, url:http://localhost}"),
+    final Track t = eas.createTrack(v.getId(), "track1", none(""), some("{color:blue, url:http://localhost}"),
             resource);
     assertTrue(eas.getTrack(t.getId()).isSome());
     assertEquals("{color:blue, url:http://localhost}", eas.getTrack(t.getId()).get().getSettings().get());
@@ -268,8 +268,8 @@ public class ExtendedAnnotationServiceJpaImplTest {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track99", none(""), none(0),
-            some("{color:blue, url:http://localhost}"), resource);
+    final Track t = eas.createTrack(v.getId(), "track99", none(""), some("{color:blue, url:http://localhost}"),
+            resource);
     assertTrue(eas.getTrack(t.getId()).isSome());
     eas.deleteTrack(t);
     assertTrue(eas.getTrack(t.getId()).isNone());
@@ -280,7 +280,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track1", none(""), some(1), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track1", none(""), none(""), resource);
     // create
     final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(""), none(-1L),
             none(-1L), resource);
@@ -319,7 +319,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track", none(""), none(0), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track", none(""), none(""), resource);
     // update/non existing
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
@@ -345,7 +345,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track", none(""), none(0), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track", none(""), none(""), resource);
     // create
     final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(""), none(-1L),
             none(-1L), resource);
@@ -650,7 +650,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     // create resources
     final User u = eas.createUser("jsbach", "J.S. Bach", some("js@bach.de"), resource);
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track", none(""), none(0), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track", none(""), none(""), resource);
     final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(""), none(-1L),
             none(-1L), resource);
     assertTrue(eas.getUser(u.getId()).isSome());

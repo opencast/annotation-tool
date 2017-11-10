@@ -87,26 +87,23 @@ public class TrackDto extends AbstractResourceDto {
   @CollectionTable(name = "xannotations_track_tags", joinColumns = @JoinColumn(name = "track_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
-  public static TrackDto create(long videoId, String name, Option<String> description, Option<Integer> access,
-          Option<String> settings, Resource resource) {
-    final TrackDto dto = new TrackDto().update(name, description, access, settings, resource);
+  public static TrackDto create(long videoId, String name, Option<String> description,  Option<String> settings,
+          Resource resource) {
+    final TrackDto dto = new TrackDto().update(name, description, settings, resource);
     dto.videoId = videoId;
     return dto;
   }
 
   public static TrackDto fromTrack(Track t) {
-    return create(t.getVideoId(), t.getName(), t.getDescription(), Option.some(t.getAccess()), t.getSettings(), t);
+    return create(t.getVideoId(), t.getName(), t.getDescription(), t.getSettings(), t);
   }
 
-  public TrackDto update(String name, Option<String> description, Option<Integer> access, Option<String> settings,
+  public TrackDto update(String name, Option<String> description, Option<String> settings,
           Resource resource) {
     super.update(resource);
     this.name = name;
     this.description = description.getOrElse((String) null);
     this.settings = settings.getOrElse((String) null);
-    if (access.isSome()) {
-      this.access = access.get();
-    }
     if (resource.getTags() != null)
       this.tags = resource.getTags();
     return this;

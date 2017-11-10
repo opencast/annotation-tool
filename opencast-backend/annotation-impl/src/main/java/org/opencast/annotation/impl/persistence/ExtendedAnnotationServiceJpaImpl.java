@@ -280,10 +280,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    */
   @Override
   public Track createTrack(final long videoId, final String name, final Option<String> description,
-          final Option<Integer> access, final Option<String> settings, final Resource resource)
-          throws ExtendedAnnotationException {
+          final Option<String> settings, final Resource resource) throws ExtendedAnnotationException {
     if (getVideoDto(videoId).isSome()) {
-      final TrackDto dto = TrackDto.create(videoId, name, description, access, settings, resource);
+      final TrackDto dto = TrackDto.create(videoId, name, description, settings, resource);
       return tx(Queries.persist(dto)).toTrack();
     } else {
       throw notFound;
@@ -366,7 +365,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     update("Track.findById", track.getId(), new Effect<TrackDto>() {
       @Override
       protected void run(TrackDto dto) {
-        dto.update(track.getName(), track.getDescription(), Option.some(track.getAccess()), track.getSettings(), track);
+        dto.update(track.getName(), track.getDescription(), track.getSettings(), track);
       }
     });
   }

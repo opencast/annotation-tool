@@ -184,9 +184,9 @@ public class VideoEndpoint {
 
         try {
 
-          Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-          final Track t = eas.createTrack(videoId, name, trimToNone(description), Option.option(access),
-                  trimToNone(settings), resource);
+          Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                  option(access));
+          final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
           return Response.created(trackLocationUri(t))
                   .entity(Strings.asStringNull().apply(TrackDto.toJson.apply(eas, t))).build();
