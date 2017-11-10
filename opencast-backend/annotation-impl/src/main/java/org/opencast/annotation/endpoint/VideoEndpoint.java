@@ -79,7 +79,7 @@ public class VideoEndpoint {
 
   private static class VideoData {
 
-    static enum Access {
+    enum Access {
         NONE,
         ANNOTATE,
         ANNOTATE_ADMIN
