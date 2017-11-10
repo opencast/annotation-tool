@@ -113,7 +113,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   private static final Logger logger = LoggerFactory.getLogger(AbstractExtendedAnnotationsRestService.class);
 
   /** Location header. */
-  public static final String LOCATION = "Location";
+  static final String LOCATION = "Location";
 
   protected abstract ExtendedAnnotationService getExtendedAnnotationsService();
 
@@ -1248,7 +1248,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     }
   }
 
-  public static final Function<String, Option<Date>> parseDate = new Function<String, Option<Date>>() {
+  static final Function<String, Option<Date>> parseDate = new Function<String, Option<Date>>() {
     @Override
     public Option<Date> apply(String s) {
       try {
@@ -1266,7 +1266,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   }
 
   @SuppressWarnings("unchecked")
-  public static final Function<String, Option<Map<String, String>>> parseToJsonMap = new Function<String, Option<Map<String, String>>>() {
+  static final Function<String, Option<Map<String, String>>> parseToJsonMap = new Function<String, Option<Map<String, String>>>() {
     @Override
     public Option<Map<String, String>> apply(String s) {
       try {
