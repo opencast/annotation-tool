@@ -129,11 +129,12 @@ define(["jquery",
                 /**
                  * Offer the user a spreadsheet version of the annotations for download.
                  * @alias module:annotations-tool-configuration.Configuration.export
+                 * @param {Video} video The video to export
                  * @param {Track[]} tracks The tracks to include in the export
                  * @param {Category[]} categories The tracks to include in the export
                  */
-                export: function (tracks, categories) {
-                    window.location.href = "../extended-annotations/export.csv?" +
+                export: function (video, tracks, categories) {
+                    window.location.href = "../extended-annotations/videos/" + video.id + "/export.csv?" +
                         _.map(tracks, function (track) {
                             return "track=" + track.id;
                         }).join("&") +

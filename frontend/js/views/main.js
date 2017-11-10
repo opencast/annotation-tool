@@ -386,7 +386,7 @@ define(["jquery",
                 var categoriesToExport = annotationsTool.video.get("categories").filter(function (category) {
                     return category.get("visible");
                 });
-                annotationsTool.export(tracksToExport, categoriesToExport);
+                annotationsTool.export(annotationsTool.video, tracksToExport, categoriesToExport);
             },
 
             /**
