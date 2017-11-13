@@ -127,12 +127,22 @@ define(["jquery",
                 logoutUrl: "/j_spring_security_logout",
 
                 /**
-                 * Url from the export function for statistics usage
-                 * @alias module:annotations-tool-configuration.Configuration.exportUrl
-                 * @type {string}
-                 * @readOnly
+                 * Offer the user a spreadsheet version of the annotations for download.
+                 * @alias module:annotations-tool-configuration.Configuration.export
+                 * @param {Video} video The video to export
+                 * @param {Track[]} tracks The tracks to include in the export
+                 * @param {Category[]} categories The tracks to include in the export
                  */
-                exportUrl: "../extended-annotations/export.csv",
+                export: function (video, tracks, categories) {
+                    window.location.href = "../extended-annotations/videos/" + video.id + "/export.csv?" +
+                        _.map(tracks, function (track) {
+                            return "track=" + track.id;
+                        }).join("&") +
+                        "&" +
+                        _.map(categories, function (category) {
+                            return "category=" + category.id;
+                        }).join("&");
+                },
 
                 /**
                  * Player adapter implementation to use for the annotations tool

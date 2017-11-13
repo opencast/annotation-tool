@@ -5,9 +5,12 @@ import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
 import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.api.Label;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
+import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
+import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
 
 import org.opencast.annotation.impl.AnnotationImpl;
@@ -31,6 +34,7 @@ import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestSe
 
 import org.opencast.annotation.impl.Jsons;
 
+import org.opencast.annotation.impl.persistence.AbstractResourceDto;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
 import org.opencast.annotation.impl.persistence.CommentDto;
@@ -40,17 +44,24 @@ import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
 
+import org.opencastproject.util.IoSupport;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
+import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
 import static org.opencastproject.util.UrlSupport.uri;
 import static org.opencastproject.util.data.Arrays.array;
+import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.functions.Strings.trimToNone;
+
+import au.com.bytecode.opencsv.CSVWriter;
+
+import org.apache.commons.io.IOUtils;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -65,10 +76,19 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class VideoEndpoint {
 
@@ -79,7 +99,7 @@ public class VideoEndpoint {
 
   private static class VideoData {
 
-    static enum Access {
+    enum Access {
         NONE,
         ANNOTATE,
         ANNOTATE_ADMIN
@@ -184,9 +204,9 @@ public class VideoEndpoint {
 
         try {
 
-          Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-          final Track t = eas.createTrack(videoId, name, trimToNone(description), Option.option(access),
-                  trimToNone(settings), resource);
+          Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                  option(access));
+          final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
           return Response.created(trackLocationUri(t))
                   .entity(Strings.asStringNull().apply(TrackDto.toJson.apply(eas, t))).build();
@@ -933,6 +953,182 @@ public class VideoEndpoint {
     return getCommentsResponse(trackId, annotationId, some(commentId), limit, offset, date, tagsAnd,
             tagsOr);
   }
+
+  @GET
+  @Path("/export.csv")
+  public Response getExportStatistics(@QueryParam("track") final List<Long> tracks,
+          @QueryParam("category") final List<Long> categories) throws IOException {
+    Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
+
+      public void write(OutputStream os) throws IOException, WebApplicationException {
+        CSVWriter writer = null;
+        try {
+          writer = new CSVWriter(new OutputStreamWriter(os));
+          writeExport(writer, tracks, categories);
+          writer.close();
+        } finally {
+          IOUtils.closeQuietly(os);
+          IoSupport.closeQuietly(writer);
+        }
+      }
+    });
+    response.header("Content-Type", "text/csv");
+    response.header("Content-Disposition", "attachment; filename=export.csv");
+    return response.build();
+  }
+
+  private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport) {
+    // Write headers
+    List<String> header = new ArrayList<>();
+    header.add("ID");
+    header.add("Creation date");
+    header.add("Last update");
+    header.add("Author nickname");
+    header.add("Author mail");
+    header.add("Track name");
+    header.add("Leadin");
+    header.add("Leadout");
+    header.add("Duration");
+    header.add("Text");
+    header.add("Category name");
+    header.add("Label name");
+    header.add("Label abbreviation");
+    header.add("Scale name");
+    header.add("Scale value name");
+    header.add("Scale value value");
+    writer.writeNext(header.toArray(new String[header.size()]));
+
+    for (VideoData videoData : this.videoData) {
+      Video video = videoData.video;
+      List<Track> tracks = eas.getTracks(video.getId(), Option.<Integer> none(), Option.<Integer> none(),
+              Option.<Date> none(), Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
+      for (Track track : tracks) {
+        if (!tracksToExport.contains(track.getId())) continue;
+        List<Annotation> annotations = eas.getAnnotations(track.getId(), none(Double.class), none(Double.class),
+                none(Integer.class), none(Integer.class), none(Date.class), Option.<Map<String, String>> none(),
+                Option.<Map<String, String>> none());
+        for (Annotation annotation : annotations) {
+          Option<Label> label = annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
+            @Override
+            public Option<Label> apply(Long labelId) {
+              final boolean includeDeleted = true;
+              return eas.getLabel(labelId, includeDeleted);
+            }
+          });
+          if (label.isSome()) {
+            if (!categoriesToExport.contains(label.get().getCategoryId())) continue;
+          }
+
+          List<String> line = new ArrayList<>();
+
+          line.add(Long.toString(annotation.getId()));
+          line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+          line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+          line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
+          line.add(option(annotation.getCreatedBy().map(getUserEmail.curry(eas)).getOrElse("")).getOrElse(""));
+          line.add(track.getName());
+
+          double start = annotation.getStart(); // start, stop, duration
+          line.add(toVideoTimeString(start));
+          double end = start;
+          if (annotation.getDuration().isSome()) {
+            end += annotation.getDuration().get();
+            line.add(toVideoTimeString(end));
+            line.add(toVideoTimeString(annotation.getDuration().get()));
+          } else {
+            line.add(toVideoTimeString(end));
+            line.add("");
+          }
+          line.add(annotation.getText().getOrElse(""));
+
+          line.add(label.map(getCategoryName.curry(eas)).getOrElse(""));
+          line.add(label.map(getLabelName).getOrElse(""));
+          line.add(label.map(getLabelAbbreviation).getOrElse(""));
+
+          if (annotation.getScaleValueId().isSome()) {
+            Option<ScaleValue> scaleValue = eas.getScaleValue(annotation.getScaleValueId().get());
+            line.add(scaleValue.map(getScaleName.curry(eas)).getOrElse(""));
+            line.add(scaleValue.map(getScaleValueName).getOrElse(""));
+            line.add(scaleValue.map(getScaleValue).getOrElse(""));
+          } else {
+            line.add("");
+            line.add("");
+            line.add("");
+          }
+
+          writer.writeNext(line.toArray(new String[line.size()]));
+        }
+      }
+    }
+  }
+
+  private static String toVideoTimeString(double seconds) {
+    long millis = new Double(seconds * 1000).longValue();
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+    return sdf.format(new Date(millis - TimeZone.getDefault().getRawOffset()));
+  }
+
+  private static final Function2<ExtendedAnnotationService, Long, String> getUserEmail = new Function2<ExtendedAnnotationService, Long, String>() {
+    @Override
+    public String apply(ExtendedAnnotationService s, Long userId) {
+      Option<User> user = s.getUser(userId);
+      if (user.isNone())
+        return null;
+
+      return user.get().getEmail().getOrElse((String) null);
+    }
+  };
+
+  private static final Function<Label, String> getLabelName = new Function<Label, String>() {
+    @Override
+    public String apply(Label label) {
+      return label.getValue();
+    }
+  };
+
+  private static final Function2<ExtendedAnnotationService, Label, String> getCategoryName = new Function2<ExtendedAnnotationService, Label, String>() {
+    @Override
+    public String apply(ExtendedAnnotationService e, Label label) {
+      Option<Category> category = e.getCategory(label.getCategoryId(), true);
+      if (category.isNone())
+        return null;
+
+      return category.get().getName();
+    }
+  };
+
+  private static final Function<Label, String> getLabelAbbreviation = new Function<Label, String>() {
+    @Override
+    public String apply(Label label) {
+      return label.getAbbreviation();
+    }
+  };
+
+  private static final Function<ScaleValue, String> getScaleValueName = new Function<ScaleValue, String>() {
+    @Override
+    public String apply(ScaleValue scaleValue) {
+      return scaleValue.getName();
+    }
+  };
+
+  private static final Function<ScaleValue, String> getScaleValue = new Function<ScaleValue, String>() {
+    @Override
+    public String apply(ScaleValue scaleValue) {
+      return Double.toString(scaleValue.getValue());
+    }
+  };
+
+  private static final Function2<ExtendedAnnotationService, ScaleValue, String> getScaleName = new Function2<ExtendedAnnotationService, ScaleValue, String>() {
+    @Override
+    public String apply(ExtendedAnnotationService e, ScaleValue scaleValue) {
+      Option<Scale> scale = e.getScale(scaleValue.getScaleId(), true);
+      if (scale.isNone())
+        return null;
+
+      return scale.get().getName();
+    }
+  };
+
 
   private URI trackLocationUri(Track t) {
     return uri(host.getEndpointBaseUrl(), "videos", t.getVideoId(), "tracks", t.getId());

@@ -191,8 +191,8 @@ public interface ExtendedAnnotationService {
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Track createTrack(long videoId, String name, Option<String> description, Option<Integer> access,
-          Option<String> settings, Resource resource) throws ExtendedAnnotationException;
+  Track createTrack(long videoId, String name, Option<String> description, Option<String> settings,
+          Resource resource) throws ExtendedAnnotationException;
 
   /**
    * Create a track with a certain track.
