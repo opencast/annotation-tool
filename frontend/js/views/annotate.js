@@ -73,7 +73,7 @@ define(["jquery",
                     filter    : function (category) {
                         return category.get("isPublic");
                     },
-                    roles     : [ROLES.SUPERVISOR, ROLES.ADMINISTRATOR],
+                    roles     : [ROLES.ADMINISTRATOR],
                     attributes: {access: ACCESS.PUBLIC}
                 },
                 MINE: {
@@ -82,7 +82,7 @@ define(["jquery",
                     filter    : function (category) {
                         return category.get("isMine") && !category.get("isPublic");
                     },
-                    roles     : [ROLES.SUPERVISOR, ROLES.USER, ROLES.ADMINISTRATOR],
+                    roles     : [ROLES.USER, ROLES.ADMINISTRATOR],
                     attributes: {access: ACCESS.PRIVATE}
                 }
             },

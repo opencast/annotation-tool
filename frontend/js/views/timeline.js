@@ -697,7 +697,7 @@ define(["util",
                 var trackJSON = track.toJSON();
 
                 trackJSON.id = track.id;
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
+                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
 
                 return {
                     model: track,
@@ -740,7 +740,7 @@ define(["util",
                 // Prepare track informations
                 trackJSON = track.toJSON();
                 trackJSON.id = track.id;
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
+                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
 
                 // Calculate start/end time
                 startTime = annotation.get("start");
@@ -828,7 +828,7 @@ define(["util",
                 } else if (!this.createGroupModal) {
                     // Otherwise we load the login modal if not loaded
                     $("body").append(this.modalAddGroupTemplate({
-                        isSupervisor: annotationsTool.user.get("role") === ROLES.SUPERVISOR
+                        isSupervisor: annotationsTool.user.get("role") === ROLES.ADMINISTRATOR
                     }));
                     this.createGroupModal = $("#modal-add-group");
                     this.createGroupModal.modal({
@@ -1558,7 +1558,7 @@ define(["util",
                     trackJSON = track.toJSON(),
                     redrawRequired = false;
 
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
+                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
                 newGroup = this.groupTemplate(trackJSON);
 
                 _.each(_.values(this.annotationItems).concat(_.values(this.trackItems)), function (item) {
