@@ -1074,22 +1074,23 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    */
   @Override
   public Resource createResource(final Option<Map<String, String>> tags) {
-    return createResource(tags, Resource.PRIVATE);
+    return createResource(tags, none(Integer.class));
   }
 
   /**
    * @see org.opencast.annotation.api.ExtendedAnnotationService#createResource(Option)
    */
   @Override
-  public Resource createResource(final Option<Map<String, String>> tags, Integer access) {
+  public Resource createResource(final Option<Map<String, String>> tags, final Option<Integer> access) {
     final Option<Long> userId = getCurrentUserId();
     final Option<Date> now = some(new Date());
     Map<String, String> tagsMap;
     if (tags.isSome())
       tagsMap = tags.get();
     else
-      tagsMap = new HashMap<String, String>();
-    return new ResourceImpl(some(access), userId, userId, none(0L), now, now, none(Date.class), tagsMap);
+      tagsMap = new HashMap<>();
+    return new ResourceImpl(access.orElse(some(Resource.PRIVATE)), userId, userId, none(0L), now, now, none(Date.class),
+            tagsMap);
   }
 
   /**
@@ -1109,7 +1110,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     if (tags.isSome())
       tagsMap = tags.get();
     else
-      tagsMap = new HashMap<String, String>();
+      tagsMap = new HashMap<>();
     return new ResourceImpl(some(r.getAccess()), r.getCreatedBy(), getCurrentUserId(), r.getDeletedBy(),
             r.getCreatedAt(), some(new Date()), r.getDeletedAt(), tagsMap);
   }

@@ -517,10 +517,12 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales")
   public Response postScale(@FormParam("name") final String name, @FormParam("description") final String description,
-          @FormParam("scale_id") final Long scaleId, @FormParam("tags") final String tags) {
+          @FormParam("scale_id") final Long scaleId, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
     if (scaleId == null)
-      return host.createScale(option(videoId), name, description, tags);
+      return host.createScale(option(videoId), name, description, access, tags);
 
+    // TODO Why does this not use `createScale`?
     return run(array(scaleId), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -529,7 +531,8 @@ public class VideoEndpoint {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                option(access));
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();
@@ -613,7 +616,7 @@ public class VideoEndpoint {
   public Response postCategory(@FormParam("name") final String name, @FormParam("description") final String description,
           @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("category_id") final Long id, @DefaultValue("0") @FormParam("access") final Integer access,
+          @FormParam("category_id") final Long id, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
     if (id == null)
       return host.postCategoryResponse(option(videoId), name, description, hasDuration, scaleId, settings, access,
