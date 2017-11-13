@@ -319,46 +319,15 @@ define(["jquery",
                     if (annotate_admin_roles.length > 0) {
                       for (var i = 0; i < annotate_admin_roles.length; i++) {
                         if (_.contains(roles, annotate_admin_roles[i])) {
-                            return ROLES.SUPERVISOR;
+                            return ROLES.ADMINISTRATOR;
                         }
                       }
                     } else if (_.contains(roles, ROLE_ADMIN)) {
                         console.log("Using admin role as default supervisor");
-                        return ROLES.SUPERVISOR;
+                        return ROLES.ADMINISTRATOR;
                     }
 
                     return ROLES.USER;
-                },
-
-                /**
-                 * Get the role of the current user
-                 * @alias module:annotations-tool-configuration.Configuration.getUserRole
-                 * @return {ROLE} The current user role
-                 */
-                getUserRole: function () {
-                    var ROLE_ADMIN = "ROLE_ADMIN";
-
-                    if (_.isUndefined(annotationsTool.userRole)) {
-                        $.ajax({
-                            url: "/info/me.json",
-                            async: false,
-                            dataType: "json",
-                            success: function (data) {
-                                if (_.contains(data.roles, ROLE_ADMIN)) {
-                                    annotationsTool.userRole = ROLES.SUPERVISOR;
-                                }
-
-                                if (_.contains(data.roles, data.org.adminRole)) {
-                                    annotationsTool.userRole = ROLES.ADMINISTRATOR;
-                                }
-                            },
-                            error: function () {
-                                console.warn("Error getting user information from Matterhorn!");
-                            }
-                        });
-                    }
-
-                    return annotationsTool.userRole || ROLES.USER;
                 },
 
                 /**

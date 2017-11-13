@@ -96,7 +96,7 @@ define(["jquery",
                             }
                         };
 
-                    if (!target.get("isMine") && this.getUserRole() !== ROLES.ADMINISTRATOR) {
+                    if (!target.isEditable()) {
                         this.alertWarning("You are not authorized to deleted this " + type.name + "!");
                         return;
                     }

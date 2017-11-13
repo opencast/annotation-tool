@@ -64,6 +64,11 @@ define(["jquery",
             },
 
             /**
+             * @see module:models-resource.Resource#administratorCanEditPublicInstances
+             */
+            administratorCanEditPublicInstances: true,
+
+            /**
              * Constructor
              * @alias module:models-category.Category#initialize
              * @param {object} attr Object literal containing the model initialion attributes.

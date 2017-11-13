@@ -238,15 +238,6 @@ define(["jquery",
             },
 
             /**
-             * Get the role of the current user
-             * @alias module:annotations-tool-configuration.Configuration.getUserRole
-             * @return {ROLE} The current user role
-             */
-            getUserRole: function () {
-                return ROLES.USER;
-            },
-
-            /**
              * Get the name of the admin role
              * @alias module:annotations-tool-configuration.Configuration.getAdminRoleName
              * @return {ROLE} The name of the admin role
