@@ -498,8 +498,7 @@ define(["jquery",
                 },
 
                 loadXACML: function (file) {
-
-                  $.ajax({
+                    $.ajax({
                         url: file.url,
                         async: false,
                         crossDomain: true,
@@ -507,12 +506,11 @@ define(["jquery",
                         success: function (xml) {
                             var $rules = $(xml).find("Rule");
 
-                                $rules.each(function(i, element){
-                                  if ($(element).find("Action").find("AttributeValue").text() === "annotate-admin") {
+                            $rules.each(function (i, element){
+                                if ($(element).find("Action").find("AttributeValue").text() === "annotate-admin") {
                                     annotate_admin_roles.push($(element).find("Condition").find("AttributeValue").text());
-                                  }
-                                });
-
+                                }
+                            });
                         }
                   });
                 }
