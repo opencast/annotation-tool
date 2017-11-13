@@ -358,7 +358,7 @@ define(["jquery",
                         });
                     }
 
-                    return annotationsTool.userRole | ROLES.USER;
+                    return annotationsTool.userRole || ROLES.USER;
                 },
 
                 /**
