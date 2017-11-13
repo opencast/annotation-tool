@@ -17,20 +17,22 @@
 /**
  * A module representing the label view for each item contained in annotate window
  * @module views-annotate-label
- * @requires jQuery
- * @requires models-annotation
+ * @requires jquery
+ * @requires underscore
+ * @requires backbone
+ * @requires models/annotation
  * @requires templates/annotate-label.tmpl
  * @requires handlebars
  * @requires jquery.colorPicker
- * @requires backbone
  */
 define(["jquery",
+        "underscore",
+        "backbone",
         "models/annotation",
         "templates/annotate-label",
-        "backbone",
         "handlebarsHelpers"],
 
-    function ($, Annotation, Template, Backbone) {
+    function ($, _, Backbone, Annotation, Template) {
 
         "use strict";
 
