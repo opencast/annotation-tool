@@ -158,7 +158,7 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Override the default toJSON function to ensure complete JSONing.
-     * @alias module:models-annotation.Annotation#toJSON
+     * @alias module:models-resource.Resource#toJSON
      * @param {options} options Potential options influencing the JSONing process
      * @return {JSON} JSON representation of the instance
      */
