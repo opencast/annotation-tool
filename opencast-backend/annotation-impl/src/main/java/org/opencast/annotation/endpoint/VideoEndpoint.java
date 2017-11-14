@@ -595,8 +595,9 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}/scalevalues")
   public Response postScaleValue(@PathParam("scaleId") final long scaleId, @FormParam("name") final String name,
           @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("tags") final String tags) {
-    return host.postScaleValueResponse(some(videoId), scaleId, name, value, order, tags);
+          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return host.postScaleValueResponse(some(videoId), scaleId, name, value, order, access, tags);
   }
 
   @PUT
@@ -604,8 +605,9 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response putScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
           @FormParam("name") final String name, @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("tags") final String tags) {
-    return host.putScaleValueResponse(some(videoId), scaleId, id, name, value, order, tags);
+          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return host.putScaleValueResponse(some(videoId), scaleId, id, name, value, order, access, tags);
   }
 
   @GET
