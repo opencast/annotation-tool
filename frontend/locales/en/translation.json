@@ -110,7 +110,7 @@
   "menu": {
     "about": "About",
     "export": "Export for statistics",
-    "logout": "Logout",
+    "logout": "Log out {{username}}",
     "print": "Print",
     "view": {
       "annotate": {
