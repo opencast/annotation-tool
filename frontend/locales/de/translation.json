@@ -1,0 +1,333 @@
+{
+  "about": {
+    "close": "$t(common actions.close)"
+  },
+  "alert": {
+    "ok": "$t(common actions.ok)",
+    "error": {
+      "title": "Fehler!"
+    },
+    "info": {
+      "title": "Hinweis"
+    },
+    "warning": {
+      "title": "Warnung!"
+    }
+  },
+  "annotate on": "Annotieren auf",
+  "annotate": {
+    "categories": {
+      "all": "Alle",
+      "mine": "Meine",
+      "public": "Öffentlich"
+    },
+    "create a label": "Kennzeichen erstellen",
+    "download categories": "Kategorien herunterladen",
+    "edit category scaling": "Skala für diese Kategorie bearbeiten",
+    "edit mode": "Bearbeiten",
+    "export not supported": "Diese Version des Browsers {{browser}} unterstützt die Export-Funktion nicht. Versuchen Sie einen anderen Browser.",
+    "insert": "$t(common actions.insert)",
+    "items visibility": {
+      "collapse all": "Alle zuklappen",
+      "expand all": "Alle aufklappen",
+      "head": "Sichtbarkeit"
+    },
+    "new category name": "NEUE KATEGORIE",
+    "new label placeholder": "Wert des Kennzeichens …",
+    "new": {
+      "placeholder": "Freitextannotation schreiben ($t(annotate.new.title))",
+      "title": "\"Shift + Return\" drücken, um eine neue Zeile einzufügen."
+    },
+    "no selected track": "Keine Spur ausgewählt",
+    "pause while editing": "Video während des Schreibens anhalten",
+    "select track prompt": "Wählen Sie eine Spur um mit dem annotieren zu beginnen",
+    "upload categories": "Kategorien hochladen",
+    "hide category": "Kategorie verstecken",
+    "show category": "Kategorie anzeigen"
+  },
+  "annotation": {
+    "author": "Erstellt von",
+    "created": "am",
+    "track": "auf",
+    "comments": {
+      "author": "Kommentar von",
+      "cancel": "$t(common actions.cancel)",
+      "count": "Ein Kommentar",
+      "count_plural": "{{count}} Kommentare",
+      "created": "am {{date}}",
+      "delete": "$t(common actions.delete)",
+      "edit": {
+        "button": "Bearbeiten",
+        "cancel": "$t(common actions.cancel)",
+        "save": "$t(common actions.save)"
+      },
+      "insert": "$t(common actions.insert)",
+      "modified": "zuletzt verändert am {{date}}",
+      "placeholder": "Einen Kommentar für diese Annotation schreiben",
+      "title": "Kommentare"
+    },
+    "edit": {
+      "delete": "Annotation löschen.",
+      "double click to edit": "$t(common actions.double click to edit)",
+      "edit": "Annotation bearbeiten.",
+      "end time": "Schluss",
+      "free text placeholder": "Freitext …",
+      "set end to playhead": {
+        "long": "Schluss auf aktuelle Abspielposition setzen",
+        "short": "SCHLUSS"
+      },
+      "set start to playhead": {
+        "long": "Start auf aktuelle Abspielposition setzen",
+        "short": "START"
+      },
+      "start time": "Start"
+    },
+    "you own": "Diese Annotation gehört Ihnen"
+  },
+  "default track": {
+    "description": "Standardspur für Benutzer {{nickname}}",
+    "name": "Standard {{nickname}}"
+  },
+  "delete modal": {
+    "cancel": "$t(common actions.cancel)",
+    "delete": "$t(common actions.delete)",
+    "title": "Löschen",
+    "warning": "Wollen Sie $t(models.genitive, {'context': {{context}} }) \"{{content}}\" wirklich löschen?"
+  },
+  "description": "Werkzeug zur Videoannotation",
+  "list annotation": {
+    "double click to edit": "$t(common actions.double click to edit)"
+  },
+  "login": {
+    "error": "Anmelden fehlgeschlagen: {{error}}"
+  },
+  "loop controller": {
+    "next": "Zur nächsten Schleife gehen",
+    "previous": "Zur vorherigen Schleife gehen",
+    "seconds": "s",
+    "invalid loop length": "Die angegebene Schleifenlänge ist nicht gültig"
+  },
+  "menu": {
+    "about": "Über diese Software",
+    "export": "Für Statistik exportieren",
+    "logout": "Abmelden",
+    "print": "Drucken",
+    "view": {
+      "annotate": {
+        "head": "Annotieren",
+        "structured annotations": "Strukturierte Annotationen",
+        "text annotations": "Textannotationen"
+      },
+      "annotation visibility": {
+        "all public": "$t(annotation visibility.all public)",
+        "head": "Annotation visibility",
+        "only mine": "$t(annotation visibility.only mine)",
+        "other public": "$t(annotation visibility.other public)"
+      },
+      "head": "Fenster",
+      "loop controller": "Schleifensteuerung",
+      "views": {
+        "annotate view": "Annotierfenster",
+        "head": "Fenster",
+        "list view": "Listenansicht"
+      },
+      "auto expand": "Aktive Annotationen automatisch aufklappen"
+    }
+  },
+  "new label defaults": {
+    "abbreviation": "NEU",
+    "description": "Neu"
+  },
+  "print": {
+    "annotations": {
+      "header": "Annotationen",
+      "table": {
+        "annotation and comments": {
+          "comment by": "Kommentar von {{author}}",
+          "free text": {
+            "header": "Freitextannotation"
+          },
+          "header": "Annotationen/Kommentare"
+        },
+        "codes": {
+          "header": "Kennzeichen"
+        },
+        "timecode": {
+          "header": "Zeit"
+        },
+        "user and track": {
+          "header": "Benutzer/Spur"
+        }
+      }
+    },
+    "categories": {
+      "header": "Benutzte Kategorien",
+      "table": {
+        "header": "Kategorien",
+        "scales": {
+          "header": "Skalen"
+        }
+      }
+    },
+    "title": "Name des Videos: {{title}}"
+  },
+  "required fields": "Pflichtfelder",
+  "scale editor": {
+    "cancel": "$t(common actions.cancel)",
+    "delete": "$t(common actions.delete)",
+    "description": {
+      "label": "Beschreibung",
+      "placeholder": "Beschreibung der Kategorie einfügen"
+    },
+    "edit category scale": "Skala der Kategorie bearbeiten",
+    "edit scales": "Skalen bearbeiten",
+    "name": {
+      "label": "Name",
+      "placeholder": "Namen der Kategorie einfügen"
+    },
+    "new scale": {
+      "name": "Neue Skala",
+      "value": "Neuer Skalenwert"
+    },
+    "new scale name": "Neue Skala",
+    "new scale value": "Neuer Skalenwert",
+    "no scale": "-- KEINE SKALA --",
+    "save": "$t(common actions.save)",
+    "values": {
+      "add": "Skalenwert hinzufügen",
+      "name": {
+        "header": "Name"
+      },
+      "value": {
+        "header": "Wert",
+        "placeholder": "Dezimalzahl einfügen."
+      }
+    }
+  },
+  "startup": {
+    "creating annotation view": "Annotierfenster wird erstellt",
+    "creating list view": "Listenansicht wird erstellt",
+    "creating timeline": "Zeitleiste wird erstellt",
+    "creating views": "Fenster werden erstellt",
+    "get current user": "Aktueller Benutzer wird ermittelt",
+    "get users saved locally": "Lokal gepseicherte Benutzer werden ermittelt",
+    "initializing the player": "Player wird initialisiert?",
+    "loading": "Wird geladen",
+    "loading video": "Video wird geladen",
+    "ready": "Fertig.",
+    "starting": "Programm wird gestartet."
+  },
+  "timeline": {
+    "add track": {
+      "add": "Hinzufügen",
+      "button": "Spur hinzufügen",
+      "cancel": "$t(common actions.cancel)",
+      "description": {
+        "label": "Beschreibung",
+        "placeholder": "Beschreibung für die Spur einfügen"
+      },
+      "header": "Neue Spur hinzufügen",
+      "is public": "Öffentlich",
+      "name": {
+        "label": "Name",
+        "placeholder": "Namen der Spur einfügen"
+      }
+    },
+    "change visibility": {
+      "to private": "Privat machen",
+      "to public": "Öffentlich machen"
+    },
+    "delete track": "Spur löschen",
+    "name required": "Es wird ein Name benötigt",
+    "no description": "Keine Beschreibung",
+    "no track available": {
+      "short": "Keine Spur verfügbar",
+      "long": "Keine Spur entspricht den aktuell gesetzten Filtern."
+    },
+    "other annotations": {
+      "all public": "$t(annotation visibility.all public)",
+      "head": "Andere Annotationen",
+      "only mine": "$t(annotation visibility.only mine)",
+      "other public": "$t(annotation visibility.other public)"
+    },
+    "private only": {
+      "no public tracks allowed": "Dieses Video erlaubt keine öffentlichen Spuren"
+    },
+    "reset zoom": "Zoom zurücksetzen",
+    "scripts not allowed": "Skripte sind nicht erlaubt.",
+    "track": {
+      "private": "Privat",
+      "public": "Öffentlich",
+      "you own": "Diese Spur gehört Ihnen",
+      "expand/collapse": "Auf-/Zuklappen"
+    },
+    "update track": {
+      "button": "Spur bearbeiten",
+      "cancel": "$t(common actions.cancel)",
+      "description": {
+        "label": "Beschreibung",
+        "placeholder": "Neue Beschreibung für die Spur einfügen"
+      },
+      "header": "Spur bearbeiten",
+      "is public": "Öffentlich",
+      "name": {
+        "label": "Name",
+        "placeholder": "Neuen Namen für die Spur einfügen"
+      },
+      "update": "Aktualisieren"
+    }
+  },
+  "title": "Annotating Academic Video",
+  "track management": "Spuren verwalten",
+  "track selection": {
+    "(un-)select all": "Alle (de-)selektieren",
+    "cancel": "$t(common actions.cancel)",
+    "header": "$t(other public annotations)",
+    "ok": "$t(common actions.ok)",
+    "search": {
+      "clear": "Löschen",
+      "hint": "Benutzer mit öffentlichen Annotationen",
+      "placeholder": "Hier tippen um zu suchen …"
+    }
+  },
+  "untitled video": "Video ohne Titel",
+  "user login": {
+    "email": {
+      "label": "E-Mail",
+      "placeholder": "E-Mail-Adresse eingeben"
+    },
+    "header": "Benutzeranmeldung",
+    "login": "Anmelden",
+    "login as supervisor": "Als Aufsicht anmelden",
+    "nickname": {
+      "hint": "Wählen Sie einen Namen für den Benutzer, als der Sie gerade angemeldet sind (z.B. im LTI)",
+      "label": "Benutzername",
+      "placeholder": "Benutzernamen eingeben"
+    },
+    "remember me": "Angemeldet bleiben"
+  },
+  "version": "Version: {{version}}",
+  "annotation visibility":  {
+    "all public": "Alle öffentlichen Annotationen",
+    "only mine": "Nur meine Annotationen",
+    "other public": "Andere öffentliche Annotationen …"
+  },
+  "common actions": {
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "ok": "Bestátigen",
+    "insert": "Einfügen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "double click to edit": "Zum Bearbeiten doppelt anklicken"
+  },
+  "models": {
+    "genitive_annotation": "die Annotation",
+    "genitive_comment": "den kommentar",
+    "genitive_label": "das Kennzeichen",
+    "genitive_track": "die Spur",
+    "genitive_category": "die Kategorie",
+    "genitive_scale value": "den Skalenwert",
+    "genitive_scale": "die Skala"
+  }
+}
