@@ -46,10 +46,15 @@
     "show category": "Show category"
   },
   "annotation": {
+    "author": "Created by",
+    "created": "on",
+    "track": "on",
     "comments": {
+      "author": "Comment by",
       "cancel": "$t(common actions.cancel)",
       "count": "1 Comment",
       "count_plural": "{{count}} Comments",
+      "created": "on {{date}}",
       "delete": "$t(common actions.delete)",
       "edit": {
         "button": "Edit",
