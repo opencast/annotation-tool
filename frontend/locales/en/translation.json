@@ -245,7 +245,8 @@
     "track": {
       "private": "Private",
       "public": "Public",
-      "you own": "You own this track"
+      "you own": "You own this track",
+      "expand/collapse": "Expand/Collapse"
     },
     "update track": {
       "button": "Update track",
