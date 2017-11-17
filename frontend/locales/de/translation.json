@@ -118,12 +118,7 @@
         "structured annotations": "Strukturierte Annotationen",
         "text annotations": "Textannotationen"
       },
-      "annotation visibility": {
-        "all public": "$t(annotation visibility.all public)",
-        "head": "Annotation visibility",
-        "only mine": "$t(annotation visibility.only mine)",
-        "other public": "$t(annotation visibility.other public)"
-      },
+      "track management": "$t(track management)",
       "head": "Fenster",
       "loop controller": "Schleifensteuerung",
       "views": {
@@ -244,12 +239,9 @@
       "short": "Keine Spur verfügbar",
       "long": "Keine Spur entspricht den aktuell gesetzten Filtern."
     },
-    "other annotations": {
-      "all public": "$t(annotation visibility.all public)",
-      "head": "Andere Annotationen",
-      "only mine": "$t(annotation visibility.only mine)",
-      "other public": "$t(annotation visibility.other public)"
-    },
+    "track management": "$t(track management)",
+    "hidden items": "Ein verstecktes Element",
+    "hidden items_plural": "{{count}} versteckte Elemente",
     "private only": {
       "no public tracks allowed": "Dieses Video erlaubt keine öffentlichen Spuren"
     },
@@ -288,7 +280,11 @@
       "clear": "Löschen",
       "hint": "Benutzer mit öffentlichen Annotationen",
       "placeholder": "Hier tippen um zu suchen …"
-    }
+    },
+    "selection header": "Sichtbare Spuren auswählen",
+    "ordering header": "Reihenfolge der Spuren festlegen",
+    "move up": "Nach oben verschieben",
+    "move down": "Nach unten verschieben"
   },
   "untitled video": "Video ohne Titel",
   "user login": {
@@ -307,7 +303,7 @@
     "remember me": "Angemeldet bleiben"
   },
   "version": "Version: {{version}}",
-  "annotation visibility":  {
+  "annotation visibility": {
     "all public": "Alle öffentlichen Annotationen",
     "only mine": "Nur meine Annotationen",
     "other public": "Andere öffentliche Annotationen …"
