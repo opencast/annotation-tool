@@ -30,7 +30,6 @@ define([], function () {
      */
     return {
         PRIVATE: 0,
-        PUBLIC: 1,
-        GROUP: 2
+        PUBLIC: 1
     };
 });
