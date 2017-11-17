@@ -29,11 +29,8 @@ define([], function () {
      * @enum {number}
      */
     return {
-        /** Private = 0*/
         PRIVATE: 0,
-        /** Public = 1*/
         PUBLIC: 1,
-        /** Group = 2*/
         GROUP: 2
     };
 });
