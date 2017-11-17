@@ -1,0 +1,7 @@
+project_identifier: opencast-annotation-tool
+base_path: .
+preserve_hierarchy: true
+
+files:
+  - source: /locales/en/translation.json
+    translation: /locales/%two_letters_code%/translation.json
