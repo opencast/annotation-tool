@@ -25,6 +25,7 @@ public interface Resource {
 
   int PRIVATE = 0;
   int PUBLIC = 1;
+  int SHARED_WITH_ADMIN = 2;
 
   /** The access to the resource */
   int getAccess();

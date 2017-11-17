@@ -30,6 +30,7 @@ define([], function () {
      */
     return {
         PRIVATE: 0,
-        PUBLIC: 1
+        PUBLIC: 1,
+        SHARED_WITH_ADMIN: 2
     };
 });
