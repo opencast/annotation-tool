@@ -16,9 +16,12 @@
 package org.opencast.annotation.impl;
 
 import org.opencastproject.util.EqualsUtil;
+import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Option;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
+import org.opencast.annotation.api.Scale;
 import org.opencast.annotation.api.ScaleValue;
 
 /**
@@ -49,6 +52,20 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
   @Override
   public long getId() {
     return id;
+  }
+
+  /**
+   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
+   */
+  @Override
+  public Option<Long> getVideo(final ExtendedAnnotationService eas) {
+    boolean includeDeleted = true;
+    return eas.getScale(scaleId, includeDeleted).bind(new Function<Scale, Option<Long>>() {
+      @Override
+      public Option<Long> apply(Scale scale) {
+        return scale.getVideo(eas);
+      }
+    });
   }
 
   /**

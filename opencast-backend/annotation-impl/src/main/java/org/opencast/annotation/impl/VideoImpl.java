@@ -15,9 +15,12 @@
  */
 package org.opencast.annotation.impl;
 
+import static org.opencastproject.util.data.Option.some;
+
 import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Video;
 
@@ -43,6 +46,14 @@ public final class VideoImpl extends ResourceImpl implements Video {
   @Override
   public long getId() {
     return id;
+  }
+
+  /**
+   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
+   */
+  @Override
+  public Option<Long> getVideo(ExtendedAnnotationService eas) {
+    return some(id);
   }
 
   /**

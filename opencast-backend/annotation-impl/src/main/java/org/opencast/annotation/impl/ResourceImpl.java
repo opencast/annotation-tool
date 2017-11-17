@@ -15,8 +15,11 @@
  */
 package org.opencast.annotation.impl;
 
+import static org.opencastproject.util.data.Option.none;
+
 import org.opencastproject.util.data.Option;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 
 import java.util.Date;
@@ -65,6 +68,14 @@ public class ResourceImpl implements Resource {
   @Override
   public int getAccess() {
     return access;
+  }
+
+  /**
+   * @see org.opencast.annotation.api.Resource#getVideo()
+   */
+  @Override
+  public Option<Long> getVideo(ExtendedAnnotationService eas) {
+    return none();
   }
 
   /**

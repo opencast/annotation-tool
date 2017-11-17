@@ -30,6 +30,9 @@ public interface Resource {
   /** The access to the resource */
   int getAccess();
 
+  /** The id of the video this resource belongs to */
+  Option<Long> getVideo(ExtendedAnnotationService eas);
+
   /** The user id from the creator */
   Option<Long> getCreatedBy();
 

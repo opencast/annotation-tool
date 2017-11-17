@@ -19,6 +19,7 @@ import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
 
 import org.opencast.annotation.api.Category;
+import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 
 /**
@@ -54,6 +55,14 @@ public class CategoryImpl extends ResourceImpl implements Category {
   @Override
   public long getId() {
     return id;
+  }
+
+  /**
+   * @see org.opencast.annotation.api.Resource#getVideo
+   */
+  @Override
+  public Option<Long> getVideo(ExtendedAnnotationService eas) {
+    return videoId;
   }
 
   /**
