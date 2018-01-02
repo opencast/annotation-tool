@@ -24,6 +24,7 @@ import org.opencast.annotation.impl.LabelImpl;
 import org.opencast.annotation.impl.VideoImpl;
 import org.opencast.annotation.impl.ScaleImpl;
 import org.opencast.annotation.impl.CommentImpl;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
