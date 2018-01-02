@@ -38,7 +38,6 @@ import org.opencastproject.search.api.SearchResultItem;
 import org.opencastproject.search.api.SearchService;
 import org.opencastproject.search.api.SearchQuery;
 import org.opencastproject.security.api.AuthorizationService;
-import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.util.data.Effect;
 import org.opencastproject.util.data.Function;
@@ -77,6 +76,7 @@ import org.opencast.annotation.impl.ScaleValueImpl;
 import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.UserImpl;
 import org.opencast.annotation.impl.VideoImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

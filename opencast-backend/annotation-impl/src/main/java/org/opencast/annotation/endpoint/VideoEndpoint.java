@@ -32,8 +32,6 @@ import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestSe
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
 
-import org.opencast.annotation.impl.Jsons;
-
 import org.opencast.annotation.impl.persistence.AbstractResourceDto;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;

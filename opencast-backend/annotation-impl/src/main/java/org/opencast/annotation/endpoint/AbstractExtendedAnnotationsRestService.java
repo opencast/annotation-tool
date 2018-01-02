@@ -34,7 +34,6 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
-
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -62,7 +61,6 @@ import org.opencast.annotation.impl.persistence.VideoDto;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
