@@ -50,7 +50,8 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   // Haven't found out who's responsible for this but that's the way it is.
   public static final ExtendedAnnotationService eas = new ExtendedAnnotationServiceJpaImpl(
           persistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
-          getSecurityService());
+          getSecurityService(),
+          getAuthorizationServiceMock());
 
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
@@ -59,11 +60,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
 
   @Override
   protected AuthorizationService getAuthorizationService() {
-    AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
-    EasyMock.expect(authorizationService.hasPermission(EasyMock.anyObject(MediaPackage.class),
-            EasyMock.anyObject(String.class))).andReturn(true).anyTimes();
-    EasyMock.replay(authorizationService);
-    return authorizationService;
+    return getAuthorizationServiceMock();
   }
 
   @Override
@@ -75,7 +72,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     EasyMock.replay(searchResultItem);
 
     SearchResult searchResult = EasyMock.createNiceMock(SearchResult.class);
-    EasyMock.expect(searchResult.getItems()).andReturn(new SearchResultItem[] { searchResultItem }).anyTimes();
+    EasyMock.expect(searchResult.getItems()).andReturn(new SearchResultItem[]{searchResultItem}).anyTimes();
     EasyMock.replay(searchResult);
 
     SearchService searchService = EasyMock.createNiceMock(SearchService.class);
@@ -93,6 +90,14 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     EasyMock.expect(securityService.getUser()).andReturn(user).anyTimes();
     EasyMock.replay(securityService);
     return securityService;
+  }
+
+  private static AuthorizationService getAuthorizationServiceMock() {
+    AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
+    EasyMock.expect(authorizationService.hasPermission(EasyMock.anyObject(MediaPackage.class),
+            EasyMock.anyObject(String.class))).andReturn(true).anyTimes();
+    EasyMock.replay(authorizationService);
+    return authorizationService;
   }
 
   @Override

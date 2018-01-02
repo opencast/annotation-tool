@@ -32,6 +32,7 @@ import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.Tuple.tuple;
 import static org.opencastproject.util.persistence.Queries.named;
 
+import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.util.data.Effect;
@@ -93,10 +94,13 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   private final PersistenceEnv penv;
   private final SecurityService securityService;
+  private final AuthorizationService authorizationService;
 
-  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService) {
+  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService,
+          AuthorizationService authorizationService) {
     this.penv = penv;
     this.securityService = securityService;
+    this.authorizationService = authorizationService;
   }
 
   /**
