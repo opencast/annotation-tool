@@ -91,7 +91,7 @@ define(["jquery",
                 }
 
                 if (attr.id) {
-                    this.attributes.labels.fetch({async: false});
+                    this.attributes.labels.fetch({ async: false });
                 }
 
                 this.attributes.visible = true;
