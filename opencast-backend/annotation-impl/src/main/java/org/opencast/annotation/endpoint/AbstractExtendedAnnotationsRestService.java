@@ -17,12 +17,13 @@ package org.opencast.annotation.endpoint;
 
 import static org.opencastproject.util.UrlSupport.uri;
 import static org.opencastproject.util.data.Arrays.array;
-import static org.opencastproject.util.data.Arrays.head;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.functions.Strings.trimToNone;
 
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
 import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 
 import org.opencastproject.mediapackage.MediaPackage;
@@ -33,10 +34,6 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
-import org.opencastproject.search.api.SearchResultItem;
-import org.opencastproject.search.api.SearchService;
-import org.opencastproject.search.api.SearchQuery;
-import org.opencastproject.security.api.AuthorizationService;
 
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationException;
@@ -97,10 +94,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
   protected abstract ExtendedAnnotationService getExtendedAnnotationsService();
 
   protected abstract String getEndpointBaseUrl();
-
-  protected abstract AuthorizationService getAuthorizationService();
-
-  protected abstract SearchService getSearchService();
 
   // short hand
   private ExtendedAnnotationService eas() {
@@ -232,24 +225,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
-  Option<MediaPackage> findMediaPackage(final String videoExtId) {
-    return head(getSearchService().getByQuery(new SearchQuery().withId(videoExtId)).getItems()).map(
-      new Function<SearchResultItem, MediaPackage>() {
-        @Override
-        public MediaPackage apply(SearchResultItem searchResultItem) {
-          return searchResultItem.getMediaPackage();
-        }
-      }
-    );
-  }
-
-  static final String ANNOTATE_ACTION = "annotate";
-  static final String ANNOTATE_ADMIN_ACTION = "annotate-admin";
-
-  boolean hasVideoAccess(MediaPackage mediaPackage, String action) {
-    return getAuthorizationService().hasPermission(mediaPackage, action);
-  }
-
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/videos")
@@ -257,10 +232,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(videoExtId), new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<MediaPackage> potentialMediaPackage = findMediaPackage(videoExtId);
+        final Option<MediaPackage> potentialMediaPackage = eas().findMediaPackage(videoExtId);
         if (potentialMediaPackage.isNone()) return BAD_REQUEST;
         final MediaPackage videoMediaPackage = potentialMediaPackage.get();
-        if (!hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
+        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
 
         if (eas().getVideoByExtId(videoExtId).isSome())
           return CONFLICT;
@@ -285,10 +260,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(videoExtId), new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<MediaPackage> potentialMediaPackage = findMediaPackage(videoExtId);
+        final Option<MediaPackage> potentialMediaPackage = eas().findMediaPackage(videoExtId);
         if (potentialMediaPackage.isNone()) return BAD_REQUEST;
         final MediaPackage videoMediaPackage = potentialMediaPackage.get();
-        if (!hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
+        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
 
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (tagsMap.isSome() && tagsMap.get().isNone())

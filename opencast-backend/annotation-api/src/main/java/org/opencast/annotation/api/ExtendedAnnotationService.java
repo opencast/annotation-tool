@@ -15,6 +15,7 @@
  */
 package org.opencast.annotation.api;
 
+import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.util.data.Option;
 
 import java.util.Date;
@@ -818,4 +819,28 @@ public interface ExtendedAnnotationService {
    */
   boolean hasResourceAccess(Resource resource);
 
+  /**
+   * Checks whether the current user has a certain ACL action on a media package
+   * 
+   * @param mediaPackage
+   *          the media package to check for access
+   * @param access
+   *          a string representing the ACL action to check for
+   * @return true if the user has the given ACL action on the given video
+   */
+  boolean hasVideoAccess(MediaPackage mediaPackage, String access);
+
+  /** String representing the `annotate` ACL action */
+  String ANNOTATE_ACTION = "annotate";
+  /** String representing the `annotate-admin` ACL action */
+  String ANNOTATE_ADMIN_ACTION = "annotate-admin";
+
+  /**
+   * Find the Opencast media package based on its id
+   * 
+   * @param id
+   *          the Opencast-level id of a media package
+   * @return the media package corresponding to the given id, if it can be found
+   */
+  Option<MediaPackage> findMediaPackage(String id);
 }

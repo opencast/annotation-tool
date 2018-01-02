@@ -51,22 +51,12 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   public static final ExtendedAnnotationService eas = new ExtendedAnnotationServiceJpaImpl(
           persistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
           getSecurityService(),
-          getAuthorizationServiceMock(),
-          getSearchServiceMock());
+          getAuthorizationService(),
+          getSearchService());
 
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
     return eas;
-  }
-
-  @Override
-  protected AuthorizationService getAuthorizationService() {
-    return getAuthorizationServiceMock();
-  }
-
-  @Override
-  protected SearchService getSearchService() {
-    return getSearchServiceMock();
   }
 
   private static SecurityService getSecurityService() {
@@ -79,7 +69,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     return securityService;
   }
 
-  private static AuthorizationService getAuthorizationServiceMock() {
+  private static AuthorizationService getAuthorizationService() {
     AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
     EasyMock.expect(authorizationService.hasPermission(EasyMock.anyObject(MediaPackage.class),
             EasyMock.anyObject(String.class))).andReturn(true).anyTimes();
@@ -87,7 +77,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     return authorizationService;
   }
 
-  private static SearchService getSearchServiceMock() {
+  private static SearchService getSearchService() {
     MediaPackage mediaPackage = EasyMock.createNiceMock(MediaPackage.class);
 
     SearchResultItem searchResultItem = EasyMock.createNiceMock(SearchResultItem.class);

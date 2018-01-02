@@ -25,6 +25,7 @@ import static org.opencast.annotation.impl.persistence.TrackDto.toTrack;
 import static org.opencast.annotation.impl.persistence.UserDto.toUser;
 import static org.opencast.annotation.impl.persistence.VideoDto.toVideo;
 
+import static org.opencastproject.util.data.Arrays.head;
 import static org.opencastproject.util.data.Monadics.mlist;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
@@ -32,7 +33,10 @@ import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.Tuple.tuple;
 import static org.opencastproject.util.persistence.Queries.named;
 
+import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.search.api.SearchResultItem;
 import org.opencastproject.search.api.SearchService;
+import org.opencastproject.search.api.SearchQuery;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
@@ -1159,6 +1163,32 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       return false;
 
     return resource.getCreatedBy().equals(currentUserId);
+  }
+
+  @Override
+  public Option<MediaPackage> findMediaPackage(String id) {
+    return head(searchService.getByQuery(new SearchQuery().withId(id)).getItems()).map(
+      new Function<SearchResultItem, MediaPackage>() {
+        @Override
+        public MediaPackage apply(SearchResultItem searchResultItem) {
+          return searchResultItem.getMediaPackage();
+        }
+      }
+    );
+  }
+
+  @Override
+  public boolean hasVideoAccess(MediaPackage mediaPackage, String access) {
+    return authorizationService.hasPermission(mediaPackage, access);
+  }
+
+  private Option<Video> getResourceVideo(Resource resource) {
+    return resource.getVideo(this).bind(new Function<Long, Option<Video>>() {
+      @Override
+      public Option<Video> apply(Long videoId) {
+        return getVideo(videoId);
+      }
+    });
   }
 
   public final Function<Resource, Boolean> hasResourceAccess = new Function<Resource, Boolean>() {

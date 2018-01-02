@@ -37,8 +37,6 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   private static final Logger logger = LoggerFactory.getLogger(ExtendedAnnotationsRestService.class);
 
   private ExtendedAnnotationService eas;
-  private AuthorizationService authorizationService;
-  private SearchService searchService;
   private String endpointBaseUrl;
 
   /** OSGi callback. */
@@ -58,28 +56,9 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
     this.eas = eas;
   }
 
-  /** OSGi callback */
-  public void setAuthorizationService(AuthorizationService authorizationService) {
-    this.authorizationService = authorizationService;
-  }
-
-  /** OSGi callback. */
-  public void setSearchService(SearchService searchService) {
-    this.searchService = searchService;
-  }
-
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
     return eas;
-  }
-
-  @Override
-  protected AuthorizationService getAuthorizationService() {
-    return authorizationService;
-  }
-
-  protected SearchService getSearchService() {
-    return searchService;
   }
 
   @Override
