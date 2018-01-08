@@ -17,6 +17,11 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.opencast</groupId>
+      <artifactId>annotation-tool-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.opencastproject</groupId>
       <artifactId>matterhorn-common</artifactId>
       <version>${opencast.version}</version>
