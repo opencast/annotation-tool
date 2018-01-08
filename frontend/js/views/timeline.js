@@ -49,8 +49,7 @@ define(["util",
         "templates/timeline-group-empty",
         "templates/timeline-item",
         "templates/timeline-placeholder",
-        "templates/timeline-modal-add-group",
-        "templates/timeline-modal-update-group",
+        "templates/timeline-modal-group",
         "access",
         "roles",
         "backbone",
@@ -61,7 +60,7 @@ define(["util",
     ],
 
        function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl, GroupEmptyTmpl,
-            ItemTmpl, PlaceholderTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, Backbone, links) {
+            ItemTmpl, PlaceholderTmpl, ModalGroupTmpl, ACCESS, ROLES, Backbone, links) {
 
         "use strict";
 
@@ -107,14 +106,22 @@ define(["util",
              * @alias module:views-timeline.TimelineView#modalAddGroupTemplate
              * @type {HandlebarsTemplate}
              */
-            modalAddGroupTemplate: ModalAddGroupTmpl,
+            modalAddGroupTemplate: function (context, options) {
+                context = context || {};
+                context.action = "add";
+                return ModalGroupTmpl(context, options);
+            },
 
             /**
              * Modal template for group update
              * @alias module:views-timeline.TimelineView#modalUpdateGroupTemplate
              * @type {HandlebarsTemplate}
              */
-            modalUpdateGroupTemplate: ModalUpdateGroupTmpl,
+            modalUpdateGroupTemplate: function (context, options) {
+                context = context || {};
+                context.action = "update";
+                return ModalGroupTmpl(context, options);
+            },
 
             /**
              * Events to handle by the timeline view

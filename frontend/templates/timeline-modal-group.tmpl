@@ -1,0 +1,42 @@
+<div class="modal" id="modal-{{action}}-group">
+	<div class="modal-header">
+		<h3>{{t (concat "timeline." action " track.header")}}</h3>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal">
+			<fieldset>
+				<div class="alert alert-error" style="display:none">
+					<span><i class="icon-exclamation-sign"></i></span>
+					<span id="content"></span>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="name"><b>*</b> {{t (concat "timeline." action " track.name.label")}}: </label>
+					<div class="controls">
+						<input type="text" placeholder="{{t (concat "timeline." action " track.name.placeholder")}}" id="name" value="{{name}}">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="description">{{t (concat "timeline." action " track.description.label")}}: </label>
+					<div class="controls">
+						<input type="text" placeholder="{{t (concat "timeline." action " track.description.placeholder")}}" id="description" value="{{description}}">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="public">{{t (concat "timeline." action " track.is public")}}: </label>
+					<div class="controls">
+						<input type="checkbox" id="public" {{#if isPublic}}checked="checked"{{/if}} {{#isPrivateOnly}}disabled="disabled"{{/isPrivateOnly}}>
+						{{#isPrivateOnly}}
+							<span class="alert alert-warning">{{t "timeline.private only.no public tracks allowed"}}</span>
+						{{/isPrivateOnly}}
+					</div>
+				</div>
+				<div style="float:right"><b>* {{t "required fields"}}</b></div>
+			</fieldset>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">{{t (concat "timeline." action " track.cancel")}}</a>
+		<a href="#" id="{{action}}-group" class="btn btn-primary">{{t (concat "timeline." action " track." action)}}</a>
+	</div>
+</div>
