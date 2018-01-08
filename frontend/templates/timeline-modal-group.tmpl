@@ -1,6 +1,6 @@
 <div class="modal" id="modal-{{action}}-group">
 	<div class="modal-header">
-		<h3>{{t (concat "timeline." action " track.header")}}</h3>
+		<h3>{{t "timeline.track modals.header" context=action}}</h3>
 	</div>
 	<div class="modal-body">
 		<form class="form-horizontal">
@@ -10,20 +10,20 @@
 					<span id="content"></span>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="name"><b>*</b> {{t (concat "timeline." action " track.name.label")}}: </label>
+					<label class="control-label" for="name"><b>*</b> {{t "timeline.track modals.name.label" context=action}}: </label>
 					<div class="controls">
-						<input type="text" placeholder="{{t (concat "timeline." action " track.name.placeholder")}}" id="name" value="{{name}}">
+						<input type="text" placeholder="{{t "timeline.track modals.name.placeholder" context=action}}" id="name" value="{{name}}">
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="description">{{t (concat "timeline." action " track.description.label")}}: </label>
+					<label class="control-label" for="description">{{t "timeline.track modals.description.label" context=action}}: </label>
 					<div class="controls">
-						<input type="text" placeholder="{{t (concat "timeline." action " track.description.placeholder")}}" id="description" value="{{description}}">
+						<input type="text" placeholder="{{t "timeline.track modals.description.placeholder" context=action}}" id="description" value="{{description}}">
 					</div>
 				</div>
 
 				<div class="control-group">
-					<label class="control-label" for="public">{{t (concat "timeline." action " track.is public")}}: </label>
+					<label class="control-label" for="public">{{t "timeline.track modals.is public" context=action}}: </label>
 					<div class="controls">
 						<input type="checkbox" id="public" {{#if isPublic}}checked="checked"{{/if}} {{#if (annotationTool "isPrivateOnly")}}disabled="disabled"{{/if}}>
 						{{#if (annotationTool "isPrivateOnly")}}
@@ -36,7 +36,7 @@
 		</form>
 	</div>
 	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">{{t (concat "timeline." action " track.cancel")}}</a>
-		<a href="#" id="{{action}}-group" class="btn btn-primary">{{t (concat "timeline." action " track." action)}}</a>
+		<a href="#" class="btn" data-dismiss="modal">{{t "timeline.track modals.cancel" context=action}}</a>
+		<a href="#" id="{{action}}-group" class="btn btn-primary">{{t "timeline.track modals.action" context=action}}</a>
 	</div>
 </div>
