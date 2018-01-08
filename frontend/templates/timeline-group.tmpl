@@ -17,16 +17,16 @@
     {{#if isMine}}
         <div class="group-edit">
             <i onclick="annotationsTool.views.timeline.onDeleteTrack(event,'{{id}}');" class="delete icon-trash" title="{{t "timeline.delete track"}}"></i>
-            <i onclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');" class="update  icon-pencil" title="{{t "timeline.update track.button"}}"></i>
+            <i onclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');" class="update icon-pencil" title="{{t "timeline.track modals.button" context="update"}}"></i>
             <span class="visibility"
-                  onmouseup="{{#isPrivateOnly}}{{else}}$(this).parent().parent().popover('show');{{/isPrivateOnly}}"
-                  onmousedown="{{#isPrivateOnly}}
+                  onmouseup="{{#unless (annotationTool "isPrivateOnly")}}$(this).parent().parent().popover('show');{{/unless}}"
+                  onmousedown="{{#if (annotationTool "isPrivateOnly")}}
                                       annotationsTool.alertWarning('{{t "timeline.private only.no public tracks allowed"}}');
                               {{else}}
                                       annotationsTool.views.timeline.onUpdateTrack(event,'{{id}}');
-                              {{/isPrivateOnly}}"
-                  title="{{#isPrivateOnly}}{{t "timeline.private only.no public tracks allowed"}}{{else}}{{#if isPublic}}{{t "timeline.change visibility.to private"}}{{else}}{{t "timeline.change visibility.to public"}}{{/if}}{{/isPrivateOnly}}">
-                    <i class="icon-dark-grey {{#isPrivateOnly}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/isPrivateOnly}}"></i> {{#isPrivateOnly}}{{t "timeline.track.private"}}{{else}}{{#if isPublic}}{{t "timeline.track.public"}}{{else}}{{t "timeline.track.private"}}{{/if}}{{/isPrivateOnly}}</span>
+                              {{/if}}"
+                  title="{{#if (annotationTool "isPrivateOnly")}}{{t "timeline.private only.no public tracks allowed"}}{{else}}{{#if isPublic}}{{t "timeline.change visibility.to private"}}{{else}}{{t "timeline.change visibility.to public"}}{{/if}}{{/if}}">
+                    <i class="icon-dark-grey {{#if (annotationTool "isPrivateOnly")}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/if}}"></i> {{#if (annotationTool "isPrivateOnly")}}{{t "timeline.track.private"}}{{else}}{{#if isPublic}}{{t "timeline.track.public"}}{{else}}{{t "timeline.track.private"}}{{/if}}{{/if}}</span>
         </div>
     {{/if}}
     <span class="toggle-expansion" href="#">Expand/Collapse</span>

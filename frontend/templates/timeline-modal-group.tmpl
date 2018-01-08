@@ -25,10 +25,10 @@
 				<div class="control-group">
 					<label class="control-label" for="public">{{t (concat "timeline." action " track.is public")}}: </label>
 					<div class="controls">
-						<input type="checkbox" id="public" {{#if isPublic}}checked="checked"{{/if}} {{#isPrivateOnly}}disabled="disabled"{{/isPrivateOnly}}>
-						{{#isPrivateOnly}}
+						<input type="checkbox" id="public" {{#if isPublic}}checked="checked"{{/if}} {{#if (annotationTool "isPrivateOnly")}}disabled="disabled"{{/if}}>
+						{{#if (annotationTool "isPrivateOnly")}}
 							<span class="alert alert-warning">{{t "timeline.private only.no public tracks allowed"}}</span>
-						{{/isPrivateOnly}}
+						{{/if}}
 					</div>
 				</div>
 				<div style="float:right"><b>* {{t "required fields"}}</b></div>
