@@ -1,7 +1,7 @@
 <div class="timeline-group{{#if isMine}} mine{{/if}}" data-id="{{id}}">
     <a id="track{{id}}"
        class="content-overlay"
-       {{#if isMine}}onclick="annotationsTool.views.timeline.onTrackSelected(event,'{{id}}');" ondblclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');"{{/if}}
+       {{#if isMine}}onclick="annotationsTool.views.timeline.onTrackSelected(event,'{{id}}');" ondblclick="annotationsTool.views.timeline.initTrackModal(event,'{{id}}');"{{/if}}
        title="{{name}}"
        rel="popover"
        data-trigger="manual"
@@ -17,7 +17,7 @@
     {{#if isMine}}
         <div class="group-edit">
             <i onclick="annotationsTool.views.timeline.onDeleteTrack(event,'{{id}}');" class="delete icon-trash" title="{{t "timeline.delete track"}}"></i>
-            <i onclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');" class="update icon-pencil" title="{{t "timeline.track modals.button" context="update"}}"></i>
+            <i onclick="annotationsTool.views.timeline.initTrackModal(event,'{{id}}');" class="update icon-pencil" title="{{t "timeline.track modals.button" context="update"}}"></i>
             <span class="visibility"
                   onmouseup="{{#unless (annotationTool "isPrivateOnly")}}$(this).parent().parent().popover('show');{{/unless}}"
                   onmousedown="{{#if (annotationTool "isPrivateOnly")}}

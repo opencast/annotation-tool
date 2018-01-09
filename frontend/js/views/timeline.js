@@ -78,7 +78,7 @@ define(["util",
              * @alias module:views-timeline.TimelineView#el
              * @type {DOMElement}
              */
-            el: $("div#timeline-container")[0],
+            el: "#timeline-container",
 
             /**
              * Group template
@@ -102,26 +102,11 @@ define(["util",
             itemTemplate: ItemTmpl,
 
             /**
-             * Modal template for group insertion
-             * @alias module:views-timeline.TimelineView#modalAddGroupTemplate
+             * Modal template for groups
+             * @alias module:views-timeline.TimelineView#modalGroupTemplate
              * @type {HandlebarsTemplate}
              */
-            modalAddGroupTemplate: function (context, options) {
-                context = context || {};
-                context.action = "add";
-                return ModalGroupTmpl(context, options);
-            },
-
-            /**
-             * Modal template for group update
-             * @alias module:views-timeline.TimelineView#modalUpdateGroupTemplate
-             * @type {HandlebarsTemplate}
-             */
-            modalUpdateGroupTemplate: function (context, options) {
-                context = context || {};
-                context.action = "update";
-                return ModalGroupTmpl(context, options);
-            },
+            modalGroupTemplate: ModalGroupTmpl,
 
             /**
              * Events to handle by the timeline view
@@ -129,7 +114,7 @@ define(["util",
              * @type {map}
              */
             events: {
-                "click #add-track": "initTrackCreation",
+                "click #add-track": "initTrackModal",
                 "click #reset-zoom": "onTimelineResetZoom",
                 "click #zoom-in": "zoomIn",
                 "click #zoom-out": "zoomOut",
@@ -259,8 +244,7 @@ define(["util",
                     "getTrack",
                     "onWindowResize",
                     "onTimelineResetZoom",
-                    "initTrackCreation",
-                    "initTrackUpdate",
+                    "initTrackModal",
                     "updateDraggingCtrl",
                     "moveToCurrentTime",
                     "moveRight",
@@ -312,6 +296,8 @@ define(["util",
                     dragAreaWidth    : 5,
                     groupsChangeable : true
                 };
+
+                this.groupModals = {};
 
                 this.$navbar = this.$el.find(".navbar");
 
@@ -792,161 +778,92 @@ define(["util",
             },
 
             /**
-             * Initialize the creation of a new track, load the modal window to add a new track.
-             * @alias module:views-timeline.TimelineView#initTrackCreation
+             * Initialize the creation or update of a track, and load a corresponding modal
+             * @alias module:views-timeline.TimelineView#initTrackModal
+             * @param {Event} event The event triggering this modal
+             * @param {Track} track The track to edit or <tt>undefined</tt> to create a new one
              */
-            initTrackCreation: function () {
-                var self = this,
-                    access,
-                    name,
-                    description,
-                    insertTrack = function () {
-                        name = self.createGroupModal.find("#name")[0].value;
-                        description = self.createGroupModal.find("#description")[0].value;
-
-                        if (name === "") {
-                            self.createGroupModal.find(".alert #content").html(i18next.t("timeline.name required"));
-                            self.createGroupModal.find(".alert").show();
-                            return;
-                        } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
-                            self.createGroupModal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
-                            self.createGroupModal.find(".alert").show();
-                            return;
-                        }
-
-                        if (self.createGroupModal.find("#public").length > 0) {
-                            access = self.createGroupModal.find("#public")[0].checked ? ACCESS.PUBLIC : ACCESS.PRIVATE;
-                        } else {
-                            access = ACCESS.PUBLIC;
-                        }
-
-                        self.createTrack({
-                            name: name,
-                            description: description,
-                            access: access
-                        }, this);
-
-                        self.createGroupModal.modal("toggle");
-                    };
+            initTrackModal: function (event, track) {
+                var action;
+                if (_.isUndefined(track)) {
+                    action = "add";
+                } else {
+                    track = annotationsTool.getTrack(track);
+                    action = "update";
+                }
 
                 // If the modal is already loaded and displayed, we do nothing
-                if ($("div#modal-add-group.modal.in").length > 0) {
-                    return;
-                } else if (!this.createGroupModal) {
-                    // Otherwise we load the login modal if not loaded
-                    $("body").append(this.modalAddGroupTemplate({
-                        isSupervisor: annotationsTool.user.get("role") === ROLES.ADMINISTRATOR
-                    }));
-                    this.createGroupModal = $("#modal-add-group");
-                    this.createGroupModal.modal({
-                        show: true,
-                        backdrop: false,
-                        keyboard: true
-                    });
-                    this.createGroupModal.find("a#add-group").bind("click", insertTrack);
-                    this.createGroupModal.bind("keypress", function (event) {
-                        if (event.keyCode === 13) {
-                            insertTrack();
-                        }
-                    });
+                if (this.groupModals[action]) return;
 
-                    this.createGroupModal.on("shown", $.proxy(function () {
-                        this.createGroupModal.find("#name").focus();
-                    }, this));
+                var modal = this.groupModals[action] = this.$el.find("#modal-" + action + "-group");
+                modal.html(
+                    this.modalGroupTemplate(_.extend(
+                        {
+                            action: action,
+                            isSupervisor: annotationsTool.user.get("role") === ROLES.ADMINISTRATOR
+                        },
+                        track && track.attributes
+                    ))
+                );
 
-                    this.createGroupModal.find("#name").focus();
-                } else {
-                    // if the modal has already been initialized, we reset input and show modal
-                    this.createGroupModal.find(".alert #content").html("").hide();
-                    this.createGroupModal.find(".alert-error").hide();
-                    this.createGroupModal.find("#name")[0].value = "";
-                    this.createGroupModal.find("#description")[0].value = "";
-                    this.createGroupModal.modal("toggle");
-                }
-            },
+                var dismissModal = _.bind(function () {
+                    modal.modal("hide");
+                    delete this.groupModals[action];
+                }, this);
 
-            /**
-             * Initialize the update of the selected track, load the modal window to modify the track.
-             * @alias module:views-timeline.TimelineView#initTrackUpdate
-             * @param {Event} event Event object
-             * @param {Integer} The track Id of the selected track
-             */
-            initTrackUpdate: function (event, id) {
-                var self = this,
-                    access,
-                    name,
-                    track = annotationsTool.getTrack(id),
-                    description,
-                    updateTrack = function () {
-                        name = self.updateGroupModal.find("#name")[0].value;
-                        description = self.updateGroupModal.find("#description")[0].value;
+                var saveTrack = _.bind(function () {
+                    var name = modal.find("#name").val();
+                    var description = modal.find("#description").val();
 
-                        if (name === "") {
-                            self.updateGroupModal.find(".alert #content").html(i18next.t("timeline.name required"));
-                            self.updateGroupModal.find(".alert").show();
-                            return;
-                        } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
-                            self.updateGroupModal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
-                            self.updateGroupModal.find(".alert").show();
-                            return;
-                        }
+                    if (name === "") {
+                       modal.find(".alert #content").html(i18next.t("timeline.name required"));
+                       modal.find(".alert").show();
+                       return;
+                    } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
+                        modal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
+                        modal.find(".alert").show();
+                        return;
+                    }
 
-                        if (self.updateGroupModal.find("#public").length > 0) {
-                            access = self.updateGroupModal.find("#public")[0].checked ? ACCESS.PUBLIC : ACCESS.PRIVATE;
-                        } else {
-                            access = ACCESS.PUBLIC;
-                        }
+                    var access;
+                    if (modal.find("#public").length > 0) {
+                        access = modal.find("#public").prop("checked") ? ACCESS.PUBLIC : ACCESS.PRIVATE;
+                    } else {
+                        access = ACCESS.PUBLIC;
+                    }
 
-                        track.set({
-                            name: name,
-                            description: description,
-                            access: access
-                        });
-
+                    var attrs = {
+                        name: name,
+                        description: description,
+                        access: access
+                    };
+                    if (track) {
+                        track.set(attrs);
                         track.save();
+                    } else {
+                        this.createTrack(attrs);
+                    }
 
-                        self.updateGroupModal.modal("toggle");
-                    };
+                    dismissModal();
+                }, this);
 
-                // If the modal is already loaded and displayed, we do nothing
-                if ($("div#modal-update-group.modal.in").length > 0) {
-                    return;
-                } else if (!this.updateGroupModal) {
-                    // Otherwise we load the login modal if not loaded
-                    $("body").append(this.modalUpdateGroupTemplate(track.toJSON()));
-                    this.updateGroupModal = $("#modal-update-group");
-                    this.updateGroupModal.modal({
-                        show: true,
-                        backdrop: false,
-                        keyboard: true
-                    });
-                    this.updateGroupModal.find("a#update-group").bind("click", updateTrack);
-                    this.updateGroupModal.bind("keypress", function (event) {
-                        if (event.keyCode === 13) {
-                            updateTrack();
-                        }
-                    });
+                modal.find(".submit").bind("click", saveTrack);
+                modal.bind("keypress", function (event) {
+                    if (event.keyCode === 13) {
+                        saveTrack();
+                    }
+                });
 
-                    this.updateGroupModal.on("shown", $.proxy(function () {
-                        this.updateGroupModal.find("#name").focus();
-                    }, this));
+                modal.find(".cancel").bind("click", dismissModal);
 
-                    this.updateGroupModal.find("#name").focus();
-                } else {
-                    // if the modal has already been initialized, we reset input and show modal
-                    this.updateGroupModal.find(".alert #content").html("");
-                    this.updateGroupModal.find(".alert-error").hide();
-                    this.updateGroupModal.find("#name")[0].value = track.get("name");
-                    this.updateGroupModal.find("#description")[0].value = track.get("description");
-                    this.updateGroupModal.find("a#update-group").unbind("click").bind("click", updateTrack);
-                    this.updateGroupModal.find("#public")[0].checked = (track.get("access") === ACCESS.PUBLIC);
-                    this.updateGroupModal.unbind("keypress").bind("keypress", function (event) {
-                        if (event.keyCode === 13) {
-                            updateTrack();
-                        }
-                    });
-                    this.updateGroupModal.modal("toggle");
-                }
+                modal.on("shown", function () {
+                   modal.find("#name").focus();
+                });
+                modal.modal({
+                    show: true,
+                    backdrop: false,
+                    keyboard: true
+                });
             },
 
             /**

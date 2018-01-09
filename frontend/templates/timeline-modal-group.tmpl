@@ -1,42 +1,40 @@
-<div class="modal" id="modal-{{action}}-group">
-	<div class="modal-header">
-		<h3>{{t "timeline.track modals.header" context=action}}</h3>
-	</div>
-	<div class="modal-body">
-		<form class="form-horizontal">
-			<fieldset>
-				<div class="alert alert-error" style="display:none">
-					<span><i class="icon-exclamation-sign"></i></span>
-					<span id="content"></span>
+<div class="modal-header">
+	<h3>{{t "timeline.track modals.header" context=action}}</h3>
+</div>
+<div class="modal-body">
+	<form class="form-horizontal">
+		<fieldset>
+			<div class="alert alert-error" style="display:none">
+				<span><i class="icon-exclamation-sign"></i></span>
+				<span id="content"></span>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="name"><b>*</b> {{t "timeline.track modals.name.label" context=action}}: </label>
+				<div class="controls">
+					<input type="text" placeholder="{{t "timeline.track modals.name.placeholder" context=action}}" id="name" value="{{name}}">
 				</div>
-				<div class="control-group">
-					<label class="control-label" for="name"><b>*</b> {{t "timeline.track modals.name.label" context=action}}: </label>
-					<div class="controls">
-						<input type="text" placeholder="{{t "timeline.track modals.name.placeholder" context=action}}" id="name" value="{{name}}">
-					</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="description">{{t "timeline.track modals.description.label" context=action}}: </label>
+				<div class="controls">
+					<input type="text" placeholder="{{t "timeline.track modals.description.placeholder" context=action}}" id="description" value="{{description}}">
 				</div>
-				<div class="control-group">
-					<label class="control-label" for="description">{{t "timeline.track modals.description.label" context=action}}: </label>
-					<div class="controls">
-						<input type="text" placeholder="{{t "timeline.track modals.description.placeholder" context=action}}" id="description" value="{{description}}">
-					</div>
-				</div>
+			</div>
 
-				<div class="control-group">
-					<label class="control-label" for="public">{{t "timeline.track modals.is public" context=action}}: </label>
-					<div class="controls">
-						<input type="checkbox" id="public" {{#if isPublic}}checked="checked"{{/if}} {{#if (annotationTool "isPrivateOnly")}}disabled="disabled"{{/if}}>
-						{{#if (annotationTool "isPrivateOnly")}}
-							<span class="alert alert-warning">{{t "timeline.private only.no public tracks allowed"}}</span>
-						{{/if}}
-					</div>
+			<div class="control-group">
+				<label class="control-label" for="public">{{t "timeline.track modals.is public" context=action}}: </label>
+				<div class="controls">
+					<input type="checkbox" id="public" {{#if isPublic}}checked="checked"{{/if}} {{#if (annotationTool "isPrivateOnly")}}disabled="disabled"{{/if}}>
+					{{#if (annotationTool "isPrivateOnly")}}
+						<span class="alert alert-warning">{{t "timeline.private only.no public tracks allowed"}}</span>
+					{{/if}}
 				</div>
-				<div style="float:right"><b>* {{t "required fields"}}</b></div>
-			</fieldset>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">{{t "timeline.track modals.cancel" context=action}}</a>
-		<a href="#" id="{{action}}-group" class="btn btn-primary">{{t "timeline.track modals.action" context=action}}</a>
-	</div>
+			</div>
+			<div style="float:right"><b>* {{t "required fields"}}</b></div>
+		</fieldset>
+	</form>
+</div>
+<div class="modal-footer">
+	<a href="#" class="cancel btn">{{t "timeline.track modals.cancel" context=action}}</a>
+	<a href="#" id="{{action}}-group" class="submit btn btn-primary">{{t "timeline.track modals.action" context=action}}</a>
 </div>
