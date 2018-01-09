@@ -687,11 +687,6 @@ define(["util",
              * @return {Object} the generated timeline item
              */
             generateVoidItem: function (track) {
-                var trackJSON = track.toJSON();
-
-                trackJSON.id = track.id;
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
-
                 return {
                     model: track,
                     trackId: track.id,
@@ -701,7 +696,7 @@ define(["util",
                     start: this.startDate - 5000,
                     end: this.startDate - 4500,
                     content: this.VOID_ITEM_TMPL,
-                    groupContent: this.groupTemplate(trackJSON)
+                    groupContent: this.groupTemplate(track.toJSON())
                 };
             },
 
@@ -722,7 +717,6 @@ define(["util",
                     end;
 
                 annotationJSON = annotation.toJSON();
-                annotationJSON.id = annotation.id;
                 annotationJSON.track = track.id;
                 annotationJSON.text = annotation.get("text");
 
@@ -732,8 +726,6 @@ define(["util",
 
                 // Prepare track informations
                 trackJSON = track.toJSON();
-                trackJSON.id = track.id;
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
 
                 // Calculate start/end time
                 startTime = annotation.get("start");
@@ -798,10 +790,7 @@ define(["util",
                 var modal = this.groupModals[action] = this.$el.find("#modal-" + action + "-group");
                 modal.html(
                     this.modalGroupTemplate(_.extend(
-                        {
-                            action: action,
-                            isSupervisor: annotationsTool.user.get("role") === ROLES.ADMINISTRATOR
-                        },
+                        { action: action },
                         track && track.attributes
                     ))
                 );
@@ -1482,7 +1471,6 @@ define(["util",
                     trackJSON = track.toJSON(),
                     redrawRequired = false;
 
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
                 newGroup = this.groupTemplate(trackJSON);
 
                 _.each(_.values(this.annotationItems).concat(_.values(this.trackItems)), function (item) {
