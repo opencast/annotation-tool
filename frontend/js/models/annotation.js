@@ -251,7 +251,6 @@ define(["jquery",
                         json.scale_value_id = json.scalevalue.id;
                     }
                 }
-                delete json.annotations;
                 return json;
             },
 
