@@ -685,14 +685,14 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:https://bitbucket.org/opencast-community/annotation-tool.git</connection>
-    <developerConnection>scm:git:git@bitbucket.org:opencast-community/annotation-tool.git</developerConnection>
-    <url>https://bitbucket.org/opencast-community</url>
+    <connection>scm:git:https://github.com/opencast/annotation-tool.git</connection>
+    <developerConnection>scm:git:git@github.com:opencast/annotation-tool.git</developerConnection>
+    <url>https://github.com/opencast/annotation-tool</url>
   </scm>
 
   <issueManagement>
-    <system>jira</system>
-    <url>https://opencast.jira.com</url>
+    <system>GitHub</system>
+    <url>https://github.com/opencast/annotation-tool/issues</url>
   </issueManagement>
 
   <!-- Site Report generation settings -->

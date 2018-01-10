@@ -4,7 +4,7 @@
   "description": "Web application to annotate academic video.",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/opencast-community/annotation-tool"
+    "url": "https://github.com/opencast/annotation-tool"
   },
   "license": "ECL-2.0",
   "devDependencies": {
