@@ -4,10 +4,8 @@
        {{#if isMine}}onclick="annotationsTool.views.timeline.onTrackSelected(event,'{{id}}');" ondblclick="annotationsTool.views.timeline.initTrackModal(event,'{{id}}');"{{/if}}
        title="{{name}}"
        rel="popover"
-       data-trigger="manual"
-       data-content="<p>{{#if description}}{{description}}{{else}}{{t "timeline.no description"}}{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>"
-       onmouseleave="$('div.popover.fade.right.in').remove();"
-       onmouseenter="$(this).popover('show');">
+       data-trigger="hover"
+       data-content="<p>{{#if description}}{{description}}{{else}}{{t "timeline.no description"}}{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>">
     {{#if isMine}}
         <i class="private icon-user" title="{{t "timeline.track.you own"}}"></i>
     {{/if}}
@@ -19,7 +17,6 @@
             <i onclick="annotationsTool.views.timeline.onDeleteTrack(event,'{{id}}');" class="delete icon-trash" title="{{t "timeline.delete track"}}"></i>
             <i onclick="annotationsTool.views.timeline.initTrackModal(event,'{{id}}');" class="update icon-pencil" title="{{t "timeline.track modals.button" context="update"}}"></i>
             <span class="visibility"
-                  onmouseup="{{#unless (annotationTool "isPrivateOnly")}}$(this).parent().parent().popover('show');{{/unless}}"
                   onmousedown="{{#if (annotationTool "isPrivateOnly")}}
                                       annotationsTool.alertWarning('{{t "timeline.private only.no public tracks allowed"}}');
                               {{else}}

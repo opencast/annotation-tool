@@ -410,6 +410,8 @@ define(["util",
                 // We save the actually displayed items here to access them later, for example in `onSelectionUpdate`
                 this.filteredItems = filteredItems.concat(_.values(this.trackItems));
 
+                this.$el.find("[rel='popover']").popover("hide");
+
                 // Dispose of all placeholder popovers to avoid displaying stale information
                 $(".timeline-placeholder").popover("hide");
 
@@ -421,6 +423,8 @@ define(["util",
                         return $(this).find(".hidden-items").html();
                     }
                 });
+
+                this.$el.find("[rel='popover']").popover();
 
                 // Restore the selections and co.
                 if (annotationsTool.hasSelection()) {
@@ -508,8 +512,6 @@ define(["util",
                     videoDuration     = this.playerAdapter.getDuration(),
                     marge             = size / 20,
                     startInSecond;
-                // popovers = $("div.popover.fade.right.in");
-
 
                 if (annotationsTool.timelineFollowPlayhead) {
                     if ((currentTime - size / 2) < 0) {
@@ -1422,9 +1424,6 @@ define(["util",
 
                 // Destroy the track and redraw the timeline
                 callback = $.proxy(function () {
-                    // delete track popover
-                    $("#track" + trackId).popover("disable");
-
                     _.each(this.annotationItems, function (item) {
                         if (item.trackId === track.id) {
                             delete this.annotationItems[item.id];
@@ -1495,8 +1494,6 @@ define(["util",
              */
             onUpdateTrack: function (event, trackId) {
                 event.stopImmediatePropagation();
-
-                $("#track" + trackId).popover("hide");
 
                 var track = this.tracks.get(trackId),
                     trackCurrentVisibility,
