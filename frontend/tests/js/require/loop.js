@@ -6,6 +6,6 @@ require(['config'], function () {
     QUnit.config.autostart = false;
     QUnit.config.autorun   = false;
 
-    require(['tests/annotations-tool-configuration',
+    require(['tests/annotation-tool-configuration',
              'tests/loop']);
 });

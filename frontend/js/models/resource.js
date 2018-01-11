@@ -41,13 +41,13 @@ var Resource = Backbone.Model.extend({
      * @param {object} attr Object literal containing the model initialion attributes.
      */
     initialize: function (attr) {
-        if (window.annotationsTool.localStorage) {
-            if (annotationsTool.user) {
+        if (window.annotationTool.localStorage) {
+            if (annotationTool.user) {
                 if (!attr.created_by) {
-                    this.set("created_by", annotationsTool.user.id);
+                    this.set("created_by", annotationTool.user.id);
                 }
                 if (!attr.created_by_nickname) {
-                    this.set("created_by_nickname", annotationsTool.user.get("nickname"));
+                    this.set("created_by_nickname", annotationTool.user.get("nickname"));
                 }
             }
             if (!attr.created_at) {
@@ -63,7 +63,7 @@ var Resource = Backbone.Model.extend({
             updateIsPublic.call(self, access);
         });
 
-        this.set("isMine", !attr.created_by || attr.created_by === annotationsTool.user.id);
+        this.set("isMine", !attr.created_by || attr.created_by === annotationTool.user.id);
 
         if (attr.tags) {
             this.set("tags", util.parseJSONString(attr.tags));
@@ -150,7 +150,7 @@ var Resource = Backbone.Model.extend({
             attr.settings = util.parseJSONString(attr.settings);
         }
 
-        attr.isMine = annotationsTool.user.id === attr.created_by;
+        attr.isMine = annotationTool.user.id === attr.created_by;
 
         if (callback) callback.call(this, attr);
 
@@ -186,7 +186,7 @@ var Resource = Backbone.Model.extend({
                 //   so for now we assume that this is only ever checked when the resource is public
                 //   in the right sense, i.e. it can be seen at all.
                 //&& this.get("isPublic")
-                && annotationsTool.user.get("role") === ROLES.ADMINISTRATOR
+                && annotationTool.user.get("role") === ROLES.ADMINISTRATOR
         );
     },
 

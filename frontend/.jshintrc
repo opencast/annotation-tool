@@ -24,7 +24,7 @@
         "FileReader"      : true,
         "console"         : true,
         "window"          : true,
-        "annotationsTool" : true,
+        "annotationTool" : true,
         "localStorage"    : true,
         "Backbone"        : true,
         "$"               : true,

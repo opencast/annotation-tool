@@ -33,9 +33,9 @@ Related to the tickets [#394](https://github.com/entwinemedia/annotations/issues
 * Off-screen rendering for the list.
 * Limit the redraw frequency for the timeline.
 
-For load testing, the method `tracksToImport` can now be implemented in the [configuration file](https://github.com/entwinemedia/annotations/blob/develop/js/annotations-tool-configuration.js) to load a large set of tracks. See the [load test configuration file](https://github.com/entwinemedia/annotations/blob/develop/tests/js/annotations-tool-configuration-loading.js) as example.
+For load testing, the method `tracksToImport` can now be implemented in the [configuration file](https://github.com/entwinemedia/annotations/blob/develop/js/annotation-tool-configuration.js) to load a large set of tracks. See the [load test configuration file](https://github.com/entwinemedia/annotations/blob/develop/tests/js/annotation-tool-configuration-loading.js) as example.
 
-###12.11.2013 
+###12.11.2013
 Some tests have been done with the updates from the 4th november and they resulted with the following work:
 
 * [#307](https://github.com/entwinemedia/annotations/issues/#307) - Moving annotations between public/private tracks and changing track visibility status in timeline did not always update the list view. This is now fixed.
@@ -44,12 +44,12 @@ Some tests have been done with the updates from the 4th november and they result
 * [#382](https://github.com/entwinemedia/annotations/issues/#382) - Automatically select new track.
 * [#383](https://github.com/entwinemedia/annotations/issues/#383) - Switching Public/Private visibility on track was relative slow due to synchronisation of all annotations. Now just the track is synchronised with the backend for this operation.
 
-###05.11.2013 
+###05.11.2013
 Some design related issues have been fixed:
 * [#280](https://github.com/entwinemedia/annotations/issues/#280) - Fix responsive design issue that was happening during tab switching.
 * [#275](https://github.com/entwinemedia/annotations/issues/#275) - Change eye icon for the track visibility status (public/private).
 
-###04.11.2013 
+###04.11.2013
 Small update with the fixes for the following bugs:
 * [#271](https://github.com/entwinemedia/annotations/issues/#271) - Small modifications done on the print design. The labels captions are no more split and the color.
 * [#280](https://github.com/entwinemedia/annotations/issues/#280) - Add responsive design for the categories edit-modus.

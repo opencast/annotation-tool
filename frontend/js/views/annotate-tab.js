@@ -281,9 +281,9 @@ define(["jquery",
                 this.listenTo(this.categories, "remove", this.removeOne);
                 this.listenTo(this.categories, "destroy", this.removeOne);
 
-                this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
+                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
 
-                this.hasEditMode = _.contains(this.roles, annotationsTool.user.get("role"));
+                this.hasEditMode = _.contains(this.roles, annotationTool.user.get("role"));
 
                 this.delegateEvents(this.events);
 
@@ -354,7 +354,7 @@ define(["jquery",
                 var attributes = {
                     name    : i18next.t("annotate.new category name"),
                     settings: {
-                        color   : "#" + annotationsTool.colorsManager.getNextColor(),
+                        color   : "#" + annotationTool.colorsManager.getNextColor(),
                         hasScale: false
                     }
                 };
@@ -387,7 +387,7 @@ define(["jquery",
                 var itemsLength = this.categoriesContainer.find("div.category-item").length;
 
                 // Create a new carousel if the current one is full
-                if ((itemsLength % annotationsTool.CATEGORIES_PER_TAB) === 0) {
+                if ((itemsLength % annotationTool.CATEGORIES_PER_TAB) === 0) {
                     this.addCarouselItem();
                 }
 
@@ -398,7 +398,7 @@ define(["jquery",
                 this.itemsCurrentContainer.append(categoryView.$el);
 
                 // Move the carousel to the container of the new item
-                this.carouselElement.carousel(parseInt(itemsLength / annotationsTool.CATEGORIES_PER_TAB, 10)).carousel("pause");
+                this.carouselElement.carousel(parseInt(itemsLength / annotationTool.CATEGORIES_PER_TAB, 10)).carousel("pause");
             },
 
             /**
@@ -407,13 +407,13 @@ define(["jquery",
              */
             addCarouselItem: function () {
                 var length = this.categoriesContainer.find("div.category-item").length,
-                    pageNumber = (length - (length % annotationsTool.CATEGORIES_PER_TAB)) / annotationsTool.CATEGORIES_PER_TAB;
+                    pageNumber = (length - (length % annotationTool.CATEGORIES_PER_TAB)) / annotationTool.CATEGORIES_PER_TAB;
 
                 this.categoriesContainer.append(this.itemContainerTemplate({number: (pageNumber + 1)}));
 
                 this.itemsCurrentContainer = this.categoriesContainer.find("div div div.row-fluid").last();
 
-                if (length >= annotationsTool.CATEGORIES_PER_TAB) {
+                if (length >= annotationTool.CATEGORIES_PER_TAB) {
                     this.carouselPagination.parent().css("display", "block");
                 }
 
@@ -463,8 +463,8 @@ define(["jquery",
                     options = {wait: true};
 
                 // Generate scales
-                if (!annotationsTool.video.get("scales").find(findByNameScale)) {
-                    scale = annotationsTool.video.get("scales").create({
+                if (!annotationTool.video.get("scales").find(findByNameScale)) {
+                    scale = annotationTool.video.get("scales").create({
                         name  : scalesSet[0].name,
                         access: ACCESS.PRIVATE
                     }, options);
@@ -539,11 +539,11 @@ define(["jquery",
                     tmpScaleId;
 
                 // If the used browser is Safari, we display a warning message
-                if (annotationsTool.isBrowserSafari6()) {
-                    annotationsTool.alertWarning(i18next.t("annotate.export not supported", { browser: "Safari" }));
+                if (annotationTool.isBrowserSafari6()) {
+                    annotationTool.alertWarning(i18next.t("annotate.export not supported", { browser: "Safari" }));
                     return;
-                } else if (annotationsTool.isBrowserIE9()) {
-                    annotationsTool.alertWarning(i18next.t("annotate.export not supported", { browser: "Internet Explorer" }));
+                } else if (annotationTool.isBrowserIE9()) {
+                    annotationTool.alertWarning(i18next.t("annotate.export not supported", { browser: "Internet Explorer" }));
                     return;
                 }
 
@@ -551,7 +551,7 @@ define(["jquery",
                     tmpScaleId = category.attributes.scale_id;
 
                     if (tmpScaleId && !tmpScales[tmpScaleId]) {
-                        tmpScales[tmpScaleId] = annotationsTool.video.get("scales").get(tmpScaleId);
+                        tmpScales[tmpScaleId] = annotationTool.video.get("scales").get(tmpScaleId);
                     }
 
                     json.categories.push(category.toExportJSON());
@@ -585,7 +585,7 @@ define(["jquery",
 
                         try {
                             importAsJSON = JSON.parse(importAsString);
-                            annotationsTool.importCategories(importAsJSON, defaultCategoryAttributes);
+                            annotationTool.importCategories(importAsJSON, defaultCategoryAttributes);
                         } catch (error) {
                             // TODO pop up an error modal to the user
                             console.warn("The uploaded file is not valid!");

@@ -7,7 +7,7 @@ require(['config'], function () {
     QUnit.config.autorun = false;
 
     require(['domReady',
-            'tests/annotations-tool-configuration',
+            'tests/annotation-tool-configuration',
             'tests/user',
             'tests/video',
             'tests/track',

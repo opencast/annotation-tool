@@ -1,13 +1,13 @@
 require(["jquery",
-         "../tests/js/annotations-tool-configuration-lazy-loading",
-         "annotations-tool-main",
+         "../tests/js/annotation-tool-configuration-lazy-loading",
+         "annotation-tool-main",
          "models/video",
          "collections/videos",
          "prototypes/player_adapter",
          "backbone-annotations-sync",
          "sinon"],
 
-        function ($, Configuration, annotationsTool, Video, Videos, PlayerAdapter, AnnotationSync, sinon) {
+        function ($, Configuration, annotationTool, Video, Videos, PlayerAdapter, AnnotationSync, sinon) {
 
 
                 var contentJSON = { "Content-Type": "application/json" },
@@ -189,43 +189,43 @@ require(["jquery",
                             server.respondWith("GET",  baseUrl + "/videos/1/tracks/4/annotations", [200, contentJSON, JSON.stringify(annotationsJSON)]);
                             server.autoRespond = true;
 
-                            if (!annotationsTool.started) {
-                                annotationsTool.start(Configuration);
-                                annotationsTool.started = true;
+                            if (!annotationTool.started) {
+                                annotationTool.start(Configuration);
+                                annotationTool.started = true;
                             }
 
                         },
 
                         teardown: function () {
-                            annotationsTool.MAX_VISIBLE_TRACKS = 2;
+                            annotationTool.MAX_VISIBLE_TRACKS = 2;
 
-                            annotationsTool.fetchData();
+                            annotationTool.fetchData();
                             server.restore();
                         }
 
                     });
 
                 test("Load two tracks", function () {
-                    annotationsTool.fetchData();
+                    annotationTool.fetchData();
 
-                    equal(annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
-                    equal(annotationsTool.getAnnotations().length, 8, "Only the annotations of the first two tracks should be loaded.");
-                    equal(annotationsTool.getTracks().visibleTracks.length, 2, "Only the first two tracks should be loaded.");
+                    equal(annotationTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
+                    equal(annotationTool.getAnnotations().length, 8, "Only the annotations of the first two tracks should be loaded.");
+                    equal(annotationTool.getTracks().visibleTracks.length, 2, "Only the first two tracks should be loaded.");
                 });
 
 
                 test("Load one tracks", function () {
-                    annotationsTool.MAX_VISIBLE_TRACKS = 1;
+                    annotationTool.MAX_VISIBLE_TRACKS = 1;
 
-                    annotationsTool.fetchData();
+                    annotationTool.fetchData();
 
-                    equal(annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
-                    equal(annotationsTool.getAnnotations().length, 4, "Only the annotations of the first two tracks should be loaded.");
-                    equal(annotationsTool.getTracks().visibleTracks.length, 1, "Only the first two tracks should be loaded.");
+                    equal(annotationTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
+                    equal(annotationTool.getAnnotations().length, 4, "Only the annotations of the first two tracks should be loaded.");
+                    equal(annotationTool.getTracks().visibleTracks.length, 1, "Only the first two tracks should be loaded.");
                 });
 
                 test("Try to display more tracks than the maximum set (tracks 2,3,4 when MAX_VISIBLE_TRACKS is 2)", function () {
-                    var tracks = annotationsTool.getTracks(),
+                    var tracks = annotationTool.getTracks(),
                         visibleTracks = [];
 
                     tracks.showTracksById([2, 3, 4]);
@@ -243,7 +243,7 @@ require(["jquery",
                 });
 
                 test("Display tracks 3 and 4", function () {
-                    var tracks = annotationsTool.getTracks(),
+                    var tracks = annotationTool.getTracks(),
                         visibleTracks = [];
 
                     tracks.showTracksById([3, 4]);
@@ -260,7 +260,7 @@ require(["jquery",
                 });
 
                 test("Display single track (4)", function () {
-                    var tracks = annotationsTool.getTracks(),
+                    var tracks = annotationTool.getTracks(),
                         visibleTracks = [];
 
                     tracks.showTracks(tracks.get(4));
@@ -277,7 +277,7 @@ require(["jquery",
                 });
 
                 test("Hide tracks 1 and 2", function () {
-                    var tracks = annotationsTool.getTracks(),
+                    var tracks = annotationTool.getTracks(),
                         visibleTracks = [];
 
                     tracks.hideTracksById([1, 2]);
@@ -299,7 +299,7 @@ require(["jquery",
                 });
 
                 test("Hide single track (2)", function () {
-                    var tracks = annotationsTool.getTracks(),
+                    var tracks = annotationTool.getTracks(),
                         visibleTracks = [];
 
                     tracks.hideTracks(tracks.get(2));

@@ -133,7 +133,7 @@ define(["jquery",
                                 "setupKeyboardShortcuts",
                                 "tracksSelection",
                                 "setLoadingProgress");
-                annotationsTool.bind(annotationsTool.EVENTS.NOTIFICATION, function (message) {
+                annotationTool.bind(annotationTool.EVENTS.NOTIFICATION, function (message) {
                     this.setLoadingProgress(this.loadingPercent, message);
                 }, this);
 
@@ -142,16 +142,16 @@ define(["jquery",
 
                 this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
                 // Create a new users collection and get exciting local user
-                annotationsTool.users = new Users();
+                annotationTool.users = new Users();
 
-                if (annotationsTool.localStorage) {
+                if (annotationTool.localStorage) {
                     // Remove link for statistics exports, work only with backend implementation
                     this.$el.find("#export").parent().remove();
                 }
 
-                Backbone.localSync("read", annotationsTool.users, {
+                Backbone.localSync("read", annotationTool.users, {
                     success: function (data) {
-                        annotationsTool.users.add(data);
+                        annotationTool.users.add(data);
                     },
                     error: function (error) {
                         console.warn(error);
@@ -159,24 +159,24 @@ define(["jquery",
                 });
 
                 this.loginView = new LoginView();
-                annotationsTool.scaleEditor = new ScaleEditorView();
+                annotationTool.scaleEditor = new ScaleEditorView();
 
-                this.listenTo(annotationsTool, "deleteAnnotation", annotationsTool.deleteAnnotation);
+                this.listenTo(annotationTool, "deleteAnnotation", annotationTool.deleteAnnotation);
 
-                annotationsTool.onWindowResize = this.onWindowResize;
+                annotationTool.onWindowResize = this.onWindowResize;
                 $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
-                annotationsTool.once(annotationsTool.EVENTS.READY, function () {
-                    this.loadPlugins(annotationsTool.plugins);
-                    this.updateTitle(annotationsTool.video);
+                annotationTool.once(annotationTool.EVENTS.READY, function () {
+                    this.loadPlugins(annotationTool.plugins);
+                    this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
-                    if (!annotationsTool.isFreeTextEnabled()) {
+                    if (!annotationTool.isFreeTextEnabled()) {
                         $("#opt-annotate-text").parent().hide();
                     }
 
-                    if (!annotationsTool.isStructuredAnnotationEnabled()) {
+                    if (!annotationTool.isStructuredAnnotationEnabled()) {
                         $("#opt-annotate-categories").parent().hide();
                     }
 
@@ -217,10 +217,10 @@ define(["jquery",
                 this.setLoadingProgress(45, i18next.t("startup.loading video"));
 
                 // Initialize the player
-                annotationsTool.playerAdapter.load();
+                annotationTool.playerAdapter.load();
                 this.setLoadingProgress(50, i18next.t("startup.initializing the player"));
 
-                annotationsTool.views.main = this;
+                annotationTool.views.main = this;
 
                 /**
                  * Loading the video dependant views
@@ -233,39 +233,39 @@ define(["jquery",
 
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
 
-                    if (annotationsTool.getLayoutConfiguration().timeline) {
+                    if (annotationTool.getLayoutConfiguration().timeline) {
                         // Create views with Timeline
                         this.setLoadingProgress(70, i18next.t("startup.creating timeline"));
-                        this.timelineView = new TimelineView({playerAdapter: annotationsTool.playerAdapter});
-                        annotationsTool.views.timeline = this.timelineView;
+                        this.timelineView = new TimelineView({playerAdapter: annotationTool.playerAdapter});
+                        annotationTool.views.timeline = this.timelineView;
                     }
 
-                    if (annotationsTool.getLayoutConfiguration().annotate) {
+                    if (annotationTool.getLayoutConfiguration().annotate) {
                         // Create view to annotate
                         this.setLoadingProgress(80, i18next.t("startup.creating annotation view"));
-                        this.annotateView = new AnnotateView({playerAdapter: annotationsTool.playerAdapter});
+                        this.annotateView = new AnnotateView({playerAdapter: annotationTool.playerAdapter});
                         this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
                         this.annotateView.$el.show();
-                        annotationsTool.views.annotate = this.annotateView;
+                        annotationTool.views.annotate = this.annotateView;
                     }
 
-                    if (annotationsTool.getLayoutConfiguration().list) {
+                    if (annotationTool.getLayoutConfiguration().list) {
                         // Create annotations list view
                         this.setLoadingProgress(90, i18next.t("startup.creating list view"));
                         this.listView = new ListView();
                         this.listenTo(this.listView, "change-layout", this.onWindowResize);
                         this.listView.$el.show();
-                        annotationsTool.views.list = this.listView;
+                        annotationTool.views.list = this.listView;
                     }
 
                     this.ready();
                 }, this);
 
 
-                if (annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
+                if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                     loadVideoDependantView();
                 } else {
-                    $(annotationsTool.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
+                    $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
                 }
             },
 
@@ -283,11 +283,11 @@ define(["jquery",
                 // Show logout button
                 $("a#logout").css("display", "block");
 
-                if (annotationsTool.getLayoutConfiguration().timeline) {
+                if (annotationTool.getLayoutConfiguration().timeline) {
                     this.timelineView.redraw();
                 }
 
-                annotationsTool.trigger(annotationsTool.EVENTS.READY);
+                annotationTool.trigger(annotationTool.EVENTS.READY);
             },
 
             /**
@@ -297,25 +297,25 @@ define(["jquery",
             setupKeyboardShortcuts: function () {
 
                 var setActiveAnnotationDuration = _.bind(function () {
-                    if (!annotationsTool.activeAnnotation) return;
+                    if (!annotationTool.activeAnnotation) return;
 
-                    var currentTime = annotationsTool.playerAdapter.getCurrentTime();
-                    var start = annotationsTool.activeAnnotation.get("start");
-                    annotationsTool.activeAnnotation.set("duration", currentTime - start);
-                    annotationsTool.activeAnnotation.save();
+                    var currentTime = annotationTool.playerAdapter.getCurrentTime();
+                    var start = annotationTool.activeAnnotation.get("start");
+                    annotationTool.activeAnnotation.set("duration", currentTime - start);
+                    annotationTool.activeAnnotation.save();
                 }, this);
 
                 var addComment = _.bind(function () {
-                    if (!annotationsTool.activeAnnotation) return;
+                    if (!annotationTool.activeAnnotation) return;
                     var annotationView = this.listView.getViewFromAnnotation(
-                        annotationsTool.activeAnnotation.get("id")
+                        annotationTool.activeAnnotation.get("id")
                     );
                     annotationView.toggleCommentsState();
-                    var wasPlaying = annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
-                    annotationsTool.playerAdapter.pause();
+                    var wasPlaying = annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
+                    annotationTool.playerAdapter.pause();
                     annotationView.once("cancel", function () {
                         if (wasPlaying) {
-                            annotationsTool.playerAdapter.play();
+                            annotationTool.playerAdapter.play();
                         }
                     });
                 }, this);
@@ -337,27 +337,27 @@ define(["jquery",
             checkUserAndLogin: function () {
                 this.setLoadingProgress(30, i18next.t("startup.get current user"));
 
-                if (!annotationsTool.modelsInitialized) {
-                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
+                if (!annotationTool.modelsInitialized) {
+                    annotationTool.once(annotationTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                 }
 
                 // If a user has been saved locally, we take it as current user
-                if (annotationsTool.users.length > 0) {
-                    annotationsTool.user = annotationsTool.users.at(0);
+                if (annotationTool.users.length > 0) {
+                    annotationTool.user = annotationTool.users.at(0);
 
-                    annotationsTool.trigger(annotationsTool.EVENTS.USER_LOGGED);
+                    annotationTool.trigger(annotationTool.EVENTS.USER_LOGGED);
 
-                    if (annotationsTool.modelsInitialized) {
+                    if (annotationTool.modelsInitialized) {
                         this.createViews();
                     }
                 } else {
                     var userExtData = {};
-                    if (annotationsTool.useUserExtData) {
-                        userExtData = annotationsTool.getUserExtData();
+                    if (annotationTool.useUserExtData) {
+                        userExtData = annotationTool.getUserExtData();
                     }
-                    if (annotationsTool.skipLoginFormIfPossible) {
+                    if (annotationTool.skipLoginFormIfPossible) {
                         try {
-                            annotationsTool.login(userExtData);
+                            annotationTool.login(userExtData);
                             return;
                         } catch (error) {
                             console.warn(error);
@@ -378,11 +378,11 @@ define(["jquery",
              * @alias module:views-main.Main#export
              */
             export: function () {
-                var tracksToExport = annotationsTool.video.get("tracks").getVisibleTracks();
-                var categoriesToExport = annotationsTool.video.get("categories").filter(function (category) {
+                var tracksToExport = annotationTool.video.get("tracks").getVisibleTracks();
+                var categoriesToExport = annotationTool.video.get("categories").filter(function (category) {
                     return category.get("visible");
                 });
-                annotationsTool.export(annotationsTool.video, tracksToExport, categoriesToExport);
+                annotationTool.export(annotationTool.video, tracksToExport, categoriesToExport);
             },
 
             /**
@@ -399,8 +399,8 @@ define(["jquery",
              */
             logout: function () {
                 // Stop and rewind the video
-                annotationsTool.playerAdapter.pause();
-                annotationsTool.playerAdapter.setCurrentTime(0);
+                annotationTool.playerAdapter.pause();
+                annotationTool.playerAdapter.setCurrentTime(0);
 
                  // Hide logout button
                 $("a#logout").hide();
@@ -408,29 +408,29 @@ define(["jquery",
                 // Hide/remove the views
                 $("#video-container").hide();
 
-                if (annotationsTool.getLayoutConfiguration().timeline) {
+                if (annotationTool.getLayoutConfiguration().timeline) {
                     this.timelineView.reset();
                 }
 
-                if (annotationsTool.getLayoutConfiguration().annotate) {
+                if (annotationTool.getLayoutConfiguration().annotate) {
                     this.annotateView.reset();
                 }
 
-                if (annotationsTool.getLayoutConfiguration().list) {
+                if (annotationTool.getLayoutConfiguration().list) {
                     this.listView.reset();
                 }
 
                 this.loginView.reset();
 
                 // Delete the different objects
-                delete annotationsTool.tracks;
-                delete annotationsTool.video;
-                delete annotationsTool.user;
+                delete annotationTool.tracks;
+                delete annotationTool.video;
+                delete annotationTool.user;
 
                 this.loadingBox.find(".bar").width("0%");
                 this.loadingBox.show();
 
-                annotationsTool.users.each(function (user) {
+                annotationTool.users.each(function (user) {
 
                     Backbone.localSync("delete", user, {
                         success: function () {
@@ -443,10 +443,10 @@ define(["jquery",
 
                 });
 
-                annotationsTool.modelsInitialized = false;
+                annotationTool.modelsInitialized = false;
 
-                if (annotationsTool.logoutUrl) {
-                    document.location = annotationsTool.logoutUrl;
+                if (annotationTool.logoutUrl) {
+                    document.location = annotationTool.logoutUrl;
                 } else {
                     location.reload();
                 }
@@ -459,7 +459,7 @@ define(["jquery",
             print: function () {
                 window.focus();
                 if (document.readyState === "complete") {
-                    var printView = new PrintView(annotationsTool);
+                    var printView = new PrintView(annotationTool);
                     printView.render();
                     window.print();
                     printView.remove();
@@ -490,14 +490,14 @@ define(["jquery",
                 var enabled = !$(event.target).hasClass("checked"),
                     layoutElement = event.currentTarget.id.replace("opt-", ""),
                     checkMainLayout = function () {
-                        if (!annotationsTool.views.annotate.visible && !annotationsTool.views.list.visible) {
+                        if (!annotationTool.views.annotate.visible && !annotationTool.views.list.visible) {
                             $("#left-column").removeClass("span6");
                             $("#left-column").addClass("span12");
                         } else {
                             $("#left-column").addClass("span6");
                             $("#left-column").removeClass("span12");
                         }
-                        annotationsTool.views.timeline.redraw();
+                        annotationTool.views.timeline.redraw();
                     };
 
                 if (enabled) {
@@ -515,11 +515,11 @@ define(["jquery",
                     this.annotateView.enableCategoriesLayout(enabled);
                     break;
                 case "view-annotate":
-                    annotationsTool.views.annotate.toggleVisibility();
+                    annotationTool.views.annotate.toggleVisibility();
                     checkMainLayout();
                     break;
                 case "view-list":
-                    annotationsTool.views.list.toggleVisibility();
+                    annotationTool.views.list.toggleVisibility();
                     checkMainLayout();
                     break;
                 }
@@ -531,7 +531,7 @@ define(["jquery",
              */
             toggleAutoExpand: function (event) {
                 $(event.currentTarget).toggleClass("checked");
-                annotationsTool.autoExpand = !annotationsTool.autoExpand;
+                annotationTool.autoExpand = !annotationTool.autoExpand;
             },
 
             /**
@@ -545,14 +545,14 @@ define(["jquery",
                 if (event.keyCode !== 8 ||
                     document.activeElement.tagName.toUpperCase() === "TEXTAREA" ||
                     document.activeElement.tagName.toUpperCase() === "INPUT" ||
-                    !annotationsTool.hasSelection()) {
+                    !annotationTool.hasSelection()) {
                     return;
                 } else {
                     event.preventDefault();
 
-                    annotation = annotationsTool.getSelection()[0];
+                    annotation = annotationTool.getSelection()[0];
                     if (annotation) {
-                        annotationsTool.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
+                        annotationTool.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
                     }
                 }
             },
@@ -567,17 +567,17 @@ define(["jquery",
                 var annotation;
 
                 if (typeof trackId === "undefined") {
-                    annotationsTool.video.get("tracks").each(function (track) {
+                    annotationTool.video.get("tracks").each(function (track) {
                         if (track.get("annotations").get(annotationId)) {
                             trackId = track.get("id");
                         }
                     });
                 }
 
-                annotation = annotationsTool.video.getAnnotation(annotationId, trackId);
+                annotation = annotationTool.video.getAnnotation(annotationId, trackId);
 
                 if (annotation) {
-                    annotationsTool.deleteOperation.start(annotation, annotationsTool.deleteOperation.targetTypes.ANNOTATION);
+                    annotationTool.deleteOperation.start(annotation, annotationTool.deleteOperation.targetTypes.ANNOTATION);
                 } else {
                     console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
                 }
@@ -591,8 +591,8 @@ define(["jquery",
                 var listContent,
                     windowHeight = $(window).height(),
                     annotationsContainerHeight = $("#annotate-container").height(),
-                    loopFunctionHeight = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ?
-                                            annotationsTool.loopFunction.$el.height() + 180 : 145,
+                    loopFunctionHeight = !_.isUndefined(annotationTool.loopFunction) && annotationTool.loopFunction.isVisible() ?
+                                            annotationTool.loopFunction.$el.height() + 180 : 145,
                     videoContainerHeight = $("#video-container").height();
 
 

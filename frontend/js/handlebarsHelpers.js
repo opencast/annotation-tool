@@ -7,7 +7,7 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
      * @return The value of the given property
      */
     Handlebars.registerHelper("annotationTool", function (key) {
-        return annotationsTool[key];
+        return annotationTool[key];
     });
 
     Handlebars.registerHelper("greater", function (value1, value2, options) {
@@ -30,7 +30,7 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
      * @return {string}      The formated time
      */
     Handlebars.registerHelper("time", function (start) {
-        return annotationsTool.getWellFormatedTime(start);
+        return annotationTool.getWellFormatedTime(start);
     });
 
     /**
@@ -41,7 +41,7 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
      * @return {string}      The formated time
      */
     Handlebars.registerHelper("end", function (start, duration) {
-        return annotationsTool.getWellFormatedTime(start + (duration || 0.0));
+        return annotationTool.getWellFormatedTime(start + (duration || 0.0));
     });
 
     /**
@@ -52,7 +52,7 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
      */
     Handlebars.registerHelper("nickname", function (user) {
         if (!_.isObject(user)) {
-            return annotationsTool.users.get(user).get("nickname");
+            return annotationTool.users.get(user).get("nickname");
         } else {
             return user.nickname;
         }
@@ -65,7 +65,7 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
      * @return {string}      The formated date
      */
     Handlebars.registerHelper("formatDate", function (date) {
-        return annotationsTool.formatDate(date);
+        return annotationTool.formatDate(date);
     });
 
     /**

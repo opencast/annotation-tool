@@ -107,7 +107,7 @@ define(["jquery",
                         delete attr.scaleValue;
                     }
 
-                    if (annotationsTool.user.get("id") === attr.created_by) {
+                    if (annotationTool.user.get("id") === attr.created_by) {
                         attr.isMine = true;
                     } else {
                         attr.isMine = false;
@@ -123,12 +123,12 @@ define(["jquery",
                         }
                     }
 
-                    if (annotationsTool.localStorage && _.isArray(attr.comments)) {
+                    if (annotationTool.localStorage && _.isArray(attr.comments)) {
                         attr.comments = new Comments(attr.comments, { annotation: this });
                     }
 
-                    if (!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
-                        categories = annotationsTool.video.get("categories");
+                    if (!annotationTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
+                        categories = annotationTool.video.get("categories");
 
                         categories.each(function (cat) {
 
@@ -142,7 +142,7 @@ define(["jquery",
                         attr.label = label;
                     }
 
-                    if (!annotationsTool.localStorage &&  attr.scalevalue) {
+                    if (!annotationTool.localStorage &&  attr.scalevalue) {
                         attr.scaleValue = attr.scalevalue;
                     }
                 });
@@ -163,7 +163,7 @@ define(["jquery",
                 });
                 if (invalidResource) return invalidResource;
 
-                if (!annotationsTool.localStorage && attr.label) {
+                if (!annotationTool.localStorage && attr.label) {
                     if (attr.label.id) {
                         this.attributes.label_id = attr.label.id;
                     } else if (attr.label.attributes) {
@@ -276,7 +276,7 @@ define(["jquery",
              */
             category: function () {
                 var label = this.get("label");
-                return label && annotationsTool.video.get("categories").get(label.category.id);
+                return label && annotationTool.video.get("categories").get(label.category.id);
             }
         });
 

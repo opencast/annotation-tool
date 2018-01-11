@@ -2,8 +2,8 @@
 require.config({
     baseUrl: "js",
     paths: {
-        "annotations-tool": "annotations-tool",
-        "annotations-tool-configuration": "annotations-tool-configuration",
+        "annotation-tool": "annotation-tool",
+        "annotation-tool-configuration": "annotation-tool-configuration",
         "backbone": "libs/backbone/backbone-0.9.9",
         "bootstrap": "libs/bootstrap/bootstrap.min",
         "domReady": "libs/require/config/domReady",

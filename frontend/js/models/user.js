@@ -70,8 +70,8 @@ define(["jquery",
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                if (!attr.role && annotationsTool.getUserRole) {
-                    attr.role = annotationsTool.getUserRole();
+                if (!attr.role && annotationTool.getUserRole) {
+                    attr.role = annotationTool.getUserRole();
 
                     if (!attr.role) {
                         delete attr.role;

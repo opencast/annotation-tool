@@ -101,7 +101,7 @@ define(["jquery",
                           "hide",
                           "search");
 
-                this.tracks = annotationsTool.getTracks();
+                this.tracks = annotationTool.getTracks();
             },
 
             /**
@@ -156,7 +156,7 @@ define(["jquery",
                 this.delegateEvents();
 
                 this.trackSelection = this.$el.find("#track-selection");
-                this.order = annotationsTool.tracksOrder;
+                this.order = annotationTool.tracksOrder;
                 this.renderSelection();
 
                 this.$el.modal({ show: true, backdrop: false, keyboard: false });
@@ -198,7 +198,7 @@ define(["jquery",
                     })
                 );
 
-                annotationsTool.orderTracks(this.sortableTrackSelection.toArray());
+                annotationTool.orderTracks(this.sortableTrackSelection.toArray());
 
                 this.hide();
             },

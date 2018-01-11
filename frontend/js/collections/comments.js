@@ -102,7 +102,7 @@ define(["jquery",
                     this.url = annotation.url() + "/comments";
                 }
 
-                if (window.annotationsTool && annotationsTool.localStorage) {
+                if (window.annotationTool && annotationTool.localStorage) {
                     var localStorageUrl = this.url;
                     if (replyTo) {
                         localStorageUrl += this.replyTo.id + "/replies";

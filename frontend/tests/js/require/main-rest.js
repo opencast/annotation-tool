@@ -2,12 +2,11 @@
 // RequireJS configuration for main app
 define(["config"], function () {
     require(["jquery",
-             "annotations-tool-configuration"
+             "annotation-tool-configuration"
              //... add other test file here, files have to be in directory tests/js
              ],
 
-            
-            function($){
+            function ($) {
                     QUnit.config.reorder   = false;
                     QUnit.config.autostart = false;
                     QUnit.config.autorun = false;
@@ -33,7 +32,7 @@ define(["config"], function () {
                                   $.ajax({
                                         type: "DELETE",
                                         async: false,
-                                        url: window.annotationsTool.restEndpointsUrl + "/reset",
+                                        url: window.annotationTool.restEndpointsUrl + "/reset",
                                         success: function () {
                                           QUnit.start.call();
                                         }

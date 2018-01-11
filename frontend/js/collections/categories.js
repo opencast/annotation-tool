@@ -87,14 +87,14 @@ define(["jquery",
              */
             setUrl: function (video) {
                 if (!video || !video.collection) { // If a template
-                    this.url = window.annotationsTool.restEndpointsUrl + "/categories";
+                    this.url = window.annotationTool.restEndpointsUrl + "/categories";
                     this.isTemplate = true;
                 } else {  // If not a template, we add video url
                     this.url = video.url() + "/categories";
                     this.isTemplate = false;
                 }
 
-                if (annotationsTool && annotationsTool.localStorage) {
+                if (annotationTool && annotationTool.localStorage) {
                     this.localStorage = new Backbone.LocalStorage(this.url);
                 }
 

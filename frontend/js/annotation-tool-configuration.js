@@ -16,7 +16,7 @@
 
 /**
  * Module containing the tool configuration
- * @module annotations-tool-configuration
+ * @module annotation-tool-configuration
  */
 define(["jquery",
         "underscore",
@@ -25,21 +25,21 @@ define(["jquery",
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, _, ROLES, HTML5PlayerAdapter, LoopView) {
+    function ($, _, ROLES, HTML5PlayerAdapter) {
 
         "use strict";
 
         /**
          * Annotations tool configuration object
-         * @alias module:annotations-tool-configuration.Configuration
+         * @alias module:annotation-tool-configuration.Configuration
          * @enum
          */
         var Configuration =  {
 
             /**
              * List of possible layout configuration
-             * @alias module:annotations-tool-configuration.Configuration.LAYOUT_CONFIGURATION
-             * @memberOf module:annotations-tool-configuration.Configuration
+             * @alias module:annotation-tool-configuration.Configuration.LAYOUT_CONFIGURATION
+             * @memberOf module:annotation-tool-configuration.Configuration
              * @type {Object}
              */
             LAYOUT_CONFIGURATION: {
@@ -48,10 +48,18 @@ define(["jquery",
                     timeline : true,
                     list     : true,
                     annotate : true,
-                    loop     : false
+                    loop     : false,
                 }
             },
 
+            /**
+             * Possible tracks selection at startup
+             * @type {Object}
+             */
+            TRACKS: {
+                MINE   : "mine",
+                PUBLIC : "public"
+            },
 
             /**
              * The default tracks at startup
@@ -67,30 +75,31 @@ define(["jquery",
             },
 
             /**
-             * The maximal number of tracks visible in the timeline at the same time
-             * @type {Number}
-             */
-            MAX_VISIBLE_TRACKS: 0,
-
-            /**
              * The minmal duration used for annotation representation on timeline
-             * @alias module:annotations-tool-configuration.Configuration.MINIMAL_DURATION
-             * @memberOf module:annotations-tool-configuration.Configuration
+             * @alias module:annotation-tool-configuration.Configuration.MINIMAL_DURATION
+             * @memberOf module:annotation-tool-configuration.Configuration
              * @type {Object}
              */
             MINIMAL_DURATION: 5,
 
             /**
              * Define the number of categories pro tab in the annotate box. Bigger is number, thinner will be the columns for the categories.
-             * @alias module:annotations-tool-configuration.Configuration.CATEGORIES_PER_TAB
-             * @memberOf module:annotations-tool-configuration.Configuration
+             * @alias module:annotation-tool-configuration.Configuration.CATEGORIES_PER_TAB
+             * @memberOf module:annotation-tool-configuration.Configuration
              * @type {Number}
              */
             CATEGORIES_PER_TAB: 7,
 
             /**
+             * The maximal number of tracks visible in the timeline at the same time
+             * @type {Number}
+             */
+            MAX_VISIBLE_TRACKS: 0,
+
+
+            /**
              * Define if the localStorage should be used or not
-             * @alias module:annotations-tool-configuration.Configuration.localStorage
+             * @alias module:annotation-tool-configuration.Configuration.localStorage
              * @type {boolean}
              * @readOnly
              */
@@ -106,14 +115,14 @@ define(["jquery",
             plugins: {
                 Loop: function () {
                     require(["views/loop"], function (Loop) {
-                        annotationsTool.loopView = new Loop();
+                        annotationTool.loopView = new Loop();
                     });
                 }
             },
 
             /**
              * Url from the annotations Rest Endpoints
-             * @alias module:annotations-tool-configuration.Configuration.restEndpointsUrl
+             * @alias module:annotation-tool-configuration.Configuration.restEndpointsUrl
              * @type {string}
              * @readOnly
              */
@@ -121,15 +130,23 @@ define(["jquery",
 
             /**
              * Url for redirect after the logout
-             * @alias module:annotations-tool-configuration.Configuration.logoutUrl
+             * @alias module:annotation-tool-configuration.Configuration.logoutUrl
              * @type {string}
              * @readOnly
              */
             logoutUrl: undefined,
 
             /**
+             * Url from the export function for statistics usage
+             * @alias module:annotation-tool-configuration.Configuration.exportUrl
+             * @type {string}
+             * @readOnly
+             */
+            exportUrl: "",
+
+            /**
              * Player adapter implementation to use for the annotations tool
-             * @alias module:annotations-tool-configuration.Configuration.playerAdapter
+             * @alias module:annotation-tool-configuration.Configuration.playerAdapter
              * @type {module:player-adapter.PlayerAdapter}
              */
             playerAdapter: undefined,
@@ -141,6 +158,23 @@ define(["jquery",
             tracksToImport: undefined,
 
             /**
+             * Formats the given date in 
+             * @alias module:annotation-tool-configuration.Configuration.formatDate
+             * @type {module:player-adapter.formatDate}
+             */
+            formatDate: function (date) {
+                if (_.isNumber(date)) {
+                    date = new Date(date);
+                }
+
+                if (_.isDate(date)) {
+                    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+                } else {
+                    return "Unvalid date";
+                }
+            },
+
+            /**
              * Get the tool layout configuration
              * @return {object} The tool layout configuration
              */
@@ -150,7 +184,7 @@ define(["jquery",
 
             /**
              * Define if the structured annotations are or not enabled
-             * @alias module:annotations-tool-configuration.Configuration.isStructuredAnnotationEnabled
+             * @alias module:annotation-tool-configuration.Configuration.isStructuredAnnotationEnabled
              * @return {boolean} True if this feature is enabled
              */
             isStructuredAnnotationEnabled: function () {
@@ -159,14 +193,14 @@ define(["jquery",
 
             /**
              * Define if the private-only mode is enabled
-             * @alias module:annotations-tool-configuration.Configuration.isPrivateOnly
-             * @return {boolean} True if this mode is enabled
+             * @alias module:annotation-tool-configuration.Configuration.isPrivateOnly
+             * @type {boolean}
              */
             isPrivateOnly: false,
 
             /**
              * Define if the free text annotations are or not enabled
-             * @alias module:annotations-tool-configuration.Configuration.isFreeTextEnabled
+             * @alias module:annotation-tool-configuration.Configuration.isFreeTextEnabled
              * @return {boolean} True if this feature is enabled
              */
             isFreeTextEnabled: function () {
@@ -175,7 +209,7 @@ define(["jquery",
 
             /**
              * Get the current video id (video_extid)
-             * @alias module:annotations-tool-configuration.Configuration.getVideoExtId
+             * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
              * @return {string} video external id
              */
             getVideoExtId: function () {
@@ -185,18 +219,18 @@ define(["jquery",
             /**
              * Returns the time interval between each timeupdate event to take into account.
              * It can improve a bit the performance if the amount of annotations is important. 
-             * @alias module:annotations-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
+             * @alias module:annotation-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
              * @return {number} The interval
              */
             getTimeupdateIntervalForTimeline: function () {
                 // TODO Check if this function should be linear
-                return Math.max(500, annotationsTool.getAnnotations().length * 3);
+                return Math.max(500, annotationTool.getAnnotations().length * 3);
 
             },
 
             /**
              * Sets the behavior of the timeline. Enable it to follow the playhead.
-             * @alias module:annotations-tool-configuration.Configuration.timelineFollowPlayhead
+             * @alias module:annotation-tool-configuration.Configuration.timelineFollowPlayhead
              * @type {Boolean}
              */
             timelineFollowPlayhead: true,
@@ -207,7 +241,7 @@ define(["jquery",
              *     - title: The title of the video
              *     - src_owner: The owner of the video in the system
              *     - src_creation_date: The date of the course, when the video itself was created.
-             * @alias module:annotations-tool-configuration.Configuration.getVideoExtId
+             * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
              * @example
              * {
              *     video_extid: 123, // Same as the value returned by getVideoExtId
@@ -228,16 +262,16 @@ define(["jquery",
 
             /**
              * Get the user id from the current context (user_extid)
-             * @alias module:annotations-tool-configuration.Configuration.getUserExtId
+             * @alias module:annotation-tool-configuration.Configuration.getUserExtId
              * @return {string} user_extid
              */
-            getUserExtId: function (email) {
-                return email;
+            getUserExtId: function () {
+                return "default";
             },
 
             /**
              * Get the name of the admin role
-             * @alias module:annotations-tool-configuration.Configuration.getAdminRoleName
+             * @alias module:annotation-tool-configuration.Configuration.getAdminRoleName
              * @return {ROLE} The name of the admin role
              */
             getAdminRoleName: function () {
@@ -246,7 +280,7 @@ define(["jquery",
 
             /**
              * Get the user authentification token if existing
-             * @alias module:annotations-tool-configuration.Configuration.getUserAuthToken
+             * @alias module:annotation-tool-configuration.Configuration.getUserAuthToken
              * @return {string} Current user token
              */
             getUserAuthToken: function () {
@@ -255,10 +289,10 @@ define(["jquery",
 
             /**
              * Function to load the video
-             * @alias module:annotations-tool-configuration.Configuration.loadVideo
+             * @alias module:annotation-tool-configuration.Configuration.loadVideo
              */
             loadVideo: function () {
-                this.playerAdapter = new HTML5PlayerAdapter($("video")[0]);
+                annotationTool.playerAdapter = new HTML5PlayerAdapter($("video")[0]);
             }
         };
 

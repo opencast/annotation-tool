@@ -58,7 +58,7 @@ define(["jquery",
              * @alias module:collections-users.User#initialize
              */
             initialize: function () {
-                this.url = window.annotationsTool.restEndpointsUrl + "/users";
+                this.url = window.annotationTool.restEndpointsUrl + "/users";
             },
 
             /**

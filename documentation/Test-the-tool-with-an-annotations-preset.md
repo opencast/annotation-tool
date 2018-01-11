@@ -4,7 +4,7 @@ To use it, first the tests folder should access through a web server. You can us
 
 If you need to install Grunt, follow [the starting tutorial](http://gruntjs.com/getting-started).
 
-The set of track is loaded only the first time following the [`tracksToImport`](https://github.com/entwinemedia/annotations/blob/t/ANNOT-83/tests/js/annotations-tool-configuration-loading.js#L141) function define in the [configuration file](https://github.com/entwinemedia/annotations/blob/t/ANNOT-83/tests/js/annotations-tool-configuration-loading.js) for the test page. To reset the tracks, use the url parameter `?reset=true`. You can edit this function to get the number of tracks and annotations that you want. The function has to return the track and annotations in the following format:
+The set of track is loaded only the first time following the [`tracksToImport`](https://github.com/entwinemedia/annotations/blob/t/ANNOT-83/tests/js/annotation-tool-configuration-loading.js#L141) function define in the [configuration file](https://github.com/entwinemedia/annotations/blob/t/ANNOT-83/tests/js/annotation-tool-configuration-loading.js) for the test page. To reset the tracks, use the url parameter `?reset=true`. You can edit this function to get the number of tracks and annotations that you want. The function has to return the track and annotations in the following format:
 
         [
             // Array containing the generated tracks

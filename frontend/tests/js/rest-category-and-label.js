@@ -29,10 +29,10 @@ define(['models/category',
                 
                 loadUser = function(){
                     users = new Users();
-                    var userExtId = window.annotationsTool.getUserExtId();
+                    var userExtId = window.annotationTool.getUserExtId();
                     users.create({user_extid:userExtId,nickname:'pinguin', email: "test@dot.com"});
                     user = users.at(0);
-                    window.annotationsTool.user = user;
+                    window.annotationTool.user = user;
                     isUserLoaded = true;
                 }
                 

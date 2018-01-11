@@ -112,12 +112,12 @@ define(["jquery",
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (annotationsTool.localStorage && _.isArray(attr.labels)) {
+                    if (annotationTool.localStorage && _.isArray(attr.labels)) {
                         attr.labels = new Labels(attr.labels, this);
                     }
 
-                    if (!annotationsTool.localStorage &&  attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
-                        attr.scale = annotationsTool.video.get("scales").get(attr.scale_id);
+                    if (!annotationTool.localStorage &&  attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
+                        attr.scale = annotationTool.video.get("scales").get(attr.scale_id);
                     }
                 });
             },
@@ -236,7 +236,7 @@ define(["jquery",
                         json.scale_id = this.attributes.scale.id;
                     }
 
-                    if (!annotationsTool.localStorage) {
+                    if (!annotationTool.localStorage) {
                         delete json.scale;
                     }
                 }
@@ -282,9 +282,9 @@ define(["jquery",
 
                 if (!_.isUndefined(withScale) &&  withScale) {
                     if (this.attributes.scale_id) {
-                        json.scale = annotationsTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
+                        json.scale = annotationTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
                     } else if (this.attributes.scale) {
-                        json.scale = annotationsTool.video.get("scales").get(this.attributes.scale.get("id")).toExportJSON();
+                        json.scale = annotationTool.video.get("scales").get(this.attributes.scale.get("id")).toExportJSON();
                     }
                 }
 

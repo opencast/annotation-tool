@@ -2,9 +2,9 @@
 require.config({
     baseUrl: "./../js",
     paths: {
-        "annotations-tool"               : "annotations-tool-configuration",
-        "annotations-tool-main"          : "annotations-tool",
-        "annotations-tool-configuration" : "../tests/js/annotations-tool-configuration",
+        "annotation-tool"               : "annotation-tool-configuration",
+        "annotation-tool-main"          : "annotation-tool",
+        "annotation-tool-configuration" : "../tests/js/annotation-tool-configuration",
         "backbone"                       : "libs/backbone/backbone-0.9.9",
         "bootstrap"                      : "libs/bootstrap/bootstrap.min",
         "carousel"                       : "libs/bootstrap/carousel2.2",

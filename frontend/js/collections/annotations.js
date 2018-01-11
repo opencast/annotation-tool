@@ -140,7 +140,7 @@ define(["jquery",
                     this.url = track.url() + "/annotations";
                 }
 
-                if (window.annotationsTool && annotationsTool.localStorage) {
+                if (window.annotationTool && annotationTool.localStorage) {
                     this.localStorage = new Backbone.LocalStorage(this.url);
                 }
             }

@@ -66,12 +66,12 @@ define(["jquery",
 
                     _.extend(this, Backbone.Events);
 
-                    this.$el.append(this.loginTemplate({localStorage: annotationsTool.localStorage}));
+                    this.$el.append(this.loginTemplate({localStorage: annotationTool.localStorage}));
                     this.$el.modal({show: true, backdrop: true, keyboard: false });
                     this.$el.modal("hide");
                     this.$el.on("hide", function () {
                         // If user not set, display the login window again
-                        if (_.isUndefined(annotationsTool.user)) {
+                        if (_.isUndefined(annotationTool.user)) {
                             setTimeout(function () {$("#user-login").modal("show"); }, 5);
                         }
                     });
@@ -119,19 +119,19 @@ define(["jquery",
                     // Fields from the login form
                     var userNickname    = this.$el.find("#nickname"),
                         userEmail       = this.$el.find("#email"),
-                        userId          = annotationsTool.getUserExtId(userEmail.val()),
+                        userId          = annotationTool.getUserExtId(userEmail.val()),
                         userRemember    = this.$el.find("#remember"),
                         userError       = this.$el.find(".alert"),
                         user; // the new user
 
                     userError.find("#content").empty();
                     try {
-                        user = annotationsTool.login(
+                        user = annotationTool.login(
                             {
                                 user_extid: userId,
                                 nickname: userNickname.val(),
                                 email: userEmail.val(),
-                                role: annotationsTool.localStorage && (
+                                role: annotationTool.localStorage && (
                                     this.$el.find("#supervisor")[0].checked ? ROLES.ADMINISTRATOR : ROLES.USER
                                 )
                             },
@@ -150,7 +150,7 @@ define(["jquery",
 
                     // If we have to remember the user
                     if (userRemember.is(":checked")) {
-                        annotationsTool.users.add(user);
+                        annotationTool.users.add(user);
                         Backbone.localSync("create", user, {
                             success: function () {
                                 console.log("current user saved locally");

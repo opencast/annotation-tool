@@ -154,7 +154,7 @@ define(["jquery",
                         category = this.model.get("label").get("category");
                     }
 
-                    this.scale = annotationsTool.video.get("scales").get(category.scale_id);
+                    this.scale = annotationTool.video.get("scales").get(category.scale_id);
                 }
 
                 if (this.scale) {
@@ -171,12 +171,12 @@ define(["jquery",
                 this.listenTo(this.model, "remove", this.deleteView);
 
                 // Type use for delete operation
-                this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
+                this.typeForDelete = annotationTool.deleteOperation.targetTypes.ANNOTATION;
 
                 if (attr.track) {
                     this.track = attr.track;
                 } else {
-                    this.track = annotationsTool.selectedTrack;
+                    this.track = annotationTool.selectedTrack;
                 }
 
                 this.currentState = ListAnnotation.STATES.COLLAPSED;
@@ -221,7 +221,7 @@ define(["jquery",
                 if (event) {
                     event.stopImmediatePropagation();
                 }
-                annotationsTool.deleteOperation.start(this.model, this.typeForDelete);
+                annotationTool.deleteOperation.start(this.model, this.typeForDelete);
             },
 
             /**
@@ -239,7 +239,7 @@ define(["jquery",
              * @alias module:views-list-annotation.ListAnnotation#jumpTo
              */
             jumpTo: function () {
-                annotationsTool.setSelection([this.model], true);
+                annotationTool.setSelection([this.model], true);
             },
 
             /**
@@ -349,7 +349,7 @@ define(["jquery",
                         seconds = parseInt(values[0], radix);
                     }
 
-                    if (annotationsTool.playerAdapter.getDuration() < seconds || this.model.get("start") > seconds) {
+                    if (annotationTool.playerAdapter.getDuration() < seconds || this.model.get("start") > seconds) {
                         $target.addClass("error");
                         return;
                     }
@@ -416,7 +416,7 @@ define(["jquery",
              * @param  {event} event Event object
              */
             setCurrentTimeAsStart: function (event) {
-                var currentTime = Math.round(annotationsTool.playerAdapter.getCurrentTime()),
+                var currentTime = Math.round(annotationTool.playerAdapter.getCurrentTime()),
                     end = this.model.get("start") + this.model.get("duration");
 
                 event.stopImmediatePropagation();
@@ -433,7 +433,7 @@ define(["jquery",
              * @param  {event} event Event object
              */
             setCurrentTimeAsEnd: function (event) {
-                var currentTime = Math.round(annotationsTool.playerAdapter.getCurrentTime());
+                var currentTime = Math.round(annotationTool.playerAdapter.getCurrentTime());
                 event.stopImmediatePropagation();
                 if (currentTime > this.model.get("start")) {
                     this.model.set({duration: currentTime - this.model.get("start")});
@@ -463,7 +463,7 @@ define(["jquery",
                 modelJSON.textHeight   = $("span.freetext").height();
 
                 if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
-                    category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
+                    category = annotationTool.video.get("categories").get(this.model.get("label").category.id);
 
                     // Check if the category is still linked to the video to get the current version
                     if (category) {
@@ -545,14 +545,14 @@ define(["jquery",
              */
             onSelect: _.debounce(function (force) {
                 // If annotation already selected
-                if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
+                if (annotationTool.hasSelection() && annotationTool.getSelection()[0].get("id") === this.model.get("id")) {
                     if (!_.isBoolean(force) || (_.isBoolean(force) && !force)) {
-                        annotationsTool.setSelection();
+                        annotationTool.setSelection();
                         this.isSelected = false;
                     }
                 } else {
                     this.isSelected = true;
-                    annotationsTool.setSelection([this.model], true, true);
+                    annotationTool.setSelection([this.model], true, true);
                 }
             }, 100),
 

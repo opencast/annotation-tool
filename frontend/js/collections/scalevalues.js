@@ -114,7 +114,7 @@ define(["jquery",
                     this.url = this.scale.url() + "/scalevalues";
                 }
 
-                if (annotationsTool.localStorage) {
+                if (annotationTool.localStorage) {
                     this.localStorage = new Backbone.LocalStorage(this.url);
                 }
             }
