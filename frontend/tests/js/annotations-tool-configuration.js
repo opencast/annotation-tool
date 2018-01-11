@@ -4,16 +4,16 @@ define(['domReady',
         // 'player_adapter_HTML5'
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
-       
-    function(domReady, $, _){
 
-       
-            
+    function (domReady, $, _) {
+
+
+
         /**
          * Annotations tool configuration
          */
-        window.annotationsTool =  {
-            
+        window.annotationsTool = {
+
             /** Define if the localStorage should be used or not */
             localStorage: true,
 
@@ -32,7 +32,7 @@ define(['domReady',
                     annotate : true
                 }
             },
-            
+
             /** Url from the annotations Rest Endpoints */
             restEndpointsUrl: "../../../extended-annotations",
 
@@ -43,25 +43,25 @@ define(['domReady',
             getLayoutConfiguration: function () {
                 return this.LAYOUT_CONFIGURATION.DEFAULT;
             },
-            
-            
+
+
             /* Function to get the current video id (video_extid) */
-            getVideoExtId: function(){
+            getVideoExtId: function () {
                 return $('video')[0].id;
             },
-            
+
             /* Function to get the user id from the current context (user_extid) */
-            getUserExtId: function(){
+            getUserExtId: function () {
                 return "default";
             },
-            
+
             /* Function to load the video */
-            loadVideo: function(){
-                
+            loadVideo: function () {
+
             },
 
             user: {
-                get: function(id) {
+                get: function (id) {
                     return 8;
                 }
             },
@@ -70,12 +70,12 @@ define(['domReady',
                 // Function without content -> nothing to do for test
             }
         };
-            
-        domReady(function(){
+
+        domReady(function () {
             /* Player adapter implementation to use for the annotations tool */
             // window.annotationsTool.playerAdapter = new HTML5PlayerAdapter($('video')[0]);
-            
-        })
-        
+
+        });
+
         return window.annotations;
 });

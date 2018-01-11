@@ -98,10 +98,10 @@ define(["jquery",
              */
             plugins: {
                 Loop: function () {
-                        require(["views/loop"], function (Loop) {
-                            annotationsTool.loopView = new Loop();
-                        });
-                    }
+                    require(["views/loop"], function (Loop) {
+                        annotationsTool.loopView = new Loop();
+                    });
+                }
             },
 
             /**
