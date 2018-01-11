@@ -20,7 +20,7 @@
  * @requires underscore
  * @requires Backbone
  * @requires i18next
- * @requires templates/loop-modal.tmpl
+ * @requires templates/loop-modal
  * @requires ROLES
  * @requires handlebars
  */
