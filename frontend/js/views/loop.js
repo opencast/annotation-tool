@@ -152,10 +152,10 @@ define(["jquery",
                                 "previousLoop",
                                 "resetLoops",
                                 "toggle",
-                                "toggleVisibity",
+                                "toggleVisibility",
                                 "typeLoopLength");
                 var mainView,
-                    defaultVisiblity = annotationTool.getLayoutConfiguration().loop;
+                    defaultVisibility = annotationTool.getLayoutConfiguration().loop;
 
                 this.playerAdapter = annotationTool.playerAdapter;
                 this.loops = new Loops([], annotationTool.video);
@@ -167,7 +167,7 @@ define(["jquery",
                 if (!_.isUndefined(annotationTool.views.main)) {
                     mainView = annotationTool.views.main;
                     mainView.$el.find("#menu-plugins").append(this.LAYOUT_MENU_TMPL);
-                    mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
+                    mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibility);
                 }
 
                 this.toggle(false);
@@ -176,14 +176,14 @@ define(["jquery",
 
                 annotationTool.onWindowResize();
 
-                if (!_.isUndefined(defaultVisiblity) && !defaultVisiblity) {
-                    this.toggleVisibity({target: mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS)[0]});
+                if (!_.isUndefined(defaultVisibility) && !defaultVisibility) {
+                    this.toggleVisibility({target: mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS)[0]});
                 }
             },
 
             /**
              * Define if the loop function view is visible or not
-             * @return {Boolean} True if the view is visisble
+             * @return {Boolean} True if the view is visible
              * @alias module:views-loop.Loop#isVisible
              */
             isVisible: function () {
@@ -195,7 +195,7 @@ define(["jquery",
              * @param  {Object} event The related event object
              * @alias module:views-loop.Loop#toggle
              */
-            toggleVisibity: function (event) {
+            toggleVisibility: function (event) {
                 $(event.target).toggleClass("checked");
 
                 if ($(event.target).hasClass("checked")) {
