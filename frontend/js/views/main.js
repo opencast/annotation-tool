@@ -99,7 +99,6 @@ define(["jquery",
              */
             loadingBox: $("div#loading"),
 
-
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
@@ -138,7 +137,6 @@ define(["jquery",
                 }, this);
 
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
-
 
                 this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
                 // Create a new users collection and get exciting local user
