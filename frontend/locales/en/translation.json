@@ -257,9 +257,9 @@
     "reset zoom": "Reset zoom",
     "scripts not allowed": "Scripts are not allowed!",
     "track": {
-      "private": "Private",
-      "public": "Public",
-      "you own": "You own this track"
+      "you own": "You own this track",
+      "expand": "Expand track",
+      "collapse": "Collapse track"
     }
   },
   "title": "Annotating Academic Video",

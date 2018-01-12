@@ -1,13 +1,9 @@
 <div class="timeline-group{{#if isMine}} mine{{/if}}" data-id="{{id}}">
-    <a
+    <div
         id="track{{id}}"
         class="content-overlay"
-        {{#if isMine}}
-            onclick="annotationsTool.views.timeline.onTrackSelected(event,'{{id}}');"
-            ondblclick="annotationsTool.views.timeline.initTrackModal(event,'{{id}}');"
-        {{/if}}
         title="{{name}}"
-        rel="popover"
+        data-toggle="popover"
         data-trigger="hover"
         data-content="
             <p>
@@ -25,68 +21,67 @@
         {{#if isMine}}
             <i class="private icon-user" title="{{t "timeline.track.you own"}}"></i>
         {{/if}}
-        <div class="content">
+        <div class="content {{#if empty}}empty{{/if}}">
             {{name}}
         </div>
-        {{#if isMine}}
-            <div class="group-edit">
-                <i
-                    onclick="annotationsTool.views.timeline.onDeleteTrack(event,'{{id}}');"
-                    class="delete icon-trash"
-                    title="{{t "timeline.delete track"}}"
-                ></i>
-                <i
-                    onclick="annotationsTool.views.timeline.initTrackModal(event,'{{id}}');"
-                    class="update icon-pencil"
-                    title="{{t "timeline.track modals.button" context="update"}}"
-                ></i>
-                <span
-                    class="visibility"
-                    onmousedown="
-                        {{#if (annotationTool "isPrivateOnly")}}
-                            annotationsTool.alertWarning(
-                                '{{t "timeline.private only.no public tracks allowed"}}'
-                            );
-                        {{else}}
-                            annotationsTool.views.timeline.onUpdateTrack(event,'{{id}}');
-                        {{/if}}
-                    "
-                    title="
-                        {{#if (annotationTool "isPrivateOnly")}}
-                            {{t "timeline.private only.no public tracks allowed"}}
-                        {{else}}
-                            {{#if isPublic}}
-                                {{t "timeline.change visibility.to private"}}
-                            {{else}}
-                                {{t "timeline.change visibility.to public"}}
-                            {{/if}}
-                        {{/if}}
-                    "
-                >
-                    <i class="
-                        icon-dark-grey
-                        {{#if (annotationTool "isPrivateOnly")}}
-                            icon-private
-                        {{else}}
-                            {{#if isPublic}}
-                                icon-public
-                            {{else}}
-                                icon-private
-                            {{/if}}
-                        {{/if}}"
+        {{#unless empty}}
+            {{#if isMine}}
+                <span>
+                    <i
+                        class="button delete icon-trash"
+                        title="{{t "timeline.delete track"}}"
                     ></i>
-                    {{#if (annotationTool "isPrivateOnly")}}
-                        {{t "timeline.track.private"}}
-                    {{else}}
-                        {{#if isPublic}}
-                            {{t "timeline.track.public"}}
-                        {{else}}
-                            {{t "timeline.track.private"}}
-                        {{/if}}
+                    {{#if isMine}}
+                        <i
+                            class="button update icon-pencil"
+                            title="{{t "timeline.track modals.button" context="update"}}"
+                        ></i>
+                        <i
+                            title="
+                                {{#if (annotationTool "isPrivateOnly")}}
+                                    {{t "timeline.private only.no public tracks allowed"}}
+                                {{else}}
+                                    {{#if isPublic}}
+                                        {{t "timeline.change visibility.to private"}}
+                                    {{else}}
+                                        {{t "timeline.change visibility.to public"}}
+                                    {{/if}}
+                                {{/if}}
+                            "
+                            class="
+                                visibility
+                                button
+                                icon-dark-grey
+                                {{#if (annotationTool "isPrivateOnly")}}
+                                    icon-private
+                                {{else}}
+                                    {{#if isPublic}}
+                                        icon-public
+                                    {{else}}
+                                        icon-private
+                                    {{/if}}
+                                {{/if}}
+                            "
+                        ></i>
                     {{/if}}
                 </span>
-            </div>
-        {{/if}}
-        <span class="toggle-expansion" href="#">{{t "timeline.track.expand/collapse"}}</span>
-    </a>
+            {{/if}}
+            <i
+                {{#if expanded}}
+                    title="{{t "timeline.track.collapse"}}"
+                {{else}}
+                    title="{{t "timeline.track.expand"}}"
+                {{/if}}
+                class="
+                    toggle-expansion
+                    button
+                    {{#if expanded}}
+                        icon-resize-small
+                    {{else}}
+                        icon-resize-full
+                    {{/if}}
+                "
+            ></i>
+        {{/unless}}
+    </div>
 </div>

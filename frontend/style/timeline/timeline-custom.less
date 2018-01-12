@@ -58,22 +58,19 @@ div.timeline-groups-text {
     }
 
     div.timeline-group {
-        padding: 4px;
         min-height: 60px;
         z-index: 3;
+        height: 100%;
 
         &.mine:hover {
             cursor: pointer;
             background-color: fade(@yellow, 15%);
         }
 
-        a:hover {
-            text-decoration: none!important;
-        }
-
-        a.content-overlay {
+        .content-overlay {
             display: inline-block;
             width: 150px;
+            margin: 4px;
             height: 100%;
         }
 
@@ -83,11 +80,6 @@ div.timeline-groups-text {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: @gray;
-
-            &:hover {
-                text-decoration: none!important;
-            }
 
             &.empty {
                 width: 150px;
@@ -109,7 +101,7 @@ div.timeline-groups-text {
         }
     }
 
-    i.delete, i.update {
+    .button {
         z-index: 4;
         margin-right: 4px;
         position: relative;
@@ -358,7 +350,4 @@ div.timeline-frame > div:first-child > div:first-child {
     text-overflow: ellipsis;
     background-color: black;
     color: white;
-    .hidden-items {
-        display: none;
-    }
 }

@@ -260,7 +260,8 @@
       "private": "Privat",
       "public": "Öffentlich",
       "you own": "Diese Spur gehört Ihnen",
-      "expand/collapse": "Auf-/Zuklappen"
+      "expand": "Spur ausklappen",
+      "collapse": "Spur einklappen"
     }
   },
   "title": "Annotating Academic Video",
