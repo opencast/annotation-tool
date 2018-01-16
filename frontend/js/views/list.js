@@ -24,7 +24,6 @@
  * @requires views-list-annotation
  * @requires backbone
  * @requires filters-manager
- * @requires bootsrap.scrollspy
  */
 define(["jquery",
         "underscore",
@@ -34,7 +33,7 @@ define(["jquery",
         "collections/tracks",
         "views/list-annotation",
         "backbone",
-        "scrollspy"],
+        "bootstrap"],
 
     function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone) {
 

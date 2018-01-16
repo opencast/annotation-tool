@@ -17,7 +17,7 @@ body {
   border-radius: 0px;
 }
 
-// Sprite icons 
+// Sprite icons
 // -------------------------
 @iconSpritePath:          "../img/annotation/icons.png";
 @iconDarkGreySpritePath:  "../img/annotation/icons-dark-grey.png";
@@ -138,6 +138,7 @@ body {
 }
 
 .nav-tabs > .active > a, .nav-tabs > .active > a:hover {
+	background-color: @white;
 	border: none;
 	padding-bottom: 4px;
 	margin-bottom: 0px;
@@ -147,4 +148,22 @@ body {
 // -------------------------
 input, textarea, select, .uneditable-input {
 	.standard_border_radius();
+}
+
+// Popovers
+// --------
+
+@popoverArrowColor: @black;
+
+.popover {
+	border: 3px solid @black;
+}
+
+.popover-title {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.popover-content > p {
+    margin: 0;
 }

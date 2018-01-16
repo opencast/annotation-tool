@@ -6,7 +6,6 @@ require.config({
         "annotations-tool-configuration": "annotations-tool-configuration",
         "backbone": "libs/backbone/backbone-0.9.9",
         "bootstrap": "libs/bootstrap/bootstrap.min",
-        "carousel": "libs/bootstrap/carousel2.2",
         "domReady": "libs/require/config/domReady",
         "handlebars": "libs/handlebars",
         "handlebarsHelpers": "handlebarsHelpers",
@@ -15,13 +14,9 @@ require.config({
         "jquery.appear": "libs/jquery.appear",
         "localstorage": "libs/backbone/backbone.localStorage-1.0",
         "jquery": "libs/jquery-1.7.2",
-        "popover": "libs/bootstrap/popover",
-        "scrollspy": "libs/bootstrap/scrollspy",
         "slider": "libs/bootstrap/bootstrap-slider",
-        "tab": "libs/bootstrap/tab",
         "templates": "../templates",
         "text": "libs/require/config/text",
-        "tooltip": "libs/bootstrap/tooltip",
         "timeline": "libs/timeline-min",
         "underscore": "libs/underscore-min",
         "raf": "libs/rAF",
@@ -59,10 +54,7 @@ require.config({
         "jquery.appear": ["jquery"],
 
         "bootstrap": ["jquery"],
-        "scrollspy": ["bootstrap"],
-        "carousel": ["bootstrap"],
-        "tab": ["bootstrap"],
-        "slider": ["jquery"],
+        "slider": ["bootstrap"],
 
         "email-addresses": {
             exports: "emailAddresses"

@@ -36,8 +36,6 @@
  * @requires backbone
  * @requires localstorage
  * @requires bootstrap
- * @requires bootstrap.carousel
- * @requires boutstrap.tab
  */
 define(["jquery",
         "underscore",
@@ -63,9 +61,7 @@ define(["jquery",
         "backbone",
         "handlebars",
         "localstorage",
-        "bootstrap",
-        "carousel",
-        "tab"],
+        "bootstrap"],
 
     function ($, _, Mousetrap, i18next, PlayerAdapter, AboutDialog, AnnotateView, ListView, ListAnnotationView,
               TimelineView, LoginView, ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos,

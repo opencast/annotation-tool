@@ -32,8 +32,7 @@
  * @requires filters-manager
  * @requires backbone
  * @requires timeline
- * @requires bootstrap.tooltip
- * @requires bootstrap.popover
+ * @requires bootstrap
  * @requires handlebarsHelpers
  */
 define(["util",
@@ -53,8 +52,7 @@ define(["util",
         "roles",
         "backbone",
         "timeline",
-        "tooltip",
-        "popover",
+        "bootstrap",
         "handlebarsHelpers"
     ],
 
@@ -409,11 +407,11 @@ define(["util",
                 // We save the actually displayed items here to access them later, for example in `onSelectionUpdate`
                 this.filteredItems = filteredItems.concat(_.values(this.trackItems));
 
-                this.$el.find("[data-toggle='popover']").popover("hide");
+                this.$el.find("[data-toggle='popover']").popover("destroy");
 
                 this.timeline.draw(this.filteredItems);
 
-                this.$el.find("[data-toggle='popover']").popover();
+                this.$el.find("[data-toggle='popover']").popover({ container: "body", html: true });
 
                 // Restore the selections and co.
                 if (annotationsTool.hasSelection()) {
