@@ -21,7 +21,6 @@
  * @requires Backbone
  * @requires Sortable
  * @requires templates/tracks-selection-modal.tmpl
- * @requires ROLES
  * @requires hanldebars
  */
 define(["jquery",
