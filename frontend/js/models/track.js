@@ -148,20 +148,6 @@ define(["jquery",
             },
 
             /**
-             * Set the access for the track and its annotations
-             * @alias module:models-track.Track#setAccess
-             * @param  {Integer} newAccess The new value of the access. See  {@link  module:access}
-             */
-            setAccess: function (newAccess) {
-                if (_.isUndefined(newAccess)) {
-                    throw "The given access value must be valid access value!";
-                }
-                this.attributes.access = newAccess;
-                this.attributes.annotations.updateAccess();
-                this.trigger("change:access", this, newAccess);
-            },
-
-            /**
              * Get the annotation with the given id
              * @alias module:models-track.Track#getAnnotation
              * @param  {Integer} annotationId The id from the wanted annotation

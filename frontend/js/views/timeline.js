@@ -1545,7 +1545,7 @@ define(["util",
                 }
 
                 track.setAccess(newTrackVisibility);
-                track.save();
+                track.save({ access: newTrackVisibility });
             },
 
             /**
