@@ -217,6 +217,12 @@
     "starting": "Programm wird gestartet."
   },
   "timeline": {
+    "change visibility": {
+      "tooltip": "Sichtbarkeit ändern",
+      "to public": "Öffentlich machen",
+      "to private": "Privat machen",
+      "to shared with admin": "Mit Administratoren teilen"
+    },
     "track modals": {
       "header_add": "Neue Spur hinzufügen",
       "header_update": "Spur bearbeiten",
@@ -230,16 +236,17 @@
         "placeholder_add": "Beschreibung für die neue Spur einfügen",
         "placeholder_update": "Beschreibung für die Spur einfügen"
       },
-      "is public": "Öffentlich",
+      "access": {
+        "label": "Zugriff",
+        "public": "Öffentlich",
+        "private": "Privat",
+        "shared with admin": "Mit Administrator geteilt"
+      },
       "name": {
         "label": "Name",
         "placeholder_add": "Namen der neuen Spur einfügen",
         "placeholder_update": "Namen der Spur einfügen"
       }
-    },
-    "change visibility": {
-      "to private": "Privat machen",
-      "to public": "Öffentlich machen"
     },
     "delete track": "Spur löschen",
     "name required": "Es wird ein Name benötigt",

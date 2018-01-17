@@ -24,61 +24,74 @@
         {{#unless empty}}
             {{#if isMine}}
                 <span>
-                    <i
-                        class="button delete icon-trash"
-                        title="{{t "timeline.delete track"}}"
-                    ></i>
+                    <a class="button delete"><i class="icon-trash" title="{{t "timeline.delete track"}}"></i></a>
                     {{#if isMine}}
-                        <i
+                        <a class="button update"><i
                             class="button update icon-pencil"
                             title="{{t "timeline.track modals.button" context="update"}}"
-                        ></i>
-                        <i
+                        ></i></a>
+                        <a
+                            href="#"
+                            data-toggle="tooltip"
+                            data-trigger="click"
                             title="
-                                {{#if (annotationTool "isPrivateOnly")}}
-                                    {{t "timeline.private only.no public tracks allowed"}}
-                                {{else}}
-                                    {{#if isPublic}}
-                                        {{t "timeline.change visibility.to private"}}
-                                    {{else}}
-                                        {{t "timeline.change visibility.to public"}}
-                                    {{/if}}
-                                {{/if}}
+                                <a href='#' data-access='public' class='visibility button'>
+                                    <i
+                                        class='icon-white icon-public'
+                                        title='{{t "timeline.change visibility.to public"}}'
+                                    ></i>
+                                </a>
+                                <a href='#' data-access='private' class='visibility button'>
+                                    <i
+                                        class='icon-white icon-private'
+                                        title='{{t "timeline.change visibility.to private"}}'
+                                    ></i>
+                                </a>
+                                <a href='#' data-access='shared-with-admin' class='visibility button'>
+                                    <i
+                                        class='icon-white icon-shared-with-admin'
+                                        title='{{t "timeline.change visibility.to shared with admin"}}'
+                                    ></i>
+                                </a>
                             "
-                            class="
-                                visibility
-                                button
-                                icon-dark-grey
-                                {{#if (annotationTool "isPrivateOnly")}}
-                                    icon-private
-                                {{else}}
-                                    {{#if isPublic}}
-                                        icon-public
+                            class="button"
+                            data-placement="top"
+                        >
+                            <i
+                                title="
+                                    {{#if (annotationTool "isPrivateOnly")}}
+                                        {{t "timeline.private only.no public tracks allowed"}}
                                     {{else}}
+                                        {{t "timeline.change visibility.tooltip"}}
+                                    {{/if}}
+                                "
+                                class="
+                                    icon-dark-grey
+                                    {{#if (annotationTool "isPrivateOnly")}}
                                         icon-private
+                                    {{else}}
+                                        icon-{{access}}
                                     {{/if}}
-                                {{/if}}
-                            "
-                        ></i>
+                                "
+                            ></i>
+                        </a>
                     {{/if}}
                 </span>
             {{/if}}
-            <i
+            <a class="button toggle-expansion"><i
                 {{#if expanded}}
                     title="{{t "timeline.track.collapse"}}"
                 {{else}}
                     title="{{t "timeline.track.expand"}}"
                 {{/if}}
                 class="
-                    toggle-expansion
-                    button
                     {{#if expanded}}
                         icon-resize-small
                     {{else}}
                         icon-resize-full
                     {{/if}}
                 "
-            ></i>
+            ></i></a>
         {{/unless}}
     </div>
 </div>

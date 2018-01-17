@@ -61,6 +61,16 @@ define(["util",
 
         "use strict";
 
+        function normalizeAccess(access) {
+            return ACCESS[access.replace(/-/g, "_").toUpperCase()];
+        }
+
+        function accessIdentifier(access) {
+            return _.findKey(ACCESS, function (value) {
+                return value === access;
+            }).replace(/_/g, "-").toLowerCase();
+        }
+
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#View}
@@ -408,10 +418,12 @@ define(["util",
                 this.filteredItems = filteredItems.concat(_.values(this.trackItems));
 
                 this.$el.find("[data-toggle='popover']").popover("destroy");
+                this.$el.find("[data-toggle='tooltip']").tooltip("destroy");
 
                 this.timeline.draw(this.filteredItems);
 
                 this.$el.find("[data-toggle='popover']").popover({ container: "body", html: true });
+                this.$el.find("[data-toggle='tooltip']").tooltip({ html: true });
 
                 // Restore the selections and co.
                 if (annotationsTool.hasSelection()) {
@@ -678,6 +690,9 @@ define(["util",
             renderTrack: function (track) {
                 var trackAttributes = _.clone(track.attributes);
                 trackAttributes.expanded = this.trackExpanded[track.id];
+                if (trackAttributes.access || trackAttributes.access === 0) {
+                    trackAttributes.access = accessIdentifier(trackAttributes.access);
+                }
                 return this.groupTemplate(trackAttributes);
             },
 
@@ -806,8 +821,9 @@ define(["util",
                     }
 
                     var access;
-                    if (modal.find("#public").length > 0) {
-                        access = modal.find("#public").prop("checked") ? ACCESS.PUBLIC : ACCESS.PRIVATE;
+                    var accessRadio = modal.find("input[name='access-radio']:checked");
+                    if (accessRadio.length > 0) {
+                        access = normalizeAccess(accessRadio.val());
                     } else {
                         access = ACCESS.PUBLIC;
                     }
@@ -818,8 +834,7 @@ define(["util",
                         access: access
                     };
                     if (track) {
-                        track.set(attrs);
-                        track.save();
+                        track.save(attrs);
                     } else {
                         this.createTrack(attrs);
                     }
@@ -837,7 +852,13 @@ define(["util",
                 modal.find(".cancel").bind("click", dismissModal);
 
                 modal.on("shown", function () {
-                   modal.find("#name").focus();
+                    modal.find("#name").focus();
+                    var access = accessIdentifier(
+                        track
+                            ? track.get("access")
+                            : ACCESS.PUBLIC
+                    );
+                    modal.find("[name='access-radio'][value='" + access + "']").prop("checked", true);
                 });
                 modal.modal({
                     show: true,
@@ -1527,25 +1548,17 @@ define(["util",
                     return;
                 }
 
-                var track = this.getTrackFromGroupHeader(event.target),
-                    trackCurrentVisibility,
-                    newTrackVisibility;
-
+                var track = this.getTrackFromGroupHeader(event.target);
                 if (!track) {
                     console.warn("Track " + track.id + " does not exist!");
                     return;
                 }
 
-                trackCurrentVisibility = track.get("access");
+                track.save({
+                    access: normalizeAccess($(event.currentTarget).data("access"))
+                });
 
-                if (trackCurrentVisibility === ACCESS.PRIVATE) {
-                    newTrackVisibility = ACCESS.PUBLIC;
-                } else {
-                    newTrackVisibility = ACCESS.PRIVATE;
-                }
-
-                track.setAccess(newTrackVisibility);
-                track.save({ access: newTrackVisibility });
+                this.$el.find("[data-toggle='tooltip']").tooltip("hide");
             },
 
             /**

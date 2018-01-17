@@ -230,7 +230,12 @@
         "placeholder_add": "Insert a description for the new track",
         "placeholder_update": "Insert a description for the track"
       },
-      "is public": "Public",
+      "access": {
+        "label": "Access",
+        "public": "Public",
+        "private": "Private",
+        "shared with admin": "Shared with admin"
+      },
       "name": {
         "label": "Name",
         "placeholder_add": "Insert the new track name",
@@ -238,8 +243,10 @@
       }
     },
     "change visibility": {
+      "tooltip": "Change visibility",
+      "to public": "Make public",
       "to private": "Make private",
-      "to public": "Make public"
+      "to shared with admin": "Share with admins"
     },
     "delete track": "Delete track",
     "name required": "Name is required!",
