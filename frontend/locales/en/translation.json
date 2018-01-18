@@ -46,10 +46,15 @@
     "show category": "Show category"
   },
   "annotation": {
+    "author": "Created by",
+    "created": "on",
+    "track": "on",
     "comments": {
+      "author": "Comment by",
       "cancel": "$t(common actions.cancel)",
       "count": "1 Comment",
       "count_plural": "{{count}} Comments",
+      "created": "on {{date}}",
       "delete": "$t(common actions.delete)",
       "edit": {
         "button": "Edit",
@@ -87,7 +92,7 @@
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
     "title": "Delete",
-      "warning": "Do you really want to delete the {{type}} \"{{content}}\"?"
+      "warning": "Do you really want to delete the {{context}} \"{{content}}\"?"
   },
   "description": "Video annotation tool",
   "list annotation": {
@@ -100,7 +105,7 @@
     "next": "Move to next loop",
     "previous": "Move to previous loop",
     "seconds": "s",
-    "invalid loop length": "The given value for the loop length is nto valid!"
+    "invalid loop length": "The given value for the loop length is not valid!"
   },
   "menu": {
     "about": "About",
@@ -245,7 +250,8 @@
     "track": {
       "private": "Private",
       "public": "Public",
-      "you own": "You own this track"
+      "you own": "You own this track",
+      "expand/collapse": "Expand/Collapse"
     },
     "update track": {
       "button": "Update track",
