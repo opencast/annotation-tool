@@ -189,6 +189,9 @@ define(["jquery",
                 this.tracksOrder = [];
 
                 this.once(this.EVENTS.USER_LOGGED, this.fetchData);
+                this.once(this.EVENTS.USER_LOGGED, function () {
+                    $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
+                });
                 this.once(this.EVENTS.MODELS_INITIALIZED, function () {
 
                     var updateTracksOrder = _.bind(function (tracks) {

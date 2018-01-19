@@ -110,7 +110,7 @@
   "menu": {
     "about": "Über diese Software",
     "export": "Für Statistik exportieren",
-    "logout": "Abmelden",
+    "logout": "{{username}} abmelden"
     "print": "Drucken",
     "view": {
       "annotate": {
