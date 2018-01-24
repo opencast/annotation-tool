@@ -1066,7 +1066,7 @@ define(["jquery",
                     video.save({}, {
                         error: _.bind(function (model, response, options) {
                             if (response.status === 403) {
-                                this.alertFatal('You are not allowed to annotate this video!');
+                                this.alertFatal(i18next.t("annotation not allowed"));
                                 this.views.main.loadingBox.hide();
                             }
                         }, this)

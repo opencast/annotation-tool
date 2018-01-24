@@ -7,6 +7,9 @@
     "error": {
       "title": "Fehler!"
     },
+    "fatal": {
+      "title": "Schwerer Fehler!"
+    },
     "info": {
       "title": "Hinweis"
     },
@@ -14,6 +17,7 @@
       "title": "Warnung!"
     }
   },
+  "annotation not allowed": "Sie haben nicht die nötigen Rechte, um dieses Video zu annotieren!",
   "annotate on": "Annotieren auf",
   "annotate": {
     "categories": {
