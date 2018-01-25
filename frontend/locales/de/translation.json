@@ -278,7 +278,6 @@
     "action": "Spuren verwalten",
     "(un-)select all": "Alle (de-)selektieren",
     "cancel": "$t(common actions.cancel)",
-    "header": "$t(other public annotations)",
     "ok": "$t(common actions.ok)",
     "search": {
       "clear": "Löschen",

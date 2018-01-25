@@ -278,7 +278,7 @@
     "action": "Track management",
     "(un-)select all": "Select/unselect all",
     "cancel": "$t(common actions.cancel)",
-    "header": "$t(other public annotations)",
+    "header": "$t(track management.action)",
     "ok": "$t(common actions.ok)",
     "search": {
       "clear": "Clear",
