@@ -307,11 +307,6 @@
     "remember me": "Remember me"
   },
   "version": "Version: {{version}}",
-  "annotation visibility":  {
-      "all public": "All public annotations",
-      "only mine": "My annotations only",
-      "other public": "Other public annotations …"
-  },
   "common actions": {
     "cancel": "Cancel",
     "close": "Close",

@@ -307,11 +307,6 @@
     "remember me": "Angemeldet bleiben"
   },
   "version": "Version: {{version}}",
-  "annotation visibility": {
-    "all public": "Alle öffentlichen Annotationen",
-    "only mine": "Nur meine Annotationen",
-    "other public": "Andere öffentliche Annotationen …"
-  },
   "common actions": {
     "cancel": "Abbrechen",
     "close": "Schließen",
