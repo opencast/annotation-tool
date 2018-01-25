@@ -1,17 +1,17 @@
 <div class="modal" id="modal-track-selection">
     <div class="modal-header">
-        <h3>{{t "track selection.header"}}</h3>
+        <h3>{{t "track management.header"}}</h3>
     </div>
 
     <div class="modal-body">
-        {{t "track selection.search.hint"}}
+        {{t "track management.search.hint"}}
         <div class="input-append">
-            <input class="span12" type="text" id="search-track" placeholder="{{t "track selection.search.placeholder"}}">
-            <button id="clear-search" class="btn search-only" type="button">{{t "track selection.search.clear"}}</button>
+            <input class="span12" type="text" id="search-track" placeholder="{{t "track management.search.placeholder"}}">
+            <button id="clear-search" class="btn search-only" type="button">{{t "track management.search.clear"}}</button>
         </div>
         <div class="row-fluid">
             <div class="span6">
-                <h4>{{t "track selection.selection header"}}</h4>
+                <h4>{{t "track management.selection header"}}</h4>
                 <ul class="list-group">
                     {{#each users}}
                     <li class="list-group-item user-track-group">
@@ -35,20 +35,20 @@
                     {{/each}}
                 </ul>
 
-                <label><input id="select-all" type="checkbox" value=""> {{t "track selection.(un-)select all"}}</label>
+                <label><input id="select-all" type="checkbox" value=""> {{t "track management.(un-)select all"}}</label>
             </div>
 
             <div class="span6">
-                <h4>{{t "track selection.ordering header"}}</h4>
+                <h4>{{t "track management.ordering header"}}</h4>
                 <ul id="track-selection" class="list-group"></ul>
-                <button id="move-up"><i class="icon-arrow-up" title="{{t "track selection.move up"}}"></i></button>
-                <button id="move-down"><i class="icon-arrow-down" title="{{t "track selection.move down"}}"></i></button>
+                <button id="move-up"><i class="icon-arrow-up" title="{{t "track management.move up"}}"></i></button>
+                <button id="move-down"><i class="icon-arrow-down" title="{{t "track management.move down"}}"></i></button>
             </div>
         </div>
     </div>
 
     <div class="modal-footer">
-        <a id="cancel-selection" href="#" class="btn">{{t "track selection.cancel"}}</a>
-        <a id="confirm-selection" href="#" class="btn btn-primary">{{t "track selection.ok"}}</a>
+        <a id="cancel-selection" href="#" class="btn">{{t "track management.cancel"}}</a>
+        <a id="confirm-selection" href="#" class="btn btn-primary">{{t "track management.ok"}}</a>
     </div>
 </div>
