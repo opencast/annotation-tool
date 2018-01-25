@@ -122,7 +122,7 @@
         "structured annotations": "Strukturierte Annotationen",
         "text annotations": "Textannotationen"
       },
-      "track management": "$t(track management)",
+      "track management": "$t(track management.action)",
       "head": "Fenster",
       "loop controller": "Schleifensteuerung",
       "views": {
@@ -243,7 +243,7 @@
       "short": "Keine Spur verfügbar",
       "long": "Keine Spur entspricht den aktuell gesetzten Filtern."
     },
-    "track management": "$t(track management)",
+    "track management": "$t(track management.action)",
     "hidden items": "Ein verstecktes Element",
     "hidden items_plural": "{{count}} versteckte Elemente",
     "private only": {
@@ -274,8 +274,8 @@
     }
   },
   "title": "Annotating Academic Video",
-  "track management": "Spuren verwalten",
-  "track selection": {
+  "track management": {
+    "action": "Spuren verwalten",
     "(un-)select all": "Alle (de-)selektieren",
     "cancel": "$t(common actions.cancel)",
     "header": "$t(other public annotations)",
