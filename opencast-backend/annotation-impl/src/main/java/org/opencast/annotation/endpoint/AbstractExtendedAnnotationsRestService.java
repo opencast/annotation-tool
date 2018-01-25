@@ -510,12 +510,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/scales/{scaleId}/scalevalues")
   public Response postScaleValue(@PathParam("scaleId") final long scaleId, @FormParam("name") final String name,
           @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("tags") final String tags) {
-    return postScaleValueResponse(Option.<Long> none(), scaleId, name, value, order, tags);
+          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return postScaleValueResponse(Option.<Long> none(), scaleId, name, value, order, access, tags);
   }
 
   Response postScaleValueResponse(final Option<Long> videoId, final long scaleId, final String name,
-          final double value, final int order, final String tags) {
+          final double value, final int order, final Integer access, final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -524,7 +525,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                option(access));
         final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
         return Response.created(scaleValueLocationUri(scaleValue, videoId))
@@ -538,12 +540,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response putScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
           @FormParam("name") final String name, @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("tags") final String tags) {
-    return putScaleValueResponse(Option.<Long> none(), scaleId, id, name, value, order, tags);
+          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return putScaleValueResponse(Option.<Long> none(), scaleId, id, name, value, order, access, tags);
   }
 
   Response putScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id,
-          final String name, final double value, final int order, final String tags) {
+          final String name, final double value, final int order, final Integer access, final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -571,7 +574,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
           @Override
           public Response none() {
-            Resource resource = eas().createResource(tags);
+            Resource resource = eas().createResource(tags, option(access));
             final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
             return Response.created(scaleValueLocationUri(scaleValue, videoId))
@@ -868,12 +871,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/categories/{categoryId}/labels")
   public Response postLabel(@PathParam("categoryId") final long categoryId, @FormParam("value") final String value,
           @FormParam("abbreviation") final String abbreviation, @FormParam("description") final String description,
-          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
-    return postLabelResponse(Option.<Long> none(), categoryId, value, abbreviation, description, settings, tags);
+          @FormParam("access") final Integer access, @FormParam("settings") final String settings,
+          @FormParam("tags") final String tags) {
+    return postLabelResponse(Option.<Long> none(), categoryId, value, abbreviation, description, access, settings,
+            tags);
   }
 
   Response postLabelResponse(final Option<Long> videoId, final long categoryId, final String value,
-          final String abbreviation, final String description, final String settings, final String tags) {
+          final String abbreviation, final String description, final Integer access, final String settings,
+          final String tags) {
     return run(array(value, abbreviation), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -882,7 +888,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || eas().getCategory(categoryId, false).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+                option(access));
         final Label label = eas().createLabel(categoryId, value, abbreviation, trimToNone(description),
                 trimToNone(settings), resource);
 
@@ -897,14 +904,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/categories/{categoryId}/labels/{labelId}")
   public Response putLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
           @FormParam("value") final String value, @FormParam("abbreviation") final String abbreviation,
-          @FormParam("description") final String description, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return putLabelResponse(Option.<Long> none(), categoryId, id, value, abbreviation, description, settings, tags);
+          @FormParam("description") final String description, @FormParam("access") final Integer access,
+          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
+    return putLabelResponse(Option.<Long> none(), categoryId, id, value, abbreviation, description, access, settings,
+            tags);
   }
 
   Response putLabelResponse(final Option<Long> videoId, final long categoryId, final long id,
-          final String value, final String abbreviation, final String description, final String settings,
-          final String tags) {
+          final String value, final String abbreviation, final String description, final Integer access,
+          final String settings, final String tags) {
     return run(array(value, abbreviation), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -933,7 +941,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
           @Override
           public Response none() {
-            Resource resource = eas().createResource(tags);
+            Resource resource = eas().createResource(tags, option(access));
             final Label label = eas().createLabel(categoryId, value, abbreviation, trimToNone(description),
                     trimToNone(settings), resource);
 

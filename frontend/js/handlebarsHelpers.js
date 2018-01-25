@@ -13,19 +13,6 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
         }
     });
 
-    /**
-     * Handlebars helper to know if the current user can deleted the current model.
-     * @alias module:Handlebars#canBeDeleted
-     * @return {boolean}    True if the current user can deleted the current model.
-     */
-    Handlebars.registerHelper("canBeDeleted", function (options) {
-        if (this.isMine || ROLES.ADMINISTRATOR === annotationsTool.getUserRole()) {
-            return options.fn(this);
-        } else {
-            return options.inverse(this);
-        }
-    });
-
     Handlebars.registerHelper("greater", function (value1, value2, options) {
         console.log(value1 + " type " + typeof value1);
         if (value1 > value2) {

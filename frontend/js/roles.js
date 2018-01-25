@@ -28,11 +28,7 @@ define([], function () {
      * @enum {String}
      */
     return {
-        /** SUPERVISOR = "supervisor"*/
-        SUPERVISOR: "supervisor",
-        /** STUDENT = "user"*/
         USER: "user",
-        /** ADMINISTRATOR = "administrator"*/
         ADMINISTRATOR: "administrator"
     };
 });

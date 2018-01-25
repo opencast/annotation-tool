@@ -540,7 +540,7 @@ public class VideoEndpoint {
           @FormParam("scale_id") final Long scaleId, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
     if (scaleId == null)
-      return host.createScale(option(videoId), name, description, access, tags);
+        return host.createScale(some(videoId), name, description, access, tags);
 
     // TODO Why does this not use `createScale`?
     return run(array(scaleId), new Function0<Response>() {
@@ -565,14 +565,14 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}")
   public Response putScale(@PathParam("scaleId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return host.updateScale(option(videoId), id, name, description, tags);
+    return host.updateScale(some(videoId), id, name, description, tags);
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}")
   public Response getScale(@PathParam("scaleId") final long id) {
-    return host.getScaleResponse(option(videoId), id);
+    return host.getScaleResponse(some(videoId), id);
   }
 
   @GET
@@ -581,13 +581,13 @@ public class VideoEndpoint {
   public Response getScales(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
           @QueryParam("tags-or") final String tagsOr) {
-    return host.getScalesResponse(option(videoId), limit, offset, date, tagsAnd, tagsOr);
+    return host.getScalesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr);
   }
 
   @DELETE
   @Path("scales/{scaleId}")
   public Response deleteScale(@PathParam("scaleId") final long id) {
-    return host.deleteScaleResponse(option(videoId), id);
+    return host.deleteScaleResponse(some(videoId), id);
   }
 
   @POST
@@ -595,8 +595,9 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}/scalevalues")
   public Response postScaleValue(@PathParam("scaleId") final long scaleId, @FormParam("name") final String name,
           @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("tags") final String tags) {
-    return host.postScaleValueResponse(option(videoId), scaleId, name, value, order, tags);
+          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return host.postScaleValueResponse(some(videoId), scaleId, name, value, order, access, tags);
   }
 
   @PUT
@@ -604,15 +605,16 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response putScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
           @FormParam("name") final String name, @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("tags") final String tags) {
-    return host.putScaleValueResponse(option(videoId), scaleId, id, name, value, order, tags);
+          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return host.putScaleValueResponse(some(videoId), scaleId, id, name, value, order, access, tags);
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response getScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return host.getScaleValueResponse(option(videoId), scaleId, id);
+    return host.getScaleValueResponse(some(videoId), scaleId, id);
   }
 
   @GET
@@ -621,13 +623,13 @@ public class VideoEndpoint {
   public Response getScaleValues(@PathParam("scaleId") final long scaleId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
           @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return host.getScaleValuesResponse(option(videoId), scaleId, limit, offset, date, tagsAnd, tagsOr);
+    return host.getScaleValuesResponse(some(videoId), scaleId, limit, offset, date, tagsAnd, tagsOr);
   }
 
   @DELETE
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response deleteScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return host.deleteScaleValueResponse(option(videoId), scaleId, id);
+    return host.deleteScaleValueResponse(some(videoId), scaleId, id);
   }
 
   @POST
@@ -639,7 +641,7 @@ public class VideoEndpoint {
           @FormParam("category_id") final Long id, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
     if (id == null)
-      return host.postCategoryResponse(option(videoId), name, description, hasDuration, scaleId, settings, access,
+      return host.postCategoryResponse(some(videoId), name, description, hasDuration, scaleId, settings, access,
               tags);
 
     return run(array(id), new Function0<Response>() {
@@ -677,7 +679,7 @@ public class VideoEndpoint {
           @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("tags") final String tags) {
-    return host.putCategoryResponse(option(videoId), id, name, description, hasDuration, option(scaleId), settings, tags);
+    return host.putCategoryResponse(some(videoId), id, name, description, hasDuration, option(scaleId), settings, tags);
   }
 
   @GET
@@ -707,8 +709,9 @@ public class VideoEndpoint {
   @Path("categories/{categoryId}/labels")
   public Response postLabel(@PathParam("categoryId") final long categoryId, @FormParam("value") final String value,
           @FormParam("abbreviation") final String abbreviation, @FormParam("description") final String description,
-          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
-    return host.postLabelResponse(option(videoId), categoryId, value, abbreviation, description, settings, tags);
+          @FormParam("access") final Integer access, @FormParam("settings") final String settings,
+          @FormParam("tags") final String tags) {
+    return host.postLabelResponse(some(videoId), categoryId, value, abbreviation, description, access, settings, tags);
   }
 
   @PUT
@@ -716,9 +719,10 @@ public class VideoEndpoint {
   @Path("categories/{categoryId}/labels/{labelId}")
   public Response putLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
           @FormParam("value") final String value, @FormParam("abbreviation") final String abbreviation,
-          @FormParam("description") final String description, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return host.putLabelResponse(option(videoId), categoryId, id, value, abbreviation, description, settings, tags);
+          @FormParam("description") final String description, @FormParam("access") final Integer access,
+          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
+    return host.putLabelResponse(some(videoId), categoryId, id, value, abbreviation, description, access, settings,
+            tags);
   }
 
   @GET

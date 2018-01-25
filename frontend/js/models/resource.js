@@ -21,8 +21,9 @@
  * @requires backbone
  * @requires util
  * @requires access
+ * @requires roles
  */
-define(["underscore", "backbone", "util", "access"], function (_, Backbone, util, ACCESS) {
+define(["underscore", "backbone", "util", "access", "roles"], function (_, Backbone, util, ACCESS, ROLES) {
 "use strict";
 
 /**
@@ -158,7 +159,7 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Override the default toJSON function to ensure complete JSONing.
-     * @alias module:models-annotation.Annotation#toJSON
+     * @alias module:models-resource.Resource#toJSON
      * @param {options} options Potential options influencing the JSONing process
      * @return {JSON} JSON representation of the instance
      */
@@ -171,7 +172,30 @@ var Resource = Backbone.Model.extend({
         }
 
         return json;
-    }
+    },
+
+    /**
+     * Decide whether this resource can be deleted by the current user.
+     * @see administratorCanEditPublicInstances
+     * @alias module:models-resource.Resource#isEditable
+     */
+    isEditable: function () {
+        return this.get("isMine") || (
+            this.administratorCanEditPublicInstances
+                // TODO We should check this as well, but it does not work with labels so well ...
+                //   so for now we assume that this is only ever checked when the resource is public
+                //   in the right sense, i.e. it can be seen at all.
+                //&& this.get("isPublic")
+                && annotationsTool.user.get("role") === ROLES.ADMINISTRATOR
+        );
+    },
+
+    /**
+     * Can a user with the administrator role delete instances of this resource, when they are public?
+     * @see module:roles
+     * @type {boolean}
+     */
+    administratorCanEditPublicInstances: false
 });
 
 return Resource;

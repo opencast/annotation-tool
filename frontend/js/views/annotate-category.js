@@ -300,10 +300,9 @@ define(["jquery",
                 this.model.get("labels").create({
                     value       : i18next.t("new label defaults.description"),
                     abbreviation: i18next.t("new label defaults.abbreviation"),
-                    category    : this.model
-                },
-                  {wait: true}
-                );
+                    category    : this.model,
+                    access      : this.model.get("access")
+                }, { wait: true });
             },
 
             /**

@@ -317,7 +317,7 @@ define(["jquery",
                     this.currentScaleId = this.$el.find("select#scale-id").val();
                     this.currentScale = annotationsTool.video.get("scales").get(this.currentScaleId);
 
-                    if (this.currentScale && this.currentScale.get("isMine")) {
+                    if (this.currentScale && this.currentScale.isEditable()) {
                         if (this.isInEditMode) {
                             this.$el.find("a.edit-scale").hide();
                         } else {

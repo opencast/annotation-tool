@@ -132,7 +132,7 @@ define(["jquery",
                                 nickname: userNickname.val(),
                                 email: userEmail.val(),
                                 role: annotationsTool.localStorage && (
-                                    this.$el.find("#supervisor")[0].checked ? ROLES.SUPERVISOR : ROLES.USER
+                                    this.$el.find("#supervisor")[0].checked ? ROLES.ADMINISTRATOR : ROLES.USER
                                 )
                             },
                             {

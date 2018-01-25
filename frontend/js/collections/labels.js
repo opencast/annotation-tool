@@ -17,17 +17,19 @@
 /**
  * A module representing a labels collection
  * @module collections-labels
- * @requires jQuery
- * @requires models-label
+ * @requires jquery
+ * @requires underscore
  * @requires backbone
+ * @requires models/label
  * @requires localstorage
  */
 define(["jquery",
-        "models/label",
+        "underscore",
         "backbone",
+        "models/label",
         "localstorage"],
 
-    function ($, Label, Backbone) {
+    function ($, _, Backbone, Label) {
 
         "use strict";
 

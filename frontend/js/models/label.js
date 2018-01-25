@@ -54,6 +54,11 @@ define(["jquery",
                 access    : ACCESS.PUBLIC
             },
 
+            /**
+             * @see module:models-resource.Resource#administratorCanEditPublicInstances
+             */
+            administratorCanEditPublicInstances: true,
+
              /**
              * Constructor
              * @alias module:models-label.Label#initialize
