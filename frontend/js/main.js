@@ -25,7 +25,10 @@ require(["domReady",
                 }
             }, function () {
                 moment.locale(i18next.language);
-                $i18next.init(i18next, $, { parseDefaultValueFromContent: false });
+                $i18next.init(i18next, $, {
+                    useOptionsAttr: true,
+                    parseDefaultValueFromContent: false
+                });
 
                 var mediaelementLanguage;
                 function start() {

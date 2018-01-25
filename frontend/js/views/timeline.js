@@ -32,8 +32,7 @@
  * @requires filters-manager
  * @requires backbone
  * @requires timeline
- * @requires bootstrap.tooltip
- * @requires bootstrap.popover
+ * @requires bootstrap
  * @requires handlebarsHelpers
  */
 define(["util",
@@ -46,24 +45,31 @@ define(["util",
         "collections/annotations",
         "collections/tracks",
         "templates/timeline-group",
-        "templates/timeline-group-empty",
         "templates/timeline-item",
         "templates/timeline-placeholder",
-        "templates/timeline-modal-add-group",
-        "templates/timeline-modal-update-group",
+        "templates/timeline-modal-group",
         "access",
         "roles",
         "backbone",
         "timeline",
-        "tooltip",
-        "popover",
+        "bootstrap",
         "handlebarsHelpers"
     ],
 
-       function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl, GroupEmptyTmpl,
-            ItemTmpl, PlaceholderTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, Backbone, links) {
+       function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
+            ItemTmpl, PlaceholderTmpl, ModalGroupTmpl, ACCESS, ROLES, Backbone, links) {
 
         "use strict";
+
+        function normalizeAccess(access) {
+            return ACCESS[access.replace(/-/g, "_").toUpperCase()];
+        }
+
+        function accessIdentifier(access) {
+            return _.findKey(ACCESS, function (value) {
+                return value === access;
+            }).replace(/_/g, "-").toLowerCase();
+        }
 
         /**
          * @constructor
@@ -79,7 +85,7 @@ define(["util",
              * @alias module:views-timeline.TimelineView#el
              * @type {DOMElement}
              */
-            el: $("div#timeline-container")[0],
+            el: "#timeline-container",
 
             /**
              * Group template
@@ -89,13 +95,6 @@ define(["util",
             groupTemplate: GroupTmpl,
 
             /**
-             * Empty group template
-             * @alias module:views-timeline.TimelineView#groupEmptyTemplate
-             * @type {HandlebarsTemplate}
-             */
-            groupEmptyTemplate: GroupEmptyTmpl,
-
-            /**
              * Item template
              * @alias module:views-timeline.TimelineView#itemTemplate
              * @type {HandlebarsTemplate}
@@ -103,18 +102,11 @@ define(["util",
             itemTemplate: ItemTmpl,
 
             /**
-             * Modal template for group insertion
-             * @alias module:views-timeline.TimelineView#modalAddGroupTemplate
+             * Modal template for groups
+             * @alias module:views-timeline.TimelineView#modalGroupTemplate
              * @type {HandlebarsTemplate}
              */
-            modalAddGroupTemplate: ModalAddGroupTmpl,
-
-            /**
-             * Modal template for group update
-             * @alias module:views-timeline.TimelineView#modalUpdateGroupTemplate
-             * @type {HandlebarsTemplate}
-             */
-            modalUpdateGroupTemplate: ModalUpdateGroupTmpl,
+            modalGroupTemplate: ModalGroupTmpl,
 
             /**
              * Events to handle by the timeline view
@@ -122,14 +114,20 @@ define(["util",
              * @type {map}
              */
             events: {
-                "click #add-track": "initTrackCreation",
+                "click #add-track": "initTrackModal",
+                "click .timeline-group": "onSelectTrack",
+                "dblclick .timeline-group": "onUpdateTrack",
+                "click .update": "onUpdateTrack",
+                "click .delete": "onDeleteTrack",
+                "click .visibility": "onChangeTrackVisibility",
                 "click #reset-zoom": "onTimelineResetZoom",
                 "click #zoom-in": "zoomIn",
                 "click #zoom-out": "zoomOut",
                 "click #move-right": "moveRight",
                 "click #move-left": "moveLeft",
+                "click .toggle-expansion": "toggleTrackExpansion",
                 "click .timeline-placeholder": "expandTrack",
-                "click .toggle-expansion": "toggleTrackExpansion"
+                "click .timeline-item.selectable": "selectAnnotation"
             },
 
             /**
@@ -150,7 +148,8 @@ define(["util",
                 isMine      : true,
                 id          : "empty-timeline",
                 name        : i18next.t("timeline.no track available.short"),
-                description : i18next.t("timeline.no track available.long")
+                description : i18next.t("timeline.no track available.long"),
+                empty       : true
             },
 
             /**
@@ -234,7 +233,7 @@ define(["util",
                     "createTrack",
                     "changeTitleFromCustomPlayhead",
                     "onDeleteTrack",
-                    "onTrackSelected",
+                    "markTrackSelected",
                     "onSelectionUpdate",
                     "onPlayerTimeUpdate",
                     "onTimelineMoved",
@@ -252,8 +251,7 @@ define(["util",
                     "getTrack",
                     "onWindowResize",
                     "onTimelineResetZoom",
-                    "initTrackCreation",
-                    "initTrackUpdate",
+                    "initTrackModal",
                     "updateDraggingCtrl",
                     "moveToCurrentTime",
                     "moveRight",
@@ -306,6 +304,8 @@ define(["util",
                     groupsChangeable : true
                 };
 
+                this.groupModals = {};
+
                 this.$navbar = this.$el.find(".navbar");
 
                 // Create the timeline
@@ -333,6 +333,7 @@ define(["util",
                 links.events.addListener(this.timeline, "rangechange", this.timerangeChange);
 
                 this.tracks = annotationsTool.video.get("tracks");
+                this.listenTo(this.tracks, "selected_track", this.markTrackSelected);
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTracksList);
                 this.listenTo(this.tracks, "change", this.changeTrack);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
@@ -401,8 +402,7 @@ define(["util",
                     return startTime <= item.end && item.start <= endTime;
                 });
 
-                // TODO This should only happen when there are no tracks
-                if (!filteredItems.length) {
+                if (_.keys(this.trackItems).length === 0) {
                     filteredItems = [{
                         trackId: this.VOID_TRACK.id,
                         isMine: this.VOID_TRACK.isMine,
@@ -410,24 +410,20 @@ define(["util",
                         start: this.startDate - 5000,
                         end: this.startDate - 4500,
                         content: this.VOID_ITEM_TMPL,
-                        group: this.groupEmptyTemplate(this.VOID_TRACK)
+                        group: this.groupTemplate(this.VOID_TRACK)
                     }];
                 }
 
                 // We save the actually displayed items here to access them later, for example in `onSelectionUpdate`
                 this.filteredItems = filteredItems.concat(_.values(this.trackItems));
 
-                // Dispose of all placeholder popovers to avoid displaying stale information
-                $(".timeline-placeholder").popover("hide");
+                this.$el.find("[data-toggle='popover']").popover("destroy");
+                this.$el.find("[data-toggle='tooltip']").tooltip("destroy");
 
                 this.timeline.draw(this.filteredItems);
 
-                // Enable the preview popover for all the placeholder items
-                $(".timeline-placeholder").popover({
-                    content: function () {
-                        return $(this).find(".hidden-items").html();
-                    }
-                });
+                this.$el.find("[data-toggle='popover']").popover({ container: "body", html: true });
+                this.$el.find("[data-toggle='tooltip']").tooltip({ html: true });
 
                 // Restore the selections and co.
                 if (annotationsTool.hasSelection()) {
@@ -435,7 +431,7 @@ define(["util",
                     this.updateDraggingCtrl();
                 }
                 if (annotationsTool.selectedTrack) {
-                    this.onTrackSelected(null, annotationsTool.selectedTrack.id);
+                    this.markTrackSelected(annotationsTool.selectedTrack);
                 }
             },
 
@@ -515,8 +511,6 @@ define(["util",
                     videoDuration     = this.playerAdapter.getDuration(),
                     marge             = size / 20,
                     startInSecond;
-                // popovers = $("div.popover.fade.right.in");
-
 
                 if (annotationsTool.timelineFollowPlayhead) {
                     if ((currentTime - size / 2) < 0) {
@@ -688,17 +682,27 @@ define(["util",
             },
 
             /**
+             * Render the timeline group header for a track.
+             * @alias module:views-timeline.TimelineView#renderTrack
+             * @param {Track} track The track to render
+             * @return {String} The rendered track group header
+             */
+            renderTrack: function (track) {
+                var trackAttributes = _.clone(track.attributes);
+                trackAttributes.expanded = this.trackExpanded[track.id];
+                if (trackAttributes.access || trackAttributes.access === 0) {
+                    trackAttributes.access = accessIdentifier(trackAttributes.access);
+                }
+                return this.groupTemplate(trackAttributes);
+            },
+
+            /**
              * Get a void timeline item for the given track
              * @alias module:views-timeline.TimelineView#generateVoidItem
              * @param {Track} track Given track owning the void item
              * @return {Object} the generated timeline item
              */
             generateVoidItem: function (track) {
-                var trackJSON = track.toJSON();
-
-                trackJSON.id = track.id;
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
-
                 return {
                     model: track,
                     trackId: track.id,
@@ -708,7 +712,7 @@ define(["util",
                     start: this.startDate - 5000,
                     end: this.startDate - 4500,
                     content: this.VOID_ITEM_TMPL,
-                    groupContent: this.groupTemplate(trackJSON)
+                    groupContent: this.renderTrack(track)
                 };
             },
 
@@ -722,25 +726,18 @@ define(["util",
             generateItem: function (annotation, track) {
                 var videoDuration = this.playerAdapter.getDuration(),
                     annotationJSON,
-                    trackJSON,
                     startTime,
                     endTime,
                     start,
                     end;
 
                 annotationJSON = annotation.toJSON();
-                annotationJSON.id = annotation.id;
                 annotationJSON.track = track.id;
                 annotationJSON.text = annotation.get("text");
 
                 if (annotationJSON.label && annotationJSON.label.category && annotationJSON.label.category.settings) {
                     annotationJSON.category = annotationJSON.label.category;
                 }
-
-                // Prepare track informations
-                trackJSON = track.toJSON();
-                trackJSON.id = track.id;
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
 
                 // Calculate start/end time
                 startTime = annotation.get("start");
@@ -762,7 +759,7 @@ define(["util",
                     start: start,
                     end: end,
                     itemContent: this.itemTemplate(annotationJSON),
-                    groupContent: this.groupTemplate(trackJSON)
+                    groupContent: this.renderTrack(track)
                 };
             },
 
@@ -785,189 +782,147 @@ define(["util",
             },
 
             /**
-             * Initialize the creation of a new track, load the modal window to add a new track.
-             * @alias module:views-timeline.TimelineView#initTrackCreation
+             * Initialize the creation or update of a track, and load a corresponding modal
+             * @alias module:views-timeline.TimelineView#initTrackModal
+             * @param {Event} event The event triggering this modal
+             * @param {Track} track The track to edit or <tt>undefined</tt> to create a new one
              */
-            initTrackCreation: function () {
-                var self = this,
-                    access,
-                    name,
-                    description,
-                    insertTrack = function () {
-                        name = self.createGroupModal.find("#name")[0].value;
-                        description = self.createGroupModal.find("#description")[0].value;
-
-                        if (name === "") {
-                            self.createGroupModal.find(".alert #content").html(i18next.t("timeline.name required"));
-                            self.createGroupModal.find(".alert").show();
-                            return;
-                        } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
-                            self.createGroupModal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
-                            self.createGroupModal.find(".alert").show();
-                            return;
-                        }
-
-                        if (self.createGroupModal.find("#public").length > 0) {
-                            access = self.createGroupModal.find("#public")[0].checked ? ACCESS.PUBLIC : ACCESS.PRIVATE;
-                        } else {
-                            access = ACCESS.PUBLIC;
-                        }
-
-                        self.createTrack({
-                            name: name,
-                            description: description,
-                            access: access
-                        }, this);
-
-                        self.createGroupModal.modal("toggle");
-                    };
+            initTrackModal: function (event, track) {
+                var action = track ? "update" : "add";
 
                 // If the modal is already loaded and displayed, we do nothing
-                if ($("div#modal-add-group.modal.in").length > 0) {
-                    return;
-                } else if (!this.createGroupModal) {
-                    // Otherwise we load the login modal if not loaded
-                    $("body").append(this.modalAddGroupTemplate({
-                        isSupervisor: annotationsTool.user.get("role") === ROLES.ADMINISTRATOR
-                    }));
-                    this.createGroupModal = $("#modal-add-group");
-                    this.createGroupModal.modal({
-                        show: true,
-                        backdrop: false,
-                        keyboard: true
-                    });
-                    this.createGroupModal.find("a#add-group").bind("click", insertTrack);
-                    this.createGroupModal.bind("keypress", function (event) {
-                        if (event.keyCode === 13) {
-                            insertTrack();
-                        }
-                    });
+                if (this.groupModals[action]) return;
 
-                    this.createGroupModal.on("shown", $.proxy(function () {
-                        this.createGroupModal.find("#name").focus();
-                    }, this));
+                var modal = this.groupModals[action] = this.$el.find("#modal-" + action + "-group");
+                modal.html(
+                    this.modalGroupTemplate(_.extend(
+                        { action: action },
+                        track && track.attributes
+                    ))
+                );
 
-                    this.createGroupModal.find("#name").focus();
-                } else {
-                    // if the modal has already been initialized, we reset input and show modal
-                    this.createGroupModal.find(".alert #content").html("").hide();
-                    this.createGroupModal.find(".alert-error").hide();
-                    this.createGroupModal.find("#name")[0].value = "";
-                    this.createGroupModal.find("#description")[0].value = "";
-                    this.createGroupModal.modal("toggle");
-                }
+                var dismissModal = _.bind(function () {
+                    modal.modal("hide");
+                    delete this.groupModals[action];
+                }, this);
+
+                var saveTrack = _.bind(function () {
+                    var name = modal.find("#name").val();
+                    var description = modal.find("#description").val();
+
+                    if (name === "") {
+                       modal.find(".alert #content").html(i18next.t("timeline.name required"));
+                       modal.find(".alert").show();
+                       return;
+                    } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
+                        modal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
+                        modal.find(".alert").show();
+                        return;
+                    }
+
+                    var access;
+                    var accessRadio = modal.find("input[name='access-radio']:checked");
+                    if (accessRadio.length > 0) {
+                        access = normalizeAccess(accessRadio.val());
+                    } else {
+                        access = ACCESS.PUBLIC;
+                    }
+
+                    var attrs = {
+                        name: name,
+                        description: description,
+                        access: access
+                    };
+                    if (track) {
+                        track.save(attrs);
+                    } else {
+                        this.createTrack(attrs);
+                    }
+
+                    dismissModal();
+                }, this);
+
+                modal.find(".submit").bind("click", saveTrack);
+                modal.bind("keypress", function (event) {
+                    if (event.keyCode === 13) {
+                        saveTrack();
+                    }
+                });
+
+                modal.find(".cancel").bind("click", dismissModal);
+
+                modal.on("shown", function () {
+                    modal.find("#name").focus();
+                    var access = accessIdentifier(
+                        track
+                            ? track.get("access")
+                            : ACCESS.PUBLIC
+                    );
+                    modal.find("[name='access-radio'][value='" + access + "']").prop("checked", true);
+                });
+                modal.modal({
+                    show: true,
+                    backdrop: false,
+                    keyboard: true
+                });
             },
 
             /**
-             * Initialize the update of the selected track, load the modal window to modify the track.
-             * @alias module:views-timeline.TimelineView#initTrackUpdate
-             * @param {Event} event Event object
-             * @param {Integer} The track Id of the selected track
+             * Get the track corresponding to the group header, givne an element inside the latter.
+             * @alias module:views-timeline.TimelineView#getTrackFromGroupHeader
+             * @param {Element} element An element inside a group header
+             * @return {Track} The track the surrounding group header belongs to
              */
-            initTrackUpdate: function (event, id) {
-                var self = this,
-                    access,
-                    name,
-                    track = annotationsTool.getTrack(id),
-                    description,
-                    updateTrack = function () {
-                        name = self.updateGroupModal.find("#name")[0].value;
-                        description = self.updateGroupModal.find("#description")[0].value;
-
-                        if (name === "") {
-                            self.updateGroupModal.find(".alert #content").html(i18next.t("timeline.name required"));
-                            self.updateGroupModal.find(".alert").show();
-                            return;
-                        } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
-                            self.updateGroupModal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
-                            self.updateGroupModal.find(".alert").show();
-                            return;
-                        }
-
-                        if (self.updateGroupModal.find("#public").length > 0) {
-                            access = self.updateGroupModal.find("#public")[0].checked ? ACCESS.PUBLIC : ACCESS.PRIVATE;
-                        } else {
-                            access = ACCESS.PUBLIC;
-                        }
-
-                        track.set({
-                            name: name,
-                            description: description,
-                            access: access
-                        });
-
-                        track.save();
-
-                        self.updateGroupModal.modal("toggle");
-                    };
-
-                // If the modal is already loaded and displayed, we do nothing
-                if ($("div#modal-update-group.modal.in").length > 0) {
-                    return;
-                } else if (!this.updateGroupModal) {
-                    // Otherwise we load the login modal if not loaded
-                    $("body").append(this.modalUpdateGroupTemplate(track.toJSON()));
-                    this.updateGroupModal = $("#modal-update-group");
-                    this.updateGroupModal.modal({
-                        show: true,
-                        backdrop: false,
-                        keyboard: true
-                    });
-                    this.updateGroupModal.find("a#update-group").bind("click", updateTrack);
-                    this.updateGroupModal.bind("keypress", function (event) {
-                        if (event.keyCode === 13) {
-                            updateTrack();
-                        }
-                    });
-
-                    this.updateGroupModal.on("shown", $.proxy(function () {
-                        this.updateGroupModal.find("#name").focus();
-                    }, this));
-
-                    this.updateGroupModal.find("#name").focus();
-                } else {
-                    // if the modal has already been initialized, we reset input and show modal
-                    this.updateGroupModal.find(".alert #content").html("");
-                    this.updateGroupModal.find(".alert-error").hide();
-                    this.updateGroupModal.find("#name")[0].value = track.get("name");
-                    this.updateGroupModal.find("#description")[0].value = track.get("description");
-                    this.updateGroupModal.find("a#update-group").unbind("click").bind("click", updateTrack);
-                    this.updateGroupModal.find("#public")[0].checked = (track.get("access") === ACCESS.PUBLIC);
-                    this.updateGroupModal.unbind("keypress").bind("keypress", function (event) {
-                        if (event.keyCode === 13) {
-                            updateTrack();
-                        }
-                    });
-                    this.updateGroupModal.modal("toggle");
-                }
+            getTrackFromGroupHeader: function (element) {
+                return this.tracks.get(
+                    $(element).closest(".timeline-group").data("id")
+                );
             },
 
             /**
-             * Expand a track, i.e. show all annotations in it, without any clustering or aggregation.
-             * This might also make the track higher.
-             * @alias module:views-timeline.TimelineView#expandTrack
+             * Initialize the update of a track, and load a corresponding modal
+             * @alias module:views-timeline.TimelineView#onUpdateTrack
              * @param {Event} event The event that causes the expansion. Usually clicking on a placeholder item
+             */
+            onUpdateTrack: function (event) {
+                var track = this.getTrackFromGroupHeader(event.target);
+                if (!track) return;
+                this.initTrackModal(event, track);
+            },
+
+            /**
+             * Expand or collapse a track, i. e. turn on or off all clustering and aggregation.
+             * @alias module:views-timeline.TimelineView#setTrackExpanded
+             * @param {Track} track The track to expand/collapse
+             * @param {Boolean} expanded Whether or not to expand the track
+             */
+            setTrackExpanded: function (track, expanded) {
+                this.trackExpanded[track.id] = expanded;
+                this.preprocessTrack(track.id);
+                this.changeTrack(track);
+            },
+
+            /**
+             * Expand a track. See {@link module:views-timeline.TimelineView#setTrackExpanded}.
+             * @see module:views-timeline.TimelineView#setTrackExpanded
+             * @alias module:views-timeline.TimelineView#expandTrack
+             * @param {Event} event The event that causes the expansion; Usually clicking on a placeholder item
              * @see preprocessTrack
              */
             expandTrack: function (event) {
-                $(event.target).popover("hide");
-                var track = $(event.target).data("track");
-                this.trackExpanded[track] = true;
-                this.preprocessTrack(track);
-                this.redraw();
+                var track = this.tracks.get($(event.target).data("track"));
+                this.setTrackExpanded(track, true);
             },
 
             /**
-             * Toggle a tracks expanstion status.
+             * Toggle a tracks expanstion status. See {@link module:views-timeline.TimelineView#setTrackExpanded}.
              * @alias module:views-timeline.TimelineView#toggleTrack
              * @param {Event} event The event triggering the toggle
              * @see expandTrack
              */
             toggleTrackExpansion: function (event) {
-                var track = $(event.target).closest(".timeline-group").data("id");
-                this.trackExpanded[track] = !this.trackExpanded[track];
-                this.preprocessTrack(track);
-                this.redraw();
+                var track = this.getTrackFromGroupHeader(event.target);
+                this.setTrackExpanded(track, !this.trackExpanded[track.id]);
             },
 
             /**
@@ -1240,6 +1195,17 @@ define(["util",
             },
 
             /**
+             * Mark an annotation as selected when it is clicked.
+             * @alias module:views-timeline.TimelineView#selectAnnotation
+             * @param {Event} event The event initiating the selection
+             */
+            selectAnnotation: function (event) {
+                var id = event.target.dataset["annotationid"],
+                    trackId = event.target.dataset["trackid"];
+                annotationsTool.onClickSelectionById([{ id: id, trackId: trackId }], true, true);
+            },
+
+            /**
              * Listener for the selection update event
              * @alias module:views-timeline.TimelineView#onSelectionUpdate
              * @param  {Array} selection The new array of selected item(s)
@@ -1333,7 +1299,7 @@ define(["util",
                         start: values.item.start,
                         end: values.item.end,
                         itemContent: values.item.content,
-                        groupContent: this.groupTemplate(values.oldTrack.toJSON()),
+                        groupContent: this.renderTrack(values.oldTrack),
                         id: values.annotation.id,
                         trackId: values.oldTrack.id,
                         model: values.oldTrack,
@@ -1491,15 +1457,14 @@ define(["util",
              * Listener for track deletion
              * @alias module:views-timeline.TimelineView#onDeleteTrack
              * @param {Event} event the action event
-             * @param {Integer} trackId Id of the track to delete
              */
-            onDeleteTrack: function (event, trackId) {
+            onDeleteTrack: function (event) {
                 event.stopImmediatePropagation();
 
-                var track = this.tracks.get(trackId),
+                var track = this.getTrackFromGroupHeader(event.target),
                     self = this,
                     values,
-                    newTrackId,
+                    newTrack,
                     callback;
 
                 // If track already deleted
@@ -1509,9 +1474,6 @@ define(["util",
 
                 // Destroy the track and redraw the timeline
                 callback = $.proxy(function () {
-                    // delete track popover
-                    $("#track" + trackId).popover("disable");
-
                     _.each(this.annotationItems, function (item) {
                         if (item.trackId === track.id) {
                             delete this.annotationItems[item.id];
@@ -1525,13 +1487,13 @@ define(["util",
                         if (self.tracks.length > 0) { // If there is still other tracks
                             self.tracks.each(function (t) {
                                 if (t.get("isMine")) {
-                                    newTrackId = t.id;
+                                    newTrack = t;
                                 }
                             });
-                            self.onTrackSelected(null, newTrackId);
+                            self.markTrackSelected(newTrack);
                         }
                     } else {
-                        self.onTrackSelected(null, annotationsTool.selectedTrack.id);
+                        self.markTrackSelected(annotationsTool.selectedTrack);
                     }
 
                     delete this.trackItems[track.id];
@@ -1555,11 +1517,9 @@ define(["util",
                 }
 
                 var newGroup,
-                    trackJSON = track.toJSON(),
                     redrawRequired = false;
 
-                trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.ADMINISTRATOR);
-                newGroup = this.groupTemplate(trackJSON);
+                newGroup = this.renderTrack(track);
 
                 _.each(_.values(this.annotationItems).concat(_.values(this.trackItems)), function (item) {
                     if (item.trackId === track.get("id") && item.groupContent !== newGroup) {
@@ -1577,61 +1537,53 @@ define(["util",
 
             /**
              * Update the track with the given id
-             * @alias module:views-timeline.TimelineView#onUpdateTrack
+             * @alias module:views-timeline.TimelineView#onChangeTrackVisibility
              * @param {Event} event the action event
-             * @param {Integer} trackId Id of the track to delete
              */
-            onUpdateTrack: function (event, trackId) {
+            onChangeTrackVisibility: function (event) {
                 event.stopImmediatePropagation();
 
-                $("#track" + trackId).popover("hide");
-
-                var track = this.tracks.get(trackId),
-                    trackCurrentVisibility,
-                    newTrackVisibility;
-
-                if (!track) {
-                    console.warn("Track " + trackId + " does not exist!");
+                if (annotationsTool.isPrivateOnly) {
+                    annotationsTool.alertWarning(i18next.t("timeline.private only.no public tracks allowed"));
                     return;
                 }
 
-                trackCurrentVisibility = track.get("access");
-
-                if (trackCurrentVisibility === ACCESS.PRIVATE) {
-                    newTrackVisibility = ACCESS.PUBLIC;
-                } else {
-                    newTrackVisibility = ACCESS.PRIVATE;
+                var track = this.getTrackFromGroupHeader(event.target);
+                if (!track) {
+                    console.warn("Track " + track.id + " does not exist!");
+                    return;
                 }
 
-                track.setAccess(newTrackVisibility);
-                track.save();
+                track.save({
+                    access: normalizeAccess($(event.currentTarget).data("access"))
+                });
+
+                this.$el.find("[data-toggle='tooltip']").tooltip("hide");
+            },
+
+            /**
+             * Mark a given track as selected
+             * @alias module:views-timeline.TimelineView#markTrackSelected
+             * @param {Track} The track to be selected
+             */
+            markTrackSelected: function (track) {
+                this.$el.find("div.selected").removeClass("selected");
+                this.$el.find(".timeline-group[data-id='" + track.id + "']")
+                    .closest(".timeline-groups-text").addClass("selected");
             },
 
             /**
              * Listener for track selection
-             * @alias module:views-timeline.TimelineView#onTrackSelected
+             * @alias module:views-timeline.TimelineView#onSelectTrack
              * @param {Event} event Event object
-             * @param {Integer} The track Id of the selected track
              */
-            onTrackSelected: function (event, trackId) {
-                var track;
-
-                if (_.isString(trackId) && !annotationsTool.localStorage) {
-                    track = annotationsTool.video.getTrack(parseInt(trackId, 10));
-                } else {
-                    track = annotationsTool.video.getTrack(trackId);
-                }
-
-                // If the track does not exist, and it has been thrown by an event
-                if ((!track && event) || (!track && trackId)) {
-                    return;
-                }
-
-                annotationsTool.selectTrack(track);
-
-                this.$el.find("div.selected").removeClass("selected");
-                this.$el.find(".timeline-group[data-id='" + trackId + "']")
-                    .closest(".timeline-groups-text").addClass("selected");
+            onSelectTrack: function (event) {
+                var track = this.getTrackFromGroupHeader(event.target);
+                if (!track.get("isMine")) return;
+                if (!track) return;
+                annotationsTool.selectTrack(
+                    this.getTrackFromGroupHeader(event.target)
+                );
             },
 
             /**
@@ -1642,7 +1594,7 @@ define(["util",
                 this.preprocessAllTracks();
                 this.redraw();
                 if (annotationsTool.selectedTrack) {
-                    this.onTrackSelected(null, annotationsTool.selectedTrack.id);
+                    this.markTrackSelected(annotationsTool.selectedTrack);
                 }
             },
 

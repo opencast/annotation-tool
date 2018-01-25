@@ -1,3 +1,18 @@
-<div title="{{text}}" class="timeline-item {{#if atEnd}}at-end{{/if}}" style="{{#if category.settings.color}};background-color: {{category.settings.color}}{{/if}}" onclick="annotationsTool.onClickSelectionById([{id:'{{id}}',trackId:'{{track}}'}], true, true)" data-annotationid="{{id}}" data-trackid="{{track}}">
+<div
+    title="{{text}}"
+    class="
+        selectable
+        timeline-item
+        {{#if atEnd}}
+            at-end
+        {{/if}}
+    "
+    style="
+        {{#if category.settings.color}}
+            background-color: {{category.settings.color}}
+        {{/if}}"
+        data-annotationid="{{id}}"
+        data-trackid="{{track}}"
+>
     <span>{{#if label}}<b>{{label.abbreviation}}</b>{{/if}} {{text}}</span>
 </div>

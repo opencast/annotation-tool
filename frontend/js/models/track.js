@@ -125,7 +125,7 @@ define(["jquery",
 
                         self.set("annotationsLoaded", true);
                     };
-                
+
                 if (!this.get("ready")) {
                     this.once("ready", this.fetchAnnotations);
                 }
@@ -145,20 +145,6 @@ define(["jquery",
                 if (this.attributes.annotations) {
                     this.attributes.annotations.setUrl(this);
                 }
-            },
-
-            /**
-             * Set the access for the track and its annotations
-             * @alias module:models-track.Track#setAccess
-             * @param  {Integer} newAccess The new value of the access. See  {@link  module:access} 
-             */
-            setAccess: function (newAccess) {
-                if (_.isUndefined(newAccess)) {
-                    throw "The given access value must be valid access value!";
-                }
-                this.attributes.access = newAccess;
-                this.attributes.annotations.updateAccess();
-                this.trigger("change:access", this, newAccess);
             },
 
             /**

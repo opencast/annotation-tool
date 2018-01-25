@@ -25,9 +25,13 @@ public interface Resource {
 
   int PRIVATE = 0;
   int PUBLIC = 1;
+  int SHARED_WITH_ADMIN = 2;
 
   /** The access to the resource */
   int getAccess();
+
+  /** The id of the video this resource belongs to */
+  Option<Long> getVideo(ExtendedAnnotationService eas);
 
   /** The user id from the creator */
   Option<Long> getCreatedBy();

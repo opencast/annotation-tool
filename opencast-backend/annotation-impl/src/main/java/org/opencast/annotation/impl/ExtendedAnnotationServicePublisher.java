@@ -17,6 +17,8 @@ package org.opencast.annotation.impl;
 
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 
+import org.opencastproject.search.api.SearchService;
+import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.util.osgi.SimpleServicePublisher;
 import org.opencastproject.util.persistence.PersistenceEnv;
@@ -39,6 +41,8 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
 
   private EntityManagerFactory emf;
   private SecurityService securityService;
+  private AuthorizationService authorizationService;
+  private SearchService searchService;
 
   /** OSGi DI */
   void setEntityManagerFactory(EntityManagerFactory emf) {
@@ -56,6 +60,26 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
   }
 
   /**
+   * OSGi callback for setting the authorization service.
+   *
+   * @param authorizationService
+   *          the authorization service
+   */
+  public void setAuthorizationService(AuthorizationService authorizationService) {
+    this.authorizationService = authorizationService;
+  }
+
+  /**
+   * OSGi callback for setting the search service.
+   *
+   * @param searchService
+   *          the search service
+   */
+  public void setSearchService(SearchService searchService) {
+    this.searchService = searchService;
+  }
+
+  /**
    * @see org.opencastproject.util.osgi.SimpleServicePublisher#needConfig()
    */
   @Override
@@ -69,7 +93,8 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
   @Override
   public ServiceReg registerService(Dictionary properties, ComponentContext cc) throws ConfigurationException {
     final PersistenceEnv penv = persistenceEnvironment(emf);
-    final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService);
+    final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService,
+            authorizationService, searchService);
     return ServiceReg.reg(registerService(cc, eas, ExtendedAnnotationService.class, "Extended Annotation Service"));
   }
 }

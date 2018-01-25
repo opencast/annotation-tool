@@ -217,24 +217,36 @@
     "starting": "Programm wird gestartet."
   },
   "timeline": {
-    "add track": {
-      "add": "Hinzufügen",
-      "button": "Spur hinzufügen",
+    "change visibility": {
+      "tooltip": "Sichtbarkeit ändern",
+      "to public": "Öffentlich machen",
+      "to private": "Privat machen",
+      "to shared with admin": "Mit Administratoren teilen"
+    },
+    "track modals": {
+      "header_add": "Neue Spur hinzufügen",
+      "header_update": "Spur bearbeiten",
+      "button_add": "Spur hinzufügen",
+      "button_update": "Spur bearbeiten",
+      "action_add": "Hinzufügen",
+      "action_update": "Aktualisieren",
       "cancel": "$t(common actions.cancel)",
       "description": {
         "label": "Beschreibung",
-        "placeholder": "Beschreibung für die Spur einfügen"
+        "placeholder_add": "Beschreibung für die neue Spur einfügen",
+        "placeholder_update": "Beschreibung für die Spur einfügen"
       },
-      "header": "Neue Spur hinzufügen",
-      "is public": "Öffentlich",
+      "access": {
+        "label": "Zugriff",
+        "public": "Öffentlich",
+        "private": "Privat",
+        "shared with admin": "Mit Administrator geteilt"
+      },
       "name": {
         "label": "Name",
-        "placeholder": "Namen der Spur einfügen"
+        "placeholder_add": "Namen der neuen Spur einfügen",
+        "placeholder_update": "Namen der Spur einfügen"
       }
-    },
-    "change visibility": {
-      "to private": "Privat machen",
-      "to public": "Öffentlich machen"
     },
     "delete track": "Spur löschen",
     "name required": "Es wird ein Name benötigt",
@@ -255,22 +267,8 @@
       "private": "Privat",
       "public": "Öffentlich",
       "you own": "Diese Spur gehört Ihnen",
-      "expand/collapse": "Auf-/Zuklappen"
-    },
-    "update track": {
-      "button": "Spur bearbeiten",
-      "cancel": "$t(common actions.cancel)",
-      "description": {
-        "label": "Beschreibung",
-        "placeholder": "Neue Beschreibung für die Spur einfügen"
-      },
-      "header": "Spur bearbeiten",
-      "is public": "Öffentlich",
-      "name": {
-        "label": "Name",
-        "placeholder": "Neuen Namen für die Spur einfügen"
-      },
-      "update": "Aktualisieren"
+      "expand": "Spur ausklappen",
+      "collapse": "Spur einklappen"
     }
   },
   "title": "Annotating Academic Video",

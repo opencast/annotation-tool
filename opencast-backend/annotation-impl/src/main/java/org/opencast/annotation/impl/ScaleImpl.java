@@ -18,6 +18,7 @@ package org.opencast.annotation.impl;
 import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
 
@@ -47,6 +48,14 @@ public class ScaleImpl extends ResourceImpl implements Scale {
   @Override
   public long getId() {
     return id;
+  }
+
+  /**
+   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
+   */
+  @Override
+  public Option<Long> getVideo(ExtendedAnnotationService eas) {
+    return videoId;
   }
 
   /**

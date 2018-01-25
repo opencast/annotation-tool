@@ -16,10 +16,13 @@
 package org.opencast.annotation.impl;
 
 import org.opencastproject.util.EqualsUtil;
+import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Option;
 
 import org.opencast.annotation.api.Annotation;
+import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
+import org.opencast.annotation.api.Track;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Annotation}.
@@ -56,6 +59,19 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
   @Override
   public long getId() {
     return id;
+  }
+
+  /**
+   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
+   */
+  @Override
+  public Option<Long> getVideo(final ExtendedAnnotationService eas) {
+    return eas.getTrack(trackId).bind(new Function<Track, Option<Long>>() {
+      @Override
+      public Option<Long> apply(Track track) {
+        return track.getVideo(eas);
+      }
+    });
   }
 
   /**

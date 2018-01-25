@@ -18,9 +18,9 @@ import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.TrackImpl;
 
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
 import static org.opencast.annotation.endpoint.util.Responses.buildOk;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.ANNOTATE_ADMIN_ACTION;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.ANNOTATE_ACTION;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.FORBIDDEN;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
@@ -31,8 +31,6 @@ import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestSe
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
-
-import org.opencast.annotation.impl.Jsons;
 
 import org.opencast.annotation.impl.persistence.AbstractResourceDto;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
@@ -117,12 +115,13 @@ public class VideoEndpoint {
   private final Option<VideoData> videoData;
 
   private VideoData.Access getVideoAccess(MediaPackage mediaPackage) {
-    if (host.hasVideoAccess(mediaPackage, ANNOTATE_ADMIN_ACTION)) return VideoData.Access.ANNOTATE_ADMIN;
-    if (host.hasVideoAccess(mediaPackage, ANNOTATE_ACTION)) return VideoData.Access.ANNOTATE;
+    if (eas.hasVideoAccess(mediaPackage, ANNOTATE_ADMIN_ACTION)) return VideoData.Access.ANNOTATE_ADMIN;
+    if (eas.hasVideoAccess(mediaPackage, ANNOTATE_ACTION)) return VideoData.Access.ANNOTATE;
     return VideoData.Access.NONE;
   }
 
-  public VideoEndpoint(final long videoId, AbstractExtendedAnnotationsRestService host, ExtendedAnnotationService eas) {
+  public VideoEndpoint(final long videoId, final AbstractExtendedAnnotationsRestService host,
+          final ExtendedAnnotationService eas) {
     this.videoId = videoId;
     this.host = host;
     this.eas = eas;
@@ -130,7 +129,7 @@ public class VideoEndpoint {
     this.videoData = this.eas.getVideo(videoId).map(new Function<Video, VideoData>() {
       @Override
       public VideoData apply(final Video video) {
-        MediaPackage mediaPackage = VideoEndpoint.this.host.findMediaPackage(video.getExtId()).get();
+        MediaPackage mediaPackage = eas.findMediaPackage(video.getExtId()).get();
         VideoData.Access access = getVideoAccess(mediaPackage);
         return new VideoData(video, access);
       }

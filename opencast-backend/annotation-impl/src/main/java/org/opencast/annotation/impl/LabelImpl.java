@@ -16,8 +16,11 @@
 package org.opencast.annotation.impl;
 
 import org.opencastproject.util.EqualsUtil;
+import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Option;
 
+import org.opencast.annotation.api.Category;
+import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Label;
 import org.opencast.annotation.api.Resource;
 
@@ -52,6 +55,20 @@ public final class LabelImpl extends ResourceImpl implements Label {
   @Override
   public long getId() {
     return id;
+  }
+
+  /**
+   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
+   */
+  @Override
+  public Option<Long> getVideo(final ExtendedAnnotationService eas) {
+    final boolean includeDeleted = true;
+    return eas.getCategory(categoryId, includeDeleted).bind(new Function<Category, Option<Long>>() {
+      @Override
+      public Option<Long> apply(Category category) {
+        return category.getVideo(eas);
+      }
+    });
   }
 
   /**

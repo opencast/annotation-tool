@@ -1,16 +1,13 @@
 define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _, i18next, ROLES) {
 
     /**
-     * Handlebars helper to check if the annotations-tool is in private-only mode.
-     * @alias module:Handlebars#isPrivateOnly
-     * @return {boolean}    True if the the tool is in private-only mode.
+     * Expose the global annotation tool to the templates to access configuration.
+     * @alias module:Handlebars#annotationTool
+     * @param {String} key The property to access from the global anntoation tool
+     * @return The value of the given property
      */
-    Handlebars.registerHelper("isPrivateOnly", function (options) {
-        if (annotationsTool.isPrivateOnly()) {
-            return options.fn(this);
-        } else {
-            return options.inverse(this);
-        }
+    Handlebars.registerHelper("annotationTool", function (key) {
+        return annotationsTool[key];
     });
 
     Handlebars.registerHelper("greater", function (value1, value2, options) {
@@ -90,6 +87,15 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
         return new Handlebars.SafeString(
             _.escape(text).replace(/\n/g, "<br/>")
         );
+    });
+
+    /**
+     * Concatenate strings and possibly variables.
+     * Mainly used for nesting helpers.
+     * @alias module:Handlebars#concat
+     */
+    Handlebars.registerHelper("concat", function () {
+	return Array.prototype.slice.call(arguments, 0, -1).join('');
     });
 
     return Handlebars;

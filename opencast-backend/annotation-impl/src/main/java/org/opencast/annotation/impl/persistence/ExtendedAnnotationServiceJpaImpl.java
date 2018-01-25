@@ -25,6 +25,7 @@ import static org.opencast.annotation.impl.persistence.TrackDto.toTrack;
 import static org.opencast.annotation.impl.persistence.UserDto.toUser;
 import static org.opencast.annotation.impl.persistence.VideoDto.toVideo;
 
+import static org.opencastproject.util.data.Arrays.head;
 import static org.opencastproject.util.data.Monadics.mlist;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
@@ -32,6 +33,11 @@ import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.Tuple.tuple;
 import static org.opencastproject.util.persistence.Queries.named;
 
+import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.search.api.SearchResultItem;
+import org.opencastproject.search.api.SearchService;
+import org.opencastproject.search.api.SearchQuery;
+import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.util.data.Effect;
@@ -71,6 +77,7 @@ import org.opencast.annotation.impl.ScaleValueImpl;
 import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.UserImpl;
 import org.opencast.annotation.impl.VideoImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,10 +100,15 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   private final PersistenceEnv penv;
   private final SecurityService securityService;
+  private final AuthorizationService authorizationService;
+  private final SearchService searchService;
 
-  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService) {
+  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService,
+          AuthorizationService authorizationService, SearchService searchService) {
     this.penv = penv;
     this.securityService = securityService;
+    this.authorizationService = authorizationService;
+    this.searchService = searchService;
   }
 
   /**
@@ -1123,13 +1135,14 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   /**
-   * Get the ID of the current user. The current user is retrieved from the security service.
+   * Get the annotation tool user id of an Opencast user
    *
-   * @return the created resource
+   * @param user
+   *          the Opencast user to get the annotation tool user id of
+   * @return the annotation tool user id of the given Opencast user
    */
-  private Option<Long> getCurrentUserId() {
-    final String userName = securityService.getUser().getUsername();
-    return getUserByExtId(userName).map(new Function<User, Long>() {
+  private Option<Long> getUserId(org.opencastproject.security.api.User user) {
+    return getUserByExtId(user.getUsername()).map(new Function<User, Long>() {
       @Override
       public Long apply(User user) {
         return user.getId();
@@ -1138,20 +1151,72 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   /**
+   * Get the ID of the current user. The current user is retrieved from the security service.
+   *
+   * @return the created resource
+   */
+  private Option<Long> getCurrentUserId() {
+    return getUserId(securityService.getUser());
+  }
+
+  /**
    * @see org.opencast.annotation.api.ExtendedAnnotationService#hasResourceAccess(Resource)
    */
   @Override
   public boolean hasResourceAccess(Resource resource) {
-    org.opencastproject.security.api.User currentUser = securityService.getUser();
-    Option<Long> currentUserId = getCurrentUserId();
+    org.opencastproject.security.api.User opencastUser = securityService.getUser();
+    Option<Long> currentUserId = getUserId(opencastUser);
 
-    if (resource.getAccess() == Resource.PUBLIC)
+    return resource.getAccess() == Resource.PUBLIC
+        || resource.getCreatedBy().equals(currentUserId)
+        || resource.getAccess() == Resource.SHARED_WITH_ADMIN && isAnnotateAdmin(opencastUser, getResourceVideo(resource));
+  }
+
+  private boolean isAnnotateAdmin(org.opencastproject.security.api.User user, Option<Video> video) {
+    if (user.hasRole(securityService.getOrganization().getAdminRole())
+            || user.hasRole(SecurityConstants.GLOBAL_ADMIN_ROLE)) {
       return true;
+    }
 
-    if (resource.getCreatedBy().isNone() || currentUserId.isNone())
-      return false;
+    return video.fold(new Match<Video, Boolean>() {
+      @Override
+      public Boolean some(Video video) {
+        for (MediaPackage mediaPackage: findMediaPackage(video.getExtId())) {
+          return hasVideoAccess(mediaPackage, ANNOTATE_ADMIN_ACTION);
+        }
+        return false;
+      }
+      @Override
+      public Boolean none() {
+        return false;
+      }
+    });
+  }
 
-    return resource.getCreatedBy().equals(currentUserId);
+  @Override
+  public Option<MediaPackage> findMediaPackage(String id) {
+    return head(searchService.getByQuery(new SearchQuery().withId(id)).getItems()).map(
+      new Function<SearchResultItem, MediaPackage>() {
+        @Override
+        public MediaPackage apply(SearchResultItem searchResultItem) {
+          return searchResultItem.getMediaPackage();
+        }
+      }
+    );
+  }
+
+  @Override
+  public boolean hasVideoAccess(MediaPackage mediaPackage, String access) {
+    return authorizationService.hasPermission(mediaPackage, access);
+  }
+
+  private Option<Video> getResourceVideo(Resource resource) {
+    return resource.getVideo(this).bind(new Function<Long, Option<Video>>() {
+      @Override
+      public Option<Video> apply(Long videoId) {
+        return getVideo(videoId);
+      }
+    });
   }
 
   public final Function<Resource, Boolean> hasResourceAccess = new Function<Resource, Boolean>() {

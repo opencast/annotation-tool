@@ -50,39 +50,13 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   // Haven't found out who's responsible for this but that's the way it is.
   public static final ExtendedAnnotationService eas = new ExtendedAnnotationServiceJpaImpl(
           persistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
-          getSecurityService());
+          getSecurityService(),
+          getAuthorizationService(),
+          getSearchService());
 
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
     return eas;
-  }
-
-  @Override
-  protected AuthorizationService getAuthorizationService() {
-    AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
-    EasyMock.expect(authorizationService.hasPermission(EasyMock.anyObject(MediaPackage.class),
-            EasyMock.anyObject(String.class))).andReturn(true).anyTimes();
-    EasyMock.replay(authorizationService);
-    return authorizationService;
-  }
-
-  @Override
-  protected SearchService getSearchService() {
-    MediaPackage mediaPackage = EasyMock.createNiceMock(MediaPackage.class);
-
-    SearchResultItem searchResultItem = EasyMock.createNiceMock(SearchResultItem.class);
-    EasyMock.expect(searchResultItem.getMediaPackage()).andReturn(mediaPackage).anyTimes();
-    EasyMock.replay(searchResultItem);
-
-    SearchResult searchResult = EasyMock.createNiceMock(SearchResult.class);
-    EasyMock.expect(searchResult.getItems()).andReturn(new SearchResultItem[] { searchResultItem }).anyTimes();
-    EasyMock.replay(searchResult);
-
-    SearchService searchService = EasyMock.createNiceMock(SearchService.class);
-    EasyMock.expect(searchService.getByQuery(EasyMock.anyObject(SearchQuery.class)))
-            .andReturn(searchResult).anyTimes();
-    EasyMock.replay(searchService);
-    return searchService;
   }
 
   private static SecurityService getSecurityService() {
@@ -93,6 +67,32 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     EasyMock.expect(securityService.getUser()).andReturn(user).anyTimes();
     EasyMock.replay(securityService);
     return securityService;
+  }
+
+  private static AuthorizationService getAuthorizationService() {
+    AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
+    EasyMock.expect(authorizationService.hasPermission(EasyMock.anyObject(MediaPackage.class),
+            EasyMock.anyObject(String.class))).andReturn(true).anyTimes();
+    EasyMock.replay(authorizationService);
+    return authorizationService;
+  }
+
+  private static SearchService getSearchService() {
+    MediaPackage mediaPackage = EasyMock.createNiceMock(MediaPackage.class);
+
+    SearchResultItem searchResultItem = EasyMock.createNiceMock(SearchResultItem.class);
+    EasyMock.expect(searchResultItem.getMediaPackage()).andReturn(mediaPackage).anyTimes();
+    EasyMock.replay(searchResultItem);
+
+    SearchResult searchResult = EasyMock.createNiceMock(SearchResult.class);
+    EasyMock.expect(searchResult.getItems()).andReturn(new SearchResultItem[]{searchResultItem}).anyTimes();
+    EasyMock.replay(searchResult);
+
+    SearchService searchService = EasyMock.createNiceMock(SearchService.class);
+    EasyMock.expect(searchService.getByQuery(EasyMock.anyObject(SearchQuery.class)))
+            .andReturn(searchResult).anyTimes();
+    EasyMock.replay(searchService);
+    return searchService;
   }
 
   @Override

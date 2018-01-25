@@ -26,7 +26,7 @@
 <body>
 <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
   <div id="screen">
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -102,7 +102,7 @@
             <!-- container for the timeline-->
             <div>
                 <div class="window" id="timeline-container" style="display:none">
-                    <div class="navbar">
+                    <div class="navbar navbar-inverse">
                         <div class="navbar-inner">
                           <div class="container-fluid">
                             <span class="time"></span>
@@ -116,7 +116,7 @@
                           <div class="btn-group dropup">
                             <button class="btn opt-tracks-select" data-i18n="timeline.track management"></button>
                           </div>
-                          <a id="add-track" class="btn">+ <span data-i18n="timeline.add track.button"></span></a>
+                          <a id="add-track" class="btn">+ <span data-i18n="timeline.track modals.button" data-i18n-options='{ "context": "add" }'></span></a>
                         </div>
 
                         <div class="timeline-bottom-controls" id="reset-zoom"><a class="btn"><i class="icon-eye-open"></i> <span data-i18n="timeline.reset zoom"></span></a></div>
@@ -125,9 +125,10 @@
                         <div class="timeline-bottom-controls" id="zoom-out"><a class="btn">-</a></div>
                         <div class="timeline-bottom-controls" id="move-right" ><a class="btn">></a></div>
                     </div>
+                    <div class="modal" id="modal-add-group" style="display: none;"></div>
+                    <div class="modal" id="modal-update-group" style="display: none;"></div>
                 </div>
             </div>
-
         </div>
 
         <div class="span6" id="right-column">
@@ -136,7 +137,7 @@
             <div>
                 <div class="window expanded" id="annotate-container" style="display:none">
 
-                    <div class="navbar">
+                    <div class="navbar navbar-inverse">
                         <div class="navbar-inner">
                           <div class="container">
                             <span class="window-title" data-i18n="annotate on"></span>
@@ -183,7 +184,7 @@
             <!-- container for the annotations list -->
             <div>
                 <div class="window expanded" id="list-container" style="display:none" data-spy="scroll">
-                    <div class="navbar">
+                    <div class="navbar navbar-inverse">
                         <div class="navbar-inner">
                           <div class="container">
 

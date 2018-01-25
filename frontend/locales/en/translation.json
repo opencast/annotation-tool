@@ -217,24 +217,36 @@
     "starting": "Starting the tool."
   },
   "timeline": {
-    "add track": {
-      "add": "Add",
-      "button": "Add track",
+    "track modals": {
+      "header_add": "Add new track",
+      "header_update": "Update track",
+      "button_add": "Add track",
+      "button_update": "Update track",
+      "action_add": "Add",
+      "action_update": "Update",
       "cancel": "$t(common actions.cancel)",
       "description": {
         "label": "Description",
-        "placeholder": "Insert a description for the new track"
+        "placeholder_add": "Insert a description for the new track",
+        "placeholder_update": "Insert a description for the track"
       },
-      "header": "Add new track",
-      "is public": "Public",
+      "access": {
+        "label": "Access",
+        "public": "Public",
+        "private": "Private",
+        "shared with admin": "Shared with admin"
+      },
       "name": {
         "label": "Name",
-        "placeholder": "Insert the new track name"
+        "placeholder_add": "Insert the new track name",
+        "placeholder_update": "Insert the track name"
       }
     },
     "change visibility": {
+      "tooltip": "Change visibility",
+      "to public": "Make public",
       "to private": "Make private",
-      "to public": "Make public"
+      "to shared with admin": "Share with admins"
     },
     "delete track": "Delete track",
     "name required": "Name is required!",
@@ -252,25 +264,9 @@
     "reset zoom": "Reset zoom",
     "scripts not allowed": "Scripts are not allowed!",
     "track": {
-      "private": "Private",
-      "public": "Public",
       "you own": "You own this track",
-      "expand/collapse": "Expand/Collapse"
-    },
-    "update track": {
-      "button": "Update track",
-      "cancel": "$t(common actions.cancel)",
-      "description": {
-        "label": "Description",
-        "placeholder": "Insert a new description for the track"
-      },
-      "header": "Update track",
-      "is public": "Public",
-      "name": {
-        "label": "Name",
-        "placeholder": "Insert the new track name"
-      },
-      "update": "Update"
+      "expand": "Expand track",
+      "collapse": "Collapse track"
     }
   },
   "title": "Annotating Academic Video",
