@@ -14,6 +14,9 @@ div#main-container {
 }
 
 .window {
+    // Windows are hidden by default; they are shown in the Backbone view code, based on the layout
+    display: none;
+
     background-color: @gray;
     border: 2px solid @grayDark;
     .standard_border_radius;
