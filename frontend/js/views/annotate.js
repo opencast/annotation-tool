@@ -112,7 +112,6 @@ define(["jquery",
                 events: {
                     "keyup #new-annotation"             : "keydownOnAnnotate",
                     "click #insert"                     : "insert",
-                    "click .toggle-collapse"            : "toggleVisibility",
                     "keydown #new-annotation"           : "onFocusIn",
                     "focusout #new-annotation"          : "onFocusOut",
                     "click #label-tabs-buttons a"       : "showTab",
@@ -464,14 +463,8 @@ define(["jquery",
 
                     if (this.layout.freeText && annotationTool.isFreeTextEnabled()) {
                         this.freeTextElement.show();
-                        if (!this.layout.categories) {
-                            $(".toggle-collapse").show();
-                        }
                     } else {
                         this.freeTextElement.hide();
-                        if (!this.layout.categories) {
-                            $(".toggle-collapse").hide();
-                        }
                     }
 
                     this.trigger("change-layout");
@@ -493,14 +486,8 @@ define(["jquery",
 
                     if (this.layout.categories && annotationTool.isStructuredAnnotationEnabled()) {
                         this.categoriesElement.show();
-                        if (!this.layout.freeText) {
-                            $(".toggle-collapse").show();
-                        }
                     } else {
                         this.categoriesElement.hide();
-                        if (!this.layout.freeText) {
-                            $(".toggle-collapse").hide();
-                        }
                     }
 
                     this.trigger("change-layout");

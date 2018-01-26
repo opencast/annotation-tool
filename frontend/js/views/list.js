@@ -90,7 +90,6 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click .toggle-collapse": "toggleVisibility",
                 "click .collapse-all"   : "collapseAll",
                 "click .expand-all"     : "expandAll"
             },
