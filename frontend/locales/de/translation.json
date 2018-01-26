@@ -123,7 +123,7 @@
         "text annotations": "Textannotationen"
       },
       "track management": "$t(track management.action)",
-      "head": "Fenster",
+      "head": "Ansicht",
       "loop controller": "Schleifensteuerung",
       "views": {
         "annotate view": "Annotierfenster",
