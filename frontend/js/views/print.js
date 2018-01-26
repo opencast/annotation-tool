@@ -49,7 +49,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
         /**
          * Constructor
          * @alias module:views-print.PrintView#initialize
-         * @param {Object} model The model managing all the annotations and related data. See {@link annotations-tool}.
+         * @param {Object} model The model managing all the annotations and related data. See {@link annotation-tool}.
          */
         initialize: function (model) {
             this.model = model;

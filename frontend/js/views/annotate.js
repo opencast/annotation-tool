@@ -208,16 +208,16 @@ define(["jquery",
 
                     // Print selected track
                     this.trackDIV = this.$el.find("span.currentTrack");
-                    this.changeTrack(annotationsTool.selectedTrack);
+                    this.changeTrack(annotationTool.selectedTrack);
 
-                    this.tracks = annotationsTool.video.get("tracks");
+                    this.tracks = annotationTool.video.get("tracks");
                     this.tracks.bind("selected_track", this.changeTrack, this);
                     this.playerAdapter = attr.playerAdapter;
 
-                    if (annotationsTool.isStructuredAnnotationEnabled()) {
-                        categories = annotationsTool.video.get("categories");
+                    if (annotationTool.isStructuredAnnotationEnabled()) {
+                        categories = annotationTool.video.get("categories");
 
-                        annotationsTool.colorsManager.updateColors(categories.models);
+                        annotationTool.colorsManager.updateColors(categories.models);
 
                         _.each(DEFAULT_TABS, function (params) {
                             this.addTab(categories, params);
@@ -228,7 +228,7 @@ define(["jquery",
                         this.$el.find("#annotate-categories").parent().hide();
                     }
 
-                    if (!annotationsTool.isFreeTextEnabled()) {
+                    if (!annotationTool.isFreeTextEnabled()) {
                         this.layout.freeText = false;
                         this.freeTextElement.hide();
                         this.$el.find("#annotate-text").parent().hide();
@@ -271,10 +271,10 @@ define(["jquery",
                         return;
                     }
 
-                    annotationsTool.createAnnotation({ text: value });
+                    annotationTool.createAnnotation({ text: value });
 
                     if (this.continueVideo) {
-                        annotationsTool.playerAdapter.play();
+                        annotationTool.playerAdapter.play();
                     }
 
                     this.input.val("");
@@ -319,7 +319,7 @@ define(["jquery",
                  * @alias module:views-annotate.Annotate#onFocusIn
                  */
                 onFocusIn: function () {
-                    if (!this.$el.find("#pause-video").attr("checked") || (annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
+                    if (!this.$el.find("#pause-video").attr("checked") || (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
                         return;
                     }
 
@@ -327,7 +327,7 @@ define(["jquery",
                     this.playerAdapter.pause();
 
                     // If the video is moved, or played, we do no continue the video after insertion
-                    $(annotationsTool.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
+                    $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
                         this.continueVideo = false;
                     });
                 },
@@ -345,7 +345,7 @@ define(["jquery",
                  * @alias module:views-annotate.Annotate#checkToContinueVideo
                  */
                 checkToContinueVideo: function () {
-                    if ((annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
+                    if ((annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
                         this.continueVideo = false;
                         this.playerAdapter.play();
                     }
@@ -425,7 +425,7 @@ define(["jquery",
                     this.$el.toggleClass("edit-on", status);
 
                     // trigger an event that all element switch in edit modus
-                    annotationsTool.trigger(annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, status);
+                    annotationTool.trigger(annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, status);
                 },
 
                 /**
@@ -435,10 +435,10 @@ define(["jquery",
                  */
                 setLayoutFull: function (event) {
                     if (!$(event.target).hasClass("checked")) {
-                        if (annotationsTool.isStructuredAnnotationEnabled()) {
+                        if (annotationTool.isStructuredAnnotationEnabled()) {
                             this.categoriesElement.show();
                         }
-                        if (annotationsTool.isFreeTextEnabled()) {
+                        if (annotationTool.isFreeTextEnabled()) {
                             this.freeTextElement.show();
                         }
                         this.$el.find("#annotate-text").removeClass("checked");
@@ -462,7 +462,7 @@ define(["jquery",
                         this.layout.freeText = enabled;
                     }
 
-                    if (this.layout.freeText && annotationsTool.isFreeTextEnabled()) {
+                    if (this.layout.freeText && annotationTool.isFreeTextEnabled()) {
                         this.freeTextElement.show();
                         if (!this.layout.categories) {
                             $(".toggle-collapse").show();
@@ -491,7 +491,7 @@ define(["jquery",
                         this.layout.categories = enabled;
                     }
 
-                    if (this.layout.categories && annotationsTool.isStructuredAnnotationEnabled()) {
+                    if (this.layout.categories && annotationTool.isStructuredAnnotationEnabled()) {
                         this.categoriesElement.show();
                         if (!this.layout.freeText) {
                             $(".toggle-collapse").show();
@@ -526,7 +526,7 @@ define(["jquery",
                     delete this.tracks;
                     this.undelegateEvents();
 
-                    if (annotationsTool.isStructuredAnnotationEnabled()) {
+                    if (annotationTool.isStructuredAnnotationEnabled()) {
                         this.tabsContainerElement.empty();
                         this.$el.find("#editSwitch input").attr("checked", false);
                         this.tabsButtonsElement.find(".tab-button").remove();

@@ -23,12 +23,12 @@ require(["jquery",
                             }
                         };
 
-                        if (_.isUndefined(annotationsTool)) {
-                            annotationsTool = {};
+                        if (_.isUndefined(annotationTool)) {
+                            annotationTool = {};
                         }
 
-                        if (_.isUndefined(annotationsTool.localStorageOnlyModel)) {
-                            annotationsTool.localStorageOnlyModel = [];
+                        if (_.isUndefined(annotationTool.localStorageOnlyModel)) {
+                            annotationTool.localStorageOnlyModel = [];
                         }
                     };
 
@@ -119,21 +119,21 @@ require(["jquery",
 
                             timeline.getFormatedDate.returns(new Date());
 
-                            annotationsTool.playerAdapter = playerAdapter;
-                            annotationsTool.video = video;
-                            annotationsTool.views = {timeline: timeline};
+                            annotationTool.playerAdapter = playerAdapter;
+                            annotationTool.video = video;
+                            annotationTool.views = {timeline: timeline};
 
                             $("body").append("<div style=\"display:none\"><div id=\"video-container\"></div></div>");
 
-                            _.extend(annotationsTool.playerAdapter, $("#video-container"));
+                            _.extend(annotationTool.playerAdapter, $("#video-container"));
 
                             loopView = new LoopView();
                         },
 
                         teardown: function () {
                             loopView.reset();
-                            delete annotationsTool.playerAdapter;
-                            delete annotationsTool.timeline;
+                            delete annotationTool.playerAdapter;
+                            delete annotationTool.timeline;
                         }
                 });
 
@@ -150,35 +150,35 @@ require(["jquery",
 
                 test("Check loop position on timeupdate", function () {
                     var currentLoop = undefined,
-                        setCurrentTimeCall = annotationsTool.playerAdapter.setCurrentTime.callCount;
+                        setCurrentTimeCall = annotationTool.playerAdapter.setCurrentTime.callCount;
 
-                    annotationsTool.playerAdapter.getCurrentTime.returns(1);
-                    $(annotationsTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
+                    annotationTool.playerAdapter.getCurrentTime.returns(1);
+                    $(annotationTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
                     currentLoop = loopView.currentLoop;
                     equal(currentLoop, undefined, "No loop should be active");
 
-                    annotationsTool.playerAdapter.getCurrentTime.returns(0);
+                    annotationTool.playerAdapter.getCurrentTime.returns(0);
                     loopView.toggle(true);
-                    annotationsTool.playerAdapter.getCurrentTime.returns(2);
-                    $(annotationsTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
+                    annotationTool.playerAdapter.getCurrentTime.returns(2);
+                    $(annotationTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
                     notEqual(loopView.currentLoop, undefined, "One loop should be active");
                     notEqual(loopView.currentLoop, currentLoop, "The current loop should have changed");
                     currentLoop = loopView.currentLoop;
 
-                    annotationsTool.playerAdapter.getCurrentTime.returns(9);
-                    $(annotationsTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
+                    annotationTool.playerAdapter.getCurrentTime.returns(9);
+                    $(annotationTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
                     notEqual(loopView.currentLoop.cid, currentLoop.cid, "The current loop should have changed");
                     currentLoop = loopView.currentLoop;
 
-                    annotationsTool.playerAdapter.getCurrentTime.returns(10);
-                    $(annotationsTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
-                    notEqual(annotationsTool.playerAdapter.setCurrentTime.callCount, setCurrentTimeCall, "The current loop should have been repeated");
-                    ok(annotationsTool.playerAdapter.play.calledOnce, "The video being at the end and the loop being repeated, the video should contine");
+                    annotationTool.playerAdapter.getCurrentTime.returns(10);
+                    $(annotationTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
+                    notEqual(annotationTool.playerAdapter.setCurrentTime.callCount, setCurrentTimeCall, "The current loop should have been repeated");
+                    ok(annotationTool.playerAdapter.play.calledOnce, "The video being at the end and the loop being repeated, the video should contine");
                     equal(loopView.currentLoop.cid, currentLoop.cid, "The current loop should still be the same");
                     currentLoop = loopView.currentLoop;
 
-                    annotationsTool.playerAdapter.getCurrentTime.returns(2);
-                    $(annotationsTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
+                    annotationTool.playerAdapter.getCurrentTime.returns(2);
+                    $(annotationTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
                     notEqual(loopView.currentLoop.cid, currentLoop.cid, "The current loop should have change");
                 });
 

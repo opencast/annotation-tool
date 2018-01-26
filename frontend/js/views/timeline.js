@@ -267,8 +267,8 @@ define(["util",
                 this.playerAdapter = attr.playerAdapter;
 
                 // Type use for delete operation
-                this.typeForDeleteAnnotation = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
-                this.typeForDeleteTrack = annotationsTool.deleteOperation.targetTypes.TRACK;
+                this.typeForDeleteAnnotation = annotationTool.deleteOperation.targetTypes.ANNOTATION;
+                this.typeForDeleteTrack = annotationTool.deleteOperation.targetTypes.TRACK;
 
                 this.startDate = this.getFormatedDate(0);
                 this.endDate = this.getFormatedDate(this.playerAdapter.getDuration());
@@ -317,11 +317,11 @@ define(["util",
                 // Ensure that the timeline is redraw on window resize
                 $(window).bind("resize", this.onWindowResize);
 
-                annotationsTool.addTimeupdateListener(this.onPlayerTimeUpdate, 1);
+                annotationTool.addTimeupdateListener(this.onPlayerTimeUpdate, 1);
 
                 this.$el.find(".timeline-frame > div:first-child").bind("click", function (event) {
                     if ($(event.target).find(".timeline-event").length > 0) {
-                        annotationsTool.setSelection([]);
+                        annotationTool.setSelection([]);
                     }
                 });
 
@@ -332,13 +332,13 @@ define(["util",
                 links.events.addListener(this.timeline, "add", this.onTimelineItemAdded);
                 links.events.addListener(this.timeline, "rangechange", this.timerangeChange);
 
-                this.tracks = annotationsTool.video.get("tracks");
+                this.tracks = annotationTool.video.get("tracks");
                 this.listenTo(this.tracks, "selected_track", this.markTrackSelected);
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTracksList);
                 this.listenTo(this.tracks, "change", this.changeTrack);
-                this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
+                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
 
-                this.listenTo(annotationsTool.video.get("categories"), "change:visible", _.bind(function () {
+                this.listenTo(annotationTool.video.get("categories"), "change:visible", _.bind(function () {
                     this.preprocessAllTracks();
                     this.redraw();
                 }, this));
@@ -361,7 +361,7 @@ define(["util",
                     event.stopPropagation();
                 }, true);
 
-                this.listenTo(annotationsTool, "order", function () {
+                this.listenTo(annotationTool, "order", function () {
                     this.preprocessAllTracks();
                     this.redraw();
                 });
@@ -426,12 +426,12 @@ define(["util",
                 this.$el.find("[data-toggle='tooltip']").tooltip({ html: true });
 
                 // Restore the selections and co.
-                if (annotationsTool.hasSelection()) {
-                    this.onSelectionUpdate(annotationsTool.getSelection());
+                if (annotationTool.hasSelection()) {
+                    this.onSelectionUpdate(annotationTool.getSelection());
                     this.updateDraggingCtrl();
                 }
-                if (annotationsTool.selectedTrack) {
-                    this.markTrackSelected(annotationsTool.selectedTrack);
+                if (annotationTool.selectedTrack) {
+                    this.markTrackSelected(annotationTool.selectedTrack);
                 }
             },
 
@@ -469,7 +469,7 @@ define(["util",
              * @alias module:views-timeline.TimelineView#changeTitleFromCustomPlayhead
              */
             changeTitleFromCustomPlayhead: function () {
-                this.$el.find(".timeline-customtime").attr("title", annotationsTool.getWellFormatedTime(this.playerAdapter.getCurrentTime()));
+                this.$el.find(".timeline-customtime").attr("title", annotationTool.getWellFormatedTime(this.playerAdapter.getCurrentTime()));
             },
 
             /**
@@ -512,7 +512,7 @@ define(["util",
                     marge             = size / 20,
                     startInSecond;
 
-                if (annotationsTool.timelineFollowPlayhead) {
+                if (annotationTool.timelineFollowPlayhead) {
                     if ((currentTime - size / 2) < 0) {
                         start = this.getFormatedDate(0);
                         end = this.getFormatedDate(size);
@@ -1135,7 +1135,7 @@ define(["util",
                     // We also need to, **in front of that**, add some indicator for the track,
                     // as to preserve the ordering.
                     item.group = "<div style=\"height: " + height * 23 + "px;\">" + item.groupContent + "</div>";
-                    item.group = "<!-- track: " + annotationsTool.tracksOrder.indexOf(trackId) + " -->" + item.group;
+                    item.group = "<!-- track: " + annotationTool.tracksOrder.indexOf(trackId) + " -->" + item.group;
 
                     // We also need to set the margin of all the items to shift them to their stacking level
                     function wrap(item, level) {
@@ -1189,7 +1189,7 @@ define(["util",
 
                 this.timeline.setCustomTime(newDate);
 
-                this.$el.find("span.time").html(annotationsTool.getWellFormatedTime(currentTime, true));
+                this.$el.find("span.time").html(annotationTool.getWellFormatedTime(currentTime, true));
 
                 this.moveToCurrentTime();
             },
@@ -1202,7 +1202,7 @@ define(["util",
             selectAnnotation: function (event) {
                 var id = event.target.dataset["annotationid"],
                     trackId = event.target.dataset["trackid"];
-                annotationsTool.onClickSelectionById([{ id: id, trackId: trackId }], true, true);
+                annotationTool.onClickSelectionById([{ id: id, trackId: trackId }], true, true);
             },
 
             /**
@@ -1331,7 +1331,7 @@ define(["util",
                     delete annJSON.created_at;
 
                     destroyCallback = function () {
-                        if (annotationsTool.localStorage) {
+                        if (annotationTool.localStorage) {
                             successCallback(values.newTrack.get("annotations").create(annJSON));
                         } else {
                             values.newTrack.get("annotations").create(annJSON, {
@@ -1368,7 +1368,7 @@ define(["util",
 
                         delete self.annotationItems[annJSON.oldId];
 
-                        annotationsTool.setSelection([newAnnotation], true, true, true);
+                        annotationTool.setSelection([newAnnotation], true, true, true);
 
                         newAnnotation.set({
                             access: values.newTrack.get("access")
@@ -1395,7 +1395,7 @@ define(["util",
                     });
                     values.annotation.save();
 
-                    annotationsTool.playerAdapter.setCurrentTime(values.annotation.get("start"));
+                    annotationTool.playerAdapter.setCurrentTime(values.annotation.get("start"));
                     this.preprocessTrack(values.item.trackId);
                     this.redraw();
 
@@ -1413,7 +1413,7 @@ define(["util",
             onTimelineItemDeleted: function () {
                 var annotation = this.getSelectedItemAndAnnotation().annotation;
                 this.timeline.cancelDelete();
-                annotationsTool.deleteOperation.start(annotation, this.typeForDeleteAnnotation);
+                annotationTool.deleteOperation.start(annotation, this.typeForDeleteAnnotation);
             },
 
             /**
@@ -1483,7 +1483,7 @@ define(["util",
                     self.tracks.remove(track);
 
                     // If the track was selected
-                    if (!annotationsTool.selectedTrack || annotationsTool.selectedTrack.id === track.id) {
+                    if (!annotationTool.selectedTrack || annotationTool.selectedTrack.id === track.id) {
                         if (self.tracks.length > 0) { // If there is still other tracks
                             self.tracks.each(function (t) {
                                 if (t.get("isMine")) {
@@ -1493,7 +1493,7 @@ define(["util",
                             self.markTrackSelected(newTrack);
                         }
                     } else {
-                        self.markTrackSelected(annotationsTool.selectedTrack);
+                        self.markTrackSelected(annotationTool.selectedTrack);
                     }
 
                     delete this.trackItems[track.id];
@@ -1501,7 +1501,7 @@ define(["util",
                     this.redraw();
                 }, this);
 
-                annotationsTool.deleteOperation.start(track, this.typeForDeleteTrack, callback);
+                annotationTool.deleteOperation.start(track, this.typeForDeleteTrack, callback);
             },
 
             /**
@@ -1543,8 +1543,8 @@ define(["util",
             onChangeTrackVisibility: function (event) {
                 event.stopImmediatePropagation();
 
-                if (annotationsTool.isPrivateOnly) {
-                    annotationsTool.alertWarning(i18next.t("timeline.private only.no public tracks allowed"));
+                if (annotationTool.isPrivateOnly) {
+                    annotationTool.alertWarning(i18next.t("timeline.private only.no public tracks allowed"));
                     return;
                 }
 
@@ -1581,7 +1581,7 @@ define(["util",
                 var track = this.getTrackFromGroupHeader(event.target);
                 if (!track.get("isMine")) return;
                 if (!track) return;
-                annotationsTool.selectTrack(
+                annotationTool.selectTrack(
                     this.getTrackFromGroupHeader(event.target)
                 );
             },
@@ -1593,8 +1593,8 @@ define(["util",
             onWindowResize: function () {
                 this.preprocessAllTracks();
                 this.redraw();
-                if (annotationsTool.selectedTrack) {
-                    this.markTrackSelected(annotationsTool.selectedTrack);
+                if (annotationTool.selectedTrack) {
+                    this.markTrackSelected(annotationTool.selectedTrack);
                 }
             },
 
@@ -1633,7 +1633,7 @@ define(["util",
              */
             getSelectedItemAndAnnotation: function () {
                 //var itemId = $("." + this.ITEM_SELECTED_CLASS + " .annotation-id").text(),
-                var annotation = annotationsTool.getSelection()[0],
+                var annotation = annotationTool.getSelection()[0],
                     //selection = this.timeline.getSelection(),
                     item,
                     itemId,
@@ -1651,9 +1651,9 @@ define(["util",
                 item = this.annotationItems[itemId];
                 newTrackId = item.trackId;
                 oldTrackId = $(item.itemContent)[0].dataset.trackid;
-                oldTrack = annotationsTool.getTrack(oldTrackId);
-                newTrack = annotationsTool.getTrack(newTrackId);
-                annotation = annotationsTool.getAnnotation(itemId, oldTrack);
+                oldTrack = annotationTool.getTrack(oldTrackId);
+                newTrack = annotationTool.getTrack(newTrackId);
+                annotation = annotationTool.getAnnotation(itemId, oldTrack);
 
                 return {
                     annotation: annotation,
@@ -1763,7 +1763,7 @@ define(["util",
                 links.events.removeListener(this.timeline, "timechanged", this.onTimelineMoved);
                 links.events.removeListener(this.timeline, "change", this.onTimelineItemChanged);
                 links.events.removeListener(this.timeline, "delete", this.onTimelineItemDeleted);
-                annotationsTool.removeTimeupdateListener(this.onPlayerTimeUpdate, 1);
+                annotationTool.removeTimeupdateListener(this.onPlayerTimeUpdate, 1);
                 $(window).unbind("resize", this.onWindowResize);
 
                 this.undelegateEvents();

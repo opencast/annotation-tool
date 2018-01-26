@@ -58,7 +58,7 @@ define(["jquery",
              * @alias module:collections-videos.Videos#initialize
              */
             initialize: function () {
-                this.url = window.annotationsTool.restEndpointsUrl + "/videos";
+                this.url = window.annotationTool.restEndpointsUrl + "/videos";
             }
         });
         return Videos;

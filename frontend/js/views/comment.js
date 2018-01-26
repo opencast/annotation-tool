@@ -103,7 +103,7 @@ define(["jquery",
                 this.isEditEnable = !!attr.isEditEnable;
 
                 // Type use for delete operation
-                this.typeForDelete = annotationsTool.deleteOperation.targetTypes.COMMENT;
+                this.typeForDelete = annotationTool.deleteOperation.targetTypes.COMMENT;
 
                 // Fix up circular dependency
                 if (!CommentsContainer) CommentsContainer = require("views/comments-container");
@@ -141,7 +141,7 @@ define(["jquery",
                     event.stopImmediatePropagation();
                 }
 
-                annotationsTool.deleteOperation.start(this.model, this.typeForDelete);
+                annotationTool.deleteOperation.start(this.model, this.typeForDelete);
             },
 
             /**

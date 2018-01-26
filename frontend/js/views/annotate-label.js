@@ -144,7 +144,7 @@ define(["jquery",
                                 "updateInputWidth");
 
                 // Type use for delete operation
-                this.typeForDelete = annotationsTool.deleteOperation.targetTypes.LABEL;
+                this.typeForDelete = annotationTool.deleteOperation.targetTypes.LABEL;
 
                 // Change the edit modus, if this config is given as parameter
                 if (attr.editModus) {
@@ -164,8 +164,8 @@ define(["jquery",
 
                 this.setupScaling(this.model.get("category"));
 
-                if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                    this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
+                if (_.contains(this.roles, annotationTool.user.get("role"))) {
+                    this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
                 }
 
                 return this.render();
@@ -197,8 +197,8 @@ define(["jquery",
                         scalevalue: scalevalue.toJSON()
                     };
 
-                annotation = annotationsTool.createAnnotation(params);
-                annotationsTool.setSelection([annotation], true);
+                annotation = annotationTool.createAnnotation(params);
+                annotationTool.setSelection([annotation], true);
             },
 
             /**
@@ -213,11 +213,11 @@ define(["jquery",
                     return;
                 }
 
-                var annotation = annotationsTool.createAnnotation({
+                var annotation = annotationTool.createAnnotation({
                     text : this.model.get("value"),
                     label: this.model
                 });
-                annotationsTool.setSelection([annotation], true);
+                annotationTool.setSelection([annotation], true);
             },
 
             /**
@@ -255,7 +255,7 @@ define(["jquery",
              */
             setupScaling: function (category) {
                 var scaleId = category.scale_id || (category.scale && category.scale.id),
-                    scale = scaleId && annotationsTool.video.get("scales").get(scaleId);
+                    scale = scaleId && annotationTool.video.get("scales").get(scaleId);
 
                 if (scale) {
                     this.scaleValues = scale.get("scaleValues");
@@ -341,7 +341,7 @@ define(["jquery",
              * @alias module:views-annotate-label.LabelView#onDeleteLabel
              */
             onDeleteLabel: function () {
-                annotationsTool.deleteOperation.start(this.model, this.typeForDelete);
+                annotationTool.deleteOperation.start(this.model, this.typeForDelete);
             },
 
             /**

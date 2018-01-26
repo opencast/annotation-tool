@@ -113,7 +113,7 @@ define(["jquery",
              * @alias module:views-loop.Loop#timelineItemTmpl
              */
             timelineItemTmpl: Handlebars.compile("<div class=\"{{class}}\"\
-                                                        onclick=\"annotationsTool.loopFunction.setCurrentLoop({{index}}, true)\">\
+                                                        onclick=\"annotationTool.loopFunction.setCurrentLoop({{index}}, true)\">\
                                                     </div>"),
 
             /**
@@ -155,26 +155,26 @@ define(["jquery",
                                 "toggleVisibity",
                                 "typeLoopLength");
                 var mainView,
-                    defaultVisiblity = annotationsTool.getLayoutConfiguration().loop;
+                    defaultVisiblity = annotationTool.getLayoutConfiguration().loop;
 
-                this.playerAdapter = annotationsTool.playerAdapter;
-                this.loops = new Loops([], annotationsTool.video);
+                this.playerAdapter = annotationTool.playerAdapter;
+                this.loops = new Loops([], annotationTool.video);
 
                 $("#video-container").after(this.loopTemplate());
                 this.setElement($("#loop")[0]);
                 this.initSlider();
 
-                if (!_.isUndefined(annotationsTool.views.main)) {
-                    mainView = annotationsTool.views.main;
+                if (!_.isUndefined(annotationTool.views.main)) {
+                    mainView = annotationTool.views.main;
                     mainView.$el.find("#menu-plugins").append(this.LAYOUT_MENU_TMPL);
                     mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
                 }
 
                 this.toggle(false);
 
-                annotationsTool.loopFunction = this;
+                annotationTool.loopFunction = this;
 
-                annotationsTool.onWindowResize();
+                annotationTool.onWindowResize();
 
                 if (!_.isUndefined(defaultVisiblity) && !defaultVisiblity) {
                     this.toggleVisibity({target: mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS)[0]});
@@ -209,7 +209,7 @@ define(["jquery",
                     this.toggle(false);
                 }
 
-                annotationsTool.onWindowResize();
+                annotationTool.onWindowResize();
             },
 
             initSlider: function () {
@@ -246,8 +246,8 @@ define(["jquery",
                     $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
                     this.$el.addClass("disabled");
                     this.resetLoops();
-                    if (annotationsTool.getLayoutConfiguration().timeline) {
-                        annotationsTool.views.timeline.redraw();
+                    if (annotationTool.getLayoutConfiguration().timeline) {
+                        annotationTool.views.timeline.redraw();
                     }
                 }
 
@@ -316,7 +316,7 @@ define(["jquery",
                     newValue = parseInt(loopInput.val(), 10);
 
                 if (_.isNaN(newValue) || newValue > this.playerAdapter.getDuration() || newValue < 0) {
-                    annotationsTool.alertWarning(i18next.t("loop controller.invalid loop length"));
+                    annotationTool.alertWarning(i18next.t("loop controller.invalid loop length"));
                     loopInput.val(this.currentLoopLength);
                     return;
                 }
@@ -346,9 +346,9 @@ define(["jquery",
              */
             toggleConstrainAnnotations: function (event) {
                 if (event.target.checked) {
-                    annotationsTool.annotationConstraints = currentLoopConstraints.call(this);
+                    annotationTool.annotationConstraints = currentLoopConstraints.call(this);
                 } else {
-                    annotationsTool.annotationConstraints = undefined;
+                    annotationTool.annotationConstraints = undefined;
                 }
             },
 
@@ -393,7 +393,7 @@ define(["jquery",
                 }
 
                 // Update the global annotation constraints.
-                _.extend(annotationsTool.annotationConstraints, currentLoopConstraints.call(this));
+                _.extend(annotationTool.annotationConstraints, currentLoopConstraints.call(this));
             },
 
             /**
@@ -420,7 +420,7 @@ define(["jquery",
                     loop;
 
                 if (loopLength >= duration) {
-                    annotationsTool.alertInfo("Interval too long to create one loop!");
+                    annotationTool.alertInfo("Interval too long to create one loop!");
                     return;
                 }
 
@@ -456,12 +456,12 @@ define(["jquery",
              * @alias module:views-loop.Loop#addTimelineItem
              */
             addTimelineItem: function (loop, isCurrent) {
-                if (!annotationsTool.getLayoutConfiguration().timeline) {
+                if (!annotationTool.getLayoutConfiguration().timeline) {
                     // Timeline is not enabled
                     return;
                 }
 
-                var timeline    = annotationsTool.views.timeline,
+                var timeline    = annotationTool.views.timeline,
                     loopClass   = isCurrent ? "loop current" : "loop";
 
                 timeline.addItem("loop-" + loop.cid, {
@@ -482,9 +482,9 @@ define(["jquery",
              * @alias module:views-loop.Loop#resetLoops
              */
             resetLoops: function () {
-                if (annotationsTool.getLayoutConfiguration().timeline) {
+                if (annotationTool.getLayoutConfiguration().timeline) {
                     this.loops.each(function (loop, index) {
-                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 == this.loops.length));
+                        annotationTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 == this.loops.length));
                     }, this);
                 }
 

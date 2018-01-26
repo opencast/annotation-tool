@@ -93,7 +93,7 @@ define(["jquery",
                     this.previous = attr.previous;
                     this.onChange = attr.onChange;
 
-                    this.scaleValueDeleteType = annotationsTool.deleteOperation.targetTypes.SCALEVALUE;
+                    this.scaleValueDeleteType = annotationTool.deleteOperation.targetTypes.SCALEVALUE;
                     this.setElement(this.scaleValueEditorTemplate(this.model.toJSON()));
                 },
 
@@ -194,7 +194,7 @@ define(["jquery",
                         sortedCollection = self.getSortedCollection();
 
                     event.stopImmediatePropagation();
-                    annotationsTool.deleteOperation.start(this.model, this.scaleValueDeleteType, function () {
+                    annotationTool.deleteOperation.start(this.model, this.scaleValueDeleteType, function () {
                         var currentOrder = self.model.get("order"),
                             i;
 

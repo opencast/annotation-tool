@@ -108,7 +108,7 @@ define(["jquery",
                     this.url = category.url() + "/labels";
                 }
 
-                if (window.annotationsTool && annotationsTool.localStorage) {
+                if (window.annotationTool && annotationTool.localStorage) {
                     this.localStorage = new Backbone.LocalStorage(this.url);
                 }
             }

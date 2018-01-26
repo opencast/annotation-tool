@@ -34,7 +34,7 @@ module.exports = function (grunt) {
             integration: {
                 sources : '',
                 target  : '../opencast-backend/annotation-tool/src/main/resources/ui/',
-                config  : 'build/profiles/integration/annotations-tool-configuration.js'
+                config  : 'build/profiles/integration/annotation-tool-configuration.js'
             },
 
             local: {
@@ -42,7 +42,7 @@ module.exports = function (grunt) {
                           <source src=\"/resources/aav1.webm\" type=\"video/webm\" />\n \
                           <source src=\"/resources/aav1.ogv\" type=\"video/ogg\" /> ',
                 target : '<%= webServerDir %>',
-                config : 'build/profiles/local/annotations-tool-configuration.js'
+                config : 'build/profiles/local/annotation-tool-configuration.js'
             },
 
             build: {
@@ -50,14 +50,14 @@ module.exports = function (grunt) {
                           <source src=\"/resources/Annotations_Video.webm\" type=\"video/webm\" />\n \
                           <source src=\"/resources/Annotations_Video.theora.ogv\" type=\"video/ogg\" /> ',
                 target : '<%= buildDir %>',
-                config : 'build/profiles/local/annotations-tool-configuration.js'
+                config : 'build/profiles/local/annotation-tool-configuration.js'
             },
 
             demo: {
                 sources: '<source src=\"/annotation/resources/sinteltrailer.mp4\" type=\"video/mp4\" />\n \
                           <source src=\"/annotation/resources/sinteltrailer.ogv\" type=\"video/ogg\" /> ',
                 target : '/var/www/html/annotation/',
-                config : 'build/profiles/local/annotations-tool-configuration.js'
+                config : 'build/profiles/local/annotation-tool-configuration.js'
             }
         },
 
@@ -269,7 +269,7 @@ module.exports = function (grunt) {
             // ... the configuration
             'config': {
                 src: '<%= currentProfile.config %>',
-                dest: '<%= currentProfile.target %>/js/annotations-tool-configuration.js'
+                dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
             },
             // ... the translations
             'locales': {

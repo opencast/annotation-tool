@@ -9,7 +9,7 @@ require(["domReady",
          "i18next-browser-language-detector",
          "moment",
          "mediaelementplayer",
-         "annotations-tool-configuration"],
+         "annotation-tool-configuration"],
 
     function (domReady, $, i18next, i18nextXHRBackend, $i18next, LngDetector, moment, mejs, config) {
         i18next
@@ -35,7 +35,7 @@ require(["domReady",
                     mejs.i18n.language(mediaelementLanguage);
                     domReady(function () {
                         $('[data-i18n]').localize();
-                        require(["annotations-tool"], function (app) {
+                        require(["annotation-tool"], function (app) {
                             app.start(config);
                         });
                     });

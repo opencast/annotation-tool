@@ -145,7 +145,7 @@ define(["jquery",
                     _.extend(this, Backbone.Events);
 
                     // Type use for delete operation
-                    this.scaleDeleteType = annotationsTool.deleteOperation.targetTypes.SCALE;
+                    this.scaleDeleteType = annotationTool.deleteOperation.targetTypes.SCALE;
 
                     this.$el.modal({show: true, backdrop: false, keyboard: false });
                     this.$el.modal("hide");
@@ -185,7 +185,7 @@ define(["jquery",
                  * @alias module:views-scale-editor.ScaleEditor#generateScalesForTemplate
                  */
                 generateScalesForTemplate: function () {
-                    var scales = annotationsTool.video.get("scales").toJSON(),
+                    var scales = annotationTool.video.get("scales").toJSON(),
                         selectedScale;
 
                     // Filter by access values
@@ -315,7 +315,7 @@ define(["jquery",
                  */
                 changeScale: function () {
                     this.currentScaleId = this.$el.find("select#scale-id").val();
-                    this.currentScale = annotationsTool.video.get("scales").get(this.currentScaleId);
+                    this.currentScale = annotationTool.video.get("scales").get(this.currentScaleId);
 
                     if (this.currentScale && this.currentScale.isEditable()) {
                         if (this.isInEditMode) {
@@ -345,7 +345,7 @@ define(["jquery",
 
                     this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
 
-                    annotationsTool.video.get("scales").add(this.currentScale);
+                    annotationTool.video.get("scales").add(this.currentScale);
                     this.currentScale.save({async: false});
                     this.currentScale.setUrl();
                     this.currentScale.get("scaleValues").each(function (scaleValue) {
@@ -380,7 +380,7 @@ define(["jquery",
                     var self = this;
 
                     event.stopImmediatePropagation();
-                    annotationsTool.deleteOperation.start(this.currentScale, this.scaleDeleteType, self.cancel);
+                    annotationTool.deleteOperation.start(this.currentScale, this.scaleDeleteType, self.cancel);
                 },
 
                 /**

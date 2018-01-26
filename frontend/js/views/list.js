@@ -122,21 +122,21 @@ define(["jquery",
                                "updateView");
 
                 this.annotationViews = [];
-                this.tracks          = annotationsTool.video.get("tracks");
-                this.playerAdapter   = annotationsTool.playerAdapter;
+                this.tracks          = annotationTool.video.get("tracks");
+                this.playerAdapter   = annotationTool.playerAdapter;
 
                 this.$list = this.$el.find("#content-list-scroll div#content-list");
 
                 this.listenTo(this.tracks, "change:access", this.render);
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
-                this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
+                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 
                 this.addTrackList(this.tracks.getVisibleTracks());
 
-                this.listenTo(annotationsTool.video.get("categories"), "change:visible", this.render);
+                this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
 
                 this.render();
 
@@ -208,7 +208,7 @@ define(["jquery",
                         }
                     });
 
-                    annotationsTool.setSelection([annotation], false);
+                    annotationTool.setSelection([annotation], false);
                     lastAddedAnnotationView = view;
                 }
             },

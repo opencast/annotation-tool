@@ -87,7 +87,7 @@ define(["jquery",
                         this.showTracks(track, true);
                         
                         // Select the new track
-                        annotationsTool.selectedTrack = track;
+                        annotationTool.selectedTrack = track;
                     });
                 },
 
@@ -205,9 +205,9 @@ define(["jquery",
                  * @param  {boolean} keepPrevious define if the previous visible tracks should be kept if enough place
                  */
                 showTracks: function (tracks, keepPrevious) {
-                    var max = annotationsTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE,
+                    var max = annotationTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE,
                         self = this,
-                        selectedTrack = annotationsTool.selectedTrack,
+                        selectedTrack = annotationTool.selectedTrack,
                         showTrack = function (track) {
                             track.set(Track.FIELDS.VISIBLE, true);
                             self.visibleTracks.push(track);
@@ -251,10 +251,10 @@ define(["jquery",
                         selectedTrack = _.find(this.visibleTracks, function (track) {
                                             return track.get("isMine");
                                         }, this);
-                        annotationsTool.selectTrack(selectedTrack);
+                        annotationTool.selectTrack(selectedTrack);
                     }
 
-                    annotationsTool.selectTrack(selectedTrack);
+                    annotationTool.selectTrack(selectedTrack);
 
                     this.trigger(EVENTS.VISIBILITY, this.visibleTracks);
                 },
@@ -325,7 +325,7 @@ define(["jquery",
 
                     this.url = video.url() + "/tracks";
 
-                    if (annotationsTool.localStorage) {
+                    if (annotationTool.localStorage) {
                         this.localStorage = new Backbone.LocalStorage(this.url);
                     }
 

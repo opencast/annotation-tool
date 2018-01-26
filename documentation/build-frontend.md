@@ -47,7 +47,7 @@ You will find the webapp in `/opt/annotation/annotation-tool/frontend/`.
     cd /opt/annotation/annotation-tool/frontend/
     grunt integration
 
-The files in `/opt/annotation/annotation-tool/opencast-backend/entwine-annotations-tool/src/main/resources/ui/` should
+The files in `/opt/annotation/annotation-tool/opencast-backend/annotation-tool/src/main/resources/ui/` should
 have been updated. Use the [installation guide for Opencast](opencast-installation.md) to update Opencast with the new frontend.
 
 ## Building __dev__

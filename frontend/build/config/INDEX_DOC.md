@@ -1,10 +1,10 @@
 # Javascript documentation for the annotations tool
 <br/>
 ## Main namespace
-The only exported namespace is [`annotationsTool`](annotationsTool.html). Extend this one to extend the tool API.
+The only exported namespace is [`annotationTool`](annotationTool.html). Extend this one to extend the tool API.
 
 ## Tool configuration
-The tool can be configured through this [`configuration file`](module-annotations-tool-configuration.html#Configuration).
+The tool can be configured through this [`configuration file`](module-annotation-tool-configuration.html#Configuration).
 
 ## More informations
 on https://github.com/entwinemedia/annotations/wiki

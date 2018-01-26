@@ -137,10 +137,10 @@ define(["jquery",
 
 
                 // Define the colors (global setting for all color pickers)
-                $.fn.colorPicker.defaults.colors = annotationsTool.colorsManager.getColors();
+                $.fn.colorPicker.defaults.colors = annotationTool.colorsManager.getColors();
 
                 // Type use for delete operation
-                this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
+                this.typeForDelete = annotationTool.deleteOperation.targetTypes.CATEGORY;
                 this.roles = attr.roles;
                 this.labelViews = [];
 
@@ -160,8 +160,8 @@ define(["jquery",
                 this.listenTo(labels, "destroy", this.removeOne);
                 this.listenTo(this.model, "change", this.onChange);
 
-                if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                    this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
+                if (_.contains(this.roles, annotationTool.user.get("role"))) {
+                    this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
                 }
 
                 $(window).bind("resize", this.updateInputWidth);
@@ -239,7 +239,7 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#editScale
              */
             editScale: function () {
-                annotationsTool.scaleEditor.show(this.model, this.model.get("access"));
+                annotationTool.scaleEditor.show(this.model, this.model.get("access"));
             },
 
             /**
@@ -248,7 +248,7 @@ define(["jquery",
              * @param  {Event} event
              */
             onDeleteCategory: function () {
-                annotationsTool.deleteOperation.start(this.model, this.typeForDelete);
+                annotationTool.deleteOperation.start(this.model, this.typeForDelete);
             },
 
             /**
@@ -421,7 +421,7 @@ define(["jquery",
 
                 this.$el.find(".colorPicker-picker").addClass("edit");
 
-                this.$el.width((100 / annotationsTool.CATEGORIES_PER_TAB) + "%");
+                this.$el.width((100 / annotationTool.CATEGORIES_PER_TAB) + "%");
 
                 this.updateInputWidth();
 

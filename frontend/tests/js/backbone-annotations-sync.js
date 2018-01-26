@@ -29,7 +29,7 @@ define(["jquery",
              
                var self = this;
 
-               if (_.contains(annotationsTool.localStorageOnlyModel ,model.TYPE)) {
+               if (_.contains(annotationTool.localStorageOnlyModel ,model.TYPE)) {
                   return Backbone.localSync(method, model, options);
                }
                
@@ -74,12 +74,12 @@ define(["jquery",
                 */
                this.setHeaderParams = function(xhr) {
                     // Use request user id
-                    if(annotationsTool.user)
-                         xhr.setRequestHeader(self.config.headerParams.userId, annotationsTool.user.id);
+                    if(annotationTool.user)
+                         xhr.setRequestHeader(self.config.headerParams.userId, annotationTool.user.id);
                     
                     // Set user token in request header if a token is given
                     var token;
-                    if(annotationsTool.getUserAuthToken && !_.isUndefined(token = annotationsTool.getUserAuthToken()))
+                    if(annotationTool.getUserAuthToken && !_.isUndefined(token = annotationTool.getUserAuthToken()))
                       xhr.setRequestHeader(self.config.headerParams.token, token); 
                };
                

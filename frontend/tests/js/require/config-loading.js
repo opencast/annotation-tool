@@ -2,8 +2,8 @@
 require.config({
     baseUrl: "./../js",
     paths: {
-        "annotations-tool"               : "annotations-tool",
-        "annotations-tool-configuration" : "../tests/js/annotations-tool-configuration-loading",
+        "annotation-tool"               : "annotation-tool",
+        "annotation-tool-configuration" : "../tests/js/annotation-tool-configuration-loading",
         "backbone"                       : "libs/backbone/backbone-0.9.9",
         "bootstrap"                      : "libs/bootstrap/bootstrap.min",
         "carousel"                       : "libs/bootstrap/carousel2.2",
@@ -78,7 +78,7 @@ require.config({
 });
 
 // Bootstrap function for main app
-require(["domReady", "annotations-tool-configuration", "annotations-tool", "raf"],
+require(["domReady", "annotation-tool-configuration", "annotation-tool", "raf"],
 
 function (domReady, config, app) {
     domReady(function () {

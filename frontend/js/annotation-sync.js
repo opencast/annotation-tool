@@ -29,7 +29,7 @@ define(["underscore", "backbone", "localstorage"], function (_, Backbone) {
      * @alias module:annotation-sync.annotationSync
      */
     var annotationSync = function (method, model, options) {
-        if (annotationsTool.localStorage || model.localStorageOnly) {
+        if (annotationTool.localStorage || model.localStorageOnly) {
             return Backbone.localSync.call(this, method, model, options);
         }
 
@@ -42,10 +42,10 @@ define(["underscore", "backbone", "localstorage"], function (_, Backbone) {
         options.data = options.attrs || model.toJSON(options);
 
         // Path along authentication data
-        if (annotationsTool.user) {
-            options.headers["X-ANNOTATIONS-USER-ID"] = annotationsTool.user.id;
+        if (annotationTool.user) {
+            options.headers["X-ANNOTATIONS-USER-ID"] = annotationTool.user.id;
         }
-        var authToken = _.result(annotationsTool, 'getUserAuthToken');
+        var authToken = _.result(annotationTool, 'getUserAuthToken');
         if (authToken) {
             options.headers["X-ANNOTATIONS-USER-AUTH-TOKEN"] = authToken;
         }

@@ -15,7 +15,7 @@ define(['domReady',
                     userExtId;
                 
                 users = new Users();
-                userExtId = window.annotationsTool.getUserExtId();
+                userExtId = window.annotationTool.getUserExtId();
                 user = new User({user_extid:userExtId,nickname:'pinguin', email: "test@dot.com"});
                 users.add(user);
                 
@@ -43,7 +43,7 @@ define(['domReady',
                             equal(data.deleted_at, null, "Deleted_at date is correct");
                             equal(data.deleted_by, null, "Deleted_by user is correct");
                             user.set(data);
-                            window.annotationsTool.user = user;
+                            window.annotationTool.user = user;
                             start();
                         }
                     });

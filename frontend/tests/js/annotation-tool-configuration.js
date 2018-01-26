@@ -12,7 +12,7 @@ define(['domReady',
         /**
          * Annotations tool configuration
          */
-        window.annotationsTool = {
+        window.annotationTool = {
 
             /** Define if the localStorage should be used or not */
             localStorage: true,
@@ -20,8 +20,8 @@ define(['domReady',
 
             /**
              * List of possible layout configuration
-             * @alias module:annotations-tool-configuration.Configuration.LAYOUT_CONFIGURATION
-             * @memberOf module:annotations-tool-configuration.Configuration
+             * @alias module:annotation-tool-configuration.Configuration.LAYOUT_CONFIGURATION
+             * @memberOf module:annotation-tool-configuration.Configuration
              * @type {Object}
              */
             LAYOUT_CONFIGURATION: {
@@ -73,8 +73,7 @@ define(['domReady',
 
         domReady(function () {
             /* Player adapter implementation to use for the annotations tool */
-            // window.annotationsTool.playerAdapter = new HTML5PlayerAdapter($('video')[0]);
-
+            // window.annotationTool.playerAdapter = new HTML5PlayerAdapter($('video')[0]);
         });
 
         return window.annotations;
