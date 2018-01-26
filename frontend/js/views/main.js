@@ -229,16 +229,18 @@ define(["jquery",
                         return;
                     }
 
+                    this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
+
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
 
-                    if (annotationTool.getLayoutConfiguration().timeline) {
+                    if (this.layoutConfiguration.timeline) {
                         // Create views with Timeline
                         this.setLoadingProgress(70, i18next.t("startup.creating timeline"));
                         this.timelineView = new TimelineView({playerAdapter: annotationTool.playerAdapter});
                         annotationTool.views.timeline = this.timelineView;
                     }
 
-                    if (annotationTool.getLayoutConfiguration().annotate) {
+                    if (this.layoutConfiguration.annotate) {
                         // Create view to annotate
                         this.setLoadingProgress(80, i18next.t("startup.creating annotation view"));
                         this.annotateView = new AnnotateView({playerAdapter: annotationTool.playerAdapter});
@@ -247,7 +249,7 @@ define(["jquery",
                         annotationTool.views.annotate = this.annotateView;
                     }
 
-                    if (annotationTool.getLayoutConfiguration().list) {
+                    if (this.layoutConfiguration.list) {
                         // Create annotations list view
                         this.setLoadingProgress(90, i18next.t("startup.creating list view"));
                         this.listView = new ListView();
@@ -281,7 +283,7 @@ define(["jquery",
                 // Show logout button
                 $("a#logout").css("display", "block");
 
-                if (annotationTool.getLayoutConfiguration().timeline) {
+                if (this.layoutConfiguration.timeline) {
                     this.timelineView.redraw();
                 }
 
@@ -406,15 +408,15 @@ define(["jquery",
                 // Hide/remove the views
                 $("#video-container").hide();
 
-                if (annotationTool.getLayoutConfiguration().timeline) {
+                if (this.layoutConfiguration.timeline) {
                     this.timelineView.reset();
                 }
 
-                if (annotationTool.getLayoutConfiguration().annotate) {
+                if (this.layoutConfiguration.annotate) {
                     this.annotateView.reset();
                 }
 
-                if (annotationTool.getLayoutConfiguration().list) {
+                if (this.layoutConfiguration.list) {
                     this.listView.reset();
                 }
 

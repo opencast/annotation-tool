@@ -155,7 +155,7 @@ define(["jquery",
                                 "toggleVisibility",
                                 "typeLoopLength");
                 var mainView,
-                    defaultVisibility = annotationTool.getLayoutConfiguration().loop;
+                    defaultVisibility = annotationTool.views.main.layoutConfiguration.loop;
 
                 this.playerAdapter = annotationTool.playerAdapter;
                 this.loops = new Loops([], annotationTool.video);
@@ -246,7 +246,7 @@ define(["jquery",
                     $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
                     this.$el.addClass("disabled");
                     this.resetLoops();
-                    if (annotationTool.getLayoutConfiguration().timeline) {
+                    if (annotationTool.views.main.layoutConfiguration.timeline) {
                         annotationTool.views.timeline.redraw();
                     }
                 }
@@ -456,7 +456,7 @@ define(["jquery",
              * @alias module:views-loop.Loop#addTimelineItem
              */
             addTimelineItem: function (loop, isCurrent) {
-                if (!annotationTool.getLayoutConfiguration().timeline) {
+                if (!annotationTool.views.main.layoutConfiguration.timeline) {
                     // Timeline is not enabled
                     return;
                 }
@@ -482,7 +482,7 @@ define(["jquery",
              * @alias module:views-loop.Loop#resetLoops
              */
             resetLoops: function () {
-                if (annotationTool.getLayoutConfiguration().timeline) {
+                if (annotationTool.views.main.layoutConfiguration.timeline) {
                     this.loops.each(function (loop, index) {
                         annotationTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 == this.loops.length));
                     }, this);
