@@ -230,6 +230,15 @@ define(["jquery",
                     }
 
                     this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
+                    for (var view in this.layoutConfiguration) {
+                        this.$el.find("#opt-view-" + view).each(_.bind(function (index, element) {
+                            if (this.layoutConfiguration[view]) {
+                                $(element).addClass("checked");
+                            } else {
+                                $(element).removeClass("checked");
+                            }
+                        }, this));
+                    }
 
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
 
