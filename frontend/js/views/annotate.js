@@ -170,8 +170,6 @@ define(["jquery",
                     categories : true
                 },
 
-                visible: true,
-
                 /**
                  * constructor
                  * @alias module:views-annotate.Category#initialize
@@ -194,8 +192,7 @@ define(["jquery",
                               "keydownOnAnnotate",
                               "enableCategoriesLayout",
                               "enableFreeTextLayout",
-                              "setLayoutFull",
-                              "toggleVisibility");
+                              "setLayoutFull");
 
                     // Parameter for stop on write
                     this.continueVideo = false;
@@ -494,22 +491,10 @@ define(["jquery",
                 },
 
                 /**
-                 * Toggle the visibility of the annotate part
-                 * @alias module:views-annotate.Annotate#toggleVisibility
-                 * @param {Event} event Event object
-                 */
-                toggleVisibility: function () {
-                    this.visible = !this.visible;
-                    this.$el.fadeToggle();
-                    this.trigger("change-layout");
-                },
-
-                /**
                  * Reset the view
                  * @alias module:views-annotate.Annotate#reset
                  */
                 reset: function () {
-                    this.$el.hide();
                     delete this.tracks;
                     this.undelegateEvents();
 

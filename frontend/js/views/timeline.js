@@ -343,7 +343,6 @@ define(["util",
                     this.redraw();
                 }, this));
 
-                this.$el.show();
                 this.addTracksList(this.tracks.getVisibleTracks());
                 this.timeline.setCustomTime(this.startDate);
 
@@ -1755,8 +1754,6 @@ define(["util",
              */
             reset: function () {
                 var annotations;
-
-                this.$el.hide();
 
                 // Remove all event listener
                 $(this.playerAdapter).unbind("pa_timeupdate", this.onPlayerTimeUpdate);

@@ -485,8 +485,6 @@ define(["jquery",
              * @alias module:views-list.List#reset
              */
             reset: function () {
-                this.$el.hide();
-
                 this.stopListening();
 
                 this.clearList();
