@@ -652,6 +652,16 @@
   <!-- Active contributors to Opencast -->
   <developers>
     <developer>
+      <id>jkniephoff</id>
+      <name>Julian Kniephoff</name>
+      <email>kniephoff@elan-ev.de</email>
+      <organization>ELAN e.V.</organization>
+      <organizationUrl>https://elan-ev.de</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
       <id>rrolf</id>
       <name>Ruediger Rolf</name>
       <email>rrolf@uni-osnabrueck.de</email>
