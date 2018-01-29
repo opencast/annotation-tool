@@ -20,7 +20,7 @@
  * @requires underscore
  * @requires Backbone
  * @requires i18next
- * @requires templates/loop-modal.tmpl
+ * @requires templates/loop-modal
  * @requires ROLES
  * @requires handlebars
  */
@@ -152,10 +152,10 @@ define(["jquery",
                                 "previousLoop",
                                 "resetLoops",
                                 "toggle",
-                                "toggleVisibity",
+                                "toggleVisibility",
                                 "typeLoopLength");
                 var mainView,
-                    defaultVisiblity = annotationTool.getLayoutConfiguration().loop;
+                    defaultVisibility = annotationTool.views.main.layoutConfiguration.loop;
 
                 this.playerAdapter = annotationTool.playerAdapter;
                 this.loops = new Loops([], annotationTool.video);
@@ -167,7 +167,7 @@ define(["jquery",
                 if (!_.isUndefined(annotationTool.views.main)) {
                     mainView = annotationTool.views.main;
                     mainView.$el.find("#menu-plugins").append(this.LAYOUT_MENU_TMPL);
-                    mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
+                    mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibility);
                 }
 
                 this.toggle(false);
@@ -176,14 +176,14 @@ define(["jquery",
 
                 annotationTool.onWindowResize();
 
-                if (!_.isUndefined(defaultVisiblity) && !defaultVisiblity) {
-                    this.toggleVisibity({target: mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS)[0]});
+                if (!_.isUndefined(defaultVisibility) && !defaultVisibility) {
+                    this.toggleVisibility({target: mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS)[0]});
                 }
             },
 
             /**
              * Define if the loop function view is visible or not
-             * @return {Boolean} True if the view is visisble
+             * @return {Boolean} True if the view is visible
              * @alias module:views-loop.Loop#isVisible
              */
             isVisible: function () {
@@ -195,7 +195,7 @@ define(["jquery",
              * @param  {Object} event The related event object
              * @alias module:views-loop.Loop#toggle
              */
-            toggleVisibity: function (event) {
+            toggleVisibility: function (event) {
                 $(event.target).toggleClass("checked");
 
                 if ($(event.target).hasClass("checked")) {
@@ -246,7 +246,7 @@ define(["jquery",
                     $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
                     this.$el.addClass("disabled");
                     this.resetLoops();
-                    if (annotationTool.getLayoutConfiguration().timeline) {
+                    if (annotationTool.views.main.layoutConfiguration.timeline) {
                         annotationTool.views.timeline.redraw();
                     }
                 }
@@ -456,7 +456,7 @@ define(["jquery",
              * @alias module:views-loop.Loop#addTimelineItem
              */
             addTimelineItem: function (loop, isCurrent) {
-                if (!annotationTool.getLayoutConfiguration().timeline) {
+                if (!annotationTool.views.main.layoutConfiguration.timeline) {
                     // Timeline is not enabled
                     return;
                 }
@@ -482,7 +482,7 @@ define(["jquery",
              * @alias module:views-loop.Loop#resetLoops
              */
             resetLoops: function () {
-                if (annotationTool.getLayoutConfiguration().timeline) {
+                if (annotationTool.views.main.layoutConfiguration.timeline) {
                     this.loops.each(function (loop, index) {
                         annotationTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 == this.loops.length));
                     }, this);

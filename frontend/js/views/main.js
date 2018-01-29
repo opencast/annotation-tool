@@ -99,7 +99,6 @@ define(["jquery",
              */
             loadingBox: $("div#loading"),
 
-
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
@@ -138,7 +137,6 @@ define(["jquery",
                 }, this);
 
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
-
 
                 this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
                 // Create a new users collection and get exciting local user
@@ -231,31 +229,41 @@ define(["jquery",
                         return;
                     }
 
+                    this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
+                    for (var view in this.layoutConfiguration) {
+                        this.$el.find("#opt-view-" + view).each(_.bind(function (index, element) {
+                            if (this.layoutConfiguration[view]) {
+                                $(element).addClass("checked");
+                            } else {
+                                $(element).removeClass("checked");
+                            }
+                        }, this));
+                    }
+
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
 
-                    if (annotationTool.getLayoutConfiguration().timeline) {
-                        // Create views with Timeline
-                        this.setLoadingProgress(70, i18next.t("startup.creating timeline"));
-                        this.timelineView = new TimelineView({playerAdapter: annotationTool.playerAdapter});
-                        annotationTool.views.timeline = this.timelineView;
+                    // Create views with Timeline
+                    this.setLoadingProgress(70, i18next.t("startup.creating timeline"));
+                    this.timelineView = new TimelineView({playerAdapter: annotationTool.playerAdapter});
+                    annotationTool.views.timeline = this.timelineView;
+                    if (this.layoutConfiguration.timeline) {
+                        this.timelineView.$el.show();
                     }
 
-                    if (annotationTool.getLayoutConfiguration().annotate) {
-                        // Create view to annotate
-                        this.setLoadingProgress(80, i18next.t("startup.creating annotation view"));
-                        this.annotateView = new AnnotateView({playerAdapter: annotationTool.playerAdapter});
-                        this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
+                    // Create view to annotate
+                    this.setLoadingProgress(80, i18next.t("startup.creating annotation view"));
+                    this.annotateView = new AnnotateView({playerAdapter: annotationTool.playerAdapter});
+                    annotationTool.views.annotate = this.annotateView;
+                    if (this.layoutConfiguration.annotate) {
                         this.annotateView.$el.show();
-                        annotationTool.views.annotate = this.annotateView;
                     }
 
-                    if (annotationTool.getLayoutConfiguration().list) {
-                        // Create annotations list view
-                        this.setLoadingProgress(90, i18next.t("startup.creating list view"));
-                        this.listView = new ListView();
-                        this.listenTo(this.listView, "change-layout", this.onWindowResize);
+                    // Create annotations list view
+                    this.setLoadingProgress(90, i18next.t("startup.creating list view"));
+                    this.listView = new ListView();
+                    annotationTool.views.list = this.listView;
+                    if (this.layoutConfiguration.list) {
                         this.listView.$el.show();
-                        annotationTool.views.list = this.listView;
                     }
 
                     this.ready();
@@ -283,7 +291,7 @@ define(["jquery",
                 // Show logout button
                 $("a#logout").css("display", "block");
 
-                if (annotationTool.getLayoutConfiguration().timeline) {
+                if (this.layoutConfiguration.timeline) {
                     this.timelineView.redraw();
                 }
 
@@ -408,18 +416,9 @@ define(["jquery",
                 // Hide/remove the views
                 $("#video-container").hide();
 
-                if (annotationTool.getLayoutConfiguration().timeline) {
-                    this.timelineView.reset();
-                }
-
-                if (annotationTool.getLayoutConfiguration().annotate) {
-                    this.annotateView.reset();
-                }
-
-                if (annotationTool.getLayoutConfiguration().list) {
-                    this.listView.reset();
-                }
-
+                this.timelineView.reset();
+                this.annotateView.reset();
+                this.listView.reset();
                 this.loginView.reset();
 
                 // Delete the different objects
@@ -489,8 +488,8 @@ define(["jquery",
             layoutUpdate: function (event) {
                 var enabled = !$(event.target).hasClass("checked"),
                     layoutElement = event.currentTarget.id.replace("opt-", ""),
-                    checkMainLayout = function () {
-                        if (!annotationTool.views.annotate.visible && !annotationTool.views.list.visible) {
+                    checkMainLayout = _.bind(function () {
+                        if (!this.layoutConfiguration.annotate && !this.layoutConfiguration.list) {
                             $("#left-column").removeClass("span6");
                             $("#left-column").addClass("span12");
                         } else {
@@ -498,13 +497,17 @@ define(["jquery",
                             $("#left-column").removeClass("span12");
                         }
                         annotationTool.views.timeline.redraw();
-                    };
+                    }, this);
 
                 if (enabled) {
                     $(event.target).addClass("checked");
                 } else {
                     $(event.target).removeClass("checked");
                 }
+
+                var isView = false;
+                var view = layoutElement.replace(/^view-/, function () { isView = true; return ""; });
+                if (isView) this.layoutConfiguration[view] = enabled;
 
                 switch (layoutElement) {
 
@@ -515,12 +518,14 @@ define(["jquery",
                     this.annotateView.enableCategoriesLayout(enabled);
                     break;
                 case "view-annotate":
-                    annotationTool.views.annotate.toggleVisibility();
+                    annotationTool.views.annotate.$el.fadeToggle();
                     checkMainLayout();
+                    this.onWindowResize();
                     break;
                 case "view-list":
-                    annotationTool.views.list.toggleVisibility();
+                    annotationTool.views.list.$el.fadeToggle();
                     checkMainLayout();
+                    this.onWindowResize();
                     break;
                 }
             },
@@ -591,18 +596,19 @@ define(["jquery",
                 var listContent,
                     windowHeight = $(window).height(),
                     annotationsContainerHeight = $("#annotate-container").height(),
-                    loopFunctionHeight = !_.isUndefined(annotationTool.loopFunction) && annotationTool.loopFunction.isVisible() ?
-                                            annotationTool.loopFunction.$el.height() + 180 : 145,
+                    loopFunctionHeight = annotationTool.loopFunction && annotationTool.loopFunction.isVisible()
+                        ? annotationTool.loopFunction.$el.height() + 180
+                        : 145,
                     videoContainerHeight = $("#video-container").height();
 
 
                 // TODO: improve this part with a better layout management, more generic
-                if (this.annotateView && this.listView) {
+                if (this.layoutConfiguration.annotate && this.layoutConfiguration.list) {
                     listContent = this.listView.$el.find("#content-list-scroll");
                     listContent.css("max-height", windowHeight - annotationsContainerHeight - 120);
                 }
 
-                if (this.timelineView) {
+                if (this.layoutConfiguration.timeline) {
                     this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
                 }
             },

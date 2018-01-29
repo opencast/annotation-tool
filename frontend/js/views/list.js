@@ -90,7 +90,6 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click .toggle-collapse": "toggleVisibility",
                 "click .collapse-all"   : "collapseAll",
                 "click .expand-all"     : "expandAll"
             },
@@ -486,8 +485,6 @@ define(["jquery",
              * @alias module:views-list.List#reset
              */
             reset: function () {
-                this.$el.hide();
-
                 this.stopListening();
 
                 this.clearList();
