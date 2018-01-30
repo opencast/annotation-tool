@@ -188,8 +188,7 @@ define(["jquery",
                             "switchEditModus",
                             "keydownOnAnnotate",
                             "enableCategoriesLayout",
-                            "enableFreeTextLayout",
-                            "setLayoutFull");
+                            "enableFreeTextLayout");
 
                 // Parameter for stop on write
                 this.continueVideo = false;
@@ -418,26 +417,6 @@ define(["jquery",
 
                 // trigger an event that all element switch in edit modus
                 annotationTool.trigger(annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, status);
-            },
-
-            /**
-             * Change the layout to full layout, with all possiblities to annotate
-             * @alias module:views-annotate.Annotate#setLayoutFull
-             * @param {Event} event Event object
-             */
-            setLayoutFull: function (event) {
-                if (!$(event.target).hasClass("checked")) {
-                    if (annotationTool.isStructuredAnnotationEnabled()) {
-                        this.categoriesElement.show();
-                    }
-                    if (annotationTool.isFreeTextEnabled()) {
-                        this.freeTextElement.show();
-                    }
-                    this.$el.find("#annotate-text").removeClass("checked");
-                    this.$el.find("#annotate-categories").removeClass("checked");
-                    $(event.target).addClass("checked");
-                    this.trigger("change-layout");
-                }
             },
 
             /**

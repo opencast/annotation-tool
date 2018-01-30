@@ -113,7 +113,6 @@ define(["jquery",
                                "insertView",
                                "sortViewsbyTime",
                                "select",
-                               "toggleVisibility",
                                "expandAll",
                                "renderSelect",
                                "collapseAll",
@@ -480,15 +479,8 @@ define(["jquery",
 
                 this.annotationViews = [];
                 this.$el.find("#content-list").empty();
-            },
-
-            toggleVisibility: function () {
-                this.visible = !this.visible;
-                this.$el.fadeToggle();
-                this.trigger("change-layout");
             }
-
         });
-        return List;
 
+        return List;
     });
