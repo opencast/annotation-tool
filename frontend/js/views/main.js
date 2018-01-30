@@ -505,14 +505,13 @@ define(["jquery",
                 case "view-annotate":
                     annotationTool.views.annotate.$el.fadeToggle();
                     checkMainLayout();
-                    this.onWindowResize();
                     break;
                 case "view-list":
                     annotationTool.views.list.$el.fadeToggle();
                     checkMainLayout();
-                    this.onWindowResize();
                     break;
                 }
+                this.onWindowResize();
             },
 
             /**

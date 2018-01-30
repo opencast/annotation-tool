@@ -438,8 +438,6 @@ define(["jquery",
                 } else {
                     this.freeTextElement.hide();
                 }
-
-                this.trigger("change-layout");
             },
 
             /**
@@ -461,8 +459,6 @@ define(["jquery",
                 } else {
                     this.categoriesElement.hide();
                 }
-
-                this.trigger("change-layout");
             }
         });
 
