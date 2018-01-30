@@ -144,7 +144,6 @@ define(["jquery",
                                 "checkUserAndLogin",
                                 "createViews",
                                 "logout",
-                                "loadPlugins",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print",
@@ -183,7 +182,6 @@ define(["jquery",
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
                 annotationTool.once(annotationTool.EVENTS.READY, function () {
-                    this.loadPlugins(annotationTool.plugins);
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
@@ -198,17 +196,6 @@ define(["jquery",
                 }, this);
 
                 this.checkUserAndLogin();
-            },
-
-            /**
-             * Loads the given plugins
-             * @param  {Array} plugins The array of plugins to load
-             * @alias module:views-main.MainView#loadPlugins
-             */
-            loadPlugins: function (plugins) {
-                _.each(plugins, function (plugin) {
-                    plugin();
-                }, this);
             },
 
             /**
