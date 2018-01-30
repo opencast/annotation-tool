@@ -29,7 +29,6 @@
     "download categories": "Kategorien herunterladen",
     "edit category scaling": "Skala für diese Kategorie bearbeiten",
     "edit mode": "Bearbeiten",
-    "export not supported": "Diese Version des Browsers {{browser}} unterstützt die Export-Funktion nicht. Versuchen Sie einen anderen Browser.",
     "insert": "$t(common actions.insert)",
     "items visibility": {
       "collapse all": "Alle zuklappen",

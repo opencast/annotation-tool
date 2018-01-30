@@ -137,7 +137,7 @@ define(["jquery",
                  * Get all the different public tracks creators 
                  * @alias module:collections-tracks.Tracks#getAllCreators
                  * @return {Array} the array containing a list of creator with their nickname and id as properties.
-                 * @example 
+                 * @example
                  * {
                  *     id       : "c12",
                  *     nickname : "Didi"

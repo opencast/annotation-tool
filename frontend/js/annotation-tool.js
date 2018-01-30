@@ -170,8 +170,7 @@ define(["jquery",
                     this.loadVideo();
                 }
 
-                if ((this.isBrowserIE9() && !(this.playerAdapter.__proto__ instanceof this.PlayerAdapter)) ||
-                    (!this.isBrowserIE9() && !(this.playerAdapter instanceof PlayerAdapter))) {
+                if (!(this.playerAdapter instanceof PlayerAdapter)) {
                     throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
                 }
 
@@ -331,24 +330,6 @@ define(["jquery",
                     hours   = (base - seconds - minutes * 60) / 3600;
 
                 return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
-            },
-
-            /**
-             * Check if the current browser is Safari 6
-             * @alias   annotationTool.isBrowserSafari6
-             * @return {boolean} true if the browser is safari 6, otherwise false
-             */
-            isBrowserSafari6: function () {
-                return (navigator.appVersion.search("Version/6") > 0 && navigator.appVersion.search("Safari") > 0);
-            },
-
-            /**
-             * Check if the current browser is Microsoft Internet Explorer 9
-             * @alias   annotationTool.isBrowserIE9
-             * @return {boolean} true if the browser is IE9, otherwise false
-             */
-            isBrowserIE9: function () {
-                return (navigator.appVersion.search("MSIE 9") > 0);
             },
 
             /**

@@ -353,23 +353,7 @@ define(["jquery",
              * @return {integer}              The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
-                var CaretPos = 0,
-                    Sel;
-
-                // IE Support
-                if (document.selection) {
-                    inputElement.focus();
-                    Sel = document.selection.createRange();
-
-                    Sel.moveStart("character", -inputElement.value.length);
-
-                    CaretPos = Sel.text.length;
-                } else if (inputElement.selectionStart || inputElement.selectionStart == "0") {
-                    // Firefox support
-                    CaretPos = inputElement.selectionStart;
-                }
-
-                return (CaretPos);
+                return inputElement.selectionStart;
             },
 
             /**

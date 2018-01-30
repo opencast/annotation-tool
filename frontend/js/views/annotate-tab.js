@@ -538,15 +538,6 @@ define(["jquery",
                     tmpScales = {},
                     tmpScaleId;
 
-                // If the used browser is Safari, we display a warning message
-                if (annotationTool.isBrowserSafari6()) {
-                    annotationTool.alertWarning(i18next.t("annotate.export not supported", { browser: "Safari" }));
-                    return;
-                } else if (annotationTool.isBrowserIE9()) {
-                    annotationTool.alertWarning(i18next.t("annotate.export not supported", { browser: "Internet Explorer" }));
-                    return;
-                }
-
                 _.each(this.categories.filter(this.filter), function (category) {
                     tmpScaleId = category.attributes.scale_id;
 

@@ -1,7 +1,5 @@
-The annotations tool supports the following browsers (given version or more recent):
-* Firefox 3.6 
-* Internet Explorer 9
-* Safari 5 
-* Chrome 14
+The annotation tool is currently only regularly tested in modern Versions of Chrome.
+Please keep your and your clients' browsers up to date, for the sake of security,
+stability, performance and last but not least to help developers make better web apps!
 
-Mobile browsers on iOS or Android platforms are not supported.
+Mobile browsers on iOS or Android platforms are specifically not supported at all.

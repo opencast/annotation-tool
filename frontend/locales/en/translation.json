@@ -29,7 +29,6 @@
     "download categories": "Download categories",
     "edit category scaling": "Edit scaling for this category",
     "edit mode": "Edit mode",
-    "export not supported": "This version of {{browser}} does not support the export function. Try it on another browser.",
     "insert": "$t(common actions.insert)",
     "items visibility": {
       "collapse all": "Collapse all",

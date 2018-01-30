@@ -195,18 +195,10 @@ define(function () {
     PlayerAdapter.prototype.triggerEvent = function (eventType) {
         var evt;
 
-        if (document.createEventObject) {
-            // For IE
-            evt = document.createEventObject();
-            evt.type = eventType;
-
-            return !this.dispatchEvent(evt, eventType);
-        } else {
-            // For others browsers
-            evt = document.createEvent("CustomEvent");
-            evt.initEvent(eventType, true, true); // event type,bubbling,cancelable
-            return !this.dispatchEvent(evt, eventType);
-        }
+        // For others browsers
+        evt = document.createEvent("CustomEvent");
+        evt.initEvent(eventType, true, true); // event type,bubbling,cancelable
+        return !this.dispatchEvent(evt, eventType);
     };
 
     /**

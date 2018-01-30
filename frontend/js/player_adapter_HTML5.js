@@ -39,13 +39,7 @@ define(["jquery",
          * @param {DOMElement} targetElement DOM Element representing the player
          */
         var PlayerAdapterHTML5 = function (targetElement, sources) {
-            var HTMLElement,
-                self = this;
-
-            // Allow to use HTMLElement with MS IE < 9
-            if (!HTMLElement) {
-                HTMLElement = Element;
-            }
+            var self = this;
 
             // Check if the given target Element is valid
             if (typeof targetElement === "undefined" || targetElement === null || !(targetElement instanceof HTMLElement)) {
