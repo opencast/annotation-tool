@@ -367,7 +367,7 @@ module.exports = function (grunt) {
                     name                       : 'main',
                     optimizeAllPluginResources : false,
                     preserveLicenseComments    : false,
-                    optimize                   : 'uglify',
+                    optimize                   : 'none',
                     useStrict                  : true,
                     findNestedDependencies     : true,
                     out                        : '<%= currentProfile.target %>/optimized.js'
