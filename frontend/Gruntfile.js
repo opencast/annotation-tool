@@ -134,48 +134,48 @@ module.exports = function (grunt) {
 
         /** Pre-compile the handlebars templates */
         handlebars: {
-          target: {
-            options: {
-              namespace: false,
-              amd: true
+            target: {
+                options: {
+                    namespace: false,
+                    amd: true
+                },
+                files: [{
+                    ext: '.js',
+                    flatten : false,
+                    expand  : true,
+                    src: '<%= currentWatchFile %>',
+                    dest: '<%= currentProfile.target %>',
+                    filter: 'isFile'
+                }]
             },
-            files: [{
-                ext: '.js',
-                flatten : false,
-                expand  : true,
-                src: '<%= currentWatchFile %>',
-                dest: '<%= currentProfile.target %>',
-                filter: 'isFile'
-            }]
-          },
 
-          all: {
-            options: {
-              namespace: false,
-              amd: true
+            all: {
+                options: {
+                    namespace: false,
+                    amd: true
+                },
+                files: [{
+                    ext: '.js',
+                    flatten : false,
+                    expand  : true,
+                    src: 'templates/*.tmpl',
+                    dest: '<%= currentProfile.target %>'
+                }]
             },
-            files: [{
-                ext: '.js',
-                flatten : false,
-                expand  : true,
-                src: 'templates/*.tmpl',
-                dest: '<%= currentProfile.target %>'
-            }]
-          },
 
-          temp: {
-            options: {
-              namespace: false,
-              amd: true
-            },
-            files: [{
-                ext: '.js',
-                flatten : false,
-                expand  : true,
-                src: 'templates/*.tmpl',
-                dest: 'target'
-            }]
-          }
+            temp: {
+                options: {
+                    namespace: false,
+                    amd: true
+                },
+                files: [{
+                    ext: '.js',
+                    flatten : false,
+                    expand  : true,
+                    src: 'templates/*.tmpl',
+                    dest: 'target'
+                }]
+            }
         },
 
         /** Copy .. */
@@ -377,7 +377,7 @@ module.exports = function (grunt) {
 
         mkdir: {
             demo: {
-                  options: {
+                options: {
                     create: ['<%= currentProfile.target %>']
                 }
             }
