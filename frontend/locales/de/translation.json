@@ -123,11 +123,11 @@
       },
       "track management": "$t(track management.action)",
       "head": "Ansicht",
-      "loop controller": "Schleifensteuerung",
       "views": {
         "annotate view": "Annotierfenster",
         "head": "Fenster",
-        "list view": "Listenansicht"
+        "list view": "Listenansicht",
+        "loop controller": "Schleifensteuerung"
       },
       "auto expand": "Aktive Annotationen automatisch aufklappen"
     }
