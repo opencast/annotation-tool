@@ -358,7 +358,7 @@ module.exports = function (grunt) {
             }
         },
 
-        /** Optimisation through requireJS */
+        /** Bundling through RequireJS */
         requirejs: {
             compile: {
                 options: {
@@ -370,8 +370,16 @@ module.exports = function (grunt) {
                     optimize                   : 'none',
                     useStrict                  : true,
                     findNestedDependencies     : true,
-                    out                        : '<%= currentProfile.target %>/optimized.js'
+                    out                        : '<%= currentProfile.target %>/bundle.js'
                 }
+            }
+        },
+
+        /** Optimization through UglifyJS */
+        uglify: {
+            minify: {
+                src: '<%= currentProfile.target %>/bundle.js',
+                dest: '<%= currentProfile.target %>/bundle.min.js'
             }
         },
 
@@ -408,6 +416,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-preprocess');
     grunt.loadNpmTasks('grunt-concurrent');
@@ -426,9 +435,9 @@ module.exports = function (grunt) {
     grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:locales']);
     //grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
-    grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'copy:locales', 'requirejs']);
+    grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'copy:locales', 'requirejs', 'uglify']);
     grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'requirejs']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'requirejs', 'uglify']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {

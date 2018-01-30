@@ -1020,7 +1020,7 @@ define(["util",
 
                     // The latter functionality will be needed again later,
                     // so we write a function for this.
-                    function stackItems(items) {
+                    var stackItems = function (items) {
                         if (!items.length) return [];
 
                         var firstItem = items.splice(0, 1)[0];
@@ -1049,7 +1049,7 @@ define(["util",
                             currentStack.items.push(item);
                         });
                         return stacks;
-                    }
+                    };
                     var stacks = stackItems(items);
 
                     // Now within each stack, we assign items to different levels.
