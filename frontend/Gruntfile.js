@@ -14,6 +14,7 @@ module.exports = function (grunt) {
         webServerDir: 'www',
 
         buildDir: 'target',
+        tempDir: '<%= buildDir %>/temp',
 
         /** Paths for the different types of ressource */
         srcPath: {
@@ -173,7 +174,7 @@ module.exports = function (grunt) {
                     flatten : false,
                     expand  : true,
                     src: 'templates/*.tmpl',
-                    dest: 'target'
+                    dest: '<%= tempDir %>'
                 }]
             }
         },
@@ -227,6 +228,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
+                    // TODO Do we need to copy libs here?
                     src: ['img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'js/libs/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
@@ -270,6 +272,12 @@ module.exports = function (grunt) {
             'config': {
                 src: '<%= currentProfile.config %>',
                 dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
+            },
+            // ... code for further processing
+            'temp': {
+                expand: true,
+                src: '<%= srcPath.js %>',
+                dest: '<%= tempDir %>'
             },
             // ... the translations
             'locales': {
@@ -362,8 +370,8 @@ module.exports = function (grunt) {
         requirejs: {
             compile: {
                 options: {
-                    baseUrl                    : './js',
-                    mainConfigFile             : './js/libs/require/config/config-build.js',
+                    baseUrl                    : '<%= tempDir %>/js',
+                    mainConfigFile             : './js/require.config.js',
                     name                       : 'main',
                     optimizeAllPluginResources : false,
                     preserveLicenseComments    : false,
@@ -434,9 +442,9 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'copy:locales', 'requirejs', 'uglify']);
+    grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
     grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['blanket_qunit', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'requirejs', 'uglify']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', [/*'blanket_qunit', */'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
