@@ -400,7 +400,7 @@ module.exports = function (grunt) {
         },
 
         gulp: {
-            i18next: function () {
+            i18next: () => {
                 const gulp = require('gulp');
                 const i18next = require('i18next-parser');
                 return gulp.src([
