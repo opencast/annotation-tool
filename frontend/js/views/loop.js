@@ -55,7 +55,7 @@ define(["jquery",
          * @memberOf module:views-loop
          * @alias Loop
          */
-        var loopView = Backbone.View.extend({
+        var LoopView = Backbone.View.extend({
 
             /**
              * Maximal margin supported to define if we are still in the same loop
@@ -496,7 +496,7 @@ define(["jquery",
             }
         });
 
-        return loopView;
+        return LoopView;
 
     }
 );
