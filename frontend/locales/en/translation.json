@@ -105,6 +105,8 @@
     "error": "Failed to log in: {{error}}"
   },
   "loop controller": {
+    "enable": "Enable loops",
+    "constrain": "Constrain new annotations to current loop",
     "next": "Move to next loop",
     "previous": "Move to previous loop",
     "seconds": "s",

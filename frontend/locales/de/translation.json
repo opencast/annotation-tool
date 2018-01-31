@@ -105,6 +105,8 @@
     "error": "Anmelden fehlgeschlagen: {{error}}"
   },
   "loop controller": {
+    "enable": "Schleifen aktivieren",
+    "constrain": "Neue Annotationen auf die aktuelle Schleife einschränken",
     "next": "Zur nächsten Schleife gehen",
     "previous": "Zur vorherigen Schleife gehen",
     "seconds": "s",
