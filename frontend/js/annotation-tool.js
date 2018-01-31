@@ -1028,7 +1028,7 @@ define(["jquery",
                     videos.fetch({
                         success: function () {
                             if (videos.length === 0) {
-                                video = videos.create(self.getVideoParameters(), {wait: true});
+                                video = videos.create(self.getVideoParameters(), { wait: true });
                             } else {
                                 video = videos.at(0);
                                 video.set(self.getVideoParameters());
@@ -1040,7 +1040,7 @@ define(["jquery",
 
                     createDefaultTrack();
                 } else { // With Rest storage
-                    videos.add({video_extid: this.getVideoExtId()});
+                    videos.add({ video_extid: this.getVideoExtId() });
                     video = videos.at(0);
                     this.video = video;
                     video.set(self.getVideoParameters());
@@ -1060,8 +1060,6 @@ define(["jquery",
                 }
             }
         }, _.clone(Backbone.Events));
-
-
 
         /**
          * Type of target that can be deleted using the delete warning modal
