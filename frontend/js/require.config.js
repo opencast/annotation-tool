@@ -29,7 +29,8 @@ require.config({
         "moment": "libs/moment-with-locales",
         "mediaelementplayer": "libs/mediaelement/mediaelement-and-player.min",
         "mediaelement/lang": "libs/mediaelement/lang",
-        "sortable": "libs/Sortable.min"
+        "sortable": "libs/Sortable.min",
+        "goldenlayout": "libs/goldenlayout"
     },
     waitSeconds: 10,
 
