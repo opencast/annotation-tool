@@ -421,7 +421,7 @@ define(["jquery",
                     }, this);
                 }
 
-                this.loops.each(function (loop) {
+                this.loops.models.forEach(function (loop) {
                     loop.destroy();
                 });
 
