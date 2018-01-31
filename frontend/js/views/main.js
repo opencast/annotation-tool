@@ -221,13 +221,9 @@ define(["jquery",
                 annotationTool.views.main = this;
 
                 /**
-                 * Loading the video dependant views
+                 * Loading the video dependent views
                  */
-                var loadVideoDependantView = $.proxy(function () {
-
-                    if (this.loadingPercent === 100) {
-                        return;
-                    }
+                var loadVideoDependentViews = $.proxy(function () {
 
                     this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
                     for (var view in this.layoutConfiguration) {
@@ -271,9 +267,9 @@ define(["jquery",
 
 
                 if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
-                    loadVideoDependantView();
+                    loadVideoDependentViews();
                 } else {
-                    $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
+                    $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY, loadVideoDependentViews);
                 }
             },
 
@@ -345,19 +341,16 @@ define(["jquery",
             checkUserAndLogin: function () {
                 this.setLoadingProgress(30, i18next.t("startup.get current user"));
 
-                if (!annotationTool.modelsInitialized) {
+                if (annotationTool.modelsInitialized) {
+                    this.createViews();
+                } else {
                     annotationTool.once(annotationTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                 }
 
                 // If a user has been saved locally, we take it as current user
                 if (annotationTool.users.length > 0) {
                     annotationTool.user = annotationTool.users.at(0);
-
                     annotationTool.trigger(annotationTool.EVENTS.USER_LOGGED);
-
-                    if (annotationTool.modelsInitialized) {
-                        this.createViews();
-                    }
                 } else {
                     var userExtData = {};
                     if (annotationTool.useUserExtData) {

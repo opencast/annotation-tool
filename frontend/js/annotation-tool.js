@@ -980,22 +980,20 @@ define(["jquery",
                     videos = new Videos(),
                     tracks,
                     self = this,
-                    selectedTrack,
-
                     // function to conclude the retrieve of annotations
                     concludeInitialization = _.bind(function () {
 
                         // At least one private track should exist, we select the first one
-                        selectedTrack = tracks.getMine()[0];
+                        var selectedTrack = tracks.getMine()[0];
 
                         if (!selectedTrack.get("id")) {
-                            selectedTrack.bind("ready", concludeInitialization(), this);
+                            selectedTrack.bind("ready", concludeInitialization, this);
                         } else {
                             this.selectedTrack = selectedTrack;
-                        }
 
-                        this.modelsInitialized = true;
-                        this.trigger(this.EVENTS.MODELS_INITIALIZED);
+                            this.modelsInitialized = true;
+                            this.trigger(this.EVENTS.MODELS_INITIALIZED);
+                        }
                     }, this),
 
                     /**
