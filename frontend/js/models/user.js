@@ -104,6 +104,7 @@ define(["jquery",
                 if (attr.email && !User.validateEmail(attr.email)) {
                     return {attribute: "email", message: "Given email is not valid!"};
                 }
+                return undefined;
             }
         },
         // Class properties and functions
