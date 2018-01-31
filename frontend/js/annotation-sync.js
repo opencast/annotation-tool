@@ -41,7 +41,7 @@ define(["underscore", "backbone", "localstorage"], function (_, Backbone) {
 
         options.data = options.attrs || model.toJSON(options);
 
-        // Path along authentication data
+        // Pass along authentication data
         if (annotationTool.user) {
             options.headers["X-ANNOTATIONS-USER-ID"] = annotationTool.user.id;
         }

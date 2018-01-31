@@ -19,14 +19,13 @@
  * @module annotation-tool-configuration
  */
 define(["jquery",
-        "moment",
         "underscore",
         "roles",
         "player_adapter_HTML5"
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, moment, _, ROLES, HTML5PlayerAdapter) {
+    function ($, _, ROLES, HTML5PlayerAdapter) {
 
         "use strict";
 
@@ -326,15 +325,6 @@ define(["jquery",
                     }
 
                     return ROLES.USER;
-                },
-
-                /**
-                 * Get the name of the admin role
-                 * @alias module:annotation-tool-configuration.Configuration.getAdminRoleName
-                 * @return {ROLE} The name of the admin role
-                 */
-                getAdminRoleName: function () {
-                    return ROLES.ADMINISTRATOR;
                 },
 
                 /**

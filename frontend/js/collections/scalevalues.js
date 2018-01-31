@@ -17,18 +17,20 @@
 /**
  * A module representing a scale values collection
  * @module collections-scalevalues
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires models-scalevalue
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "models/scalevalue",
         "backbone",
         "localstorage"],
 
 
-    function ($, ScaleValue, Backbone) {
+    function ($, _, ScaleValue, Backbone) {
 
         "use strict";
 
@@ -119,6 +121,7 @@ define(["jquery",
                 }
             }
         });
+
         return ScaleValues;
     }
 );

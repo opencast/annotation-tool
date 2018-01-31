@@ -312,12 +312,13 @@ define(["jquery",
              */
             removeOne: function (delLabel) {
                 _.find(this.labelViews, function (labelView, index) {
-                        if (delLabel === labelView.model) {
-                            labelView.remove();
-                            this.labelViews.splice(index, 1);
-                            return true;
-                        }
-                    }, this);
+                    if (delLabel === labelView.model) {
+                        labelView.remove();
+                        this.labelViews.splice(index, 1);
+                        return true;
+                    }
+                    return false;
+                }, this);
             },
 
             /**
@@ -325,8 +326,8 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onFocusOut
              */
             onFocusOut: function () {
-                this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
-                this.model.save({wait: true});
+                this.model.set("name", _.escape(this.nameInput.val()), { wait: true });
+                this.model.save({ wait: true });
             },
 
             /**
@@ -337,8 +338,8 @@ define(["jquery",
                 e.stopImmediatePropagation();
 
                 if (e.keyCode === 13) { // If "return" key
-                    this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
-                    this.model.save({wait: true});
+                    this.model.set("name", _.escape(this.nameInput.val()), { wait: true });
+                    this.model.save({ wait: true });
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
                            e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
                     // Avoid scrolling through arrows keys

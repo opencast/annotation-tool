@@ -138,8 +138,8 @@ define(["jquery",
              * @param  {module:annotation-tool-configuration.Configuration} config The tool configuration
              */
             start: function (config) {
-                _.bindAll(this, "updateSelectionOnTimeUpdate",
-                          "createTrack",
+                _.bindAll(this,
+                          "updateSelectionOnTimeUpdate",
                           "createAnnotation",
                           "deleteAnnotation",
                           "getAnnotation",
@@ -318,7 +318,7 @@ define(["jquery",
              * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
              * @alias   annotationTool.getWellFormatedTime
              * @param {number} time the time in seconds
-             * @param {boolean} [noRounted] Define if the number should be rounded or if the decimal should be simply removed. Default is rounding (false). 
+             * @param {boolean} [noRounted] Define if the number should be rounded or if the decimal should be simply removed. Default is rounding (false).
              */
             getWellFormatedTime: function (time, noRounding) {
                 var twoDigit = function (number) {
@@ -802,7 +802,7 @@ define(["jquery",
             /**
              * Get the annotation with the given Id
              * @alias   annotationTool.getAnnotation
-             * @param  {String} annotationId The annotation 
+             * @param  {String} annotationId The annotation
              * @param  {String} (trackId)      The track Id (Optional)
              * @return {Object}   The annotation object or undefined if not found
              */
@@ -817,7 +817,7 @@ define(["jquery",
 
                     if (_.isUndefined(track)) {
                         console.warn("Not able to find the track with the given Id");
-                        return;
+                        return undefined;
                     } else {
                         return track.getAnnotation(annotationId);
                     }
@@ -826,7 +826,7 @@ define(["jquery",
 
                     if (_.isUndefined(this.video)) {
                         console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
-                        return;
+                        return undefined;
                     } else {
                         this.video.get("tracks").each(function (trackItem) {
                             var tmpAnnotation = trackItem.getAnnotation(annotationId);
@@ -1009,14 +1009,23 @@ define(["jquery",
 
                         if (tracks.getMine().length === 0) {
                             tracks.create({
-                                name        : i18next.t("default track.name", { nickname: this.user.get("nickname") }),
-                                description : i18next.t("default track.description", { nickname: this.user.get("nickname") })
+                                name: i18next.t("default track.name", {
+                                    nickname: this.user.get("nickname")
+                                }),
+                                description: i18next.t("default track.description", {
+                                    nickname: this.user.get("nickname")
+                                })
                             }, {
-                                wait    : true,
-                                success : concludeInitialization
+                                wait: true,
+                                success: concludeInitialization
                             });
                         } else {
-                            tracks.showTracks(_.first(tracks.filter(this.getDefaultTracks().filter), this.MAX_VISIBLE_TRACKS || Number.MAX_VALUE));
+                            tracks.showTracks(
+                                _.first(
+                                    tracks.filter(this.getDefaultTracks().filter),
+                                    this.MAX_VISIBLE_TRACKS || Number.MAX_VALUE
+                                )
+                            );
                             concludeInitialization();
                         }
                     }, this);
@@ -1090,9 +1099,10 @@ define(["jquery",
                                 annotationTool.video.get("tracks").each(function (value) {
                                     if (value.get("annotations").get(target.id)) {
                                         value.get("annotations").remove(target);
-                                        value.save({wait: true});
+                                        value.save({ wait: true });
                                         return false;
                                     }
+                                    return undefined;
                                 });
                                 annotationTool.video.save();
                             }

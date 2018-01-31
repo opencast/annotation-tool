@@ -118,6 +118,8 @@ var Resource = Backbone.Model.extend({
         if (attr.deleted_at && !util.parseDate(attr.deleted_at)) {
             return "\"deleted_at\" attribute must represent a date!";
         }
+
+        return undefined;
     },
 
     /**

@@ -45,7 +45,7 @@ define(["jquery",
              * Model of the instances contained in this collection
              * @alias module:collections-loops.Loops#initialize
              */
-            model       : Loop,
+            model: Loop,
 
             /**
              * Localstorage container for the collection

@@ -72,6 +72,8 @@ define(["jquery",
                 if (attr.start > attr.end) {
                     return "The start point is after the end point!";
                 }
+
+                return undefined;
             },
         });
         return Loop;

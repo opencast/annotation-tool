@@ -47,8 +47,8 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
     /**
      * Handlebars helper to get user nickname
      * @alias module:Handlebars#nickname
-     * @param  {User | integer} user The user object of its id
-     * @return {string}      The user nickname
+     * @param  {User | integer} user The user object or its id
+     * @return {string} The user nickname
      */
     Handlebars.registerHelper("nickname", function (user) {
         if (!_.isObject(user)) {

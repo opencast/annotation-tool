@@ -182,6 +182,8 @@ define(["jquery",
                 if (attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
                     return "\"duration\" attribute must be a positive number";
                 }
+
+                return undefined;
             },
 
             /**

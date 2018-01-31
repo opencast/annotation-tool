@@ -119,6 +119,8 @@ define(["jquery",
                 if (attr.description && !_.isString(attr.description)) {
                     return "'description' attribute must be a string";
                 }
+
+                return undefined;
             },
 
             /**

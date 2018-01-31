@@ -48,9 +48,7 @@ require.config({
         "localstorage": ["backbone"],
 
         "jquery.FileReader": ["jquery"],
-
         "jquery.colorPicker": ["jquery"],
-
         "jquery.appear": ["jquery"],
 
         "bootstrap": ["jquery"],

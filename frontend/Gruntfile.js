@@ -476,10 +476,6 @@ module.exports = function (grunt) {
             // Configure the tasks with given profiles
             grunt.config.set('currentProfile', profileConfig);
 
-//            if (name.toUpperCase() === "DEMO") {
-//                grunt.config.set('currentProfile.target', grunt.config.get('currentProfile.target') + grunt.config.get('pkg.version'));
-//            }
-
             // Run the tasks
             grunt.task.run('base' + name.toUpperCase());
         });

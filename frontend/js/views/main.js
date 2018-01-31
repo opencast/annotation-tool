@@ -63,10 +63,30 @@ define(["jquery",
         "localstorage",
         "bootstrap"],
 
-    function ($, _, Mousetrap, i18next, PlayerAdapter, AboutDialog, AnnotateView, ListView, ListAnnotationView,
-              TimelineView, LoginView, ScaleEditorView, TracksSelectionView, PrintView, Annotations, Users, Videos,
-              User, Track, Video, ROLES, Backbone) {
-
+    function (
+        $,
+        _,
+        Mousetrap,
+        i18next,
+        PlayerAdapter,
+        AboutDialog,
+        AnnotateView,
+        ListView,
+        ListAnnotationView,
+        TimelineView,
+        LoginView,
+        ScaleEditorView,
+        TracksSelectionView,
+        PrintView,
+        Annotations,
+        Users,
+        Videos,
+        User,
+        Track,
+        Video,
+        ROLES,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -240,7 +260,7 @@ define(["jquery",
 
                     // Create views with Timeline
                     this.setLoadingProgress(70, i18next.t("startup.creating timeline"));
-                    this.timelineView = new TimelineView({playerAdapter: annotationTool.playerAdapter});
+                    this.timelineView = new TimelineView({ playerAdapter: annotationTool.playerAdapter });
                     annotationTool.views.timeline = this.timelineView;
                     if (this.layoutConfiguration.timeline) {
                         this.timelineView.$el.show();
@@ -248,7 +268,7 @@ define(["jquery",
 
                     // Create view to annotate
                     this.setLoadingProgress(80, i18next.t("startup.creating annotation view"));
-                    this.annotateView = new AnnotateView({playerAdapter: annotationTool.playerAdapter});
+                    this.annotateView = new AnnotateView({ playerAdapter: annotationTool.playerAdapter });
                     annotationTool.views.annotate = this.annotateView;
                     if (this.layoutConfiguration.annotate) {
                         this.annotateView.$el.show();

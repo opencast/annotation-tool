@@ -17,17 +17,19 @@
 /**
  * A module representing a scales collection
  * @module collections-scales
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires models-scale
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "models/scale",
         "backbone",
         "localstorage"],
 
-    function ($, Scale, Backbone) {
+    function ($, _, Scale, Backbone) {
 
         "use strict";
 
@@ -116,6 +118,7 @@ define(["jquery",
                 return scalesForExport;
             }
         });
+
         return Scales;
     }
 );

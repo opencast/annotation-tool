@@ -99,6 +99,8 @@ define(["jquery",
                 if (attr.order && !_.isNumber(attr.order)) {
                     return "'order' attribute must be a number";
                 }
+
+                return undefined;
             },
 
             /**
@@ -134,6 +136,7 @@ define(["jquery",
                 return json;
             }
         });
+
         return ScaleValue;
     }
 );

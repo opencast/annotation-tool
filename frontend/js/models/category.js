@@ -100,8 +100,6 @@ define(["jquery",
                 }
 
                 this.attributes.visible = true;
-
-                //this.set(attr);
             },
 
             /**
@@ -164,6 +162,8 @@ define(["jquery",
                         value.category = parseValue;
                     }, this);
                 }
+
+                return undefined;
             },
 
             /**

@@ -283,7 +283,7 @@ define(["jquery",
                     return;
                 }
 
-                this.model.set({text: newValue});
+                this.model.set({ text: newValue });
                 this.model.save();
 
                 if (event.type === "keydown") {
@@ -667,7 +667,7 @@ define(["jquery",
 
                 this.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
                 this.render();
-                this.commentContainer.$("textarea").focus();
+                this.commentContainer.$find("textarea").focus();
             },
 
             /**

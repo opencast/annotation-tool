@@ -235,15 +235,6 @@ define(["jquery",
             },
 
             /**
-             * Get the name of the admin role
-             * @alias module:annotation-tool-configuration.Configuration.getAdminRoleName
-             * @return {ROLE} The name of the admin role
-             */
-            getAdminRoleName: function () {
-                return ROLES.ADMINISTRATOR;
-            },
-
-            /**
              * Get the user authentification token if existing
              * @alias module:annotation-tool-configuration.Configuration.getUserAuthToken
              * @return {string} Current user token

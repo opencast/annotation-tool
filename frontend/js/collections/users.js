@@ -71,6 +71,7 @@ define(["jquery",
                 return resp.users;
             }
         });
+
         return Users;
     }
 );

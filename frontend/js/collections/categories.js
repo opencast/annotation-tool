@@ -17,17 +17,19 @@
 /**
  * A module representing a categories collection
  * @module collections-categories
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires models-category
  * @requires backbone
  * @requires localstorage
  */
 define(["jquery",
+        "underscore",
         "models/category",
         "backbone",
         "localstorage"],
 
-    function ($, Category, Backbone) {
+    function ($, _, Category, Backbone) {
 
         "use strict";
 
@@ -44,7 +46,7 @@ define(["jquery",
              * Model of the instances contained in this collection
              * @alias module:collections-categories.Categories#initialize
              */
-            model       : Category,
+            model: Category,
 
             /**
              * Localstorage container for the collection
@@ -109,7 +111,7 @@ define(["jquery",
              * @return {array} Array containing the list of categories created by the current user
              */
             getMine: function () {
-                return this.where({isMine: true});
+                return this.where({ isMine: true });
             },
 
             /**
@@ -118,7 +120,7 @@ define(["jquery",
              * @return {array} Array containing the list of categories visible by everyone
              */
             getPublic: function () {
-                return this.where({isPublic: true});
+                return this.where({ isPublic: true });
             },
 
             /**
@@ -137,6 +139,7 @@ define(["jquery",
                 return categoriesForExport;
             }
         });
+
         return Categories;
     }
 );

@@ -53,7 +53,7 @@ define(["jquery",
              * Model of the instances contained in this collection
              * @alias module:collections-comments.Comments#initialize
              */
-            model       : Comment,
+            model: Comment,
 
             /**
              * Localstorage container for the collection

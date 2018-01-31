@@ -346,7 +346,7 @@ define(["jquery",
                     this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
 
                     annotationTool.video.get("scales").add(this.currentScale);
-                    this.currentScale.save({async: false});
+                    this.currentScale.save({ async: false });
                     this.currentScale.setUrl();
                     this.currentScale.get("scaleValues").each(function (scaleValue) {
                         scaleValue.save();
@@ -364,11 +364,11 @@ define(["jquery",
                  */
                 createScaleValue: function () {
                     this.currentScale.get("scaleValues").create({
-                            order: this.$el.find(".scale-value").length,
-                            name : i18next.t("scale editor.new scale.value"),
-                            value: 0,
-                            access: this.currentCategory.get("access")
-                        });
+                        order: this.$el.find(".scale-value").length,
+                        name : i18next.t("scale editor.new scale.value"),
+                        value: 0,
+                        access: this.currentCategory.get("access")
+                    });
                 },
 
                 /**

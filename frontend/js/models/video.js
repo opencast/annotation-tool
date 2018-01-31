@@ -107,7 +107,7 @@ define(["jquery",
              * Validate the attribute list passed to the model
              * @alias module:models-video.Video#validate
              * @param  {object} data Object literal containing the model attribute to validate.
-             * @return {string}  If the validation failed, an error message will be returned.
+             * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var categories,
@@ -153,6 +153,8 @@ define(["jquery",
                 if (attr.tracks && !(attr.tracks instanceof Tracks)) {
                     return "'tracks' attribute must be an instance of 'Tracks'";
                 }
+
+                return undefined;
             },
 
             loadTracks: function () {

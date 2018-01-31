@@ -28,7 +28,7 @@ define(function () {
      * @see {@link https://github.com/entwinemedia/annotations/wiki/Player-adapter-API}
      * @alias module:player-adapter.PlayerAdapter
      */
-    var PlayerAdapter = function () {this._init(); };
+    var PlayerAdapter = function () { this._init(); };
 
     /**
      * Possible player status
@@ -124,7 +124,7 @@ define(function () {
     /**
      * Get the listeners list for this object
      * @param {string} type event type
-     * @param {boolean} If the user wish to initiate the capture
+     * @param {boolean} useCapture If the user wish to initiate the capture
      * @return {array} listeners list
      */
     PlayerAdapter.prototype._getListeners = function (type, useCapture) {
@@ -141,7 +141,7 @@ define(function () {
      * Add listener for the given event type
      * @param {String} type event type
      * @parm {function} listener the new listener
-     * @param {boolean} If the user wish to initiate the capture
+     * @param {boolean} useCapture If the user wish to initiate the capture
      */
     PlayerAdapter.prototype.addEventListener = function (type, listener, useCapture) {
         var listeners = this._getListeners(type, useCapture),
@@ -156,7 +156,7 @@ define(function () {
      * Remove listener for the given event type
      * @param {String} type event type
      * @parm {function} listener the listener to remove
-     * @param {boolean} If the user wish to initiate the capture
+     * @param {boolean} useCapture If the user wish to initiate the capture
      */
     PlayerAdapter.prototype.removeEventListener = function (type, listener, useCapture) {
         var listeners = this._getListeners(type, useCapture),

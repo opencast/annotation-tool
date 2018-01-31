@@ -143,7 +143,7 @@ define(["jquery",
                         return;
                     }
 
-                    self.status =  PlayerAdapter.STATUS.PLAYING;
+                    self.status = PlayerAdapter.STATUS.PLAYING;
                     self.triggerEvent(PlayerAdapter.EVENTS.PLAY);
                 });
 
@@ -156,38 +156,41 @@ define(["jquery",
                         return;
                     }
 
-                    self.status =  PlayerAdapter.STATUS.PAUSED;
+                    self.status = PlayerAdapter.STATUS.PAUSED;
                     self.triggerEvent(PlayerAdapter.EVENTS.PAUSE);
                 });
 
                 $(targetElement).bind("ended", function () {
-                    self.status =  PlayerAdapter.STATUS.ENDED;
+                    self.status = PlayerAdapter.STATUS.ENDED;
                     self.triggerEvent(PlayerAdapter.EVENTS.ENDED);
                 });
 
                 $(targetElement).bind("seeking", function () {
                     self.oldStatus = self.status;
-                    self.status =  PlayerAdapter.STATUS.SEEKING;
+                    self.status = PlayerAdapter.STATUS.SEEKING;
                     self.triggerEvent(PlayerAdapter.EVENTS.SEEKING);
                 });
 
                 $(targetElement).bind("seeked", function () {
                     if (typeof self.oldStatus !== "undefined") {
-                        self.status =  self.oldStatus;
+                        self.status = self.oldStatus;
                     } else {
                         self.status = PlayerAdapter.STATUS.PLAYING;
                     }
                 });
 
                 $(targetElement).bind("timeupdate", function () {
-                    if ((self.status == PlayerAdapter.STATUS.PAUSED || self.status == PlayerAdapter.STATUS.SEEKING) && !this.paused && !this.ended && this.currentTime > 0) {
+                    if (
+                        (self.status == PlayerAdapter.STATUS.PAUSED || self.status == PlayerAdapter.STATUS.SEEKING)
+                            && !this.paused && !this.ended && this.currentTime > 0
+                    ) {
                         self.status = PlayerAdapter.STATUS.PLAYING;
                     }
                     self.triggerEvent(PlayerAdapter.EVENTS.TIMEUPDATE);
                 });
 
                 $(targetElement).bind("error", function () {
-                    self.status =  PlayerAdapter.STATUS.ERROR_NETWORK;
+                    self.status = PlayerAdapter.STATUS.ERROR_NETWORK;
                     self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
                 });
 
@@ -197,7 +200,6 @@ define(["jquery",
 
                 return this;
             };
-
 
             // =================
             // REQUIRED FUNCTIONS
@@ -282,7 +284,7 @@ define(["jquery",
                 return  "<div id=\"" + id + "\"></div>";
             };
 
-            return self.init();
+            return this.init();
         };
 
         return PlayerAdapterHTML5;

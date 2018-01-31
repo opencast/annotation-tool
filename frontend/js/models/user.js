@@ -93,17 +93,27 @@ define(["jquery",
                 var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
-                if (_.isUndefined(attr.user_extid) || (!_.isString(attr.user_extid) && !_.isNumber(attr.user_extid))) {
-                    return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};
+                if (!(_.isString(attr.user_extid) || _.isNumber(attr.user_extid))) {
+                    return {
+                        attribute: "user_extid",
+                        message: "'user_extid' must be a valid string or number."
+                    };
                 }
 
-                if (_.isUndefined(attr.nickname) || !_.isString(attr.nickname)) {
-                    return {attribute: "nickname", message: "'nickname' must be a valid string!"};
+                if (!_.isString(attr.nickname)) {
+                    return {
+                        attribute: "nickname",
+                        message: "'nickname' must be a valid string!"
+                    };
                 }
 
-                if (attr.email && !User.validateEmail(attr.email)) {
-                    return {attribute: "email", message: "Given email is not valid!"};
+                if (!User.validateEmail(attr.email)) {
+                    return {
+                        attribute: "email",
+                        message: "Given email is not valid!"
+                    };
                 }
+
                 return undefined;
             }
         },

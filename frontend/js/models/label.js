@@ -124,6 +124,8 @@ define(["jquery",
                 if (attr.category &&  !_.isObject(attr.category)) {
                     return "'category' attribute must be a JSON Object!";
                 }
+
+                return undefined;
             },
 
             /**

@@ -460,7 +460,7 @@ define(["jquery",
                     findByNameScale = function (scale) {
                         return scalesSet[0].name === scale.get("name");
                     },
-                    options = {wait: true};
+                    options = { wait: true };
 
                 // Generate scales
                 if (!annotationTool.video.get("scales").find(findByNameScale)) {
@@ -655,4 +655,3 @@ define(["jquery",
         return AnnotateTab;
     }
 );
-

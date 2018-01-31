@@ -93,6 +93,8 @@ define(["jquery",
                 if (attr.text &&  !_.isString(attr.text)) {
                     return "\"text\" attribute must be a string!";
                 }
+
+                return undefined;
             }
         });
 

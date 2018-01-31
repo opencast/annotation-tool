@@ -61,6 +61,7 @@ define(["jquery",
                 this.url = window.annotationTool.restEndpointsUrl + "/videos";
             }
         });
+
         return Videos;
     }
 );

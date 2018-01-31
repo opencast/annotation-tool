@@ -212,7 +212,7 @@ define(["jquery",
                     return;
                 }
 
-                commentModel = this.collection.create({text: textValue});
+                commentModel = this.collection.create({ text: textValue });
 
                 this.cancel();
                 this.addComment(commentModel);

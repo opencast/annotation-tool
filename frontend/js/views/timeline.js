@@ -774,9 +774,7 @@ define(["util",
                     return;
                 }
 
-                track = this.tracks.create(param, {
-                    wait: true
-                });
+                track = this.tracks.create(param, { wait: true });
             },
 
             /**
