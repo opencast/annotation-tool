@@ -26,6 +26,7 @@
  * @requires views-annotate
  * @requires views-list
  * @requires views-timeline
+ * @requires views-loop
  * @requires views-login
  * @requires views-scale-editor
  * @requires models-user
@@ -47,6 +48,7 @@ define(["jquery",
         "views/list",
         "views/list-annotation",
         "views/timeline",
+        "views/loop",
         "views/login",
         "views/scale-editor",
         "views/tracks-selection",
@@ -74,6 +76,7 @@ define(["jquery",
         ListView,
         ListAnnotationView,
         TimelineView,
+        LoopView,
         LoginView,
         ScaleEditorView,
         TracksSelectionView,
@@ -248,6 +251,12 @@ define(["jquery",
                     annotationTool.views.timeline = this.timelineView;
                     if (this.layoutConfiguration.timeline) {
                         this.timelineView.$el.show();
+                    }
+
+                    this.loopController = new LoopView();
+                    annotationTool.loopFunction = this.loopController;
+                    if (this.layoutConfiguration.loop) {
+                        this.loopController.$el.show();
                     }
 
                     // Create view to annotate
@@ -497,6 +506,9 @@ define(["jquery",
                     annotationTool.views.list.$el.fadeToggle();
                     checkMainLayout();
                     break;
+                case "view-loop":
+                    annotationTool.loopFunction.$el.fadeToggle();
+                    break;
                 }
                 this.onWindowResize();
             },
@@ -567,7 +579,7 @@ define(["jquery",
                 var listContent,
                     windowHeight = $(window).height(),
                     annotationsContainerHeight = $("#annotate-container").height(),
-                    loopFunctionHeight = annotationTool.loopFunction && annotationTool.loopFunction.isVisible()
+                    loopFunctionHeight = this.layoutConfiguration.loop
                         ? annotationTool.loopFunction.$el.height() + 180
                         : 145,
                     videoContainerHeight = $("#video-container").height();
