@@ -62,7 +62,7 @@ define(["jquery",
                  */
                 initialize: function () {
 
-                    _.bindAll(this, "loginOnInsert", "login", "reset", "show", "hide");
+                    _.bindAll(this, "loginOnInsert", "login", "show", "hide");
 
                     _.extend(this, Backbone.Events);
 
@@ -164,19 +164,7 @@ define(["jquery",
                     this.$el.modal("toggle");
 
                     return user;
-                },
-
-                /**
-                 * Reset the view
-                 * @alias module:views-login.Login#reset
-                 */
-                reset: function () {
-                    this.$el.find("#nickname")[0].value = "";
-                    this.$el.find("#email")[0].value = "";
-                    this.$el.find("#remember")[0].value = "";
-                    //this.$el.modal("toggle");
                 }
-
             });
             return loginView;
         }

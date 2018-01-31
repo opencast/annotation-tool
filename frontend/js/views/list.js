@@ -112,7 +112,6 @@ define(["jquery",
                                "editAnnotationCallback",
                                "insertView",
                                "sortViewsbyTime",
-                               "reset",
                                "select",
                                "toggleVisibility",
                                "expandAll",
@@ -478,20 +477,6 @@ define(["jquery",
 
                 this.annotationViews = [];
                 this.$el.find("#content-list").empty();
-            },
-
-            /**
-             * Reset the view
-             * @alias module:views-list.List#reset
-             */
-            reset: function () {
-                this.stopListening();
-
-                this.clearList();
-
-                delete this.annotationViews;
-                delete this.tracks;
-                this.undelegateEvents();
             },
 
             toggleVisibility: function () {

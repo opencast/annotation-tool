@@ -261,7 +261,6 @@ define(["util",
                     "timerangeChange",
                     "repaintCustomTime",
                     "redraw",
-                    "reset",
                     "updateHeader");
 
                 this.playerAdapter = attr.playerAdapter;
@@ -1746,48 +1745,6 @@ define(["util",
                     }, this);
                 }
                 return rTrack;
-            },
-
-            /**
-             * Reset the view
-             * @alias module:views-timeline.TimelineView#reset
-             */
-            reset: function () {
-                var annotations;
-
-                // Remove all event listener
-                $(this.playerAdapter).unbind("pa_timeupdate", this.onPlayerTimeUpdate);
-                links.events.removeListener(this.timeline, "timechanged", this.onTimelineMoved);
-                links.events.removeListener(this.timeline, "change", this.onTimelineItemChanged);
-                links.events.removeListener(this.timeline, "delete", this.onTimelineItemDeleted);
-                annotationTool.removeTimeupdateListener(this.onPlayerTimeUpdate, 1);
-                $(window).unbind("resize", this.onWindowResize);
-
-                this.undelegateEvents();
-
-                if (this.createGroupModal) {
-                    this.createGroupModal.remove();
-                }
-
-                if (this.updateGroupModal) {
-                    this.updateGroupModal.remove();
-                }
-
-                this.tracks.each(function (track) {
-                    annotations = track.get("annotations");
-                    annotations.unbind("add");
-                }, this);
-
-                // Remove all elements
-                this.annotationItems = {};
-                this.trackItems = {};
-                this.extraItems = {};
-                this.preprocessedItems = {};
-                this.$el.find("#timeline").empty();
-                //this.timeline.deleteAllItems();
-                this.timeline = null;
-                delete this.timeline;
-                this.filteredItems = [];
             }
         });
         return Timeline;

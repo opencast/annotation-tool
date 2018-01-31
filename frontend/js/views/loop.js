@@ -493,17 +493,6 @@ define(["jquery",
                 });
 
                 this.loops.reset();
-            },
-
-            /**
-             * Reset the view
-             * @alias module:views-loop.Loop#reset
-             */
-            reset: function () {
-                this.resetLoops();
-                this.undelegateEvents();
-                this.isEnable = false;
-                this.$el.remove();
             }
         });
 

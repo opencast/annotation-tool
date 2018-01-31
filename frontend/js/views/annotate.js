@@ -181,7 +181,6 @@ define(["jquery",
                     // Set the current context for all these functions
                     _.bindAll(this,
                               "insert",
-                              "reset",
                               "onFocusIn",
                               "onFocusOut",
                               "changeTrack",
@@ -488,21 +487,6 @@ define(["jquery",
                     }
 
                     this.trigger("change-layout");
-                },
-
-                /**
-                 * Reset the view
-                 * @alias module:views-annotate.Annotate#reset
-                 */
-                reset: function () {
-                    delete this.tracks;
-                    this.undelegateEvents();
-
-                    if (annotationTool.isStructuredAnnotationEnabled()) {
-                        this.tabsContainerElement.empty();
-                        this.$el.find("#editSwitch input").attr("checked", false);
-                        this.tabsButtonsElement.find(".tab-button").remove();
-                    }
                 }
             });
         return Annotate;

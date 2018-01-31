@@ -406,29 +406,6 @@ define(["jquery",
              * @alias module:views-main.MainView#logout
              */
             logout: function () {
-                // Stop and rewind the video
-                annotationTool.playerAdapter.pause();
-                annotationTool.playerAdapter.setCurrentTime(0);
-
-                 // Hide logout button
-                $("a#logout").hide();
-
-                // Hide/remove the views
-                $("#video-container").hide();
-
-                this.timelineView.reset();
-                this.annotateView.reset();
-                this.listView.reset();
-                this.loginView.reset();
-
-                // Delete the different objects
-                delete annotationTool.tracks;
-                delete annotationTool.video;
-                delete annotationTool.user;
-
-                this.loadingBox.find(".bar").width("0%");
-                this.loadingBox.show();
-
                 annotationTool.users.each(function (user) {
 
                     Backbone.localSync("delete", user, {
@@ -442,12 +419,10 @@ define(["jquery",
 
                 });
 
-                annotationTool.modelsInitialized = false;
-
                 if (annotationTool.logoutUrl) {
-                    document.location = annotationTool.logoutUrl;
+                    window.location = annotationTool.logoutUrl;
                 } else {
-                    location.reload();
+                    window.location.reload();
                 }
             },
 
