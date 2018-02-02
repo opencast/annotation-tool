@@ -293,7 +293,6 @@ define(["jquery",
             },
 
             select: function () {
-                console.log("Tab selected");
                 _.each(this.categoryViews, function (view) {
                     view.updateInputWidth();
                 }, this);
