@@ -397,7 +397,7 @@ define(["jquery",
             switchEditModus: function (status) {
                 this.editModus = status;
 
-                this.$el.toggleClass("edit-on", status);
+                this.$el.find("#annotate-container").toggleClass("edit-on", status);
 
                 // trigger an event that all element switch in edit modus
                 annotationTool.trigger(annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, status);
