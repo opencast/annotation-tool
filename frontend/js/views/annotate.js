@@ -119,20 +119,6 @@ define(["jquery",
             tabsButtonTemplate: TabsButtonTemplate,
 
             /**
-             * Element containing the tabs buttons
-             * @alias module:views-annotate.Category#tabsButtonsElement
-             * @type {DOMElement}
-             */
-            tabsButtonsElement: $("ul#label-tabs-buttons"),
-
-            /**
-             * Element containing the tabs contents
-             * @alias module:views-annotate.Category#tabsContainerElement
-             * @type {DOMElement}
-             */
-            tabsContainerElement: $("div#label-tabs-contents"),
-
-            /**
              * Define if the view is or not in edit modus.
              * @alias module:views-annotate.Category#editModus
              * @type {boolean}
@@ -193,6 +179,8 @@ define(["jquery",
                 this.input = this.$el.find("#new-annotation");
                 this.freeTextElement = this.$el.find("#input-container");
                 this.categoriesElement = this.$el.find("#categories");
+                this.tabsButtonsElement = this.$el.find("ul#label-tabs-buttons");
+                this.tabsContainerElement = this.$el.find("div#label-tabs-contents");
 
                 // Print selected track
                 this.trackDIV = this.$el.find("span.currentTrack");
