@@ -210,9 +210,6 @@
     }
   },
   "startup": {
-    "creating annotation view": "Annotierfenster wird erstellt",
-    "creating list view": "Listenansicht wird erstellt",
-    "creating timeline": "Zeitleiste wird erstellt",
     "creating views": "Fenster werden erstellt",
     "get current user": "Aktueller Benutzer wird ermittelt",
     "get users saved locally": "Lokal gepseicherte Benutzer werden ermittelt",

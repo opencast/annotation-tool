@@ -210,9 +210,6 @@
     }
   },
   "startup": {
-    "creating annotation view": "Creating annotate view.",
-    "creating list view": "Creating list view.",
-    "creating timeline": "Creating timeline.",
     "creating views": "Start creating views.",
     "get current user": "Get current user.",
     "get users saved locally": "Get users saved locally.",
