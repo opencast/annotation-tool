@@ -259,6 +259,40 @@ define(["jquery",
                         this.listView.$el.show();
                     }
 
+                    // Test GoldenLayout
+                    var testLayout = new GoldenLayout({
+                        content: [{
+                            type: "row",
+                            content: [{
+                                type: "column",
+                                content: [{
+                                    type: "component",
+                                    componentName: "testComponent"
+                                }, {
+                                    type: "component",
+                                    componentName: "testComponent"
+                                }]
+                            }, {
+                                type: "column",
+                                content: [{
+                                    type: "component",
+                                    componentName: "annotate"
+                                }, {
+                                    type: "component",
+                                    componentName: "testComponent"
+                                }]
+                            }]
+                        }]
+                    }, document.getElementById("main-container"));
+                    testLayout.registerComponent("testComponent", function (container, componentState) {
+                        container.getElement().html("<h2>Test Component</h2>");
+                    });
+                    testLayout.registerComponent("annotate", _.bind(function (container, componentState) {
+                        this.annotateView = annotationTool.views.annotate =
+                            new AnnotateView({ el: container.getElement() });
+                    }, this));
+                    testLayout.init();
+
                     this.ready();
                 }, this);
 
@@ -268,36 +302,6 @@ define(["jquery",
                 } else {
                     $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY, loadVideoDependentViews);
                 }
-
-                // Test GoldenLayout
-                var testLayout = new GoldenLayout({
-                    content: [{
-                        type: "row",
-                        content: [{
-                            type: "column",
-                            content: [{
-                                type: "component",
-                                componentName: "testComponent"
-                            }, {
-                                type: "component",
-                                componentName: "testComponent"
-                            }]
-                        }, {
-                            type: "column",
-                            content: [{
-                                type: "component",
-                                componentName: "testComponent"
-                            }, {
-                                type: "component",
-                                componentName: "testComponent"
-                            }]
-                        }]
-                    }]
-                }, document.getElementById("main-container"));
-                testLayout.registerComponent("testComponent", function (container, componentState) {
-                    container.getElement().html("<h2>Test Component</h2>");
-                });
-                testLayout.init();
             },
 
             /**

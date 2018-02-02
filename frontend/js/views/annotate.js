@@ -95,14 +95,6 @@ define(["jquery",
          * @alias module:views-annotate.Annotate
          */
         Annotate = Backbone.View.extend({
-
-            /**
-             * Main container of the annotate view
-             * @alias module:views-annotate.Annotate#el
-             * @type {DOMElement}
-             */
-            el: $("div#annotate-container"),
-
             /**
              * Events to handle by the annotate view
              * @alias module:views-annotate.Annotate#events
