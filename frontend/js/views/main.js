@@ -59,6 +59,7 @@ define(["jquery",
         "models/video",
         "roles",
         "backbone",
+        "goldenlayout",
         "handlebars",
         "localstorage",
         "bootstrap"],
@@ -85,7 +86,8 @@ define(["jquery",
         Track,
         Video,
         ROLES,
-        Backbone
+        Backbone,
+        GoldenLayout
     ) {
         "use strict";
 
@@ -266,6 +268,36 @@ define(["jquery",
                 } else {
                     $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY, loadVideoDependentViews);
                 }
+
+                // Test GoldenLayout
+                var testLayout = new GoldenLayout({
+                    content: [{
+                        type: "row",
+                        content: [{
+                            type: "column",
+                            content: [{
+                                type: "component",
+                                componentName: "testComponent"
+                            }, {
+                                type: "component",
+                                componentName: "testComponent"
+                            }]
+                        }, {
+                            type: "column",
+                            content: [{
+                                type: "component",
+                                componentName: "testComponent"
+                            }, {
+                                type: "component",
+                                componentName: "testComponent"
+                            }]
+                        }]
+                    }]
+                }, document.getElementById("main-container"));
+                testLayout.registerComponent("testComponent", function (container, componentState) {
+                    container.getElement().html("<h2>Test Component</h2>");
+                });
+                testLayout.init();
             },
 
             /**
