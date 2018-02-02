@@ -24,7 +24,8 @@
  * @requires models-annotation
  * @requires collections-annotations
  * @requires collections-categories
- * @requires templates/annotate-tab-title.tmpl
+ * @requires templates/annotate
+ * @requires templates/annotate-tab-title
  * @requires ROLES
  * @requires ACCESS
  * @requires handlebars
@@ -38,13 +39,14 @@ define(["jquery",
         "collections/annotations",
         "collections/categories",
         "views/annotate-tab",
+        "templates/annotate",
         "templates/annotate-tab-title",
         "roles",
         "access",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
+    function ($, _, i18next, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, template, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
 
         "use strict";
 
@@ -184,6 +186,8 @@ define(["jquery",
 
                 // Parameter for stop on write
                 this.continueVideo = false;
+
+                this.$el.html(template());
 
                 // New annotation input
                 this.input = this.$el.find("#new-annotation");

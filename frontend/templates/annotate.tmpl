@@ -1,0 +1,37 @@
+<div class="window expanded" id="annotate-container">
+
+    <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container">
+                <span class="window-title" data-i18n="annotate on"></span>
+                <span class='currentTrack'>
+                    <span class="content" data-i18n="annotate.no selected track"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group" id="annotate-form">
+        <div class="no-track" data-i18n="annotate.select track prompt"></div>
+
+        <div id="input-container" class="insert-fields">
+            <textarea id="new-annotation" data-i18n="[placeholder]annotate.new.placeholder;[title]annotate.new.title" rows="3"></textarea>
+            <div class="stop-fields">
+                <label class="checkbox inline">
+                    <input id="pause-video" type="checkbox"> <span data-i18n="annotate.pause while editing"></span>
+                </label>
+            </div>
+            <button id="insert" type="button" class="btn" data-i18n="annotate.insert"></button>
+        </div>
+
+        <div id="categories">
+            <ul class="nav nav-tabs" id="label-tabs-buttons">
+                <label class="checkbox inline" id="editSwitch">
+                    <input type="checkbox" value="option1"> <span data-i18n="annotate.edit mode"></span>
+                </label>
+            </ul>
+
+            <div class="tab-content" id="label-tabs-contents"></div>
+        </div>
+    </div>
+</div>

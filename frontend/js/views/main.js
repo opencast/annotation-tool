@@ -242,13 +242,6 @@ define(["jquery",
                         this.loopController.$el.show();
                     }
 
-                    // Create view to annotate
-                    this.annotateView = new AnnotateView({ playerAdapter: annotationTool.playerAdapter });
-                    annotationTool.views.annotate = this.annotateView;
-                    if (this.layoutConfiguration.annotate) {
-                        this.annotateView.$el.show();
-                    }
-
                     // Create annotations list view
                     this.listView = new ListView();
                     annotationTool.views.list = this.listView;
