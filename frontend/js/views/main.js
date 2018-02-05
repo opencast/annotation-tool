@@ -242,6 +242,7 @@ define(["jquery",
                         this.loopController.$el.show();
                     }
 
+                    var self = this;
                     // Test GoldenLayout
                     var testLayout = new GoldenLayout({
                         content: [{
@@ -270,14 +271,14 @@ define(["jquery",
                     testLayout.registerComponent("testComponent", function (container, componentState) {
                         container.getElement().html("<h2>Test Component</h2>");
                     });
-                    testLayout.registerComponent("annotate", _.bind(function (container, componentState) {
-                        this.annotateView = annotationTool.views.annotate =
+                    testLayout.registerComponent("annotate", function (container, componentState) {
+                        self.annotateView = annotationTool.views.annotate =
                             new AnnotateView({ el: container.getElement() });
-                    }, this));
-                    testLayout.registerComponent("list", _.bind(function (container, componentState) {
-                        this.listView = annotationTool.views.list =
+                    });
+                    testLayout.registerComponent("list", function (container, componentState) {
+                        self.listView = annotationTool.views.list =
                             new ListView({ el: container.getElement() });
-                    }, this));
+                    });
                     testLayout.init();
 
                     this.ready();
