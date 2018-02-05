@@ -121,9 +121,13 @@ define(["jquery",
 
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
 
-                this.render();
+                this.$el.html(template());
+                this.scrollableArea = this.$el.find("#content-list-scroll");
+                this.$list = this.scrollableArea.find("#content-list");
 
                 this.addTrackList(this.tracks.getVisibleTracks());
+
+                this.render();
 
                 window.requestAnimationFrame(this.renderSelect);
 
@@ -430,11 +434,6 @@ define(["jquery",
              * @alias module:views-list.List#render
              */
             render: function () {
-                this.$el.html(template());
-
-                this.scrollableArea = this.$el.find("#content-list-scroll");
-                this.$list = this.scrollableArea.find("#content-list");
-
                 var $listContainer = this.$list.detach();
 
                 _.each(this.annotationViews, function (annView) {
