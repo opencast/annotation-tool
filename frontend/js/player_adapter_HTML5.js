@@ -42,7 +42,7 @@ define(["jquery",
             var self = this;
 
             // Check if the given target Element is valid
-            if (typeof targetElement === "undefined" || targetElement === null || !(targetElement instanceof HTMLElement)) {
+            if (!(targetElement instanceof HTMLElement)) {
                 throw "The given target element must not be null and have to be a vaild HTMLElement!";
             }
 
