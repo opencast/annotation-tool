@@ -463,7 +463,7 @@ define(["jquery",
                 modelJSON.track        = this.track.get("name");
                 modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
                 modelJSON.duration     = (modelJSON.duration || 0.0);
-                modelJSON.textHeight   = $("span.freetext").height();
+                modelJSON.textHeight   = this.$el.find("span.freetext").height();
 
                 if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                     category = annotationTool.video.get("categories").get(this.model.get("label").category.id);
