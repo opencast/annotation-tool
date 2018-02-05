@@ -242,13 +242,6 @@ define(["jquery",
                         this.loopController.$el.show();
                     }
 
-                    // Create annotations list view
-                    this.listView = new ListView();
-                    annotationTool.views.list = this.listView;
-                    if (this.layoutConfiguration.list) {
-                        this.listView.$el.show();
-                    }
-
                     // Test GoldenLayout
                     var testLayout = new GoldenLayout({
                         content: [{
@@ -269,7 +262,7 @@ define(["jquery",
                                     componentName: "annotate"
                                 }, {
                                     type: "component",
-                                    componentName: "testComponent"
+                                    componentName: "list"
                                 }]
                             }]
                         }]
@@ -280,6 +273,10 @@ define(["jquery",
                     testLayout.registerComponent("annotate", _.bind(function (container, componentState) {
                         this.annotateView = annotationTool.views.annotate =
                             new AnnotateView({ el: container.getElement() });
+                    }, this));
+                    testLayout.registerComponent("list", _.bind(function (container, componentState) {
+                        this.listView = annotationTool.views.list =
+                            new ListView({ el: container.getElement() });
                     }, this));
                     testLayout.init();
 
@@ -540,13 +537,6 @@ define(["jquery",
                         ? annotationTool.loopFunction.$el.height() + 180
                         : 145,
                     videoContainerHeight = $("#video-container").height();
-
-
-                // TODO: improve this part with a better layout management, more generic
-                if (this.layoutConfiguration.annotate && this.layoutConfiguration.list) {
-                    listContent = this.listView.$el.find("#content-list-scroll");
-                    listContent.css("max-height", windowHeight - annotationsContainerHeight - 120);
-                }
 
                 if (this.layoutConfiguration.timeline) {
                     this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));

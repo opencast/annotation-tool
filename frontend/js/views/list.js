@@ -32,10 +32,11 @@ define(["jquery",
         "collections/annotations",
         "collections/tracks",
         "views/list-annotation",
+        "templates/list",
         "backbone",
         "bootstrap"],
 
-    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, template, Backbone) {
 
         "use strict";
 
@@ -49,14 +50,6 @@ define(["jquery",
          * @alias module:views-list.List
          */
         var List = Backbone.View.extend({
-
-            /**
-             * Annotations list container of the appplication
-             * @alias module:views-list.List#el
-             * @type {DOMElement}
-             */
-            el: $("div#list-container"),
-
             /**
              * Annotation views list
              * @alias module:views-list.List#annotationViews
@@ -122,18 +115,15 @@ define(["jquery",
                 this.tracks          = annotationTool.video.get("tracks");
                 this.playerAdapter   = annotationTool.playerAdapter;
 
-                this.scrollableArea = this.$el.find("#content-list-scroll");
-                this.$list = this.scrollableArea.find("#content-list");
-
                 this.listenTo(this.tracks, "change:access", this.render);
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
-                this.addTrackList(this.tracks.getVisibleTracks());
-
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
 
                 this.render();
+
+                this.addTrackList(this.tracks.getVisibleTracks());
 
                 window.requestAnimationFrame(this.renderSelect);
 
@@ -440,6 +430,11 @@ define(["jquery",
              * @alias module:views-list.List#render
              */
             render: function () {
+                this.$el.html(template());
+
+                this.scrollableArea = this.$el.find("#content-list-scroll");
+                this.$list = this.scrollableArea.find("#content-list");
+
                 var $listContainer = this.$list.detach();
 
                 _.each(this.annotationViews, function (annView) {
