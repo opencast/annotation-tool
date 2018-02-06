@@ -56,3 +56,11 @@ have been updated. Use the [installation guide for Opencast](opencast-installati
     grunt dev
 
 See the console output for the URL and port that you can open in your webserver.
+
+## A note on the "local" versions
+
+Note that for the versions not integrated in opencast (`dev`, `build` and `demo`) to work,
+you have to provide a video file. You do this by attaching a `video` URL parameter to the URL.
+For example:
+
+    localhost:9001?video=http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4

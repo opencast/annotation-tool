@@ -231,7 +231,11 @@ define(["jquery",
              * @alias module:annotation-tool-configuration.Configuration.loadVideo
              */
             loadVideo: function () {
-                this.playerAdapter = new HTML5PlayerAdapter($("video")[0]);
+                var video = _.chain(window.location.search.slice(1).split("&"))
+                    .map(function (keyValuePair) { return keyValuePair.split("="); })
+                    .find(function (keyValuePair) { return keyValuePair[0] === "video"; })
+                    .value()[1];
+                this.playerAdapter = new HTML5PlayerAdapter($("video")[0], { src: video });
             }
         };
 
