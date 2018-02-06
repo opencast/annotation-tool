@@ -82,6 +82,11 @@ module.exports = function (grunt) {
                 files: ['<%= srcPath.js %>', '<%= srcPath.test_js %>'],
                 tasks: ['copy:target']
             },
+            // Watch configuration files
+            config: {
+                files: ['<%= currentProfile.config %>'],
+                tasks: ['copy:config']
+            },
             // Watch Templates files
             templates: {
                 files: ['<%= srcPath.tmpl %>'],
@@ -317,10 +322,19 @@ module.exports = function (grunt) {
         /** Task to run tasks in parrallel */
         concurrent: {
             dev: {
-                tasks: ['watch:js', 'watch:html', 'watch:less', 'watch:templates', 'watch:locales', 'watch:www', 'connect:dev'],
+                tasks: [
+                    'watch:js',
+                    'watch:config',
+                    'watch:html',
+                    'watch:less',
+                    'watch:templates',
+                    'watch:locales',
+                    'watch:www',
+                    'connect:dev'
+                ],
                 options: {
                     logConcurrentOutput: true,
-                    limit: 7
+                    limit: 8
                 }
             }
         },
@@ -417,6 +431,22 @@ module.exports = function (grunt) {
         }
     });
 
+    /**
+     * Set the profile in the configuration but also as a command line option,
+     * so that any child processes like those spawned by the `concurrent` task
+     * can pick it up, too.
+     */
+    function setProfile(profile) {
+        var config = grunt.config.get('profiles')[profile];
+        if (!config) {
+            grunt.fail.fatal('The profile "' + profileName + '" does not exist in the Gruntfile.');
+        }
+        grunt.config.set('currentProfile', config);
+        grunt.option('profile', profile);
+    }
+    var profile = grunt.option('profile');
+    if (profile) setProfile(profile);
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -446,35 +476,18 @@ module.exports = function (grunt) {
     grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
     grunt.registerTask('baseINTEGRATIONMINIFIED', [/*'blanket_qunit', */'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
 
-    grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
+    grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
-            var profileName = grunt.option('profile') || defaultProfile,
-                profileConfig;
 
             if (grunt.option('cv')) {
                 console.log('With version ' + grunt.option('cv'));
                 grunt.config.set('pkg.version', grunt.option('cv'));
             }
 
-            // If no profile name given, use the default one
-            if (typeof profileName == 'undefined') {
-                profileName = grunt.config.get('profiles.default');
-                grunt.option('profile', profileName);
-                grunt.log.writeln('No profile name given as option, use default one.');
-            }
-
-            // Get the profile configuration
-            profileConfig = grunt.config.get('profiles.' + profileName);
-
-            // Check if the profile exist
-            if (typeof profileConfig == 'undefined') {
-                grunt.fail.fatal('The profile "' + profileName + '" does not exist in the Gruntfile.');
-            }
-
-            grunt.log.writeln(name + ' task with profile "' + profileName + '" started! ');
-
             // Configure the tasks with given profiles
-            grunt.config.set('currentProfile', profileConfig);
+            if (!profile) profile = grunt.config.get("profiles.default");
+            setProfile(profile);
+            grunt.log.writeln(name + ' task with profile "' + profile + '" started! ');
 
             // Run the tasks
             grunt.task.run('base' + name.toUpperCase());
