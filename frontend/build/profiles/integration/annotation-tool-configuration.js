@@ -288,8 +288,7 @@ define(["jquery",
                  * @alias module:annotation-tool-configuration.Configuration.loadVideo
                  */
                 loadVideo: function () {
-                    var mediaPackageId = window.location.search.match(/id=(.+?)(&|$)/);
-                    if (mediaPackageId) mediaPackageId = decodeURIComponent(mediaPackageId[1]);
+                    var mediaPackageId = util.queryParameters.id;
 
                     // Enable cross-domain for jquery ajax query
                     $.support.cors = true;

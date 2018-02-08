@@ -21,6 +21,8 @@
 define(["jquery",
         "underscore",
         "backbone",
+        "util",
+        "roles",
         "collections/users",
         "views/login",
         "player_adapter_HTML5",
@@ -28,7 +30,7 @@ define(["jquery",
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, _, Backbone, Users, LoginView, HTML5PlayerAdapter) {
+    function ($, _, Backbone, util, ROLES, Users, LoginView, HTML5PlayerAdapter) {
 
         "use strict";
 
@@ -231,11 +233,7 @@ define(["jquery",
              * @alias module:annotation-tool-configuration.Configuration.loadVideo
              */
             loadVideo: function () {
-                var video = _.chain(window.location.search.slice(1).split("&"))
-                    .map(function (keyValuePair) { return keyValuePair.split("="); })
-                    .find(function (keyValuePair) { return keyValuePair[0] === "video"; })
-                    .value()[1];
-                this.playerAdapter = new HTML5PlayerAdapter($("video")[0], { src: video });
+                this.playerAdapter = new HTML5PlayerAdapter($("video")[0], { src: util.queryParameters.video });
             }
         };
 
