@@ -107,7 +107,7 @@ define(["jquery",
                     };
                 }
 
-                if (!User.validateEmail(attr.email)) {
+                if (!emailAddresses.parseOneAddress(attr.email)) {
                     return {
                         attribute: "email",
                         message: "Given email is not valid!"
@@ -115,19 +115,6 @@ define(["jquery",
                 }
 
                 return undefined;
-            }
-        },
-        // Class properties and functions
-        {
-            /**
-             * Check if the email address has a valid structure
-             * @static
-             * @alias module:models-user.User.validateEmail
-             * @param {String} email the email address to check
-             * @return {Boolean} true if the address is valid
-             */
-            validateEmail: function (email) {
-                return !!emailAddresses.parseOneAddress(email);
             }
         });
         return User;
