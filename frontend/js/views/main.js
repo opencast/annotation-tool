@@ -152,9 +152,6 @@ define(["jquery",
                                 "setupKeyboardShortcuts",
                                 "tracksSelection",
                                 "setLoadingProgress");
-                annotationTool.bind(annotationTool.EVENTS.NOTIFICATION, function (message) {
-                    this.setLoadingProgress(this.loadingPercent, message);
-                }, this);
 
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
 

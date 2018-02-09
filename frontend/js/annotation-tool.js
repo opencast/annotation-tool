@@ -59,7 +59,6 @@ define(["jquery",
                 ANNOTATION_SELECTION : "at:annotation-selection",
                 ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
                 MODELS_INITIALIZED   : "at:models-initialized",
-                NOTIFICATION         : "at:notification",
                 READY                : "at:ready",
                 TIMEUPDATE           : "at:timeupdate",
                 USER_LOGGED          : "at:logged"
@@ -854,7 +853,7 @@ define(["jquery",
              */
             importTracks: function (tracks) {
                 _.each(tracks, function (track) {
-                    this.trigger(this.EVENTS.NOTIFICATION, "Importing track " + track.name);
+                    this.setLoadingProgress(this.loadingPercent, "Importing track " + track.name);
                     if (_.isUndefined(this.getTrack(track.id))) {
                         this.video.get("tracks").create(track);
                     } else {
