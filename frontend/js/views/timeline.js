@@ -1192,7 +1192,7 @@ define(["util",
             selectAnnotation: function (event) {
                 var id = event.target.dataset["annotationid"],
                     trackId = event.target.dataset["trackid"];
-                annotationTool.onClickSelectionById([{ id: id, trackId: trackId }], true, true);
+                annotationTool.setSelectionById([{ id: id, trackId: trackId }], true, true);
             },
 
             /**

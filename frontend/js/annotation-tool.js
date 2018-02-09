@@ -148,10 +148,7 @@ define(["jquery",
                           "importTracks",
                           "importCategories",
                           "hasSelection",
-                          "onClickSelectionById",
                           "onDestroyRemoveSelection",
-                          "onMouseDown",
-                          "onMouseUp",
                           "onTimeUpdate",
                           "selectTrack",
                           "setSelection",
@@ -227,9 +224,6 @@ define(["jquery",
                 this.views.main = new MainView(this.playerAdapter);
 
                 $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
-
-                $(window).bind("mousedown", this.onMouseDown);
-                $(window).bind("mouseup", this.onMouseUp);
 
                 return this;
             },
@@ -322,26 +316,6 @@ define(["jquery",
             },
 
             /**
-             * Listener for mouse down event to get infos about the click
-             * @alias   annotationTool.onMouseDown
-             */
-            onMouseDown: function () {
-                this.timeMouseDown = undefined;
-                this.startMouseDown = new Date();
-                this.isMouseDown = true;
-            },
-
-            /**
-             * Listener for mouse up event to get infos about the click
-             * @alias   annotationTool.onMouseUp
-             */
-            onMouseUp: function () {
-                this.timeMouseDown = new Date() - this.startMouseDown;
-                this.startMouseDown = undefined;
-                this.isMouseDown = false;
-            },
-
-            /**
              * Listen and retrigger timeupdate event from player adapter events with added intervals
              * @alias   annotationTool.onTimeUpdate
              */
@@ -431,28 +405,6 @@ define(["jquery",
                 }
 
                 this.stopListening(this, timeupdateEvent, callback);
-            },
-
-            ///////////////////////////////////////////////
-            // Function related to annotation selection  //
-            ///////////////////////////////////////////////
-
-            /**
-             * Proxy to select annotation by Id on mouse click
-             * @alias   annotationTool.onClickSelectionById
-             * @param {Array} selection The new selection. This is an array of object containing the id of the annotation and optionnaly the track id. See example below.
-             * @example
-             * {
-             *     id: "a123", // The id of the annotations
-             *     trackId: "b23", // The track id (optional)
-             * }
-             * @param {Boolean} moveTo define if the video should be move to the start point of the selection
-             * @param {Boolean} isManuallySelected define if the selection has been done manually or through a video timeupdate
-             */
-            onClickSelectionById: function (selectedIds, moveTo, isManuallySelected) {
-                if (!this.isMouseDown && this.timeMouseDown < 300) {
-                    this.setSelectionById(selectedIds, moveTo, isManuallySelected);
-                }
             },
 
             /**
