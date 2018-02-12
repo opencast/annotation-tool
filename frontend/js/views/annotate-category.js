@@ -326,7 +326,7 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onFocusOut
              */
             onFocusOut: function () {
-                this.model.set("name", _.escape(this.nameInput.val()), { wait: true });
+                this.model.set("name", _.escape(this.nameInput.val()));
                 this.model.save({ wait: true });
             },
 
