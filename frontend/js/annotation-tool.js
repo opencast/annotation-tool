@@ -696,21 +696,6 @@ define(["jquery",
             //////////////
 
             /**
-             * Create a new track
-             * @alias   annotationTool.createTrack
-             * @param  {Object} parameters The content of the new track
-             * @param  {Object} (options) The options for the Backone.js options for the model creation
-             * @return {Object}  The created track
-             */
-            createTrack: function (parameters, options) {
-                var defaultOptions = {
-                    wait: true
-                }; // TODO define default options for all tracks
-
-                return this.video.get("tracks").create(parameters, (_.isUndefined(options) ? defaultOptions : options));
-            },
-
-            /**
              * Create an annotation on the selected track.
              * If the `params` do not contain a user (`created_by`), the new annotation belongs to the current user.
              * If it does not specify a `start` time, the current time of the playhead is used.
@@ -881,7 +866,7 @@ define(["jquery",
                 _.each(tracks, function (track) {
                     this.trigger(this.EVENTS.NOTIFICATION, "Importing track " + track.name);
                     if (_.isUndefined(this.getTrack(track.id))) {
-                        this.createTrack(track);
+                        this.video.get("tracks").create(track);
                     } else {
                         console.info("Can not import track %s: A track with this ID already exist.", track.id);
                     }
