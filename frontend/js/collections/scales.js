@@ -60,7 +60,7 @@ define(["jquery",
              * @alias module:collections-scales.Scales#initialize
              */
             initialize: function (models, video) {
-                _.bindAll(this, "setUrl", "toExportJSON");
+                _.bindAll(this, "setUrl");
                 this.setUrl(video);
             },
 
@@ -99,21 +99,6 @@ define(["jquery",
                 this.each(function (scale) {
                     scale.setUrl();
                 });
-            },
-
-            /**
-             * Get the collection as array with the model in JSON, ready to be exported
-             * @alias module:collections-scales.Scales#toExportJSON
-             * @return {array} Array of json models
-             */
-            toExportJSON: function () {
-                var scalesForExport = [];
-
-                this.each(function (scale) {
-                    scalesForExport.push(scale.toExportJSON());
-                });
-
-                return scalesForExport;
             }
         });
 

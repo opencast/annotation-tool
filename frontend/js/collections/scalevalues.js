@@ -61,7 +61,7 @@ define(["jquery",
              * @alias module:collections-scalevalues.ScaleValues#initialize
              */
             initialize: function (models, scale) {
-                _.bindAll(this, "setUrl", "toExportJSON");
+                _.bindAll(this, "setUrl");
                 this.scale = scale;
                 this.setUrl(scale);
             },
@@ -85,21 +85,6 @@ define(["jquery",
 
             comparator: function (scaleValue) {
                 return scaleValue.get("order");
-            },
-
-            /**
-             * Get the collection as array with the model in JSON, ready to be exported
-             * @alias module:collections-scalevalues.ScaleValues#toExportJSON
-             * @return {array} Array of json models
-             */
-            toExportJSON: function () {
-                var valueForExport = [];
-
-                this.each(function (value) {
-                    valueForExport.push(value.toExportJSON());
-                });
-
-                return valueForExport;
             },
 
             /**

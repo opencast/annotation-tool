@@ -60,9 +60,7 @@ define(["jquery",
              * @alias module:collections-labels.Labels#initialize
              */
             initialize: function (models, category) {
-                _.bindAll(this,
-                        "setUrl",
-                        "toExportJSON");
+                _.bindAll(this, "setUrl");
                 this.setUrl(category);
             },
 
@@ -80,20 +78,6 @@ define(["jquery",
                 } else {
                     return null;
                 }
-            },
-
-            /**
-             * Get the collection as array with the model in JSON, ready to be exported
-             * @alias module:collections-labels.Labels#toExportJSON
-             * @return {array} Array of json models
-             */
-            toExportJSON: function () {
-                var labelsForExport = [];
-
-                this.each(function (label) {
-                    labelsForExport.push(label.toExportJSON());
-                });
-                return labelsForExport;
             },
 
             /**

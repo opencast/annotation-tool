@@ -60,8 +60,7 @@ define(["jquery",
              * @alias module:collections-categories.Categories#initialize
              */
             initialize: function (models, video) {
-                _.bindAll(this, "setUrl",
-                                "toExportJSON");
+                _.bindAll(this, "setUrl");
 
                 this.setUrl(video);
             },
@@ -121,22 +120,6 @@ define(["jquery",
              */
             getPublic: function () {
                 return this.where({ isPublic: true });
-            },
-
-            /**
-             * Get the collection as array with the model in JSON, ready to be exported
-             * @alias module:collections-categories.Categories#toExportJSON
-             * @param {boolean} withScales Define if the scales have to be included
-             * @return {array} Array of json models
-             */
-            toExportJSON: function (withScales) {
-                var categoriesForExport = [];
-
-                this.each(function (category) {
-                    categoriesForExport.push(category.toExportJSON(withScales));
-                });
-
-                return categoriesForExport;
             }
         });
 
