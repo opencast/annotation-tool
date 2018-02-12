@@ -88,10 +88,8 @@ define(["jquery",
             setUrl: function (video) {
                 if (!video || !video.collection) { // If a template
                     this.url = window.annotationTool.restEndpointsUrl + "/scales";
-                    this.isTemplate = true;
                 } else {  // If not a template, we add video url
                     this.url = video.url() + "/scales";
-                    this.isTemplate = false;
 
                     if (annotationTool.localStorage) {
                         this.localStorage = new Backbone.LocalStorage(this.url);
