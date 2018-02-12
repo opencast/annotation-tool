@@ -613,12 +613,6 @@ define(["util",
                     return;
                 }
 
-                // If annotation has not id, we save it to have an id
-                if (!annotation.id) {
-                    annotation.bind("ready", this.addAnnotation, this);
-                    return;
-                }
-
                 this.annotationItems[annotation.id] = this.generateItem(annotation, track);
 
                 if (!isList) {
