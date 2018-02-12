@@ -17,11 +17,14 @@
  * A module containing helper functions needed in many different places
  * @module util
  * @requires underscore
+ * @requires moment
  */
 define([
-    "underscore"
+    "underscore",
+    "moment"
 ], function (
-    _
+    _,
+    moment
 ) { "use strict";
 
 var util = {
@@ -49,6 +52,15 @@ var util = {
     parseDate: function (value) {
         var date = new Date(value);
         return _.isNaN(date.getTime()) ? undefined : date;
+    },
+
+    /**
+     * Formats the given date
+     * @param {Date} date The date to format
+     * @return {String} A textual representation of the given date
+     */
+    formatDate: function (date) {
+        return moment(date).format("L");
     },
 
     /**

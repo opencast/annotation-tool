@@ -20,7 +20,6 @@
  * @requires jQuery
  * @requires backbone
  * @requires i18next
- * @requires moment
  * @requires views-main
  * @requires views-alert
  * @requires views-list-annotation
@@ -34,7 +33,6 @@ define(["jquery",
         "underscore",
         "backbone",
         "i18next",
-        "moment",
         "collections/videos",
         "views/main",
         "views/alert",
@@ -47,7 +45,7 @@ define(["jquery",
         "annotation-sync",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, moment, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ROLES, ColorsManager, annotationSync) {
+    function ($, _, Backbone, i18next, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ROLES, ColorsManager, annotationSync) {
 
         "use strict";
 
@@ -235,14 +233,6 @@ define(["jquery",
                 $(window).bind("mouseup", this.onMouseUp);
 
                 return this;
-            },
-
-            /**
-             * Formats the given date
-             * @alias annotationTool.formatDate
-             */
-            formatDate: function (date) {
-                return moment(date).format("L");
             },
 
             /**

@@ -1,4 +1,4 @@
-define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _, i18next, ROLES) {
+define(["handlebars", "underscore", "i18next", "util", "roles"], function (Handlebars, _, i18next, util, ROLES) {
 
     /**
      * Expose the global annotation tool to the templates to access configuration.
@@ -65,7 +65,7 @@ define(["handlebars", "underscore", "i18next", "roles"], function (Handlebars, _
      * @return {string}      The formated date
      */
     Handlebars.registerHelper("formatDate", function (date) {
-        return annotationTool.formatDate(date);
+        return util.formatDate(date);
     });
 
     /**
