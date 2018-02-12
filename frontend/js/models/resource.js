@@ -41,6 +41,7 @@ var Resource = Backbone.Model.extend({
      * @param {object} attr Object literal containing the model initialion attributes.
      */
     initialize: function (attr) {
+        if (!attr) attr = {};
         if (window.annotationTool.localStorage) {
             if (annotationTool.user) {
                 if (!attr.created_by) {

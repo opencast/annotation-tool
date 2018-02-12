@@ -68,6 +68,7 @@ define(["jquery",
                     throw "'user_extid' and 'nickname' attributes are required";
                 }
 
+                if (!attr) attr = {};
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (!attr.role && annotationTool.getUserRole) {
