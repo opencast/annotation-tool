@@ -63,11 +63,6 @@ define(["jquery",
              * @param {Object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
-                if (_.isUndefined(attr.user_extid) || attr.user_extid === "" ||
-                   _.isUndefined(attr.nickname) || attr.nickname === "") {
-                    throw "'user_extid' and 'nickname' attributes are required";
-                }
-
                 if (!attr) attr = {};
                 Resource.prototype.initialize.apply(this, arguments);
 
