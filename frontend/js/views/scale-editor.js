@@ -348,9 +348,6 @@ define(["jquery",
                     annotationTool.video.get("scales").add(this.currentScale);
                     this.currentScale.save({ async: false });
                     this.currentScale.setUrl();
-                    this.currentScale.get("scaleValues").each(function (scaleValue) {
-                        scaleValue.save();
-                    });
                     this.currentScaleId = this.currentScale.get("id");
                     this.$el.find("select#scale-id").removeAttr("disabled");
 
