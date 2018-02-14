@@ -338,16 +338,13 @@ define(["jquery",
                 createScale: function () {
                     this.isInEditMode = true;
 
-                    this.currentScale = new Scale({
+                    this.currentScale = annotationTool.video.get("scales").create({
                         name  : i18next.t("scale editor.new scale.name"),
                         access: this.currentCategory.get("access")
                     });
 
                     this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
 
-                    annotationTool.video.get("scales").add(this.currentScale);
-                    this.currentScale.save({ async: false });
-                    this.currentScale.setUrl();
                     this.currentScaleId = this.currentScale.get("id");
                     this.$el.find("select#scale-id").removeAttr("disabled");
 
