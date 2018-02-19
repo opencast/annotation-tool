@@ -21,13 +21,11 @@
  * @requires underscore
  * @requires models-category
  * @requires backbone
- * @requires localstorage
  */
 define(["jquery",
         "underscore",
         "models/category",
-        "backbone",
-        "localstorage"],
+        "backbone"],
 
     function ($, _, Category, Backbone) {
 
@@ -49,20 +47,20 @@ define(["jquery",
             model: Category,
 
             /**
-             * Localstorage container for the collection
-             * @alias module:collections-categories.Categories#localStorage
-             * @type {Backbone.LocalStorgage}
-             */
-            localStorage: new Backbone.LocalStorage("Categories"),
-
-            /**
              * constructor
              * @alias module:collections-categories.Categories#initialize
              */
             initialize: function (models, video) {
-                _.bindAll(this, "setUrl");
+                this.video = video;
+            },
 
-                this.setUrl(video);
+            /**
+             * Get the url for this collection
+             * @alias module:collections-categories.Categories#url
+             * @return {String} The url of this collection
+             */
+            url: function () {
+                return (this.video ? _.result(this.video, "url") : "") + "/categories";
             },
 
             /**
@@ -79,29 +77,6 @@ define(["jquery",
                 } else {
                     return null;
                 }
-            },
-
-            /**
-             * Define the url from the collection with the given video
-             * @alias module:collections-categories.Categories#setUrl
-             * @param {Video} Video containing the categories
-             */
-            setUrl: function (video) {
-                if (!video || !video.collection) { // If a template
-                    this.url = window.annotationTool.restEndpointsUrl + "/categories";
-                    this.isTemplate = true;
-                } else {  // If not a template, we add video url
-                    this.url = video.url() + "/categories";
-                    this.isTemplate = false;
-                }
-
-                if (annotationTool && annotationTool.localStorage) {
-                    this.localStorage = new Backbone.LocalStorage(this.url);
-                }
-
-                this.each(function (category) {
-                    category.setUrl();
-                });
             },
 
             /**

@@ -158,7 +158,6 @@ define(["jquery",
                 var invalidResource = Resource.prototype.validate.call(this, attr, {
                     onIdChange: function () {
                         this.trigger("ready", this);
-                        this.setUrl();
                     }
                 });
                 if (invalidResource) return invalidResource;
@@ -220,16 +219,6 @@ define(["jquery",
                             });
                         }
                     }
-                }
-            },
-
-            /**
-             * Modify the current url for the annotations collection
-             * @alias module:models-annotation.Annotation#setUrl
-             */
-            setUrl: function () {
-                if (this.get("comments")) {
-                    this.get("comments").setUrl(this);
                 }
             },
 

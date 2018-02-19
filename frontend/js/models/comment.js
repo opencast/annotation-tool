@@ -84,7 +84,6 @@ define(["jquery",
 
                 var invalidResource = Resource.prototype.validate.call(this, attr, {
                     onIdChange: function () {
-                        this.replies.setUrl(this.collection.annotation, this);
                         this.replies.fetch();
                     }
                 });
@@ -95,6 +94,17 @@ define(["jquery",
                 }
 
                 return undefined;
+            },
+
+            /**
+             * The URL root of this model
+             * @alias module:models-comment.Comment#urlRoot
+             * @return {string} The URL root of this model
+             */
+            urlRoot: function () {
+                return this.isNew()
+                    ? _.result(this.collection, "url")
+                    : _.result(this.collection, "urlRoot");
             }
         });
 

@@ -99,7 +99,6 @@ define(["jquery",
             validate: function (attr) {
                 var invalidResource = Resource.prototype.validate.call(this, attr, {
                     onIdChange: function () {
-                        this.setUrl();
                         this.attributes.ready = true;
                         this.trigger("ready", this);
                     }
@@ -136,16 +135,6 @@ define(["jquery",
                     annotations.fetch({async: false,
                                        add: true,
                                        success: success});
-                }
-            },
-
-            /**
-             * Modify the current url for the tracks collection
-             * @alias module:models-track.Track#setUrl
-             */
-            setUrl: function () {
-                if (this.attributes.annotations) {
-                    this.attributes.annotations.setUrl(this);
                 }
             },
 

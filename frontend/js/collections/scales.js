@@ -21,13 +21,11 @@
  * @requires underscore
  * @requires models-scale
  * @requires backbone
- * @requires localstorage
  */
 define(["jquery",
         "underscore",
         "models/scale",
-        "backbone",
-        "localstorage"],
+        "backbone"],
 
     function ($, _, Scale, Backbone) {
 
@@ -49,19 +47,11 @@ define(["jquery",
             model: Scale,
 
             /**
-             * Localstorage container for the collection
-             * @alias module:collections-scales.Scales#localStorage
-             * @type {Backbone.LocalStorgage}
-             */
-            localStorage: new Backbone.LocalStorage("Scales"),
-
-            /**
              * constructor
              * @alias module:collections-scales.Scales#initialize
              */
             initialize: function (models, video) {
-                _.bindAll(this, "setUrl");
-                this.setUrl(video);
+                this.video = video;
             },
 
             /**
@@ -81,24 +71,12 @@ define(["jquery",
             },
 
             /**
-             * Define the url from the collection with the given video
-             * @alias module:collections-scales.Scales#setUrl
-             * @param {Video} Video containing the scales
+             * Get the url for this collection
+             * @alias module:collections-scales.Scales#url
+             * @return {String} The url of this collection
              */
-            setUrl: function (video) {
-                if (!video || !video.collection) { // If a template
-                    this.url = window.annotationTool.restEndpointsUrl + "/scales";
-                } else {  // If not a template, we add video url
-                    this.url = video.url() + "/scales";
-
-                    if (annotationTool.localStorage) {
-                        this.localStorage = new Backbone.LocalStorage(this.url);
-                    }
-                }
-
-                this.each(function (scale) {
-                    scale.setUrl();
-                });
+            url: function () {
+                return (this.video ? _.result(this.video, "url") : "") + "/scales";
             }
         });
 
