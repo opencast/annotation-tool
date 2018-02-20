@@ -667,7 +667,7 @@ define(["jquery",
 
                 this.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
                 this.render();
-                this.commentContainer.$find("textarea").focus();
+                this.commentContainer.$el.find("textarea").focus();
             },
 
             /**
