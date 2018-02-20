@@ -8,7 +8,7 @@ At first you need to checkout the annotation tool with GIT:
 
     mkdir /opt/annotation
     cd /opt/annotation
-    git clone https://github.com/JulianKniephoff/annotation-tool.git
+    git clone https://github.com/opencast/annotation-tool.git
 
 Make sure you have installed [Node.js](https://nodejs.org/en/download/), which you might find as a binary package in a repo also, and [Grunt](http://gruntjs.com/getting-started) on your machine.
 

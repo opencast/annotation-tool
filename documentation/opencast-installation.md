@@ -21,7 +21,7 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 
 #### Cloning the Annotation Tool Git repository
 
-    git clone https://github.com/JulianKniephoff/annotation-tool.git
+    git clone https://github.com/opencast/annotation-tool.git
 
 ### Building the Annotation Tool
 
