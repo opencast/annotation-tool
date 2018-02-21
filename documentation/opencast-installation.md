@@ -41,7 +41,7 @@ where `${version}` is to be replaced by the version of the annotation tool.
 
 You can conveniently install it using the following Karaf shell commands:
 
-    feature:repo-add eature:repo-add mvn:org.opencast.annotation/karaf-feature/${version}/xml/features
+    feature:repo-add mvn:org.opencast.annotation/karaf-feature/${version}/xml/features
     feature:install opencast-annotation-tool
 
 Unfortunately this will only install the tool for the current session; it will not survive an Opencast restart.
