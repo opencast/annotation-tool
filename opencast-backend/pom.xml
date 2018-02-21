@@ -1,0 +1,36 @@
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XML-instance"
+  xsi:Location="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opencast</groupId>
+    <artifactId>annotation</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+  <groupId>org.opencast.annotation</groupId>
+  <artifactId>opencast-backend</artifactId>
+  <packaging>pom</packaging>
+
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
+
+  <modules>
+    <module>annotation-api</module>
+    <module>annotation-impl</module>
+    <module>annotation-tool</module>
+    <module>karaf-feature</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>matterhorn-common</artifactId>
+        <version>${opencast.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

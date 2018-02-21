@@ -21,13 +21,66 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 
 #### Cloning the Annotation Tool Git repository
 
-    git clone https://github.com/JulianKniephoff/annotation-tool.git
+    git clone https://github.com/opencast/annotation-tool.git
 
 ### Building the Annotation Tool
 
     mvn clean install -DdeployTo=<opencast-dir> -Dopencast.version=<your Opencast version number>
 
-This should build the frontend, include it into the Opencast modules and copies the JARs to your Opencast installation.
+This should build the frontend, include it into the Opencast modules and copies the JARs
+to your Opencast installation.
+
+#### As a Karaf Feature
+
+As an alternative, the Annotation Tool is also packaged as a Karaf feature
+under the name `opencast-annotation-tool` and the Maven coordinates
+
+    org.opencast.annotation:karaf-feature:${version}:xml:features
+
+where `${version}` is to be replaced by the version of the annotation tool.
+
+You can conveniently install it using the following Karaf shell commands:
+
+    feature:repo-add eature:repo-add mvn:org.opencast.annotation/karaf-feature/${version}/xml/features
+    feature:install opencast-annotation-tool
+
+Unfortunately this will only install the tool for the current session; it will not survive an Opencast restart.
+To install it permanently into your system, open up `etc/org.apache.karaf.features.cfg` in your Opencast directory
+and make the following modifications:
+
+Add the feature repository already mentioned above to the list aptly named `featureRepositories`.
+For example if it looks like this:
+
+    featuresRepositories = \
+        mvn:org.opencastproject.assemblies/opencast-karaf-features/4.1/xml/features, \
+        mvn:org.apache.karaf.features/enterprise/4.0.9/xml/features, \
+        mvn:org.apache.cxf.karaf/apache-cxf/3.1.12/xml/features, \
+        mvn:org.apache.karaf.features/framework/4.0.9/xml/features, \
+        mvn:org.apache.karaf.features/standard/4.0.9/xml/features, \
+        mvn:org.ops4j.pax.web/pax-web-features/4.3.0/xml/features
+
+change it to this (the change is in the last two lines):
+
+    featuresRepositories = \
+        mvn:org.opencastproject.assemblies/opencast-karaf-features/4.1/xml/features, \
+        mvn:org.apache.karaf.features/enterprise/4.0.9/xml/features, \
+        mvn:org.apache.cxf.karaf/apache-cxf/3.1.12/xml/features, \
+        mvn:org.apache.karaf.features/framework/4.0.9/xml/features, \
+        mvn:org.apache.karaf.features/standard/4.0.9/xml/features, \
+        mvn:org.ops4j.pax.web/pax-web-features/4.3.0/xml/features, \
+        mvn:org.opencast.annotation/karaf-feature/${version}/xml/features
+
+Note that the version numbers appearing in your configuration file
+will probably differ from those in this example snippet!
+
+This enables you to say `feature:install opencast-annotation-tool` at the Karaf console
+without the `repo-add` step mentioned above. To start the Annotation Tool automatically,
+add `opencast-annotation-tool` to the list `featuresBoot` in the same configuration file
+mentioned above in the same fashion to how you added the repository.
+
+Note that for this to work, you need to have built the Annotation Tool at least once,
+so that the corresponding Maven artifacts can be found by Karaf, since they are currently not
+in any remote repository!
 
 ## Configuration of Opencast
 

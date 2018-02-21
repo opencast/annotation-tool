@@ -11,11 +11,9 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <properties>
-    <matterhorn.basedir>${project.basedir}/../..</matterhorn.basedir>
     <checkstyle.skip>true</checkstyle.skip>
     <nexus.npm>${opencast.nexus.url}/nexus/content/repositories/npmjs/</nexus.npm>
   </properties>
-  <dependencies/>
 
   <profiles>
     <profile>
@@ -76,4 +74,3 @@
     </profile>
   </profiles>
 </project>
-

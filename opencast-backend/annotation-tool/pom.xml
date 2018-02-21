@@ -6,13 +6,11 @@
   <packaging>bundle</packaging>
   <name>opencast-annotation-tool</name>
   <parent>
-    <groupId>org.opencast</groupId>
-    <artifactId>annotation</artifactId>
+    <groupId>org.opencast.annotation</groupId>
+    <artifactId>opencast-backend</artifactId>
     <version>1.1-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
   </parent>
   <properties>
-    <matterhorn.basedir>${project.basedir}/../..</matterhorn.basedir>
     <checkstyle.skip>true</checkstyle.skip>
   </properties>
   <dependencies>
@@ -24,8 +22,6 @@
     <dependency>
       <groupId>org.opencastproject</groupId>
       <artifactId>matterhorn-common</artifactId>
-      <version>${opencast.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -73,4 +69,3 @@
     </plugins>
   </build>
 </project>
-

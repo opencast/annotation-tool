@@ -1,0 +1,58 @@
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opencast.annotation</groupId>
+    <artifactId>opencast-backend</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>karaf-feature</artifactId>
+  <packaging>feature</packaging>
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>${karaf.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <primaryFeatureName>opencast-annotation-tool</primaryFeatureName>
+          <!--
+            This is currently necessary
+            since Maven and OSGi dependencies
+            in both, the annotation tool and Opencast itself,
+            are not declared cleanly enough
+            for the default behavior to work.
+            For now, we just assume
+            all the necessary bundles
+            to already be loaded.
+          -->
+          <includeTransitiveDependency>false</includeTransitiveDependency>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.opencast</groupId>
+      <artifactId>opencast-annotation-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencast</groupId>
+      <artifactId>opencast-annotation-impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencast</groupId>
+      <artifactId>opencast-annotation-tool</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>
