@@ -21,14 +21,11 @@
  * @requires underscore
  * @requires models-scalevalue
  * @requires backbone
- * @requires localstorage
  */
 define(["jquery",
         "underscore",
         "models/scalevalue",
-        "backbone",
-        "localstorage"],
-
+        "backbone"],
 
     function ($, _, ScaleValue, Backbone) {
 
@@ -50,20 +47,11 @@ define(["jquery",
             model: ScaleValue,
 
             /**
-             * Localstorage container for the collection
-             * @alias module:collections-scalevalues.ScaleValues#localStorage
-             * @type {Backbone.LocalStorgage}
-             */
-            localStorage: new Backbone.LocalStorage("ScaleValue"),
-
-            /**
              * constructor
              * @alias module:collections-scalevalues.ScaleValues#initialize
              */
             initialize: function (models, scale) {
-                _.bindAll(this, "setUrl");
                 this.scale = scale;
-                this.setUrl(scale);
             },
 
             /**
@@ -82,28 +70,17 @@ define(["jquery",
                 }
             },
 
-
             comparator: function (scaleValue) {
                 return scaleValue.get("order");
             },
 
             /**
-             * Define the url from the collection with the given scale
-             * @alias module:collections-scalevalues.ScaleValues#setUrl
-             * @param {Scale} Scale containing the scalevalues
+             * Get the url for this collection
+             * @alias module:collections-scalevalues.ScaleValues#url
+             * @return {String} The url of this collection
              */
-            setUrl: function (scale) {
-                if (!scale && !this.scale) {
-                    throw "The parent scale of the scale value must be given!";
-                } else if (scale && scale.collection) {
-                    this.url = scale.url() + "/scalevalues";
-                } else if (this.scale.collection) {
-                    this.url = this.scale.url() + "/scalevalues";
-                }
-
-                if (annotationTool.localStorage) {
-                    this.localStorage = new Backbone.LocalStorage(this.url);
-                }
+            url: function () {
+                return _.result(this.scale, "url") + "/scalevalues";
             }
         });
 

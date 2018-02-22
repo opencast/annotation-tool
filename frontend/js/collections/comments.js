@@ -21,24 +21,15 @@
  * @requires underscore
  * @requires models-comment
  * @requires backbone
- * @requires localstorage
  */
 define(["jquery",
         "underscore",
         "models/comment",
-        "backbone",
-        "localstorage"],
+        "backbone"],
 
     function ($, _, Comment, Backbone) {
 
         "use strict";
-
-        function fixUrlForReplies(options) {
-            if (!this.replyTo) return options;
-            return _.extend({
-                url: _.result(this, "url") + "/" + this.replyTo.id + "/replies"
-            }, options);
-        }
 
         /**
          * @constructor
@@ -56,21 +47,12 @@ define(["jquery",
             model: Comment,
 
             /**
-             * Localstorage container for the collection
-             * @alias module:collections-comments.Comments#localStorage
-             * @type {Backbone.LocalStorgage}
-             */
-            localStorage: new Backbone.LocalStorage("Comments"),
-
-            /**
              * constructor
              * @alias module:collections-comments.Comments#initialize
              */
             initialize: function (models, options) {
-                _.bindAll(this, "setUrl");
                 this.annotation = options.annotation;
                 this.replyTo = options.replyTo;
-                this.setUrl(this.annotation);
             },
 
             /**
@@ -90,43 +72,26 @@ define(["jquery",
             },
 
             /**
-             * Define the url from the collection with the given video
-             * @alias module:collections-comments.Comments#setUrl
-             * @param {@link module:models-annotation.Annotation} annotation The annotation containing the comments
-             * @param {@link module:models-comment.Comment} replyTo The comment that this collection holds the replies to
+             * Get the url for this collection
+             * @alias module:collections-comments.Comments#url
+             * @return {String} The url of this collection
              */
-            setUrl: function (annotation, replyTo) {
-                if (!annotation) {
-                    throw "The parent annotation of the comments must be given!";
-                } else if (annotation.collection) {
-                    this.url = annotation.url() + "/comments";
-                }
-
-                if (window.annotationTool && annotationTool.localStorage) {
-                    var localStorageUrl = this.url;
-                    if (replyTo) {
-                        localStorageUrl += this.replyTo.id + "/replies";
-                    }
-                    this.localStorage = new Backbone.LocalStorage(localStorageUrl);
-                }
+            url: function () {
+                return this.replyTo
+                    ? _.result(this.replyTo, "url") + "/replies"
+                    : _.result(this.annotation, "url") + "/comments";
             },
 
             /**
-             * Override in order to use the right URL for replies.
-             * @alias module:collections-comments.Comments#fetch
+             * The "root" URL of this collection.
+             * This is needed to update comments, even when they are in a collection of replies.
+             * See {@link module:models-Comment.Comment#urlRoot}.
+             * Note: This is only named `urlRoot` to suggest a relation to Backbones URL generation mechanism;
+             * on collections this name has no meaning normally.
+             * @alias module:collections-comments
              */
-            fetch: function (options) {
-                options = fixUrlForReplies.call(this, options);
-                return Backbone.Collection.prototype.fetch.call(this, options);
-            },
-
-            /**
-             * Override in order to use the right URL for replies.
-             * @alias module:collections-comments.Comments#fetch
-             */
-            create: function (model, options) {
-                options = fixUrlForReplies.call(this, options);
-                return Backbone.Collection.prototype.create.call(this, model, options);
+            urlRoot: function () {
+                return _.result(this.annotation, "url") + "/comments";
             },
 
             /**

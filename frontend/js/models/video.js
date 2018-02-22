@@ -116,8 +116,6 @@ define(["jquery",
 
                 var invalidResource = Resource.prototype.validate.call(this, attr, {
                     onIdChange: function () {
-                        this.setUrl();
-
                         categories = this.attributes.categories;
                         scales     = this.attributes.scales;
 
@@ -173,24 +171,6 @@ define(["jquery",
                             }
                         }
                     });
-                }
-            },
-
-            /**
-             * Modify the current url for the tracks collection
-             * @alias module:models-video.Video#setUrl
-             */
-            setUrl: function () {
-                if (this.attributes.tracks) {
-                    this.attributes.tracks.setUrl(this);
-                }
-
-                if (this.attributes.categories) {
-                    this.attributes.categories.setUrl(this);
-                }
-
-                if (this.attributes.scales) {
-                    this.attributes.scales.setUrl(this);
                 }
             },
 

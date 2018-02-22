@@ -96,14 +96,6 @@ define(["jquery",
             localStorage: true,
 
             /**
-             * Url from the annotations Rest Endpoints
-             * @alias module:annotation-tool-configuration.Configuration.restEndpointsUrl
-             * @type {string}
-             * @readOnly
-             */
-            restEndpointsUrl: "../../extended-annotations",
-
-            /**
              * Url for redirect after the logout
              * @alias module:annotation-tool-configuration.Configuration.logoutUrl
              * @type {string}

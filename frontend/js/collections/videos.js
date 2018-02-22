@@ -20,12 +20,10 @@
  * @requires jQuery
  * @requires models-video
  * @requires backbone
- * @requires localstorage
  */
 define(["jquery",
         "models/video",
-        "backbone",
-        "localstorage"],
+        "backbone"],
 
     function ($, Video, Backbone) {
 
@@ -47,19 +45,10 @@ define(["jquery",
             model: Video,
 
             /**
-             * Localstorage container for the collection
-             * @alias module:collections-videos.Videos#localStorage
-             * @type {Backbone.LocalStorgage}
+             * The REST endpoint url
+             * @type {String}
              */
-            localStorage: new Backbone.LocalStorage("Videos"),
-
-            /**
-             * constructor
-             * @alias module:collections-videos.Videos#initialize
-             */
-            initialize: function () {
-                this.url = window.annotationTool.restEndpointsUrl + "/videos";
-            }
+            url: "/videos"
         });
 
         return Videos;

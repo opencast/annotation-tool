@@ -25,6 +25,15 @@ define(["underscore", "backbone", "localstorage"], function (_, Backbone) {
     "use strict";
 
     /**
+     * Provide a default implementation of {@link module:Backbone.Collection.localStorage}
+     * to generate the local storage container for every collection based on its URL.
+     * @see module:Backbone.LocalStorage
+     */
+    Backbone.Collection.prototype.localStorage = function () {
+        return new Backbone.LocalStorage(_.result(this, "url"));
+    };
+
+    /**
      * Synchronize models with an annotation tool backend
      * @alias module:annotation-sync.annotationSync
      */
@@ -33,7 +42,7 @@ define(["underscore", "backbone", "localstorage"], function (_, Backbone) {
             return Backbone.localSync.call(this, method, model, options);
         }
 
-        options = _.extend({ headers: {}}, options);
+        options = _.extend({ headers: {} }, options);
 
         // The backend expects `application/x-www-form-urlencoded data
         // with anything nested deeper than one level transformed to a JSON string
@@ -54,6 +63,10 @@ define(["underscore", "backbone", "localstorage"], function (_, Backbone) {
         if (model.noPOST && method === "create") {
             method = "update";
         }
+
+        options.beforeSend = function () {
+            this.url = "../../extended-annotations" + this.url;
+        };
 
         return Backbone.ajaxSync.call(this, method, model, options);
     };

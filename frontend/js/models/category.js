@@ -75,7 +75,7 @@ define(["jquery",
              */
             initialize: function (attr) {
 
-                _.bindAll(this, "toggleVisibility", "setUrl", "validate", "toExportJSON");
+                _.bindAll(this, "toggleVisibility", "validate", "toExportJSON");
 
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "\"name\" attribute is required";
@@ -129,11 +129,7 @@ define(["jquery",
             validate: function (attr) {
                 var self = this;
 
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        this.setUrl(attr.labels);
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.apply(this, arguments);
                 if (invalidResource) return invalidResource;
 
                 if (attr.id) {
@@ -205,16 +201,6 @@ define(["jquery",
                 settings.color = color;
 
                 this.set("settings", settings);
-            },
-
-            /**
-             * Modify the current url for the annotations collection
-             * @alias module:models-category.Category#setUrl
-             */
-            setUrl: function (labels) {
-                if (labels) {
-                    labels.setUrl(this);
-                }
             },
 
             /**

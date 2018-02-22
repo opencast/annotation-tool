@@ -21,14 +21,12 @@
  * @requires underscore
  * @requires models-scale
  * @requires backbone
- * @requires localstorage
  */
 define(["jquery",
         "underscore",
         "models/track",
         "access",
-        "backbone",
-        "localstorage"],
+        "backbone"],
 
     function ($, _, Track, ACCESS, Backbone) {
 
@@ -61,26 +59,19 @@ define(["jquery",
             visibleTracks: [],
 
             /**
-             * Localstorage container for the collection
-             * @alias module:collections-tracks.Tracks#localStorage
-             * @type {Backbone.LocalStorgage}
-             */
-            localStorage: new Backbone.LocalStorage("Tracks"),
-
-            /**
              * constructor
              * @alias module:collections-tracks.Tracks#initialize
              */
             initialize: function (models, video) {
-                _.bindAll(this, "setUrl",
-                                "showTracks",
+                _.bindAll(this, "showTracks",
                                 "showTracksById",
                                 "hideTracks",
                                 "isTrackVisible",
                                 "getTracksForLocalStorage",
                                 "getAllCreators",
                                 "showTracksByCreators");
-                this.setUrl(video);
+
+                this.video = video;
 
                 this.on("add", function (track) {
                     // Show the new track
@@ -314,24 +305,12 @@ define(["jquery",
             },
 
             /**
-             * Define the url from the collection with the given video
-             * @alias module:collections-tracks.Tracks#setUrl
-             * @param {Video} Video containing the tracks
+             * Get the url for this collection
+             * @alias module:collections-tracks.Tracks#url
+             * @return {String} The url of this collection
              */
-            setUrl: function (video) {
-                if (!video || !video.collection) {
-                    throw "Parent video must be given!";
-                }
-
-                this.url = video.url() + "/tracks";
-
-                if (annotationTool.localStorage) {
-                    this.localStorage = new Backbone.LocalStorage(this.url);
-                }
-
-                this.each(function (track) {
-                    track.setUrl();
-                });
+            url: function () {
+                return _.result(this.video, "url") + "/tracks";
             }
         }, {
             EVENTS: EVENTS

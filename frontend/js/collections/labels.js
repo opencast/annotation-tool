@@ -21,13 +21,11 @@
  * @requires underscore
  * @requires backbone
  * @requires models/label
- * @requires localstorage
  */
 define(["jquery",
         "underscore",
         "backbone",
-        "models/label",
-        "localstorage"],
+        "models/label"],
 
     function ($, _, Backbone, Label) {
 
@@ -49,19 +47,11 @@ define(["jquery",
             model: Label,
 
             /**
-             * Localstorage container for the collection
-             * @alias module:collections-labels.Labels#localStorage
-             * @type {Backbone.LocalStorgage}
-             */
-            localStorage: new Backbone.LocalStorage("Labels"),
-
-            /**
              * constructor
              * @alias module:collections-labels.Labels#initialize
              */
             initialize: function (models, category) {
-                _.bindAll(this, "setUrl");
-                this.setUrl(category);
+                this.category = category;
             },
 
             /**
@@ -81,20 +71,12 @@ define(["jquery",
             },
 
             /**
-             * Define the url from the collection with the given video
-             * @alias module:collections-labels.Labels#setUrl
-             * @param {Category} Category containing the labels
+             * Get the url for this collection
+             * @alias module:collections-labels.Labels#url
+             * @return {String} The url of this collection
              */
-            setUrl: function (category) {
-                if (!category) {
-                    throw "The parent category of the labels must be given!";
-                } else if (category.collection) {
-                    this.url = category.url() + "/labels";
-                }
-
-                if (window.annotationTool && annotationTool.localStorage) {
-                    this.localStorage = new Backbone.LocalStorage(this.url);
-                }
+            url: function () {
+                return _.result(this.category, "url") + "/labels";
             }
         });
 

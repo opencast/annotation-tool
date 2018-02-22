@@ -20,12 +20,10 @@
  * @requires jQuery
  * @requires models-user
  * @requires backbone
- * @requires localstorage
  */
 define(["jquery",
         "models/user",
-        "backbone",
-        "localstorage"],
+        "backbone"],
 
        function ($, User, Backbone) {
 
@@ -47,19 +45,10 @@ define(["jquery",
             model: User,
 
             /**
-             * Localstorage container for the collection
-             * @alias module:collections-users.User#localStorage
-             * @type {Backbone.LocalStorgage}
+             * The REST endpoint url
+             * @type {String}
              */
-            localStorage: new Backbone.LocalStorage("Users"),
-
-            /**
-             * constructor
-             * @alias module:collections-users.User#initialize
-             */
-            initialize: function () {
-                this.url = window.annotationTool.restEndpointsUrl + "/users";
-            },
+            url: "/users",
 
             /**
              * Parse the given data

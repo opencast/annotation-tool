@@ -101,8 +101,6 @@ define(["jquery",
 
                 var invalidResource = Resource.prototype.validate.call(this, attr, {
                     onIdChange: function () {
-                        this.setUrl();
-
                         scalevalues = this.attributes.scaleValues;
 
                         if (scalevalues && (scalevalues.length) === 0) {
@@ -157,16 +155,6 @@ define(["jquery",
                 }
 
                 return json;
-            },
-
-            /**
-             * Modify the current url for the annotations collection
-             * @alias module:models-scale.Scale#setUrl
-             */
-            setUrl: function () {
-                if (this.attributes.scaleValues) {
-                    this.attributes.scaleValues.setUrl(this);
-                }
             }
         });
         return Scale;

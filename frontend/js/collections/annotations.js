@@ -21,14 +21,12 @@
  * @requires underscore
  * @requires models-annotation
  * @requires backbone
- * @requires localstorage
  */
 define(["jquery",
         "underscore",
         "models/annotation",
         "backbone",
-        "access",
-        "localstorage"],
+        "access"],
 
     function ($, _, Annotation, Backbone) {
 
@@ -47,22 +45,14 @@ define(["jquery",
              * Model of the instances contained in this collection
              * @alias module:collections-annotations.Annotations#initialize
              */
-            model       : Annotation,
-
-            /**
-             * Localstorage container for the collection
-             * @alias module:collections-annotations.Annotations#localStorage
-             * @type {Backbone.LocalStorgage}
-             */
-            localStorage: new Backbone.LocalStorage("Annotations"),
+            model: Annotation,
 
             /**
              * constructor
              * @alias module:collections-annotations.Annotations#initialize
              */
             initialize: function (models, track) {
-                _.bindAll(this, "setUrl", "updateAccess", "setAccess");
-                this.setUrl(track);
+                _.bindAll(this, "updateAccess", "setAccess");
 
                 /**
                  * Access value for all the annotations in the collection
@@ -82,6 +72,15 @@ define(["jquery",
                         this.create(annotation);
                     }, this);
                 }
+            },
+
+            /**
+             * Get the url for this collection
+             * @alias module:collections-annotations.Annotations#url
+             * @return {String} The url of this collection
+             */
+            url: function () {
+                return _.result(this.track, "url") + "/annotations";
             },
 
             /**
@@ -125,23 +124,6 @@ define(["jquery",
                     return data;
                 } else {
                     return null;
-                }
-            },
-
-            /**
-             * Define the url from the collection with the given track
-             * @alias module:collections-annotations.Annotations#setUrl
-             * @param {Track} Track containing the annotations
-             */
-            setUrl: function (track) {
-                if (!track) {
-                    throw "The parent track of the annotations must be given!";
-                } else if (track.collection) {
-                    this.url = track.url() + "/annotations";
-                }
-
-                if (window.annotationTool && annotationTool.localStorage) {
-                    this.localStorage = new Backbone.LocalStorage(this.url);
                 }
             }
         });
