@@ -35,7 +35,7 @@ define(["jquery",
         "slider",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, Loops, PlayerAdapter, Backbone, LoopTemplate, Handlebars) {
+    function ($, _, i18next, Loops, PlayerAdapter, Backbone, loopTemplate, Handlebars) {
 
         "use strict";
 
@@ -55,7 +55,15 @@ define(["jquery",
          * @memberOf module:views-loop
          * @alias Loop
          */
-        var loopView = Backbone.View.extend({
+        var LoopView = Backbone.View.extend({
+
+            /**
+             * The element to display the loop controller in
+             * @constant
+             * @type {String}
+             * @alias module:views-loop.Loop#el
+             */
+            el: "#loop",
 
             /**
              * Maximal margin supported to define if we are still in the same loop
@@ -89,25 +97,6 @@ define(["jquery",
             DEACTIVATED_CLASS: "deactivated",
 
             /**
-             * Class for the button to hide/show the loop function in the layout menu
-             * @type {String}
-             * @alias module:views-loop.Loop#LAYOUT_MENU_CLASS
-             */
-            LAYOUT_MENU_CLASS: "enableLoops",
-
-            /**
-             * Template of the button to hide/show the loop function in the layout menu
-             * @type {String}
-             * @alias module:views-loop.Loop#LAYOUT_MENU_TMPL
-             */
-            LAYOUT_MENU_TMPL:   "<li>\
-                                        <a id=\"enableLoops\" href=\"#\" class=\"checked\">\
-                                            <i class=\"check icon-check\"></i>"
-                                            + i18next.t("menu.view.loop controller") +
-                                        "</a>\
-                                    </li>",
-
-            /**
              * Template of the timelineItem
              * @type {Object}
              * @alias module:views-loop.Loop#timelineItemTmpl
@@ -115,13 +104,6 @@ define(["jquery",
             timelineItemTmpl: Handlebars.compile("<div class=\"{{class}}\"\
                                                         onclick=\"annotationTool.loopFunction.setCurrentLoop({{index}}, true)\">\
                                                     </div>"),
-
-            /**
-             * Loop template
-             * @alias module:views-loop.Loop#loopTemplate
-             * @type {HandlebarsTemplate}
-             */
-            loopTemplate: LoopTemplate,
 
             /**
              * Events to handle
@@ -147,69 +129,20 @@ define(["jquery",
                                 "createLoops",
                                 "findCurrentLoop",
                                 "initSlider",
-                                "isVisible",
                                 "nextLoop",
                                 "previousLoop",
                                 "resetLoops",
                                 "toggle",
-                                "toggleVisibility",
                                 "typeLoopLength");
-                var mainView,
-                    defaultVisibility = annotationTool.views.main.layoutConfiguration.loop;
-
                 this.playerAdapter = annotationTool.playerAdapter;
                 this.loops = new Loops([], annotationTool.video);
-
-                $("#video-container").after(this.loopTemplate());
-                this.setElement($("#loop")[0]);
-                this.initSlider();
-
-                if (!_.isUndefined(annotationTool.views.main)) {
-                    mainView = annotationTool.views.main;
-                    mainView.$el.find("#menu-plugins").append(this.LAYOUT_MENU_TMPL);
-                    mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibility);
-                }
-
+                this.render();
                 this.toggle(false);
-
-                annotationTool.loopFunction = this;
-
-                annotationTool.onWindowResize();
-
-                if (!_.isUndefined(defaultVisibility) && !defaultVisibility) {
-                    this.toggleVisibility({target: mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS)[0]});
-                }
             },
 
-            /**
-             * Define if the loop function view is visible or not
-             * @return {Boolean} True if the view is visible
-             * @alias module:views-loop.Loop#isVisible
-             */
-            isVisible: function () {
-                return this.$el.filter(":visible").length > 0;
-            },
-
-            /**
-             * Listesner for the button to activate/deactivate the loop function in the layout menu
-             * @param  {Object} event The related event object
-             * @alias module:views-loop.Loop#toggle
-             */
-            toggleVisibility: function (event) {
-                $(event.target).toggleClass("checked");
-
-                if ($(event.target).hasClass("checked")) {
-                    if (this.wasEnableBeforeDeactivate) {
-                        this.toggle(true);
-                    }
-                    this.$el.show();
-                } else {
-                    this.$el.hide();
-                    this.wasEnableBeforeDeactivate = this.isEnable;
-                    this.toggle(false);
-                }
-
-                annotationTool.onWindowResize();
+            render: function () {
+                this.$el.html(loopTemplate());
+                this.initSlider();
             },
 
             initSlider: function () {
@@ -488,7 +421,7 @@ define(["jquery",
                     }, this);
                 }
 
-                this.loops.each(function (loop) {
+                this.loops.models.forEach(function (loop) {
                     loop.destroy();
                 });
 
@@ -496,7 +429,7 @@ define(["jquery",
             }
         });
 
-        return loopView;
+        return LoopView;
 
     }
 );

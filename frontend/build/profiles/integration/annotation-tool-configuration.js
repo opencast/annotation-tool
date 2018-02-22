@@ -99,16 +99,6 @@ define(["jquery",
                  */
                 localStorage: false,
 
-
-                plugins: {
-                    Loop: function () {
-                        require(["views/loop"], function (Loop) {
-                            annotationTool.loopView = new Loop();
-                        });
-                    }
-                },
-
-
                 /**
                  * Url from the annotations Rest Endpoints
                  * @alias module:annotation-tool-configuration.Configuration.restEndpointsUrl

@@ -188,8 +188,7 @@ define(["jquery",
                             "switchEditModus",
                             "keydownOnAnnotate",
                             "enableCategoriesLayout",
-                            "enableFreeTextLayout",
-                            "setLayoutFull");
+                            "enableFreeTextLayout");
 
                 // Parameter for stop on write
                 this.continueVideo = false;
@@ -421,26 +420,6 @@ define(["jquery",
             },
 
             /**
-             * Change the layout to full layout, with all possiblities to annotate
-             * @alias module:views-annotate.Annotate#setLayoutFull
-             * @param {Event} event Event object
-             */
-            setLayoutFull: function (event) {
-                if (!$(event.target).hasClass("checked")) {
-                    if (annotationTool.isStructuredAnnotationEnabled()) {
-                        this.categoriesElement.show();
-                    }
-                    if (annotationTool.isFreeTextEnabled()) {
-                        this.freeTextElement.show();
-                    }
-                    this.$el.find("#annotate-text").removeClass("checked");
-                    this.$el.find("#annotate-categories").removeClass("checked");
-                    $(event.target).addClass("checked");
-                    this.trigger("change-layout");
-                }
-            },
-
-            /**
              * Enable layout for free text annotation only
              * @alias module:views-annotate.Annotate#enableFreeTextLayout
              * @param {boolean} [enabled] Define if the layout must be enable or disable
@@ -459,8 +438,6 @@ define(["jquery",
                 } else {
                     this.freeTextElement.hide();
                 }
-
-                this.trigger("change-layout");
             },
 
             /**
@@ -482,8 +459,6 @@ define(["jquery",
                 } else {
                     this.categoriesElement.hide();
                 }
-
-                this.trigger("change-layout");
             }
         });
 

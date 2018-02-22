@@ -26,6 +26,7 @@
  * @requires views-annotate
  * @requires views-list
  * @requires views-timeline
+ * @requires views-loop
  * @requires views-login
  * @requires views-scale-editor
  * @requires models-user
@@ -47,6 +48,7 @@ define(["jquery",
         "views/list",
         "views/list-annotation",
         "views/timeline",
+        "views/loop",
         "views/login",
         "views/scale-editor",
         "views/tracks-selection",
@@ -74,6 +76,7 @@ define(["jquery",
         ListView,
         ListAnnotationView,
         TimelineView,
+        LoopView,
         LoginView,
         ScaleEditorView,
         TracksSelectionView,
@@ -144,7 +147,6 @@ define(["jquery",
                                 "checkUserAndLogin",
                                 "createViews",
                                 "logout",
-                                "loadPlugins",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print",
@@ -183,7 +185,6 @@ define(["jquery",
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
                 annotationTool.once(annotationTool.EVENTS.READY, function () {
-                    this.loadPlugins(annotationTool.plugins);
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
@@ -198,17 +199,6 @@ define(["jquery",
                 }, this);
 
                 this.checkUserAndLogin();
-            },
-
-            /**
-             * Loads the given plugins
-             * @param  {Array} plugins The array of plugins to load
-             * @alias module:views-main.MainView#loadPlugins
-             */
-            loadPlugins: function (plugins) {
-                _.each(plugins, function (plugin) {
-                    plugin();
-                }, this);
             },
 
             /**
@@ -261,6 +251,12 @@ define(["jquery",
                     annotationTool.views.timeline = this.timelineView;
                     if (this.layoutConfiguration.timeline) {
                         this.timelineView.$el.show();
+                    }
+
+                    this.loopController = new LoopView();
+                    annotationTool.loopFunction = this.loopController;
+                    if (this.layoutConfiguration.loop) {
+                        this.loopController.$el.show();
                     }
 
                     // Create view to annotate
@@ -505,14 +501,16 @@ define(["jquery",
                 case "view-annotate":
                     annotationTool.views.annotate.$el.fadeToggle();
                     checkMainLayout();
-                    this.onWindowResize();
                     break;
                 case "view-list":
                     annotationTool.views.list.$el.fadeToggle();
                     checkMainLayout();
-                    this.onWindowResize();
+                    break;
+                case "view-loop":
+                    annotationTool.loopFunction.$el.fadeToggle();
                     break;
                 }
+                this.onWindowResize();
             },
 
             /**
@@ -581,7 +579,7 @@ define(["jquery",
                 var listContent,
                     windowHeight = $(window).height(),
                     annotationsContainerHeight = $("#annotate-container").height(),
-                    loopFunctionHeight = annotationTool.loopFunction && annotationTool.loopFunction.isVisible()
+                    loopFunctionHeight = this.layoutConfiguration.loop
                         ? annotationTool.loopFunction.$el.height() + 180
                         : 145,
                     videoContainerHeight = $("#video-container").height();

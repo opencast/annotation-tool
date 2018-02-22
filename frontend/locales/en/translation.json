@@ -105,6 +105,8 @@
     "error": "Failed to log in: {{error}}"
   },
   "loop controller": {
+    "enable": "Enable loops",
+    "constrain": "Constrain new annotations to current loop",
     "next": "Move to next loop",
     "previous": "Move to previous loop",
     "seconds": "s",
@@ -123,11 +125,11 @@
       },
       "track management": "$t(track management.action)",
       "head": "View",
-      "loop controller": "Loop controller",
       "views": {
         "annotate view": "Annotate view",
         "head": "Views",
-        "list view": "List view"
+        "list view": "List view",
+        "loop controller": "Loop controller"
       },
       "auto expand": "Automatically expand active annotations"
     }

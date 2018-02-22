@@ -88,17 +88,6 @@ define(["jquery",
              */
             localStorageOnlyModel: [],
 
-
-            /**
-             * List of plugins to load,
-             * the bootstrap function of each plugin is called once the tool is ready
-             * @type {Object}
-             * @readOnly
-             */
-            plugins: {
-
-            },
-
             /**
              * Url from the annotations Rest Endpoints
              * @alias module:annotation-tool-configuration.Configuration.restEndpointsUrl
