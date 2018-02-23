@@ -95,8 +95,49 @@ var util = {
         }
 
         return parameter;
+    },
+
+    /**
+     * Compose an array of comparators into one,
+     * comparing inputs lexicographically based on the given functions.
+     * @param {comparator[]} comparators The base comparators to compose
+     * @returns {comparator} The lexicographic composition of the given comparators
+     */
+    lexicographic: function (comparators) {
+        return function (a, b) {
+            for (var f in comparators) {
+                var d = f(a, b);
+                if (d) return d;
+            }
+            return 0;
+        };
+    },
+
+    /**
+     * Create a comparator based on whether a given predicate applies to a function or not
+     * @param {predicate} predicate The predicate to test
+     * @returns {comparator} A comparator that sorts the first value before the second
+     *     if the predicate is true for it, and vice versa.
+     */
+    firstWith: function (predicate) {
+        return function (a, b) {
+            if (predicate(a)) return -1;
+            if (predicate(b)) return 1;
+            return 0;
+        };
     }
 };
+
+
+/**
+ * A callback to compare two values
+ * @callback comparator
+ * @param a The first object
+ * @param b The second object
+ * @return {Number} A negative number if <code>a</code> is less than <code>b</code>,
+ *     a positive number if <code>a</code> is larger than <code>b</code>,
+ *     and zero if they are euqal.
+ */
 
 return util;
 
