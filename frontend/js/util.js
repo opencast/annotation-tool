@@ -125,6 +125,20 @@ var util = {
             if (predicate(b)) return 1;
             return 0;
         };
+    },
+
+    /**
+     * Coerce anything as an array
+     * @param object Any object that is to be coerced to an array
+     * @returns {Array} If the argument is already an array it is returned as it;
+     *     otherwise a singleton array containing it is returned.
+     */
+    array: function (object) {
+        if (Array.isArray(object)) {
+            return object;
+        } else {
+            return [object];
+        }
     }
 };
 
