@@ -22,7 +22,7 @@ define(["jquery",
         "underscore",
         "roles",
         "player_adapter_HTML5"
-        // Add here the files (PlayerAdapter, ...) required for your configuration
+        // Add the files (PlayerAdapter, ...) required for your configuration here
         ],
 
     function ($, _, ROLES, HTML5PlayerAdapter) {
