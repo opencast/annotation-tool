@@ -20,12 +20,13 @@
  */
 define(["jquery",
         "underscore",
+        "util",
         "roles",
         "player_adapter_HTML5"
         // Add the files (PlayerAdapter, ...) required for your configuration here
         ],
 
-    function ($, _, ROLES, HTML5PlayerAdapter) {
+    function ($, _, util, ROLES, HTML5PlayerAdapter) {
 
         "use strict";
 
@@ -322,13 +323,8 @@ define(["jquery",
                  * @alias module:annotation-tool-configuration.Configuration.loadVideo
                  */
                 loadVideo: function () {
-                    var // Supported video formats
-                        videoTypes = ["video/webm", "video/ogg", "video/mp4"],
-                        videoTypesForFallBack = [],
-                        trackType = ["presenter/delivery", "presentation/delivery"],
-                        xacmlType = ["security/xacml+episode"],
-                        xacmlSeriesType = ["security/xacml+series"],
-                        mediaPackageId = decodeURI((new RegExp("id=" + "(.+?)(&|$)").exec(location.search) || [,null])[1]);
+                    var mediaPackageId = window.location.search.match(/id=(.+?)(&|$)/);
+                    if (mediaPackageId) mediaPackageId = decodeURIComponent(mediaPackageId[1]);
 
                     // Enable cross-domain for jquery ajax query
                     $.support.cors = true;
@@ -340,107 +336,71 @@ define(["jquery",
                         crossDomain: true,
                         data: "id=" + mediaPackageId + "&limit=1",
                         dataType: "json",
-                        success: $.proxy(function (data) {
-                            var result = data["search-results"].result,
-                                mediapackage,
-                                videos = {},
-                                videosFallback = {},
-                                nbNormalVideos = 0,
-                                nbFallbackVideos = {},
-                                tracks,
-                                attachments,
-                                selectedVideos = {},
-                                selectedXACML = {};
+                        success: (function (data) {
+                            var result = data["search-results"].result;
 
                             if (!result) {
+                                // TODO Fail louder here
                                 console.warn("Could not load video " + mediaPackageId);
                             }
-                            mediapackage = result.mediapackage;
+                            var mediapackage = result.mediapackage;
 
                             video_extid = mediapackage.id;
                             video_title = result.dcTitle;
                             video_creator = result.dcCreator;
                             video_creation_date = result.dcCreated;
 
-                            $.each(videoTypesForFallBack, function (idx, mimetype) {
-                                videosFallback[mimetype] = {};
-                                nbFallbackVideos[mimetype] = 0;
-                            });
+                            var tracks = util.array(mediapackage.media.track);
 
-                            $.each(trackType, function (index, type) {
-                                videos[type] = [];
-                                $.each(videoTypesForFallBack, function (idx, mimetype) {
-                                    videosFallback[mimetype][type] = [];
-                                });
-                            });
-
-                            tracks = mediapackage.media.track;
-                            if (!$.isArray(tracks)) {
-                                tracks = [];
-                                tracks.push(mediapackage.media.track);
+                            function matchType(field, type, subtype) {
+                                if (!type) type = ".*";
+                                if (!subtype) subtype = ".*";
+                                var regex = new RegExp(type + "/" + subtype);
+                                return function (object) {
+                                    return object[field].match(regex);
+                                };
                             }
+                            var videos = util.array(mediapackage.media.track)
+                                .filter(matchType("mimetype", "video"));
+                            videos.sort(
+                                util.lexicographic(
+                                    util.firstWith(matchType("type", "presenter")),
+                                    util.firstWith(matchType("type", "presentation")),
+                                )
+                            );
 
-                            $.each(tracks, function (index, track) {
-                                selectedVideos = null;
-
-                                // If type not supported, go to next track
-                                if ($.inArray(track.mimetype, videoTypes) !== -1) {
-                                    selectedVideos = videos;
-                                    nbNormalVideos++;
-                                } else if ($.inArray(track.mimetype, videoTypesForFallBack) !== -1) {
-                                    selectedVideos = videosFallback[track.mimetype];
-                                    nbFallbackVideos[track.mimetype]++;
-                                } else {
-                                    return;
-                                }
-
-                                $.each(trackType, function (index, type) {
-                                    if (track.type === type) {
-                                        selectedVideos[type].push(track);
-                                        return false;
-                                    }
-                                });
-                            });
-
-                            if (nbNormalVideos === 0) {
-                                $.each(videoTypesForFallBack, function (idx, mimetype) {
-                                    if (nbFallbackVideos[mimetype] > 0) {
-                                        selectedVideos = videosFallback[mimetype];
-                                        return false;
-                                    }
-                                });
-                            } else {
-                                selectedVideos = videos;
-                            }
-
-                            var sources = $.map(selectedVideos, function (type) {
-                                return $.map(type, function (track) {
-                                    return { src: track.url, type: track.mimetype };
-                                });
-                            });
-                            this.playerAdapter = new HTML5PlayerAdapter($("video")[0], sources);
+                            this.playerAdapter = new HTML5PlayerAdapter(
+                                $("video")[0],
+                                videos.map(function (track) {
+                                    return {
+                                        src: track.url,
+                                        type: track.mimetype
+                                    };
+                                })
+                            );
 
                             // Load the security XACML file for the episode
-                            attachments = mediapackage.attachments.attachment;
-                            if (!$.isArray(attachments)) {
-                                attachments = [];
-                                attachments.push(mediapackage.attachments.attachment);
-                            }
-
-                            selectedXACML = null;
-                            for (var i = 0; i < attachments.length; i++) {
-                                if ($.inArray(attachments[i].type, xacmlType) !== -1) {
-                                    selectedXACML = attachments[i];
-                                    break;
+                            var attachments = util.array(mediapackage.attachments.attachment);
+                            var selectedXACML = (function () {
+                                var seriesXACML;
+                                for (var i = 0; i < attachments.length; i++) {
+                                    var attachment = attachments[i];
+                                    if (attachment.type === "security/xacml+episode") {
+                                        // Immediately return an XACML belonging to this specific episode
+                                        return attachment;
+                                    }
+                                    if (attachment.type === "security/xacml+series") {
+                                        // Remember any series XACML on the way,
+                                        //   so we can return that as a fallback
+                                        selectedXACML = attachments[i];
+                                    }
                                 }
-                                if ($.inArray(attachments[i].type, xacmlSeriesType) !== -1) {
-                                    selectedXACML = attachments[i];
-                                    // continue in case an episode XACML can be found, otherwiese use this as fallback
-                                }
-                            }
+                                return seriesXACML;
+                            })();
+                            // TODO What if **no** XACML is found?!
                             this.loadXACML(selectedXACML);
 
-                        }, this)
+                        }).bind(this)
                     });
                 },
 
