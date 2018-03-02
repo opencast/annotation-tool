@@ -309,7 +309,7 @@ define(["jquery",
                 if (newValue === "OFF") {
                     this.model.unset("scalevalue");
                 } else {
-                    this.model.set({scalevalue: this.scaleValues.get(newValue).toJSON()});
+                    this.model.set({ scalevalue: this.scaleValues.get(newValue).toJSON() });
                     this.$el.find(".scaling span").html(this.scaleValues.get(newValue).get("name"));
                 }
 
@@ -356,7 +356,7 @@ define(["jquery",
 
                     $target.parent().parent().find("tr.text-container span").show();
                     this.model.set("duration", Math.round(seconds - this.model.get("start")));
-                    this.model.save({silent: true});
+                    this.model.save({ silent: true });
                 }
             },
 
@@ -406,7 +406,7 @@ define(["jquery",
                         start   : seconds,
                         duration: Math.round(this.model.get("duration") + this.model.get("start") - seconds)
                     });
-                    this.model.save({silent: true});
+                    this.model.save({ silent: true });
                 }
             },
 
@@ -422,7 +422,10 @@ define(["jquery",
                 event.stopImmediatePropagation();
 
                 if (currentTime < end) {
-                    this.model.set({start: currentTime, duration: this.model.get("duration") + this.model.get("start") - currentTime});
+                    this.model.set({
+                        start: currentTime,
+                        duration: this.model.get("duration") + this.model.get("start") - currentTime
+                    });
                     this.model.save();
                 }
             },
@@ -436,7 +439,7 @@ define(["jquery",
                 var currentTime = Math.round(annotationTool.playerAdapter.getCurrentTime());
                 event.stopImmediatePropagation();
                 if (currentTime > this.model.get("start")) {
-                    this.model.set({duration: currentTime - this.model.get("start")});
+                    this.model.set({ duration: currentTime - this.model.get("start") });
                     this.model.save();
                 }
             },

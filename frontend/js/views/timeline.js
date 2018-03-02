@@ -1331,9 +1331,7 @@ define(["util",
                         }
                     },
                     successCallback = function (newAnnotation) {
-                        newAnnotation.unset("oldId", {
-                            silent: true
-                        });
+                        newAnnotation.unset("oldId", { silent: true });
                         newAnnotation.save();
 
                         annJSON.id = newAnnotation.get("id");

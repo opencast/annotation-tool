@@ -101,9 +101,9 @@ define(["jquery",
              * @alias module:collections-annotations.Annotations#setAccess
              * @param {model} model The model to update
              */
-            setAccess: function (model, silentUpdate) {
+            setAccess: function (model) {
                 if (!_.isUndefined(model.attributes)) {
-                    model.set({access: this.access}, {silent: (_.isUndefined(silentUpdate) || !_.isBoolean(silentUpdate) ? true : silentUpdate)});
+                    model.set({ access: this.access }, { silent: true });
                 } else {
                     model.access = this.access;
                 }

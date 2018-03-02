@@ -48,7 +48,7 @@ define(["jquery",
 
             /**
              * Default models value
-             * @alias module:models-scalevalue.Scalevalue#defaults
+             * @alias module:models-user.User#defaults
              * @type {map}
              * @static
              */
@@ -82,8 +82,8 @@ define(["jquery",
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-user.User#validate
-             * @param  {Object} data Object literal containing the model attribute to validate.
-             * @return {string}  If the validation failed, an error message will be returned.
+             * @param {Object} attr Object literal containing the model attribute to validate.
+             * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var invalidResource = Resource.prototype.validate.call(this, attr);

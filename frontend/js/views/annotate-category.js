@@ -365,7 +365,7 @@ define(["jquery",
              */
             onColorChange: function (id, newValue) {
                 this.model.setColor(newValue);
-                this.model.save({silent: true});
+                this.model.save({ silent: true });
             },
 
             /**

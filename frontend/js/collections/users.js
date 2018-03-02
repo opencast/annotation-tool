@@ -17,15 +17,13 @@
 /**
  * A module representing a users collection
  * @module collections-users
- * @requires jQuery
  * @requires models-user
  * @requires backbone
  */
-define(["jquery",
-        "models/user",
+define(["models/user",
         "backbone"],
 
-       function ($, User, Backbone) {
+    function (User, Backbone) {
 
         "use strict";
 
@@ -37,7 +35,6 @@ define(["jquery",
          * @alias module:collections-users.User
          */
         var Users = Backbone.Collection.extend({
-
             /**
              * Model of the instances contained in this collection
              * @alias module:collections-users.User#initialize

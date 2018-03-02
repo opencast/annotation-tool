@@ -224,8 +224,6 @@ define(["jquery",
                 this.views.main = new MainView(this.playerAdapter);
 
                 $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
-
-                return this;
             },
 
             /**

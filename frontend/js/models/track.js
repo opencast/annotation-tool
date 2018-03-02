@@ -77,9 +77,9 @@ define(["jquery",
                 attr.annotationsLoaded = false;
 
                 if (attr.annotations && _.isArray(attr.annotations)) {
-                    this.set({annotations: new Annotations(attr.annotations, this)});
+                    this.set({ annotations: new Annotations(attr.annotations, this) });
                 } else {
-                    this.set({annotations: new Annotations([], this)});
+                    this.set({ annotations: new Annotations([], this) });
                 }
 
                 delete attr.annotations;
@@ -93,8 +93,8 @@ define(["jquery",
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-track.Track#validate
-             * @param  {Object} data Object literal containing the model attribute to validate.
-             * @return {string}  If the validation failed, an error message will be returned.
+             * @param {Object} attr Object literal containing the model attribute to validate.
+             * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var invalidResource = Resource.prototype.validate.call(this, attr, {

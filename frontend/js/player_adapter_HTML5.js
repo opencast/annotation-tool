@@ -130,7 +130,7 @@ define(["jquery",
                     }
 
                     // If duration is valid, we changed status
-                    self.status =  PlayerAdapter.STATUS.PAUSED;
+                    self.status = PlayerAdapter.STATUS.PAUSED;
                     self.triggerEvent(PlayerAdapter.EVENTS.READY);
 
                     if (self.waitToPlay) {
@@ -201,9 +201,9 @@ define(["jquery",
                 return this;
             };
 
-            // =================
+            // ==================
             // REQUIRED FUNCTIONS
-            // =================
+            // ==================
 
             /**
              * Play the video

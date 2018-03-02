@@ -78,8 +78,8 @@ var Resource = Backbone.Model.extend({
     /**
      * Validate the attribute list passed to the model
      * @alias module:models-resource.Resource#validate
-     * @param  {object} data Object literal containing the model attribute to validate.
-     * @return {string}  If the validation failed, an error message will be returned.
+     * @param {object} attr Object literal containing the model attribute to validate.
+     * @return {string} If the validation failed, an error message will be returned.
      */
     validate: function (attr, callbacks) {
         var created = this.get("created_at");

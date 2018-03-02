@@ -259,7 +259,7 @@ define(["jquery",
                             description: description
                         });
 
-                        this.currentScale.save({async: false});
+                        this.currentScale.save({ async: false });
                         this.currentScale.get("scaleValues").each(function (scaleValue) {
                             scaleValue.save();
                         });

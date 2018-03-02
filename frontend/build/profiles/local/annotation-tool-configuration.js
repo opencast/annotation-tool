@@ -25,14 +25,13 @@ define(["jquery",
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, _, ROLES, HTML5PlayerAdapter, LoopView) {
+    function ($, _, ROLES, HTML5PlayerAdapter) {
 
         "use strict";
 
         /**
          * Annotations tool configuration object
          * @alias module:annotation-tool-configuration.Configuration
-         * @enum
          */
         var Configuration =  {
 
@@ -112,7 +111,7 @@ define(["jquery",
 
             /**
              * Array of tracks to import by default
-             * @type {module:player-adapter.tracksToImport}
+             * @type {?object[]}
              */
             tracksToImport: undefined,
 
