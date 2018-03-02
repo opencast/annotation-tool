@@ -356,7 +356,7 @@ define(["jquery",
 
                     $target.parent().parent().find("tr.text-container span").show();
                     this.model.set("duration", Math.round(seconds - this.model.get("start")));
-                    this.model.save({ silent: true });
+                    this.model.save(null, { silent: true });
                 }
             },
 
@@ -406,7 +406,7 @@ define(["jquery",
                         start   : seconds,
                         duration: Math.round(this.model.get("duration") + this.model.get("start") - seconds)
                     });
-                    this.model.save({ silent: true });
+                    this.model.save(null, { silent: true });
                 }
             },
 

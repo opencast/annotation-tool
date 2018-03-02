@@ -976,7 +976,7 @@ define(["jquery",
                     video = videos.at(0);
                     this.video = video;
                     video.set(self.getVideoParameters());
-                    video.save({}, {
+                    video.save(null, {
                         error: _.bind(function (model, response, options) {
                             if (response.status === 403) {
                                 this.alertFatal(i18next.t("annotation not allowed"));
@@ -1024,7 +1024,7 @@ define(["jquery",
                                 annotationTool.video.get("tracks").each(function (value) {
                                     if (value.get("annotations").get(target.id)) {
                                         value.get("annotations").remove(target);
-                                        value.save({ wait: true });
+                                        value.save(null, { wait: true });
                                         return false;
                                     }
                                     return undefined;

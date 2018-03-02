@@ -197,7 +197,7 @@ define(["jquery",
              * @param  {string} color the new color
              */
             setColor: function (color) {
-                var settings = this.attributes.settings;
+                var settings = _.clone(this.get("settings"));
                 settings.color = color;
 
                 this.set("settings", settings);
