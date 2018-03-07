@@ -108,13 +108,6 @@ define(["jquery",
             el: $("body"),
 
             /**
-             * The player adapter passed during initialization part
-             * @alias module:views-main.MainView#playerAdapter
-             * @type {playerAdapter}
-             */
-            playerAdapter: null,
-
-            /**
              * jQuery element for the loading box
              * @alias module:views-main.MainView#loadingBox
              * @type {DOMElement}
