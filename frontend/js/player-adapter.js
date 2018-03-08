@@ -122,45 +122,15 @@ define(["event-target"], function (EventTarget) {
     };
 
     /**
-     * Optional function to test interface implementation
-     * @return {boolean} true if the implementation is valid
+     * Optional function to type check the interface methods
+     * @return {boolean|string[]} a list of methods that have the wrong type
+     *   or a <code>false</code>-y result
      */
-    PlayerAdapter.prototype.isValid = function () {
-        var errors = "",
-            // All interface properties
-            properties = {
-                play          : "function",
-                pause         : "function",
-                setCurrentTime: "function",
-                getCurrentTime: "function",
-                getDuration   : "function",
-                getStatus     : "function"
-            },
-            property;
-
-        for (property in properties) {
-            // If this is not a required property, we do not check it.
-            if (typeof properties[property] !== "string") {
-                continue;
-            }
-
-            // If the function is not implementated
-            if (typeof this[property] === "undefined") {
-                errors += "-" + property + " is not implemented! \n";
-            }
-
-            // If the implementation is not valid
-            if (typeof this[property] !== properties[property]) {
-                errors += "-" + property + " is not a valid implementation, type should be " + properties[property] + "! \n";
-            }
-        }
-
-        if (errors !== "") {
-            console.warn("Player adapter implementation not valid! \n" + errors);
-            return false;
-        }
-
-        return true;
+    PlayerAdapter.prototype.typeErrors = function () {
+        var errors = methods.filter(function (method) {
+            return typeof this[method] !== "function";
+        }, this);
+        return errors.length ? errors : false;
     };
 
     // Return the complete interface
