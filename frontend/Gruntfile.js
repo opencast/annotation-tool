@@ -310,9 +310,9 @@ module.exports = function (grunt) {
 
         jsdoc : {
             dist : {
-                src: ['js/views/*.js', 'js/collections/*.js', 'js/models/*.js', 'js/prototypes/*.js'],
+                src: ['<%= srcPath.js %>', '!js/libs/**'],
                 options: {
-                    destination: '<%= currentProfile.target %>/doc',
+                    destination: 'doc',
                     template: 'node_modules/ink-docstrap/template'
                 }
             }

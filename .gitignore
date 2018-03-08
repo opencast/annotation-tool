@@ -40,3 +40,6 @@ Makefile
 
 # Ignore translation file backups
 /frontend/locales/**/*_old.json
+
+# Ignore generated frontend documentation
+/frontend/doc
