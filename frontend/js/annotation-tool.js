@@ -26,6 +26,7 @@
  * @requires templates/delete-modal.tmpl
  * @requires templates/delete-warning-content.tmpl
  * @requires player-adapter
+ * @requires player-adapter
  * @requires handlebars
  * @requires annotation-sync
  */
@@ -39,7 +40,7 @@ define(["jquery",
         "views/list-annotation",
         "templates/delete-modal",
         "templates/delete-warning-content",
-        "prototypes/player_adapter",
+        "player-adapter",
         "roles",
         "colors",
         "annotation-sync",

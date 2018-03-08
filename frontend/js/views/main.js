@@ -21,7 +21,7 @@
  * @requires underscore
  * @requires mousetrap
  * @requires i18next
- * @requires prototype-player_adapter
+ * @requires player-adapter
  * @requires collections-annotations
  * @requires views-annotate
  * @requires views-list
@@ -42,7 +42,7 @@ define(["jquery",
         "underscore",
         "mousetrap",
         "i18next",
-        "prototypes/player_adapter",
+        "player-adapter",
         "views/about",
         "views/annotate",
         "views/list",

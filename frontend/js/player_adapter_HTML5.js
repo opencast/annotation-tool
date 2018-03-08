@@ -24,7 +24,7 @@
  * @requires mediaelementplayer
  */
 define(["jquery",
-        "prototypes/player_adapter",
+        "player-adapter",
         "mediaelementplayer"],
 
     function ($, PlayerAdapter) {

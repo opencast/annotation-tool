@@ -15,7 +15,7 @@
  */
 
 /**
- * A containing the player adapter prototype
+ * A module containing the player adapter prototype
  * @module player-adapter
  */
 define(function () {

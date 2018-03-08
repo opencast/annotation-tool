@@ -31,7 +31,7 @@
 define(["jquery",
         "underscore",
         "i18next",
-        "prototypes/player_adapter",
+        "player-adapter",
         "models/annotation",
         "models/user",
         "views/comments-container",

@@ -18,6 +18,7 @@
  * @module views-loop
  * @requires jquery
  * @requires underscore
+ * @requires player-adapter
  * @requires Backbone
  * @requires i18next
  * @requires templates/loop-modal
@@ -28,7 +29,7 @@ define(["jquery",
         "underscore",
         "i18next",
         "collections/loops",
-        "prototypes/player_adapter",
+        "player-adapter",
         "backbone",
         "templates/loop-control",
         "handlebars",
