@@ -111,10 +111,8 @@ define(["jquery",
 
                 // ...and ensure that its methods are used for the Events management
                 this.dispatchEvent       = this.__proto__.dispatchEvent;
-                this.triggerEvent        = this.__proto__.triggerEvent;
                 this.addEventListener    = this.__proto__.addEventListener;
                 this.removeEventListener = this.__proto__.removeEventListener;
-                this._getListeners       = this.__proto__._getListeners;
 
                 /**
                  * Listen the events from the native player
@@ -131,7 +129,7 @@ define(["jquery",
 
                     // If duration is valid, we changed status
                     self.status = PlayerAdapter.STATUS.PAUSED;
-                    self.triggerEvent(PlayerAdapter.EVENTS.READY);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.READY));
 
                     if (self.waitToPlay) {
                         self.play();
@@ -144,7 +142,7 @@ define(["jquery",
                     }
 
                     self.status = PlayerAdapter.STATUS.PLAYING;
-                    self.triggerEvent(PlayerAdapter.EVENTS.PLAY);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PLAY));
                 });
 
                 $(targetElement).bind("playing", function () {
@@ -157,18 +155,18 @@ define(["jquery",
                     }
 
                     self.status = PlayerAdapter.STATUS.PAUSED;
-                    self.triggerEvent(PlayerAdapter.EVENTS.PAUSE);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PAUSE));
                 });
 
                 $(targetElement).bind("ended", function () {
                     self.status = PlayerAdapter.STATUS.ENDED;
-                    self.triggerEvent(PlayerAdapter.EVENTS.ENDED);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ENDED));
                 });
 
                 $(targetElement).bind("seeking", function () {
                     self.oldStatus = self.status;
                     self.status = PlayerAdapter.STATUS.SEEKING;
-                    self.triggerEvent(PlayerAdapter.EVENTS.SEEKING);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.SEEKING));
                 });
 
                 $(targetElement).bind("seeked", function () {
@@ -186,12 +184,12 @@ define(["jquery",
                     ) {
                         self.status = PlayerAdapter.STATUS.PLAYING;
                     }
-                    self.triggerEvent(PlayerAdapter.EVENTS.TIMEUPDATE);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.TIMEUPDATE));
                 });
 
                 $(targetElement).bind("error", function () {
                     self.status = PlayerAdapter.STATUS.ERROR_NETWORK;
-                    self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ERROR));
                 });
 
                 $(targetElement).bind("contextmenu", function (e) {

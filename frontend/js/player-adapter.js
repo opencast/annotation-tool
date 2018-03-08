@@ -17,8 +17,9 @@
 /**
  * A module containing the player adapter prototype
  * @module player-adapter
+ * @requires event-target
  */
-define(function () {
+define(["event-target"], function (EventTarget) {
 
     "use strict";
 
@@ -28,7 +29,11 @@ define(function () {
      * @see {@link https://github.com/entwinemedia/annotations/wiki/Player-adapter-API}
      * @alias module:player-adapter.PlayerAdapter
      */
-    var PlayerAdapter = function () { this._init(); };
+    var PlayerAdapter = function () {
+        EventTarget.apply(this, arguments);
+    };
+
+    PlayerAdapter.prototype = Object.create(EventTarget.prototype);
 
     /**
      * Possible player status
@@ -59,19 +64,6 @@ define(function () {
         TIMEUPDATE: "pa_timeupdate",
         ERROR     : "pa_error",
         ENDED     : "pa_ended"
-    };
-
-    /**
-     * List of player listeners
-     * @type {map}
-     */
-    PlayerAdapter.prototype._listeners = {};
-
-    /**
-     * Initilization method
-     */
-    PlayerAdapter.prototype._init = function () {
-        this._listeners = {};
     };
 
     /**
@@ -119,86 +111,6 @@ define(function () {
      */
     PlayerAdapter.prototype.getStatus = function () {
         throw "Function 'getStatus' must be implemented in player adapter!";
-    };
-
-    /**
-     * Get the listeners list for this object
-     * @param {string} type event type
-     * @param {boolean} useCapture If the user wish to initiate the capture
-     * @return {array} listeners list
-     */
-    PlayerAdapter.prototype._getListeners = function (type, useCapture) {
-        var captype = (useCapture ? "1" : "0") + type;
-
-        if (!(captype in this.__proto__._listeners)) {
-            this.__proto__._listeners[captype] = [];
-        }
-
-        return this.__proto__._listeners[captype];
-    };
-
-    /**
-     * Add listener for the given event type
-     * @param {String} type event type
-     * @parm {function} listener the new listener
-     * @param {boolean} useCapture If the user wish to initiate the capture
-     */
-    PlayerAdapter.prototype.addEventListener = function (type, listener, useCapture) {
-        var listeners = this._getListeners(type, useCapture),
-            ix = listeners.indexOf(listener);
-
-        if (ix === -1) {
-            listeners.push(listener);
-        }
-    };
-
-    /**
-     * Remove listener for the given event type
-     * @param {String} type event type
-     * @parm {function} listener the listener to remove
-     * @param {boolean} useCapture If the user wish to initiate the capture
-     */
-    PlayerAdapter.prototype.removeEventListener = function (type, listener, useCapture) {
-        var listeners = this._getListeners(type, useCapture),
-            ix = listeners.indexOf(listener);
-
-        if (ix !== -1) {
-            listeners.splice(ix, 1);
-        }
-    };
-
-    /**
-     * Dipatch the given event to the listeners
-     * @param {Event} evt the event to dispatch
-     */
-    PlayerAdapter.prototype.dispatchEvent = function (event, type) {
-        var eventType = type,
-            listeners,
-            i;
-
-        if (typeof type !== "undefined") {
-            eventType = event.type;
-        }
-
-        listeners = this._getListeners(eventType, false).slice();
-
-        for (i = 0; i < listeners.length; i++) {
-            listeners[i].call(this, event);
-        }
-
-        return !event.defaultPrevented;
-    };
-
-    /**
-     * Dispatch the given event
-     */
-    PlayerAdapter.prototype.triggerEvent = function (eventType) {
-        var evt;
-
-        // For others browsers
-        evt = document.createEvent("CustomEvent");
-        evt.initEvent(eventType, true, true); // event type,bubbling,cancelable
-        return !this.dispatchEvent(evt, eventType);
     };
 
     /**
