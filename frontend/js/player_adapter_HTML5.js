@@ -14,8 +14,6 @@
  *
  */
 
-/*global Element */
-
 /**
  * A module representing the player adapter implementation for the HTML5 native player
  * @module player-adapter-HTML5
@@ -36,29 +34,17 @@ define(["jquery",
          * @constructor
          * @alias module:player-adapter-HTML5.PlayerAdapterHTML5
          * @augments {module:player-adapter.PlayerAdapter}
-         * @param {DOMElement} targetElement DOM Element representing the player
+         * @param {HTMLElement} targetElement DOM Element representing the player
          */
         var PlayerAdapterHTML5 = function (targetElement, sources) {
+            PlayerAdapter.apply(this, arguments);
+
             var self = this;
 
             // Check if the given target Element is valid
             if (typeof targetElement === "undefined" || targetElement === null || !(targetElement instanceof HTMLElement)) {
                 throw "The given target element must not be null and have to be a vaild HTMLElement!";
             }
-
-            /**
-             * Id of the player adapter
-             * @inner
-             * @type {String}
-             */
-            this.id = "PlayerAdapter" + targetElement.id;
-
-            /**
-             * The HTML representation of the adapter, mainly used to thriggered event
-             * @inner
-             * @type {DOMElement}
-             */
-            this.htmlElement = null;
 
             /**
              * The current player status
@@ -94,25 +80,6 @@ define(["jquery",
                         }
                     }
                 });
-
-                // Create the HTML representation of the adapter
-                $(targetElement).wrap(self.getHTMLTemplate(self.id));
-                if ($("#" + self.id).length === 0) {
-                    throw "Cannot create HTML representation of the adapter";
-                }
-
-                self.htmlElement = document.getElementById(self.id);
-
-                // Extend the current object with the HTML representation
-                $.extend(true, this, self.htmlElement);
-
-                // Add PlayerAdapter the prototype
-                this.__proto__ = new PlayerAdapter();
-
-                // ...and ensure that its methods are used for the Events management
-                this.dispatchEvent       = this.__proto__.dispatchEvent;
-                this.addEventListener    = this.__proto__.addEventListener;
-                this.removeEventListener = this.__proto__.removeEventListener;
 
                 /**
                  * Listen the events from the native player
@@ -271,19 +238,10 @@ define(["jquery",
                 return self.status;
             };
 
-            // =================================
-            // IMPLEMENTATION SPECIFIC FUNCTIONS
-            // ==================================
-
-            /**
-             * Get the HTML template for the html representation of the adapter
-             */
-            this.getHTMLTemplate = function (id) {
-                return  "<div id=\"" + id + "\"></div>";
-            };
-
             return this.init();
         };
+
+        PlayerAdapterHTML5.prototype = Object.create(PlayerAdapter.prototype);
 
         return PlayerAdapterHTML5;
     }
