@@ -35,6 +35,61 @@ define(["event-target"], function (EventTarget) {
 
     PlayerAdapter.prototype = Object.create(EventTarget.prototype);
 
+    var methods = [
+        /**
+         * Play the media element in the player.
+         * @method play
+         * @memberof module:player-adapter.PlayerAdapter#
+         */
+        "play",
+
+        /**
+         * Set the media element in the player in pause mode.
+         * @method pause
+         * @memberof module:player-adapter.PlayerAdapter#
+         */
+        "pause",
+
+        /**
+         * Get the current time of the media element.
+         * @method getCurrentTime
+         * @return {number} current time
+         * @memberof module:player-adapter.PlayerAdapter#
+         */
+        "getCurrentTime",
+
+        /**
+         * Set the current time of the media element in the player to the given one.
+         * If the given value is not value, does not set it and write a warning in the console.
+         * @method setCurrentTime
+         * @param {number} time the new time
+         * @memberof module:player-adapter.PlayerAdapter#
+         */
+        "setCurrentTime",
+
+        /**
+         * Get the media element duration.
+         * @method getDuration
+         * @return {number} current time
+         * @memberof module:player-adapter.PlayerAdapter#
+         */
+        "getDuration",
+
+        /**
+         * Get the media element duration
+         * @method getStatus
+         * @return {number} duration
+         * @memberof module:player-adapter.PlayerAdapter#
+         */
+        "getStatus"
+    ];
+
+    methods.forEach(function (method) {
+        PlayerAdapter.prototype[method] = function () {
+            throw "Function '" + method + "' must be implemented in player adapter!";
+        };
+    });
+
     /**
      * Possible player status
      * @readonly
@@ -64,53 +119,6 @@ define(["event-target"], function (EventTarget) {
         TIMEUPDATE: "pa_timeupdate",
         ERROR     : "pa_error",
         ENDED     : "pa_ended"
-    };
-
-    /**
-     * Play the media element in the player.
-     */
-    PlayerAdapter.prototype.play = function () {
-        throw "Function 'play' must be implemented in player adapter!";
-    };
-
-    /**
-     * Set the media element in the player in pause mode.
-     */
-    PlayerAdapter.prototype.pause = function () {
-        throw "Function 'pause' must be implemented in player adapter!";
-    };
-
-    /**
-     * Set the current time of the media element in the player to the given one.
-     * If the given value is not value, does not set it and write a warning in the console.
-     * @param {double} the new time
-     */
-    PlayerAdapter.prototype.setCurrentTime = function () {
-        throw "Function 'setCurrentTime' must be implemented in player adapter!";
-    };
-
-    /**
-     * Get the current time of the media element.
-     * @return {double} current time
-     */
-    PlayerAdapter.prototype.getCurrentTime = function () {
-        throw "Function 'getCurrentTime' must be implemented in player adapter!";
-    };
-
-    /**
-     * Get the media element duration.
-     * @return {double} current time
-     */
-    PlayerAdapter.prototype.getDuration = function () {
-        throw "Function 'getDuration' must be implemented in player adapter!";
-    };
-
-    /**
-     * Get the media element duration
-     * @return {double} duration
-     */
-    PlayerAdapter.prototype.getStatus = function () {
-        throw "Function 'getStatus' must be implemented in player adapter!";
     };
 
     /**
