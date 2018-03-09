@@ -369,21 +369,19 @@ define(["jquery",
                     timeupdateEvent += ":" + interval;
 
                     // Check if the interval needs to be added to list
-                    _.bind(function () {
-                        for (i = 0; i < this.timeupdateIntervals.length; i++) {
-                            value = this.timeupdateIntervals[i];
+                    for (i = 0; i < this.timeupdateIntervals.length; i++) {
+                        value = this.timeupdateIntervals[i];
 
-                            if (value.interval === interval) {
-                                return;
-                            }
+                        if (value.interval === interval) {
+                            return;
                         }
+                    }
 
-                        // Add interval to list
-                        this.timeupdateIntervals.push({
-                            interval: interval,
-                            lastUpdate: 0
-                        });
-                    }, this)();
+                    // Add interval to list
+                    this.timeupdateIntervals.push({
+                        interval: interval,
+                        lastUpdate: 0
+                    });
                 }
 
                 this.listenTo(this, timeupdateEvent, callback);
