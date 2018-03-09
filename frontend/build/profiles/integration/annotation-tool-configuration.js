@@ -340,20 +340,21 @@ define(["jquery",
 
                             var tracks = util.array(mediapackage.media.track);
 
-                            function matchType(field, type, subtype) {
-                                if (!type) type = ".*";
-                                if (!subtype) subtype = ".*";
-                                var regex = new RegExp(type + "/" + subtype);
-                                return function (object) {
-                                    return object[field].match(regex);
-                                };
-                            }
                             var videos = util.array(mediapackage.media.track)
-                                .filter(matchType("mimetype", "video"));
+                                .filter(_.compose(
+                                    RegExp.prototype.test.bind(/video\/.*/),
+                                    _.property("mimetype")
+                                ));
                             videos.sort(
                                 util.lexicographic(
-                                    util.firstWith(matchType("type", "presenter")),
-                                    util.firstWith(matchType("type", "presentation")),
+                                    util.firstWith(_.compose(
+                                        RegExp.prototype.test.bind(/presenter\/.*/),
+                                        _.property("type")
+                                    )),
+                                    util.firstWith(_.compose(
+                                        RegExp.prototype.test.bind(/presentation\/.*/),
+                                        _.property("type")
+                                    ))
                                 )
                             );
 
