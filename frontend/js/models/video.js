@@ -202,12 +202,10 @@ define(["jquery",
                 if (track) {
                     return track.getAnnotation(annotationId);
                 } else {
-                    this.get("tracks").each(function (trackItem) {
+                    this.get("tracks").find(function (trackItem) {
                         tmpAnnotation = trackItem.getAnnotation(annotationId);
-                        if (!_.isUndefined(tmpAnnotation)) {
-                            return tmpAnnotation;
-                        }
-                    }, this);
+                        return !_.isUndefined(tmpAnnotation);
+                    });
                     return tmpAnnotation;
                 }
             },
