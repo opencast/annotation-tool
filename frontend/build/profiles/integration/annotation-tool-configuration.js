@@ -41,22 +41,11 @@ define(["jquery",
                 return Backbone.localSync.call(this, method, model, options);
             }
 
-            options = _.extend({ headers: {} }, options);
-
             // The backend expects `application/x-www-form-urlencoded data
             // with anything nested deeper than one level transformed to a JSON string
             options.processData = true;
 
             options.data = options.attrs || model.toJSON(options);
-
-            // Pass along authentication data
-            if (annotationTool.user) {
-                options.headers["X-ANNOTATIONS-USER-ID"] = annotationTool.user.id;
-            }
-            var authToken = _.result(annotationTool, 'getUserAuthToken');
-            if (authToken) {
-                options.headers["X-ANNOTATIONS-USER-AUTH-TOKEN"] = authToken;
-            }
 
             // Some models (marked with `mPOST`) need to always be `PUT`, i.e. never be `POST`ed
             if (model.noPOST && method === "create") {

@@ -209,15 +209,6 @@ define(["jquery",
             },
 
             /**
-             * Get the user authentification token if existing
-             * @alias module:annotation-tool-configuration.Configuration.getUserAuthToken
-             * @return {string} Current user token
-             */
-            getUserAuthToken: function () {
-                return undefined;
-            },
-
-            /**
              * Function to load the video
              * @alias module:annotation-tool-configuration.Configuration.loadVideo
              */
