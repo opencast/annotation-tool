@@ -20,17 +20,55 @@
  */
 define(["jquery",
         "underscore",
+        "backbone",
         "util",
         "roles",
-        "player_adapter_HTML5"
+        "player_adapter_HTML5",
+        "localstorage"
         // Add the files (PlayerAdapter, ...) required for your configuration here
         ],
 
-    function ($, _, util, ROLES, HTML5PlayerAdapter) {
+    function ($, _, Backbone, util, ROLES, HTML5PlayerAdapter) {
 
         "use strict";
 
+        /**
+         * Synchronize models with an annotation tool backend
+         */
+        Backbone.sync = function (method, model, options) {
 
+            if (annotationTool.localStorage || model.localStorageOnly) {
+                return Backbone.localSync.call(this, method, model, options);
+            }
+
+            options = _.extend({ headers: {} }, options);
+
+            // The backend expects `application/x-www-form-urlencoded data
+            // with anything nested deeper than one level transformed to a JSON string
+            options.processData = true;
+
+            options.data = options.attrs || model.toJSON(options);
+
+            // Pass along authentication data
+            if (annotationTool.user) {
+                options.headers["X-ANNOTATIONS-USER-ID"] = annotationTool.user.id;
+            }
+            var authToken = _.result(annotationTool, 'getUserAuthToken');
+            if (authToken) {
+                options.headers["X-ANNOTATIONS-USER-AUTH-TOKEN"] = authToken;
+            }
+
+            // Some models (marked with `mPOST`) need to always be `PUT`, i.e. never be `POST`ed
+            if (model.noPOST && method === "create") {
+                method = "update";
+            }
+
+            options.beforeSend = function () {
+                this.url = "../../extended-annotations" + this.url;
+            };
+
+            return Backbone.ajaxSync.call(this, method, model, options);
+        };
 
         var video_title,
             video_creator,

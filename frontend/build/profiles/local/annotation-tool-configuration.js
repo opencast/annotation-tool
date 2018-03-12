@@ -20,14 +20,25 @@
  */
 define(["jquery",
         "underscore",
+        "backbone",
         "roles",
-        "player_adapter_HTML5"
+        "player_adapter_HTML5",
+        "localstorage"
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, _, ROLES, HTML5PlayerAdapter) {
+    function ($, _, Backbone, ROLES, HTML5PlayerAdapter) {
 
         "use strict";
+
+        /**
+         * Provide a default implementation of {@link module:Backbone.Collection.localStorage}
+         * to generate the local storage container for every collection based on its URL.
+         * @see module:Backbone.LocalStorage
+         */
+        Backbone.Collection.prototype.localStorage = function () {
+            return new Backbone.LocalStorage(_.result(this, "url"));
+        };
 
         /**
          * Annotations tool configuration object

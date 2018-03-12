@@ -28,7 +28,6 @@
  * @requires player-adapter
  * @requires player-adapter
  * @requires handlebars
- * @requires annotation-sync
  */
 define(["jquery",
         "underscore",
@@ -43,10 +42,9 @@ define(["jquery",
         "player-adapter",
         "roles",
         "colors",
-        "annotation-sync",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ROLES, ColorsManager, annotationSync) {
+    function ($, _, Backbone, i18next, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ROLES, ColorsManager) {
 
         "use strict";
 
@@ -174,9 +172,6 @@ define(["jquery",
                         return "- " + method + " is not a function";
                     }).join("\n");
                 }
-
-                // Set up the storage layer
-                Backbone.sync = annotationSync;
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
