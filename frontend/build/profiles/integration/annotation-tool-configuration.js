@@ -32,14 +32,12 @@ define(["jquery",
 
         "use strict";
 
+        var backboneSync = Backbone.sync;
+
         /**
          * Synchronize models with an annotation tool backend
          */
         Backbone.sync = function (method, model, options) {
-
-            if (annotationTool.localStorage || model.localStorageOnly) {
-                return Backbone.localSync.call(this, method, model, options);
-            }
 
             // The backend expects `application/x-www-form-urlencoded data
             // with anything nested deeper than one level transformed to a JSON string
@@ -56,7 +54,7 @@ define(["jquery",
                 this.url = "../../extended-annotations" + this.url;
             };
 
-            return Backbone.ajaxSync.call(this, method, model, options);
+            return backboneSync.call(this, method, model, options);
         };
 
         var video_title,

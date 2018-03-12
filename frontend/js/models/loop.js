@@ -51,9 +51,6 @@ define(["jquery",
                 this.set(attr);
             },
 
-            /** Only save this model locally and don't sync it with the server */
-            localStorageOnly: true,
-
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-loop.Loop#validate
