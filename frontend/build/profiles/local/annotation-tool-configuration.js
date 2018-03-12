@@ -52,19 +52,6 @@ define(["jquery",
             },
 
             /**
-             * The default tracks at startup
-             * @type {{@link this.TRACKS}}
-             */
-            getDefaultTracks: function () {
-                return {
-                    name: "mine",
-                    filter: function (track) {
-                        return track.get("isMine");
-                    }
-                };
-            },
-
-            /**
              * The maximal number of tracks visible in the timeline at the same time
              * @type {Number}
              */

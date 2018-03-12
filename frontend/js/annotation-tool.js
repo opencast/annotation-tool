@@ -947,7 +947,7 @@ define(["jquery",
                         } else {
                             tracks.showTracks(
                                 _.first(
-                                    tracks.filter(this.getDefaultTracks().filter),
+                                    tracks.where({ isMine: true }),
                                     this.MAX_VISIBLE_TRACKS || Number.MAX_VALUE
                                 )
                             );
