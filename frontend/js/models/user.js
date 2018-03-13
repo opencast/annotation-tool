@@ -103,7 +103,7 @@ define(["jquery",
                     };
                 }
 
-                if (!emailAddresses.parseOneAddress(attr.email)) {
+                if (attr.email && !emailAddresses.parseOneAddress(attr.email)) {
                     return {
                         attribute: "email",
                         message: "Given email is not valid!"
