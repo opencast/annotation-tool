@@ -221,7 +221,7 @@ define(["jquery",
 
                 this.colorsManager = new ColorsManager();
 
-                this.views.main = new MainView(this.playerAdapter);
+                this.views.main = new MainView();
 
                 $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
             },
