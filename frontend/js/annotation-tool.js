@@ -58,7 +58,6 @@ define(["jquery",
                 ANNOTATION_SELECTION : "at:annotation-selection",
                 ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
                 MODELS_INITIALIZED   : "at:models-initialized",
-                READY                : "at:ready",
                 TIMEUPDATE           : "at:timeupdate",
                 USER_LOGGED          : "at:logged"
             },
@@ -183,10 +182,12 @@ define(["jquery",
 
                 this.tracksOrder = [];
 
-                this.once(this.EVENTS.USER_LOGGED, this.fetchData);
+                this.colorsManager = new ColorsManager();
+
                 this.once(this.EVENTS.USER_LOGGED, function () {
                     $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
-                });
+                    this.fetchData();
+                }, this);
                 this.once(this.EVENTS.MODELS_INITIALIZED, function () {
 
                     var updateTracksOrder = _.bind(function (tracks) {
@@ -219,32 +220,11 @@ define(["jquery",
                             );
                         }
                     }
+
+                    this.views.main = new MainView();
+                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
                 }, this);
-
-                this.colorsManager = new ColorsManager();
-
-                this.views.main = new MainView();
-
-                $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
-            },
-
-            /**
-             * Log in the current user of the tool
-             * @alias annotationTool.login
-             * @param {Object} The Attributes of the user that is to be logged in.
-             * @param {Object} callbacks Callbacks for the user creation
-             * @return {User} The logged in user
-             * @see module:models-user.User#initialize
-             */
-            login: function (attributes, callbacks) {
-                var user = this.users.create(attributes, { wait: true });
-                if (!user) throw "Invalid user";
-                user.bind(callbacks);
-                user.save();
-                this.user = user;
-                this.users.trigger("login");
-                this.trigger(this.EVENTS.USER_LOGGED);
-                return user;
+                this.authenticate();
             },
 
             /**

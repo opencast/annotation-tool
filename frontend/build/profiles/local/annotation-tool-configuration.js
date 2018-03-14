@@ -21,15 +21,19 @@
 define(["jquery",
         "underscore",
         "backbone",
+        "collections/users",
         "roles",
+        "views/login",
         "player_adapter_HTML5",
         "localstorage"
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, _, Backbone, ROLES, HTML5PlayerAdapter) {
+    function ($, _, Backbone, Users, ROLES, LoginView, HTML5PlayerAdapter) {
 
         "use strict";
+
+        var users = new Users();
 
         /**
          * Provide a default implementation of {@link module:Backbone.Collection.localStorage}
@@ -91,14 +95,6 @@ define(["jquery",
              * @readOnly
              */
             localStorage: true,
-
-            /**
-             * Url for redirect after the logout
-             * @alias module:annotation-tool-configuration.Configuration.logoutUrl
-             * @type {string}
-             * @readOnly
-             */
-            logoutUrl: undefined,
 
             /**
              * Array of tracks to import by default
@@ -193,12 +189,42 @@ define(["jquery",
             },
 
             /**
-             * Get the user id from the current context (user_extid)
-             * @alias module:annotation-tool-configuration.Configuration.getUserExtId
-             * @return {string} user_extid
+             * Authenticate the user
+             * @alias module:annotation-tool-configuration.Configuration.authenticate
              */
-            getUserExtId: function (email) {
-                return email;
+            authenticate: function () {
+                users.fetch().then(_.bind(function () {
+                    var currentUser = localStorage.currentUser;
+                    if (currentUser) {
+                        this.user = users.get(currentUser);
+                        this.trigger(this.EVENTS.USER_LOGGED);
+                    } else {
+                        var loginView = new LoginView();
+                        loginView.once(LoginView.EVENTS.LOGIN, function (user, remember) {
+                            this.user = users.get(user);
+                            if (this.user) {
+                                this.user.set(user.attributes);
+                            } else {
+                                this.user = users.create(user);
+                            }
+                            if (remember) {
+                                localStorage.currentUser = this.user.id;
+                            }
+                            loginView.hide();
+                            this.trigger(this.EVENTS.USER_LOGGED);
+                        }, this);
+                        loginView.show();
+                    }
+                }, this));
+            },
+
+            /**
+             * Log out the current user
+             * @alias module:annotation-tool-configuration.Configuration.logout
+             */
+            logout: function () {
+                delete localStorage.currentUser;
+                window.location.reload();
             },
 
             /**

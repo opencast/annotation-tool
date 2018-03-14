@@ -22,13 +22,14 @@ define(["jquery",
         "underscore",
         "backbone",
         "util",
+        "models/user",
         "roles",
         "player_adapter_HTML5",
         "localstorage"
         // Add the files (PlayerAdapter, ...) required for your configuration here
         ],
 
-    function ($, _, Backbone, util, ROLES, HTML5PlayerAdapter) {
+    function ($, _, Backbone, util, User, ROLES, HTML5PlayerAdapter) {
 
         "use strict";
 
@@ -228,71 +229,6 @@ define(["jquery",
                 },
 
                 /**
-                 * Get the user id from the current context (user_extid)
-                 * @alias module:annotation-tool-configuration.Configuration.getUserExtId
-                 * @return {string} user_extid
-                 */
-                getUserExtId: function () {
-                    if (_.isUndefined(annotationTool.userExtId)) {
-                        $.ajax({
-                            url: "/info/me.json",
-                            async: false,
-                            dataType: "json",
-                            success: function (data) {
-                                annotationTool.userExtId = data.user.username;
-                            },
-                            error: function () {
-                                console.warn("Error getting user information from Opencast!");
-                            }
-                        });
-                    }
-
-                    return annotationTool.userExtId;
-                },
-
-                /**
-                 * Controls the behavior of the login form. For truthy values it is prepopulated
-                 * with user data from the current context.
-                 * @alias module:annotation-tool-configuration.Configuration.useUserExtData
-                 * @type {Boolean}
-                 * @see module:annotation-tool-configuration.Configuration.getUserExtData
-                 */
-                useUserExtData: true,
-
-                /**
-                 * Skip the login form if possible, for example because user data can be extracted from the context
-                 * @alias module:annotation-tool-configuration.Configuration.skipLoginFormIfPossible
-                 * @type {Boolean}
-                 * @see module:annotation-tool-configuration.Configuration.useUserExtData
-                 */
-                skipLoginFormIfPossible: true,
-
-                getUserExtData: function () {
-                    var user;
-
-                    $.ajax({
-                        url: "/info/me.json",
-                        dataType: "json",
-                        async: false,
-                        success: function (response) {
-                            user = response;
-                        },
-                        error: function (error) {
-                            console.warn("Error getting user information from Opencast: " + error);
-                        }
-                    });
-
-                    if (!user) return undefined;
-
-                    return {
-                        user_extid: user.user.username,
-                        nickname: user.user.username,
-                        email: user.user.email,
-                        role: user.roles && this.getUserRoleFromExt(user.roles)
-                    };
-                },
-
-                /**
                  * Maps a list of roles of the external user to a corresponding user role
                  * @alias module:annotation-tool-configuration.Configuration.getUserRoleFromExt
                  * @param {string[]} roles The roles of the external user
@@ -314,6 +250,37 @@ define(["jquery",
                     }
 
                     return ROLES.USER;
+                },
+
+                /**
+                 * Authenticate the user
+                 * @alias module:annotation-tool-configuration.Configuration.authenticate
+                 */
+                authenticate: function () {
+                    $.ajax({
+                        url: "/info/me.json",
+                        dataType: "json"
+                    }).then(_.bind(function (response) {
+                        var userData = response.user;
+                        this.user = new User({
+                            user_extid: userData.username,
+                            nickname: userData.username,
+                            email: userData.email,
+                            role: this.getUserRoleFromExt(response.roles)
+                        });
+                        this.user.urlRoot = "/users";
+                        return this.user.save();
+                    }, this)).then(_.bind(function () {
+                        this.trigger(annotationTool.EVENTS.USER_LOGGED);
+                    }, this));
+                },
+
+                /**
+                 * Log out the current user
+                 * @alias module:annotation-tool-configuration.Configuration.logout
+                 */
+                logout: function () {
+                    window.location = "/j_spring_security_logout";
                 },
 
                 /**

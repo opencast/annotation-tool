@@ -15,14 +15,13 @@
  */
 
 /**
- * A module representing the login modal
+ * A module representing the login modal.
+ * Note that this is currently only used in the local configurations.
  * @module views-login
  * @requires jquery
  * @requires underscore
  * @requires backbone
  * @requires i18next
- * @requires models-user
- * @requires collections-users
  * @requires templates/user-login.tmpl
  * @requires ROLES
  * @requires handlebars
@@ -31,9 +30,8 @@ define([
     "jquery",
     "underscore",
     "backbone",
-    "i18next",
     "models/user",
-    "collections/users",
+    "i18next",
     "templates/user-login",
     "roles",
     "handlebars",
@@ -42,9 +40,8 @@ define([
     $,
     _,
     Backbone,
-    i18next,
     User,
-    Users,
+    i18next,
     LoginTemplate,
     ROLES
 ) { "use strict";
@@ -87,29 +84,15 @@ var LoginView = Backbone.View.extend({
      * @alias module:views-login.Login#initialize
      */
     initialize: function () {
-        this.$el.append(this.loginTemplate({ localStorage: annotationTool.localStorage }));
-        this.$el.modal({show: true, backdrop: true, keyboard: false });
-        this.$el.modal("hide");
-        this.$el.on("hide", function () {
-            // If user not set, display the login window again
-            if (_.isUndefined(annotationTool.user)) {
-                setTimeout(function () {$("#user-login").modal("show"); }, 5);
-            }
-        });
+        this.$el.append(this.loginTemplate());
+        this.$el.modal({ show: true, backdrop: "static", keyboard: false });
     },
 
     /**
      * Show the login modal
      * @alias module:views-login.Login#show
-     * @param {Object} options The options to prefill the form with
      */
     show: function (options) {
-        var userNickname    = this.$el.find("#nickname");
-        var userEmail       = this.$el.find("#email");
-        if (options) {
-            userNickname.val(options.nickname);
-            userEmail.val(options.email);
-        }
         this.$el.modal("show");
     },
 
@@ -132,59 +115,50 @@ var LoginView = Backbone.View.extend({
     },
 
     /**
-     * Log the current user of the tool in
+     * Validate the given credentials and potentially signal the corresponding user's login
      * @alias module:views-login.Login#login
-     * @return {User} the current user
      */
     login: function () {
+
         // Fields from the login form
-        var userNickname    = this.$el.find("#nickname"),
-            userEmail       = this.$el.find("#email"),
-            userId          = annotationTool.getUserExtId(userEmail.val()),
-            userRemember    = this.$el.find("#remember"),
-            userError       = this.$el.find(".alert"),
-            user; // the new user
+        var userNickname = this.$el.find("#nickname").val(),
+            userEmail = this.$el.find("#email").val(),
+            userRemember = this.$el.find("#remember").prop("checked"),
+            userSupervisor = this.$el.find("#supervisor").prop("checked"),
+            alert = this.$el.find(".alert"),
+            userError = alert.find("#content"),
+            validationErrors = false;
 
-        userError.find("#content").empty();
-        try {
-            user = annotationTool.login(
-                {
-                    user_extid: userId,
-                    nickname: userNickname.val(),
-                    email: userEmail.val(),
-                    role: annotationTool.localStorage && (
-                        this.$el.find("#supervisor")[0].checked ? ROLES.ADMINISTRATOR : ROLES.USER
-                    )
-                },
-                {
-                    error: $.proxy(function (model, error) {
-                        this.$el.find("#" + error.attribute).parentsUntil("form").addClass("error");
-                        userError.find("#content").append(i18next.t("login.error", { error: error.message }) + "<br/>");
-                    }, this)
-                }
-            );
-        } catch (error) {
-            userError.find("#content").append(i18next.t("login.error", { error: error }) + "<br/>");
-            this.$el.find(".alert").show();
-            return undefined;
-        }
+        // Remove potential previous validation errors
+        this.$el.find(".error").removeClass("error");
+        alert.hide();
+        userError.empty();
 
-        // If we have to remember the user
-        if (userRemember.is(":checked")) {
-            annotationTool.users.add(user);
-            Backbone.localSync("create", user, {
-                success: function () {
-                    console.log("current user saved locally");
-                },
-                error: function (error) {
-                    console.warn(error);
-                }
-            });
-        }
+        var user = new User();
+        user.set({
+            id: userNickname,
+            user_extid: userNickname,
+            nickname: userNickname,
+            email: userEmail,
+            role: userSupervisor ? ROLES.ADMINISTRATOR : ROLES.USER
+        }, {
+            error: _.bind(function (user, error) {
+                this.$el.find("#" + error.attribute).parentsUntil("form").addClass("error");
+                userError.append(i18next.t(
+                    "login error." + error.attribute + "." + error.error
+                ));
+                alert.show();
+                validationErrors = true;
+            }, this)
+        });
 
-        this.$el.modal("toggle");
+        if (validationErrors) return;
 
-        return user;
+        this.trigger(LoginView.EVENTS.LOGIN, user, userRemember);
+    }
+}, {
+    EVENTS: {
+        LOGIN: "login"
     }
 });
 

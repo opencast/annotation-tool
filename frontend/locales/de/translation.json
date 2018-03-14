@@ -101,8 +101,13 @@
   "list annotation": {
     "double click to edit": "$t(common actions.double click to edit)"
   },
-  "login": {
-    "error": "Anmelden fehlgeschlagen: {{error}}"
+  "login error": {
+    "nickname": {
+      "absent": "Benutzername kann nicht leer sein"
+    },
+    "email": {
+      "invalid": "{{attribute}} ist keine gültige E-Mail-Adresse"
+    }
   },
   "loop controller": {
     "enable": "Schleifen aktivieren",
@@ -299,7 +304,6 @@
     "login": "Anmelden",
     "login as supervisor": "Als Aufsicht anmelden",
     "nickname": {
-      "hint": "Wählen Sie einen Namen für den Benutzer, als der Sie gerade angemeldet sind (z.B. im LTI)",
       "label": "Benutzername",
       "placeholder": "Benutzernamen eingeben"
     },

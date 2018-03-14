@@ -101,8 +101,13 @@
   "list annotation": {
     "double click to edit": "Double click to edit"
   },
-  "login": {
-    "error": "Failed to log in: {{error}}"
+  "login error": {
+    "nickname": {
+      "absent": "Nickname can't be blank"
+    },
+    "email": {
+      "invalid": "{{attribute}} is not a valid email address"
+    }
   },
   "loop controller": {
     "enable": "Enable loops",
@@ -298,7 +303,6 @@
     "login": "Log in",
     "login as supervisor": "Log in as supervisor",
     "nickname": {
-      "hint": "Create a new nickname for the user you are logged in with in the current context (e.g. LTI)",
       "label": "Nickname",
       "placeholder": "Insert your nickname"
     },

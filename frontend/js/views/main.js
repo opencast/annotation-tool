@@ -27,7 +27,6 @@
  * @requires views-list
  * @requires views-timeline
  * @requires views-loop
- * @requires views-login
  * @requires views-scale-editor
  * @requires models-user
  * @requires models-track
@@ -49,7 +48,6 @@ define(["jquery",
         "views/list-annotation",
         "views/timeline",
         "views/loop",
-        "views/login",
         "views/scale-editor",
         "views/tracks-selection",
         "views/print",
@@ -77,7 +75,6 @@ define(["jquery",
         ListAnnotationView,
         TimelineView,
         LoopView,
-        LoginView,
         ScaleEditorView,
         TracksSelectionView,
         PrintView,
@@ -130,7 +127,7 @@ define(["jquery",
             events: {
                 "click #export"              : "export",
                 "click #about"               : "about",
-                "click #logout"              : "logout",
+                "click #logout"              : "onLogout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
                 "click .opt-tracks-select"   : "tracksSelection",
@@ -144,9 +141,7 @@ define(["jquery",
              */
             initialize: function () {
                 _.bindAll(this, "layoutUpdate",
-                                "checkUserAndLogin",
                                 "createViews",
-                                "logout",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print",
@@ -158,24 +153,12 @@ define(["jquery",
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
 
                 this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
-                // Create a new users collection and get exciting local user
-                annotationTool.users = new Users();
 
                 if (annotationTool.localStorage) {
                     // Remove link for statistics exports, work only with backend implementation
                     this.$el.find("#export").parent().remove();
                 }
 
-                Backbone.localSync("read", annotationTool.users, {
-                    success: function (data) {
-                        annotationTool.users.add(data);
-                    },
-                    error: function (error) {
-                        console.warn(error);
-                    }
-                });
-
-                this.loginView = new LoginView();
                 annotationTool.scaleEditor = new ScaleEditorView();
 
                 this.listenTo(annotationTool, "deleteAnnotation", annotationTool.deleteAnnotation);
@@ -184,7 +167,7 @@ define(["jquery",
                 $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
-                annotationTool.once(annotationTool.EVENTS.READY, function () {
+                this.once(MainView.EVENTS.READY, function () {
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
@@ -197,8 +180,7 @@ define(["jquery",
                     }
 
                 }, this);
-
-                this.checkUserAndLogin();
+                this.createViews();
             },
 
             /**
@@ -304,7 +286,7 @@ define(["jquery",
                     this.timelineView.redraw();
                 }
 
-                annotationTool.trigger(annotationTool.EVENTS.READY);
+                this.trigger(MainView.EVENTS.READY);
             },
 
             /**
@@ -348,40 +330,6 @@ define(["jquery",
             },
 
             /**
-             * Check if a user is logged into the tool, otherwise display the login modal
-             * @alias module:views-main.MainView#checkUserAndLogin
-             */
-            checkUserAndLogin: function () {
-                this.setLoadingProgress(30, i18next.t("startup.get current user"));
-
-                if (annotationTool.modelsInitialized) {
-                    this.createViews();
-                } else {
-                    annotationTool.once(annotationTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
-                }
-
-                // If a user has been saved locally, we take it as current user
-                if (annotationTool.users.length > 0) {
-                    annotationTool.user = annotationTool.users.at(0);
-                    annotationTool.trigger(annotationTool.EVENTS.USER_LOGGED);
-                } else {
-                    var userExtData = {};
-                    if (annotationTool.useUserExtData) {
-                        userExtData = annotationTool.getUserExtData();
-                    }
-                    if (annotationTool.skipLoginFormIfPossible) {
-                        try {
-                            annotationTool.login(userExtData);
-                            return;
-                        } catch (error) {
-                            console.warn(error);
-                        }
-                    }
-                    this.loginView.show(userExtData);
-                }
-            },
-
-            /**
              * The about dialog
              * @alias module:views-main.MainView#aboutDialog
              */
@@ -409,27 +357,10 @@ define(["jquery",
 
             /**
              * Logout from the tool
-             * @alias module:views-main.MainView#logout
+             * @alias module:views-main.MainView#onLogout
              */
-            logout: function () {
-                annotationTool.users.each(function (user) {
-
-                    Backbone.localSync("delete", user, {
-                        success: function () {
-                            console.log("current session destroyed.");
-                        },
-                        error: function (error) {
-                            console.warn(error);
-                        }
-                    });
-
-                });
-
-                if (annotationTool.logoutUrl) {
-                    window.location = annotationTool.logoutUrl;
-                } else {
-                    window.location.reload();
-                }
+            onLogout: function () {
+                annotationTool.logout();
             },
 
             /**
@@ -606,6 +537,10 @@ define(["jquery",
 
                 this.loadingBox.find(".bar").width(this.loadingPercent + "%");
                 this.loadingBox.find(".info").text(message);
+            }
+        }, {
+            EVENTS: {
+                READY: "ready"
             }
         });
         return MainView;
