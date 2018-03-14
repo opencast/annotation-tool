@@ -101,13 +101,6 @@ define(["jquery",
             logoutUrl: undefined,
 
             /**
-             * Player adapter implementation to use for the annotations tool
-             * @alias module:annotation-tool-configuration.Configuration.playerAdapter
-             * @type {module:player-adapter.PlayerAdapter}
-             */
-            playerAdapter: undefined,
-
-            /**
              * Array of tracks to import by default
              * @type {?object[]}
              */

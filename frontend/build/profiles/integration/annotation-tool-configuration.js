@@ -114,14 +114,6 @@ define(["jquery",
                 localStorage: false,
 
                 /**
-                 * Url from the annotations Rest Endpoints
-                 * @alias module:annotation-tool-configuration.Configuration.restEndpointsUrl
-                 * @type {string}
-                 * @readOnly
-                 */
-                restEndpointsUrl: "../../extended-annotations",
-
-                /**
                  * Url for redirect after the logout
                  * @alias module:annotation-tool-configuration.Configuration.logoutUrl
                  * @type {string}
@@ -146,13 +138,6 @@ define(["jquery",
                             return "category=" + category.id;
                         }).join("&");
                 },
-
-                /**
-                 * Player adapter implementation to use for the annotations tool
-                 * @alias module:annotation-tool-configuration.Configuration.playerAdapter
-                 * @type {module:player-adapter.PlayerAdapter}
-                 */
-                playerAdapter: undefined,
 
                 tracksToImport: undefined,
 
