@@ -58,26 +58,11 @@ define(["jquery",
             },
 
             /**
-             * Constructor
-             * @alias module:models-user.User#initialize
-             * @param {Object} attr Object literal containing the model initialion attributes.
+             * Define that all post operation have to been done through PUT method
+             * @alias module:models-user.User#noPOST
+             * @type {boolean}
              */
-            initialize: function (attr) {
-                if (!attr) attr = {};
-                Resource.prototype.initialize.apply(this, arguments);
-
-                if (!attr.role && annotationTool.getUserRole) {
-                    attr.role = annotationTool.getUserRole();
-
-                    if (!attr.role) {
-                        delete attr.role;
-                    }
-                }
-
-                // Define that all post operation have to been done through PUT method
-                // see in wiki
-                this.noPOST = true;
-            },
+            noPOST: true,
 
             /**
              * Validate the attribute list passed to the model
