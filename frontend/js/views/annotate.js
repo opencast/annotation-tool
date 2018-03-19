@@ -33,7 +33,7 @@
 define(["jquery",
         "underscore",
         "i18next",
-        "prototypes/player_adapter",
+        "player-adapter",
         "models/annotation",
         "collections/annotations",
         "collections/categories",

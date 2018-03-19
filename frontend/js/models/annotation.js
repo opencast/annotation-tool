@@ -151,8 +151,8 @@ define(["jquery",
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-annotation.Annotation#validate
-             * @param  {object} data Object literal containing the model attribute to validate.
-             * @return {string}  If the validation failed, an error message will be returned.
+             * @param {object} attr Object literal containing the model attribute to validate.
+             * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var invalidResource = Resource.prototype.validate.call(this, attr, {

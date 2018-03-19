@@ -71,29 +71,29 @@ define(["jquery",
 
                 // Check if tracks are given
                 if (attr.tracks && _.isArray(attr.tracks)) {
-                    this.set({tracks: new Tracks(attr.tracks, this)});
+                    this.set({ tracks: new Tracks(attr.tracks, this) });
                 }  else {
-                    this.set({tracks: new Tracks([], this)});
+                    this.set({ tracks: new Tracks([], this) });
                 }
 
                 // Check if supported categories are given
                 if (attr.categories && _.isArray(attr.categories)) {
-                    this.set({categories: new Categories(attr.categories, this)});
+                    this.set({ categories: new Categories(attr.categories, this) });
                 } else {
-                    this.set({categories: new Categories([], this)});
+                    this.set({ categories: new Categories([], this) });
                 }
 
                 // Check if the possible video scales are given
                 if (attr.scales && _.isArray(attr.scales)) {
-                    this.set({scales: new Scales(attr.scales, this)});
+                    this.set({ scales: new Scales(attr.scales, this) });
                 } else {
-                    this.set({scales: new Scales([], this)});
+                    this.set({ scales: new Scales([], this) });
                 }
 
                 if (attr.id) {
-                    this.get("categories").fetch({async: false});
-                    this.get("tracks").fetch({async: false});
-                    this.get("scales").fetch({async: false});
+                    this.get("categories").fetch({ async: false });
+                    this.get("tracks").fetch({ async: false });
+                    this.get("scales").fetch({ async: false });
                 }
 
                 // Add backbone events to the model
@@ -106,7 +106,7 @@ define(["jquery",
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-video.Video#validate
-             * @param  {object} data Object literal containing the model attribute to validate.
+             * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
@@ -202,12 +202,10 @@ define(["jquery",
                 if (track) {
                     return track.getAnnotation(annotationId);
                 } else {
-                    this.get("tracks").each(function (trackItem) {
+                    this.get("tracks").find(function (trackItem) {
                         tmpAnnotation = trackItem.getAnnotation(annotationId);
-                        if (!_.isUndefined(tmpAnnotation)) {
-                            return tmpAnnotation;
-                        }
-                    }, this);
+                        return !_.isUndefined(tmpAnnotation);
+                    });
                     return tmpAnnotation;
                 }
             },

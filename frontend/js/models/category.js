@@ -114,7 +114,7 @@ define(["jquery",
                         attr.labels = new Labels(attr.labels, this);
                     }
 
-                    if (!annotationTool.localStorage &&  attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
+                    if (!annotationTool.localStorage && attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
                         attr.scale = annotationTool.video.get("scales").get(attr.scale_id);
                     }
                 });
@@ -123,8 +123,8 @@ define(["jquery",
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-category.Category#validate
-             * @param  {object} data Object literal containing the model attribute to validate.
-             * @return {string}  If the validation failed, an error message will be returned.
+             * @param {object} attr Object literal containing the model attribute to validate.
+             * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var self = this;
@@ -197,7 +197,7 @@ define(["jquery",
              * @param  {string} color the new color
              */
             setColor: function (color) {
-                var settings = this.attributes.settings;
+                var settings = _.clone(this.get("settings"));
                 settings.color = color;
 
                 this.set("settings", settings);

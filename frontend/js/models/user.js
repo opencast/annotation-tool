@@ -48,7 +48,7 @@ define(["jquery",
 
             /**
              * Default models value
-             * @alias module:models-scalevalue.Scalevalue#defaults
+             * @alias module:models-user.User#defaults
              * @type {map}
              * @static
              */
@@ -58,55 +58,34 @@ define(["jquery",
             },
 
             /**
-             * Constructor
-             * @alias module:models-user.User#initialize
-             * @param {Object} attr Object literal containing the model initialion attributes.
+             * Define that all post operation have to been done through PUT method
+             * @alias module:models-user.User#noPOST
+             * @type {boolean}
              */
-            initialize: function (attr) {
-                if (!attr) attr = {};
-                Resource.prototype.initialize.apply(this, arguments);
-
-                if (!attr.role && annotationTool.getUserRole) {
-                    attr.role = annotationTool.getUserRole();
-
-                    if (!attr.role) {
-                        delete attr.role;
-                    }
-                }
-
-                // Define that all post operation have to been done through PUT method
-                // see in wiki
-                this.noPOST = true;
-            },
+            noPOST: true,
 
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-user.User#validate
-             * @param  {Object} data Object literal containing the model attribute to validate.
-             * @return {string}  If the validation failed, an error message will be returned.
+             * @param {Object} attr Object literal containing the model attribute to validate.
+             * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
-                if (!(_.isString(attr.user_extid) || _.isNumber(attr.user_extid))) {
-                    return {
-                        attribute: "user_extid",
-                        message: "'user_extid' must be a valid string or number."
-                    };
-                }
 
-                if (!_.isString(attr.nickname)) {
+                if (!attr.nickname) {
                     return {
                         attribute: "nickname",
-                        message: "'nickname' must be a valid string!"
+                        error: "absent"
                     };
                 }
 
                 if (attr.email && !emailAddresses.parseOneAddress(attr.email)) {
                     return {
                         attribute: "email",
-                        message: "Given email is not valid!"
+                        error: "invalid"
                     };
                 }
 

@@ -51,14 +51,11 @@ define(["jquery",
                 this.set(attr);
             },
 
-            /** Only save this model locally and don't sync it with the server */
-            localStorageOnly: true,
-
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-loop.Loop#validate
-             * @param  {object} data Object literal containing the model attribute to validate.
-             * @return {string}  If the validation failed, an error message will be returned.
+             * @param {object} attr Object literal containing the model attribute to validate.
+             * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 if (_.isUndefined(attr.start) || _.isUndefined(attr.end)) {

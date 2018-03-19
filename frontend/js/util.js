@@ -139,7 +139,17 @@ var util = {
         } else {
             return [object];
         }
-    }
+    },
+
+    /**
+     * Map of the current URLs query parameters
+     * @type {Object}
+     */
+    queryParameters: _.chain(window.location.search.slice(1).split("&"))
+        .map(function (keyValuePair) { return keyValuePair.split("="); })
+        .object()
+        .mapObject(decodeURIComponent)
+        .value()
 };
 
 

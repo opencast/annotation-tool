@@ -19,7 +19,7 @@
  * @module views-list
  * @requires jQuery
  * @requires underscore
- * @requires prototype-player_adapter
+ * @requires player-adapter
  * @requires models-annotation
  * @requires views-list-annotation
  * @requires backbone
@@ -27,7 +27,7 @@
  */
 define(["jquery",
         "underscore",
-        "prototypes/player_adapter",
+        "player-adapter",
         "models/annotation",
         "collections/annotations",
         "collections/tracks",

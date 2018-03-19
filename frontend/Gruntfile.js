@@ -33,36 +33,27 @@ module.exports = function (grunt) {
             default: 'local',
 
             integration: {
-                sources : '',
                 target  : '../opencast-backend/annotation-tool/src/main/resources/ui/',
                 config  : 'build/profiles/integration/annotation-tool-configuration.js'
             },
 
             local: {
-                sources: '<source src=\"/resources/aav1.mp4\" type=\"video/mp4\" />\n \
-                          <source src=\"/resources/aav1.webm\" type=\"video/webm\" />\n \
-                          <source src=\"/resources/aav1.ogv\" type=\"video/ogg\" /> ',
                 target : '<%= webServerDir %>',
                 config : 'build/profiles/local/annotation-tool-configuration.js'
             },
 
             build: {
-                sources: '<source src=\"/resources/Annotations_Video.mp4\" type=\"video/mp4\" />\n \
-                          <source src=\"/resources/Annotations_Video.webm\" type=\"video/webm\" />\n \
-                          <source src=\"/resources/Annotations_Video.theora.ogv\" type=\"video/ogg\" /> ',
                 target : '<%= buildDir %>',
                 config : 'build/profiles/local/annotation-tool-configuration.js'
             },
 
             demo: {
-                sources: '<source src=\"/annotation/resources/sinteltrailer.mp4\" type=\"video/mp4\" />\n \
-                          <source src=\"/annotation/resources/sinteltrailer.ogv\" type=\"video/ogg\" /> ',
                 target : '/var/www/html/annotation/',
                 config : 'build/profiles/local/annotation-tool-configuration.js'
             }
         },
 
-        currentProfile: { sources: 'test' },
+        currentProfile: {},
 
         jshint: {
             options: {
@@ -193,7 +184,7 @@ module.exports = function (grunt) {
                     }
                     return content;
                 },
-                processContentExclude: ['img/**/*', 'resources/**/*']
+                processContentExclude: ['img/**/*']
             },
             // ... a single file locally
             'target': {
@@ -210,7 +201,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten : false,
                     expand  : true,
-                    src     : ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
+                    src     : ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
                     dest    : '<%= currentProfile.target %>'
                 }]
             },
@@ -224,7 +215,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -234,7 +225,7 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     // TODO Do we need to copy libs here?
-                    src: ['img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'js/libs/**/*'],
+                    src: ['img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'js/libs/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -243,7 +234,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png',  'resources/*', 'style/**/*.css', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -310,9 +301,9 @@ module.exports = function (grunt) {
 
         jsdoc : {
             dist : {
-                src: ['js/views/*.js', 'js/collections/*.js', 'js/models/*.js', 'js/prototypes/*.js'],
+                src: ['<%= srcPath.js %>', '!js/libs/**'],
                 options: {
-                    destination: '<%= currentProfile.target %>/doc',
+                    destination: 'doc',
                     template: 'node_modules/ink-docstrap/template'
                 }
             }
@@ -363,8 +354,7 @@ module.exports = function (grunt) {
         processhtml: {
             options: {
                 data: {
-                    version: '<%= pkg.version %>',
-                    sources: '<%= currentProfile.sources %>'
+                    version: '<%= pkg.version %>'
                 },
                 process: true
             },

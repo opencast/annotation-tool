@@ -39,7 +39,7 @@ define(["util",
         "jquery",
         "underscore",
         "i18next",
-        "prototypes/player_adapter",
+        "player-adapter",
         "models/annotation",
         "models/track",
         "collections/annotations",
@@ -1331,9 +1331,7 @@ define(["util",
                         }
                     },
                     successCallback = function (newAnnotation) {
-                        newAnnotation.unset("oldId", {
-                            silent: true
-                        });
+                        newAnnotation.unset("oldId", { silent: true });
                         newAnnotation.save();
 
                         annJSON.id = newAnnotation.get("id");
