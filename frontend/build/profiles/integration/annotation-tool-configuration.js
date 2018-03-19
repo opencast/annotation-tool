@@ -290,17 +290,15 @@ define(["jquery",
                 loadVideo: function () {
                     var mediaPackageId = util.queryParameters.id;
 
-                    // Enable cross-domain for jquery ajax query
-                    $.support.cors = true;
-
                     // Get the mediapackage and fill the player element with the videos
+                    $.support.cors = true;
                     $.ajax({
                         url: "/search/episode.json",
                         async: false,
                         crossDomain: true,
                         data: "id=" + mediaPackageId + "&limit=1",
                         dataType: "json",
-                        success: (function (data) {
+                        success: function (data) {
                             var result = data["search-results"].result;
 
                             if (!result) {
@@ -346,7 +344,7 @@ define(["jquery",
 
                             // Load the security XACML file for the episode
                             var attachments = util.array(mediapackage.attachments.attachment);
-                            var selectedXACML = (function () {
+                            var selectedXACML = function () {
                                 var seriesXACML;
                                 for (var i = 0; i < attachments.length; i++) {
                                     var attachment = attachments[i];
@@ -361,11 +359,10 @@ define(["jquery",
                                     }
                                 }
                                 return seriesXACML;
-                            })();
+                            }();
                             // TODO What if **no** XACML is found?!
                             this.loadXACML(selectedXACML);
-
-                        }).bind(this)
+                        }.bind(this)
                     });
                 },
 
@@ -384,7 +381,7 @@ define(["jquery",
                                 }
                             });
                         }
-                  });
+                    });
                 }
             };
 
