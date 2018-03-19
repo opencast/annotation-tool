@@ -211,6 +211,7 @@
     "creating views": "Start creating views.",
     "get current user": "Get current user.",
     "get users saved locally": "Get users saved locally.",
+    "importing track": "Importing track {{track}}",
     "initializing the player": "Initializing the player.",
     "loading": "Loading",
     "loading video": "Start loading video.",

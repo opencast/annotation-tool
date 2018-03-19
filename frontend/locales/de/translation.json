@@ -211,6 +211,7 @@
     "creating views": "Fenster werden erstellt",
     "get current user": "Aktueller Benutzer wird ermittelt",
     "get users saved locally": "Lokal gepseicherte Benutzer werden ermittelt",
+    "importing track": "Spur {{track}} wird importiert"
     "initializing the player": "Player wird initialisiert?",
     "loading": "Wird geladen",
     "loading video": "Video wird geladen",

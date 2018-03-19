@@ -805,7 +805,10 @@ define(["jquery",
              */
             importTracks: function (tracks) {
                 _.each(tracks, function (track) {
-                    this.setLoadingProgress(this.loadingPercent, "Importing track " + track.name);
+                    this.setLoadingProgress(
+                        this.loadingPercent,
+                        i18next.t("startup.importing track", { track: track.name })
+                    );
                     if (_.isUndefined(this.getTrack(track.id))) {
                         this.video.get("tracks").create(track);
                     } else {
