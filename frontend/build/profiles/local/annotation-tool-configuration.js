@@ -22,14 +22,13 @@ define(["jquery",
         "underscore",
         "backbone",
         "collections/users",
-        "roles",
         "views/login",
         "player_adapter_HTML5",
         "localstorage"
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, _, Backbone, Users, ROLES, LoginView, HTML5PlayerAdapter) {
+    function ($, _, Backbone, Users, LoginView, HTML5PlayerAdapter) {
 
         "use strict";
 
