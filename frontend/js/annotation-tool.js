@@ -59,7 +59,8 @@ define(["jquery",
                 ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
                 MODELS_INITIALIZED   : "at:models-initialized",
                 TIMEUPDATE           : "at:timeupdate",
-                USER_LOGGED          : "at:logged"
+                USER_LOGGED          : "at:logged",
+                VIDEO_LOADED         : "at:video-loaded"
             },
 
             timeupdateIntervals: [],
@@ -158,20 +159,6 @@ define(["jquery",
 
                 _.extend(this, config);
 
-                if (this.loadVideo) {
-                    this.loadVideo();
-                }
-
-                if (!(this.playerAdapter instanceof PlayerAdapter)) {
-                    throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
-                }
-                var typeErrors = this.playerAdapter.typeErrors();
-                if (typeErrors) {
-                    throw _.map(typeErrors, function (method) {
-                        return "- " + method + " is not a function";
-                    }).join("\n");
-                }
-
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
 
@@ -184,6 +171,20 @@ define(["jquery",
 
                 this.colorsManager = new ColorsManager();
 
+                this.once(this.EVENTS.VIDEO_LOADED, function () {
+
+                    if (!(this.playerAdapter instanceof PlayerAdapter)) {
+                        throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
+                    }
+                    var typeErrors = this.playerAdapter.typeErrors();
+                    if (typeErrors) {
+                        throw _.map(typeErrors, function (method) {
+                            return "- " + method + " is not a function";
+                        }).join("\n");
+                    }
+
+                    this.authenticate();
+                }, this);
                 this.once(this.EVENTS.USER_LOGGED, function () {
                     $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
                     this.fetchData();
@@ -224,7 +225,10 @@ define(["jquery",
                     this.views.main = new MainView();
                     $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
                 }, this);
-                this.authenticate();
+
+                if (this.loadVideo) {
+                    this.loadVideo(document.getElementById("video-container"));
+                }
             },
 
             /**

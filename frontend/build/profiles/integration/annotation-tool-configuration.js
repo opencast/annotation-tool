@@ -286,15 +286,15 @@ define(["jquery",
                 /**
                  * Function to load the video
                  * @alias module:annotation-tool-configuration.Configuration.loadVideo
+                 * @param {HTMLElement} container The container to create the video player in
                  */
-                loadVideo: function () {
+                loadVideo: function (container) {
                     var mediaPackageId = util.queryParameters.id;
 
                     // Get the mediapackage and fill the player element with the videos
                     $.support.cors = true;
                     $.ajax({
                         url: "/search/episode.json",
-                        async: false,
                         crossDomain: true,
                         data: "id=" + mediaPackageId + "&limit=1",
                         dataType: "json",
@@ -332,8 +332,10 @@ define(["jquery",
                                 )
                             );
 
+                            var videoElement = document.createElement("video");
+                            container.appendChild(videoElement);
                             this.playerAdapter = new HTML5PlayerAdapter(
-                                $("video")[0],
+                                videoElement,
                                 videos.map(function (track) {
                                     return {
                                         src: track.url,
@@ -369,7 +371,6 @@ define(["jquery",
                 loadXACML: function (file) {
                     $.ajax({
                         url: file.url,
-                        async: false,
                         crossDomain: true,
                         dataType: "xml",
                         success: function (xml) {
@@ -377,10 +378,14 @@ define(["jquery",
 
                             $rules.each(function (i, element){
                                 if ($(element).find("Action").find("AttributeValue").text() === "annotate-admin") {
-                                    annotate_admin_roles.push($(element).find("Condition").find("AttributeValue").text());
+                                    annotate_admin_roles.push(
+                                        $(element).find("Condition").find("AttributeValue").text()
+                                    );
                                 }
                             });
-                        }
+
+                            this.trigger(annotationTool.EVENTS.VIDEO_LOADED);
+                        }.bind(this)
                     });
                 }
             };

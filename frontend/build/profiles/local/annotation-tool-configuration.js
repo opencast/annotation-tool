@@ -18,8 +18,7 @@
  * Module containing the tool configuration
  * @module annotation-tool-configuration
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "backbone",
         "util",
         "roles",
@@ -30,7 +29,7 @@ define(["jquery",
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, _, Backbone, util, ROLES, Users, LoginView, HTML5PlayerAdapter) {
+    function (_, Backbone, util, ROLES, Users, LoginView, HTML5PlayerAdapter) {
 
         "use strict";
 
@@ -142,7 +141,7 @@ define(["jquery",
              * @return {string} video external id
              */
             getVideoExtId: function () {
-                return $("video")[0].id;
+                return util.queryParameters.video;
             },
 
             /**
@@ -183,9 +182,7 @@ define(["jquery",
             getVideoParameters: function () {
                 return {
                     video_extid: this.getVideoExtId(),
-                    title: $("video")[0].currentSrc.split("/").pop().split(".")[0],
-                    src_owner: $("video").first().attr("data-owner"),
-                    src_creation_date:  $("video").first().attr("data-date")
+                    title: util.queryParameters.video.split("/").pop().split(".")[0]
                 };
             },
 
@@ -231,9 +228,13 @@ define(["jquery",
             /**
              * Function to load the video
              * @alias module:annotation-tool-configuration.Configuration.loadVideo
+             * @param {HTMLElement} container The container to create the video player in
              */
-            loadVideo: function () {
-                this.playerAdapter = new HTML5PlayerAdapter($("video")[0], { src: util.queryParameters.video });
+            loadVideo: function (container) {
+                var videoElement = document.createElement("video");
+                container.append(videoElement);
+                this.playerAdapter = new HTML5PlayerAdapter(videoElement, { src: util.queryParameters.video });
+                this.trigger(annotationTool.EVENTS.VIDEO_LOADED);
             }
         };
 
