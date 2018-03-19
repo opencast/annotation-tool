@@ -58,6 +58,61 @@ define(["jquery",
             return backboneSync.call(this, method, model, options);
         };
 
+        // Initiate loading the video metadata from Opencast
+        var mediaPackageId = util.queryParameters.id;
+        $.support.cors = true;
+        var searchResult = $.ajax({
+            url: "/search/episode.json",
+            crossDomain: true,
+            data: "id=" + mediaPackageId + "&limit=1",
+            dataType: "json"
+        }).then(function (data) {
+            return data["search-results"].result;
+        });
+        // TODO Error handling!
+        var mediaPackage = searchResult.then(function (result) {
+            return result.mediapackage;
+        });
+        // Get user data from Opencast
+        var user = $.ajax({
+            url: "/info/me.json",
+            dataType: "json"
+        });
+        // Find out which roles should have admin rights
+        var adminRoles = mediaPackage.then(function (mediaPackage) {
+            // First we need to find the proper XACML file
+            var attachments = util.array(mediaPackage.attachments.attachment);
+            var selectedXACML = function () {
+                var seriesXACML;
+                for (var i = 0; i < attachments.length; i++) {
+                    var attachment = attachments[i];
+                    if (attachment.type === "security/xacml+episode") {
+                        // Immediately return an XACML belonging to this specific episode
+                        return attachment;
+                    }
+                    if (attachment.type === "security/xacml+series") {
+                        // Remember any series XACML on the way,
+                        //   so we can return that as a fallback
+                        seriesXACML = attachment;
+                    }
+                }
+                return seriesXACML;
+            }();
+            // TODO What if nothing was found?!
+            return $.ajax({
+                url: selectedXACML.url,
+                crossDomain: true,
+                dataType: "xml"
+            });
+        }).then(function (xacmlData) {
+            // Then we need to extract the appropriate rules
+            return $(xacmlData).find("rules").filter(function (index, rule) {
+                return $(rule).find("Action AttributeValue").text() === "annotate-admin";
+            }).map(function (index, rule) {
+                return $(rule).find("Condition AttributeValue").text();
+            }).toArray();
+        });
+
         var video_title,
             video_creator,
             video_creation_date,
@@ -178,10 +233,10 @@ define(["jquery",
                 /**
                  * Get the current video id (video_extid)
                  * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
-                 * @return {string} video external id
+                 * @return {Promise.<string>} video external id
                  */
                 getVideoExtId: function () {
-                    return video_extid;
+                    return $.when(mediaPackageId);
                 },
 
                 /**
@@ -205,7 +260,6 @@ define(["jquery",
 
                 /**
                  * Get the external parameters related to video. The supported parameters are now the following:
-                 *     - video_extid: Required! Same as the value returned by getVideoExtId
                  *     - title: The title of the video
                  *     - src_owner: The owner of the video in the system
                  *     - src_creation_date: The date of the course, when the video itself was created.
@@ -220,36 +274,31 @@ define(["jquery",
                  * @return {Object} The literal object containing all the parameters described in the example.
                  */
                 getVideoParameters: function () {
-                    return {
-                        video_extid       : this.getVideoExtId(),
-                        title             : video_title,
-                        src_owner         : video_creator,
-                        src_creation_date : video_creation_date
-                    };
+                    return searchResult.then(function (result) {
+                        return {
+                            title: result.dcTitle,
+                            src_owner: result.dcCreator,
+                            src_creaton_date: result.dcCreated
+                        };
+                    });
                 },
 
                 /**
                  * Maps a list of roles of the external user to a corresponding user role
                  * @alias module:annotation-tool-configuration.Configuration.getUserRoleFromExt
                  * @param {string[]} roles The roles of the external user
-                 * @return {ROLE} The corresponding user role in the annotations tool
+                 * @return {Promise.<ROLE>} The corresponding user role in the annotations tool
                  */
                 getUserRoleFromExt: function (roles) {
-
-                    var ROLE_ADMIN = "ROLE_ADMIN";
-
-                    if (annotate_admin_roles.length > 0) {
-                      for (var i = 0; i < annotate_admin_roles.length; i++) {
-                        if (_.contains(roles, annotate_admin_roles[i])) {
+                    return adminRoles.then(function (adminRoles) {
+                        if (_.some(adminRoles.concat(['ROLE_ADMIN']), function (adminRole) {
+                            return _.contains(roles, adminRole);
+                        })) {
                             return ROLES.ADMINISTRATOR;
+                        } else {
+                            return ROLES.USER;
                         }
-                      }
-                    } else if (_.contains(roles, ROLE_ADMIN)) {
-                        console.log("Using admin role as default supervisor");
-                        return ROLES.ADMINISTRATOR;
-                    }
-
-                    return ROLES.USER;
+                    });
                 },
 
                 /**
@@ -257,22 +306,19 @@ define(["jquery",
                  * @alias module:annotation-tool-configuration.Configuration.authenticate
                  */
                 authenticate: function () {
-                    $.ajax({
-                        url: "/info/me.json",
-                        dataType: "json"
-                    }).then(_.bind(function (response) {
-                        var userData = response.user;
+                    user.then(function (userData) {
+                        return $.when(userData.user, this.getUserRoleFromExt(userData.roles));
+                    }.bind(this)).then(function (user, role) {
                         this.user = new User({
-                            user_extid: userData.username,
-                            nickname: userData.username,
-                            email: userData.email,
-                            role: this.getUserRoleFromExt(response.roles)
+                            user_extid: user.username,
+                            nickname: user.username,
+                            email: user.email,
+                            role: role
                         });
-                        this.user.urlRoot = "/users";
                         return this.user.save();
-                    }, this)).then(_.bind(function () {
+                    }.bind(this)).then(function () {
                         this.trigger(annotationTool.EVENTS.USER_LOGGED);
-                    }, this));
+                    }.bind(this));
                 },
 
                 /**
@@ -286,100 +332,41 @@ define(["jquery",
                 /**
                  * Function to load the video
                  * @alias module:annotation-tool-configuration.Configuration.loadVideo
+                 * @param {HTMLElement} container The container to create the video player in
                  */
-                loadVideo: function () {
-                    var mediaPackageId = util.queryParameters.id;
+                loadVideo: function (container) {
+                    mediaPackage.then(function (mediaPackage) {
+                        var videos = util.array(mediaPackage.media.track)
+                            .filter(_.compose(
+                                RegExp.prototype.test.bind(/video\/.*/),
+                                _.property("mimetype")
+                            ));
+                        videos.sort(
+                            util.lexicographic(
+                                util.firstWith(_.compose(
+                                    RegExp.prototype.test.bind(/presenter\/.*/),
+                                    _.property("type")
+                                )),
+                                util.firstWith(_.compose(
+                                    RegExp.prototype.test.bind(/presentation\/.*/),
+                                    _.property("type")
+                                ))
+                            )
+                        );
 
-                    // Get the mediapackage and fill the player element with the videos
-                    $.support.cors = true;
-                    $.ajax({
-                        url: "/search/episode.json",
-                        async: false,
-                        crossDomain: true,
-                        data: "id=" + mediaPackageId + "&limit=1",
-                        dataType: "json",
-                        success: function (data) {
-                            var result = data["search-results"].result;
-
-                            if (!result) {
-                                // TODO Fail louder here
-                                console.warn("Could not load video " + mediaPackageId);
-                            }
-                            var mediapackage = result.mediapackage;
-
-                            video_extid = mediapackage.id;
-                            video_title = result.dcTitle;
-                            video_creator = result.dcCreator;
-                            video_creation_date = result.dcCreated;
-
-                            var videos = util.array(mediapackage.media.track)
-                                .filter(_.compose(
-                                    RegExp.prototype.test.bind(/video\/.*/),
-                                    _.property("mimetype")
-                                ));
-                            videos.sort(
-                                util.lexicographic(
-                                    util.firstWith(_.compose(
-                                        RegExp.prototype.test.bind(/presenter\/.*/),
-                                        _.property("type")
-                                    )),
-                                    util.firstWith(_.compose(
-                                        RegExp.prototype.test.bind(/presentation\/.*/),
-                                        _.property("type")
-                                    ))
-                                )
-                            );
-
-                            this.playerAdapter = new HTML5PlayerAdapter(
-                                $("video")[0],
-                                videos.map(function (track) {
-                                    return {
-                                        src: track.url,
-                                        type: track.mimetype
-                                    };
-                                })
-                            );
-
-                            // Load the security XACML file for the episode
-                            var attachments = util.array(mediapackage.attachments.attachment);
-                            var selectedXACML = function () {
-                                var seriesXACML;
-                                for (var i = 0; i < attachments.length; i++) {
-                                    var attachment = attachments[i];
-                                    if (attachment.type === "security/xacml+episode") {
-                                        // Immediately return an XACML belonging to this specific episode
-                                        return attachment;
-                                    }
-                                    if (attachment.type === "security/xacml+series") {
-                                        // Remember any series XACML on the way,
-                                        //   so we can return that as a fallback
-                                        seriesXACML = attachment;
-                                    }
-                                }
-                                return seriesXACML;
-                            }();
-                            // TODO What if **no** XACML is found?!
-                            this.loadXACML(selectedXACML);
-                        }.bind(this)
-                    });
-                },
-
-                loadXACML: function (file) {
-                    $.ajax({
-                        url: file.url,
-                        async: false,
-                        crossDomain: true,
-                        dataType: "xml",
-                        success: function (xml) {
-                            var $rules = $(xml).find("Rule");
-
-                            $rules.each(function (i, element){
-                                if ($(element).find("Action").find("AttributeValue").text() === "annotate-admin") {
-                                    annotate_admin_roles.push($(element).find("Condition").find("AttributeValue").text());
-                                }
-                            });
-                        }
-                    });
+                        var videoElement = document.createElement("video");
+                        container.appendChild(videoElement);
+                        this.playerAdapter = new HTML5PlayerAdapter(
+                            videoElement,
+                            videos.map(function (track) {
+                                return {
+                                    src: track.url,
+                                    type: track.mimetype
+                                };
+                            })
+                        );
+                        this.trigger(annotationTool.EVENTS.VIDEO_LOADED);
+                    }.bind(this));
                 }
             };
 

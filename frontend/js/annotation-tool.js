@@ -59,7 +59,8 @@ define(["jquery",
                 ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
                 MODELS_INITIALIZED   : "at:models-initialized",
                 TIMEUPDATE           : "at:timeupdate",
-                USER_LOGGED          : "at:logged"
+                USER_LOGGED          : "at:logged",
+                VIDEO_LOADED         : "at:video-loaded"
             },
 
             timeupdateIntervals: [],
@@ -158,20 +159,6 @@ define(["jquery",
 
                 _.extend(this, config);
 
-                if (this.loadVideo) {
-                    this.loadVideo();
-                }
-
-                if (!(this.playerAdapter instanceof PlayerAdapter)) {
-                    throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
-                }
-                var typeErrors = this.playerAdapter.typeErrors();
-                if (typeErrors) {
-                    throw _.map(typeErrors, function (method) {
-                        return "- " + method + " is not a function";
-                    }).join("\n");
-                }
-
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
 
@@ -184,11 +171,33 @@ define(["jquery",
 
                 this.colorsManager = new ColorsManager();
 
+
                 this.once(this.EVENTS.USER_LOGGED, function () {
+
                     $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
+
+                    if (this.loadVideo) {
+                        this.loadVideo(document.getElementById("video-container"));
+                    }
+
                     this.fetchData();
                 }, this);
-                this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                this.once(this.EVENTS.VIDEO_LOADED, function () {
+
+                    if (!(this.playerAdapter instanceof PlayerAdapter)) {
+                        throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
+                    }
+                    var typeErrors = this.playerAdapter.typeErrors();
+                    if (typeErrors) {
+                        throw _.map(typeErrors, function (method) {
+                            return "- " + method + " is not a function";
+                        }).join("\n");
+                    }
+
+                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
+                }, this);
+
+                var importTracks = _.after(2, function () {
 
                     var updateTracksOrder = _.bind(function (tracks) {
                         this.tracksOrder = _.chain(tracks.getVisibleTracks())
@@ -220,10 +229,16 @@ define(["jquery",
                             );
                         }
                     }
-
-                    this.views.main = new MainView();
-                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
                 }, this);
+                this.once(this.EVENTS.MODELS_INITIALIZED, importTracks);
+                this.once(this.EVENTS.VIDEO_LOADED, importTracks);
+
+                var createMainView = _.after(2, function () {
+                    this.views.main = new MainView();
+                }, this);
+                this.once(this.EVENTS.VIDEO_LOADED, createMainView);
+                this.once(this.EVENTS.MODELS_INITIALIZED, createMainView);
+
                 this.authenticate();
             },
 
@@ -886,7 +901,6 @@ define(["jquery",
                 var video,
                     videos = new Videos(),
                     tracks,
-                    self = this,
                     // function to conclude the retrieve of annotations
                     concludeInitialization = _.bind(function () {
 
@@ -937,41 +951,45 @@ define(["jquery",
                         }
                     }, this);
 
-                // If we are using the localstorage
-                if (this.localStorage) {
-                    videos.fetch({
-                        success: function () {
-                            if (videos.length === 0) {
-                                video = videos.create(self.getVideoParameters(), { wait: true });
+                $.when(this.getVideoExtId(), this.getVideoParameters()).then(
+                    _.bind(function (videoExtId, videoParameters) {
+                        // If we are using the localstorage
+                        if (this.localStorage) {
+                            videos.fetch({
+                                success: _.bind(function () {
+                                    if (videos.length === 0) {
+                                        video = videos.create(videoParameters, { wait: true });
+                                    } else {
+                                        video = videos.at(0);
+                                        video.set(videoParameters);
+                                    }
+
+                                    this.video = video;
+                                }, this)
+                            });
+
+                            createDefaultTrack();
+                        } else { // With Rest storage
+                            videos.add({ video_extid: videoExtId });
+                            video = videos.at(0);
+                            this.video = video;
+                            video.set(videoParameters);
+                            video.save(null, {
+                                error: _.bind(function (model, response, options) {
+                                    if (response.status === 403) {
+                                        this.alertFatal(i18next.t("annotation not allowed"));
+                                        this.views.main.loadingBox.hide();
+                                    }
+                                }, this)
+                            });
+                            if (video.get("ready")) {
+                                createDefaultTrack();
                             } else {
-                                video = videos.at(0);
-                                video.set(self.getVideoParameters());
+                                video.once("ready", createDefaultTrack);
                             }
-
-                            self.video = video;
                         }
-                    });
-
-                    createDefaultTrack();
-                } else { // With Rest storage
-                    videos.add({ video_extid: this.getVideoExtId() });
-                    video = videos.at(0);
-                    this.video = video;
-                    video.set(self.getVideoParameters());
-                    video.save(null, {
-                        error: _.bind(function (model, response, options) {
-                            if (response.status === 403) {
-                                this.alertFatal(i18next.t("annotation not allowed"));
-                                this.views.main.loadingBox.hide();
-                            }
-                        }, this)
-                    });
-                    if (video.get("ready")) {
-                        createDefaultTrack();
-                    } else {
-                        video.once("ready", createDefaultTrack);
-                    }
-                }
+                    }, this)
+                );
             }
         });
 

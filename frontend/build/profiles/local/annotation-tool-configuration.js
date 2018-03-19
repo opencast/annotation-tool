@@ -139,10 +139,10 @@ define(["jquery",
             /**
              * Get the current video id (video_extid)
              * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
-             * @return {string} video external id
+             * @return {Promise.<string>} video external id
              */
             getVideoExtId: function () {
-                return $("video")[0].id;
+                return $.when(util.queryParameters.video);
             },
 
             /**
@@ -166,7 +166,6 @@ define(["jquery",
 
             /**
              * Get the external parameters related to video. The supported parameters are now the following:
-             *     - video_extid: Required! Same as the value returned by getVideoExtId
              *     - title: The title of the video
              *     - src_owner: The owner of the video in the system
              *     - src_creation_date: The date of the course, when the video itself was created.
@@ -178,15 +177,12 @@ define(["jquery",
              *     src_owner: "Professor X", // The owner of the video in the system
              *     src_creation_date: "12-12-1023" // The date of the course, when the video itself was created.
              * }
-             * @return {Object} The literal object containing all the parameters described in the example.
+             * @return {Promise.<Object>} The literal object containing all the parameters described in the example.
              */
             getVideoParameters: function () {
-                return {
-                    video_extid: this.getVideoExtId(),
-                    title: $("video")[0].currentSrc.split("/").pop().split(".")[0],
-                    src_owner: $("video").first().attr("data-owner"),
-                    src_creation_date:  $("video").first().attr("data-date")
-                };
+                return $.when({
+                    title: util.queryParameters.video.split("/").pop().split(".")[0]
+                });
             },
 
             /**
@@ -231,9 +227,13 @@ define(["jquery",
             /**
              * Function to load the video
              * @alias module:annotation-tool-configuration.Configuration.loadVideo
+             * @param {HTMLElement} container The container to create the video player in
              */
-            loadVideo: function () {
-                this.playerAdapter = new HTML5PlayerAdapter($("video")[0], { src: util.queryParameters.video });
+            loadVideo: function (container) {
+                var videoElement = document.createElement("video");
+                container.appendChild(videoElement);
+                this.playerAdapter = new HTML5PlayerAdapter(videoElement, { src: util.queryParameters.video });
+                this.trigger(annotationTool.EVENTS.VIDEO_LOADED);
             }
         };
 
