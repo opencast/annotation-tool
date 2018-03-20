@@ -312,8 +312,6 @@ define(["jquery",
                             video_creator = result.dcCreator;
                             video_creation_date = result.dcCreated;
 
-                            var tracks = util.array(mediapackage.media.track);
-
                             var videos = util.array(mediapackage.media.track)
                                 .filter(_.compose(
                                     RegExp.prototype.test.bind(/video\/.*/),
