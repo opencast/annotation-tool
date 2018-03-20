@@ -176,9 +176,7 @@ define(["jquery",
 
                     $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
 
-                    if (this.loadVideo) {
-                        this.loadVideo(document.getElementById("video-container"));
-                    }
+                    this.loadVideo(document.getElementById("video-container"));
 
                     this.fetchData();
                 }, this);
