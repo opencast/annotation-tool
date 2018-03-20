@@ -113,262 +113,257 @@ define(["jquery",
             }).toArray();
         });
 
-        var video_title,
-            video_creator,
-            video_creation_date,
-            video_extid,
-            annotate_admin_roles = [],
+        /**
+         * Annotations tool configuration object
+         * @alias module:annotation-tool-configuration.Configuration
+         */
+        var Configuration = {
             /**
-             * Annotations tool configuration object
-             * @alias module:annotation-tool-configuration.Configuration
+             * List of possible layout configuration
+             * @memberOf module:annotation-tool-configuration.Configuration
+             * @type {Object}
              */
-            Configuration =  {
-
-                /**
-                 * List of possible layout configuration
-                 * @memberOf module:annotation-tool-configuration.Configuration
-                 * @type {Object}
-                 */
-                LAYOUT_CONFIGURATION: {
-                    /** default configuration */
-                    DEFAULT: {
-                        timeline : true,
-                        list     : true,
-                        annotate : true,
-                        loop     : false
-                    }
-                },
-
-                /**
-                 * The minmal duration used for annotation representation on timeline
-                 * @alias module:annotation-tool-configuration.Configuration.MINIMAL_DURATION
-                 * @memberOf module:annotation-tool-configuration.Configuration
-                 * @type {Object}
-                 */
-                MINIMAL_DURATION: 5,
-
-                /**
-                 * Define the number of categories pro tab in the annotate box. Bigger is number, thinner will be the columns for the categories.
-                 * @alias module:annotation-tool-configuration.Configuration.CATEGORIES_PER_TAB
-                 * @memberOf module:annotation-tool-configuration.Configuration
-                 * @type {Number}
-                 */
-                CATEGORIES_PER_TAB: 7,
-
-                /**
-                * The maximal number of tracks visible in the timeline at the same time
-                * @type {Number}
-                */
-                MAX_VISIBLE_TRACKS: 0,
-
-                /**
-                 * Define if the localStorage should be used or not
-                 * @alias module:annotation-tool-configuration.Configuration.localStorage
-                 * @type {boolean}
-                 * @readOnly
-                 */
-                localStorage: false,
-
-                /**
-                 * Url for redirect after the logout
-                 * @alias module:annotation-tool-configuration.Configuration.logoutUrl
-                 * @type {string}
-                 * @readOnly
-                 */
-                logoutUrl: "/j_spring_security_logout",
-
-                /**
-                 * Offer the user a spreadsheet version of the annotations for download.
-                 * @alias module:annotation-tool-configuration.Configuration.export
-                 * @param {Video} video The video to export
-                 * @param {Track[]} tracks The tracks to include in the export
-                 * @param {Category[]} categories The tracks to include in the export
-                 */
-                export: function (video, tracks, categories) {
-                    window.location.href = "../extended-annotations/videos/" + video.id + "/export.csv?" +
-                        _.map(tracks, function (track) {
-                            return "track=" + track.id;
-                        }).join("&") +
-                        "&" +
-                        _.map(categories, function (category) {
-                            return "category=" + category.id;
-                        }).join("&");
-                },
-
-                tracksToImport: undefined,
-
-                /**
-                 * Get the tool layout configuration
-                 * @return {object} The tool layout configuration
-                 */
-                getLayoutConfiguration: function () {
-                    return this.LAYOUT_CONFIGURATION.DEFAULT;
-                },
-
-                /**
-                 * Define if the structured annotations are or not enabled
-                 * @alias module:annotation-tool-configuration.Configuration.isStructuredAnnotationEnabled
-                 * @return {boolean} True if this feature is enabled
-                 */
-                isStructuredAnnotationEnabled: function () {
-                    return true;
-                },
-
-                /**
-                 * Define if the private-only mode is enabled
-                 * @alias module:annotation-tool-configuration.Configuration.isPrivateOnly
-                 * @type {boolean}
-                 */
-                isPrivateOnly: false,
-
-                /**
-                 * Define if the free text annotations are or not enabled
-                 * @alias module:annotation-tool-configuration.Configuration.isFreeTextEnabled
-                 * @return {boolean} True if this feature is enabled
-                 */
-                isFreeTextEnabled: function () {
-                    return true;
-                },
-
-                /**
-                 * Get the current video id (video_extid)
-                 * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
-                 * @return {Promise.<string>} video external id
-                 */
-                getVideoExtId: function () {
-                    return $.when(mediaPackageId);
-                },
-
-                /**
-                 * Returns the time interval between each timeupdate event to take into account.
-                 * It can improve a bit the performance if the amount of annotations is important.
-                 * @alias module:annotation-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
-                 * @return {number} The interval
-                 */
-                getTimeupdateIntervalForTimeline: function () {
-                    // TODO Check if this function should be linear
-                    return Math.max(500, annotationTool.getAnnotations().length * 3);
-
-                },
-
-                /**
-                 * Sets the behavior of the timeline. Enable it to follow the playhead.
-                 * @alias module:annotation-tool-configuration.Configuration.timelineFollowPlayhead
-                 * @type {Boolean}
-                 */
-                timelineFollowPlayhead: true,
-
-                /**
-                 * Get the external parameters related to video. The supported parameters are now the following:
-                 *     - title: The title of the video
-                 *     - src_owner: The owner of the video in the system
-                 *     - src_creation_date: The date of the course, when the video itself was created.
-                 * @alias module:annotation-tool-configuration.Configuration.getVideoParameters
-                 * @example
-                 * {
-                 *     video_extid: 123, // Same as the value returned by getVideoExtId
-                 *     title: "Math lesson 4", // The title of the video
-                 *     src_owner: "Professor X", // The owner of the video in the system
-                 *     src_creation_date: "12-12-1023" // The date of the course, when the video itself was created.
-                 * }
-                 * @return {Object} The literal object containing all the parameters described in the example.
-                 */
-                getVideoParameters: function () {
-                    return searchResult.then(function (result) {
-                        return {
-                            title: result.dcTitle,
-                            src_owner: result.dcCreator,
-                            src_creaton_date: result.dcCreated
-                        };
-                    });
-                },
-
-                /**
-                 * Maps a list of roles of the external user to a corresponding user role
-                 * @alias module:annotation-tool-configuration.Configuration.getUserRoleFromExt
-                 * @param {string[]} roles The roles of the external user
-                 * @return {Promise.<ROLE>} The corresponding user role in the annotations tool
-                 */
-                getUserRoleFromExt: function (roles) {
-                    return adminRoles.then(function (adminRoles) {
-                        if (_.some(adminRoles.concat(['ROLE_ADMIN']), function (adminRole) {
-                            return _.contains(roles, adminRole);
-                        })) {
-                            return ROLES.ADMINISTRATOR;
-                        } else {
-                            return ROLES.USER;
-                        }
-                    });
-                },
-
-                /**
-                 * Authenticate the user
-                 * @alias module:annotation-tool-configuration.Configuration.authenticate
-                 */
-                authenticate: function () {
-                    user.then(function (userData) {
-                        return $.when(userData.user, this.getUserRoleFromExt(userData.roles));
-                    }.bind(this)).then(function (user, role) {
-                        this.user = new User({
-                            user_extid: user.username,
-                            nickname: user.username,
-                            email: user.email,
-                            role: role
-                        });
-                        return this.user.save();
-                    }.bind(this)).then(function () {
-                        this.trigger(annotationTool.EVENTS.USER_LOGGED);
-                    }.bind(this));
-                },
-
-                /**
-                 * Log out the current user
-                 * @alias module:annotation-tool-configuration.Configuration.logout
-                 */
-                logout: function () {
-                    window.location = "/j_spring_security_logout";
-                },
-
-                /**
-                 * Function to load the video
-                 * @alias module:annotation-tool-configuration.Configuration.loadVideo
-                 * @param {HTMLElement} container The container to create the video player in
-                 */
-                loadVideo: function (container) {
-                    mediaPackage.then(function (mediaPackage) {
-                        var videos = util.array(mediaPackage.media.track)
-                            .filter(_.compose(
-                                RegExp.prototype.test.bind(/video\/.*/),
-                                _.property("mimetype")
-                            ));
-                        videos.sort(
-                            util.lexicographic(
-                                util.firstWith(_.compose(
-                                    RegExp.prototype.test.bind(/presenter\/.*/),
-                                    _.property("type")
-                                )),
-                                util.firstWith(_.compose(
-                                    RegExp.prototype.test.bind(/presentation\/.*/),
-                                    _.property("type")
-                                ))
-                            )
-                        );
-
-                        var videoElement = document.createElement("video");
-                        container.appendChild(videoElement);
-                        this.playerAdapter = new HTML5PlayerAdapter(
-                            videoElement,
-                            videos.map(function (track) {
-                                return {
-                                    src: track.url,
-                                    type: track.mimetype
-                                };
-                            })
-                        );
-                        this.trigger(annotationTool.EVENTS.VIDEO_LOADED);
-                    }.bind(this));
+            LAYOUT_CONFIGURATION: {
+                /** default configuration */
+                DEFAULT: {
+                    timeline : true,
+                    list     : true,
+                    annotate : true,
+                    loop     : false
                 }
-            };
+            },
+
+            /**
+             * The minmal duration used for annotation representation on timeline
+             * @alias module:annotation-tool-configuration.Configuration.MINIMAL_DURATION
+             * @memberOf module:annotation-tool-configuration.Configuration
+             * @type {Object}
+             */
+            MINIMAL_DURATION: 5,
+
+            /**
+             * Define the number of categories per tab in the annotate box.
+             * The bigger this number, the thinner the columns for the categories.
+             * @alias module:annotation-tool-configuration.Configuration.CATEGORIES_PER_TAB
+             * @memberOf module:annotation-tool-configuration.Configuration
+             * @type {Number}
+             */
+            CATEGORIES_PER_TAB: 7,
+
+            /**
+             * The maximal number of tracks visible in the timeline at the same time
+             * @type {Number}
+             */
+            MAX_VISIBLE_TRACKS: 0,
+
+            /**
+             * Define if the localStorage should be used or not
+             * @alias module:annotation-tool-configuration.Configuration.localStorage
+             * @type {boolean}
+             * @readOnly
+             */
+            localStorage: false,
+
+            /**
+             * Url for redirect after the logout
+             * @alias module:annotation-tool-configuration.Configuration.logoutUrl
+             * @type {string}
+             * @readOnly
+             */
+            logoutUrl: "/j_spring_security_logout",
+
+            /**
+             * Offer the user a spreadsheet version of the annotations for download.
+             * @alias module:annotation-tool-configuration.Configuration.export
+             * @param {Video} video The video to export
+             * @param {Track[]} tracks The tracks to include in the export
+             * @param {Category[]} categories The tracks to include in the export
+             */
+            export: function (video, tracks, categories) {
+                window.location.href = "../extended-annotations/videos/" + video.id + "/export.csv?" +
+                    _.map(tracks, function (track) {
+                        return "track=" + track.id;
+                    }).join("&") +
+                    "&" +
+                    _.map(categories, function (category) {
+                        return "category=" + category.id;
+                    }).join("&");
+            },
+
+            tracksToImport: undefined,
+
+            /**
+             * Get the tool layout configuration
+             * @return {object} The tool layout configuration
+             */
+            getLayoutConfiguration: function () {
+                return this.LAYOUT_CONFIGURATION.DEFAULT;
+            },
+
+            /**
+             * Define if the structured annotations are or not enabled
+             * @alias module:annotation-tool-configuration.Configuration.isStructuredAnnotationEnabled
+             * @return {boolean} True if this feature is enabled
+             */
+            isStructuredAnnotationEnabled: function () {
+                return true;
+            },
+
+            /**
+             * Define if the private-only mode is enabled
+             * @alias module:annotation-tool-configuration.Configuration.isPrivateOnly
+             * @type {boolean}
+             */
+            isPrivateOnly: false,
+
+            /**
+             * Define if the free text annotations are or not enabled
+             * @alias module:annotation-tool-configuration.Configuration.isFreeTextEnabled
+             * @return {boolean} True if this feature is enabled
+             */
+            isFreeTextEnabled: function () {
+                return true;
+            },
+
+            /**
+             * Get the current video id (video_extid)
+             * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
+             * @return {Promise.<string>} video external id
+             */
+            getVideoExtId: function () {
+                return $.when(mediaPackageId);
+            },
+
+            /**
+             * Returns the time interval between each timeupdate event to take into account.
+             * It can improve a bit the performance if the amount of annotations is important.
+             * @alias module:annotation-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
+             * @return {number} The interval
+             */
+            getTimeupdateIntervalForTimeline: function () {
+                // TODO Check if this function should be linear
+                return Math.max(500, annotationTool.getAnnotations().length * 3);
+
+            },
+
+            /**
+             * Sets the behavior of the timeline. Enable it to follow the playhead.
+             * @alias module:annotation-tool-configuration.Configuration.timelineFollowPlayhead
+             * @type {Boolean}
+             */
+            timelineFollowPlayhead: true,
+
+            /**
+             * Get the external parameters related to video. The supported parameters are now the following:
+             *     - title: The title of the video
+             *     - src_owner: The owner of the video in the system
+             *     - src_creation_date: The date of the course, when the video itself was created.
+             * @alias module:annotation-tool-configuration.Configuration.getVideoParameters
+             * @example
+             * {
+             *     video_extid: 123, // Same as the value returned by getVideoExtId
+             *     title: "Math lesson 4", // The title of the video
+             *     src_owner: "Professor X", // The owner of the video in the system
+             *     src_creation_date: "12-12-1023" // The date of the course, when the video itself was created.
+             * }
+             * @return {Object} The literal object containing all the parameters described in the example.
+             */
+            getVideoParameters: function () {
+                return searchResult.then(function (result) {
+                    return {
+                        title: result.dcTitle,
+                        src_owner: result.dcCreator,
+                        src_creaton_date: result.dcCreated
+                    };
+                });
+            },
+
+            /**
+             * Maps a list of roles of the external user to a corresponding user role
+             * @alias module:annotation-tool-configuration.Configuration.getUserRoleFromExt
+             * @param {string[]} roles The roles of the external user
+             * @return {Promise.<ROLE>} The corresponding user role in the annotations tool
+             */
+            getUserRoleFromExt: function (roles) {
+                return adminRoles.then(function (adminRoles) {
+                    if (_.some(adminRoles.concat(['ROLE_ADMIN']), function (adminRole) {
+                        return _.contains(roles, adminRole);
+                    })) {
+                        return ROLES.ADMINISTRATOR;
+                    } else {
+                        return ROLES.USER;
+                    }
+                });
+            },
+
+            /**
+             * Authenticate the user
+             * @alias module:annotation-tool-configuration.Configuration.authenticate
+             */
+            authenticate: function () {
+                user.then(function (userData) {
+                    return $.when(userData.user, this.getUserRoleFromExt(userData.roles));
+                }.bind(this)).then(function (user, role) {
+                    this.user = new User({
+                        user_extid: user.username,
+                        nickname: user.username,
+                        email: user.email,
+                        role: role
+                    });
+                    return this.user.save();
+                }.bind(this)).then(function () {
+                    this.trigger(annotationTool.EVENTS.USER_LOGGED);
+                }.bind(this));
+            },
+
+            /**
+             * Log out the current user
+             * @alias module:annotation-tool-configuration.Configuration.logout
+             */
+            logout: function () {
+                window.location = "/j_spring_security_logout";
+            },
+
+            /**
+             * Function to load the video
+             * @alias module:annotation-tool-configuration.Configuration.loadVideo
+             * @param {HTMLElement} container The container to create the video player in
+             */
+            loadVideo: function (container) {
+                mediaPackage.then(function (mediaPackage) {
+                    var videos = util.array(mediaPackage.media.track)
+                        .filter(_.compose(
+                            RegExp.prototype.test.bind(/video\/.*/),
+                            _.property("mimetype")
+                        ));
+                    videos.sort(
+                        util.lexicographic(
+                            util.firstWith(_.compose(
+                                RegExp.prototype.test.bind(/presenter\/.*/),
+                                _.property("type")
+                            )),
+                            util.firstWith(_.compose(
+                                RegExp.prototype.test.bind(/presentation\/.*/),
+                                _.property("type")
+                            ))
+                        )
+                    );
+
+                    var videoElement = document.createElement("video");
+                    container.appendChild(videoElement);
+                    this.playerAdapter = new HTML5PlayerAdapter(
+                        videoElement,
+                        videos.map(function (track) {
+                            return {
+                                src: track.url,
+                                type: track.mimetype
+                            };
+                        })
+                    );
+                    this.trigger(annotationTool.EVENTS.VIDEO_LOADED);
+                }.bind(this));
+            }
+        };
 
         return Configuration;
     }
