@@ -209,7 +209,7 @@ define(["jquery",
                  *     - title: The title of the video
                  *     - src_owner: The owner of the video in the system
                  *     - src_creation_date: The date of the course, when the video itself was created.
-                 * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
+                 * @alias module:annotation-tool-configuration.Configuration.getVideoParameters
                  * @example
                  * {
                  *     video_extid: 123, // Same as the value returned by getVideoExtId
