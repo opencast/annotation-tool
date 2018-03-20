@@ -52,7 +52,7 @@ define(["jquery",
          * The main object of the annotations tool
          * @namespace annotationTool
          */
-        var annotationTool = window.annotationTool = _.extend({
+        var annotationTool = window.annotationTool = _.extend(_.clone(Backbone.Events), {
 
             EVENTS: {
                 ANNOTATION_SELECTION : "at:annotation-selection",
@@ -973,7 +973,7 @@ define(["jquery",
                     }
                 }
             }
-        }, _.clone(Backbone.Events));
+        });
 
         /**
          * Type of target that can be deleted using the delete warning modal
