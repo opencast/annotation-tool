@@ -58,6 +58,12 @@ define(["jquery",
             },
 
             /**
+             * REST endpont for this model
+             * @type {string}
+             */
+            urlRoot: "/users",
+
+            /**
              * Define that all post operation have to been done through PUT method
              * @alias module:models-user.User#noPOST
              * @type {boolean}
