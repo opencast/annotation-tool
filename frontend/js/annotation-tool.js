@@ -171,7 +171,6 @@ define(["jquery",
 
                 this.colorsManager = new ColorsManager();
 
-
                 this.once(this.EVENTS.USER_LOGGED, function () {
 
                     $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
@@ -967,7 +966,7 @@ define(["jquery",
                             });
 
                             createDefaultTrack();
-                        } else { // With Rest storage
+                        } else { // With REST storage
                             videos.add({ video_extid: videoExtId });
                             video = videos.at(0);
                             this.video = video;

@@ -112,7 +112,7 @@ define(["jquery",
              * @alias module:views-main.MainView#loadingBox
              * @type {DOMElement}
              */
-            loadingBox: $("div#loading"),
+            loadingBox: $("#loading"),
 
             /**
              * Events to handle by the main view
@@ -207,7 +207,7 @@ define(["jquery",
                 /**
                  * Loading the video dependent views
                  */
-                var loadVideoDependentViews = $.proxy(function () {
+                var loadVideoDependentViews = _.bind(function () {
 
                     this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
                     for (var view in this.layoutConfiguration) {
@@ -536,6 +536,7 @@ define(["jquery",
                     this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
                 }
             },
+
             /**
              * Update loading box with given percent & message
              * @alias module:views-main.MainView#setLoadingProgress

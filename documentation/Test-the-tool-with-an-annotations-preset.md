@@ -27,6 +27,6 @@ The set of track is loaded only the first time following the [`tracksToImport`](
                 ]
             },
             // Add more track here
-        ]  
+        ]
 
 A test page for the story ANNOT-83 is available at http://entwinemedia.github.io/annotations/ANNOT-83/tests/loading.html

@@ -247,9 +247,9 @@ define(["jquery",
 
                 this.$el.append(this.template({id: attr.id}));
 
-                this.carouselElement = this.$("#" + attr.id);
+                this.carouselElement = this.$el.find("#" + attr.id);
 
-                this.carouselPagination = this.$(".pagination ul");
+                this.carouselPagination = this.$el.find(".pagination ul");
 
                 this.categoriesContainer = this.carouselElement.find(".carousel-inner");
 
@@ -306,7 +306,7 @@ define(["jquery",
             addCategories: function (categories, filter) {
                 categories.each(function (category) {
                     if (filter(category)) {
-                        this.addCategory(category, categories, {skipTests: true});
+                        this.addCategory(category, categories, { skipTests: true });
                     }
                 }, this);
             },
@@ -430,7 +430,7 @@ define(["jquery",
                 }
 
                 this.carouselElement
-                      .carousel({interval: false, pause: ""})
+                      .carousel({ interval: false, pause: "" })
                       .bind("slid", this.onCarouselSlid)
                       .carousel("pause");
 
@@ -639,7 +639,7 @@ define(["jquery",
                 if (currentId) {
                     currentIndex = parseInt(currentId.replace("item-", ""), 10);
                     if (this.categoriesContainer.find("#" + currentId).length === 0) {
-                        currentIndex --;
+                        currentIndex--;
                     }
                     this.categoriesContainer.find("#item-" + currentIndex).addClass("active");
                     this.carouselPagination.find("#page-" + currentIndex).parent().addClass("active");
@@ -647,8 +647,8 @@ define(["jquery",
                 this.delegateEvents(this.events);
                 return this;
             }
-
         });
+
         return AnnotateTab;
     }
 );

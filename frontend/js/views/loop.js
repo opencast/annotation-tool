@@ -102,9 +102,12 @@ define(["jquery",
              * @type {Object}
              * @alias module:views-loop.Loop#timelineItemTmpl
              */
-            timelineItemTmpl: Handlebars.compile("<div class=\"{{class}}\"\
-                                                        onclick=\"annotationTool.loopFunction.setCurrentLoop({{index}}, true)\">\
-                                                    </div>"),
+            timelineItemTmpl: Handlebars.compile("\
+                <div\
+                    class=\"{{class}}\"\
+                    onclick=\"annotationTool.loopFunction.setCurrentLoop({{index}}, true)\"\
+                ></div>\
+            "),
 
             /**
              * Events to handle
@@ -170,7 +173,9 @@ define(["jquery",
              * @alias module:views-loop.Loop#toggle
              */
             toggle: function (event) {
-                var isEnable = (!event.target && _.isBoolean(event)) ? event : !(_.isUndefined($(event.target).attr("checked")));
+                var isEnable = (!event.target && _.isBoolean(event))
+                    ? event
+                    : !(_.isUndefined($(event.target).attr("checked")));
 
                 if (isEnable) {
                     $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
@@ -384,7 +389,8 @@ define(["jquery",
             },
 
             /**
-             * Add the given loop on the timeline. If the given loop already has a representation, this one will be replaced.
+             * Add the given loop on the timeline. If the given loop already has a representation,
+             * this one will be replaced.
              * @param {object}  loop      The loop to represent on the timeline
              * @param {Boolean} isCurrent Define if the loop is the current one
              * @alias module:views-loop.Loop#addTimelineItem
@@ -399,11 +405,11 @@ define(["jquery",
                     loopClass   = isCurrent ? "loop current" : "loop";
 
                 timeline.addItem("loop-" + loop.cid, {
-                    start   : timeline.getFormatedDate(loop.get("start")),
-                    end     : timeline.getFormatedDate(loop.get("end")),
-                    group   : "<div class=\"loop-group\">Loops",
-                    content : this.timelineItemTmpl({
-                        cid  : loop.cid,
+                    start: timeline.getFormatedDate(loop.get("start")),
+                    end: timeline.getFormatedDate(loop.get("end")),
+                    group: "<div class=\"loop-group\">Loops",
+                    content: this.timelineItemTmpl({
+                        cid: loop.cid,
                         class: loopClass,
                         index: this.loops.indexOf(loop)
                     }),

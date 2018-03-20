@@ -221,10 +221,9 @@ define(["jquery",
                 getSortedCollection: function () {
                     // Sort the model in the right scale value order
                     return this.model.collection.sortBy(function (scaleValue) {
-                            return scaleValue.get("order");
-                        });
+                        return scaleValue.get("order");
+                    });
                 }
-
             });
 
             return ScaleValueEditor;

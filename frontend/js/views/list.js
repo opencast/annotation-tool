@@ -155,7 +155,7 @@ define(["jquery",
 
                 this.stopListening(ann);
 
-                this.listenTo(ann, "add", $.proxy(function (newAnnotation) {
+                this.listenTo(ann, "add", _.bind(function (newAnnotation) {
                     this.addAnnotation(newAnnotation, annotationTrack);
                 }, this));
 

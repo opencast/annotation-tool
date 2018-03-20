@@ -168,6 +168,7 @@ define(["jquery",
                         this.render();
                         return true;
                     }
+                    return false;
                 }, this);
             },
 
