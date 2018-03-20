@@ -56,6 +56,13 @@ define(["jquery",
             },
 
             /**
+             * Define that all post operation have to been done through PUT method
+             * @alias module:models-user.User#noPOST
+             * @type {boolean}
+             */
+            noPOST: true,
+
+            /**
              * Constructor
              * @alias module:models-video.Video#initialize
              * @param {object} attr Object literal containing the model initialion attribute.
@@ -95,12 +102,6 @@ define(["jquery",
                     this.get("tracks").fetch({ async: false });
                     this.get("scales").fetch({ async: false });
                 }
-
-                // Add backbone events to the model
-                _.extend(this, Backbone.Events);
-
-                // Define that all post operation have to been done through PUT method
-                this.noPOST = true;
             },
 
             /**

@@ -82,11 +82,6 @@ define(["jquery",
                     this.attributes.comments = attr.comments;
                     delete attr.comments;
                 }
-
-                // Add backbone events to the model
-                _.extend(this, Backbone.Events);
-
-                this.set(attr);
             },
 
             /**
