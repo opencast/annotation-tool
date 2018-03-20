@@ -353,7 +353,7 @@ define(["jquery",
                                     if (attachment.type === "security/xacml+series") {
                                         // Remember any series XACML on the way,
                                         //   so we can return that as a fallback
-                                        selectedXACML = attachments[i];
+                                        seriesXACML = attachment;
                                     }
                                 }
                                 return seriesXACML;
