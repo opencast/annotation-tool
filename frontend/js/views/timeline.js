@@ -81,14 +81,6 @@ define(["util",
          * @alias module:views-timeline.TimelineView
          */
         var Timeline = Backbone.View.extend({
-
-            /**
-             * Main container of the timeline
-             * @alias module:views-timeline.TimelineView#el
-             * @type {DOMElement}
-             */
-            el: "#timeline-container",
-
             /**
              * Group template
              * @alias module:views-timeline.TimelineView#groupTemplate
@@ -295,7 +287,6 @@ define(["util",
                     showMajorLabels  : false,
                     snapEvents       : false,
                     stackEvents      : true,
-                    minHeight        : "200",
                     axisOnTop        : true,
                     groupsWidth      : "150px",
                     animate          : true,

@@ -221,14 +221,13 @@ define(["jquery",
                         }]
                     });
 
-                    this.setLoadingProgress(60, i18next.t("startup.creating views"));
+                    var leftColumn = layout.contentItems[0];
+                    leftColumn.addChild({
+                        type: "component",
+                        componentName: "timeline"
+                    });
 
-                    // Create views with Timeline
-                    this.timelineView = new TimelineView({ playerAdapter: annotationTool.playerAdapter });
-                    annotationTool.views.timeline = this.timelineView;
-                    if (this.layoutConfiguration.timeline) {
-                        this.timelineView.$el.show();
-                    }
+                    this.setLoadingProgress(60, i18next.t("startup.creating views"));
 
                     this.loopController = new LoopView();
                     annotationTool.loopFunction = this.loopController;
@@ -291,12 +290,27 @@ define(["jquery",
 
                 goldenLayout.registerComponent("annotate", function (container, componentState) {
                     self.annotateView = annotationTool.views.annotate =
-                        new AnnotateView({ el: container.getElement() });
+                        new AnnotateView({
+                            playerAdapter: annotationTool.playerAdapter,
+                            el: container.getElement()
+                        });
                 });
 
                 goldenLayout.registerComponent("list", function (container, componentState) {
                     self.listView = annotationTool.views.list =
                         new ListView({ el: container.getElement() });
+                });
+
+                goldenLayout.registerComponent("timeline", function (container, componentState) {
+                    container.on("resize", function () {
+                        self.timelineView.redraw();
+                    });
+
+                    self.timelineView = annotationTool.views.timeline =
+                        new TimelineView({
+                            el: container.getElement(),
+                            playerAdapter: annotationTool.playerAdapter
+                        });
                 });
 
                 this.setLoadingProgress(50, i18next.t("startup.initializing the player"));
@@ -551,7 +565,7 @@ define(["jquery",
                     videoContainerHeight = $("#video-container").height();
 
                 if (this.layoutConfiguration.timeline) {
-                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
+                    //this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
                 }
             },
 

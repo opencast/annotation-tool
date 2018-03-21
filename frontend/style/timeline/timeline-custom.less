@@ -1,4 +1,8 @@
 #timeline-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
     .navbar {
         margin: 0;
         span.time {
@@ -11,7 +15,6 @@
 .item-id, .annotation-id, .group-id, .track-id, .timeline-navigation-new {
     display: none;
 }
-
 
 i.check {
     visibility: hidden;
@@ -165,7 +168,7 @@ div#timeline-custom-navigation {
     height: 20px;
     border: none;
     border-top: 1px solid @grayDark;
-    //border-bottom: 2px solid @grayDark;
+    border-bottom: 2px solid @grayDark;
     border-radius: 0;
     background-color: @grayLight;
     position: relative!important;
