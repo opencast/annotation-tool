@@ -23,6 +23,7 @@
  * @requires player-adapter
  * @requires models-annotation
  * @requires collections-annotations
+ * @requires templates/timeline.tmpl
  * @requires templates/timeline-group.tmpl
  * @requires templates/timeline-item.tmpl
  * @requires templates/timeline-placeholder.tmpl
@@ -44,6 +45,7 @@ define(["util",
         "models/track",
         "collections/annotations",
         "collections/tracks",
+        "templates/timeline",
         "templates/timeline-group",
         "templates/timeline-item",
         "templates/timeline-placeholder",
@@ -56,7 +58,7 @@ define(["util",
         "handlebarsHelpers"
     ],
 
-       function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
+       function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, template, GroupTmpl,
             ItemTmpl, PlaceholderTmpl, ModalGroupTmpl, ACCESS, ROLES, Backbone, links) {
 
         "use strict";
@@ -264,6 +266,8 @@ define(["util",
                     "updateHeader");
 
                 this.playerAdapter = attr.playerAdapter;
+
+                this.$el.html(template());
 
                 // Type use for delete operation
                 this.typeForDeleteAnnotation = annotationTool.deleteOperation.targetTypes.ANNOTATION;

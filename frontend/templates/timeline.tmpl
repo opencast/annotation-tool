@@ -1,0 +1,34 @@
+<div class="window">
+    <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <span class="time"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="timeline"></div>
+
+    <div id="timeline-custom-navigation">
+        <div class="timeline-bottom-controls">
+            <div class="btn-group dropup">
+                <button type="button" class="btn opt-tracks-select">{{t "timeline.track management"}}</button>
+            </div>
+            <button type="button" id="add-track" class="btn">
+                + <span>{{t "timeline.track modals.button" context="add"}}</span>
+            </button>
+        </div>
+
+        <div class="timeline-bottom-controls" id="reset-zoom">
+            <button type="button" class="btn">
+                <i class="icon-eye-open"></i> <span>{{t "timeline.reset zoom"}}</span>
+            </button>
+        </div>
+        <div class="timeline-bottom-controls" id="move-left"><button type="button" class="btn">&lt;</button></div>
+        <div class="timeline-bottom-controls" id="zoom-in"><button type="button" class="btn">+</button></div>
+        <div class="timeline-bottom-controls" id="zoom-out"><button type="button" class="btn">-</button></div>
+        <div class="timeline-bottom-controls" id="move-right"><button type="button" class="btn">></button></div>
+    </div>
+    <div class="modal" id="modal-add-group" style="display: none;"></div>
+    <div class="modal" id="modal-update-group" style="display: none;"></div>
+</div>
