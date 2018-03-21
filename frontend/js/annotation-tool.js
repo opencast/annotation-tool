@@ -175,26 +175,14 @@ define(["jquery",
 
                     $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
 
-                    this.loadVideo(document.getElementById("video-container"));
-
                     this.fetchData();
                 }, this);
-                this.once(this.EVENTS.VIDEO_LOADED, function () {
 
-                    if (!(this.playerAdapter instanceof PlayerAdapter)) {
-                        throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
-                    }
-                    var typeErrors = this.playerAdapter.typeErrors();
-                    if (typeErrors) {
-                        throw _.map(typeErrors, function (method) {
-                            return "- " + method + " is not a function";
-                        }).join("\n");
-                    }
-
-                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
+                this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                    this.views.main = new MainView();
                 }, this);
 
-                var importTracks = _.after(2, function () {
+                var importTracks = function () {
 
                     var updateTracksOrder = _.bind(function (tracks) {
                         this.tracksOrder = _.chain(tracks.getVisibleTracks())
@@ -226,15 +214,27 @@ define(["jquery",
                             );
                         }
                     }
-                }, this);
+                };
+                importTracks = _.after(2, importTracks, this);
                 this.once(this.EVENTS.MODELS_INITIALIZED, importTracks);
                 this.once(this.EVENTS.VIDEO_LOADED, importTracks);
 
-                var createMainView = _.after(2, function () {
-                    this.views.main = new MainView();
+                this.once(this.EVENTS.VIDEO_LOADED, function () {
+
+                    if (!(this.playerAdapter instanceof PlayerAdapter)) {
+                        throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
+                    }
+                    var typeErrors = this.playerAdapter.typeErrors();
+                    if (typeErrors) {
+                        throw _.map(typeErrors, function (method) {
+                            return "- " + method + " is not a function";
+                        }).join("\n");
+                    }
+
+                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
+
+                    this.playerAdapter.load();
                 }, this);
-                this.once(this.EVENTS.VIDEO_LOADED, createMainView);
-                this.once(this.EVENTS.MODELS_INITIALIZED, createMainView);
 
                 this.authenticate();
             },

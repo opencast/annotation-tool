@@ -159,7 +159,6 @@ define(["jquery",
                 this.listenTo(annotationTool, "deleteAnnotation", annotationTool.deleteAnnotation);
 
                 annotationTool.onWindowResize = this.onWindowResize;
-                $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
                 this.once(MainView.EVENTS.READY, function () {
@@ -192,32 +191,35 @@ define(["jquery",
              * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
-                this.setLoadingProgress(40, i18next.t("startup.creating views"));
 
-                $("#video-container").show();
-
-                this.setLoadingProgress(45, i18next.t("startup.loading video"));
-
-                // Initialize the player
-                annotationTool.playerAdapter.load();
-                this.setLoadingProgress(50, i18next.t("startup.initializing the player"));
-
+                this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
+                for (var view in this.layoutConfiguration) {
+                    this.$el.find("#opt-view-" + view).each(_.bind(function (index, element) {
+                        if (this.layoutConfiguration[view]) {
+                            $(element).addClass("checked");
+                        } else {
+                            $(element).removeClass("checked");
+                        }
+                    }, this));
+                }
 
                 /**
                  * Loading the video dependent views
                  */
                 var loadVideoDependentViews = _.bind(function () {
 
-                    this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
-                    for (var view in this.layoutConfiguration) {
-                        this.$el.find("#opt-view-" + view).each(_.bind(function (index, element) {
-                            if (this.layoutConfiguration[view]) {
-                                $(element).addClass("checked");
-                            } else {
-                                $(element).removeClass("checked");
-                            }
-                        }, this));
-                    }
+                    var layout = goldenLayout.root.contentItems[0];
+
+                    layout.addChild({
+                        type: "column",
+                        content: [{
+                            type: "component",
+                            componentName: "annotate"
+                        }, {
+                            type: "component",
+                            componentName: "list"
+                        }]
+                    });
 
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
 
@@ -234,54 +236,71 @@ define(["jquery",
                         this.loopController.$el.show();
                     }
 
-                    var self = this;
-                    // Test GoldenLayout
-                    var testLayout = new GoldenLayout({
-                        content: [{
-                            type: "row",
-                            content: [{
-                                type: "column",
-                                content: [{
-                                    type: "component",
-                                    componentName: "testComponent"
-                                }, {
-                                    type: "component",
-                                    componentName: "testComponent"
-                                }]
-                            }, {
-                                type: "column",
-                                content: [{
-                                    type: "component",
-                                    componentName: "annotate"
-                                }, {
-                                    type: "component",
-                                    componentName: "list"
-                                }]
-                            }]
-                        }]
-                    }, document.getElementById("main-container"));
-                    testLayout.registerComponent("testComponent", function (container, componentState) {
-                        container.getElement().html("<h2>Test Component</h2>");
-                    });
-                    testLayout.registerComponent("annotate", function (container, componentState) {
-                        self.annotateView = annotationTool.views.annotate =
-                            new AnnotateView({ el: container.getElement() });
-                    });
-                    testLayout.registerComponent("list", function (container, componentState) {
-                        self.listView = annotationTool.views.list =
-                            new ListView({ el: container.getElement() });
-                    });
-                    testLayout.init();
-
                     this.ready();
                 }, this);
 
+                this.setLoadingProgress(40, i18next.t("startup.creating views"));
 
-                if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
-                    loadVideoDependentViews();
-                } else {
-                    $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY, loadVideoDependentViews);
-                }
+                // Get a reference to the calling object for use in closures.
+                // Note that `bind`- and `proxy`-like things do not work with GoldenLayout
+                // since it calls its component factories as constructors.
+                // The curious shall meditate on the following example:
+                //
+                //     var Foo = _.bind(function () { console.log(this.foo); }, { foo: 42 });
+                //     var foo = new Foo();
+                //
+                var self = this;
+                var goldenLayout = new GoldenLayout({
+                    // Since most of the views depend on the player,
+                    // we initially only create that view
+                    // and add the others dynamically later,
+                    // once the video has loaded.
+                    content: [{
+                        type: "row",
+                        content: [{
+                            type: "column",
+                            content: [{
+                                type: "component",
+                                componentName: "player"
+                            }]
+                        }]
+                    }]
+                }, document.getElementById("main-container"));
+
+                goldenLayout.registerComponent("player", function (container, componentState) {
+
+                    container.on("resize", function () {
+                        // MediaElement only resizes the player on resize events for the window
+                        // not for the containing element, unfortunately.
+                        // However, we can just emulate that event.
+                        window.dispatchEvent(new Event("resize"));
+                    });
+
+                    annotationTool.once(annotationTool.EVENTS.VIDEO_LOADED, function () {
+                        if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
+                            loadVideoDependentViews();
+                        } else {
+                            $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY, loadVideoDependentViews);
+                        }
+                    });
+
+                    self.setLoadingProgress(50, i18next.t("startup.loading video"));
+
+                    annotationTool.loadVideo(container.getElement()[0]);
+                });
+
+                goldenLayout.registerComponent("annotate", function (container, componentState) {
+                    self.annotateView = annotationTool.views.annotate =
+                        new AnnotateView({ el: container.getElement() });
+                });
+
+                goldenLayout.registerComponent("list", function (container, componentState) {
+                    self.listView = annotationTool.views.list =
+                        new ListView({ el: container.getElement() });
+                });
+
+                this.setLoadingProgress(50, i18next.t("startup.initializing the player"));
+                goldenLayout.init();
             },
 
             /**
