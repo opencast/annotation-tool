@@ -17,18 +17,20 @@
 /**
  * A module representing the scale value editor
  * @module views-scalevalue-editor
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires backbone
  * @requires views-scalevalue
  * @requires templates/scale-value-editor.tmpl
  * @requires handlebars
  */
 define(["jquery",
+        "underscore",
         "backbone",
         "models/scalevalue",
         "templates/scale-value-editor",
         "handlebarsHelpers"],
-        function ($, Backbone, ScaleValue, ScaleValueEditorTmpl) {
+       function ($, _, Backbone, ScaleValue, ScaleValueEditorTmpl) {
 
             "use strict";
 
