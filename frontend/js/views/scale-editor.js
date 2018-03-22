@@ -112,10 +112,10 @@ define(["jquery",
                 events: {
                     "click #save-scale": "save",
                     "click #cancel-scale": "cancel",
-                    "click a.edit-scale": "startEditScale",
-                    "click a.create-scale": "createScale",
-                    "click a.delete-scale": "deleteScale",
-                    "click a.create-scale-value": "createScaleValue",
+                    "click .edit-scale": "startEditScale",
+                    "click .create-scale": "createScale",
+                    "click .delete-scale": "deleteScale",
+                    "click .create-scale-value": "createScaleValue",
                     "change select#scale-id": "changeScale",
                     "keydown #save-scale": "saveOnInsert"
                 },
@@ -319,14 +319,14 @@ define(["jquery",
 
                     if (this.currentScale && this.currentScale.isEditable()) {
                         if (this.isInEditMode) {
-                            this.$el.find("a.edit-scale").hide();
+                            this.$el.find(".edit-scale").hide();
                         } else {
-                            this.$el.find("a.edit-scale").show();
+                            this.$el.find(".edit-scale").show();
                         }
                         this.renderEditContent(this.currentScale);
                     } else {
                         this.isInEditMode = false;
-                        this.$el.find("a.edit-scale").hide();
+                        this.$el.find(".edit-scale").hide();
                         this.$el.find(".modal-body").hide();
                     }
                 },
@@ -383,8 +383,8 @@ define(["jquery",
                  */
                 startEditScale: function () {
                     this.isInEditMode = true;
-                    this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
-                    this.$el.find("a.edit-scale").hide();
+                    this.$el.find("#save-scale").text(this.TITLES.SAVE_BUTTON);
+                    this.$el.find(".edit-scale").hide();
                     this.$el.find(".modal-body").show();
                 },
 

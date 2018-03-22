@@ -25,34 +25,34 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a id="video-title" class="brand" href="#"><span data-i18n="title"></span> - <%= version %> </a>
+          <span id="video-title" class="brand"><span data-i18n="title"></span> - <%= version %></span>
 
           <ul class="nav pull-right">
-              <li><a href="#" id="about" data-i18n="menu.about"></a></li>
+              <li><button type="button" id="about" data-i18n="menu.about"></button></li>
               <li class="dropdown" id="view-options">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span data-i18n="menu.view.head"></span> <b class="caret"></b></a>
+                <button type="button" class="dropdown-toggle" data-toggle="dropdown"><span data-i18n="menu.view.head"></span> <b class="caret"></b></button>
                 <ul class="dropdown-menu">
                   <li class="menu-category" data-i18n="menu.view.annotate.head"></li>
-                  <li><a id="opt-annotate-text" class="opt-layout checked" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.annotate.text annotations"></span></a></li>
-                  <li><a id="opt-annotate-categories" class="opt-layout checked" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.annotate.structured annotations"></span></a></li>
+                  <li><button type="button" id="opt-annotate-text" class="opt-layout checked"><i class="check icon-check"></i> <span data-i18n="menu.view.annotate.text annotations"></span></button></li>
+                  <li><button type="button" id="opt-annotate-categories" class="opt-layout checked"><i class="check icon-check"></i> <span data-i18n="menu.view.annotate.structured annotations"></span></button></li>
                   <li role="presentation" class="divider"></li>
                   <li class="menu-category" data-i18n="menu.view.views.head"></li>
-                  <li><a id="opt-view-annotate" class="opt-layout checked" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.views.annotate view"></span></a></li>
-                  <li><a id="opt-view-list" class="opt-layout checked" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.views.list view"></span></a></li>
-                  <li><a id="opt-view-loop" class="opt-layout" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.views.loop controller"></span></a></li>
+                  <li><button type="button" id="opt-view-annotate" class="opt-layout checked"><i class="check icon-check"></i> <span data-i18n="menu.view.views.annotate view"></span></button></li>
+                  <li><button type="button" id="opt-view-list" class="opt-layout checked"><i class="check icon-check"></i> <span data-i18n="menu.view.views.list view"></span></button></li>
+                  <li><button type="button" id="opt-view-loop" class="opt-layout"><i class="check icon-check"></i> <span data-i18n="menu.view.views.loop controller"></span></button></li>
                   <li role="presentation" class="divider"></li>
 
-                  <li><a id="opt-auto-expand" href="#"><i class="check icon-check"></i> <span data-i18n="menu.view.auto expand"></span></a></li>
+                  <li><button type="button" id="opt-auto-expand"><i class="check icon-check"></i> <span data-i18n="menu.view.auto expand"></span></button></li>
 
                   <li role="presentation" class="divider"></li>
-                  <li><a class="opt-tracks-select" href="#" data-i18n="menu.view.track management"></a></li>
+                  <li><button type="button" class="opt-tracks-select" data-i18n="menu.view.track management"></button></li>
 
 
                 </ul>
               </li>
-              <li><a href="#" id="export" data-i18n="menu.export"></a></li>
-              <li><a href="#" id="print" data-i18n="menu.print"></a></li>
-              <li><a href="#" id="logout"></a></li>
+              <li><button type="button" id="export" data-i18n="menu.export"></button></li>
+              <li><button type="button" id="print" data-i18n="menu.print"></button></li>
+              <li><button type="button" id="logout"></button></li>
           </ul>
         </div>
       </div>
@@ -95,16 +95,16 @@
                     <div id="timeline-custom-navigation">
                         <div class="timeline-bottom-controls">
                             <div class="btn-group dropup">
-                                <button class="btn opt-tracks-select" data-i18n="timeline.track management"></button>
+                                <button type="button" class="btn opt-tracks-select" data-i18n="timeline.track management"></button>
                             </div>
-                            <a id="add-track" class="btn">+ <span data-i18n="timeline.track modals.button" data-i18n-options='{ "context": "add" }'></span></a>
+                            <button type="button" id="add-track" class="btn">+ <span data-i18n="timeline.track modals.button" data-i18n-options='{ "context": "add" }'></span></button>
                         </div>
 
-                        <div class="timeline-bottom-controls" id="reset-zoom"><a class="btn"><i class="icon-eye-open"></i> <span data-i18n="timeline.reset zoom"></span></a></div>
-                        <div class="timeline-bottom-controls" id="move-left"><a class="btn">&lt;</a></div>
-                        <div class="timeline-bottom-controls" id="zoom-in"><a class="btn">+</a></div>
-                        <div class="timeline-bottom-controls" id="zoom-out"><a class="btn">-</a></div>
-                        <div class="timeline-bottom-controls" id="move-right" ><a class="btn">></a></div>
+                        <div class="timeline-bottom-controls" id="reset-zoom"><button type="button" class="btn"><i class="icon-eye-open"></i> <span data-i18n="timeline.reset zoom"></span></button></div>
+                        <div class="timeline-bottom-controls" id="move-left"><button type="button" class="btn">&lt;</button></div>
+                        <div class="timeline-bottom-controls" id="zoom-in"><button type="button" class="btn">+</button></div>
+                        <div class="timeline-bottom-controls" id="zoom-out"><button type="button" class="btn">-</button></div>
+                        <div class="timeline-bottom-controls" id="move-right" ><button type="button" class="btn">></button></div>
                     </div>
                     <div class="modal" id="modal-add-group" style="display: none;"></div>
                     <div class="modal" id="modal-update-group" style="display: none;"></div>
@@ -171,10 +171,10 @@
 
                             <ul class="nav pull-right">
                                 <li class="dropdown">
-                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span data-i18n="annotate.items visibility.head"></span><b class="caret"></b></a>
+                                  <button type="button" class="dropdown-toggle" data-toggle="dropdown"><span data-i18n="annotate.items visibility.head"></span><b class="caret"></b></button>
                                   <ul class="dropdown-menu">
-                                    <li><a href="#" class="collapse-all" data-i18n="annotate.items visibility.collapse all"></a></i></li>
-                                    <li><a href="#" class="expand-all" data-i18n="annotate.items visibility.expand all"></a></i></li>
+                                    <li><button type="button" class="collapse-all" data-i18n="annotate.items visibility.collapse all"></button></i></li>
+                                    <li><button type="button" class="expand-all" data-i18n="annotate.items visibility.expand all"></button></i></li>
                                   </ul>
                                 </li>
                             </ul>

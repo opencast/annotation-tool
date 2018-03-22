@@ -46,7 +46,7 @@ div#main-container {
             }
         }
 
-        .nav > li > a {
+        .nav > li > button {
             padding: 0 0 0 1em;
             line-height: @line-height;
 
@@ -66,12 +66,16 @@ div#main-container {
         padding-left: 5px;
     }
 
-    a.brand {
+    .brand {
         font-size: @font-size;
         line-height: @line-height;
         padding: 0px 1em 0px 20px;
     }
-    .nav > li > a {
+
+    .nav > li > button {
+        .link-button();
+        color: @white;
+
         font-size: @font-size;
         line-height: @line-height;
         font-weight: normal;
@@ -79,6 +83,34 @@ div#main-container {
 
         &#logout {
             display: none;
+        }
+    }
+}
+
+// Make Bootstraps dropdown styles work with button elements instead of links
+.dropdown-menu {
+
+    button {
+        .link-button();
+
+        // Make the button actually observe its block nature set by the extend rule above
+        // and adapt it to the circumstances
+        width: 100%;
+        text-align: left;
+
+    }
+
+    // The rules in here are more specific than, in particular, the `.link-button()` above,
+    // because the selector count is greater.
+    // Thus the padding reset can be overridden despite the inconvenient ordering of the rules
+    // output by less.
+    li {
+        button {
+            &:extend(.dropdown-menu > li > a);
+
+            &:hover {
+                &:extend(.dropdown-menu > li > a:hover);
+            }
         }
     }
 }

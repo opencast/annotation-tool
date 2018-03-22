@@ -65,7 +65,7 @@ define(["jquery",
                 events: {
                     "click .order-up": "up",
                     "click .order-down": "down",
-                    "click a.delete-scale-value": "deleteScaleValue",
+                    "click .delete-scale-value": "deleteScaleValue",
                     "keydown .scale-value-name": "saveOnInsert",
                     "keydown .scale-value-value": "saveOnInsert",
                     "focusout .scale-value-value": "save",

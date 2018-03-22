@@ -280,7 +280,7 @@ define(["jquery",
                 this.setupKeyboardShortcuts();
 
                 // Show logout button
-                $("a#logout").css("display", "block");
+                $("#logout").css("display", "block");
 
                 if (this.layoutConfiguration.timeline) {
                     this.timelineView.redraw();

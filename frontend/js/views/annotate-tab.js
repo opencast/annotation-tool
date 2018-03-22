@@ -143,7 +143,7 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#paginationBulletTemplate
              * @type {HandlebarsTemplate}
              */
-            paginationBulletTemplate: Handlebars.compile("<li><a href=\"#\" class=\"page-link\" title=\"{{frame}}\" id=\"page-{{number}}\">{{number}}</a></li>"),
+            paginationBulletTemplate: Handlebars.compile("<li><button type=\"button\" class=\"page-link\" title=\"{{frame}}\" id=\"page-{{number}}\">{{number}}</button></li>"),
 
             /**
              * Element containing the "carousel"

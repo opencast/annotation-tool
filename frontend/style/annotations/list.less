@@ -130,9 +130,12 @@
             height: @headerSumHeight;
             border: 1px solid @btnBorder;
             .box-sizing(border-box);
-            padding: @headerPadding;
             vertical-align: top;
             line-height: headerHeight;
+            &.collapse {
+                .link-button();
+            }
+            padding: @headerPadding;
         }
 
         /* Content Elements in headerbar*/

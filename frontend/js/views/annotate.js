@@ -229,7 +229,7 @@ define(["jquery",
                 this.$el.find("#annotate-full").addClass("checked");
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
-                this.tabsButtonsElement.find("a:first-child").parent().first().addClass("active");
+                this.tabsButtonsElement.find("button:first-child").parent().first().addClass("active");
 
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
@@ -349,7 +349,7 @@ define(["jquery",
              * @param {Event} event Event object
              */
             showTab: function (event) {
-                var tabId = event.currentTarget.attributes.getNamedItem("href").value;
+                var tabId = event.currentTarget.dataset.target;
 
                 tabId = tabId.replace(TAB_LINK_PREFIX, "");
 
@@ -400,7 +400,7 @@ define(["jquery",
 
                 if (status) {
                     this.showTab({
-                        currentTarget: this.categoriesTabs[this.DEFAULT_TAB_ON_EDIT].titleLink.find("a")[0]
+                        currentTarget: this.categoriesTabs[this.DEFAULT_TAB_ON_EDIT].titleLink.find("button")[0]
                     });
                 }
             },
