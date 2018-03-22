@@ -1,18 +1,16 @@
-      <div class="modal-header">
+<div class="modal-header">
+    <h3>
+        {{title}}
+        <span class="manage">
+            <select id="scale-id"></select>
+            <a class="btn edit-scale"><i class="icon-edit"></i></a>
+            <a class="btn create-scale"><i class="icon-plus-sign"></i></a>
+        </span>
+    </h3>
+</div>
+<div class="modal-body"></div>
 
-        <h3>{{title}}
-            <span class="manage">
-                <select id="scale-id">
-                </select>
-                <a class="btn edit-scale"><icon class="icon-edit"></i></a>
-                <a class="btn create-scale"><icon class="icon-plus-sign"></i></a>
-            </span>
-        </h3>
-
-      </div>
-      <div class="modal-body"></div>
-
-      <div class="modal-footer">
-        <a id="cancel-scale" href="#" class="btn">{{t "scale editor.cancel"}}</a>
-        <a id="save-scale" href="#" class="btn btn-primary">{{t "scale editor.save"}}</a>
-      </div>
+<div class="modal-footer">
+    <a id="cancel-scale" href="#" class="btn">{{t "scale editor.cancel"}}</a>
+    <a id="save-scale" href="#" class="btn btn-primary">{{t "scale editor.save"}}</a>
+</div>

@@ -110,14 +110,14 @@ define(["jquery",
                  * @type {object}
                  */
                 events: {
-                    "click #save-scale"         : "save",
-                    "click #cancel-scale"       : "cancel",
-                    "click a.edit-scale"        : "startEditScale",
-                    "click a.create-scale"      : "createScale",
-                    "click a.delete-scale"      : "deleteScale",
+                    "click #save-scale": "save",
+                    "click #cancel-scale": "cancel",
+                    "click a.edit-scale": "startEditScale",
+                    "click a.create-scale": "createScale",
+                    "click a.delete-scale": "deleteScale",
                     "click a.create-scale-value": "createScaleValue",
-                    "change select#scale-id"    : "changeScale",
-                    "keydown #save-scale"       : "saveOnInsert"
+                    "change select#scale-id": "changeScale",
+                    "keydown #save-scale": "saveOnInsert"
                 },
 
                 /**

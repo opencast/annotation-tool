@@ -1,26 +1,34 @@
-        <form class="form-horizontal">
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label" for="nickanme"><b>*</b> {{t "scale editor.name.label"}}: </label>
-                    <div class="controls">
-                        <input type="text" class="input-xlarge scale-name" placeholder="{{t "scale editor.name.placeholder"}}" value="{{scale.name}}"></input>
-                    </div>
-                    <label class="control-label" for="nickanme">{{t "scale editor.description.label"}}: </label>
-                    <div class="controls">
-                        <input type="text" class="input-xlarge scale-description" placeholder="{{t "scale editor.description.placeholder"}}" value="{{scale.description}}"></input>
-                    </div>
-                    <div class="controls">
-                        <a class="btn delete-scale"><i class="icon-trash"></i>{{t "scale editor.delete"}}</a>
-                    </div>
+<form class="form-horizontal">
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label" for="nickanme"><b>*</b> {{t "scale editor.name.label"}}: </label>
+            <div class="controls">
+                <input
+                    type="text"
+                    class="input-xlarge scale-name"
+                    placeholder="{{t "scale editor.name.placeholder"}}"
+                    value="{{scale.name}}"
+                ></input>
+            </div>
+            <label class="control-label" for="nickanme">{{t "scale editor.description.label"}}: </label>
+            <div class="controls">
+                <input
+                    type="text"
+                    class="input-xlarge scale-description"
+                    placeholder="{{t "scale editor.description.placeholder"}}"
+                    value="{{scale.description}}"
+                ></input>
+            </div>
+            <div class="controls">
+                <a class="btn delete-scale"><i class="icon-trash"></i>{{t "scale editor.delete"}}</a>
+            </div>
+        </div>
 
-                </div>
-
-                <div>
-                    <div class="header-name">{{t "scale editor.values.name.header"}}</div>
-                    <div class="header-value">{{t "scale editor.values.value.header"}}</div>
-                </div>
-                <div class="control-group list-scale-values"></div>
-                 <a class="btn create-scale-value"><i class="icon-plus-sign"></i>{{t "scale editor.values.add"}}</a>
-
-            </fieldset>
-        </form>
+        <div>
+            <div class="header-name">{{t "scale editor.values.name.header"}}</div>
+            <div class="header-value">{{t "scale editor.values.value.header"}}</div>
+        </div>
+        <div class="control-group list-scale-values"></div>
+        <a class="btn create-scale-value"><i class="icon-plus-sign"></i>{{t "scale editor.values.add"}}</a>
+    </fieldset>
+</form>

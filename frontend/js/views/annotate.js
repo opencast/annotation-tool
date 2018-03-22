@@ -109,12 +109,12 @@ define(["jquery",
              * @type {map}
              */
             events: {
-                "keyup #new-annotation"             : "keydownOnAnnotate",
-                "click #insert"                     : "insert",
-                "keydown #new-annotation"           : "onFocusIn",
-                "focusout #new-annotation"          : "onFocusOut",
-                "click #label-tabs-buttons a"       : "showTab",
-                "click #editSwitch"                 : "onSwitchEditModus"
+                "keyup #new-annotation": "keydownOnAnnotate",
+                "click #insert": "insert",
+                "keydown #new-annotation": "onFocusIn",
+                "focusout #new-annotation": "onFocusOut",
+                "click #label-tabs-buttons a": "showTab",
+                "click #editSwitch": "onSwitchEditModus"
             },
 
             /**
