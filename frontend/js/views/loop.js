@@ -57,15 +57,6 @@ define(["jquery",
          * @alias Loop
          */
         var LoopView = Backbone.View.extend({
-
-            /**
-             * The element to display the loop controller in
-             * @constant
-             * @type {String}
-             * @alias module:views-loop.Loop#el
-             */
-            el: "#loop",
-
             /**
              * Maximal margin supported to define if we are still in the same loop
              * @constant
@@ -146,6 +137,7 @@ define(["jquery",
 
             render: function () {
                 this.$el.html(loopTemplate());
+                this.window = this.$el.find("#loop");
                 this.initSlider();
             },
 
@@ -153,17 +145,17 @@ define(["jquery",
                 var duration = this.playerAdapter.getDuration();
 
                 this.currentLoopLength = (duration / 10) < this.MINIMAL_LOOP ? this.MINIMAL_LOOP : Math.round(duration / 10);
-                this.slider = $("#slider").slider({
-                        min     : this.MINIMAL_LOOP,
-                        max     : Math.round(duration - 1),
-                        step    : 1,
-                        value   : this.currentLoopLength,
-                        formater: function (value) {
-                            return value + " s";
-                        }
-                    });
+                this.slider = this.$el.find("#slider").slider({
+                    min: this.MINIMAL_LOOP,
+                    max: Math.round(duration - 1),
+                    step: this.SLIDER_STEP,
+                    value: this.currentLoopLength,
+                    formater: function (value) {
+                        return value + " s";
+                    }
+                });
 
-                $("#slider").bind("slideStop", this.changeLoopLength);
+                this.slider.bind("slideStop", this.changeLoopLength);
                 this.$el.find("#loop-length").val(this.currentLoopLength);
             },
 
@@ -180,10 +172,10 @@ define(["jquery",
                 if (isEnable) {
                     $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
                     this.createLoops(this.currentLoopLength);
-                    this.$el.removeClass("disabled");
+                    this.window.removeClass("disabled");
                 } else {
                     $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
-                    this.$el.addClass("disabled");
+                    this.window.addClass("disabled");
                     this.resetLoops();
                     if (annotationTool.views.main.layoutConfiguration.timeline) {
                         annotationTool.views.timeline.redraw();
@@ -261,7 +253,7 @@ define(["jquery",
                 }
 
                 this.currentLoopLength = newValue;
-                this.$el.find("#slider").slider("setValue", this.currentLoopLength);
+                this.slider.slider("setValue", this.currentLoopLength);
                 this.createLoops(this.currentLoopLength);
             },
 
@@ -273,7 +265,7 @@ define(["jquery",
             changeLoopLength: function (event) {
                 this.currentLoopLength = parseInt(event.value, 10);
                 this.$el.find("#loop-length").val(this.currentLoopLength);
-                this.$el.find("#slider").slider("setValue", this.currentLoopLength);
+                this.slider.slider("setValue", this.currentLoopLength);
                 this.createLoops(this.currentLoopLength);
             },
 

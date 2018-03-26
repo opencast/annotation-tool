@@ -226,14 +226,12 @@ define(["jquery",
                         type: "component",
                         componentName: "timeline"
                     });
+                    leftColumn.addChild({
+                        type: "component",
+                        componentName: "loop"
+                    });
 
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
-
-                    this.loopController = new LoopView();
-                    annotationTool.loopFunction = this.loopController;
-                    if (this.layoutConfiguration.loop) {
-                        this.loopController.$el.show();
-                    }
 
                     this.ready();
                 }, this);
@@ -299,6 +297,11 @@ define(["jquery",
                 goldenLayout.registerComponent("list", function (container, componentState) {
                     self.listView = annotationTool.views.list =
                         new ListView({ el: container.getElement() });
+                });
+
+                goldenLayout.registerComponent("loop", function (container, componentState) {
+                    self.loopController = annotationTool.loopFunction =
+                        new LoopView({ el: container.getElement() });
                 });
 
                 goldenLayout.registerComponent("timeline", function (container, componentState) {
