@@ -343,7 +343,7 @@ define(["jquery",
 
                         // Only scroll the list to the first item of the selection
                         if (i === 0 && !view.isSelected) {
-                            location.hash = "#" + view.id;
+                            this.$el.scrollTop(view.$el.position().top);
                         }
 
                         view.isSelected = true;
