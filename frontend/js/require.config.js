@@ -13,7 +13,7 @@ require.config({
         "jquery.FileReader": "libs/jquery.FileReader",
         "jquery.appear": "libs/jquery.appear",
         "localstorage": "libs/backbone/backbone.localStorage-1.1.16",
-        "jquery": "libs/jquery-1.7.2",
+        "jquery": "libs/jquery-1.8.0",
         "slider": "libs/bootstrap/bootstrap-slider",
         "templates": "../templates",
         "text": "libs/require/text",

@@ -73,6 +73,9 @@ define(["jquery",
              */
             this.init = function () {
 
+                targetElement.style.width = "100%";
+                targetElement.style.height = "100%";
+
                 $(targetElement).mediaelementplayer({
                     success: function (mediaElement) {
                         if (sources) {

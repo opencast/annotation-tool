@@ -39,19 +39,6 @@ define(["jquery",
          */
         var Loop = Backbone.Model.extend({
             /**
-             * Constructor
-             * @alias module:models-loop.Loop#initialize
-             * @param {object} attr Object literal containing the model initialion attributes.
-             */
-            initialize: function (attr) {
-
-                // Add backbone events to the model
-                _.extend(this, Backbone.Events);
-
-                this.set(attr);
-            },
-
-            /**
              * Validate the attribute list passed to the model
              * @alias module:models-loop.Loop#validate
              * @param {object} attr Object literal containing the model attribute to validate.

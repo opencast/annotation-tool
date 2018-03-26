@@ -73,21 +73,16 @@ define(["jquery",
                 Resource.prototype.initialize.apply(this, arguments);
 
                 // the tack is not visible at initialisation
-                attr.visible = false;
-                attr.annotationsLoaded = false;
+                this.set({
+                    visible: false,
+                    annotationsLoaded: false
+                });
 
                 if (attr.annotations && _.isArray(attr.annotations)) {
                     this.set({ annotations: new Annotations(attr.annotations, this) });
                 } else {
                     this.set({ annotations: new Annotations([], this) });
                 }
-
-                delete attr.annotations;
-
-                // Add backbone events to the model
-                _.extend(this, Backbone.Events);
-
-                this.set(attr);
             },
 
             /**
