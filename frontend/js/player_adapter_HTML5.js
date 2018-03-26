@@ -78,6 +78,7 @@ define(["jquery",
 
                 $(targetElement).mediaelementplayer({
                     alwaysShowControls: true,
+                    stretching: "fill",
                     success: function (mediaElement) {
                         if (sources) {
                             mediaElement.setSrc(sources);
