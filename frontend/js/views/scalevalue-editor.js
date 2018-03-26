@@ -17,18 +17,20 @@
 /**
  * A module representing the scale value editor
  * @module views-scalevalue-editor
- * @requires jQuery
+ * @requires jquery
+ * @requires underscore
  * @requires backbone
  * @requires views-scalevalue
  * @requires templates/scale-value-editor.tmpl
  * @requires handlebars
  */
 define(["jquery",
+        "underscore",
         "backbone",
         "models/scalevalue",
         "templates/scale-value-editor",
         "handlebarsHelpers"],
-        function ($, Backbone, ScaleValue, ScaleValueEditorTmpl) {
+       function ($, _, Backbone, ScaleValue, ScaleValueEditorTmpl) {
 
             "use strict";
 
@@ -61,13 +63,13 @@ define(["jquery",
                  * @type {Map}
                  */
                 events: {
-                    "click .order-up"            : "up",
-                    "click .order-down"          : "down",
-                    "click a.delete-scale-value" : "deleteScaleValue",
-                    "keydown .scale-value-name"  : "saveOnInsert",
-                    "keydown .scale-value-value" : "saveOnInsert",
+                    "click .order-up": "up",
+                    "click .order-down": "down",
+                    "click .delete-scale-value": "deleteScaleValue",
+                    "keydown .scale-value-name": "saveOnInsert",
+                    "keydown .scale-value-value": "saveOnInsert",
                     "focusout .scale-value-value": "save",
-                    "focusout .scale-value-name" : "save"
+                    "focusout .scale-value-name": "save"
                 },
 
                 /**

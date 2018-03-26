@@ -1,14 +1,14 @@
 <div class="modal" id="modal-alert">
-      <div class="modal-body">
-            <div class="alert {{class}} alert-block">
-                  <h4>{{title}}</h4>
+    <div class="modal-body">
+        <div class="alert {{class}} alert-block">
+            <h4>{{title}}</h4>
 
-                  {{message}}
-            </div>
-      </div>
-      {{#unless hideButtons}}
-      <div class="modal-footer">
-            <a id="confirm-alert" href="#" class="btn btn-primary">{{t "alert.ok"}}</a>
-      </div>
-      {{/unless}}
+            {{message}}
+        </div>
+    </div>
+    {{#unless hideButtons}}
+        <div class="modal-footer">
+            <button type="button" id="confirm-alert" class="btn btn-primary">{{t "alert.ok"}}</button>
+        </div>
+    {{/unless}}
 </div>

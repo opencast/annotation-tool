@@ -14,7 +14,7 @@
     @min-height: 300px;
     @content-padding: 5px;
 
-    .iconStateSelected(@color1: fade(@black,20%),@color2: fade(@blue,70%),@cursor: pointer,@radius: 3px) {
+    .iconStateSelected(@color1: fade(@black, 20%), @color2: fade(@blue, 70%), @cursor: pointer, @radius: 3px) {
         background-color: @color1;
         box-shadow: 0 0 1px @color2 inset;
         border-radius: @radius;
@@ -47,11 +47,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         min-height: 55px;
-        width: 100%; 
-    }
-
-    a.proxy-anchor {
-        display: none;
+        width: 100%;
     }
 
     i.check {
@@ -130,9 +126,12 @@
             height: @headerSumHeight;
             border: 1px solid @btnBorder;
             .box-sizing(border-box);
-            padding: @headerPadding;
             vertical-align: top;
             line-height: headerHeight;
+            &.collapse {
+                .link-button();
+            }
+            padding: @headerPadding;
         }
 
         /* Content Elements in headerbar*/
@@ -296,14 +295,6 @@
             }
         }
 
-        // span.track {
-        //     display:none;
-        //     background-color: lighten(#005580,20%);
-        //     color: white;
-        //     padding: 3px;
-        //     font-size: 0.90em;
-        // }
-
         div.creator-info {
             padding: @content-padding;
             font-size: 10px;
@@ -332,7 +323,6 @@
     }
 
     div.comments-container {
-        //background-color: @grayLight;
         color: @black;
         clear: both;
 

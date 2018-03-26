@@ -693,12 +693,10 @@ define(["jquery",
                     withComments: false,
                     id: "collapsed",
                     events: {
-                        "click"                      : "onSelect",
-                        "click .proxy-anchor "       : "stopPropagation",
-                        "click a.collapse"           : "toggleCollapsedState",
+                        "click": "onSelect",
+                        "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "click i.icon-comment"       : "toggleCommentsState"
-                        //"dblclick"                   : "toggleEditState"
+                        "click i.icon-comment": "toggleCommentsState"
                     }
                 },
                 EXPANDED: {
@@ -706,17 +704,12 @@ define(["jquery",
                     withComments: true,
                     id: "expanded",
                     events: {
-                        "click"                      : "onSelect",
-                        "click .proxy-anchor "       : "stopPropagation",
-                        "click a.collapse"           : "toggleCollapsedState",
+                        "click": "onSelect",
+                        "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "click i.icon-comment"       : "toggleCommentsState",
-                        "click .toggle-edit"         : "toggleEditState",
-                        "click i.delete"             : "deleteFull"
-                        //"dblclick span.text"         : "toggleEditState",
-                        //"dblclick span.start"        : "toggleEditState",
-                        //"dblclick span.end"          : "toggleEditState",
-                        //"dblclick span.category"     : "toggleEditState"
+                        "click i.icon-comment": "toggleCommentsState",
+                        "click .toggle-edit": "toggleEditState",
+                        "click i.delete": "deleteFull"
                     }
                 },
                 EDIT: {
@@ -724,29 +717,28 @@ define(["jquery",
                     withComments: true,
                     id: "edit-annotation",
                     events: {
-                        "click"                      : "onSelect",
-                        "click .proxy-anchor "       : "stopPropagation",
-                        "click a.collapse"           : "toggleCollapsedState",
+                        "click": "onSelect",
+                        "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "click i.icon-comment"       : "toggleCommentsState",
-                        "click .toggle-edit"         : "toggleEditState",
-                        "click .freetext textarea"   : "stopPropagation",
-                        "click .scaling select"      : "stopPropagation",
-                        "click .end-value"           : "stopPropagation",
-                        "click .start-value"         : "stopPropagation",
-                        "click i.delete"             : "deleteFull",
-                        "click button.in"            : "setCurrentTimeAsStart",
-                        "click button.out"           : "setCurrentTimeAsEnd",
-                        "keydown .start-value"       : "saveStart",
-                        "keydown .end-value"         : "saveEnd",
-                        "keydown .freetext textarea" : "saveFreeText",
-                        "focusout .start-value"      : "saveStart",
-                        "focusout .end-value"        : "saveEnd",
-                        "click button[type=submit]"  : "saveFreeText",
-                        "click button[type=button]"  : "toggleEditState",
+                        "click i.icon-comment": "toggleCommentsState",
+                        "click .toggle-edit": "toggleEditState",
+                        "click .freetext textarea": "stopPropagation",
+                        "click .scaling select": "stopPropagation",
+                        "click .end-value": "stopPropagation",
+                        "click .start-value": "stopPropagation",
+                        "click i.delete": "deleteFull",
+                        "click button.in": "setCurrentTimeAsStart",
+                        "click button.out": "setCurrentTimeAsEnd",
+                        "keydown .start-value": "saveStart",
+                        "keydown .end-value": "saveEnd",
+                        "keydown .freetext textarea": "saveFreeText",
+                        "focusout .start-value": "saveStart",
+                        "focusout .end-value": "saveEnd",
+                        "click button[type=submit]": "saveFreeText",
+                        "click button[type=button]": "toggleEditState",
                         "focusout .freetext textarea": "saveFreeText",
-                        "change .scaling select"     : "saveScaling",
-                        "keyup"                      : "handleEsc"
+                        "change .scaling select": "saveScaling",
+                        "keyup": "handleEsc"
                     }
                 },
                 COMMENTS: {
@@ -754,14 +746,13 @@ define(["jquery",
                     withComments: true,
                     id: "add-comment",
                     events: {
-                        "click"                      : "onSelect",
-                        "click .proxy-anchor "       : "stopPropagation",
-                        "click a.collapse"           : "toggleCollapsedState",
+                        "click": "onSelect",
+                        "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "click i.icon-comment"       : "toggleCommentsState",
-                        "click .toggle-edit"         : "toggleEditState",
-                        "dblclick span.text"         : "toggleEditState",
-                        "dblclick span.category"     : "toggleEditState"
+                        "click i.icon-comment": "toggleCommentsState",
+                        "click .toggle-edit": "toggleEditState",
+                        "dblclick span.text": "toggleEditState",
+                        "dblclick span.category": "toggleEditState"
                     }
                 }
             }

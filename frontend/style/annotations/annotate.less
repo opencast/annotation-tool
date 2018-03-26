@@ -65,8 +65,8 @@ i.check {
 		position: relative;
 		z-index: 10;
 
-		> li a {
-			&.active a {
+		> li button {
+			&.active buttno {
 				border-bottom: 2px solid @white;
 				margin-bottom: 0;
 			}
@@ -416,12 +416,12 @@ i.check {
 				border-radius: 0;
 			}
 
-			li.active a {
+			li.active button {
 				background-color: @grayLighter;
 				background-image: none;
 			}
 
-			a {
+			button {
 				.btn();
 				// Override some Setting of .btn()
 				padding-top: 0;
@@ -431,6 +431,7 @@ i.check {
 				border-radius: 0;
 				height: @controlsHeight;
 				line-height: @controlsHeight;
+				float: left;
 
 				&:hover {
 					background-color: @white;
@@ -580,7 +581,6 @@ i.check {
 		width: 100px;
 		margin-right: 3px;
 	}
-
 
 	.error {
 		color: red;

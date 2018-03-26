@@ -143,7 +143,7 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#paginationBulletTemplate
              * @type {HandlebarsTemplate}
              */
-            paginationBulletTemplate: Handlebars.compile("<li><a href=\"#\" class=\"page-link\" title=\"{{frame}}\" id=\"page-{{number}}\">{{number}}</a></li>"),
+            paginationBulletTemplate: Handlebars.compile("<li><button type=\"button\" class=\"page-link\" title=\"{{frame}}\" id=\"page-{{number}}\">{{number}}</button></li>"),
 
             /**
              * Element containing the "carousel"
@@ -406,7 +406,7 @@ define(["jquery",
                 var length = this.categoriesContainer.find("div.category-item").length,
                     pageNumber = (length - (length % annotationTool.CATEGORIES_PER_TAB)) / annotationTool.CATEGORIES_PER_TAB;
 
-                this.categoriesContainer.append(this.itemContainerTemplate({number: (pageNumber + 1)}));
+                this.categoriesContainer.append(this.itemContainerTemplate({ number: (pageNumber + 1) }));
 
                 this.itemsCurrentContainer = this.categoriesContainer.find("div div div.row-fluid").last();
 
@@ -414,7 +414,7 @@ define(["jquery",
                     this.carouselPagination.parent().css("display", "block");
                 }
 
-                this.carouselPagination.find("li:last").before(this.paginationBulletTemplate({number: (pageNumber + 1), frame: pageNumber}));
+                this.carouselPagination.find("li:last").before(this.paginationBulletTemplate({ number: (pageNumber + 1), frame: pageNumber }));
             },
 
             /**
