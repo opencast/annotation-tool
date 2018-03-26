@@ -14,8 +14,6 @@
  *
  */
 
-/*global Element */
-
 /**
  * A module representing the player adapter implementation for the HTML5 native player
  * @module player-adapter-HTML5
@@ -24,7 +22,7 @@
  * @requires mediaelementplayer
  */
 define(["jquery",
-        "prototypes/player_adapter",
+        "player-adapter",
         "mediaelementplayer"],
 
     function ($, PlayerAdapter) {
@@ -36,29 +34,17 @@ define(["jquery",
          * @constructor
          * @alias module:player-adapter-HTML5.PlayerAdapterHTML5
          * @augments {module:player-adapter.PlayerAdapter}
-         * @param {DOMElement} targetElement DOM Element representing the player
+         * @param {HTMLElement} targetElement DOM Element representing the player
          */
         var PlayerAdapterHTML5 = function (targetElement, sources) {
+            PlayerAdapter.apply(this, arguments);
+
             var self = this;
 
             // Check if the given target Element is valid
             if (typeof targetElement === "undefined" || targetElement === null || !(targetElement instanceof HTMLElement)) {
                 throw "The given target element must not be null and have to be a vaild HTMLElement!";
             }
-
-            /**
-             * Id of the player adapter
-             * @inner
-             * @type {String}
-             */
-            this.id = "PlayerAdapter" + targetElement.id;
-
-            /**
-             * The HTML representation of the adapter, mainly used to thriggered event
-             * @inner
-             * @type {DOMElement}
-             */
-            this.htmlElement = null;
 
             /**
              * The current player status
@@ -95,27 +81,6 @@ define(["jquery",
                     }
                 });
 
-                // Create the HTML representation of the adapter
-                $(targetElement).wrap(self.getHTMLTemplate(self.id));
-                if ($("#" + self.id).length === 0) {
-                    throw "Cannot create HTML representation of the adapter";
-                }
-
-                self.htmlElement = document.getElementById(self.id);
-
-                // Extend the current object with the HTML representation
-                $.extend(true, this, self.htmlElement);
-
-                // Add PlayerAdapter the prototype
-                this.__proto__ = new PlayerAdapter();
-
-                // ...and ensure that its methods are used for the Events management
-                this.dispatchEvent       = this.__proto__.dispatchEvent;
-                this.triggerEvent        = this.__proto__.triggerEvent;
-                this.addEventListener    = this.__proto__.addEventListener;
-                this.removeEventListener = this.__proto__.removeEventListener;
-                this._getListeners       = this.__proto__._getListeners;
-
                 /**
                  * Listen the events from the native player
                  */
@@ -130,8 +95,8 @@ define(["jquery",
                     }
 
                     // If duration is valid, we changed status
-                    self.status =  PlayerAdapter.STATUS.PAUSED;
-                    self.triggerEvent(PlayerAdapter.EVENTS.READY);
+                    self.status = PlayerAdapter.STATUS.PAUSED;
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.READY));
 
                     if (self.waitToPlay) {
                         self.play();
@@ -144,7 +109,7 @@ define(["jquery",
                     }
 
                     self.status = PlayerAdapter.STATUS.PLAYING;
-                    self.triggerEvent(PlayerAdapter.EVENTS.PLAY);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PLAY));
                 });
 
                 $(targetElement).bind("playing", function () {
@@ -157,18 +122,18 @@ define(["jquery",
                     }
 
                     self.status = PlayerAdapter.STATUS.PAUSED;
-                    self.triggerEvent(PlayerAdapter.EVENTS.PAUSE);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PAUSE));
                 });
 
                 $(targetElement).bind("ended", function () {
                     self.status = PlayerAdapter.STATUS.ENDED;
-                    self.triggerEvent(PlayerAdapter.EVENTS.ENDED);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ENDED));
                 });
 
                 $(targetElement).bind("seeking", function () {
                     self.oldStatus = self.status;
                     self.status = PlayerAdapter.STATUS.SEEKING;
-                    self.triggerEvent(PlayerAdapter.EVENTS.SEEKING);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.SEEKING));
                 });
 
                 $(targetElement).bind("seeked", function () {
@@ -186,12 +151,12 @@ define(["jquery",
                     ) {
                         self.status = PlayerAdapter.STATUS.PLAYING;
                     }
-                    self.triggerEvent(PlayerAdapter.EVENTS.TIMEUPDATE);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.TIMEUPDATE));
                 });
 
                 $(targetElement).bind("error", function () {
                     self.status = PlayerAdapter.STATUS.ERROR_NETWORK;
-                    self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
+                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ERROR));
                 });
 
                 $(targetElement).bind("contextmenu", function (e) {
@@ -201,9 +166,9 @@ define(["jquery",
                 return this;
             };
 
-            // =================
+            // ==================
             // REQUIRED FUNCTIONS
-            // =================
+            // ==================
 
             /**
              * Play the video
@@ -273,19 +238,10 @@ define(["jquery",
                 return self.status;
             };
 
-            // =================================
-            // IMPLEMENTATION SPECIFIC FUNCTIONS
-            // ==================================
-
-            /**
-             * Get the HTML template for the html representation of the adapter
-             */
-            this.getHTMLTemplate = function (id) {
-                return  "<div id=\"" + id + "\"></div>";
-            };
-
             return this.init();
         };
+
+        PlayerAdapterHTML5.prototype = Object.create(PlayerAdapter.prototype);
 
         return PlayerAdapterHTML5;
     }

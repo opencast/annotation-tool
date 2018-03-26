@@ -20,19 +20,32 @@
  */
 define(["jquery",
         "underscore",
-        "roles",
-        "player_adapter_HTML5"
+        "backbone",
+        "collections/users",
+        "views/login",
+        "player_adapter_HTML5",
+        "localstorage"
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
 
-    function ($, _, ROLES, HTML5PlayerAdapter, LoopView) {
+    function ($, _, Backbone, Users, LoginView, HTML5PlayerAdapter) {
 
         "use strict";
+
+        var users = new Users();
+
+        /**
+         * Provide a default implementation of {@link module:Backbone.Collection.localStorage}
+         * to generate the local storage container for every collection based on its URL.
+         * @see module:Backbone.LocalStorage
+         */
+        Backbone.Collection.prototype.localStorage = function () {
+            return new Backbone.LocalStorage(_.result(this, "url"));
+        };
 
         /**
          * Annotations tool configuration object
          * @alias module:annotation-tool-configuration.Configuration
-         * @enum
          */
         var Configuration =  {
 
@@ -50,19 +63,6 @@ define(["jquery",
                     annotate : true,
                     loop     : false
                 }
-            },
-
-            /**
-             * The default tracks at startup
-             * @type {{@link this.TRACKS}}
-             */
-            getDefaultTracks: function () {
-                return {
-                    name: "mine",
-                    filter: function (track) {
-                        return track.get("isMine");
-                    }
-                };
             },
 
             /**
@@ -96,23 +96,8 @@ define(["jquery",
             localStorage: true,
 
             /**
-             * Url for redirect after the logout
-             * @alias module:annotation-tool-configuration.Configuration.logoutUrl
-             * @type {string}
-             * @readOnly
-             */
-            logoutUrl: undefined,
-
-            /**
-             * Player adapter implementation to use for the annotations tool
-             * @alias module:annotation-tool-configuration.Configuration.playerAdapter
-             * @type {module:player-adapter.PlayerAdapter}
-             */
-            playerAdapter: undefined,
-
-            /**
              * Array of tracks to import by default
-             * @type {module:player-adapter.tracksToImport}
+             * @type {?object[]}
              */
             tracksToImport: undefined,
 
@@ -203,21 +188,42 @@ define(["jquery",
             },
 
             /**
-             * Get the user id from the current context (user_extid)
-             * @alias module:annotation-tool-configuration.Configuration.getUserExtId
-             * @return {string} user_extid
+             * Authenticate the user
+             * @alias module:annotation-tool-configuration.Configuration.authenticate
              */
-            getUserExtId: function (email) {
-                return email;
+            authenticate: function () {
+                users.fetch().then(_.bind(function () {
+                    var currentUser = localStorage.currentUser;
+                    if (currentUser) {
+                        this.user = users.get(currentUser);
+                        this.trigger(this.EVENTS.USER_LOGGED);
+                    } else {
+                        var loginView = new LoginView();
+                        loginView.once(LoginView.EVENTS.LOGIN, function (user, remember) {
+                            this.user = users.get(user);
+                            if (this.user) {
+                                this.user.set(user.attributes);
+                            } else {
+                                this.user = users.create(user);
+                            }
+                            if (remember) {
+                                localStorage.currentUser = this.user.id;
+                            }
+                            loginView.hide();
+                            this.trigger(this.EVENTS.USER_LOGGED);
+                        }, this);
+                        loginView.show();
+                    }
+                }, this));
             },
 
             /**
-             * Get the user authentification token if existing
-             * @alias module:annotation-tool-configuration.Configuration.getUserAuthToken
-             * @return {string} Current user token
+             * Log out the current user
+             * @alias module:annotation-tool-configuration.Configuration.logout
              */
-            getUserAuthToken: function () {
-                return undefined;
+            logout: function () {
+                delete localStorage.currentUser;
+                window.location.reload();
             },
 
             /**

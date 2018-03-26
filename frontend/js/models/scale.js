@@ -80,9 +80,9 @@ define(["jquery",
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.scaleValues && _.isArray(attr.scaleValues)) {
-                    this.set({scaleValues: new ScaleValues(attr.scaleValues, this)});
+                    this.set({ scaleValues: new ScaleValues(attr.scaleValues, this) });
                 } else {
-                    this.set({scaleValues: new ScaleValues([], this)});
+                    this.set({ scaleValues: new ScaleValues([], this) });
                 }
 
                 if (attr.id) {
@@ -93,8 +93,8 @@ define(["jquery",
             /**
              * Validate the attribute list passed to the model
              * @alias module:models-scale.Scale#validate
-             * @param  {object} data Object literal containing the model attribute to validate.
-             * @return {string}  If the validation failed, an error message will be returned.
+             * @param {object} attr Object literal containing the model attribute to validate.
+             * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var scalevalues;

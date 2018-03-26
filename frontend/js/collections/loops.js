@@ -54,9 +54,6 @@ define(["jquery",
              */
             localStorage: new Backbone.LocalStorage("Loops"),
 
-            /** Only save this collection locally and don't sync it with the server */
-            localStorageOnly: true,
-
             /**
              * Parse the given data
              * @alias module:collections-loops.Loops#parse

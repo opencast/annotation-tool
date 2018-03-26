@@ -26,8 +26,8 @@
  * @requires templates/delete-modal.tmpl
  * @requires templates/delete-warning-content.tmpl
  * @requires player-adapter
+ * @requires player-adapter
  * @requires handlebars
- * @requires annotation-sync
  */
 define(["jquery",
         "underscore",
@@ -39,13 +39,12 @@ define(["jquery",
         "views/list-annotation",
         "templates/delete-modal",
         "templates/delete-warning-content",
-        "prototypes/player_adapter",
+        "player-adapter",
         "roles",
         "colors",
-        "annotation-sync",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ROLES, ColorsManager, annotationSync) {
+    function ($, _, Backbone, i18next, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ROLES, ColorsManager) {
 
         "use strict";
 
@@ -59,7 +58,6 @@ define(["jquery",
                 ANNOTATION_SELECTION : "at:annotation-selection",
                 ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
                 MODELS_INITIALIZED   : "at:models-initialized",
-                READY                : "at:ready",
                 TIMEUPDATE           : "at:timeupdate",
                 USER_LOGGED          : "at:logged"
             },
@@ -167,9 +165,12 @@ define(["jquery",
                 if (!(this.playerAdapter instanceof PlayerAdapter)) {
                     throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
                 }
-
-                // Set up the storage layer
-                Backbone.sync = annotationSync;
+                var typeErrors = this.playerAdapter.typeErrors();
+                if (typeErrors) {
+                    throw _.map(typeErrors, function (method) {
+                        return "- " + method + " is not a function";
+                    }).join("\n");
+                }
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
@@ -181,10 +182,12 @@ define(["jquery",
 
                 this.tracksOrder = [];
 
-                this.once(this.EVENTS.USER_LOGGED, this.fetchData);
+                this.colorsManager = new ColorsManager();
+
                 this.once(this.EVENTS.USER_LOGGED, function () {
                     $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
-                });
+                    this.fetchData();
+                }, this);
                 this.once(this.EVENTS.MODELS_INITIALIZED, function () {
 
                     var updateTracksOrder = _.bind(function (tracks) {
@@ -217,34 +220,11 @@ define(["jquery",
                             );
                         }
                     }
+
+                    this.views.main = new MainView();
+                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
                 }, this);
-
-                this.colorsManager = new ColorsManager();
-
-                this.views.main = new MainView(this.playerAdapter);
-
-                $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
-
-                return this;
-            },
-
-            /**
-             * Log in the current user of the tool
-             * @alias annotationTool.login
-             * @param {Object} The Attributes of the user that is to be logged in.
-             * @param {Object} callbacks Callbacks for the user creation
-             * @return {User} The logged in user
-             * @see module:models-user.User#initialize
-             */
-            login: function (attributes, callbacks) {
-                var user = this.users.create(attributes, { wait: true });
-                if (!user) throw "Invalid user";
-                user.bind(callbacks);
-                user.save();
-                this.user = user;
-                this.users.trigger("login");
-                this.trigger(this.EVENTS.USER_LOGGED);
-                return user;
+                this.authenticate();
             },
 
             /**
@@ -371,21 +351,19 @@ define(["jquery",
                     timeupdateEvent += ":" + interval;
 
                     // Check if the interval needs to be added to list
-                    _.bind(function () {
-                        for (i = 0; i < this.timeupdateIntervals.length; i++) {
-                            value = this.timeupdateIntervals[i];
+                    for (i = 0; i < this.timeupdateIntervals.length; i++) {
+                        value = this.timeupdateIntervals[i];
 
-                            if (value.interval === interval) {
-                                return;
-                            }
+                        if (value.interval === interval) {
+                            return;
                         }
+                    }
 
-                        // Add interval to list
-                        this.timeupdateIntervals.push({
-                            interval: interval,
-                            lastUpdate: 0
-                        });
-                    }, this)();
+                    // Add interval to list
+                    this.timeupdateIntervals.push({
+                        interval: interval,
+                        lastUpdate: 0
+                    });
                 }
 
                 this.listenTo(this, timeupdateEvent, callback);
@@ -951,7 +929,7 @@ define(["jquery",
                         } else {
                             tracks.showTracks(
                                 _.first(
-                                    tracks.filter(this.getDefaultTracks().filter),
+                                    tracks.where({ isMine: true }),
                                     this.MAX_VISIBLE_TRACKS || Number.MAX_VALUE
                                 )
                             );
@@ -980,7 +958,7 @@ define(["jquery",
                     video = videos.at(0);
                     this.video = video;
                     video.set(self.getVideoParameters());
-                    video.save({}, {
+                    video.save(null, {
                         error: _.bind(function (model, response, options) {
                             if (response.status === 403) {
                                 this.alertFatal(i18next.t("annotation not allowed"));
@@ -1028,7 +1006,7 @@ define(["jquery",
                                 annotationTool.video.get("tracks").each(function (value) {
                                     if (value.get("annotations").get(target.id)) {
                                         value.get("annotations").remove(target);
-                                        value.save({ wait: true });
+                                        value.save(null, { wait: true });
                                         return false;
                                     }
                                     return undefined;

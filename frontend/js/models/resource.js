@@ -41,8 +41,10 @@ var Resource = Backbone.Model.extend({
      * @param {object} attr Object literal containing the model initialion attributes.
      */
     initialize: function (attr) {
+        var annotationTool = window.annotationTool || {};
+
         if (!attr) attr = {};
-        if (window.annotationTool.localStorage) {
+        if (annotationTool.localStorage) {
             if (annotationTool.user) {
                 if (!attr.created_by) {
                     this.set("created_by", annotationTool.user.id);
@@ -64,7 +66,7 @@ var Resource = Backbone.Model.extend({
             updateIsPublic.call(self, access);
         });
 
-        this.set("isMine", !attr.created_by || attr.created_by === annotationTool.user.id);
+        this.set("isMine", !attr.created_by || (annotationTool.user && attr.created_by === annotationTool.user.id));
 
         if (attr.tags) {
             this.set("tags", util.parseJSONString(attr.tags));
@@ -78,8 +80,8 @@ var Resource = Backbone.Model.extend({
     /**
      * Validate the attribute list passed to the model
      * @alias module:models-resource.Resource#validate
-     * @param  {object} data Object literal containing the model attribute to validate.
-     * @return {string}  If the validation failed, an error message will be returned.
+     * @param {object} attr Object literal containing the model attribute to validate.
+     * @return {string} If the validation failed, an error message will be returned.
      */
     validate: function (attr, callbacks) {
         var created = this.get("created_at");
@@ -133,6 +135,8 @@ var Resource = Backbone.Model.extend({
      * @return {object}  The object literal with the list of parsed model attribute.
      */
     parse: function (data, callback) {
+        var annotationTool = window.annotationTool || {};
+
         var attr = data.attributes || data;
 
         if (attr.created_at) {

@@ -20,15 +20,43 @@
  */
 define(["jquery",
         "underscore",
+        "backbone",
         "util",
+        "models/user",
         "roles",
-        "player_adapter_HTML5"
+        "player_adapter_HTML5",
+        "localstorage"
         // Add the files (PlayerAdapter, ...) required for your configuration here
         ],
 
-    function ($, _, util, ROLES, HTML5PlayerAdapter) {
+    function ($, _, Backbone, util, User, ROLES, HTML5PlayerAdapter) {
 
         "use strict";
+
+        var backboneSync = Backbone.sync;
+
+        /**
+         * Synchronize models with an annotation tool backend
+         */
+        Backbone.sync = function (method, model, options) {
+
+            // The backend expects `application/x-www-form-urlencoded data
+            // with anything nested deeper than one level transformed to a JSON string
+            options.processData = true;
+
+            options.data = options.attrs || model.toJSON(options);
+
+            // Some models (marked with `mPOST`) need to always be `PUT`, i.e. never be `POST`ed
+            if (model.noPOST && method === "create") {
+                method = "update";
+            }
+
+            options.beforeSend = function () {
+                this.url = "../../extended-annotations" + this.url;
+            };
+
+            return backboneSync.call(this, method, model, options);
+        };
 
         var video_title,
             video_creator,
@@ -38,7 +66,6 @@ define(["jquery",
             /**
              * Annotations tool configuration object
              * @alias module:annotation-tool-configuration.Configuration
-             * @enum
              */
             Configuration =  {
 
@@ -55,19 +82,6 @@ define(["jquery",
                         annotate : true,
                         loop     : false
                     }
-                },
-
-                /**
-                 * The default tracks at startup
-                 * @type {{@link this.TRACKS}}
-                 */
-                getDefaultTracks: function () {
-                    return {
-                        name: "mine",
-                        filter: function (track) {
-                            return track.get("isMine");
-                        }
-                    };
                 },
 
                 /**
@@ -101,14 +115,6 @@ define(["jquery",
                 localStorage: false,
 
                 /**
-                 * Url from the annotations Rest Endpoints
-                 * @alias module:annotation-tool-configuration.Configuration.restEndpointsUrl
-                 * @type {string}
-                 * @readOnly
-                 */
-                restEndpointsUrl: "../../extended-annotations",
-
-                /**
                  * Url for redirect after the logout
                  * @alias module:annotation-tool-configuration.Configuration.logoutUrl
                  * @type {string}
@@ -133,13 +139,6 @@ define(["jquery",
                             return "category=" + category.id;
                         }).join("&");
                 },
-
-                /**
-                 * Player adapter implementation to use for the annotations tool
-                 * @alias module:annotation-tool-configuration.Configuration.playerAdapter
-                 * @type {module:player-adapter.PlayerAdapter}
-                 */
-                playerAdapter: undefined,
 
                 tracksToImport: undefined,
 
@@ -230,71 +229,6 @@ define(["jquery",
                 },
 
                 /**
-                 * Get the user id from the current context (user_extid)
-                 * @alias module:annotation-tool-configuration.Configuration.getUserExtId
-                 * @return {string} user_extid
-                 */
-                getUserExtId: function () {
-                    if (_.isUndefined(annotationTool.userExtId)) {
-                        $.ajax({
-                            url: "/info/me.json",
-                            async: false,
-                            dataType: "json",
-                            success: function (data) {
-                                annotationTool.userExtId = data.user.username;
-                            },
-                            error: function () {
-                                console.warn("Error getting user information from Opencast!");
-                            }
-                        });
-                    }
-
-                    return annotationTool.userExtId;
-                },
-
-                /**
-                 * Controls the behavior of the login form. For truthy values it is prepopulated
-                 * with user data from the current context.
-                 * @alias module:annotation-tool-configuration.Configuration.useUserExtData
-                 * @type {Boolean}
-                 * @see module:annotation-tool-configuration.Configuration.getUserExtData
-                 */
-                useUserExtData: true,
-
-                /**
-                 * Skip the login form if possible, for example because user data can be extracted from the context
-                 * @alias module:annotation-tool-configuration.Configuration.skipLoginFormIfPossible
-                 * @type {Boolean}
-                 * @see module:annotation-tool-configuration.Configuration.useUserExtData
-                 */
-                skipLoginFormIfPossible: true,
-
-                getUserExtData: function () {
-                    var user;
-
-                    $.ajax({
-                        url: "/info/me.json",
-                        dataType: "json",
-                        async: false,
-                        success: function (response) {
-                            user = response;
-                        },
-                        error: function (error) {
-                            console.warn("Error getting user information from Opencast: " + error);
-                        }
-                    });
-
-                    if (!user) return undefined;
-
-                    return {
-                        user_extid: user.user.username,
-                        nickname: user.user.username,
-                        email: user.user.email,
-                        role: user.roles && this.getUserRoleFromExt(user.roles)
-                    };
-                },
-
-                /**
                  * Maps a list of roles of the external user to a corresponding user role
                  * @alias module:annotation-tool-configuration.Configuration.getUserRoleFromExt
                  * @param {string[]} roles The roles of the external user
@@ -316,6 +250,37 @@ define(["jquery",
                     }
 
                     return ROLES.USER;
+                },
+
+                /**
+                 * Authenticate the user
+                 * @alias module:annotation-tool-configuration.Configuration.authenticate
+                 */
+                authenticate: function () {
+                    $.ajax({
+                        url: "/info/me.json",
+                        dataType: "json"
+                    }).then(_.bind(function (response) {
+                        var userData = response.user;
+                        this.user = new User({
+                            user_extid: userData.username,
+                            nickname: userData.username,
+                            email: userData.email,
+                            role: this.getUserRoleFromExt(response.roles)
+                        });
+                        this.user.urlRoot = "/users";
+                        return this.user.save();
+                    }, this)).then(_.bind(function () {
+                        this.trigger(annotationTool.EVENTS.USER_LOGGED);
+                    }, this));
+                },
+
+                /**
+                 * Log out the current user
+                 * @alias module:annotation-tool-configuration.Configuration.logout
+                 */
+                logout: function () {
+                    window.location = "/j_spring_security_logout";
                 },
 
                 /**
@@ -352,20 +317,21 @@ define(["jquery",
 
                             var tracks = util.array(mediapackage.media.track);
 
-                            function matchType(field, type, subtype) {
-                                if (!type) type = ".*";
-                                if (!subtype) subtype = ".*";
-                                var regex = new RegExp(type + "/" + subtype);
-                                return function (object) {
-                                    return object[field].match(regex);
-                                };
-                            }
                             var videos = util.array(mediapackage.media.track)
-                                .filter(matchType("mimetype", "video"));
+                                .filter(_.compose(
+                                    RegExp.prototype.test.bind(/video\/.*/),
+                                    _.property("mimetype")
+                                ));
                             videos.sort(
                                 util.lexicographic(
-                                    util.firstWith(matchType("type", "presenter")),
-                                    util.firstWith(matchType("type", "presentation")),
+                                    util.firstWith(_.compose(
+                                        RegExp.prototype.test.bind(/presenter\/.*/),
+                                        _.property("type")
+                                    )),
+                                    util.firstWith(_.compose(
+                                        RegExp.prototype.test.bind(/presentation\/.*/),
+                                        _.property("type")
+                                    ))
                                 )
                             );
 

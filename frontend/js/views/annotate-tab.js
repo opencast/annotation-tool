@@ -328,12 +328,10 @@ define(["jquery",
                 }
 
                 if (!this.categories.get(category.id)) {// Add this category if new
-                    this.categories.add(category, {silent: true});
+                    this.categories.add(category, { silent: true });
                 } else if (_.contains(_.pluck(this.categoryViews, "model"), category)) {
                     return;
                 }
-                // Save new category
-                // newCategory.save({silent: true});
 
                 categoryView = new CategoryView({
                     category : category,
