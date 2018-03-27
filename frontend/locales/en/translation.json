@@ -131,10 +131,10 @@
       "track management": "$t(track management.action)",
       "head": "View",
       "views": {
-        "annotate view": "Annotate view",
+        "annotate view": "$t(views.annotate)",
         "head": "Views",
-        "list view": "List view",
-        "loop controller": "Loop controller"
+        "list view": "$t(views.list)",
+        "loop controller": "$t(views.loop)"
       },
       "auto expand": "Automatically expand active annotations"
     }
@@ -304,6 +304,13 @@
       "placeholder": "Insert your nickname"
     },
     "remember me": "Remember me"
+  },
+  "views": {
+    "annotate": "Create new annotations",
+    "list": "Annotation list",
+    "loop": "Loop controller",
+    "timeline": "Timeline",
+    "player": "Player"
   },
   "version": "Version: {{version}}",
   "common actions": {

@@ -215,21 +215,25 @@ define(["jquery",
                         type: "column",
                         content: [{
                             type: "component",
-                            componentName: "annotate"
+                            componentName: "annotate",
+                            title: i18next.t("views.annotate")
                         }, {
                             type: "component",
-                            componentName: "list"
+                            componentName: "list",
+                            title: i18next.t("views.list")
                         }]
                     });
 
                     var leftColumn = layout.contentItems[0];
                     leftColumn.addChild({
                         type: "component",
-                        componentName: "timeline"
+                        componentName: "timeline",
+                        title: i18next.t("views.timeline")
                     });
                     leftColumn.addChild({
                         type: "component",
-                        componentName: "loop"
+                        componentName: "loop",
+                        title: i18next.t("views.loop")
                     });
 
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
@@ -259,7 +263,8 @@ define(["jquery",
                             type: "column",
                             content: [{
                                 type: "component",
-                                componentName: "player"
+                                componentName: "player",
+                                title: i18next.t("views.player")
                             }]
                         }]
                     }]

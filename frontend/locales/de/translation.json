@@ -131,10 +131,7 @@
       "track management": "$t(track management.action)",
       "head": "Ansicht",
       "views": {
-        "annotate view": "Annotierfenster",
         "head": "Fenster",
-        "list view": "Listenansicht",
-        "loop controller": "Schleifensteuerung"
       },
       "auto expand": "Aktive Annotationen automatisch aufklappen"
     }
@@ -307,15 +304,6 @@
     "remember me": "Angemeldet bleiben"
   },
   "version": "Version: {{version}}",
-  "common actions": {
-    "cancel": "Abbrechen",
-    "close": "Schließen",
-    "ok": "Bestätigen",
-    "insert": "Einfügen",
-    "save": "Speichern",
-    "delete": "Löschen",
-    "double click to edit": "Zum Bearbeiten doppelt anklicken"
-  },
   "models": {
     "genitive_annotation": "die Annotation",
     "genitive_comment": "den kommentar",
@@ -324,5 +312,21 @@
     "genitive_category": "die Kategorie",
     "genitive_scale value": "den Skalenwert",
     "genitive_scale": "die Skala"
+  },
+  "views": {
+    "annotate view": "Neue Annotationen erstellen",
+    "list view": "Liste von Annotationen",
+    "loop controller": "Schleifensteuerung",
+    "timeline": "Zeitleiste",
+    "player": "Player"
+  },
+  "common actions": {
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "ok": "Bestätigen",
+    "insert": "Einfügen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "double click to edit": "Zum Bearbeiten doppelt anklicken"
   }
 }
