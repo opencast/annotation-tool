@@ -467,7 +467,6 @@ define(["jquery",
                     this.stopListening(track);
                     track.stopListening();
                 }, this);
-                //this.stopListening(this.tracks);
 
                 _.each(this.annotationViews, function (annView) {
                     annView.undelegateEvents();
