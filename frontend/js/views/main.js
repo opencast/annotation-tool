@@ -91,6 +91,8 @@ define(["jquery",
     ) {
         "use strict";
 
+        var goldenLayout;
+
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#View}
@@ -246,7 +248,7 @@ define(["jquery",
                 //     var foo = new Foo();
                 //
                 var self = this;
-                var goldenLayout = new GoldenLayout({
+                goldenLayout = new GoldenLayout({
                     // Since most of the views depend on the player,
                     // we initially only create that view
                     // and add the others dynamically later,
@@ -266,10 +268,7 @@ define(["jquery",
                 goldenLayout.registerComponent("player", function (container, componentState) {
 
                     container.on("resize", function () {
-                        // MediaElement only resizes the player on resize events for the window
-                        // not for the containing element, unfortunately.
-                        // However, we can just emulate that event.
-                        window.dispatchEvent(new Event("resize"));
+                        annotationTool.playerAdapter.resetSize();
                     });
 
                     annotationTool.once(annotationTool.EVENTS.VIDEO_LOADED, function () {
@@ -305,7 +304,7 @@ define(["jquery",
 
                 goldenLayout.registerComponent("timeline", function (container, componentState) {
                     container.on("resize", function () {
-                        self.timelineView.redraw();
+                        self.timelineView.onWindowResize();
                     });
 
                     self.timelineView = annotationTool.views.timeline =
@@ -327,15 +326,12 @@ define(["jquery",
                 this.setLoadingProgress(100, i18next.t("startup.ready"));
                 this.loadingBox.hide();
                 this.onWindowResize();
+                $(window).resize(this.onWindowResize);
 
                 this.setupKeyboardShortcuts();
 
                 // Show logout button
                 $("#logout").css("display", "block");
-
-                if (this.layoutConfiguration.timeline) {
-                    this.timelineView.redraw();
-                }
 
                 this.trigger(MainView.EVENTS.READY);
             },
@@ -558,17 +554,7 @@ define(["jquery",
              * @alias module:views-main.MainView#onWindowResize
              */
             onWindowResize: function () {
-                var listContent,
-                    windowHeight = $(window).height(),
-                    annotationsContainerHeight = $("#annotate-container").height(),
-                    loopFunctionHeight = this.layoutConfiguration.loop
-                        ? annotationTool.loopFunction.$el.height() + 180
-                        : 145,
-                    videoContainerHeight = $("#video-container").height();
-
-                if (this.layoutConfiguration.timeline) {
-                    //this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
-                }
+                goldenLayout.updateSize();
             },
 
             /**

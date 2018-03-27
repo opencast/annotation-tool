@@ -3,17 +3,29 @@
  */
 
 body {
-    padding-top: 30px;
-    padding-bottom: 10px;
+    height: 100vh;
+    overflow: hidden;
 }
 
-div#main-container {
-    padding-left: 10px;
-    padding-right: 10px;
+#screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#main-container {
+    flex-grow: 1;
+    // This would normally be unnecessary in a flexbox layout/
+    // but GoldenLayout seems to need this to recalculate its size.
+    height: 100%;
 }
 
 .lm_content .window {
     height: 100%;
+}
+
+.navbar {
+    margin: 0;
 }
 
 .window {

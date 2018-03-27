@@ -17,7 +17,7 @@
   </head>
   <body>
     <div id="screen">
-      <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar navbar-inverse">
         <div class="navbar-inner">
           <div class="container-fluid">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -80,20 +80,18 @@
         </div>
       </div>
 
-      <div id="main-container" class="container-fluid">
+      <!-- Loading box -->
+      <div class="hero-unit" id="loading">
+        <h1 data-i18n="startup.loading"></h1>
+        <p class='info' data-i18n="startup.creating views"></p>
+        <p>
+          <div class="progress progress-striped active">
+            <div class="bar" style="width: 10%;"></div>
+          </div>
+        </p>
+      </div>
 
-        <!-- Loading box -->
-        <div class="hero-unit" id="loading">
-          <h1 data-i18n="startup.loading"></h1>
-          <p class='info' data-i18n="startup.creating views"></p>
-          <p>
-            <div class="progress progress-striped active">
-              <div class="bar" style="width: 10%;"></div>
-            </div>
-          </p>
-        </div>
-
-      </div> <!-- /container -->
+      <div id="main-container"></div>
 
       <div id="dialogs"></div>
       <div class="modal" id="about-dialog" style="display:none"></div>

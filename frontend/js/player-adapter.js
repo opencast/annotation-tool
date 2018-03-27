@@ -81,8 +81,14 @@ define(["event-target"], function (EventTarget) {
          * @return {number} duration
          * @memberof module:player-adapter.PlayerAdapter#
          */
-        "getStatus"
+        "getStatus",
 
+        /**
+         * Make the player fill its parent element
+         * @method resetSize
+         * @memberof module:player-adapter.PlayerAdapter#
+         */
+        "resetSize"
     ].forEach(function (method) {
         PlayerAdapter.prototype[method] = function () {
             throw "Function '" + method + "' must be implemented in player adapter!";
