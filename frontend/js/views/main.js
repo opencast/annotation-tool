@@ -158,7 +158,6 @@ define(["jquery",
 
                 this.listenTo(annotationTool, "deleteAnnotation", annotationTool.deleteAnnotation);
 
-                annotationTool.onWindowResize = this.onWindowResize;
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
                 this.once(MainView.EVENTS.READY, function () {
