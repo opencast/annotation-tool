@@ -224,12 +224,6 @@ define(["jquery",
                     if (!(this.playerAdapter instanceof PlayerAdapter)) {
                         throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
                     }
-                    var typeErrors = this.playerAdapter.typeErrors();
-                    if (typeErrors) {
-                        throw _.map(typeErrors, function (method) {
-                            return "- " + method + " is not a function";
-                        }).join("\n");
-                    }
 
                     $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
 

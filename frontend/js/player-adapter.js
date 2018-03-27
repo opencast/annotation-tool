@@ -35,7 +35,7 @@ define(["event-target"], function (EventTarget) {
 
     PlayerAdapter.prototype = Object.create(EventTarget.prototype);
 
-    var methods = [
+    [
         /**
          * Play the media element in the player.
          * @method play
@@ -82,9 +82,8 @@ define(["event-target"], function (EventTarget) {
          * @memberof module:player-adapter.PlayerAdapter#
          */
         "getStatus"
-    ];
 
-    methods.forEach(function (method) {
+    ].forEach(function (method) {
         PlayerAdapter.prototype[method] = function () {
             throw "Function '" + method + "' must be implemented in player adapter!";
         };
@@ -119,18 +118,6 @@ define(["event-target"], function (EventTarget) {
         TIMEUPDATE: "pa_timeupdate",
         ERROR     : "pa_error",
         ENDED     : "pa_ended"
-    };
-
-    /**
-     * Optional function to type check the interface methods
-     * @return {boolean|string[]} a list of methods that have the wrong type
-     *   or a <code>false</code>-y result
-     */
-    PlayerAdapter.prototype.typeErrors = function () {
-        var errors = methods.filter(function (method) {
-            return typeof this[method] !== "function";
-        }, this);
-        return errors.length ? errors : false;
     };
 
     // Return the complete interface
