@@ -77,6 +77,7 @@ define(["jquery",
                 targetElement.style.height = "100%";
 
                 $(targetElement).mediaelementplayer({
+                    alwaysShowControls: true,
                     success: function (mediaElement) {
                         if (sources) {
                             mediaElement.setSrc(sources);
