@@ -1190,8 +1190,8 @@ define(["util",
              * @param {Event} event The event initiating the selection
              */
             selectAnnotation: function (event) {
-                var id = event.target.dataset["annotationid"],
-                    trackId = event.target.dataset["trackid"];
+                var id = event.currentTarget.dataset["annotationid"],
+                    trackId = event.currentTarget.dataset["trackid"];
                 annotationTool.setSelectionById([{ id: id, trackId: trackId }], true, true);
             },
 
