@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8">
     <title data-i18n="title">Annotating Academic Video</title>
     <meta name="description" data-i18n="[content]description">
@@ -14,72 +14,94 @@
     <script src="js/require.config.js"></script>
     <script src="js/main.js"></script>
     <!-- /build -->
-</head>
-<body>
-  <div id="screen">
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <span id="video-title" class="brand"><span data-i18n="title"></span> - <%= version %></span>
+  </head>
+  <body>
+    <div id="screen">
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+            <span id="video-title" class="brand"><span data-i18n="title"></span> - <%= version %></span>
 
-          <ul class="nav pull-right">
+            <ul class="nav pull-right">
               <li><button type="button" id="about" data-i18n="menu.about"></button></li>
               <li class="dropdown" id="view-options">
-                <button type="button" class="dropdown-toggle" data-toggle="dropdown"><span data-i18n="menu.view.head"></span> <b class="caret"></b></button>
+                <button type="button" class="dropdown-toggle" data-toggle="dropdown">
+                  <span data-i18n="menu.view.head"></span> <b class="caret"></b>
+                </button>
                 <ul class="dropdown-menu">
                   <li class="menu-category" data-i18n="menu.view.annotate.head"></li>
-                  <li><button type="button" id="opt-annotate-text" class="opt-layout checked"><i class="check icon-check"></i> <span data-i18n="menu.view.annotate.text annotations"></span></button></li>
-                  <li><button type="button" id="opt-annotate-categories" class="opt-layout checked"><i class="check icon-check"></i> <span data-i18n="menu.view.annotate.structured annotations"></span></button></li>
+                  <li><button type="button" id="opt-annotate-text" class="opt-layout checked">
+                    <i class="check icon-check"></i>
+                    <span data-i18n="menu.view.annotate.text annotations"></span>
+                  </button></li>
+                  <li><button type="button" id="opt-annotate-categories" class="opt-layout checked">
+                    <i class="check icon-check"></i>
+                    <span data-i18n="menu.view.annotate.structured annotations"></span>
+                  </button></li>
+
                   <li role="presentation" class="divider"></li>
+
                   <li class="menu-category" data-i18n="menu.view.views.head"></li>
-                  <li><button type="button" id="opt-view-annotate" class="opt-layout checked"><i class="check icon-check"></i> <span data-i18n="menu.view.views.annotate view"></span></button></li>
-                  <li><button type="button" id="opt-view-list" class="opt-layout checked"><i class="check icon-check"></i> <span data-i18n="menu.view.views.list view"></span></button></li>
-                  <li><button type="button" id="opt-view-loop" class="opt-layout"><i class="check icon-check"></i> <span data-i18n="menu.view.views.loop controller"></span></button></li>
+                  <li><button type="button" id="opt-view-annotate" class="opt-layout checked">
+                    <i class="check icon-check"></i>
+                    <span data-i18n="menu.view.views.annotate view"></span>
+                  </button></li>
+                  <li><button type="button" id="opt-view-list" class="opt-layout checked">
+                    <i class="check icon-check"></i>
+                    <span data-i18n="menu.view.views.list view"></span>
+                  </button></li>
+                  <li><button type="button" id="opt-view-loop" class="opt-layout">
+                    <i class="check icon-check"></i>
+                    <span data-i18n="menu.view.views.loop controller"></span>
+                  </button></li>
+
                   <li role="presentation" class="divider"></li>
 
-                  <li><button type="button" id="opt-auto-expand"><i class="check icon-check"></i> <span data-i18n="menu.view.auto expand"></span></button></li>
+                  <li><button type="button" id="opt-auto-expand">
+                    <i class="check icon-check"></i>
+                    <span data-i18n="menu.view.auto expand"></span>
+                  </button></li>
 
                   <li role="presentation" class="divider"></li>
+
                   <li><button type="button" class="opt-tracks-select" data-i18n="menu.view.track management"></button></li>
-
-
                 </ul>
               </li>
               <li><button type="button" id="export" data-i18n="menu.export"></button></li>
               <li><button type="button" id="print" data-i18n="menu.print"></button></li>
               <li><button type="button" id="logout"></button></li>
-          </ul>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="main-container" class="container-fluid">
+      <div id="main-container" class="container-fluid">
 
-    <!-- Loading box -->
-    <div class="hero-unit" id="loading">
-        <h1 data-i18n="startup.loading"></h1>
-        <p class='info' data-i18n="startup.creating views"></p>
-        <p>
+        <!-- Loading box -->
+        <div class="hero-unit" id="loading">
+          <h1 data-i18n="startup.loading"></h1>
+          <p class='info' data-i18n="startup.creating views"></p>
+          <p>
             <div class="progress progress-striped active">
-                <div class="bar" style="width: 10%;"></div>
+              <div class="bar" style="width: 10%;"></div>
             </div>
-        </p>
+          </p>
+        </div>
+
+      </div> <!-- /container -->
+
+      <div id="dialogs"></div>
+      <div class="modal" id="about-dialog" style="display:none"></div>
+      <div class="modal" id="user-login" style="display:none"></div>
+      <div class="modal" id="scale-editor" style="display:none"></div>
+      <div class="modal" id="alert" style="display:none"></div>
+      <div class="modal" id="tracks-selection" style="display:none"></div>
     </div>
-
-    </div> <!-- /container -->
-
-    <div id="dialogs"></div>
-    <div class="modal" id="about-dialog" style="display:none"></div>
-    <div class="modal" id="user-login" style="display:none"></div>
-    <div class="modal" id="scale-editor" style="display:none"></div>
-    <div class="modal" id="alert" style="display:none"></div>
-    <div class="modal" id="tracks-selection" style="display:none"></div>
-  </div>
-  <div id="print-view"></div>
-</body>
+    <div id="print-view"></div>
+  </body>
 </html>
