@@ -309,7 +309,7 @@ define(["util",
                 this.timeline.draw([], this.options);
 
                 // Ensure that the timeline is redraw on window resize
-                $(window).bind("resize", this.onWindowResize);
+                $(window).resize(this.onWindowResize);
 
                 annotationTool.addTimeupdateListener(this.onPlayerTimeUpdate, 1);
 
