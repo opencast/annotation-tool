@@ -128,9 +128,6 @@ define(["jquery",
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
-                // Add backbone events to the model
-                _.extend(this, Backbone.Events);
-
                 this.addTrackList(this.tracks.getVisibleTracks());
 
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
