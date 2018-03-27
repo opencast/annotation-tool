@@ -37,6 +37,12 @@ body {
         .navbar-text;
     }
 
+    display: flex;
+    flex-direction: column;
+    > :not(.navbar) {
+        flex-grow: 1;
+    }
+
     margin-bottom: 8px;
     overflow: hidden;
 
