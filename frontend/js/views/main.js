@@ -228,7 +228,8 @@ define(["jquery",
                     leftColumn.addChild({
                         type: "component",
                         componentName: "timeline",
-                        title: i18next.t("views.timeline")
+                        title: i18next.t("views.timeline"),
+                        isClosable: false
                     });
                     leftColumn.addChild({
                         type: "component",
@@ -264,7 +265,8 @@ define(["jquery",
                             content: [{
                                 type: "component",
                                 componentName: "player",
-                                title: i18next.t("views.player")
+                                title: i18next.t("views.player"),
+                                isClosable: false
                             }]
                         }]
                     }]
