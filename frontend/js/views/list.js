@@ -122,14 +122,12 @@ define(["jquery",
                 this.tracks          = annotationTool.video.get("tracks");
                 this.playerAdapter   = annotationTool.playerAdapter;
 
-                this.$list = this.$el.find("#content-list-scroll div#content-list");
+                this.scrollableArea = this.$el.find("#content-list-scroll");
+                this.$list = this.scrollableArea.find("#content-list");
 
                 this.listenTo(this.tracks, "change:access", this.render);
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
-
-                // Add backbone events to the model
-                _.extend(this, Backbone.Events);
 
                 this.addTrackList(this.tracks.getVisibleTracks());
 
@@ -343,7 +341,7 @@ define(["jquery",
 
                         // Only scroll the list to the first item of the selection
                         if (i === 0 && !view.isSelected) {
-                            this.$el.scrollTop(view.$el.position().top);
+                            this.scrollableArea.scrollTop(view.$el.offset().top - this.scrollableArea.offset().top);
                         }
 
                         view.isSelected = true;
@@ -456,7 +454,7 @@ define(["jquery",
                     $listContainer.append(annView.$el);
                 });
 
-                this.$el.find("#content-list-scroll").append($listContainer);
+                this.scrollableArea.append($listContainer);
 
                 return this;
             },
@@ -470,7 +468,6 @@ define(["jquery",
                     this.stopListening(track);
                     track.stopListening();
                 }, this);
-                //this.stopListening(this.tracks);
 
                 _.each(this.annotationViews, function (annView) {
                     annView.undelegateEvents();
