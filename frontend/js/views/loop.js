@@ -130,7 +130,7 @@ define(["jquery",
                                 "toggle",
                                 "typeLoopLength");
                 this.playerAdapter = annotationTool.playerAdapter;
-                this.loops = new Loops([], annotationTool.video);
+                this.loops = new Loops();
                 this.render();
                 this.toggle(false);
             },
