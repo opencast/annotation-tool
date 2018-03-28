@@ -117,7 +117,7 @@ define(["jquery",
              * Constructor
              * @alias module:views-loop.Loop#initialize
              */
-            initialize: function () {
+            initialize: function (options) {
                 _.bindAll(this, "addTimelineItem",
                                 "changeLoopLength",
                                 "checkLoop",
@@ -129,7 +129,7 @@ define(["jquery",
                                 "resetLoops",
                                 "toggle",
                                 "typeLoopLength");
-                this.playerAdapter = annotationTool.playerAdapter;
+                this.playerAdapter = options.playerAdapter;
                 this.loops = new Loops();
                 this.render();
                 this.toggle(false);

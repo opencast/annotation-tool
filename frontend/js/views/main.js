@@ -306,7 +306,10 @@ define(["jquery",
 
                 goldenLayout.registerComponent("loop", function (container, componentState) {
                     self.loopController = annotationTool.loopFunction =
-                        new LoopView({ el: container.getElement() });
+                        new LoopView({
+                            el: container.getElement(),
+                            playerAdapter: annotationTool.playerAdapter
+                        });
                 });
 
                 goldenLayout.registerComponent("timeline", function (container, componentState) {
