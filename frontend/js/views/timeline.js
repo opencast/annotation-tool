@@ -564,15 +564,11 @@ define(["util",
              * Add a new item to the timeline
              * @param {string}  id           The id of the item
              * @param {object}  item         The object representing the item
-             * @param {Boolean} isPartOfList Define if the object is part of a group insertion
              * @alias module:views-timeline.TimelineView#addItem
              */
-            addItem: function (id, item, isPartOfList) {
+            addItem: function (id, item) {
                 item.group = "<!-- extra -->" + item.group;
                 this.extraItems[id] = item;
-                if (!isPartOfList) {
-                    this.redraw();
-                }
             },
 
             /**
@@ -580,11 +576,8 @@ define(["util",
              * @param  {string} id The id of the item to remove
              * @alias module:views-timeline.TimelineView#removeItem
              */
-            removeItem: function (id, refresh) {
+            removeItem: function (id) {
                 delete this.extraItems[id];
-                if (refresh) {
-                    this.redraw();
-                }
             },
 
             /**

@@ -1,21 +1,23 @@
-<div class="window" id="loop">
+<div class="window {{#unless enabled}}disabled{{/unless}}" id="loop">
     <div class="controls stop-fields">
         <label class="checkbox inline">
-            <input id="enableLoop" type="checkbox" value="enable"> {{t "loop controller.enable"}}
+            <input id="enable-loop" type="checkbox" value="enable"> {{t "loop controller.enable"}}
         </label>
 
-        <input type="text" class="span2" id="slider" value="0"
-               data-slider-orientation="horizontal"
-               data-slider-selection="after"
-               data-slider-tooltip="show">
+        <input
+            type="text" id="slider" value="{{length}}"
+            data-slider-orientation="horizontal"
+            data-slider-selection="after"
+            data-slider-tooltip="show"
+        >
 
-        <input id="loop-length"><span>{{t "loop controller.seconds"}}</span>
+        <input id="loop-length" value="{{length}}"><span>{{t "loop controller.seconds"}}</span>
 
         <label id="constrain-annotations" class="checkbox inline"><input type="checkbox"> {{t "loop controller.constrain"}}</label>
 
         <div class="btn-group">
-            <button type="button" class="btn previous" title="{{t "loop controller.previous"}}"><i class="icon-chevron-left"></i></button>
-            <button type="button" class="btn next" title="{{t "loop controller.next"}}"><i class="icon-chevron-right"></i></button>
+            <button type="button" {{#if atFirstLoop}}disabled{{/if}} class="btn previous" title="{{t "loop controller.previous"}}"><i class="icon-chevron-left"></i></button>
+            <button type="button" {{#if atLastLoop}}disabled{{/if}} class="btn next" title="{{t "loop controller.next"}}"><i class="icon-chevron-right"></i></button>
         </div>
     </div>
 </div>

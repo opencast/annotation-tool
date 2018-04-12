@@ -304,14 +304,6 @@ define(["jquery",
                         new ListView({ el: container.getElement() });
                 });
 
-                goldenLayout.registerComponent("loop", function (container, componentState) {
-                    self.loopController = annotationTool.loopFunction =
-                        new LoopView({
-                            el: container.getElement(),
-                            playerAdapter: annotationTool.playerAdapter
-                        });
-                });
-
                 goldenLayout.registerComponent("timeline", function (container, componentState) {
                     container.on("resize", function () {
                         self.timelineView.onWindowResize();
@@ -321,6 +313,15 @@ define(["jquery",
                         new TimelineView({
                             el: container.getElement(),
                             playerAdapter: annotationTool.playerAdapter
+                        });
+                });
+
+                goldenLayout.registerComponent("loop", function (container, componentState) {
+                    self.loopController = annotationTool.loopFunction =
+                        new LoopView({
+                            el: container.getElement(),
+                            playerAdapter: annotationTool.playerAdapter,
+                            timeline: annotationTool.views.timeline
                         });
                 });
 
