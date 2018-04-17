@@ -423,9 +423,7 @@ define(["util",
                     this.onSelectionUpdate(annotationTool.getSelection());
                     this.updateDraggingCtrl();
                 }
-                if (annotationTool.selectedTrack) {
-                    this.markTrackSelected(annotationTool.selectedTrack);
-                }
+                this.markTrackSelected(annotationTool.selectedTrack);
             },
 
             /**
@@ -1543,6 +1541,7 @@ define(["util",
              * @param {Track} The track to be selected
              */
             markTrackSelected: function (track) {
+                if (!track) return;
                 this.$el.find("div.selected").removeClass("selected");
                 this.$el.find(".timeline-group[data-id='" + track.id + "']")
                     .closest(".timeline-groups-text").addClass("selected");
