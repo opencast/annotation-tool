@@ -154,8 +154,7 @@ define(["jquery",
                           "setSelectionById",
                           "addTimeupdateListener",
                           "removeTimeupdateListener",
-                          "updateSelectionOnTimeUpdate",
-                          "potentiallyOpenCurrentItems");
+                          "updateSelectionOnTimeUpdate");
 
                 _.extend(this, config);
 
@@ -163,7 +162,6 @@ define(["jquery",
                 this.initDeleteModal();
 
                 this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
-                this.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
                 this.currentSelection = [];
 
@@ -586,30 +584,6 @@ define(["jquery",
 
                 this.setSelection(this.getCurrentAnnotations(), false);
             },
-
-            /**
-             * Listener for player "timeupdate" event to open the current annotations in the list view
-             * @alias   annotationTool.potentiallyOpenCurrentItems
-             */
-            potentiallyOpenCurrentItems: function () {
-                var previousAnnotations = [];
-
-                return function () {
-                    if (!this.autoExpand) return;
-
-                    var listView = this.views.main.listView;
-                    if (!listView) return;
-
-                    _.each(previousAnnotations, function (annotation) {
-                        listView.getViewFromAnnotation(annotation.id).collapse(true);
-                    });
-                    var currentAnnotations = this.getCurrentAnnotations();
-                    _.each(currentAnnotations, function (annotation) {
-                        listView.getViewFromAnnotation(annotation.id).expand(true);
-                    });
-                    previousAnnotations = currentAnnotations;
-                };
-            }(),
 
             //////////////
             // CREATORs //

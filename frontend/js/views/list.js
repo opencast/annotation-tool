@@ -109,7 +109,8 @@ define(["jquery",
                                "expandAll",
                                "renderSelect",
                                "collapseAll",
-                               "updateView");
+                               "updateView",
+                               "potentiallyOpenCurrentItems");
 
                 this.annotationViews = [];
                 this.tracks          = annotationTool.video.get("tracks");
@@ -120,6 +121,8 @@ define(["jquery",
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
+
+                annotationTool.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
                 this.$el.html(template());
                 this.scrollableArea = this.$el.find("#content-list-scroll");
@@ -412,6 +415,26 @@ define(["jquery",
                     annView.toggleCollapsedState(event, true);
                 });
             },
+
+            /**
+             * Listener for player "timeupdate" event to open the current annotations in the list view
+             * @alias module:views-list.List#potentiallyOpenCurrentItems
+             */
+            potentiallyOpenCurrentItems: function () {
+                var previousAnnotations = [];
+                return function () {
+                    if (!this.autoExpand) return;
+
+                    _.each(previousAnnotations, function (annotation) {
+                        this.getViewFromAnnotation(annotation.id).collapse(true);
+                    }, this);
+                    var currentAnnotations = annotationTool.getCurrentAnnotations();
+                    _.each(currentAnnotations, function (annotation) {
+                        this.getViewFromAnnotation(annotation.id).expand(true);
+                    }, this);
+                    previousAnnotations = currentAnnotations;
+                };
+            }(),
 
             /**
              * Display the list

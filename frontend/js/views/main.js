@@ -508,7 +508,7 @@ define(["jquery",
              */
             toggleAutoExpand: function (event) {
                 $(event.currentTarget).toggleClass("checked");
-                annotationTool.autoExpand = !annotationTool.autoExpand;
+                this.listView.autoExpand = !this.listView.autoExpand;
             },
 
             /**
