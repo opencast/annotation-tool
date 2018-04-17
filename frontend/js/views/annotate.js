@@ -267,23 +267,13 @@ define(["jquery",
             changeTrack: function (track) {
                 // If the track is valid, we set it
                 if (track) {
-                    this.input.attr("disabled", false);
-
-                    if (this.layout.freeText) {
-                        this.freeTextElement.show();
-                    }
-
-                    if (this.layout.categories) {
-                        this.categoriesElement.show();
-                    }
-
+                    this.$el.find("#annotate-form").show();
                     this.$el.find(".no-track").hide();
+
                     this.trackDIV.html(track.get("name"));
                 } else {
                     // Otherwise, we disable the input and inform the user that no track is set
-                    this.freeTextElement.hide();
-                    this.categoriesElement.hide();
-                    this.input.attr("disabled", true);
+                    this.$el.find("#annotate-form").hide();
                     this.$el.find(".no-track").show();
                     this.trackDIV.html("<span>" + i18next.t("annotate.no selected track") + "</span>");
                 }
