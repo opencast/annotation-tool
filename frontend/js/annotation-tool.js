@@ -349,27 +349,22 @@ define(["jquery",
              * @param {Number} (interval) the interval between each timeupdate event
              */
             addTimeupdateListener: function (callback, interval) {
-                var timeupdateEvent = this.EVENTS.TIMEUPDATE,
-                    value,
-                    i = 0;
+                var timeupdateEvent = this.EVENTS.TIMEUPDATE;
 
                 if (!_.isUndefined(interval)) {
                     timeupdateEvent += ":" + interval;
 
                     // Check if the interval needs to be added to list
-                    for (i = 0; i < this.timeupdateIntervals.length; i++) {
-                        value = this.timeupdateIntervals[i];
-
-                        if (value.interval === interval) {
-                            return;
-                        }
+                    // TODO Use `findWhere` once that is available
+                    if (!_.find(this.timeupdateIntervals, function (value) {
+                        return value.interval === interval;
+                    }, this)) {
+                        // Add interval to list
+                        this.timeupdateIntervals.push({
+                            interval: interval,
+                            lastUpdate: 0
+                        });
                     }
-
-                    // Add interval to list
-                    this.timeupdateIntervals.push({
-                        interval: interval,
-                        lastUpdate: 0
-                    });
                 }
 
                 this.listenTo(this, timeupdateEvent, callback);
