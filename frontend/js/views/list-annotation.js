@@ -124,8 +124,6 @@ define(["jquery",
                                 "getState",
                                 "handleEsc");
 
-                _.extend(this, Backbone.Events);
-
                 this.model = attr.annotation;
 
                 this.id = this.model.get("id");
@@ -160,9 +158,6 @@ define(["jquery",
                 if (this.scale) {
                     this.scaleValues = this.scale.get("scaleValues");
                 }
-
-                // Add backbone events to the model
-                _.extend(this.model, Backbone.Events);
 
                 this.listenTo(this.model, "change", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);

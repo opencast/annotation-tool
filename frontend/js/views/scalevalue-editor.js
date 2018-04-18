@@ -87,8 +87,6 @@ define(["jquery",
                               "getSortedCollection",
                               "deleteScaleValue");
 
-                    _.extend(this, Backbone.Events);
-
                     this.model    = attr.model;
                     this.isNew    = attr.isNew;
                     this.next     = attr.next;

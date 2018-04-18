@@ -214,9 +214,6 @@ define(["jquery",
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
                 this.tabsButtonsElement.find("button:first-child").parent().first().addClass("active");
-
-                // Add backbone events to the model
-                _.extend(this, Backbone.Events);
             },
 
             /**

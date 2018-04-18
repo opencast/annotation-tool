@@ -142,8 +142,6 @@ define(["jquery",
                             "show",
                             "hide");
 
-                    _.extend(this, Backbone.Events);
-
                     // Type use for delete operation
                     this.scaleDeleteType = annotationTool.deleteOperation.targetTypes.SCALE;
 

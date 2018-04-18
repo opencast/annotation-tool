@@ -52,7 +52,7 @@ define(["jquery",
          * The main object of the annotations tool
          * @namespace annotationTool
          */
-        var annotationTool = window.annotationTool = _.extend(_.clone(Backbone.Events), {
+        var annotationTool = window.annotationTool = _.extend({}, Backbone.Events, {
 
             EVENTS: {
                 ANNOTATION_SELECTION : "at:annotation-selection",

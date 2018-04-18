@@ -98,8 +98,6 @@ define(["jquery",
                           "stopPropagation",
                           "render");
 
-                _.extend(this, Backbone.Events);
-
                 this.isEditEnable = !!attr.isEditEnable;
 
                 // Type use for delete operation

@@ -155,9 +155,6 @@ define(["jquery",
                 this.roles = attr.roles;
                 this.isScaleEnable = attr.isScaleEnable;
 
-                // Add backbone events to the model
-                _.extend(this.model, Backbone.Events);
-
                 this.el.id = this.ID_PREFIX + this.model.get("id");
 
                 this.listenTo(this.model, "change", this.render);
