@@ -247,7 +247,7 @@ define(["jquery",
                 annotationTool.createAnnotation({ text: value });
 
                 if (this.continueVideo) {
-                    annotationTool.playerAdapter.play();
+                    this.playerAdapter.play();
                 }
 
                 this.input.val("");
@@ -282,7 +282,7 @@ define(["jquery",
              * @alias module:views-annotate.Annotate#onFocusIn
              */
             onFocusIn: function () {
-                if (!this.$el.find("#pause-video").attr("checked") || (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
+                if (!this.$el.find("#pause-video").attr("checked") || (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
                     return;
                 }
 
@@ -290,7 +290,7 @@ define(["jquery",
                 this.playerAdapter.pause();
 
                 // If the video is moved, or played, we do no continue the video after insertion
-                $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
+                $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
                     this.continueVideo = false;
                 });
             },
@@ -308,7 +308,7 @@ define(["jquery",
              * @alias module:views-annotate.Annotate#checkToContinueVideo
              */
             checkToContinueVideo: function () {
-                if ((annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
+                if ((this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
                     this.continueVideo = false;
                     this.playerAdapter.play();
                 }
