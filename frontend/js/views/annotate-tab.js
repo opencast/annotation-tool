@@ -627,7 +627,7 @@ define(["jquery",
                     currentIndex;
 
                 this.categoriesContainer.empty();
-                this.carouselPagination.find("li:not(:last,:first)").remove();
+                this.carouselPagination.find("li").not(":first, :last").remove();
 
                 _.each(this.categoryViews, function (catView) {
                     this.insertCategoryView(catView.render());
