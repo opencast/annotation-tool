@@ -325,14 +325,6 @@ module.exports = function (grunt) {
                     keepalive: true,
                     livereload: true
                 }
-            },
-            build: {
-                options: {
-                    port: 9001,
-                    base: '<%= buildDir %>',
-                    keepalive: true,
-                    livereload: true
-                }
             }
         },
 
