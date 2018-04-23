@@ -311,8 +311,6 @@ define(["jquery",
             addCategory: function (category, collection, options) {
                 var categoryView;
 
-                options = _.extend({}, options);
-
                 if (!options.skipTests && !this.filter(category)) {
                     return;
                 }
