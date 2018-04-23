@@ -193,14 +193,6 @@ define(["jquery",
             },
 
             /**
-             * Default color for new category
-             * @alias module:views-annotate-tab.AnnotateTab#DEFAULT_CAT_COLOR
-             * @constant
-             * @type {string}
-             */
-            DEFAULT_CAT_COLOR: "#61ae24",
-
-            /**
              * Constructor
              * @alias module:views-annotate-tab.AnnotateTabView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
