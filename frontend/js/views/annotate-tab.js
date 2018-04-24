@@ -31,7 +31,6 @@
  * @requires collections-scalevalues
  * @requires views-annotate-category
  * @requires templates/annotate-tab.tmpl
- * @requires default_scales_set
  * @requires handlebars
  * @requires backbone
  * @requires ACCESS
@@ -53,7 +52,6 @@ define(["jquery",
         "collections/scalevalues",
         "views/annotate-category",
         "templates/annotate-tab",
-        "default_scale_set",
         "backbone",
         "handlebars",
         "access",
@@ -64,7 +62,23 @@ define(["jquery",
         "libs/FileSaver",
         "jquery.FileReader"],
 
-    function ($, _, i18next, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, scalesSet, Backbone, Handlebars, ACCESS) {
+    function (
+        $,
+        _,
+        i18next,
+        Category,
+        Label,
+        Scale,
+        ScaleValue,
+        Categories,
+        Labels,
+        ScaleValues,
+        CategoryView,
+        Template,
+        Backbone,
+        Handlebars,
+        ACCESS
+    ) {
 
         "use strict";
 
@@ -210,7 +224,6 @@ define(["jquery",
                   "onAddCategory",
                   "removeOne",
                   "addCarouselItem",
-                  "generateScales",
                   "moveCarouselToFrame",
                   "moveCarouselPrevious",
                   "moveCarouselNext",
@@ -246,8 +259,6 @@ define(["jquery",
                 this.categoriesContainer = this.carouselElement.find(".carousel-inner");
 
                 this.addCategories(this.categories, this.filter);
-
-                this.generateScales();
 
                 this.initCarousel();
 
@@ -433,38 +444,6 @@ define(["jquery",
              */
             pauseCarousel: function () {
                 this.carouselElement.carousel("pause");
-            },
-
-            /**
-             * Generate scales with the default set given
-             * @alias module:views-annotate-tab.AnnotateTab#generatesScales
-             */
-            generateScales: function () {
-                var scale,
-                    scalevalues,
-                    findByNameScale = function (scale) {
-                        return scalesSet[0].name === scale.get("name");
-                    },
-                    options = { wait: true };
-
-                // Generate scales
-                if (!annotationTool.video.get("scales").find(findByNameScale)) {
-                    scale = annotationTool.video.get("scales").create({
-                        name  : scalesSet[0].name,
-                        access: ACCESS.PRIVATE
-                    }, options);
-
-                    scalevalues = scale.get("scaleValues");
-
-                    _.each(scalesSet[0].values, function (scalevalue) {
-                        scalevalues.create({
-                            name : scalevalue.name,
-                            value: scalevalue.value,
-                            order: scalevalue.order,
-                            scale: scale
-                        }, options);
-                    });
-                }
             },
 
             /**
