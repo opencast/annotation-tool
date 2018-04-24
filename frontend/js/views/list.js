@@ -92,7 +92,7 @@ define(["jquery",
              * @alias module:views-list.List#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
-            initialize: function () {
+            initialize: function (options) {
                 // Bind functions to the good context
                 _.bindAll(this, "render",
                                "addTrackList",
@@ -122,6 +122,7 @@ define(["jquery",
 
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
 
+                this.autoExpand = options.autoExpand;
                 annotationTool.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
                 this.$el.html(template());
