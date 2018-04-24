@@ -94,9 +94,6 @@ define(["jquery",
                           "onCancelComment",
                           "resetViews");
 
-                _.extend(this, Backbone.Events);
-
-                this.listenTo(this.collection, "destroy", this.deleteView);
                 this.listenTo(this.collection, "remove", this.deleteView);
                 this.listenTo(this.collection, "reset", this.resetViews);
 

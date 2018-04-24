@@ -159,7 +159,6 @@ define(["jquery",
                     this.addAnnotation(newAnnotation, annotationTrack);
                 }, this));
 
-                this.listenTo(ann, "destroy", this.removeOne);
                 this.listenTo(ann, "change:start change:duration", this.updateView);
 
                 this.addList(ann.toArray(), annotationTrack, _.isNumber(index) && index === (this.tracks.length - 1));
@@ -366,21 +365,6 @@ define(["jquery",
                 }
 
                 return undefined;
-            },
-
-            /**
-             * Remove the given annotation from the views list
-             * @alias module:views-list.List#removeOne
-             * @param {Annotation} Annotation from which the view has to be deleted
-             */
-            removeOne: function (delAnnotation) {
-                _.find(this.annotationViews, function (annotationView, index) {
-                    if (delAnnotation === annotationView.model) {
-                        this.annotationViews.splice(index, 1);
-                        return true;
-                    }
-                    return false;
-                }, this);
             },
 
             /**

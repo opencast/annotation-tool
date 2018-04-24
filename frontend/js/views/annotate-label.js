@@ -313,16 +313,6 @@ define(["jquery",
             },
 
             /**
-             * Delete only this category view
-             * @alias module:views-annotate-label.LabelView#deleteView
-             */
-            deleteView: function () {
-                this.remove();
-                this.undelegateEvents();
-                this.deleted = true;
-            },
-
-            /**
              * Listener for label deletion request from UI
              * @alias module:views-annotate-label.LabelView#onDeleteLabel
              */

@@ -285,8 +285,6 @@ define(["jquery",
 
                 this.hasEditMode = _.contains(this.roles, annotationTool.user.get("role"));
 
-                this.delegateEvents(this.events);
-
                 this.carouselElement.carousel(0).carousel("pause");
 
                 return this;
@@ -516,7 +514,6 @@ define(["jquery",
                 numberStr = numberStr.replace("item-", "");
                 this.carouselPagination.find(".page-link").parent().removeClass("active");
                 this.carouselPagination.find("#page-" + numberStr).parent().addClass("active");
-                this.delegateEvents(this.events);
 
                 _.each(this.categoryViews, function (catView) {
                     catView.updateInputWidth();
@@ -644,7 +641,6 @@ define(["jquery",
                     this.categoriesContainer.find("#item-" + currentIndex).addClass("active");
                     this.carouselPagination.find("#page-" + currentIndex).parent().addClass("active");
                 }
-                this.delegateEvents(this.events);
                 return this;
             }
         });

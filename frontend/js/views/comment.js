@@ -128,7 +128,6 @@ define(["jquery",
              */
             deleteView: function () {
                 this.remove();
-                this.undelegateEvents();
                 this.deleted = true;
             },
 

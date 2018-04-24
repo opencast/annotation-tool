@@ -168,7 +168,6 @@ define(["jquery",
                 this.listenTo(this.model.get("comments"), "change", this.render);
                 this.listenTo(this.model.get("comments"), "remove", this.render);
                 this.listenTo(this.model, "destroy", this.deleteView);
-                this.listenTo(this.model, "remove", this.deleteView);
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.ANNOTATION;
@@ -230,7 +229,6 @@ define(["jquery",
              */
             deleteView: function () {
                 this.remove();
-                this.undelegateEvents();
                 this.deleted = true;
             },
 

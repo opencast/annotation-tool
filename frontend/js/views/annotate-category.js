@@ -122,7 +122,6 @@ define(["jquery",
                 // Set the current context for all these functions
                 _.bindAll(this,
                   "onDeleteCategory",
-                  "deleteView",
                   "addLabels",
                   "addLabel",
                   "render",
@@ -157,7 +156,6 @@ define(["jquery",
                 labels = this.model.get("labels");
                 this.listenTo(labels, "add", this.addLabel);
                 this.listenTo(labels, "remove", this.removeOne);
-                this.listenTo(labels, "destroy", this.removeOne);
                 this.listenTo(this.model, "change", this.onChange);
 
                 if (_.contains(this.roles, annotationTool.user.get("role"))) {
@@ -249,16 +247,6 @@ define(["jquery",
              */
             onDeleteCategory: function () {
                 annotationTool.deleteOperation.start(this.model, this.typeForDelete);
-            },
-
-            /**
-             * Delete only this category view
-             * @alias module:views-annotate-category.CategoryView#deleteView
-             */
-            deleteView: function () {
-                this.remove();
-                this.undelegateEvents();
-                this.deleted = true;
             },
 
             /**
