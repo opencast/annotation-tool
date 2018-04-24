@@ -162,7 +162,7 @@ define(["jquery",
                     this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
                 }
 
-                $(window).bind("resize", this.updateInputWidth);
+                $(window).bind("resize.annotate-category", this.updateInputWidth);
 
                 //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
@@ -401,6 +401,12 @@ define(["jquery",
                 this.delegateEvents(this.events);
 
                 return this;
+            },
+
+            // TODO docs
+            remove: function () {
+                $(window).unbind(".annotate-category");
+                Backbone.View.prototype.remove.apply(this, arguments);
             }
         });
 
