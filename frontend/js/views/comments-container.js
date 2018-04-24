@@ -223,14 +223,11 @@ define(["jquery",
              * @param {Comment} comment Comment to add
              */
             addComment: function (comment) {
-                var self = this,
-                    commentView = new CommentView({ model: comment });
-                commentView.on({
-                    edit: function () {
-                        self.setState(CommentsContainer.STATES.EDIT);
-                        self.trigger("edit");
-                        self.render();
-                    }
+                var commentView = new CommentView({ model: comment });
+                this.listenTo(commentView, "edit", function () {
+                    this.setState(CommentsContainer.STATES.EDIT);
+                    this.trigger("edit");
+                    this.render();
                 });
 
                 this.commentViews.push(commentView);

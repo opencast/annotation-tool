@@ -96,8 +96,7 @@ define(["jquery",
              * @alias module:views-list-annotation.ListAnnotation#initialize
              */
             initialize: function (attr) {
-                var category,
-                    self = this;
+                var category;
 
                 if (!attr.annotation) {
                     throw "The annotations have to be given to the annotate view.";
@@ -131,16 +130,14 @@ define(["jquery",
                 this.commentContainer = new CommentsContainer({
                     collection: this.model.get("comments")
                 });
-                this.commentContainer.on({
-                    cancel: function () {
-                        self.trigger("cancel", self);
-                        self.toggleCommentsState();
-                    },
-                    edit: function () {
-                        self.trigger("edit", self);
-                        self.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
-                        self.render();
-                    }
+                this.listenTo(this.commentContainer, "cancel", function () {
+                    this.trigger("cancel", this);
+                    this.toggleCommentsState();
+                });
+                this.listenTo(this.commentContainer, "edit", function () {
+                    this.trigger("edit", this);
+                    this.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
+                    this.render();
                 });
 
                 this.model.fetchComments();
