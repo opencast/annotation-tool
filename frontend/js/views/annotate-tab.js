@@ -106,13 +106,6 @@ define(["jquery",
             className: "tab-pane",
 
             /**
-             * Prefix for the item id
-             * @alias module:views-annotate-tab.AnnotateTab#ID_PREFIX
-             * @type {string}
-             */
-            ID_PREFIX: "labelTab-",
-
-            /**
              * Define if the view is or not in edit modus.
              * @alias module:views-annotate-tab.AnnotateTab#editModus
              * @type {boolean}
@@ -145,9 +138,9 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#itemContainerTemplate
              * @type {HandlebarsTemplate}
              */
-            itemContainerTemplate: Handlebars.compile("<div class=\"item row-fluid\" id=\"item-{{number}}\">\
+            itemContainerTemplate: Handlebars.compile("<div class=\"item row-fluid\">\
                                                         <div class=\"span12\">\
-                                                          <div class=\"row-fluid\">\
+                                                          <div class=\"row-fluid categories-container\">\
                                                           </div>\
                                                         </div>\
                                                       </div>"),
@@ -157,7 +150,7 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#paginationBulletTemplate
              * @type {HandlebarsTemplate}
              */
-            paginationBulletTemplate: Handlebars.compile("<li><button type=\"button\" class=\"page-link\" title=\"{{frame}}\" id=\"page-{{number}}\">{{number}}</button></li>"),
+            paginationBulletTemplate: Handlebars.compile("<li><button type=\"button\" class=\"page-link\" data-page=\"{{number}}\">{{number}}</button></li>"),
 
             /**
              * Element containing the "carousel"
@@ -202,8 +195,7 @@ define(["jquery",
             events: {
                 "click #carousel-prev"    : "moveCarouselPrevious",
                 "click #carousel-next"    : "moveCarouselNext",
-                "click .page-link"        : "moveCarouselToFrame",
-                "mouseleave .carousel"    : "pauseCarousel"
+                "click .page-link"        : "moveCarouselToFrame"
             },
 
             /**
@@ -248,19 +240,10 @@ define(["jquery",
                     this.edit = true;
                 }
 
-                this.el.id = this.ID_PREFIX + attr.id;
-
-                this.$el.append(this.template({id: attr.id}));
-
-                this.carouselElement = this.$el.find("#" + attr.id);
-
-                this.carouselPagination = this.$el.find(".pagination ul");
-
-                this.categoriesContainer = this.carouselElement.find(".carousel-inner");
+                this.currentPage = 0;
+                this.render();
 
                 this.addCategories(this.categories, this.filter);
-
-                this.initCarousel();
 
                 this.titleLink = attr.button;
                 this.titleLink.find("i.add").bind("click", this.onAddCategory);
@@ -282,17 +265,53 @@ define(["jquery",
 
                 this.listenTo(this.categories, "add", this.addCategory);
                 this.listenTo(this.categories, "remove", this.removeOne);
-                this.listenTo(this.categories, "destroy", this.removeOne);
 
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
 
                 this.hasEditMode = _.contains(this.roles, annotationTool.user.get("role"));
 
-                this.carouselElement.carousel(0).carousel("pause");
-
                 return this;
             },
 
+            /**
+             * Display the list
+             * @alias module:views-annotate-tab.AnnotateTab#render
+             */
+            render: function () {
+
+                // We want to keep the event handlers on the subviews intact,
+                // so we remove them from the DOM prior to clearing the view;
+                // Otherwise, jQUery would remove them.
+                _.each(this.categoryViews, function (categoryView) {
+                    categoryView.$el.detach();
+                });
+
+                this.$el.html(this.template({}, {
+                    partials: {
+                        "carousel-item": this.itemContainerTemplate,
+                        "pagination-bullet": this.paginationBulletTemplate
+                    }
+                }));
+
+                this.carouselElement = this.$el.find(".carousel");
+                this.carouselPagination = this.$el.find(".pagination ul");
+                this.categoriesContainer = this.carouselElement.find(".carousel-inner");
+                this.itemsCurrentContainer = this.carouselElement.find(".categories-container");
+
+                var categoryViews = this.categoryViews;
+                this.categoryViews = [];
+                _.each(categoryViews, this.insertCategoryView, this);
+
+                this.updateNavigation();
+                this.carouselElement.find(".item").eq(this.currentPage).addClass("active");
+
+                this.initCarousel();
+            },
+
+            /**
+             * Make the tab ready to be displayed after it having been selected.
+             * @alias module:views-annotate-tab.AnnotateTab#select
+             */
             select: function () {
                 _.each(this.categoryViews, function (view) {
                     view.updateInputWidth();
@@ -326,19 +345,12 @@ define(["jquery",
                     return;
                 }
 
-                if (!this.categories.get(category.id)) {// Add this category if new
-                    this.categories.add(category, { silent: true });
-                } else if (_.contains(_.pluck(this.categoryViews, "model"), category)) {
-                    return;
-                }
-
                 categoryView = new CategoryView({
                     category : category,
                     editModus: this.editModus,
                     roles    : this.roles
                 });
 
-                this.categoryViews.push(categoryView);
                 this.insertCategoryView(categoryView);
             },
 
@@ -354,7 +366,18 @@ define(["jquery",
                         hasScale: false
                     }
                 };
-                this.categories.create(_.extend(attributes, this.defaultCategoryAttributes), { wait: true });
+                this.categories.create(
+                    _.extend(attributes, this.defaultCategoryAttributes),
+                    {
+                        wait: true,
+                        success: _.bind(function () {
+                            // Move the carousel to the container of the new item
+                            this.carouselElement.carousel(Math.floor(
+                                this.categories.length / annotationTool.CATEGORIES_PER_TAB
+                            ));
+                        }, this)
+                    }
+                );
             },
 
             /**
@@ -366,11 +389,19 @@ define(["jquery",
                 _.find(this.categoryViews, function (catView, index) {
                     if (delCategory === catView.model) {
                         catView.remove();
+                        // If this is the last item on the last page
+                        if (
+                            index === this.categoryViews.length - 1
+                                && index % annotationTool.CATEGORIES_PER_TAB === 0
+                                && this.currentPage > 0
+                        ) {
+                            --this.currentPage;
+                        }
                         this.categoryViews.splice(index, 1);
-                        this.initCarousel();
                         this.render();
                         return true;
                     }
+                    return false;
                 }, this);
             },
 
@@ -380,21 +411,13 @@ define(["jquery",
              * @param  {CategoryView} categoryView the view to insert
              */
             insertCategoryView: function (categoryView) {
-                var itemsLength = this.categoriesContainer.find("div.category-item").length;
-
                 // Create a new carousel if the current one is full
-                if ((itemsLength % annotationTool.CATEGORIES_PER_TAB) === 0) {
+                if (this.categoryViews.length > 0 && this.categoryViews.length % annotationTool.CATEGORIES_PER_TAB === 0) {
                     this.addCarouselItem();
                 }
 
-                if (itemsLength === 0) {
-                    this.initCarousel();
-                }
-
+                this.categoryViews.push(categoryView);
                 this.itemsCurrentContainer.append(categoryView.$el);
-
-                // Move the carousel to the container of the new item
-                this.carouselElement.carousel(parseInt(itemsLength / annotationTool.CATEGORIES_PER_TAB, 10)).carousel("pause");
             },
 
             /**
@@ -402,18 +425,18 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#addCarouselItem
              */
             addCarouselItem: function () {
-                var length = this.categoriesContainer.find("div.category-item").length,
-                    pageNumber = (length - (length % annotationTool.CATEGORIES_PER_TAB)) / annotationTool.CATEGORIES_PER_TAB;
+                var length = this.categoryViews.length,
+                    pageNumber = Math.floor(length / annotationTool.CATEGORIES_PER_TAB) + 1;
 
-                this.categoriesContainer.append(this.itemContainerTemplate({ number: (pageNumber + 1) }));
+                this.categoriesContainer.append(this.itemContainerTemplate());
 
-                this.itemsCurrentContainer = this.categoriesContainer.find("div div div.row-fluid").last();
+                this.itemsCurrentContainer = this.carouselElement.find(".item").last().find(".categories-container");
 
-                if (length >= annotationTool.CATEGORIES_PER_TAB) {
+                if (pageNumber > 1) {
                     this.carouselPagination.parent().css("display", "block");
                 }
 
-                this.carouselPagination.find("li:last").before(this.paginationBulletTemplate({ number: (pageNumber + 1), frame: pageNumber }));
+                this.carouselPagination.find("li:last").before(this.paginationBulletTemplate({ number: pageNumber }));
             },
 
             /**
@@ -421,29 +444,9 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#initCarousel
              */
             initCarousel: function () {
-                var hasBeenInit = (this.categoriesContainer.find(".active").length > 0);
-
-                if (!hasBeenInit) {
-                    this.categoriesContainer.find(".item:first-child").addClass("active");
-                    this.carouselPagination.find(".page-link:first").parent().addClass("active");
-                }
-
                 this.carouselElement
-                      .carousel({ interval: false, pause: "" })
-                      .bind("slid", this.onCarouselSlid)
-                      .carousel("pause");
-
-                if (!hasBeenInit) {
-                    this.carouselElement.carousel(0);
-                }
-            },
-
-            /**
-             * Stop the carousel
-             * @alias module:views-annotate-tab.AnnotateTab#pauseCarousel
-             */
-            pauseCarousel: function () {
-                this.carouselElement.carousel("pause");
+                    .carousel({ interval: false })
+                    .bind("slid", this.onCarouselSlid);
             },
 
             /**
@@ -453,9 +456,7 @@ define(["jquery",
              */
             moveCarouselToFrame: function (event) {
                 var target = $(event.target);
-                this.carouselElement.carousel(parseInt(target.attr("title"), 10)).carousel("pause");
-                this.carouselPagination.find(".page-link").parent().removeClass("active");
-                target.parent().addClass("active");
+                this.carouselElement.carousel(parseInt(target.data("page"), 10) - 1);
             },
 
             /**
@@ -463,7 +464,7 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#moveCarouselNext
              */
             moveCarouselNext: function () {
-                this.carouselElement.carousel("next").carousel("pause");
+                this.carouselElement.carousel("next");
             },
 
             /**
@@ -471,22 +472,31 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#moveCarouselPrevious
              */
             moveCarouselPrevious: function () {
-                this.carouselElement.carousel("prev").carousel("pause");
+                this.carouselElement.carousel("prev");
             },
 
             /**
              * Listener for carousel slid event.
              * @alias module:views-annotate-tab.AnnotateTab#onCarouselSlid
+             * @param {Event} event the event to handle
              */
-            onCarouselSlid: function () {
-                var numberStr = this.carouselElement.find("div.active").attr("id");
-                numberStr = numberStr.replace("item-", "");
-                this.carouselPagination.find(".page-link").parent().removeClass("active");
-                this.carouselPagination.find("#page-" + numberStr).parent().addClass("active");
+            onCarouselSlid: function (event) {
+                this.currentPage = $(event.target).find(".active").index();
+                this.updateNavigation();
 
                 _.each(this.categoryViews, function (catView) {
                     catView.updateInputWidth();
                 }, this);
+            },
+
+            /**
+             * Sync the pagination items with the state of the carousel
+             * @alias module:views-annotate-tab.AnnotateTab#updateNavigation
+             */
+            updateNavigation: function() {
+                var pageLinks = this.carouselPagination.find(".page-link").parent();
+                pageLinks.removeClass("active");
+                $(pageLinks[this.currentPage]).addClass("active");
             },
 
             /**
@@ -588,29 +598,14 @@ define(["jquery",
             },
 
             /**
-             * Display the list
-             * @alias module:views-annotate-tab.AnnotateTab#render
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-annotate-tab.AnnotateTab#remove
              */
-            render: function () {
-                var currentId = this.categoriesContainer.find("div.item.active").attr("id"),
-                    currentIndex;
-
-                this.categoriesContainer.empty();
-                this.carouselPagination.find("li").not(":first, :last").remove();
-
-                _.each(this.categoryViews, function (catView) {
-                    this.insertCategoryView(catView.render());
-                }, this);
-
-                if (currentId) {
-                    currentIndex = parseInt(currentId.replace("item-", ""), 10);
-                    if (this.categoriesContainer.find("#" + currentId).length === 0) {
-                        currentIndex--;
-                    }
-                    this.categoriesContainer.find("#item-" + currentIndex).addClass("active");
-                    this.carouselPagination.find("#page-" + currentIndex).parent().addClass("active");
-                }
-                return this;
+            remove: function () {
+                _.each(this.categoryViews, function (categoryView) {
+                    categoryView.remove();
+                });
+                Backbone.View.prototype.remove.call(this);
             }
         });
 

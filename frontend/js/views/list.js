@@ -478,6 +478,17 @@ define(["jquery",
 
                 this.annotationViews = [];
                 this.$el.find("#content-list").empty();
+            },
+
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-list.List#remove
+             */
+            remove: function () {
+                _.each(this.annotationViews, function (annotationView) {
+                    annotationView.remove();
+                });
+                Backbone.View.prototype.remove.call(this);
             }
         });
 

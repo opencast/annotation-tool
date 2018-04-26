@@ -122,13 +122,14 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #export"              : "export",
-                "click #about"               : "about",
-                "click #logout"              : "onLogout",
-                "click #print"               : "print",
-                "click .opt-layout"          : "layoutUpdate",
-                "click .opt-tracks-select"   : "tracksSelection",
-                "click #opt-auto-expand"     : "toggleAutoExpand"
+                "click #export": "export",
+                "click #about": "about",
+                "click #logout": "onLogout",
+                "click #print": "print",
+                "click #opt-annotate-text": "toggleFreeTextAnnotations",
+                "click #opt-annotate-categories": "toggleStructuredAnnotations",
+                "click .opt-tracks-select": "tracksSelection",
+                "click #opt-auto-expand": "toggleAutoExpand"
             },
 
             /**
@@ -137,8 +138,7 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
-                _.bindAll(this, "layoutUpdate",
-                                "createViews",
+                _.bindAll(this, "createViews",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print",
@@ -192,49 +192,78 @@ define(["jquery",
              * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
+                var views = [
+                    "player",
+                    "timeline",
+                    "annotate",
+                    "list",
+                    "loop"
+                ];
 
-                this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
-                for (var view in this.layoutConfiguration) {
-                    this.$el.find("#opt-view-" + view).each(_.bind(function (index, element) {
-                        if (this.layoutConfiguration[view]) {
-                            $(element).addClass("checked");
-                        } else {
-                            $(element).removeClass("checked");
-                        }
-                    }, this));
+                var closableViews = ["list", "annotate", "loop"];
+                var viewConfigs = _.object(_.map(views, function (view) { return [
+                    view, {
+                        type: "component",
+                        componentName: view,
+                        title: i18next.t("views." + view)
+                    }
+                ]; }));
+                _.each(_.difference(views, closableViews), function (view) {
+                    viewConfigs[view].isClosable = false;
+                });
+
+                var viewMenuItems = _.object(_.map(closableViews, function (view) { return [
+                    view, $("#opt-view-" + view)
+                ]; }));
+
+                function disableViewMenuItem(view) {
+                    viewMenuItems[view].addClass("checked");
                 }
+                var layoutConfiguration = annotationTool.getLayoutConfiguration();
+                _.each(closableViews, function (view) {
+                    if (layoutConfiguration[view]) {
+                        disableViewMenuItem(view);
+                    }
+                }, this);
 
-                /**
-                 * Loading the video dependent views
-                 */
                 var loadVideoDependentViews = _.bind(function () {
 
                     var layout = goldenLayout.root.contentItems[0];
 
-                    layout.addChild({
-                        type: "column",
-                        content: [{
-                            type: "component",
-                            componentName: "annotate",
-                            title: i18next.t("views.annotate")
-                        }, {
-                            type: "component",
-                            componentName: "list",
-                            title: i18next.t("views.list")
-                        }]
-                    });
-
                     var leftColumn = layout.contentItems[0];
-                    leftColumn.addChild({
-                        type: "component",
-                        componentName: "timeline",
-                        title: i18next.t("views.timeline"),
-                        isClosable: false
-                    });
-                    leftColumn.addChild({
-                        type: "component",
-                        componentName: "loop",
-                        title: i18next.t("views.loop")
+                    leftColumn.addChild(viewConfigs.timeline);
+
+                    if (_.some(_.values(layoutConfiguration))) {
+                        layout.addChild({
+                            type: "column",
+                            content: _.chain(views)
+                                .filter(function (view) {
+                                    return layoutConfiguration[view];
+                                })
+                                .map(function (views) {
+                                    return viewConfigs[views];
+                                })
+                                .value()
+                        });
+                    }
+
+                    _.each(closableViews, function (view) {
+                        viewMenuItems[view].mousedown(_.bind(function (event) {
+                            if (this.views[view]) event.stopImmediatePropagation();
+                        }, this));
+                        goldenLayout.createDragSource(
+                            viewMenuItems[view],
+                            viewConfigs[view]
+                        );
+                    }, this);
+
+                    var viewOptionsDropdown = $("#view-options .dropdown-toggle");
+                    $("#view-options .dropdown-menu").mouseleave(function (event) {
+                        if (event.buttons & 1) {
+                            // Note that we explicitly assume the menu to be open!
+                            // Otherwise, how would this event ever happen?
+                            viewOptionsDropdown.dropdown("toggle");
+                        }
                     });
 
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
@@ -262,12 +291,7 @@ define(["jquery",
                         type: "row",
                         content: [{
                             type: "column",
-                            content: [{
-                                type: "component",
-                                componentName: "player",
-                                title: i18next.t("views.player"),
-                                isClosable: false
-                            }]
+                            content: [viewConfigs.player]
                         }]
                     }]
                 }, document.getElementById("main-container"));
@@ -291,38 +315,66 @@ define(["jquery",
                     annotationTool.loadVideo(container.getElement()[0]);
                 });
 
-                goldenLayout.registerComponent("annotate", function (container, componentState) {
-                    self.annotateView = annotationTool.views.annotate =
-                        new AnnotateView({
-                            playerAdapter: annotationTool.playerAdapter,
-                            el: container.getElement()
-                        });
-                });
-
-                goldenLayout.registerComponent("list", function (container, componentState) {
-                    self.listView = annotationTool.views.list =
-                        new ListView({ el: container.getElement() });
-                });
+                var timelineView;
 
                 goldenLayout.registerComponent("timeline", function (container, componentState) {
                     container.on("resize", function () {
-                        self.timelineView.onWindowResize();
+                        timelineView.onWindowResize();
                     });
 
-                    self.timelineView = annotationTool.views.timeline =
-                        new TimelineView({
-                            el: container.getElement(),
-                            playerAdapter: annotationTool.playerAdapter
-                        });
+                    timelineView = new TimelineView({
+                        el: container.getElement(),
+                        playerAdapter: annotationTool.playerAdapter
+                    });
                 });
 
-                goldenLayout.registerComponent("loop", function (container, componentState) {
-                    self.loopController = annotationTool.loopFunction =
-                        new LoopView({
-                            el: container.getElement(),
-                            playerAdapter: annotationTool.playerAdapter,
-                            timeline: annotationTool.views.timeline
+                this.views = {};
+
+                function registerClosableComponent(view, setup, teardown) {
+                    return goldenLayout.registerComponent(view, function (container, componentState) {
+                        self.views[view] = setup.apply(this, arguments);
+
+                        container.on("destroy", function () {
+
+                            viewMenuItems[view].removeClass("checked");
+                            viewMenuItems[view].prop("disabled", false);
+
+                            if (teardown) teardown.call(this, arguments);
+                            self.views[view].remove();
+                            delete self.views[view];
                         });
+
+                        disableViewMenuItem(view);
+                    });
+                }
+
+                registerClosableComponent("list", function (container, componentState) {
+                    $(".opt-list").show();
+                    return new ListView({
+                        el: container.getElement(),
+                        autoExpand: $("#opt-auto-expand").hasClass("checked")
+                    });
+                }, function () {
+                    $(".opt-list").hide();
+                });
+                registerClosableComponent("annotate", function (container, componentState) {
+                    $(".opt-annotate").show();
+                    return new AnnotateView({
+                        playerAdapter: annotationTool.playerAdapter,
+                        el: container.getElement(),
+                        freeText: $("#opt-annotate-text").hasClass("checked"),
+                        categories: $("#opt-annotate-categories").hasClass("checked")
+                    });
+                }, function () {
+                    $(".opt-annotate").hide();
+                });
+
+                registerClosableComponent("loop", function (container, componentState) {
+                    return new LoopView({
+                        el: container.getElement(),
+                        playerAdapter: annotationTool.playerAdapter,
+                        timeline: timelineView
+                    });
                 });
 
                 this.setLoadingProgress(50, i18next.t("startup.initializing the player"));
@@ -353,18 +405,19 @@ define(["jquery",
              */
             setupKeyboardShortcuts: function () {
 
-                var setActiveAnnotationDuration = _.bind(function () {
+                var setActiveAnnotationDuration = function () {
                     if (!annotationTool.activeAnnotation) return;
 
                     var currentTime = annotationTool.playerAdapter.getCurrentTime();
                     var start = annotationTool.activeAnnotation.get("start");
                     annotationTool.activeAnnotation.set("duration", currentTime - start);
                     annotationTool.activeAnnotation.save();
-                }, this);
+                };
 
                 var addComment = _.bind(function () {
                     if (!annotationTool.activeAnnotation) return;
-                    var annotationView = this.listView.getViewFromAnnotation(
+                    if (!this.views.list) return;
+                    var annotationView = this.views.list.getViewFromAnnotation(
                         annotationTool.activeAnnotation.get("id")
                     );
                     annotationView.toggleCommentsState();
@@ -452,54 +505,21 @@ define(["jquery",
             },
 
             /**
-             * Set the layout of the tools following the option selected in the menu
-             * @alias module:views-main.MainView#layoutUpdate
+             * Enable/disable the free text annotations pane in the annotate view
+             * @alias module:views-main.MainView#toggleFreeTextAnnotations
              */
-            layoutUpdate: function (event) {
-                var enabled = !$(event.target).hasClass("checked"),
-                    layoutElement = event.currentTarget.id.replace("opt-", ""),
-                    checkMainLayout = _.bind(function () {
-                        if (!this.layoutConfiguration.annotate && !this.layoutConfiguration.list) {
-                            $("#left-column").removeClass("span6");
-                            $("#left-column").addClass("span12");
-                        } else {
-                            $("#left-column").addClass("span6");
-                            $("#left-column").removeClass("span12");
-                        }
-                        annotationTool.views.timeline.redraw();
-                    }, this);
+            toggleFreeTextAnnotations: function () {
+                $("#opt-annotate-text").toggleClass("checked");
+                this.views.annotate.toggleFreeTextAnnotations();
+            },
 
-                if (enabled) {
-                    $(event.target).addClass("checked");
-                } else {
-                    $(event.target).removeClass("checked");
-                }
-
-                var isView = false;
-                var view = layoutElement.replace(/^view-/, function () { isView = true; return ""; });
-                if (isView) this.layoutConfiguration[view] = enabled;
-
-                switch (layoutElement) {
-
-                case "annotate-text":
-                    this.annotateView.enableFreeTextLayout(enabled);
-                    break;
-                case "annotate-categories":
-                    this.annotateView.enableCategoriesLayout(enabled);
-                    break;
-                case "view-annotate":
-                    annotationTool.views.annotate.$el.fadeToggle();
-                    checkMainLayout();
-                    break;
-                case "view-list":
-                    annotationTool.views.list.$el.fadeToggle();
-                    checkMainLayout();
-                    break;
-                case "view-loop":
-                    annotationTool.loopFunction.$el.fadeToggle();
-                    break;
-                }
-                this.onWindowResize();
+            /**
+             * Enable/disable the structured annotations pane in the annotate view
+             * @alias module:views-main.MainView#toggleStructuredAnnotations
+             */
+            toggleStructuredAnnotations: function () {
+                $("#opt-annotate-categories").toggleClass("checked");
+                this.views.annotate.toggleStructuredAnnotations();
             },
 
             /**
@@ -508,7 +528,7 @@ define(["jquery",
              */
             toggleAutoExpand: function (event) {
                 $(event.currentTarget).toggleClass("checked");
-                this.listView.autoExpand = !this.listView.autoExpand;
+                this.views.list.autoExpand = !this.views.list.autoExpand;
             },
 
             /**

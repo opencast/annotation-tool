@@ -255,6 +255,17 @@ define(["jquery",
                 this.$("textarea").val("");
                 this.trigger("cancel");
                 this.setState(CommentsContainer.STATES.READ);
+            },
+
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-comments-container.CommentsContainer#remove
+             */
+            remove: function () {
+                _.each(this.commentViews, function (commentView) {
+                    commentView.remove();
+                });
+                Backbone.View.prototype.remove.call(this);
             }
         }, {
             /**

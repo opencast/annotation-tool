@@ -673,6 +673,15 @@ define(["jquery",
                 if (event.keyCode === 27 && !event.shiftKey && this.getState() === ListAnnotation.STATES.EDIT) {
                     this.toggleExpandedState(event, true);
                 }
+            },
+
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-list-annotation.ListAnnotation#remove
+             */
+            remove: function () {
+                this.commentContainer.remove();
+                Backbone.View.prototype.remove.call(this);
             }
         }, {
 

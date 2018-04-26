@@ -403,10 +403,16 @@ define(["jquery",
                 return this;
             },
 
-            // TODO docs
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-annotate-category.CategoryView#remove
+             */
             remove: function () {
+                _.each(this.labelViews, function (labelView) {
+                    labelView.remove();
+                });
                 $(window).unbind(".annotate-category");
-                Backbone.View.prototype.remove.apply(this, arguments);
+                Backbone.View.prototype.remove.call(this);
             }
         });
 

@@ -243,6 +243,15 @@ define(["jquery",
                 this.$el.find(".replies").first().append(this.replyContainer.render().el);
                 this.delegateEvents(this.events);
                 return this;
+            },
+
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-comment.Comment#remove
+             */
+            remove: function () {
+                this.replyContainer.remove();
+                Backbone.View.prototype.remove.call(this);
             }
         });
         return CommentView;

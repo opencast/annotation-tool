@@ -126,7 +126,6 @@ define(["jquery",
             LAYOUT_CONFIGURATION: {
                 /** default configuration */
                 DEFAULT: {
-                    timeline : true,
                     list     : true,
                     annotate : true,
                     loop     : false
