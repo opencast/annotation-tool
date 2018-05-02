@@ -248,14 +248,17 @@ define(["jquery",
             changeTrack: function (track) {
                 // If the track is valid, we set it
                 if (track) {
-                    this.$el.find("#annotate-form").show();
+                    // TODO Until we update jQuery, we can't use `show` and `hide` here,
+                    //   since our current jQuery version does not preserve
+                    //   the `display` property correctly.
+                    this.$el.find(".annotate").css("display", "");
                     this.$el.find(".no-track").hide();
 
                     this.trackDIV.html(track.get("name"));
 
                 } else {
                     // Otherwise, we disable the input and inform the user that no track is set
-                    this.$el.find("#annotate-form").hide();
+                    this.$el.find(".annotate").css("display", "none");
                     this.$el.find(".no-track").show();
                     this.trackDIV.html("<span>" + i18next.t("annotate.no selected track") + "</span>");
                 }
@@ -306,7 +309,6 @@ define(["jquery",
              */
             showTab: function (event) {
                 var tabId = event.currentTarget.dataset.tabid;
-                console.log(tabId);
 
                 $(event.currentTarget).one("shown", _.bind(function () {
                     this.categoriesTabs[tabId].initCarousel();
@@ -381,6 +383,7 @@ define(["jquery",
              */
             toggleFreeTextAnnotations: function () {
                 this.layout.freeText = !this.layout.freeText;
+                // TODO You might have to adapt this as well
                 this.freeTextElement.toggle();
             },
 
