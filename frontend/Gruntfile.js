@@ -285,20 +285,6 @@ module.exports = function (grunt) {
             }
         },
 
-        blanket_qunit: {
-            all: {
-                options: {
-                    urls: [
-                        '<%= srcPath.tests %>loop.html?coverage=true&gruntReport',
-                        '<%= srcPath.tests %>collections.html?coverage=true&gruntReport',
-                        '<%= srcPath.tests %>models.html?coverage=true&gruntReport'
-                    ],
-                    threshold: 10,
-                    globalThreshold: 10
-                }
-            }
-        },
-
         jsdoc : {
             dist : {
                 src: ['<%= srcPath.js %>', '!js/libs/**'],
@@ -336,14 +322,6 @@ module.exports = function (grunt) {
                 options: {
                     port: 9001,
                     base: '<%= webServerDir %>',
-                    keepalive: true,
-                    livereload: true
-                }
-            },
-            build: {
-                options: {
-                    port: 9001,
-                    base: '<%= buildDir %>',
                     keepalive: true,
                     livereload: true
                 }
@@ -440,7 +418,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    //grunt.loadNpmTasks('grunt-blanket-qunit');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
@@ -462,9 +439,9 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseBUILD', [/*'blanket_qunit', */'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseBUILD', ['jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
     grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', [/*'blanket_qunit', */'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
@@ -512,7 +489,6 @@ module.exports = function (grunt) {
             switch (ext) {
                 case 'js':
                     grunt.task.run('jshint:watch');
-                    grunt.task.run('blanket_qunit');
                     break;
                 case 'less':
                     grunt.task.run('less');
