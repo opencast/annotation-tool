@@ -293,7 +293,11 @@ define(["jquery",
                             type: "column",
                             content: [viewConfigs.player]
                         }]
-                    }]
+                    }],
+                    settings: {
+                        showPopoutIcon: false,
+                        showMaximiseIcon: false
+                    }
                 }, document.getElementById("main-container"));
 
                 goldenLayout.registerComponent("player", function (container, componentState) {
