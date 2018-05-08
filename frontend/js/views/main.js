@@ -129,7 +129,8 @@ define(["jquery",
                 "click #opt-annotate-text": "toggleFreeTextAnnotations",
                 "click #opt-annotate-categories": "toggleStructuredAnnotations",
                 "click .opt-tracks-select": "tracksSelection",
-                "click #opt-auto-expand": "toggleAutoExpand"
+                "click #opt-auto-expand": "toggleAutoExpand",
+                "click .opt-view": "toggleView",
             },
 
             /**
@@ -201,7 +202,7 @@ define(["jquery",
                 ];
 
                 var closableViews = ["list", "annotate", "loop"];
-                var viewConfigs = _.object(_.map(views, function (view) { return [
+                this.viewConfigs = _.object(_.map(views, function (view) { return [
                     view, {
                         type: "component",
                         componentName: view,
@@ -209,11 +210,11 @@ define(["jquery",
                     }
                 ]; }));
                 _.each(_.difference(views, closableViews), function (view) {
-                    viewConfigs[view].isClosable = false;
-                });
+                    this.viewConfigs[view].isClosable = false;
+                }, this);
 
                 var viewMenuItems = _.object(_.map(closableViews, function (view) { return [
-                    view, $("#opt-view-" + view)
+                    view, $(".opt-view[data-view=" + view + "]")
                 ]; }));
 
                 function disableViewMenuItem(view) {
@@ -231,7 +232,7 @@ define(["jquery",
                     var layout = goldenLayout.root.contentItems[0];
 
                     var leftColumn = layout.contentItems[0];
-                    leftColumn.addChild(viewConfigs.timeline);
+                    leftColumn.addChild(this.viewConfigs.timeline);
 
                     if (_.some(_.values(layoutConfiguration))) {
                         layout.addChild({
@@ -241,19 +242,16 @@ define(["jquery",
                                     return layoutConfiguration[view];
                                 })
                                 .map(function (views) {
-                                    return viewConfigs[views];
-                                })
+                                    return this.viewConfigs[views];
+                                }, this)
                                 .value()
                         });
                     }
 
                     _.each(closableViews, function (view) {
-                        viewMenuItems[view].mousedown(_.bind(function (event) {
-                            if (this.views[view]) event.stopImmediatePropagation();
-                        }, this));
                         goldenLayout.createDragSource(
-                            viewMenuItems[view],
-                            viewConfigs[view]
+                            viewMenuItems[view].find(".drag-source"),
+                            this.viewConfigs[view]
                         );
                     }, this);
 
@@ -291,7 +289,7 @@ define(["jquery",
                         type: "row",
                         content: [{
                             type: "column",
-                            content: [viewConfigs.player]
+                            content: [this.viewConfigs.player]
                         }]
                     }],
                     settings: {
@@ -334,8 +332,9 @@ define(["jquery",
 
                 this.views = {};
 
-                function registerClosableComponent(view, setup, teardown) {
-                    return goldenLayout.registerComponent(view, function (container, componentState) {
+                function registerClosableComponent(view, setup) {
+                    return goldenLayout.registerComponent(view, function (container) {
+                        $(".opt-" + view).show();
                         self.views[view] = setup.apply(this, arguments);
 
                         container.on("destroy", function () {
@@ -343,7 +342,8 @@ define(["jquery",
                             viewMenuItems[view].removeClass("checked");
                             viewMenuItems[view].prop("disabled", false);
 
-                            if (teardown) teardown.call(this, arguments);
+                            $(".opt-" + view).hide();
+
                             self.views[view].remove();
                             delete self.views[view];
                         });
@@ -352,28 +352,22 @@ define(["jquery",
                     });
                 }
 
-                registerClosableComponent("list", function (container, componentState) {
-                    $(".opt-list").show();
+                registerClosableComponent("list", function (container) {
                     return new ListView({
                         el: container.getElement(),
                         autoExpand: $("#opt-auto-expand").hasClass("checked")
                     });
-                }, function () {
-                    $(".opt-list").hide();
                 });
-                registerClosableComponent("annotate", function (container, componentState) {
-                    $(".opt-annotate").show();
+                registerClosableComponent("annotate", function (container) {
                     return new AnnotateView({
                         playerAdapter: annotationTool.playerAdapter,
                         el: container.getElement(),
                         freeText: $("#opt-annotate-text").hasClass("checked"),
                         categories: $("#opt-annotate-categories").hasClass("checked")
                     });
-                }, function () {
-                    $(".opt-annotate").hide();
                 });
 
-                registerClosableComponent("loop", function (container, componentState) {
+                registerClosableComponent("loop", function (container) {
                     return new LoopView({
                         el: container.getElement(),
                         playerAdapter: annotationTool.playerAdapter,
@@ -442,6 +436,22 @@ define(["jquery",
                     event.preventDefault();
                     addComment();
                 });
+            },
+
+            /**
+             * Add/remove a view from the layout
+             * @param {Event} event The event
+             */
+            toggleView: function (event) {
+                var view = event.currentTarget.dataset.view;
+                var root = goldenLayout.root.contentItems[0];
+                if (this.views[view]) {
+                    root.getItemsByFilter(function (item) {
+                        return item.componentName === view;
+                    })[0].remove();
+                } else {
+                    root.addChild(this.viewConfigs[view]);
+                }
             },
 
             /**

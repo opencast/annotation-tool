@@ -136,7 +136,8 @@
         "list view": "$t(views.list)",
         "loop controller": "$t(views.loop)"
       },
-      "auto expand": "Automatically expand active annotations"
+      "auto expand": "Automatically expand active annotations",
+      "drag here": "Drag icon to place element"
     }
   },
   "new label defaults": {

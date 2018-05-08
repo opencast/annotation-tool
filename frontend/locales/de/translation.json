@@ -133,7 +133,8 @@
       "views": {
         "head": "Fenster",
       },
-      "auto expand": "Aktive Annotationen automatisch aufklappen"
+      "auto expand": "Aktive Annotationen automatisch aufklappen",
+      "drag here": "Icon ziehen, um das Element zu platzieren"
     }
   },
   "new label defaults": {

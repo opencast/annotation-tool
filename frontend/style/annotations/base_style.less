@@ -167,3 +167,20 @@ input, textarea, select, .uneditable-input {
 .popover-content > p {
     margin: 0;
 }
+
+.dropdown-menu {
+    .opt-view {
+
+        display: flex;
+
+        span {
+            padding-left: 1em;
+            padding-right: 1em;
+            flex-grow: 1;
+        }
+
+        &.checked .drag-source {
+            display: none;
+        }
+    }
+}
