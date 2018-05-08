@@ -424,6 +424,8 @@ define(["util",
                     this.updateDraggingCtrl();
                 }
                 this.markTrackSelected(annotationTool.selectedTrack);
+
+                this.$el.find(".timeline-groups-text").width(this.$el.width());
             },
 
             /**
@@ -1544,7 +1546,7 @@ define(["util",
                 if (!track) return;
                 this.$el.find("div.selected").removeClass("selected");
                 this.$el.find(".timeline-group[data-id='" + track.id + "']")
-                    .closest(".timeline-groups-text").addClass("selected");
+                    .closest(".timeline-groups-text").addClass("selected").width(this.$el.width());
             },
 
             /**
