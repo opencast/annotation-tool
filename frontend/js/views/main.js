@@ -294,7 +294,8 @@ define(["jquery",
                     }],
                     settings: {
                         showPopoutIcon: false,
-                        showMaximiseIcon: false
+                        showMaximiseIcon: false,
+                        selectionEnabled: true
                     }
                 }, document.getElementById("main-container"));
 
@@ -450,7 +451,8 @@ define(["jquery",
                         return item.componentName === view;
                     })[0].remove();
                 } else {
-                    root.addChild(this.viewConfigs[view]);
+                    var parent = goldenLayout.selectedItem || root;
+                    parent.addChild(this.viewConfigs[view]);
                 }
             },
 
