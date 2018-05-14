@@ -34,13 +34,13 @@ All these events have to be triggered by the player adapter implementation.
 ## Status<a name="status"></a>
 Possible status:
 
-1. INITIALIZING 
+1. INITIALIZING
 * PLAYING
 * PAUSED
 * ENDED
 * ERROR_NETWORK
 * ERROR_UNSUPPORTED_MEDIA
-* ERROR_UNAUTHORIZED_ACCESS 
+* ERROR_UNAUTHORIZED_ACCESS
 * LOADING
 * SEEKING
 

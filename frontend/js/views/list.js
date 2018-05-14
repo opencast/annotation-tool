@@ -32,10 +32,11 @@ define(["jquery",
         "collections/annotations",
         "collections/tracks",
         "views/list-annotation",
+        "templates/list",
         "backbone",
         "bootstrap"],
 
-    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, template, Backbone) {
 
         "use strict";
 
@@ -49,14 +50,6 @@ define(["jquery",
          * @alias module:views-list.List
          */
         var List = Backbone.View.extend({
-
-            /**
-             * Annotations list container of the appplication
-             * @alias module:views-list.List#el
-             * @type {DOMElement}
-             */
-            el: $("div#list-container"),
-
             /**
              * Annotation views list
              * @alias module:views-list.List#annotationViews
@@ -99,7 +92,7 @@ define(["jquery",
              * @alias module:views-list.List#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
-            initialize: function () {
+            initialize: function (options) {
                 // Bind functions to the good context
                 _.bindAll(this, "render",
                                "addTrackList",
@@ -116,22 +109,27 @@ define(["jquery",
                                "expandAll",
                                "renderSelect",
                                "collapseAll",
-                               "updateView");
+                               "updateView",
+                               "potentiallyOpenCurrentItems");
 
                 this.annotationViews = [];
                 this.tracks          = annotationTool.video.get("tracks");
                 this.playerAdapter   = annotationTool.playerAdapter;
 
-                this.scrollableArea = this.$el.find("#content-list-scroll");
-                this.$list = this.scrollableArea.find("#content-list");
-
                 this.listenTo(this.tracks, "change:access", this.render);
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
-                this.addTrackList(this.tracks.getVisibleTracks());
-
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
+
+                this.autoExpand = options.autoExpand;
+                annotationTool.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
+
+                this.$el.html(template());
+                this.scrollableArea = this.$el.find("#content-list-scroll");
+                this.$list = this.scrollableArea.find("#content-list");
+
+                this.addTrackList(this.tracks.getVisibleTracks());
 
                 this.render();
 
@@ -161,11 +159,10 @@ define(["jquery",
 
                 this.stopListening(ann);
 
-                this.listenTo(ann, "add", $.proxy(function (newAnnotation) {
+                this.listenTo(ann, "add", _.bind(function (newAnnotation) {
                     this.addAnnotation(newAnnotation, annotationTrack);
                 }, this));
 
-                this.listenTo(ann, "destroy", this.removeOne);
                 this.listenTo(ann, "change:start change:duration", this.updateView);
 
                 this.addList(ann.toArray(), annotationTrack, _.isNumber(index) && index === (this.tracks.length - 1));
@@ -375,21 +372,6 @@ define(["jquery",
             },
 
             /**
-             * Remove the given annotation from the views list
-             * @alias module:views-list.List#removeOne
-             * @param {Annotation} Annotation from which the view has to be deleted
-             */
-            removeOne: function (delAnnotation) {
-                _.find(this.annotationViews, function (annotationView, index) {
-                    if (delAnnotation === annotationView.model) {
-                        this.annotationViews.splice(index, 1);
-                        return true;
-                    }
-                    return false;
-                }, this);
-            },
-
-            /**
              * Sort all the annotations in the list by start time
              * @alias module:views-list.List#sortViewsByTime
              */
@@ -436,6 +418,26 @@ define(["jquery",
             },
 
             /**
+             * Listener for player "timeupdate" event to open the current annotations in the list view
+             * @alias module:views-list.List#potentiallyOpenCurrentItems
+             */
+            potentiallyOpenCurrentItems: function () {
+                var previousAnnotations = [];
+                return function () {
+                    if (!this.autoExpand) return;
+
+                    _.each(previousAnnotations, function (annotation) {
+                        this.getViewFromAnnotation(annotation.id).collapse(true);
+                    }, this);
+                    var currentAnnotations = annotationTool.getCurrentAnnotations();
+                    _.each(currentAnnotations, function (annotation) {
+                        this.getViewFromAnnotation(annotation.id).expand(true);
+                    }, this);
+                    previousAnnotations = currentAnnotations;
+                };
+            }(),
+
+            /**
              * Display the list
              * @alias module:views-list.List#render
              */
@@ -476,6 +478,17 @@ define(["jquery",
 
                 this.annotationViews = [];
                 this.$el.find("#content-list").empty();
+            },
+
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-list.List#remove
+             */
+            remove: function () {
+                _.each(this.annotationViews, function (annotationView) {
+                    annotationView.remove();
+                });
+                Backbone.View.prototype.remove.call(this);
             }
         });
 

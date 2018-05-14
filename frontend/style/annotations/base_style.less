@@ -135,11 +135,13 @@ body {
     }
 }
 
-.nav-tabs > .active > button, .nav-tabs > .active > button:hover {
-    background-color: @white;
-    border: none;
-    padding-bottom: 4px;
-    margin-bottom: 0px;
+.nav-tabs > .active > button {
+    &, &:hover, &:focus {
+        background-color: @white;
+        border: none;
+        padding-bottom: 4px;
+        margin-bottom: 0px;
+    }
 }
 
 // Elements
@@ -164,4 +166,21 @@ input, textarea, select, .uneditable-input {
 
 .popover-content > p {
     margin: 0;
+}
+
+.dropdown-menu {
+    .opt-view {
+
+        display: flex;
+
+        span {
+            padding-left: 1em;
+            padding-right: 1em;
+            flex-grow: 1;
+        }
+
+        &.checked .drag-source {
+            display: none;
+        }
+    }
 }

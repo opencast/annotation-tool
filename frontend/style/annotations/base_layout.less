@@ -3,20 +3,32 @@
  */
 
 body {
-    padding-top: 30px;
-    padding-bottom: 10px;
+    height: 100vh;
     overflow: hidden;
 }
 
-div#main-container {
-    padding-left: 10px;
-    padding-right: 10px;
+#screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#main-container {
+    flex-grow: 1;
+    // This would normally be unnecessary in a flexbox layout/
+    // but GoldenLayout seems to need this to recalculate its size.
+    height: 100%;
+}
+
+.lm_content .window {
+    height: 100%;
+}
+
+.navbar {
+    margin: 0;
 }
 
 .window {
-    // Windows are hidden by default; they are shown in the Backbone view code, based on the layout
-    display: none;
-
     background-color: @gray;
     border: 2px solid @grayDark;
     .standard_border_radius;
@@ -25,9 +37,14 @@ div#main-container {
         .navbar-text;
     }
 
+    display: flex;
+    flex-direction: column;
+    > :not(.navbar) {
+        flex-grow: 1;
+    }
+
     margin-bottom: 8px;
     overflow: hidden;
-    max-height: 40%;
 
     .navbar {
         margin-bottom: 0px;

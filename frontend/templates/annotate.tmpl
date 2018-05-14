@@ -1,0 +1,43 @@
+<div class="window expanded" id="annotate-container">
+
+    <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container">
+                <span class="window-title">{{t "annotate on"}}</span>
+                <span class='currentTrack'>
+                    <span class="content">{{t "annotate.no selected track"}}</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="no-track">{{t "annotate.select track prompt"}}</div>
+
+    <div class="control-group" id="annotate-form">
+
+        <div id="input-container" class="insert-fields annotate">
+            <textarea
+                id="new-annotation"
+                placeholder="{{t "annotate.new.placeholder"}}"
+                title="{{t "annotate.new.title"}}"
+                rows="3"
+            ></textarea>
+            <div class="stop-fields">
+                <label class="checkbox inline">
+                    <input id="pause-video" type="checkbox"> <span>{{t "annotate.pause while editing"}}</span>
+                </label>
+            </div>
+            <button id="insert" type="button" class="btn">{{t "annotate.insert"}}</button>
+        </div>
+
+        <div id="categories" class="annotate">
+            <ul class="nav nav-tabs" id="label-tabs-buttons">
+                <label class="checkbox inline" id="editSwitch">
+                    <input type="checkbox" value="option1"> <span>{{t "annotate.edit mode"}}</span>
+                </label>
+            </ul>
+
+            <div class="tab-content" id="label-tabs-contents"></div>
+        </div>
+    </div>
+</div>

@@ -131,12 +131,13 @@
       "track management": "$t(track management.action)",
       "head": "View",
       "views": {
-        "annotate view": "Annotate view",
+        "annotate view": "$t(views.annotate)",
         "head": "Views",
-        "list view": "List view",
-        "loop controller": "Loop controller"
+        "list view": "$t(views.list)",
+        "loop controller": "$t(views.loop)"
       },
-      "auto expand": "Automatically expand active annotations"
+      "auto expand": "Automatically expand active annotations",
+      "drag here": "Drag icon to place element"
     }
   },
   "new label defaults": {
@@ -210,9 +211,6 @@
     }
   },
   "startup": {
-    "creating annotation view": "Creating annotate view.",
-    "creating list view": "Creating list view.",
-    "creating timeline": "Creating timeline.",
     "creating views": "Start creating views.",
     "get current user": "Get current user.",
     "get users saved locally": "Get users saved locally.",
@@ -307,6 +305,13 @@
       "placeholder": "Insert your nickname"
     },
     "remember me": "Remember me"
+  },
+  "views": {
+    "annotate": "Create new annotations",
+    "list": "Annotation list",
+    "loop": "Loop controller",
+    "timeline": "Timeline",
+    "player": "Player"
   },
   "version": "Version: {{version}}",
   "common actions": {

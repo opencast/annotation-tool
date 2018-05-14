@@ -1,5 +1,5 @@
 #timeline-container {
-    background-color: @white;
+    height: 100%;
 
     .navbar {
         margin: 0;
@@ -10,10 +10,18 @@
     }
 }
 
+#timeline-content {
+    display: flex;
+    flex-direction: column;
+}
+
+#timeline {
+    flex-grow: 1;
+}
+
 .item-id, .annotation-id, .group-id, .track-id, .timeline-navigation-new {
     display: none;
 }
-
 
 i.check {
     visibility: hidden;
@@ -43,7 +51,6 @@ div.timeline-groups-text {
     z-index: 1;
     background-color: white;
     position: absolute;
-    width: 2000px;
     top: -6px;
     padding: 0;
 
@@ -123,7 +130,7 @@ div.timeline-customtime {
     width: 1px;
 }
 
-div.timeline-navigation{
+div.timeline-navigation {
     display: block;
     z-index: 4;
     height: 22px;
@@ -167,7 +174,7 @@ div#timeline-custom-navigation {
     height: 20px;
     border: none;
     border-top: 1px solid @grayDark;
-    //border-bottom: 2px solid @grayDark;
+    border-bottom: 2px solid @grayDark;
     border-radius: 0;
     background-color: @grayLight;
     position: relative!important;
@@ -212,14 +219,9 @@ div#reset-zoom, div#move-left, div#move-right, div#zoom-in, div#zoom-out {
     float: left;
 }
 
-div.timeline-frame {
-    border: none;
-    border-top: 1px solid @gray;
-
-    > div:first-child {
-        z-index: 2;
-        border-left: 2px solid @gray;
-    }
+div.timeline-frame > div:first-child {
+    z-index: 2;
+    border-left: 2px solid @gray;
 }
 
 div.timeline-groups-axis {
@@ -320,6 +322,7 @@ div#timeline {
     overflow-x: hidden;
     overflow-y: auto!important;
     min-height: 55px!important;
+    background-color: @white;
 }
 
 div.timeline-frame > div:first-child > div:first-child {

@@ -3,13 +3,15 @@
 	<div class="pagination pagination-centered" style="display:none">
 	<ul>
 		<li><button type="button" id="carousel-prev">&lt;</button></li>
+		{{> pagination-bullet number=1}}
 		<li><button type="button" id="carousel-next">&gt;</button></li>
 	</ul>
 	</div>
 </div>
 
-
-<div id="{{id}}" class="carousel slide">
+<div class="carousel slide">
 	<!-- Carousel items -->
-	<div class="carousel-inner"></div>
+	<div class="carousel-inner">
+		{{> carousel-item}}
+	</div>
 </div>

@@ -59,6 +59,7 @@ define(["jquery",
         "models/video",
         "roles",
         "backbone",
+        "goldenlayout",
         "handlebars",
         "localstorage",
         "bootstrap"],
@@ -85,9 +86,12 @@ define(["jquery",
         Track,
         Video,
         ROLES,
-        Backbone
+        Backbone,
+        GoldenLayout
     ) {
         "use strict";
+
+        var goldenLayout;
 
         /**
          * @constructor
@@ -106,18 +110,11 @@ define(["jquery",
             el: $("body"),
 
             /**
-             * The player adapter passed during initialization part
-             * @alias module:views-main.MainView#playerAdapter
-             * @type {playerAdapter}
-             */
-            playerAdapter: null,
-
-            /**
              * jQuery element for the loading box
              * @alias module:views-main.MainView#loadingBox
              * @type {DOMElement}
              */
-            loadingBox: $("div#loading"),
+            loadingBox: $("#loading"),
 
             /**
              * Events to handle by the main view
@@ -125,13 +122,15 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #export"              : "export",
-                "click #about"               : "about",
-                "click #logout"              : "onLogout",
-                "click #print"               : "print",
-                "click .opt-layout"          : "layoutUpdate",
-                "click .opt-tracks-select"   : "tracksSelection",
-                "click #opt-auto-expand"     : "toggleAutoExpand"
+                "click #export": "export",
+                "click #about": "about",
+                "click #logout": "onLogout",
+                "click #print": "print",
+                "click #opt-annotate-text": "toggleFreeTextAnnotations",
+                "click #opt-annotate-categories": "toggleStructuredAnnotations",
+                "click .opt-tracks-select": "tracksSelection",
+                "click #opt-auto-expand": "toggleAutoExpand",
+                "click .opt-view": "toggleView",
             },
 
             /**
@@ -140,8 +139,7 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
-                _.bindAll(this, "layoutUpdate",
-                                "createViews",
+                _.bindAll(this, "createViews",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print",
@@ -163,8 +161,6 @@ define(["jquery",
 
                 this.listenTo(annotationTool, "deleteAnnotation", annotationTool.deleteAnnotation);
 
-                annotationTool.onWindowResize = this.onWindowResize;
-                $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
                 this.once(MainView.EVENTS.READY, function () {
@@ -197,75 +193,191 @@ define(["jquery",
              * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
-                this.setLoadingProgress(40, i18next.t("startup.creating views"));
+                var views = [
+                    "player",
+                    "timeline",
+                    "annotate",
+                    "list",
+                    "loop"
+                ];
 
-                $("#video-container").show();
-
-                this.setLoadingProgress(45, i18next.t("startup.loading video"));
-
-                // Initialize the player
-                annotationTool.playerAdapter.load();
-                this.setLoadingProgress(50, i18next.t("startup.initializing the player"));
-
-                annotationTool.views.main = this;
-
-                /**
-                 * Loading the video dependent views
-                 */
-                var loadVideoDependentViews = $.proxy(function () {
-
-                    this.layoutConfiguration = _.clone(annotationTool.getLayoutConfiguration());
-                    for (var view in this.layoutConfiguration) {
-                        this.$el.find("#opt-view-" + view).each(_.bind(function (index, element) {
-                            if (this.layoutConfiguration[view]) {
-                                $(element).addClass("checked");
-                            } else {
-                                $(element).removeClass("checked");
-                            }
-                        }, this));
+                var closableViews = ["list", "annotate", "loop"];
+                this.viewConfigs = _.object(_.map(views, function (view) { return [
+                    view, {
+                        type: "component",
+                        componentName: view,
+                        title: i18next.t("views." + view)
                     }
+                ]; }));
+                _.each(_.difference(views, closableViews), function (view) {
+                    this.viewConfigs[view].isClosable = false;
+                }, this);
+
+                var viewMenuItems = _.object(_.map(closableViews, function (view) { return [
+                    view, $(".opt-view[data-view=" + view + "]")
+                ]; }));
+
+                function disableViewMenuItem(view) {
+                    viewMenuItems[view].addClass("checked");
+                }
+                var layoutConfiguration = annotationTool.getLayoutConfiguration();
+                _.each(closableViews, function (view) {
+                    if (layoutConfiguration[view]) {
+                        disableViewMenuItem(view);
+                    }
+                }, this);
+
+                var loadVideoDependentViews = _.bind(function () {
+
+                    var layout = goldenLayout.root.contentItems[0];
+
+                    var leftColumn = layout.contentItems[0];
+                    leftColumn.addChild(this.viewConfigs.timeline);
+
+                    if (_.some(_.values(layoutConfiguration))) {
+                        layout.addChild({
+                            type: "column",
+                            content: _.chain(views)
+                                .filter(function (view) {
+                                    return layoutConfiguration[view];
+                                })
+                                .map(function (views) {
+                                    return this.viewConfigs[views];
+                                }, this)
+                                .value()
+                        });
+                    }
+
+                    _.each(closableViews, function (view) {
+                        goldenLayout.createDragSource(
+                            viewMenuItems[view].find(".drag-source"),
+                            this.viewConfigs[view]
+                        );
+                    }, this);
+
+                    var viewOptionsDropdown = $("#view-options .dropdown-toggle");
+                    $("#view-options .dropdown-menu").mouseleave(function (event) {
+                        if (event.buttons & 1) {
+                            // Note that we explicitly assume the menu to be open!
+                            // Otherwise, how would this event ever happen?
+                            viewOptionsDropdown.dropdown("toggle");
+                        }
+                    });
 
                     this.setLoadingProgress(60, i18next.t("startup.creating views"));
-
-                    // Create views with Timeline
-                    this.setLoadingProgress(70, i18next.t("startup.creating timeline"));
-                    this.timelineView = new TimelineView({ playerAdapter: annotationTool.playerAdapter });
-                    annotationTool.views.timeline = this.timelineView;
-                    if (this.layoutConfiguration.timeline) {
-                        this.timelineView.$el.show();
-                    }
-
-                    this.loopController = new LoopView();
-                    annotationTool.loopFunction = this.loopController;
-                    if (this.layoutConfiguration.loop) {
-                        this.loopController.$el.show();
-                    }
-
-                    // Create view to annotate
-                    this.setLoadingProgress(80, i18next.t("startup.creating annotation view"));
-                    this.annotateView = new AnnotateView({ playerAdapter: annotationTool.playerAdapter });
-                    annotationTool.views.annotate = this.annotateView;
-                    if (this.layoutConfiguration.annotate) {
-                        this.annotateView.$el.show();
-                    }
-
-                    // Create annotations list view
-                    this.setLoadingProgress(90, i18next.t("startup.creating list view"));
-                    this.listView = new ListView();
-                    annotationTool.views.list = this.listView;
-                    if (this.layoutConfiguration.list) {
-                        this.listView.$el.show();
-                    }
 
                     this.ready();
                 }, this);
 
+                this.setLoadingProgress(40, i18next.t("startup.creating views"));
 
-                if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
-                    loadVideoDependentViews();
-                } else {
-                    $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY, loadVideoDependentViews);
+                // Get a reference to the calling object for use in closures.
+                // Note that `bind`- and `proxy`-like things do not work with GoldenLayout
+                // since it calls its component factories as constructors.
+                // The curious shall meditate on the following example:
+                //
+                //     var Foo = _.bind(function () { console.log(this.foo); }, { foo: 42 });
+                //     var foo = new Foo();
+                //
+                var self = this;
+                goldenLayout = new GoldenLayout({
+                    // Since most of the views depend on the player,
+                    // we initially only create that view
+                    // and add the others dynamically later,
+                    // once the video has loaded.
+                    content: [{
+                        type: "row",
+                        content: [{
+                            type: "column",
+                            content: [this.viewConfigs.player]
+                        }]
+                    }],
+                    settings: {
+                        showPopoutIcon: false,
+                        showMaximiseIcon: false,
+                        selectionEnabled: true
+                    }
+                }, document.getElementById("main-container"));
+
+                goldenLayout.registerComponent("player", function (container, componentState) {
+
+                    container.on("resize", function () {
+                        annotationTool.playerAdapter.resetSize();
+                    });
+
+                    annotationTool.once(annotationTool.EVENTS.VIDEO_LOADED, function () {
+                        if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
+                            loadVideoDependentViews();
+                        } else {
+                            $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY, loadVideoDependentViews);
+                        }
+                    });
+
+                    self.setLoadingProgress(50, i18next.t("startup.loading video"));
+
+                    annotationTool.loadVideo(container.getElement()[0]);
+                });
+
+                var timelineView;
+
+                goldenLayout.registerComponent("timeline", function (container, componentState) {
+                    container.on("resize", function () {
+                        timelineView.onWindowResize();
+                    });
+
+                    timelineView = new TimelineView({
+                        el: container.getElement(),
+                        playerAdapter: annotationTool.playerAdapter
+                    });
+                });
+
+                this.views = {};
+
+                function registerClosableComponent(view, setup) {
+                    return goldenLayout.registerComponent(view, function (container) {
+                        $(".opt-" + view).show();
+                        self.views[view] = setup.apply(this, arguments);
+
+                        container.on("destroy", function () {
+
+                            viewMenuItems[view].removeClass("checked");
+                            viewMenuItems[view].prop("disabled", false);
+
+                            $(".opt-" + view).hide();
+
+                            self.views[view].remove();
+                            delete self.views[view];
+                        });
+
+                        disableViewMenuItem(view);
+                    });
                 }
+
+                registerClosableComponent("list", function (container) {
+                    return new ListView({
+                        el: container.getElement(),
+                        autoExpand: $("#opt-auto-expand").hasClass("checked")
+                    });
+                });
+                registerClosableComponent("annotate", function (container) {
+                    return new AnnotateView({
+                        playerAdapter: annotationTool.playerAdapter,
+                        el: container.getElement(),
+                        freeText: $("#opt-annotate-text").hasClass("checked"),
+                        categories: $("#opt-annotate-categories").hasClass("checked")
+                    });
+                });
+
+                registerClosableComponent("loop", function (container) {
+                    return new LoopView({
+                        el: container.getElement(),
+                        playerAdapter: annotationTool.playerAdapter,
+                        timeline: timelineView
+                    });
+                });
+
+                this.setLoadingProgress(50, i18next.t("startup.initializing the player"));
+                goldenLayout.init();
             },
 
             /**
@@ -276,15 +388,12 @@ define(["jquery",
                 this.setLoadingProgress(100, i18next.t("startup.ready"));
                 this.loadingBox.hide();
                 this.onWindowResize();
+                $(window).resize(this.onWindowResize);
 
                 this.setupKeyboardShortcuts();
 
                 // Show logout button
                 $("#logout").css("display", "block");
-
-                if (this.layoutConfiguration.timeline) {
-                    this.timelineView.redraw();
-                }
 
                 this.trigger(MainView.EVENTS.READY);
             },
@@ -295,18 +404,19 @@ define(["jquery",
              */
             setupKeyboardShortcuts: function () {
 
-                var setActiveAnnotationDuration = _.bind(function () {
+                var setActiveAnnotationDuration = function () {
                     if (!annotationTool.activeAnnotation) return;
 
                     var currentTime = annotationTool.playerAdapter.getCurrentTime();
                     var start = annotationTool.activeAnnotation.get("start");
                     annotationTool.activeAnnotation.set("duration", currentTime - start);
                     annotationTool.activeAnnotation.save();
-                }, this);
+                };
 
                 var addComment = _.bind(function () {
                     if (!annotationTool.activeAnnotation) return;
-                    var annotationView = this.listView.getViewFromAnnotation(
+                    if (!this.views.list) return;
+                    var annotationView = this.views.list.getViewFromAnnotation(
                         annotationTool.activeAnnotation.get("id")
                     );
                     annotationView.toggleCommentsState();
@@ -327,6 +437,23 @@ define(["jquery",
                     event.preventDefault();
                     addComment();
                 });
+            },
+
+            /**
+             * Add/remove a view from the layout
+             * @param {Event} event The event
+             */
+            toggleView: function (event) {
+                var view = event.currentTarget.dataset.view;
+                var root = goldenLayout.root.contentItems[0];
+                if (this.views[view]) {
+                    root.getItemsByFilter(function (item) {
+                        return item.componentName === view;
+                    })[0].remove();
+                } else {
+                    var parent = goldenLayout.selectedItem || root;
+                    parent.addChild(this.viewConfigs[view]);
+                }
             },
 
             /**
@@ -394,54 +521,21 @@ define(["jquery",
             },
 
             /**
-             * Set the layout of the tools following the option selected in the menu
-             * @alias module:views-main.MainView#layoutUpdate
+             * Enable/disable the free text annotations pane in the annotate view
+             * @alias module:views-main.MainView#toggleFreeTextAnnotations
              */
-            layoutUpdate: function (event) {
-                var enabled = !$(event.target).hasClass("checked"),
-                    layoutElement = event.currentTarget.id.replace("opt-", ""),
-                    checkMainLayout = _.bind(function () {
-                        if (!this.layoutConfiguration.annotate && !this.layoutConfiguration.list) {
-                            $("#left-column").removeClass("span6");
-                            $("#left-column").addClass("span12");
-                        } else {
-                            $("#left-column").addClass("span6");
-                            $("#left-column").removeClass("span12");
-                        }
-                        annotationTool.views.timeline.redraw();
-                    }, this);
+            toggleFreeTextAnnotations: function () {
+                $("#opt-annotate-text").toggleClass("checked");
+                this.views.annotate.toggleFreeTextAnnotations();
+            },
 
-                if (enabled) {
-                    $(event.target).addClass("checked");
-                } else {
-                    $(event.target).removeClass("checked");
-                }
-
-                var isView = false;
-                var view = layoutElement.replace(/^view-/, function () { isView = true; return ""; });
-                if (isView) this.layoutConfiguration[view] = enabled;
-
-                switch (layoutElement) {
-
-                case "annotate-text":
-                    this.annotateView.enableFreeTextLayout(enabled);
-                    break;
-                case "annotate-categories":
-                    this.annotateView.enableCategoriesLayout(enabled);
-                    break;
-                case "view-annotate":
-                    annotationTool.views.annotate.$el.fadeToggle();
-                    checkMainLayout();
-                    break;
-                case "view-list":
-                    annotationTool.views.list.$el.fadeToggle();
-                    checkMainLayout();
-                    break;
-                case "view-loop":
-                    annotationTool.loopFunction.$el.fadeToggle();
-                    break;
-                }
-                this.onWindowResize();
+            /**
+             * Enable/disable the structured annotations pane in the annotate view
+             * @alias module:views-main.MainView#toggleStructuredAnnotations
+             */
+            toggleStructuredAnnotations: function () {
+                $("#opt-annotate-categories").toggleClass("checked");
+                this.views.annotate.toggleStructuredAnnotations();
             },
 
             /**
@@ -450,7 +544,7 @@ define(["jquery",
              */
             toggleAutoExpand: function (event) {
                 $(event.currentTarget).toggleClass("checked");
-                annotationTool.autoExpand = !annotationTool.autoExpand;
+                this.views.list.autoExpand = !this.views.list.autoExpand;
             },
 
             /**
@@ -507,25 +601,9 @@ define(["jquery",
              * @alias module:views-main.MainView#onWindowResize
              */
             onWindowResize: function () {
-                var listContent,
-                    windowHeight = $(window).height(),
-                    annotationsContainerHeight = $("#annotate-container").height(),
-                    loopFunctionHeight = this.layoutConfiguration.loop
-                        ? annotationTool.loopFunction.$el.height() + 180
-                        : 145,
-                    videoContainerHeight = $("#video-container").height();
-
-
-                // TODO: improve this part with a better layout management, more generic
-                if (this.layoutConfiguration.annotate && this.layoutConfiguration.list) {
-                    listContent = this.listView.$el.find("#content-list-scroll");
-                    listContent.css("max-height", windowHeight - annotationsContainerHeight - 120);
-                }
-
-                if (this.layoutConfiguration.timeline) {
-                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
-                }
+                goldenLayout.updateSize();
             },
+
             /**
              * Update loading box with given percent & message
              * @alias module:views-main.MainView#setLoadingProgress

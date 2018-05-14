@@ -25,7 +25,7 @@ define(["jquery",
         "player-adapter",
         "mediaelementplayer"],
 
-    function ($, PlayerAdapter) {
+    function ($, PlayerAdapter, mejs) {
 
         "use strict";
 
@@ -42,7 +42,7 @@ define(["jquery",
             var self = this;
 
             // Check if the given target Element is valid
-            if (typeof targetElement === "undefined" || targetElement === null || !(targetElement instanceof HTMLElement)) {
+            if (!(targetElement instanceof HTMLElement)) {
                 throw "The given target element must not be null and have to be a vaild HTMLElement!";
             }
 
@@ -67,6 +67,8 @@ define(["jquery",
              */
             this.initialized = false;
 
+            var mediaElementPlayer;
+
             /**
              * Initilize the player adapter
              * @inner
@@ -76,8 +78,9 @@ define(["jquery",
                 targetElement.style.width = "100%";
                 targetElement.style.height = "100%";
 
-                $(targetElement).mediaelementplayer({
+                mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
                     alwaysShowControls: true,
+                    stretching: "fill",
                     success: function (mediaElement) {
                         if (sources) {
                             mediaElement.setSrc(sources);
@@ -240,6 +243,13 @@ define(["jquery",
              */
             this.getStatus = function () {
                 return self.status;
+            };
+
+            /**
+             * Make the player fill its container
+             */
+            this.resetSize = function () {
+                mediaElementPlayer.resetSize();
             };
 
             return this.init();

@@ -23,6 +23,7 @@
  * @requires player-adapter
  * @requires models-annotation
  * @requires collections-annotations
+ * @requires templates/timeline.tmpl
  * @requires templates/timeline-group.tmpl
  * @requires templates/timeline-item.tmpl
  * @requires templates/timeline-placeholder.tmpl
@@ -44,6 +45,7 @@ define(["util",
         "models/track",
         "collections/annotations",
         "collections/tracks",
+        "templates/timeline",
         "templates/timeline-group",
         "templates/timeline-item",
         "templates/timeline-placeholder",
@@ -56,7 +58,7 @@ define(["util",
         "handlebarsHelpers"
     ],
 
-       function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
+       function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, template, GroupTmpl,
             ItemTmpl, PlaceholderTmpl, ModalGroupTmpl, ACCESS, ROLES, Backbone, links) {
 
         "use strict";
@@ -79,14 +81,6 @@ define(["util",
          * @alias module:views-timeline.TimelineView
          */
         var Timeline = Backbone.View.extend({
-
-            /**
-             * Main container of the timeline
-             * @alias module:views-timeline.TimelineView#el
-             * @type {DOMElement}
-             */
-            el: "#timeline-container",
-
             /**
              * Group template
              * @alias module:views-timeline.TimelineView#groupTemplate
@@ -265,6 +259,8 @@ define(["util",
 
                 this.playerAdapter = attr.playerAdapter;
 
+                this.$el.html(template());
+
                 // Type use for delete operation
                 this.typeForDeleteAnnotation = annotationTool.deleteOperation.targetTypes.ANNOTATION;
                 this.typeForDeleteTrack = annotationTool.deleteOperation.targetTypes.TRACK;
@@ -291,7 +287,6 @@ define(["util",
                     showMajorLabels  : false,
                     snapEvents       : false,
                     stackEvents      : true,
-                    minHeight        : "200",
                     axisOnTop        : true,
                     groupsWidth      : "150px",
                     animate          : true,
@@ -314,7 +309,7 @@ define(["util",
                 this.timeline.draw([], this.options);
 
                 // Ensure that the timeline is redraw on window resize
-                $(window).bind("resize", this.onWindowResize);
+                $(window).resize(this.onWindowResize);
 
                 annotationTool.addTimeupdateListener(this.onPlayerTimeUpdate, 1);
 
@@ -428,9 +423,9 @@ define(["util",
                     this.onSelectionUpdate(annotationTool.getSelection());
                     this.updateDraggingCtrl();
                 }
-                if (annotationTool.selectedTrack) {
-                    this.markTrackSelected(annotationTool.selectedTrack);
-                }
+                this.markTrackSelected(annotationTool.selectedTrack);
+
+                this.$el.find(".timeline-groups-text").width(this.$el.width());
             },
 
             /**
@@ -569,15 +564,11 @@ define(["util",
              * Add a new item to the timeline
              * @param {string}  id           The id of the item
              * @param {object}  item         The object representing the item
-             * @param {Boolean} isPartOfList Define if the object is part of a group insertion
              * @alias module:views-timeline.TimelineView#addItem
              */
-            addItem: function (id, item, isPartOfList) {
+            addItem: function (id, item) {
                 item.group = "<!-- extra -->" + item.group;
                 this.extraItems[id] = item;
-                if (!isPartOfList) {
-                    this.redraw();
-                }
             },
 
             /**
@@ -585,11 +576,8 @@ define(["util",
              * @param  {string} id The id of the item to remove
              * @alias module:views-timeline.TimelineView#removeItem
              */
-            removeItem: function (id, refresh) {
+            removeItem: function (id) {
                 delete this.extraItems[id];
-                if (refresh) {
-                    this.redraw();
-                }
             },
 
             /**
@@ -1555,9 +1543,10 @@ define(["util",
              * @param {Track} The track to be selected
              */
             markTrackSelected: function (track) {
+                if (!track) return;
                 this.$el.find("div.selected").removeClass("selected");
                 this.$el.find(".timeline-group[data-id='" + track.id + "']")
-                    .closest(".timeline-groups-text").addClass("selected");
+                    .closest(".timeline-groups-text").addClass("selected").width(this.$el.width());
             },
 
             /**

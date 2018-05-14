@@ -22,11 +22,11 @@ All these improvements have been merged to the develop branch. There are still s
 ###7.3.2014
 The tool has been further optimised in relation with the tickets [#394](https://github.com/entwinemedia/annotations/issues/394) and [#393](https://github.com/entwinemedia/annotations/issues/393). The following optimisation have been implemented
 * New possible behaviour for the timeline during playback: Time-range half-static, keeps no more the playhead in the middle but moves when the playhead is no more in visible range. For more information about how it works, pleaser read [this comment on ticket #394](https://github.com/entwinemedia/annotations/issues/394#issuecomment-37014487).
-* Lazy-loading for annotations comments to avoid to reduce the number of GET request on launch time and therefore improve the tool start time.  
+* Lazy-loading for annotations comments to avoid to reduce the number of GET request on launch time and therefore improve the tool start time.
 
 ###3.2.2014
 Related to the tickets [#394](https://github.com/entwinemedia/annotations/issues/394), [#392](https://github.com/entwinemedia/annotations/issues/392), the tool has been optimised with the following modifications:
-* Limit the annotations to draw on the timeline to the annotations 
+* Limit the annotations to draw on the timeline to the annotations
   * in the visible tracks.
   * in the current timerange.
 * Optimise the filters (reduce the number of loops).

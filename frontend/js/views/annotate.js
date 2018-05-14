@@ -24,7 +24,8 @@
  * @requires models-annotation
  * @requires collections-annotations
  * @requires collections-categories
- * @requires templates/annotate-tab-title.tmpl
+ * @requires templates/annotate
+ * @requires templates/annotate-tab-title
  * @requires ROLES
  * @requires ACCESS
  * @requires handlebars
@@ -38,27 +39,22 @@ define(["jquery",
         "collections/annotations",
         "collections/categories",
         "views/annotate-tab",
+        "templates/annotate",
         "templates/annotate-tab-title",
         "roles",
         "access",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
+    function ($, _, i18next, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, template, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
 
         "use strict";
-
-        /**
-         * Prefix for the name of the categories tab id
-         * @type {String}
-         */
-        var TAB_LINK_PREFIX = "#labelTab-",
 
         /**
          * List of default tabs, each object contains an id, name and an array of roles
          * @type {Object}
          */
-        DEFAULT_TABS = {
+        var DEFAULT_TABS = {
             ALL: {
                 id    : "all",
                 name  : i18next.t("annotate.categories.all"),
@@ -95,14 +91,6 @@ define(["jquery",
          * @alias module:views-annotate.Annotate
          */
         Annotate = Backbone.View.extend({
-
-            /**
-             * Main container of the annotate view
-             * @alias module:views-annotate.Annotate#el
-             * @type {DOMElement}
-             */
-            el: $("div#annotate-container"),
-
             /**
              * Events to handle by the annotate view
              * @alias module:views-annotate.Annotate#events
@@ -113,7 +101,7 @@ define(["jquery",
                 "click #insert": "insert",
                 "keydown #new-annotation": "onFocusIn",
                 "focusout #new-annotation": "onFocusOut",
-                "click #label-tabs-buttons a": "showTab",
+                "click #label-tabs-buttons button": "showTab",
                 "click #editSwitch": "onSwitchEditModus"
             },
 
@@ -123,20 +111,6 @@ define(["jquery",
              * @type {HandlebarsTemplate}
              */
             tabsButtonTemplate: TabsButtonTemplate,
-
-            /**
-             * Element containing the tabs buttons
-             * @alias module:views-annotate.Category#tabsButtonsElement
-             * @type {DOMElement}
-             */
-            tabsButtonsElement: $("ul#label-tabs-buttons"),
-
-            /**
-             * Element containing the tabs contents
-             * @alias module:views-annotate.Category#tabsContainerElement
-             * @type {DOMElement}
-             */
-            tabsContainerElement: $("div#label-tabs-contents"),
 
             /**
              * Define if the view is or not in edit modus.
@@ -187,52 +161,43 @@ define(["jquery",
                             "checkToContinueVideo",
                             "switchEditModus",
                             "keydownOnAnnotate",
-                            "enableCategoriesLayout",
-                            "enableFreeTextLayout");
+                            "toggleFreeTextAnnotations",
+                            "toggleStructuredAnnotations");
 
                 // Parameter for stop on write
                 this.continueVideo = false;
+
+                this.$el.html(template());
 
                 // New annotation input
                 this.input = this.$el.find("#new-annotation");
                 this.freeTextElement = this.$el.find("#input-container");
                 this.categoriesElement = this.$el.find("#categories");
+                this.tabsButtonsElement = this.$el.find("ul#label-tabs-buttons");
+                this.tabsContainerElement = this.$el.find("div#label-tabs-contents");
 
                 // Print selected track
                 this.trackDIV = this.$el.find("span.currentTrack");
                 this.changeTrack(annotationTool.selectedTrack);
 
                 this.tracks = annotationTool.video.get("tracks");
-                this.tracks.bind("selected_track", this.changeTrack, this);
+                this.listenTo(this.tracks, "selected_track", this.changeTrack);
                 this.playerAdapter = attr.playerAdapter;
 
-                if (annotationTool.isStructuredAnnotationEnabled()) {
-                    categories = annotationTool.video.get("categories");
+                this.layout = _.pick(attr, "freeText", "categories");
+                if (!this.layout.freeText) this.freeTextElement.hide();
+                if (!this.layout.categories) this.categoriesElement.hide();
 
-                    annotationTool.colorsManager.updateColors(categories.models);
+                categories = annotationTool.video.get("categories");
 
-                    _.each(DEFAULT_TABS, function (params) {
-                        this.addTab(categories, params);
-                    }, this);
-                } else {
-                    this.layout.categories = false;
-                    this.categoriesElement.hide();
-                    this.$el.find("#annotate-categories").parent().hide();
-                }
+                annotationTool.colorsManager.updateColors(categories.models);
 
-                if (!annotationTool.isFreeTextEnabled()) {
-                    this.layout.freeText = false;
-                    this.freeTextElement.hide();
-                    this.$el.find("#annotate-text").parent().hide();
-                }
-
-                this.$el.find("#annotate-full").addClass("checked");
+                _.each(DEFAULT_TABS, function (params) {
+                    this.addTab(categories, params);
+                }, this);
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
                 this.tabsButtonsElement.find("button:first-child").parent().first().addClass("active");
-
-                // Add backbone events to the model
-                _.extend(this, Backbone.Events);
             },
 
             /**
@@ -266,7 +231,7 @@ define(["jquery",
                 annotationTool.createAnnotation({ text: value });
 
                 if (this.continueVideo) {
-                    annotationTool.playerAdapter.play();
+                    this.playerAdapter.play();
                 }
 
                 this.input.val("");
@@ -283,23 +248,17 @@ define(["jquery",
             changeTrack: function (track) {
                 // If the track is valid, we set it
                 if (track) {
-                    this.input.attr("disabled", false);
-
-                    if (this.layout.freeText) {
-                        this.freeTextElement.show();
-                    }
-
-                    if (this.layout.categories) {
-                        this.categoriesElement.show();
-                    }
-
+                    // TODO Until we update jQuery, we can't use `show` and `hide` here,
+                    //   since our current jQuery version does not preserve
+                    //   the `display` property correctly.
+                    this.$el.find(".annotate").css("display", "");
                     this.$el.find(".no-track").hide();
+
                     this.trackDIV.html(track.get("name"));
+
                 } else {
                     // Otherwise, we disable the input and inform the user that no track is set
-                    this.freeTextElement.hide();
-                    this.categoriesElement.hide();
-                    this.input.attr("disabled", true);
+                    this.$el.find(".annotate").css("display", "none");
                     this.$el.find(".no-track").show();
                     this.trackDIV.html("<span>" + i18next.t("annotate.no selected track") + "</span>");
                 }
@@ -311,7 +270,7 @@ define(["jquery",
              * @alias module:views-annotate.Annotate#onFocusIn
              */
             onFocusIn: function () {
-                if (!this.$el.find("#pause-video").attr("checked") || (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
+                if (!this.$el.find("#pause-video").attr("checked") || (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
                     return;
                 }
 
@@ -319,7 +278,7 @@ define(["jquery",
                 this.playerAdapter.pause();
 
                 // If the video is moved, or played, we do no continue the video after insertion
-                $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
+                $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
                     this.continueVideo = false;
                 });
             },
@@ -337,7 +296,7 @@ define(["jquery",
              * @alias module:views-annotate.Annotate#checkToContinueVideo
              */
             checkToContinueVideo: function () {
-                if ((annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
+                if ((this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
                     this.continueVideo = false;
                     this.playerAdapter.play();
                 }
@@ -349,9 +308,7 @@ define(["jquery",
              * @param {Event} event Event object
              */
             showTab: function (event) {
-                var tabId = event.currentTarget.dataset.target;
-
-                tabId = tabId.replace(TAB_LINK_PREFIX, "");
+                var tabId = event.currentTarget.dataset.tabid;
 
                 $(event.currentTarget).one("shown", _.bind(function () {
                     this.categoriesTabs[tabId].initCarousel();
@@ -382,6 +339,7 @@ define(["jquery",
                 newButton = $(newButton).appendTo(this.tabsButtonsElement);
                 params.button = newButton;
 
+                params.id = "labelTab-" + params.id;
                 annotateTab = new AnnotateTab(params);
 
                 this.categoriesTabs[attr.id] = annotateTab;
@@ -413,52 +371,40 @@ define(["jquery",
             switchEditModus: function (status) {
                 this.editModus = status;
 
-                this.$el.toggleClass("edit-on", status);
+                this.$el.find("#annotate-container").toggleClass("edit-on", status);
 
                 // trigger an event that all element switch in edit modus
                 annotationTool.trigger(annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, status);
             },
 
             /**
-             * Enable layout for free text annotation only
-             * @alias module:views-annotate.Annotate#enableFreeTextLayout
-             * @param {boolean} [enabled] Define if the layout must be enable or disable
+             * Toggle layout for free text annotation only
+             * @alias module:views-annotate.Annotate#toggleFreeTextAnnotations
              */
-            enableFreeTextLayout: function (enabled) {
-                if (_.isUndefined(enabled)) {
-                    this.layout.freeText = !this.layout.freeText;
-                } else if (this.layout.freeText == enabled) {
-                    return;
-                } else {
-                    this.layout.freeText = enabled;
-                }
-
-                if (this.layout.freeText && annotationTool.isFreeTextEnabled()) {
-                    this.freeTextElement.show();
-                } else {
-                    this.freeTextElement.hide();
-                }
+            toggleFreeTextAnnotations: function () {
+                this.layout.freeText = !this.layout.freeText;
+                // TODO You might have to adapt this as well
+                this.freeTextElement.toggle();
             },
 
             /**
-             * Enable layout for labels annotation
-             * @alias module:views-annotate.Annotate#enableCategoriesLayout
-             * @param {boolean} [enabled] Define if the layout must be enable or disable
+             * Toggle layout for labels annotation
+             * @alias module:views-annotate.Annotate#toggleStructuredAnnotations
              */
-            enableCategoriesLayout: function (enabled) {
-                if (_.isUndefined(enabled)) {
-                    this.layout.categories = !this.layout.categories;
-                } else if (this.layout.categories == enabled) {
-                    return;
-                } else {
-                    this.layout.categories = enabled;
-                }
+            toggleStructuredAnnotations: function () {
+                this.layout.categories = !this.layout.categories;
+                this.categoriesElement.toggle();
+            },
 
-                if (this.layout.categories && annotationTool.isStructuredAnnotationEnabled()) {
-                    this.categoriesElement.show();
-                } else {
-                    this.categoriesElement.hide();
-                }
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-annotate.Annotate#remove
+             */
+            remove: function () {
+                _.each(this.categoriesTabs, function (categoriesTab) {
+                    categoriesTab.remove();
+                });
+                return Backbone.View.prototype.remove.apply(this, arguments);
             }
         });
 

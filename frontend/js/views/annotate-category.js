@@ -122,7 +122,6 @@ define(["jquery",
                 // Set the current context for all these functions
                 _.bindAll(this,
                   "onDeleteCategory",
-                  "deleteView",
                   "addLabels",
                   "addLabel",
                   "render",
@@ -157,14 +156,13 @@ define(["jquery",
                 labels = this.model.get("labels");
                 this.listenTo(labels, "add", this.addLabel);
                 this.listenTo(labels, "remove", this.removeOne);
-                this.listenTo(labels, "destroy", this.removeOne);
                 this.listenTo(this.model, "change", this.onChange);
 
                 if (_.contains(this.roles, annotationTool.user.get("role"))) {
                     this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
                 }
 
-                $(window).bind("resize", this.updateInputWidth);
+                $(window).bind("resize.annotate-category", this.updateInputWidth);
 
                 //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
@@ -249,16 +247,6 @@ define(["jquery",
              */
             onDeleteCategory: function () {
                 annotationTool.deleteOperation.start(this.model, this.typeForDelete);
-            },
-
-            /**
-             * Delete only this category view
-             * @alias module:views-annotate-category.CategoryView#deleteView
-             */
-            deleteView: function () {
-                this.remove();
-                this.undelegateEvents();
-                this.deleted = true;
             },
 
             /**
@@ -413,6 +401,18 @@ define(["jquery",
                 this.delegateEvents(this.events);
 
                 return this;
+            },
+
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-annotate-category.CategoryView#remove
+             */
+            remove: function () {
+                _.each(this.labelViews, function (labelView) {
+                    labelView.remove();
+                });
+                $(window).unbind(".annotate-category");
+                Backbone.View.prototype.remove.call(this);
             }
         });
 

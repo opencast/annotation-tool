@@ -52,7 +52,7 @@ define(["jquery",
          * The main object of the annotations tool
          * @namespace annotationTool
          */
-        var annotationTool = window.annotationTool = _.extend(_.clone(Backbone.Events), {
+        var annotationTool = window.annotationTool = _.extend({}, Backbone.Events, {
 
             EVENTS: {
                 ANNOTATION_SELECTION : "at:annotation-selection",
@@ -154,8 +154,7 @@ define(["jquery",
                           "setSelectionById",
                           "addTimeupdateListener",
                           "removeTimeupdateListener",
-                          "updateSelectionOnTimeUpdate",
-                          "potentiallyOpenCurrentItems");
+                          "updateSelectionOnTimeUpdate");
 
                 _.extend(this, config);
 
@@ -163,7 +162,6 @@ define(["jquery",
                 this.initDeleteModal();
 
                 this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
-                this.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
                 this.currentSelection = [];
 
@@ -171,31 +169,18 @@ define(["jquery",
 
                 this.colorsManager = new ColorsManager();
 
-
                 this.once(this.EVENTS.USER_LOGGED, function () {
 
                     $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
 
-                    this.loadVideo(document.getElementById("video-container"));
-
                     this.fetchData();
                 }, this);
-                this.once(this.EVENTS.VIDEO_LOADED, function () {
 
-                    if (!(this.playerAdapter instanceof PlayerAdapter)) {
-                        throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
-                    }
-                    var typeErrors = this.playerAdapter.typeErrors();
-                    if (typeErrors) {
-                        throw _.map(typeErrors, function (method) {
-                            return "- " + method + " is not a function";
-                        }).join("\n");
-                    }
-
-                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
+                this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                    this.views.main = new MainView();
                 }, this);
 
-                var importTracks = _.after(2, function () {
+                var importTracks = function () {
 
                     var updateTracksOrder = _.bind(function (tracks) {
                         this.tracksOrder = _.chain(tracks.getVisibleTracks())
@@ -227,15 +212,21 @@ define(["jquery",
                             );
                         }
                     }
-                }, this);
+                };
+                importTracks = _.after(2, importTracks, this);
                 this.once(this.EVENTS.MODELS_INITIALIZED, importTracks);
                 this.once(this.EVENTS.VIDEO_LOADED, importTracks);
 
-                var createMainView = _.after(2, function () {
-                    this.views.main = new MainView();
+                this.once(this.EVENTS.VIDEO_LOADED, function () {
+
+                    if (!(this.playerAdapter instanceof PlayerAdapter)) {
+                        throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
+                    }
+
+                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
+
+                    this.playerAdapter.load();
                 }, this);
-                this.once(this.EVENTS.VIDEO_LOADED, createMainView);
-                this.once(this.EVENTS.MODELS_INITIALIZED, createMainView);
 
                 this.authenticate();
             },
@@ -356,27 +347,22 @@ define(["jquery",
              * @param {Number} (interval) the interval between each timeupdate event
              */
             addTimeupdateListener: function (callback, interval) {
-                var timeupdateEvent = this.EVENTS.TIMEUPDATE,
-                    value,
-                    i = 0;
+                var timeupdateEvent = this.EVENTS.TIMEUPDATE;
 
                 if (!_.isUndefined(interval)) {
                     timeupdateEvent += ":" + interval;
 
                     // Check if the interval needs to be added to list
-                    for (i = 0; i < this.timeupdateIntervals.length; i++) {
-                        value = this.timeupdateIntervals[i];
-
-                        if (value.interval === interval) {
-                            return;
-                        }
+                    // TODO Use `findWhere` once that is available
+                    if (!_.find(this.timeupdateIntervals, function (value) {
+                        return value.interval === interval;
+                    }, this)) {
+                        // Add interval to list
+                        this.timeupdateIntervals.push({
+                            interval: interval,
+                            lastUpdate: 0
+                        });
                     }
-
-                    // Add interval to list
-                    this.timeupdateIntervals.push({
-                        interval: interval,
-                        lastUpdate: 0
-                    });
                 }
 
                 this.listenTo(this, timeupdateEvent, callback);
@@ -598,30 +584,6 @@ define(["jquery",
 
                 this.setSelection(this.getCurrentAnnotations(), false);
             },
-
-            /**
-             * Listener for player "timeupdate" event to open the current annotations in the list view
-             * @alias   annotationTool.potentiallyOpenCurrentItems
-             */
-            potentiallyOpenCurrentItems: function () {
-                var previousAnnotations = [];
-
-                return function () {
-                    if (!this.autoExpand) return;
-
-                    var listView = this.views.main.listView;
-                    if (!listView) return;
-
-                    _.each(previousAnnotations, function (annotation) {
-                        listView.getViewFromAnnotation(annotation.id).collapse(true);
-                    });
-                    var currentAnnotations = this.getCurrentAnnotations();
-                    _.each(currentAnnotations, function (annotation) {
-                        listView.getViewFromAnnotation(annotation.id).expand(true);
-                    });
-                    previousAnnotations = currentAnnotations;
-                };
-            }(),
 
             //////////////
             // CREATORs //
@@ -967,7 +929,7 @@ define(["jquery",
                             });
 
                             createDefaultTrack();
-                        } else { // With Rest storage
+                        } else { // With REST storage
                             videos.add({ video_extid: videoExtId });
                             video = videos.at(0);
                             this.video = video;

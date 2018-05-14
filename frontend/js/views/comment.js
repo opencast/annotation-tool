@@ -98,8 +98,6 @@ define(["jquery",
                           "stopPropagation",
                           "render");
 
-                _.extend(this, Backbone.Events);
-
                 this.isEditEnable = !!attr.isEditEnable;
 
                 // Type use for delete operation
@@ -128,7 +126,6 @@ define(["jquery",
              */
             deleteView: function () {
                 this.remove();
-                this.undelegateEvents();
                 this.deleted = true;
             },
 
@@ -246,6 +243,15 @@ define(["jquery",
                 this.$el.find(".replies").first().append(this.replyContainer.render().el);
                 this.delegateEvents(this.events);
                 return this;
+            },
+
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-comment.Comment#remove
+             */
+            remove: function () {
+                this.replyContainer.remove();
+                Backbone.View.prototype.remove.call(this);
             }
         });
         return CommentView;

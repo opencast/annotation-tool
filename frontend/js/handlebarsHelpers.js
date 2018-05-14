@@ -11,7 +11,6 @@ define(["handlebars", "underscore", "i18next", "util", "roles"], function (Handl
     });
 
     Handlebars.registerHelper("greater", function (value1, value2, options) {
-        console.log(value1 + " type " + typeof value1);
         if (value1 > value2) {
             return options.fn(this);
         } else {

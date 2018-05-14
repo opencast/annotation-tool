@@ -96,8 +96,7 @@ define(["jquery",
              * @alias module:views-list-annotation.ListAnnotation#initialize
              */
             initialize: function (attr) {
-                var category,
-                    self = this;
+                var category;
 
                 if (!attr.annotation) {
                     throw "The annotations have to be given to the annotate view.";
@@ -124,8 +123,6 @@ define(["jquery",
                                 "getState",
                                 "handleEsc");
 
-                _.extend(this, Backbone.Events);
-
                 this.model = attr.annotation;
 
                 this.id = this.model.get("id");
@@ -133,16 +130,14 @@ define(["jquery",
                 this.commentContainer = new CommentsContainer({
                     collection: this.model.get("comments")
                 });
-                this.commentContainer.on({
-                    cancel: function () {
-                        self.trigger("cancel", self);
-                        self.toggleCommentsState();
-                    },
-                    edit: function () {
-                        self.trigger("edit", self);
-                        self.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
-                        self.render();
-                    }
+                this.listenTo(this.commentContainer, "cancel", function () {
+                    this.trigger("cancel", this);
+                    this.toggleCommentsState();
+                });
+                this.listenTo(this.commentContainer, "edit", function () {
+                    this.trigger("edit", this);
+                    this.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
+                    this.render();
                 });
 
                 this.model.fetchComments();
@@ -161,14 +156,10 @@ define(["jquery",
                     this.scaleValues = this.scale.get("scaleValues");
                 }
 
-                // Add backbone events to the model
-                _.extend(this.model, Backbone.Events);
-
                 this.listenTo(this.model, "change", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);
                 this.listenTo(this.model.get("comments"), "remove", this.render);
                 this.listenTo(this.model, "destroy", this.deleteView);
-                this.listenTo(this.model, "remove", this.deleteView);
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.ANNOTATION;
@@ -230,7 +221,6 @@ define(["jquery",
              */
             deleteView: function () {
                 this.remove();
-                this.undelegateEvents();
                 this.deleted = true;
             },
 
@@ -463,7 +453,7 @@ define(["jquery",
                 modelJSON.track        = this.track.get("name");
                 modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
                 modelJSON.duration     = (modelJSON.duration || 0.0);
-                modelJSON.textHeight   = $("span.freetext").height();
+                modelJSON.textHeight   = this.$el.find("span.freetext").height();
 
                 if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                     category = annotationTool.video.get("categories").get(this.model.get("label").category.id);
@@ -683,6 +673,15 @@ define(["jquery",
                 if (event.keyCode === 27 && !event.shiftKey && this.getState() === ListAnnotation.STATES.EDIT) {
                     this.toggleExpandedState(event, true);
                 }
+            },
+
+            /**
+             * Remove this view from the DOM and clean up all of its data and event handlers
+             * @alias module:views-list-annotation.ListAnnotation#remove
+             */
+            remove: function () {
+                this.commentContainer.remove();
+                Backbone.View.prototype.remove.call(this);
             }
         }, {
 
