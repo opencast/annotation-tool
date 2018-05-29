@@ -114,7 +114,7 @@ define(["jquery",
 
                 this.annotationViews = [];
                 this.tracks          = annotationTool.video.get("tracks");
-                this.playerAdapter   = annotationTool.playerAdapter;
+                this.playerAdapter   = options.playerAdapter;
 
                 this.listenTo(this.tracks, "change:access", this.render);
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
