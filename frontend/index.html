@@ -34,6 +34,7 @@
                   <span data-i18n="menu.view.head"></span> <b class="caret"></b>
                 </button>
                 <ul class="dropdown-menu">
+                  <!-- TODO Why do these headers have the class `opt-annotate`? -->
                   <li class="opt-annotate menu-category" data-i18n="menu.view.annotate.head"></li>
                   <li class="opt-annotate"><button type="button" id="opt-annotate-text" class="checked">
                     <i class="check icon-check"></i>
@@ -62,6 +63,9 @@
                     <span data-i18n="menu.view.views.loop controller"></span>
                     <i data-i18n="[title]menu.view.drag here" class="drag-source icon icon-move"></i>
                   </button></li>
+
+                  <li role="presentation" class="opt-list divider"></li>
+                  <li class="menu-category" id="templates-menu" data-i18n="menu.view.templates.head"></li>
 
                   <li role="presentation" class="opt-list divider"></li>
 

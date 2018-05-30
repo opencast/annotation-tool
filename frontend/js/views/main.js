@@ -131,6 +131,7 @@ define(["jquery",
                 "click .opt-tracks-select": "tracksSelection",
                 "click #opt-auto-expand": "toggleAutoExpand",
                 "click .opt-view": "toggleView",
+                "click .opt-template": "loadTemplate"
             },
 
             /**
@@ -209,9 +210,106 @@ define(["jquery",
                         title: i18next.t("views." + view)
                     }
                 ]; }));
+
+                // The loop controller does not need to be very high by default.
+                // In fact it looks rather strange if it is.
+                this.viewConfigs.loop.height = 15;
+
                 _.each(_.difference(views, closableViews), function (view) {
                     this.viewConfigs[view].isClosable = false;
                 }, this);
+                var viewConfig = _.bind(function (view) {
+                    return this.viewConfigs[view];
+                }, this);
+
+                var templates = {
+                    default: {
+                        type: "row",
+                        content: [{
+                            type: "column",
+                            content: [
+                                "player",
+                                "timeline"
+                            ].map(viewConfig)
+                        }, {
+                            type: "column",
+                            content: [
+                                "annotate",
+                                "list"
+                            ].map(viewConfig)
+                        }]
+                    },
+                    "with loops": {
+                        type: "row",
+                        content: [{
+                            type: "column",
+                            content: [
+                                "player",
+                                "loop",
+                                "timeline"
+                            ].map(viewConfig)
+                        }, {
+                            type: "column",
+                            content: [
+                                "annotate",
+                                "list"
+                            ].map(viewConfig)
+                        }]
+                    },
+                    alternative: {
+                        type: "row",
+                        content: [{
+                            type: "column",
+                            content: [
+                                "player",
+                                "annotate"
+                            ].map(viewConfig)
+                        }, {
+                            type: "column",
+                            content: [
+                                "timeline",
+                                "list"
+                            ].map(viewConfig)
+                        }]
+                    },
+                    reviewing: {
+                        type: "column",
+                        content: [{
+                            type: "row",
+                            content: [
+                                "player",
+                                "annotate"
+                            ].map(viewConfig)
+                        }, this.viewConfigs.timeline]
+                    },
+                    "fullscreen timeline": {
+                        type: "stack",
+                        content: [
+                            "timeline",
+                            "player"
+                        ].map(viewConfig)
+                    }
+                };
+
+                // Create menu items for the templates
+                //   Note that this should no longer be necessary
+                //   once the index is (mostly) rendered using a template as well.
+                $("#templates-menu").after(
+                    _.map([
+                        // Note that we explicitly **list** the templates here
+                        //   instead of relying on the keys of the above map
+                        //   to impose an order!
+                        "default",
+                        "with loops",
+                        "alternative",
+                        "reviewing",
+                        "fullscreen timeline"
+                    ], function (template) {
+                        return '<li><button class="opt-template" type="button" data-template="' + template + '">' +
+                            i18next.t("menu.view.templates." + template) +
+                            '</button></li>';
+                    }).join("")
+                );
 
                 var viewMenuItems = _.object(_.map(closableViews, function (view) { return [
                     view, $(".opt-view[data-view=" + view + "]")
@@ -220,15 +318,6 @@ define(["jquery",
                 function disableViewMenuItem(view) {
                     viewMenuItems[view].addClass("checked");
                 }
-                var layoutConfiguration = annotationTool.getLayoutConfiguration();
-                _.each(closableViews, function (view) {
-                    if (layoutConfiguration[view]) {
-                        disableViewMenuItem(view);
-                    }
-                }, this);
-
-                var loadVideoDependentViews = _.bind(function () {
-                }, this);
 
                 this.setLoadingProgress(40, i18next.t("startup.creating views"));
 
@@ -242,32 +331,9 @@ define(["jquery",
                 //
                 var self = this;
 
-                var pickViews = _.bind(function (views) {
-                    return _.chain(views)
-                        .filter(function (view) {
-                            return !(view in layoutConfiguration) || layoutConfiguration[view];
-                        })
-                        .map(function (view) { return this.viewConfigs[view]; }, this)
-                        .value();
-                }, this);
+                var layout = localStorage.getItem("layout") || "default";
                 goldenLayout = new GoldenLayout({
-                    content: [{
-                        type: "row",
-                        content: [{
-                            type: "column",
-                            content: pickViews([
-                                "player",
-                                "timeline",
-                                "loop"
-                            ])
-                        }, {
-                            type: "column",
-                            content: pickViews([
-                                "annotate",
-                                "list"
-                            ])
-                        }]
-                    }],
+                    content: [templates[layout]],
                     settings: {
                         showPopoutIcon: false,
                         showMaximiseIcon: false,
@@ -405,7 +471,16 @@ define(["jquery",
                     });
                 });
 
-                var numberVisibleViews = pickViews(views).length;
+                function visibleChildren(config) {
+                    if (config.type === "component") {
+                        return 1;
+                    } else {
+                        return config.content
+                            .map(visibleChildren)
+                            .reduce(function (acc, n) { return acc + n; });
+                    }
+                }
+                var numberVisibleViews = visibleChildren(goldenLayout.config.content[0]);
                 this.listenTo(this, "view", _.after(numberVisibleViews, function () {
 
                     _.each(closableViews, function (view) {
@@ -498,6 +573,9 @@ define(["jquery",
                 var view = event.currentTarget.dataset.view;
                 var root = goldenLayout.root.contentItems[0];
                 if (this.views[view]) {
+                    // Note that the objects returned by `ContentItem#getComponentsByName`
+                    // unfortunately do now allow for their own removal from the layout,
+                    // hence our copying some of the functionality of that method.
                     root.getItemsByFilter(function (item) {
                         return item.componentName === view;
                     })[0].remove();
@@ -505,6 +583,15 @@ define(["jquery",
                     var parent = goldenLayout.selectedItem || root;
                     parent.addChild(this.viewConfigs[view]);
                 }
+            },
+
+            /**
+             * Load the specified layout template
+             * @param {Event} event The event
+             */
+            loadTemplate: function (event) {
+                localStorage.setItem("layout", event.currentTarget.dataset.template);
+                location.reload();
             },
 
             /**

@@ -119,20 +119,6 @@ define(["jquery",
          */
         var Configuration = {
             /**
-             * List of possible layout configuration
-             * @memberOf module:annotation-tool-configuration.Configuration
-             * @type {Object}
-             */
-            LAYOUT_CONFIGURATION: {
-                /** default configuration */
-                DEFAULT: {
-                    list     : true,
-                    annotate : true,
-                    loop     : false
-                }
-            },
-
-            /**
              * The minmal duration used for annotation representation on timeline
              * @alias module:annotation-tool-configuration.Configuration.MINIMAL_DURATION
              * @memberOf module:annotation-tool-configuration.Configuration
@@ -190,14 +176,6 @@ define(["jquery",
             },
 
             tracksToImport: undefined,
-
-            /**
-             * Get the tool layout configuration
-             * @return {object} The tool layout configuration
-             */
-            getLayoutConfiguration: function () {
-                return this.LAYOUT_CONFIGURATION.DEFAULT;
-            },
 
             /**
              * Define if the structured annotations are or not enabled
