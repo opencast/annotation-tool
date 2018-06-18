@@ -135,6 +135,7 @@
       },
       "templates": {
         "head": "Layouts",
+        "custom": "Eigenes",
         "default": "Standard",
         "with loops": "Mit Schleifen",
         "alternative": "Alternativ",
