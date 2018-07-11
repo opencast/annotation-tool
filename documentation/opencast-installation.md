@@ -30,9 +30,9 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 This should build the frontend, include it into the Opencast modules and copies the JARs
 to your Opencast installation.
 
-Note that if you build with `opencast.version` set to something `>= 5`, you also have to specify
-`-Dopencast.artifactPrefix=opencast` because of the transition away from the `matterhorn` name
-between versions `4` and `5`.
+Note that if you build with `opencast.version` set to something `<= 4`, you also have to specify
+`-Dopencast.artifactPrefix="matterhorn-" -Dopencast.osgi.jndi.service.name=jdbc/matterhorn` because
+of the transition away from the `matterhorn` name between versions `4` and `5`.
 
 #### As a Karaf Feature
 
@@ -110,7 +110,7 @@ Users are only allowed to access the annotation tool if the have the action `ann
 
 ### Adding Distribution to Annotation Tool to the Workflow
 
-Although the Annotation Tool can access a recording when it shows up in the Opencast search service, the Annotation Tool can also be added to the list of publications for an event. 
+Although the Annotation Tool can access a recording when it shows up in the Opencast search service, the Annotation Tool can also be added to the list of publications for an event.
 
 Within the `etc/workflows/ng-partial-publish` you need to add this operation to the `<operations>` section. It is recommended to add it after the "publish-engage" operation.
 

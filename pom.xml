@@ -41,7 +41,8 @@
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
     <opencast.version>[2.3,)</opencast.version>
-    <opencast.artifactPrefix>matterhorn</opencast.artifactPrefix>
+    <opencast.artifactPrefix></opencast.artifactPrefix>
+    <opencast.osgi.jndi.service.name>jdbc/opencast</opencast.osgi.jndi.service.name>
   </properties>
 
   <modules>
