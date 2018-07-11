@@ -23,11 +23,11 @@
     </dependency>
     <dependency>
       <groupId>org.opencastproject</groupId>
-      <artifactId>${opencast.artifactPrefix}-common</artifactId>
+      <artifactId>${opencast.artifactPrefix}common</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opencastproject</groupId>
-      <artifactId>${opencast.artifactPrefix}-search-service-api</artifactId>
+      <artifactId>${opencast.artifactPrefix}search-service-api</artifactId>
       <version>${opencast.version}</version>
     </dependency>
     <!-- Logging -->
