@@ -339,7 +339,6 @@ define(["jquery",
                 } else {
                     layout = [templates.default];
                 }
-                console.log(templates.default);
                 goldenLayout = new GoldenLayout({
                     content: layout,
                     settings: {
