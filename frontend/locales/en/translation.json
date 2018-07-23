@@ -136,6 +136,14 @@
         "list view": "$t(views.list)",
         "loop controller": "$t(views.loop)"
       },
+      "templates": {
+        "head": "Layouts",
+        "default": "Standard",
+        "with loops": "With loops",
+        "alternative": "Alternative",
+        "reviewing": "Reviewing",
+        "fullscreen timeline": "Fullscreen timeline"
+      },
       "auto expand": "Automatically expand active annotations",
       "drag here": "Drag icon to place element"
     }

@@ -50,22 +50,6 @@ define(["jquery",
          * @alias module:annotation-tool-configuration.Configuration
          */
         var Configuration =  {
-
-            /**
-             * List of possible layout configuration
-             * @alias module:annotation-tool-configuration.Configuration.LAYOUT_CONFIGURATION
-             * @memberOf module:annotation-tool-configuration.Configuration
-             * @type {Object}
-             */
-            LAYOUT_CONFIGURATION: {
-                /** default configuration */
-                DEFAULT: {
-                    list     : true,
-                    annotate : true,
-                    loop     : false
-                }
-            },
-
             /**
              * The maximal number of tracks visible in the timeline at the same time
              * @type {Number}
@@ -101,14 +85,6 @@ define(["jquery",
              * @type {?object[]}
              */
             tracksToImport: undefined,
-
-            /**
-             * Get the tool layout configuration
-             * @return {object} The tool layout configuration
-             */
-            getLayoutConfiguration: function () {
-                return this.LAYOUT_CONFIGURATION.DEFAULT;
-            },
 
             /**
              * Define if the structured annotations are or not enabled

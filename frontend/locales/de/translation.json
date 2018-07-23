@@ -133,6 +133,14 @@
       "views": {
         "head": "Fenster",
       },
+      "templates": {
+        "head": "Layouts",
+        "default": "Standard",
+        "with loops": "Mit Schleifen",
+        "alternative": "Alternativ",
+        "reviewing": "Durchsehen",
+        "fullscreen timeline": "Vollbild-Zeitleiste"
+      },
       "auto expand": "Aktive Annotationen automatisch aufklappen",
       "drag here": "Icon ziehen, um das Element zu platzieren"
     }
