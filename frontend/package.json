@@ -27,6 +27,7 @@
     "grunt-processhtml": "^0.4.1",
     "i18next-parser": "^0.13.0",
     "ink-docstrap": "^1.3.0",
-    "less": "^1.7.5"
+    "less": "^1.7.5",
+    "mime": "^1.4.1"
   }
 }
