@@ -331,9 +331,17 @@ define(["jquery",
                 //
                 var self = this;
 
-                var layout = localStorage.getItem("layout") || "default";
+                var layout = localStorage.getItem("layout");
+                if (layout === "custom") {
+                    layout = JSON.parse(localStorage.getItem("layout-custom")).content;
+                } else if (layout in templates) {
+                    layout = [templates[layout]];
+                } else {
+                    layout = [templates.default];
+                }
+                console.log(templates.default);
                 goldenLayout = new GoldenLayout({
-                    content: [templates[layout]],
+                    content: layout,
                     settings: {
                         showPopoutIcon: false,
                         showMaximiseIcon: false,
@@ -503,6 +511,11 @@ define(["jquery",
                     this.stopListening(this, "view");
                 }));
 
+
+                goldenLayout.on("stateChanged", function (event) {
+                    localStorage.setItem("layout-custom", JSON.stringify(goldenLayout.toConfig()));
+                    localStorage.setItem("layout", "custom");
+                });
                 goldenLayout.init();
             },
 

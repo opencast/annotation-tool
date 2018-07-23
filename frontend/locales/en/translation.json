@@ -138,6 +138,7 @@
       },
       "templates": {
         "head": "Layouts",
+        "custom": "Custom",
         "default": "Standard",
         "with loops": "With loops",
         "alternative": "Alternative",
