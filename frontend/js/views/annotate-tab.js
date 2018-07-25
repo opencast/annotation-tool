@@ -261,6 +261,15 @@ define(["jquery",
                     extensions    : "*.json"
                 });
 
+                this.titleLink.find(".file").bind("click", function (event) {
+                    // We need to stop the propagation of this click event,
+                    // which we trigger ourselves in `chooseFile`
+                    // to open the file dialog,
+                    // up to the tab itself,
+                    // where it would be swallowed by Bootstrap
+                    // using `preventDefault`.
+                    event.stopPropagation();
+                });
                 this.titleLink.find(".file").bind("change", this.onImport);
 
                 this.listenTo(this.categories, "add", this.addCategory);
