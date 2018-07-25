@@ -239,7 +239,9 @@ define(["jquery",
             toExportJSON: function (withScale) {
                 var json = {
                     name: this.attributes.name,
-                    labels: this.attributes.labels.toExportJSON()
+                    labels: this.attributes.labels.map(function (label) {
+                        return label.toExportJSON();
+                    })
                 };
 
                 if (this.attributes.tags) {
