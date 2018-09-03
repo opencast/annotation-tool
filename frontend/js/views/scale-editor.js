@@ -400,10 +400,10 @@ define(["jquery",
                         },
                         // Refresh the list of scale values
                         renderScaleValues = function () {
-                            scaleValuesViews = _.where(scaleValuesViews, {isDeleted: false});
+                            scaleValuesViews = _.where(scaleValuesViews, { isDeleted: false });
                             scaleValuesViews = _.sortBy(scaleValuesViews, function (view) {
-                                                    return sortModelByOrderValue(view.model);
-                                                });
+                                return sortModelByOrderValue(view.model);
+                            });
 
                             this.$el.find(".list-scale-values").empty();
 

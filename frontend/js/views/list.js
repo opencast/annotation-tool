@@ -246,7 +246,7 @@ define(["jquery",
             updateView: function (annotation) {
                 var view = this.getViewFromAnnotation(annotation.get("id"));
 
-                // Remove the view in the list if the view index is valid 
+                // Remove the view in the list if the view index is valid
                 if (!_.isUndefined(view.index) && this.annotationViews[view.index] === view) {
                     this.annotationViews.splice(view.index, 1);
                 }

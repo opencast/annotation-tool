@@ -31,7 +31,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, CommentView, Template, Handlebars, Backbone) {
+    function ($, _, CommentView, template, Handlebars, Backbone) {
 
         "use strict";
 
@@ -63,7 +63,6 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#template
              * @type {HandlebarsTemplate}
              */
-            template: Template,
 
             /**
              * Events to handle
@@ -77,6 +76,7 @@ define(["jquery",
             },
 
             currentState: false,
+            template: template,
 
             /**
              * constructor

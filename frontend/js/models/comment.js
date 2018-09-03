@@ -89,7 +89,7 @@ define(["jquery",
                 });
                 if (invalidResource) return invalidResource;
 
-                if (attr.text &&  !_.isString(attr.text)) {
+                if (attr.text && !_.isString(attr.text)) {
                     return "\"text\" attribute must be a string!";
                 }
 

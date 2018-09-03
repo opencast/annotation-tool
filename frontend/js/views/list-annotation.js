@@ -266,20 +266,18 @@ define(["jquery",
              * @param  {event} event Event object
              */
             saveFreeText: function (event) {
-                var newValue = this.$el.find(".freetext textarea").val();
 
                 // If keydown event but not enter, value must not be saved
                 if (event.type === "keydown" && !(event.keyCode === 13 && !event.shiftKey)) {
                     return;
                 }
 
-                this.model.set({ text: newValue });
-                this.model.save();
+                var newValue = this.$el.find(".freetext textarea").val();
+                this.model.save({ text: newValue });
 
                 if (event.type === "keydown") {
                     $(event.currentTarget).blur();
                 }
-
                 this.toggleEditState(event);
             },
 
@@ -482,7 +480,6 @@ define(["jquery",
 
                 this.$el.html($(this.currentState.render(modelJSON)));
 
-                this.el = this.$el[0];
                 this.$el.attr("id", this.id);
 
                 if (!_.isUndefined(modelJSON.label) && !_.isNull(modelJSON.label)) {
@@ -602,8 +599,8 @@ define(["jquery",
             /**
              * Toggle the visibility of the text container
              * @alias module:views-list-annotation.ListAnnotation#toggleExpandedState
-             * @param  {event} event Event object
-             * @param  {boolean} force Force to expand state 
+             * @param {Event} event Event object
+             * @param {boolean} force Force to expand state
              */
             toggleExpandedState: function (event, force) {
                 if (!_.isUndefined(event) && !force) {

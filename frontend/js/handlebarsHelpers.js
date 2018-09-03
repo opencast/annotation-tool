@@ -94,7 +94,7 @@ define(["handlebars", "underscore", "i18next", "util", "roles"], function (Handl
      * @alias module:Handlebars#concat
      */
     Handlebars.registerHelper("concat", function () {
-	return Array.prototype.slice.call(arguments, 0, -1).join('');
+        return Array.prototype.slice.call(arguments, 0, -1).join('');
     });
 
     return Handlebars;
