@@ -170,17 +170,6 @@ define(["jquery",
             },
 
             /**
-             * Sort all the comments in the list by date
-             * @alias module:views-comments-container.CommentsContainer#sortViewsByDate
-             */
-            sortViewsByDate: function () {
-                this.commentViews = _.sortBy(this.commentViews, function (commentViews) {
-                    return commentViews.model.get("created_at");
-                });
-                this.render();
-            },
-
-            /**
              * Handle keyboard shortcuts to control the insert and cancel buttons in the new comment form.
              * @alias module:views-comments-container.CommentsContainer#handleInsertCancelButtonShortcuts
              * @param  {event} event Event object

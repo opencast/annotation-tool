@@ -104,7 +104,6 @@ define(["jquery",
                                "getViewFromAnnotation",
                                "editAnnotationCallback",
                                "insertView",
-                               "sortViewsbyTime",
                                "select",
                                "expandAll",
                                "renderSelect",
@@ -369,17 +368,6 @@ define(["jquery",
                 }
 
                 return undefined;
-            },
-
-            /**
-             * Sort all the annotations in the list by start time
-             * @alias module:views-list.List#sortViewsByTime
-             */
-            sortViewsbyTime: function () {
-                this.annotationViews = _.sortBy(this.annotationViews, function (annotationView) {
-                    return annotationView.model.get("start");
-                });
-                this.render();
             },
 
             /**

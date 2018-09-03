@@ -107,7 +107,6 @@ define(["jquery",
                                 "deleteFull",
                                 "deleteView",
                                 "onSelect",
-                                "startEdit",
                                 "saveStart",
                                 "saveEnd",
                                 "saveFreeText",
@@ -222,42 +221,6 @@ define(["jquery",
             deleteView: function () {
                 this.remove();
                 this.deleted = true;
-            },
-
-            /**
-             * Move the video current time to this annotation
-             * @alias module:views-list-annotation.ListAnnotation#jumpTo
-             */
-            jumpTo: function () {
-                annotationTool.setSelection([this.model], true);
-            },
-
-            /**
-             * Enter in edit modus
-             * @alias module:views-list-annotation.ListAnnotation#startEdit
-             * @param  {event} event Event object
-             */
-            startEdit: function (event) {
-                var $target = $(event.currentTarget).find("input");
-
-                if (event.stopImmediatePropagation) {
-                    event.stopImmediatePropagation();
-                }
-
-                if (!this.model.get("isMine")) {
-                    return;
-                }
-
-                // Hack for Firefox, add an button over it
-                if ($target.length === 0 && event.currentTarget.className.match(/-btn$/)) {
-                    $target = $(event.currentTarget).parent().find(".input");
-                    $(event.currentTarget).parent().find(".text-container span").hide();
-                }
-
-                if ($target.attr("disabled")) {
-                    $target.removeAttr("disabled");
-                    $target.focus();
-                }
             },
 
             /**

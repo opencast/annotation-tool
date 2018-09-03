@@ -1014,10 +1014,6 @@ define(["jquery",
 
                         success: function () {
                             if (annotationTool.localStorage) {
-                                if (target.collection) {
-                                    target.collection.remove(target);
-                                }
-
                                 annotationTool.video.save();
                             }
                             if (callback) {
