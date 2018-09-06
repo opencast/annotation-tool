@@ -90,7 +90,6 @@ define(["jquery",
                 // Bind function to the good context
                 _.bindAll(this,
                           "cancel",
-                          "deleteView",
                           "onDeleteComment",
                           "onEditComment",
                           "onSubmit",
@@ -108,15 +107,6 @@ define(["jquery",
                 this.replyContainer = new CommentsContainer({ collection: this.model.replies });
 
                 return this;
-            },
-
-            /**
-             * Delete only this comment
-             * @alias module:views-comment.Comment#deleteView
-             */
-            deleteView: function () {
-                this.remove();
-                this.deleted = true;
             },
 
             /**

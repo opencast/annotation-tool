@@ -66,13 +66,6 @@ define(["jquery",
             className: "annotation",
 
             /**
-             * Define if the view has been or not deleted
-             * @alias module:views-list-annotation.ListAnnotation#deleted
-             * @type {boolean}
-             */
-            deleted: false,
-
-            /**
              * Define if the comments container is currently visible
              * @alias module:views-list-annotation.ListAnnotation#commentsVisible
              * @type {Boolean}
@@ -106,7 +99,6 @@ define(["jquery",
                 // Bind function to the good context
                 _.bindAll(this, "render",
                                 "deleteFull",
-                                "deleteView",
                                 "onSelect",
                                 "saveStart",
                                 "saveEnd",
@@ -158,7 +150,7 @@ define(["jquery",
                 this.listenTo(this.model, "change", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);
                 this.listenTo(this.model.get("comments"), "remove", this.render);
-                this.listenTo(this.model, "destroy", this.deleteView);
+                this.listenTo(this.model, "destroy", this.remove);
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.ANNOTATION;
@@ -212,15 +204,6 @@ define(["jquery",
                     event.stopImmediatePropagation();
                 }
                 annotationTool.deleteOperation.start(this.model, this.typeForDelete);
-            },
-
-            /**
-             * Delete only this annotation view
-             * @alias module:views-list-annotation.ListAnnotation#deleteView
-             */
-            deleteView: function () {
-                this.remove();
-                this.deleted = true;
             },
 
             /**
@@ -405,10 +388,6 @@ define(["jquery",
                     category,
                     selectedScaleValue,
                     title;
-
-                if (this.deleted) {
-                    return "";
-                }
 
                 modelJSON              = this.model.toJSON();
                 modelJSON.track        = this.track.get("name");

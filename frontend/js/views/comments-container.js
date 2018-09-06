@@ -84,7 +84,7 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                this.commentViews        = [];
+                this.commentViews = [];
 
                 // Bind function to the good context
                 _.bindAll(this,
@@ -121,9 +121,9 @@ define(["jquery",
              */
             resetViews: function () {
                 _.each(this.commentViews, function (commentView, index) {
-                    this.commentViews.splice(index, 1);
-                    commentView.deleteView();
+                    commentView.remove();
                 }, this);
+                this.commentViews = [];
 
                 _.each(this.collection.toArray(), function (comment) {
                     this.addComment(comment);
@@ -161,7 +161,7 @@ define(["jquery",
                 _.find(this.commentViews, function (commentView, index) {
                     if (delComment === commentView.model) {
                         this.commentViews.splice(index, 1);
-                        commentView.deleteView();
+                        commentView.remove();
                         this.render();
                         return true;
                     }
