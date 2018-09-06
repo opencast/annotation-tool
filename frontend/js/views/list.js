@@ -102,7 +102,6 @@ define(["jquery",
                                "clearList",
                                "getPosition",
                                "getViewFromAnnotation",
-                               "editAnnotationCallback",
                                "insertView",
                                "select",
                                "expandAll",
@@ -185,7 +184,6 @@ define(["jquery",
                     return;
                 }
                 view = new AnnotationView({ annotation: annotation, track: track });
-                this.listenTo(view, "edit", this.editAnnotationCallback);
                 this.insertView(view);
 
                 if (!isPartofList) {
@@ -222,19 +220,6 @@ define(["jquery",
                     this.annotationViews[index - 1].$el.after(view.render().$el);
                 }
 
-            },
-
-            editAnnotationCallback: function (editView) {
-                _.each(this.annotationViews, function (view) {
-                    if (view.id !== editView.id) {
-                        var state = view.getState();
-                        if (state === AnnotationView.STATES.EDIT) {
-                            view.toggleEditState();
-                        } else if (state === AnnotationView.STATES.COMMENTS) {
-                            view.toggleCommentsState();
-                        }
-                    }
-                }, this);
             },
 
             /**
