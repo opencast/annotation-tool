@@ -51,20 +51,8 @@ define(["jquery",
              * @static
              */
             defaults: {
+                text: "",
                 access: ACCESS.PUBLIC
-            },
-
-            /**
-             * Constructor
-             * @alias module:models-comment.Comment#initialize
-             * @param {object} attr Object literal containing the model initialion attributes.
-             */
-            initialize: function (attr) {
-                if (!attr || _.isUndefined(attr.text)) {
-                    throw "'text' attribute is required";
-                }
-
-                Resource.prototype.initialize.apply(this, arguments);
             },
 
             /**
