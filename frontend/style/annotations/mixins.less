@@ -1,0 +1,10 @@
+// Explicitly instantiate the `#grid > .core` mixin from Bootstrap
+// for the default values of `@gridColumnWidth` and `@gridGutterWidth`,
+// to make Bootstrap 2 compatible with less 2
+#grid {
+    .core  {
+        .span(@gridColumns) {
+            width: (@gridColumnWidth * @gridColumns) + (@gridGutterWidth * (@gridColumns - 1));
+        }
+    }
+}

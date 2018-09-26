@@ -119,7 +119,8 @@ module.exports = function (grunt) {
                 paths: 'style',
                 syncImport: true,
                 compress: true,
-                sourceMap: { outputSourceFiles: true },
+                sourceMap: true,
+                sourceMapURL: '/style/style.css.map',
                 sourceMapBasepath: 'style'
             },
             files: {
