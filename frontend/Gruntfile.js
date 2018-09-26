@@ -117,7 +117,6 @@ module.exports = function (grunt) {
         less: {
             options: {
                 paths: 'style',
-                version: 'node_modules/less',
                 syncImport: true,
                 compress: true,
                 sourceMap: { outputSourceFiles: true },
@@ -422,13 +421,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-preprocess');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mkdir');
     grunt.loadNpmTasks('grunt-gulp');
-    grunt.loadNpmTasks('assemble-less');
 
 
     /** ================================================
