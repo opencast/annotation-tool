@@ -30,6 +30,7 @@
  */
 define(["jquery",
         "underscore",
+        "util",
         "i18next",
         "player-adapter",
         "models/annotation",
@@ -42,7 +43,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, User, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
+    function ($, _, util, i18next, PlayerAdapter, Annotation, User, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
 
         "use strict";
 
@@ -111,7 +112,6 @@ define(["jquery",
                                 "saveEnd",
                                 "saveFreeText",
                                 "saveScaling",
-                                "stopPropagation",
                                 "toggleEditState",
                                 "toggleCollapsedState",
                                 "toggleExpandedState",
@@ -510,15 +510,6 @@ define(["jquery",
             }, 100),
 
             /**
-             * Stop the propagation of the given event
-             * @alias module:views-list-annotation.ListAnnotation#stopPropagation
-             * @param  {event} event Event object
-             */
-            stopPropagation: function (event) {
-                event.stopImmediatePropagation();
-            },
-
-            /**
              * Switch in/out edit modus
              * @alias module:views-list-annotation.ListAnnotation#toggleEditState
              * @param  {event} event Event object
@@ -681,10 +672,10 @@ define(["jquery",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment": "toggleCommentsState",
                         "click .toggle-edit": "toggleEditState",
-                        "click .freetext textarea": "stopPropagation",
-                        "click .scaling select": "stopPropagation",
-                        "click .end-value": "stopPropagation",
-                        "click .start-value": "stopPropagation",
+                        "click .freetext textarea": util.stopPropagation,
+                        "click .scaling select": util.stopPropagation,
+                        "click .end-value": util.stopPropagation,
+                        "click .start-value": util.stopPropagation,
                         "click i.delete": "deleteFull",
                         "click button.in": "setCurrentTimeAsStart",
                         "click button.out": "setCurrentTimeAsEnd",

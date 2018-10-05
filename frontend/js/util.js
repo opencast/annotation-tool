@@ -159,10 +159,62 @@ var util = {
         .map(function (keyValuePair) { return keyValuePair.split("="); })
         .object()
         .mapObject(decodeURIComponent)
-        .value()
+        .value(),
+
+    /**
+     * A combinator calling the given method on its argument.
+     * @param {String} name The name of the method to call on the argument of the returned function
+     */
+    caller: function (name) {
+        return function (o) {
+            return o[name].apply(o, arguments);
+        };
+    },
+
+    /**
+     * A function mapping names to values
+     * @callback stringMap
+     * @param {String} a The name to return the value for
+     * @return The value belonging to the given key
+     */
+
+    /**
+     * Dynamically extend a given object with definitions for certain keys
+     * @param {Object} object The object to extend
+     * @param {String[]} properties The properties to add to the object
+     * @param {stringMap} definition A function mapping a property name to its definition
+     * @return {Object} The extended object
+     */
+    extend: function (object, properties, definition) {
+        return _.extend(object, _.object(_.map(properties, function (property) {
+            return [property, definition(property)];
+        })));
+    }
 };
 
-
+util.extend(util, [
+    /**
+     * Event handler to prevent the browser's default behavior
+     * @function preventDefault
+     * @static
+     * @param {Event} event The event to handle
+     */
+    "preventDefault",
+    /**
+     * Event handler to stop events from propagating further up/down the chain
+     * @function stopPropagation
+     * @static
+     * @param {Event} event The event to handle
+     */
+    "stopPropagation",
+    /**
+     * Event handler to stop the processing of an event completely
+     * @function stopImmediatePropagation
+     * @static
+     * @param {Event} event The event to handle
+     */
+    "stopImmediatePropagation"
+], util.caller);
 
 return util;
 

@@ -67,7 +67,7 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click": "stopPropagation",
+                "click": util.stopPropagation,
                 "click i.delete-comment": "onDeleteComment",
                 "dblclick span.comment": "onEditComment",
                 "click i.edit-comment": "onEditComment",
@@ -95,7 +95,6 @@ define(["jquery",
                           "onEditComment",
                           "onSubmit",
                           "onCancel",
-                          "stopPropagation",
                           "render");
 
                 this.isEditEnable = !!attr.isEditEnable;
@@ -109,15 +108,6 @@ define(["jquery",
                 this.replyContainer = new CommentsContainer({ collection: this.model.replies });
 
                 return this;
-            },
-
-            /**
-             * Stop the propagation of the given event
-             * @alias module:views-comment.Comment#stopPropagation
-             * @param  {event} event Event object
-             */
-            stopPropagation: function (event) {
-                event.stopImmediatePropagation();
             },
 
             /**
