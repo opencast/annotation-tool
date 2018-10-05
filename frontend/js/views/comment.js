@@ -106,6 +106,8 @@ define(["jquery",
 
                 this.replyContainer = new CommentsContainer({ collection: this.model.replies });
 
+                this.listenTo(this.model, "reply", this.render);
+
                 return this;
             },
 
