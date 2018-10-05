@@ -83,8 +83,8 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click .collapse-all"   : "collapseAll",
-                "click .expand-all"     : "expandAll"
+                "click .collapse-all": "collapseAll",
+                "click .expand-all": "expandAll"
             },
 
             /**
@@ -104,9 +104,7 @@ define(["jquery",
                                "getViewFromAnnotation",
                                "insertView",
                                "select",
-                               "expandAll",
                                "renderSelect",
-                               "collapseAll",
                                "updateView",
                                "potentiallyOpenCurrentItems");
 
@@ -176,7 +174,7 @@ define(["jquery",
             addAnnotation: function (annotation, track, isPartofList) {
                 var view;
 
-                // Wait that the id has be set to the model before to add it
+                // Wait that the id has been set on the model before to add it
                 if (_.isUndefined(annotation.get("id"))) {
                     annotation.once("ready", function () {
                         this.addAnnotation(annotation, track, isPartofList);
@@ -375,9 +373,7 @@ define(["jquery",
              * @alias module:views-list.List#expandAll
              */
             expandAll: function (event) {
-                _.each(this.annotationViews, function (annView) {
-                    annView.toggleExpandedState(event, true);
-                });
+                _.invoke(this.annotationViews, "expand");
             },
 
             /**
@@ -385,9 +381,7 @@ define(["jquery",
              * @alias module:views-list.List#collapseAll
              */
             collapseAll: function (event) {
-                _.each(this.annotationViews, function (annView) {
-                    annView.toggleCollapsedState(event, true);
-                });
+                _.invoke(this.annotationViews, "collapse");
             },
 
             /**

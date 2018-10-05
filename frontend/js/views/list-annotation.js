@@ -96,24 +96,6 @@ define(["jquery",
                     throw "The annotations have to be given to the annotate view.";
                 }
 
-                // Bind function to the good context
-                _.bindAll(this, "render",
-                                "deleteFull",
-                                "onSelect",
-                                "saveStart",
-                                "saveEnd",
-                                "saveFreeText",
-                                "saveScaling",
-                                "toggleEditState",
-                                "toggleCollapsedState",
-                                "toggleExpandedState",
-                                "toggleCommentsState",
-                                "setCurrentTimeAsStart",
-                                "setCurrentTimeAsEnd",
-                                "setState",
-                                "getState",
-                                "handleEsc");
-
                 this.model = attr.annotation;
 
                 this.id = this.model.get("id");
@@ -408,7 +390,7 @@ define(["jquery",
 
                     if (modelJSON.hasScale && this.scale) {
                         scaleValues = this.scaleValues.toJSON();
-                        selectedScaleValue = _.where(scaleValues, {id: modelJSON.scale_value_id});
+                        selectedScaleValue = _.where(scaleValues, { id: modelJSON.scale_value_id });
 
                         if (selectedScaleValue.length > 0) {
                             selectedScaleValue[0].isSelected = true;
