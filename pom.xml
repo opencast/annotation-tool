@@ -13,10 +13,6 @@
   <url>http://opencast.org</url>
   <inceptionYear>2017</inceptionYear>
 
-  <prerequisites>
-    <maven>3.1</maven>
-  </prerequisites>
-
   <properties>
     <checkstyle.skip>false</checkstyle.skip>
     <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
@@ -66,11 +62,32 @@
     </testResources>
     <!-- This defines what plugins run on a global basis.  Plugins defined here run for all child poms without needing to reference them from the child pom.  Note that configuration data goes in the pluginManagement stanza below -->
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M2</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.1</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <!-- Require Java 8 or higher for building -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
+          <!-- TODO Why does `pluginManagement` say something else?! -->
           <source>1.8</source>
           <target>1.8</target>
           <encoding>UTF-8</encoding>
