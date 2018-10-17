@@ -190,8 +190,7 @@ define(["jquery",
                 this.viewConfigs = _.object(_.map(views, function (view) { return [
                     view, {
                         type: "component",
-                        componentName: view,
-                        title: i18next.t("views." + view)
+                        componentName: view
                     }
                 ]; }));
 
@@ -314,22 +313,44 @@ define(["jquery",
                 //
                 var self = this;
 
+                // Helper functions to work with GoldenLayout configurations
+                function mapReduceComponents(config, mapper, reducer, initial) {
+                    return config.type === "component"
+                        ? mapper(config)
+                        : _.chain(config.content)
+                            .map(function (config) {
+                                return mapReduceComponents(config, mapper, reducer, initial);
+                            })
+                            .reduce(reducer, initial)
+                            .value();
+                }
+
+                function visitComponents(config, visitor) {
+                    return mapReduceComponents(config, visitor, _.constant(undefined));
+                }
+
                 var layout = localStorage.getItem("layout");
                 if (layout === "custom") {
-                    layout = JSON.parse(localStorage.getItem("layout-custom")).content;
-                } else if (layout in templates) {
-                    layout = [templates[layout]];
+                    layout = JSON.parse(localStorage.getItem("layout-custom"));
                 } else {
-                    layout = [templates.default];
+                    if (!(layout in templates)) layout = "default";
+                    layout = { content: [templates[layout]] };
                 }
-                goldenLayout = new GoldenLayout({
-                    content: layout,
-                    settings: {
-                        showPopoutIcon: false,
-                        showMaximiseIcon: false,
-                        selectionEnabled: true
-                    }
-                }, document.getElementById("main-container"));
+                // Reset the titles of all the views.
+                // We might have to retranslate these,
+                // if the user changed their language.
+                visitComponents(layout, function (component) {
+                    component.title = i18next.t("views." + component.componentName);
+                });
+                _.extend(layout.settings, {
+                    showPopoutIcon: false,
+                    showMaximiseIcon: false,
+                    selectionEnabled: true
+                });
+                goldenLayout = new GoldenLayout(
+                    layout,
+                    document.getElementById("main-container")
+                );
 
                 // We have no control over the order in which GoldenLayout initializes its views.
                 // However, some of the views depend on others, most notably the player.
@@ -461,16 +482,12 @@ define(["jquery",
                     });
                 });
 
-                function visibleChildren(config) {
-                    if (config.type === "component") {
-                        return 1;
-                    } else {
-                        return config.content
-                            .map(visibleChildren)
-                            .reduce(function (acc, n) { return acc + n; });
-                    }
-                }
-                var numberVisibleViews = visibleChildren(goldenLayout.config.content[0]);
+                var numberVisibleViews = mapReduceComponents(
+                    goldenLayout.config.content[0],
+                    _.constant(1),
+                    function (a, b) { return a + b; },
+                    0
+                );
                 this.listenTo(this, "view", _.after(numberVisibleViews, function () {
 
                     _.each(closableViews, function (view) {
