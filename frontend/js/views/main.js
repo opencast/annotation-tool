@@ -202,9 +202,8 @@ define(["jquery",
                 _.each(_.difference(views, closableViews), function (view) {
                     this.viewConfigs[view].isClosable = false;
                 }, this);
-                var viewConfig = _.bind(function (view) {
-                    return this.viewConfigs[view];
-                }, this);
+
+                var viewConfig = _.propertyOf(this.viewConfigs);
 
                 var templates = {
                     default: {
@@ -493,7 +492,6 @@ define(["jquery",
                     this.ready();
                     this.stopListening(this, "view");
                 }));
-
 
                 goldenLayout.on("stateChanged", function (event) {
                     localStorage.setItem("layout-custom", JSON.stringify(goldenLayout.toConfig()));
