@@ -117,7 +117,7 @@ define(["jquery",
              * @return {Promise.<string>} video external id
              */
             getVideoExtId: function () {
-                return $.when(util.queryParameters.video);
+                return util.queryParameters.video;
             },
 
             /**
@@ -155,9 +155,9 @@ define(["jquery",
              * @return {Promise.<Object>} The literal object containing all the parameters described in the example.
              */
             getVideoParameters: function () {
-                return $.when({
+                return {
                     title: util.queryParameters.video.split("/").pop().split(".")[0]
-                });
+                };
             },
 
             /**
