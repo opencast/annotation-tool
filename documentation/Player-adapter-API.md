@@ -6,7 +6,7 @@ The player adapter is the proxy between the player and the annotations tool. In 
 
 ## Methods
 | Signature | Parameter | Return  | Description |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 |  play() |  | | Play the media. |
 |  pause() |   | | Set the media in pause.|
 |  setCurrentTime(Double time) |  `Double`, time in seconds | | Modify the media current time. |
