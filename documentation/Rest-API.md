@@ -63,7 +63,7 @@ Sample response:
 ## Tags<a name="tags"></a>
 
 | Name | Type | Description | Default |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 | tags | `String` | Array of JSON key/value tag as URL encoded String. `{"key":"value", "key":"value"}`. Returned as object. | NULL |
 
 Tag is a new optional field created to add a possible scope information. For example, with the futur addition of channel scope, a category could contains a tag "{'channel_id':'1234'}". It would logically mean that this category is related to the mathematics channel. 
