@@ -46,4 +46,4 @@ Possible status:
 
 ## Implementation
 
-Each implementation of the player adapter must include the [player adapter prototype](https://github.com/entwinemedia/annotations/blob/develop/js/prototypes/player_adapter.js) as prototype. The [HTML5 player adapter](https://github.com/entwinemedia/annotations/blob/develop/js/player_adapter_HTML5.js) is a good example of an implementation and its [unit tests](https://github.com/entwinemedia/annotations/blob/develop/tests/HTM5_adapter.html) can be easily modified to test your own player adapter.  
+Each implementation of the player adapter must include the [player adapter prototype](https://github.com/opencast/annotation-tool/blob/0512bd6e11477b0df353cb786952271850752b73/frontend/js/player-adapter.js) as prototype. The [HTML5 player adapter](https://github.com/opencast/annotation-tool/blob/0512bd6e11477b0df353cb786952271850752b73/frontend/js/player_adapter_HTML5.js) is a good example of an implementation and its [unit tests](https://github.com/opencast/annotation-tool/blob/0512bd6e11477b0df353cb786952271850752b73/frontend/tests/player_adapter_HTML5.html) can be easily modified to test your own player adapter.  
