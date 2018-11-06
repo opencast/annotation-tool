@@ -220,7 +220,7 @@ define(["jquery",
              */
             getTimeupdateIntervalForTimeline: function () {
                 // TODO Check if this function should be linear
-                return Math.max(500, annotationTool.getAnnotations().length * 3);
+                return Math.max(500, this.getAnnotations().length * 3);
 
             },
 
@@ -290,7 +290,7 @@ define(["jquery",
                     });
                     return this.user.save();
                 }.bind(this)).then(function () {
-                    this.trigger(annotationTool.EVENTS.USER_LOGGED);
+                    this.trigger(this.EVENTS.USER_LOGGED);
                 }.bind(this));
             },
 
@@ -338,7 +338,7 @@ define(["jquery",
                             };
                         })
                     );
-                    this.trigger(annotationTool.EVENTS.VIDEO_LOADED);
+                    this.trigger(this.EVENTS.VIDEO_LOADED);
                 }.bind(this));
             }
         };

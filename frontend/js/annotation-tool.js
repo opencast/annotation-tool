@@ -173,7 +173,10 @@ define(["jquery",
 
                 this.once(this.EVENTS.USER_LOGGED, function () {
 
-                    $("#logout").html(i18next.t("menu.logout", { username: this.user.get("nickname") }));
+                    $("#logout").html(i18next.t(
+                        "menu.logout",
+                        { username: this.user.get("nickname") }
+                    ));
 
                     this.fetchData();
                 }, this);

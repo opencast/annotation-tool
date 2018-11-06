@@ -128,7 +128,7 @@ define(["jquery",
              */
             getTimeupdateIntervalForTimeline: function () {
                 // TODO Check if this function should be linear
-                return Math.max(500, annotationTool.getAnnotations().length * 3);
+                return Math.max(500, this.getAnnotations().length * 3);
 
             },
 
@@ -208,7 +208,7 @@ define(["jquery",
                 var videoElement = document.createElement("video");
                 container.appendChild(videoElement);
                 this.playerAdapter = new HTML5PlayerAdapter(videoElement, { src: util.queryParameters.video });
-                this.trigger(annotationTool.EVENTS.VIDEO_LOADED);
+                this.trigger(this.EVENTS.VIDEO_LOADED);
             }
         };
 
