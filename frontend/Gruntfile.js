@@ -34,7 +34,7 @@ module.exports = function (grunt) {
 
             integration: {
                 target: '../opencast-backend/annotation-tool/src/main/resources/ui/',
-                integration: 'build/integration/search.js'
+                integration: `build/integration/${grunt.option('integration') || 'search'}.js`
             },
 
             local: {
