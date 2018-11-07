@@ -33,23 +33,23 @@ module.exports = function (grunt) {
             default: 'local',
 
             integration: {
-                target  : '../opencast-backend/annotation-tool/src/main/resources/ui/',
-                config  : 'build/profiles/integration/annotation-tool-configuration.js'
+                target: '../opencast-backend/annotation-tool/src/main/resources/ui/',
+                integration: 'build/integration/search.js'
             },
 
             local: {
-                target : '<%= webServerDir %>',
-                config : 'build/profiles/local/annotation-tool-configuration.js'
+                target: '<%= webServerDir %>',
+                integration: 'build/integration/local.js'
             },
 
             build: {
-                target : '<%= buildDir %>',
-                config : 'build/profiles/local/annotation-tool-configuration.js'
+                target: '<%= buildDir %>',
+                integration: 'build/integration/local.js'
             },
 
             demo: {
-                target : '/var/www/html/annotation/',
-                config : 'build/profiles/local/annotation-tool-configuration.js'
+                target: '/var/www/html/annotation/',
+                integration: 'build/integration/local.js'
             }
         },
 
@@ -75,8 +75,13 @@ module.exports = function (grunt) {
             },
             // Watch configuration files
             config: {
-                files: ['<%= currentProfile.config %>'],
+                files: ['build/config/annotation-tool-configuration.js'],
                 tasks: ['copy:config']
+            },
+            // Watch integration files
+            integration: {
+                files: ['<%= currentProfile.integration %>'],
+                tasks: ['copy:integration']
             },
             // Watch Templates files
             templates: {
@@ -238,7 +243,7 @@ module.exports = function (grunt) {
                     dest: '<%= currentProfile.target %>'
                 }]
             },
-            'integration': {
+            'backend': {
                 files: [{
                     flatten: false,
                     expand: true,
@@ -264,15 +269,25 @@ module.exports = function (grunt) {
                     expand: true
                 }]
             },
+            // ... the integration
+            'integration': {
+                src: '<%= currentProfile.integration %>',
+                dest: '<%= currentProfile.target %>/js/annotation-tool-integration.js'
+            },
+            // ... the integration for the build step
+            'integration-build': {
+                src: '<%= currentProfile.integration %>',
+                dest: '<%= tempDir %>/js/annotation-tool-integration.js'
+            },
             // ... the configuration
             'config': {
-                src: '<%= currentProfile.config %>',
-                dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
+                src: 'build/config/annotation-tool-configuration.js',
+                dest: '<%= currentProfile.target %>/js/'
             },
-            // ... build the configuration
+            // ... the configuration for the build step
             'config-build': {
-                src: '<%= currentProfile.config %>',
-                dest: '<%= tempDir %>/js/annotation-tool-configuration.js'
+                src: 'build/config/annotation-tool-configuration.js',
+                dest: '<%= tempDir %>/js/'
             },
             // ... code for further processing
             'temp': {
@@ -303,22 +318,26 @@ module.exports = function (grunt) {
 
         /** Task to run tasks in parrallel */
         concurrent: {
-            dev: {
-                tasks: [
+            dev: (function () {
+                var tasks = [
                     'watch:js',
                     'watch:config',
+                    'watch:integration',
                     'watch:html',
                     'watch:less',
                     'watch:templates',
                     'watch:locales',
                     'watch:www',
                     'connect:dev'
-                ],
-                options: {
-                    logConcurrentOutput: true,
-                    limit: 8
-                }
-            }
+                ];
+                return {
+                    tasks: tasks,
+                    options: {
+                        logConcurrentOutput: true,
+                        limit: tasks.length
+                    }
+                };
+            })()
         },
 
         /** Web server */
@@ -436,11 +455,11 @@ module.exports = function (grunt) {
 
     // Default task
     grunt.registerTask('default', ['amdcheck', 'jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['amdcheck', 'mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
-    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['amdcheck', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:integration', 'copy:locales', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['amdcheck', 'mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:integration', 'copy:locales']);
+    grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config-build', 'copy:integration-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:backend', 'processhtml:dev', 'copy:config', 'copy:integration', 'copy:locales']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['amdcheck', 'handlebars:temp', 'less', 'copy:backend', 'processhtml:build', 'copy:config-build', 'copy:integration-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {

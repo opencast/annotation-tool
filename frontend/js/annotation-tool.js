@@ -120,7 +120,7 @@ define(["jquery",
              * @alias   annotationTool.start
              * @param  {module:annotation-tool-configuration.Configuration} config The tool configuration
              */
-            start: function (config) {
+            start: function (config, integration) {
                 _.bindAll(this,
                           "updateSelectionOnTimeUpdate",
                           "createAnnotation",
@@ -141,7 +141,7 @@ define(["jquery",
                           "removeTimeupdateListener",
                           "updateSelectionOnTimeUpdate");
 
-                _.extend(this, config);
+                _.extend(this, config, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
