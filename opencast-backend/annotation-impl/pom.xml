@@ -214,7 +214,8 @@
             </Embed-Dependency>
             <Service-Component>
               OSGI-INF/extended-annotation-service-publisher.xml,
-              OSGI-INF/extended-annotation-service-rest.xml
+              OSGI-INF/extended-annotation-service-rest.xml,
+              OSGI-INF/external-api-video-provider-configuration.xml
             </Service-Component>
             <Meta-Persistence>
               META-INF/persistence.xml

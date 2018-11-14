@@ -15,7 +15,8 @@
  */
 package org.opencast.annotation.api;
 
-import org.opencastproject.mediapackage.MediaPackage;
+import org.opencast.annotation.api.videointerface.VideoInterface;
+import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
 import org.opencastproject.util.data.Option;
 
 import java.util.Date;
@@ -816,27 +817,21 @@ public interface ExtendedAnnotationService {
   boolean hasResourceAccess(Resource resource);
 
   /**
-   * Checks whether the current user has a certain ACL action on a media package
-   * 
-   * @param mediaPackage
-   *          the media package to check for access
-   * @param access
-   *          a string representing the ACL action to check for
-   * @return true if the user has the given ACL action on the given video
+   * Looks for an annotation tool user that corresponds to the currently logged in Opencast user.
+   * The correspondence is established by using the username of the Opencast user as <code>ext_id</code>
+   * of the annotation tool user.
+   *
+   * If no such user is found, a new one is created.
+   *
+   * @return the user that was found or created as described above
    */
-  boolean hasVideoAccess(MediaPackage mediaPackage, String access);
-
-  /** String representing the `annotate` ACL action */
-  String ANNOTATE_ACTION = "annotate";
-  /** String representing the `annotate-admin` ACL action */
-  String ANNOTATE_ADMIN_ACTION = "annotate-admin";
+  User getOrCreateCurrentUser();
 
   /**
-   * Find the Opencast media package based on its id
-   * 
-   * @param id
-   *          the Opencast-level id of a media package
-   * @return the media package corresponding to the given id, if it can be found
+   * @param mediaPackageId the ID of the media package to interface with
+   * @return a video interface for the given media package ID
+   * @throws VideoInterfaceProviderException when the communication between the service
+   *         and the rest of the Opencast system fails
    */
-  Option<MediaPackage> findMediaPackage(String id);
+  VideoInterface getVideoInterface(String mediaPackageId) throws VideoInterfaceProviderException;
 }

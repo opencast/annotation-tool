@@ -25,7 +25,6 @@ import static org.opencast.annotation.impl.persistence.TrackDto.toTrack;
 import static org.opencast.annotation.impl.persistence.UserDto.toUser;
 import static org.opencast.annotation.impl.persistence.VideoDto.toVideo;
 
-import static org.opencastproject.util.data.Arrays.head;
 import static org.opencastproject.util.data.Monadics.mlist;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
@@ -33,11 +32,10 @@ import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.Tuple.tuple;
 import static org.opencastproject.util.persistence.Queries.named;
 
-import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.search.api.SearchResultItem;
-import org.opencastproject.search.api.SearchService;
-import org.opencastproject.search.api.SearchQuery;
-import org.opencastproject.security.api.AuthorizationService;
+import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
+import org.opencast.annotation.api.videointerface.VideoInterface;
+import org.opencast.annotation.api.videointerface.Access;
+import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
 import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.util.data.Effect;
@@ -100,15 +98,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   private final PersistenceEnv penv;
   private final SecurityService securityService;
-  private final AuthorizationService authorizationService;
-  private final SearchService searchService;
+  private VideoInterfaceProvider videoInterfaceProvider;
 
-  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService,
-          AuthorizationService authorizationService, SearchService searchService) {
+  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService, VideoInterfaceProvider videoInterfaceProvider) {
     this.penv = penv;
     this.securityService = securityService;
-    this.authorizationService = authorizationService;
-    this.searchService = searchService;
+    this.videoInterfaceProvider = videoInterfaceProvider;
   }
 
   /**
@@ -1017,6 +1012,20 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
+  public User getOrCreateCurrentUser() {
+    return getOrCreateUser(securityService.getUser());
+  }
+
+  private User getOrCreateUser(org.opencastproject.security.api.User user) {
+    return getUserByExtId(user.getUsername()).getOrElse(new Function0<User>() {
+      @Override
+      public User apply() {
+        return createUser(user.getUsername(), user.getUsername(), Option.some(user.getEmail()), createResource());
+      }
+    });
+  }
+
+  @Override
   public boolean hasResourceAccess(Resource resource) {
     org.opencastproject.security.api.User opencastUser = securityService.getUser();
     Option<Long> currentUserId = getUserId(opencastUser);
@@ -1035,10 +1044,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return video.fold(new Match<Video, Boolean>() {
       @Override
       public Boolean some(Video video) {
-        for (MediaPackage mediaPackage: findMediaPackage(video.getExtId())) {
-          return hasVideoAccess(mediaPackage, ANNOTATE_ADMIN_ACTION);
+        try {
+          return videoInterfaceProvider.getVideoInterface(video.getExtId()).getAccess() == Access.ADMIN;
+        } catch (VideoInterfaceProviderException e) {
+          return false;
         }
-        return false;
       }
       @Override
       public Boolean none() {
@@ -1048,20 +1058,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public Option<MediaPackage> findMediaPackage(String id) {
-    return head(searchService.getByQuery(new SearchQuery().withId(id)).getItems()).map(
-      new Function<SearchResultItem, MediaPackage>() {
-        @Override
-        public MediaPackage apply(SearchResultItem searchResultItem) {
-          return searchResultItem.getMediaPackage();
-        }
-      }
-    );
-  }
-
-  @Override
-  public boolean hasVideoAccess(MediaPackage mediaPackage, String access) {
-    return authorizationService.hasPermission(mediaPackage, access);
+  public VideoInterface getVideoInterface(String mediaPackageId) throws VideoInterfaceProviderException {
+    return videoInterfaceProvider.getVideoInterface(mediaPackageId);
   }
 
   private Option<Video> getResourceVideo(Resource resource) {
@@ -1076,7 +1074,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public final Function<Resource, Boolean> hasResourceAccess = new Function<Resource, Boolean>() {
     @Override
     public Boolean apply(Resource resource) {
-      return hasResourceAccess(resource);
+    return hasResourceAccess(resource);
     }
   };
 

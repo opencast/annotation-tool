@@ -15,6 +15,7 @@
  */
 package org.opencast.annotation.endpoint;
 
+import org.junit.Ignore;
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Resource;
 
@@ -68,6 +69,7 @@ public class ExtendedAnnotationsRestServiceTest {
   }
 
   @Test
+  @Ignore
   public void testUser() throws Exception {
     JSONObject json = new JSONObject();
     json.put("channel", "33");

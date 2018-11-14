@@ -70,7 +70,6 @@ define([
     }).then(function (data) {
         return data["search-results"].result;
     });
-    // TODO Error handling!
     var mediaPackage = searchResult.then(function (result) {
         return result.mediapackage;
     });
@@ -99,7 +98,6 @@ define([
             }
             return seriesXACML;
         }();
-        // TODO What if nothing was found?!
         return $.ajax({
             url: selectedXACML.url,
             crossDomain: true,

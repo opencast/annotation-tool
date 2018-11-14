@@ -15,16 +15,6 @@
  */
 package org.opencast.annotation.impl;
 
-import org.opencast.annotation.impl.ScaleValueImpl;
-import org.opencast.annotation.impl.AnnotationImpl;
-import org.opencast.annotation.impl.CategoryImpl;
-import org.opencast.annotation.impl.UserImpl;
-import org.opencast.annotation.impl.TrackImpl;
-import org.opencast.annotation.impl.LabelImpl;
-import org.opencast.annotation.impl.VideoImpl;
-import org.opencast.annotation.impl.ScaleImpl;
-import org.opencast.annotation.impl.CommentImpl;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -35,8 +25,7 @@ import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.persistence.PersistenceUtil.newPersistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
-import org.opencastproject.search.api.SearchService;
-import org.opencastproject.security.api.AuthorizationService;
+import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.util.SecurityUtil;
@@ -685,11 +674,10 @@ public class ExtendedAnnotationServiceJpaImplTest {
     EasyMock.expect(securityService.getUser()).andReturn(user).anyTimes();
     EasyMock.replay(securityService);
 
-    AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
-    SearchService searchService = EasyMock.createNiceMock(SearchService.class);
+    VideoInterfaceProvider videoInterfaceProvider = EasyMock.createNiceMock(VideoInterfaceProvider.class);
 
     return new ExtendedAnnotationServiceJpaImpl(
             newPersistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
-            securityService, authorizationService, searchService);
+            securityService, videoInterfaceProvider);
   }
 }

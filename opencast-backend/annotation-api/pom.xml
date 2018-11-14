@@ -35,7 +35,8 @@
         <configuration>
           <instructions>
             <Export-Package>
-              org.opencast.annotation.api;version=${project.version}
+              org.opencast.annotation.api;version=${project.version},
+              org.opencast.annotation.api.*;version=${project.version}
             </Export-Package>
           </instructions>
         </configuration>

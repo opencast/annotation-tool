@@ -22,12 +22,15 @@ import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.functions.Strings.trimToNone;
 
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
 import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 
-import org.opencastproject.mediapackage.MediaPackage;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.opencast.annotation.api.videointerface.VideoInterface;
+import org.opencast.annotation.api.videointerface.Access;
 
+import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoTrack;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Option;
@@ -67,6 +70,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -98,31 +102,50 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getExtendedAnnotationsService();
   }
 
-  @POST
+  @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("/users")
-  public Response postUsers(@FormParam("user_extid") final String userExtId,
-          @FormParam("nickname") final String nickname, @FormParam("email") final String email,
-          @FormParam("tags") final String tags) {
-    final Option<String> emailo = trimToNone(email);
-    return run(array(userExtId, nickname), new Function0<Response>() {
+  @Path("/annotate")
+  public Response initialize(@QueryParam("mediaPackageId") final String mediaPackageId) {
+    return run(array(mediaPackageId), new Function0<Response>() {
       @Override
       public Response apply() {
-        if (eas().getUserByExtId(userExtId).isSome())
-          return CONFLICT;
 
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
-          return BAD_REQUEST;
+        User user = eas().getOrCreateCurrentUser();
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-        User u = eas().createUser(userExtId, nickname, emailo, resource);
-        resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-        u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
-        eas().updateUser(u);
+        VideoInterface videoInterface = null;
+        try {
+          videoInterface = eas().getVideoInterface(mediaPackageId);
+        } catch (VideoInterfaceProviderException e) {
+          return SERVER_ERROR;
+        }
 
-        return Response.created(userLocationUri(u))
-                .entity(Strings.asStringNull().apply(UserDto.toJson.apply(eas(), u))).build();
+        Access access = videoInterface.getAccess();
+        if (access == Access.NOT_FOUND) {
+          return NOT_FOUND;
+        } else if (access == Access.NONE) {
+          return FORBIDDEN;
+        }
+
+        JSONArray videos = new JSONArray();
+        for (VideoTrack track: videoInterface.getTracks()) {
+          JSONObject video = new JSONObject();
+          video.put("url", track.getUrl().toString());
+          video.put("type", track.getType().toString());
+          videos.add(video);
+        }
+
+        JSONObject userJson = UserDto.toJson.apply(eas(), user);
+        String role = "user";
+        if (videoInterface.getAccess() == Access.ADMIN) {
+          role = "administrator";
+        }
+        userJson.put("role", role);
+
+        JSONObject responseObject = new JSONObject();
+        responseObject.put("user", userJson);
+        responseObject.put("videos", videos);
+        responseObject.put("title", Objects.toString(videoInterface.getTitle(), ""));
+        return Response.ok(responseObject.toJSONString()).build();
       }
     });
   }
@@ -175,54 +198,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
-  @DELETE
-  @Path("/users/{id}")
-  public Response deleteUser(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        return eas().getUser(id).fold(new Option.Match<User, Response>() {
-          @Override
-          public Response some(User u) {
-            if (!eas().hasResourceAccess(u))
-              return UNAUTHORIZED;
-            return eas().deleteUser(u) ? NO_CONTENT : NOT_FOUND;
-          }
-
-          @Override
-          public Response none() {
-            return NOT_FOUND;
-          }
-        });
-      }
-    });
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/users/{id}")
-  public Response getUser(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        return eas().getUser(id).fold(new Option.Match<User, Response>() {
-          @Override
-          public Response some(User u) {
-            if (!eas().hasResourceAccess(u))
-              return UNAUTHORIZED;
-
-            return buildOk(UserDto.toJson.apply(eas(), u));
-          }
-
-          @Override
-          public Response none() {
-            return NOT_FOUND;
-          }
-        });
-      }
-    });
-  }
-
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/videos")
@@ -230,10 +205,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(videoExtId), new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<MediaPackage> potentialMediaPackage = eas().findMediaPackage(videoExtId);
-        if (potentialMediaPackage.isNone()) return BAD_REQUEST;
-        final MediaPackage videoMediaPackage = potentialMediaPackage.get();
-        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
+        try {
+          Access access = eas().getVideoInterface(videoExtId).getAccess();
+          switch (access) {
+            case NOT_FOUND: return BAD_REQUEST;
+            case NONE: return FORBIDDEN;
+          }
+        } catch (VideoInterfaceProviderException e) {
+          return SERVER_ERROR;
+        }
 
         if (eas().getVideoByExtId(videoExtId).isSome())
           return CONFLICT;
@@ -258,10 +238,17 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(videoExtId), new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<MediaPackage> potentialMediaPackage = eas().findMediaPackage(videoExtId);
-        if (potentialMediaPackage.isNone()) return BAD_REQUEST;
-        final MediaPackage videoMediaPackage = potentialMediaPackage.get();
-        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
+        try {
+          Access videoAccess = eas().getVideoInterface(videoExtId).getAccess();
+          switch (videoAccess) {
+            case NOT_FOUND:
+              return BAD_REQUEST;
+            case NONE:
+              return FORBIDDEN;
+          }
+        } catch (VideoInterfaceProviderException e) {
+          return SERVER_ERROR;
+        }
 
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (tagsMap.isSome() && tagsMap.get().isNone())

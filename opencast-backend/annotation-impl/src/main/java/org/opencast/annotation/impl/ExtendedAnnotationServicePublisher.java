@@ -17,9 +17,11 @@ package org.opencast.annotation.impl;
 
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 
-import org.opencastproject.search.api.SearchService;
-import org.opencastproject.security.api.AuthorizationService;
+import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProvider;
+import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProviderConfiguration;
+import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.api.TrustedHttpClient;
 import org.opencastproject.util.osgi.SimpleServicePublisher;
 import org.opencastproject.util.persistence.PersistenceEnv;
 
@@ -41,8 +43,9 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
 
   private EntityManagerFactory emf;
   private SecurityService securityService;
-  private AuthorizationService authorizationService;
-  private SearchService searchService;
+  private TrustedHttpClient trustedHttpClient;
+  private VideoInterfaceProvider videoInterfaceProvider;
+  private ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration;
 
   /** OSGi DI */
   void setEntityManagerFactory(EntityManagerFactory emf) {
@@ -60,23 +63,23 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
   }
 
   /**
-   * OSGi callback for setting the authorization service.
+   * OSGi callback for setting the trusted http client
    *
-   * @param authorizationService
-   *          the authorization service
+   * @param trustedHttpClient
+   *          the trusted http client
    */
-  public void setAuthorizationService(AuthorizationService authorizationService) {
-    this.authorizationService = authorizationService;
+  public void setTrustedHttpClient(TrustedHttpClient trustedHttpClient) {
+    this.trustedHttpClient = trustedHttpClient;
   }
 
   /**
-   * OSGi callback for setting the search service.
+   * OSGi callback for setting the external API video interface provider externalApiVideoInterfaceProviderConfiguration
    *
-   * @param searchService
-   *          the search service
+   * @param externalApiVideoInterfaceProviderConfiguration
+   *          the externalApiVideoInterfaceProviderConfiguration
    */
-  public void setSearchService(SearchService searchService) {
-    this.searchService = searchService;
+  public void setExternalApiVideoInterfaceProviderConfiguration(ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration) {
+    this.externalApiVideoInterfaceProviderConfiguration = externalApiVideoInterfaceProviderConfiguration;
   }
 
   @Override
@@ -87,8 +90,8 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
   @Override
   public ServiceReg registerService(Dictionary properties, ComponentContext cc) throws ConfigurationException {
     final PersistenceEnv penv = persistenceEnvironment(emf);
-    final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService,
-            authorizationService, searchService);
+    videoInterfaceProvider = new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration, securityService, trustedHttpClient);
+    final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService, videoInterfaceProvider);
     return ServiceReg.reg(registerService(cc, eas, ExtendedAnnotationService.class, "Extended Annotation Service"));
   }
 }
