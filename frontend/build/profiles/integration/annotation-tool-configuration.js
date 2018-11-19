@@ -106,7 +106,7 @@ define(["jquery",
             });
         }).then(function (xacmlData) {
             // Then we need to extract the appropriate rules
-            return $(xacmlData).find("rules").filter(function (index, rule) {
+            return $(xacmlData).find("Rule").filter(function (index, rule) {
                 return $(rule).find("Action AttributeValue").text() === "annotate-admin";
             }).map(function (index, rule) {
                 return $(rule).find("Condition AttributeValue").text();
