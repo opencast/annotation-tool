@@ -1028,7 +1028,7 @@ public class VideoEndpoint {
           line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
           line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
           line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-          line.add(option(annotation.getCreatedBy().map(getUserEmail.curry(eas)).getOrElse("")).getOrElse(""));
+          line.add(annotation.getCreatedBy().map(getUserEmail.curry(eas)).getOrElse(""));
           line.add(track.getName());
 
           double start = annotation.getStart(); // start, stop, duration
@@ -1078,7 +1078,7 @@ public class VideoEndpoint {
       if (user.isNone())
         return null;
 
-      return user.get().getEmail().getOrElse((String) null);
+      return user.get().getEmail().getOrElse("");
     }
   };
 
