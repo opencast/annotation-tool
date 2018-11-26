@@ -13,6 +13,8 @@ import org.opencast.annotation.api.videointerface.VideoTrack;
 import org.opencastproject.security.api.Role;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.TrustedHttpClient;
+import org.opencastproject.security.api.User;
+import org.opencastproject.security.api.UserDirectoryService;
 import org.opencastproject.util.MimeTypes;
 
 import java.io.IOException;
@@ -32,11 +34,13 @@ import java.util.Map;
 public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider {
   private final TrustedHttpClient client;
   private final SecurityService securityService;
+  private final UserDirectoryService userDirectoryService;
   private final ExternalApiVideoInterfaceProviderConfiguration configuration;
 
-  public ExternalApiVideoInterfaceProvider(ExternalApiVideoInterfaceProviderConfiguration configuration, SecurityService securityService, TrustedHttpClient client) {
+  public ExternalApiVideoInterfaceProvider(ExternalApiVideoInterfaceProviderConfiguration configuration, SecurityService securityService, UserDirectoryService userDirectoryService, TrustedHttpClient client) {
     this.configuration = configuration;
     this.securityService = securityService;
+    this.userDirectoryService = userDirectoryService;
     this.client = client;
   }
 
@@ -52,6 +56,11 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
    */
   @Override
   public VideoInterface getVideoInterface(String mediaPackageId) throws VideoInterfaceProviderException {
+
+    User originalUser = securityService.getUser();
+    User annotateUser = userDirectoryService.loadUser("annotate");
+    securityService.setUser(annotateUser);
+
     HttpResponse response = null;
     try {
       HttpGet request = new HttpGet(new URIBuilder(configuration.getExternalApiBase())
@@ -147,6 +156,7 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
       throw new VideoInterfaceProviderException(e);
     } finally {
       client.close(response);
+      securityService.setUser(originalUser);
     }
   }
 

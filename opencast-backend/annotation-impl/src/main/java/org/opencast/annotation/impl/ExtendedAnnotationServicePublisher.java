@@ -22,6 +22,7 @@ import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProv
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.TrustedHttpClient;
+import org.opencastproject.security.api.UserDirectoryService;
 import org.opencastproject.util.osgi.SimpleServicePublisher;
 import org.opencastproject.util.persistence.PersistenceEnv;
 
@@ -43,6 +44,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
 
   private EntityManagerFactory emf;
   private SecurityService securityService;
+  private UserDirectoryService userDirectoryService;
   private TrustedHttpClient trustedHttpClient;
   private VideoInterfaceProvider videoInterfaceProvider;
   private ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration;
@@ -60,6 +62,16 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    */
   public void setSecurityService(SecurityService securityService) {
     this.securityService = securityService;
+  }
+
+  /**
+   * OSGi callback for setting the user directory service.
+   *
+   * @param userDirectoryService
+   *          the user directory service
+   */
+  public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
+    this.userDirectoryService = userDirectoryService;
   }
 
   /**
@@ -90,7 +102,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
   @Override
   public ServiceReg registerService(Dictionary properties, ComponentContext cc) throws ConfigurationException {
     final PersistenceEnv penv = persistenceEnvironment(emf);
-    videoInterfaceProvider = new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration, securityService, trustedHttpClient);
+    videoInterfaceProvider = new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration, securityService, userDirectoryService, trustedHttpClient);
     final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService, videoInterfaceProvider);
     return ServiceReg.reg(registerService(cc, eas, ExtendedAnnotationService.class, "Extended Annotation Service"));
   }
