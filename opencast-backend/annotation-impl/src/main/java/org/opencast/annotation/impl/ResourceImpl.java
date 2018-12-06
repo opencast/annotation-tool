@@ -68,11 +68,6 @@ public class ResourceImpl implements Resource {
   }
 
   @Override
-  public Option<Long> getVideo(ExtendedAnnotationService eas) {
-    return none();
-  }
-
-  @Override
   public Option<Long> getCreatedBy() {
     return createdBy;
   }

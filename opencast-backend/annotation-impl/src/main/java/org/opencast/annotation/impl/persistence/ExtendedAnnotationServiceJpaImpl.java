@@ -31,18 +31,12 @@ import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.Tuple.tuple;
 
-import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
-import org.opencast.annotation.api.videointerface.VideoInterface;
-import org.opencast.annotation.api.videointerface.Access;
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
-import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.util.data.Effect;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Monadics;
 import org.opencastproject.util.data.Option;
-import org.opencastproject.util.data.Option.Match;
 import org.opencastproject.util.data.Predicate;
 import org.opencastproject.util.data.Tuple;
 import org.opencastproject.util.data.functions.Options;
@@ -94,12 +88,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   private final PersistenceEnv penv;
   private final SecurityService securityService;
-  private VideoInterfaceProvider videoInterfaceProvider;
 
-  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService, VideoInterfaceProvider videoInterfaceProvider) {
+  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService) {
     this.penv = penv;
     this.securityService = securityService;
-    this.videoInterfaceProvider = videoInterfaceProvider;
   }
 
   /**
@@ -300,8 +292,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     if (tagsOr.isSome())
       tracks = filterOrTags(tracks, tagsOr.get());
 
-    tracks = filterByAccess(tracks);
-
     return tracks;
   }
 
@@ -392,9 +382,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
     if (tagsOr.isSome())
       annotations = filterOrTags(annotations, tagsOr.get());
-
-    // Filter out structured annotations from categories the current user cannot access
-    annotations = filterByCategoryAccess(annotations);
 
     return annotations;
   }
@@ -901,6 +888,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             r.getCreatedAt(), r.getUpdatedAt(), some(new Date()), r.getTags());
   }
 
+  // TODO Can we get rid of these?
+
   /**
    * Get the annotation tool user id of an Opencast user
    *
@@ -940,94 +929,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  @Override
-  public boolean hasResourceAccess(Resource resource) {
-    org.opencastproject.security.api.User opencastUser = securityService.getUser();
-    Option<Long> currentUserId = getUserId(opencastUser);
-
-    return resource.getAccess() == Resource.PUBLIC
-        || resource.getCreatedBy().equals(currentUserId)
-        || resource.getAccess() == Resource.SHARED_WITH_ADMIN && isAnnotateAdmin(opencastUser, getResourceVideo(resource));
-  }
-
-  private boolean isAnnotateAdmin(org.opencastproject.security.api.User user, Option<Video> video) {
-    if (user.hasRole(securityService.getOrganization().getAdminRole())
-            || user.hasRole(SecurityConstants.GLOBAL_ADMIN_ROLE)) {
-      return true;
-    }
-
-    return video.fold(new Match<Video, Boolean>() {
-      @Override
-      public Boolean some(Video video) {
-        try {
-          return videoInterfaceProvider.getVideoInterface(video.getExtId()).getAccess() == Access.ADMIN;
-        } catch (VideoInterfaceProviderException e) {
-          return false;
-        }
-      }
-      @Override
-      public Boolean none() {
-        return false;
-      }
-    });
-  }
-
-  @Override
-  public VideoInterface getVideoInterface(String mediaPackageId) throws VideoInterfaceProviderException {
-    return videoInterfaceProvider.getVideoInterface(mediaPackageId);
-  }
-
-  private Option<Video> getResourceVideo(Resource resource) {
-    return resource.getVideo(this).bind(new Function<Long, Option<Video>>() {
-      @Override
-      public Option<Video> apply(Long videoId) {
-        return getVideo(videoId);
-      }
-    });
-  }
-
-  private final Function<Resource, Boolean> hasResourceAccess = new Function<Resource, Boolean>() {
-    @Override
-    public Boolean apply(Resource resource) {
-    return hasResourceAccess(resource);
-    }
-  };
-
-  private boolean hasCategoryAccess(Annotation annotation) {
-    return annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
-      @Override
-      public Option<Label> apply(Long labelId) {
-        boolean includeDeletedLabels = true;
-        return getLabel(labelId, includeDeletedLabels);
-      }
-    }).bind(new Function<Label, Option<Category>>() {
-      @Override
-      public Option<Category> apply(Label label) {
-        boolean includeDeletedCategories = true;
-        return getCategory(label.getCategoryId(), includeDeletedCategories);
-      }
-    // TODO It would be nice if we could use the second overload of `fold` here
-    // TODO Create a helper function to create `Match` objects that enables type inference ...
-    }).fold(new Match<Category, Boolean>() {
-      // annotations without category are always accessible
-      @Override
-      public Boolean none() {
-        return true;
-      }
-      @Override
-      public Boolean some(Category category) {
-        return hasResourceAccess(category);
-      }
-    });
-  }
-
-  private final Function<Annotation, Boolean> hasCategoryAccess = new Function<Annotation, Boolean>() {
-    @Override
-    public Boolean apply(Annotation annotation) {
-      return hasCategoryAccess(annotation);
-    }
-  };
-
   private <T extends Resource> List<T> filterOrTags(List<T> originalList, Map<String, String> tags) {
     if (tags.size() < 1)
       return originalList;
@@ -1046,14 +947,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       }
     }
     return list;
-  }
-
-  private <T extends Resource> List<T> filterByAccess(List<T> originalList) {
-    return mlist(originalList).filter(hasResourceAccess).value();
-  }
-
-  private <T extends Annotation> List<T> filterByCategoryAccess(List<T> originalList) {
-    return mlist(originalList).filter(hasCategoryAccess).value();
   }
 
   private <T extends Resource> List<T> filterAndTags(final List<T> originalList, final Map<String, String> tags) {

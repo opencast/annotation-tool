@@ -17,16 +17,10 @@ package org.opencast.annotation.impl;
 
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 
-import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProvider;
-import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProviderConfiguration;
-import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 import org.opencastproject.security.api.SecurityService;
-import org.opencastproject.security.api.TrustedHttpClient;
-import org.opencastproject.security.api.UserDirectoryService;
 import org.opencastproject.util.osgi.SimpleServicePublisher;
 import org.opencastproject.util.persistence.PersistenceEnv;
 
-import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.component.ComponentContext;
 
 import java.util.Dictionary;
@@ -44,10 +38,6 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
 
   private EntityManagerFactory emf;
   private SecurityService securityService;
-  private UserDirectoryService userDirectoryService;
-  private TrustedHttpClient trustedHttpClient;
-  private VideoInterfaceProvider videoInterfaceProvider;
-  private ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration;
 
   /** OSGi DI */
   @SuppressWarnings("unused")
@@ -66,49 +56,15 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
     this.securityService = securityService;
   }
 
-  /**
-   * OSGi callback for setting the user directory service.
-   *
-   * @param userDirectoryService
-   *          the user directory service
-   */
-  @SuppressWarnings("unused")
-  public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
-    this.userDirectoryService = userDirectoryService;
-  }
-
-  /**
-   * OSGi callback for setting the trusted http client
-   *
-   * @param trustedHttpClient
-   *          the trusted http client
-   */
-  @SuppressWarnings("unused")
-  public void setTrustedHttpClient(TrustedHttpClient trustedHttpClient) {
-    this.trustedHttpClient = trustedHttpClient;
-  }
-
-  /**
-   * OSGi callback for setting the external API video interface provider externalApiVideoInterfaceProviderConfiguration
-   *
-   * @param externalApiVideoInterfaceProviderConfiguration
-   *          the externalApiVideoInterfaceProviderConfiguration
-   */
-  @SuppressWarnings("unused")
-  public void setExternalApiVideoInterfaceProviderConfiguration(ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration) {
-    this.externalApiVideoInterfaceProviderConfiguration = externalApiVideoInterfaceProviderConfiguration;
-  }
-
   @Override
   public boolean needConfig() {
     return false;
   }
 
   @Override
-  public ServiceReg registerService(Dictionary properties, ComponentContext cc) throws ConfigurationException {
+  public ServiceReg registerService(Dictionary properties, ComponentContext cc) {
     final PersistenceEnv penv = persistenceEnvironment(emf);
-    videoInterfaceProvider = new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration, securityService, userDirectoryService, trustedHttpClient);
-    final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService, videoInterfaceProvider);
+    final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService);
     return ServiceReg.reg(registerService(cc, eas, ExtendedAnnotationService.class, "Extended Annotation Service"));
   }
 }

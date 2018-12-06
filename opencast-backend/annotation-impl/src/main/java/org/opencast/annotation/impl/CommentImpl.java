@@ -49,15 +49,6 @@ public final class CommentImpl extends ResourceImpl implements Comment {
     return id;
   }
 
-  public Option<Long> getVideo(final ExtendedAnnotationService eas) {
-    return eas.getAnnotation(annotationId).bind(new Function<Annotation, Option<Long>>() {
-      @Override
-      public Option<Long> apply(Annotation annotation) {
-        return annotation.getVideo(eas);
-      }
-    });
-  }
-
   @Override
   public long getAnnotationId() {
     return annotationId;

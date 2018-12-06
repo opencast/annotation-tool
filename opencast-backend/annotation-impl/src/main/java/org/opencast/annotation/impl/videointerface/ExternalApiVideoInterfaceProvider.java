@@ -17,6 +17,7 @@ import org.opencastproject.security.api.User;
 import org.opencastproject.security.api.UserDirectoryService;
 import org.opencastproject.util.MimeTypes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -31,6 +32,11 @@ import java.util.Objects;
 
 /**
  * Provide access to video information by using the external API.
+ *
+ * Note that this implementation makes all the necessary requests to answer the queries
+ * that {@link VideoInterface} exposes in its constructor. Calls to these query methods
+ * on the constructed object do not incur any further requests to aid performance
+ * and return consistent, though potentially stale results.
  */
 public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider {
   private final TrustedHttpClient client;
@@ -46,33 +52,25 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
     this.client = client;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * Note that this method makes all the necessary requests to answer the queries
-   * that <code>VideoInterface</code> exposes. Calls to these query methods
-   * on the returned object do not lead to any further requests.
-   *
-   * @param mediaPackageId the media package ID of an event
-   * @return a video interface to get information about the given event
-   */
   @Override
-  public VideoInterface getVideoInterface(String mediaPackageId) throws VideoInterfaceProviderException {
+  public VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceProviderException {
 
     User originalUser = securityService.getUser();
     User annotateUser = userDirectoryService.loadUser("annotate");
     securityService.setUser(annotateUser);
 
+    String mediaPackageId = request.getParameter("id");
+
     HttpResponse response = null;
     try {
-      HttpGet request = new HttpGet(new URIBuilder(configuration.getExternalApiBase())
+      HttpGet apiRequest = new HttpGet(new URIBuilder(configuration.getExternalApiBase())
               .setPath("/api/events/" + mediaPackageId)
               .addParameter("withacl", Boolean.toString(true))
               .addParameter("withpublications", Boolean.toString(true))
               .addParameter("sign", Boolean.toString(true))
               .build());
-      request.setHeader("Accept", "application/v1.0.0+json");
-      response = client.execute(request);
+      apiRequest.setHeader("Accept", "application/v1.0.0+json");
+      response = client.execute(apiRequest);
 
       if (response.getStatusLine().getStatusCode() == 404) {
         return NOT_FOUND;

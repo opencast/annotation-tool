@@ -18,6 +18,12 @@ package org.opencast.annotation.endpoint;
 
 import static org.opencastproject.util.RestUtil.getEndpointUrl;
 
+import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProvider;
+import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProviderConfiguration;
+import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
+import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.api.TrustedHttpClient;
+import org.opencastproject.security.api.UserDirectoryService;
 import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
 
@@ -34,6 +40,12 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   private static final Logger logger = LoggerFactory.getLogger(ExtendedAnnotationsRestService.class);
 
   private ExtendedAnnotationService eas;
+  // TODO Inject this via OSGi
+  private VideoInterfaceProvider videoInterfaceProvider;
+  private ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration;
+  private SecurityService securityService;
+  private UserDirectoryService userDirectoryService;
+  private TrustedHttpClient trustedHttpClient;
   private String endpointBaseUrl;
 
   /** OSGi callback. */
@@ -42,6 +54,9 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
     logger.info("Start");
     final Tuple<String, String> endpointUrl = getEndpointUrl(cc);
     endpointBaseUrl = UrlSupport.concat(endpointUrl.getA(), endpointUrl.getB());
+
+    videoInterfaceProvider = new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration,
+            securityService, userDirectoryService, trustedHttpClient);
   }
 
   /** OSGi callback. */
@@ -56,9 +71,44 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
     this.eas = eas;
   }
 
+  /** OSGi callback. */
+  @SuppressWarnings("unused")
+  public void setExternalApiVideoInterfaceProviderConfiguration(
+          ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration) {
+    this.externalApiVideoInterfaceProviderConfiguration = externalApiVideoInterfaceProviderConfiguration;
+  }
+
+  /** OSGi callback. */
+  @SuppressWarnings("unused")
+  public void setSecurityService(SecurityService securityService) {
+    this.securityService = securityService;
+  }
+
+  /** OSGi callback. */
+  @SuppressWarnings("unused")
+  public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
+    this.userDirectoryService = userDirectoryService;
+  }
+
+  /** OSGi callback. */
+  @SuppressWarnings("unused")
+  public void setTrustedHttpClient(TrustedHttpClient trustedHttpClient) {
+    this.trustedHttpClient = trustedHttpClient;
+  }
+
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
     return eas;
+  }
+
+  @Override
+  protected SecurityService getSecurityService() {
+    return securityService;
+  }
+
+  @Override
+  protected VideoInterfaceProvider getVideoInterfaceProvider() {
+    return videoInterfaceProvider;
   }
 
   @Override

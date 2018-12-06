@@ -1,6 +1,5 @@
 package org.opencast.annotation.endpoint;
 
-import org.opencast.annotation.api.videointerface.Access;
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
@@ -14,7 +13,7 @@ import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
 
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.ResourceImpl;
@@ -22,15 +21,12 @@ import org.opencast.annotation.impl.TrackImpl;
 
 import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.FORBIDDEN;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.SERVER_ERROR;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
 
 import org.opencast.annotation.impl.persistence.AbstractResourceDto;
@@ -43,7 +39,6 @@ import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.util.IoSupport;
 import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
@@ -60,6 +55,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 import org.apache.commons.io.IOUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -71,6 +67,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -86,6 +83,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 public class VideoEndpoint {
 
@@ -103,27 +101,18 @@ public class VideoEndpoint {
     this.eas = eas;
 
     this.video = eas.getVideo(videoId);
-    for (Video video: this.video) {
-      try {
-        if (eas.getVideoInterface(video.getExtId()).getAccess() == Access.NONE) {
-          throw new WebApplicationException(FORBIDDEN);
-        }
-      } catch (VideoInterfaceProviderException e) {
-        throw new WebApplicationException(SERVER_ERROR);
-      }
-    }
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getVideo() {
-    return run(nil, new Function0<Response>() {
+  public Response getVideo(@Context final HttpServletRequest request) {
+    return host.run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return video.fold(new Option.Match<Video, Response>() {
           @Override
           public Response some(Video v) {
-            if (!eas.hasResourceAccess(v))
+            if (!host.hasResourceAccess(v, videoInterface.getAccess()))
               return UNAUTHORIZED;
             return buildOk(VideoDto.toJson.apply(eas, v));
           }
@@ -138,14 +127,14 @@ public class VideoEndpoint {
   }
 
   @DELETE
-  public Response deleteVideo() {
-    return run(nil, new Function0<Response>() {
+  public Response deleteVideo(final @Context HttpServletRequest request) {
+    return host.run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return video.fold(new Option.Match<Video, Response>() {
           @Override
           public Response some(Video v) {
-            if (!eas.hasResourceAccess(v))
+            if (!host.hasResourceAccess(v, videoInterface.getAccess()))
               return UNAUTHORIZED;
             return eas.deleteVideo(v) ? NO_CONTENT : NOT_FOUND;
           }
@@ -164,11 +153,11 @@ public class VideoEndpoint {
   @Path("tracks")
   public Response postTrack(@FormParam("name") final String name, @FormParam("description") final String description,
           @FormParam("settings") final String settings, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
 
-    return run(array(name), new Function0<Response>() {
+    return host.run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
@@ -194,17 +183,18 @@ public class VideoEndpoint {
   @Path("tracks/{id}")
   public Response putTrack(@PathParam("id") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("settings") final String settings,
-          @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
-    return run(array(name), new Function0<Response>() {
+          @FormParam("access") final Integer access, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return host.run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         // check if video exists
         if (video.isSome()) {
           return eas.getTrack(id).fold(new Option.Match<Track, Response>() {
             // update track
             @Override
             public Response some(Track track) {
-              if (!eas.hasResourceAccess(track))
+              if (!host.hasResourceAccess(track, videoInterface.getAccess()))
                 return UNAUTHORIZED;
 
               final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
@@ -240,16 +230,16 @@ public class VideoEndpoint {
 
   @DELETE
   @Path("tracks/{trackId}")
-  public Response deleteTrack(@PathParam("trackId") final long trackId) {
+  public Response deleteTrack(@PathParam("trackId") final long trackId, @Context final HttpServletRequest request) {
     // TODO optimize querying for the existence of video and track
     if (video.isSome()) {
-      return run(nil, new Function0<Response>() {
+      return host.run(nil, request, new Function<VideoInterface, Response>() {
         @Override
-        public Response apply() {
+        public Response apply(VideoInterface videoInterface) {
           return eas.getTrack(trackId).fold(new Option.Match<Track, Response>() {
             @Override
             public Response some(Track t) {
-              if (!eas.hasResourceAccess(t))
+              if (!host.hasResourceAccess(t, videoInterface.getAccess()))
                 return UNAUTHORIZED;
               return eas.deleteTrack(t) ? NO_CONTENT : NOT_FOUND;
             }
@@ -269,15 +259,15 @@ public class VideoEndpoint {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("tracks/{id}")
-  public Response getTrack(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
+  public Response getTrack(@PathParam("id") final long id, @Context final HttpServletRequest request) {
+    return host.run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         if (video.isSome()) {
           return eas.getTrack(id).fold(new Option.Match<Track, Response>() {
             @Override
             public Response some(Track t) {
-              if (!eas.hasResourceAccess(t))
+              if (!host.hasResourceAccess(t, videoInterface.getAccess()))
                 return UNAUTHORIZED;
               return buildOk(TrackDto.toJson.apply(eas, t));
             }
@@ -299,10 +289,10 @@ public class VideoEndpoint {
   @Path("tracks")
   public Response getTracks(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+          @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {
+    return host.run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
         final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
@@ -319,7 +309,10 @@ public class VideoEndpoint {
                   offset,
                   eas.getTracks(videoId, offsetm, limitm, datem.bind(Functions.identity()),
                           tagsAndArray.bind(Functions.identity()),
-                          tagsOrArray.bind(Functions.identity()))));
+                          tagsOrArray.bind(Functions.identity()))
+                          .stream()
+                          .filter(track -> host.hasResourceAccess(track, videoInterface.getAccess()))
+                          .collect(Collectors.toList())));
         }
       }
     });
@@ -331,10 +324,11 @@ public class VideoEndpoint {
   public Response postAnnotation(@PathParam("trackId") final long trackId, @FormParam("text") final String text,
           @FormParam("start") final Double start, @FormParam("duration") final Double duration,
           @FormParam("settings") final String settings, @FormParam("label_id") final Long labelId,
-          @FormParam("scale_value_id") final Long scaleValueId, @FormParam("tags") final String tags) {
-    return run(array(start), new Function0<Response>() {
+          @FormParam("scale_value_id") final Long scaleValueId, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return host.run(array(start), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         if (video.isSome() && eas.getTrack(trackId).isSome()) {
           final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
           if (tagsMap.isSome() && tagsMap.get().isNone())
@@ -360,10 +354,10 @@ public class VideoEndpoint {
           @FormParam("text") final String text, @FormParam("start") final double start,
           @FormParam("duration") final Double duration, @FormParam("settings") final String settings,
           @FormParam("label_id") final Long labelId, @FormParam("scale_value_id") final Long scaleValueId,
-          @FormParam("tags") final String tags) {
-    return run(array(start), new Function0<Response>() {
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return host.run(array(start), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
@@ -376,7 +370,7 @@ public class VideoEndpoint {
             // update annotation
             @Override
             public Response some(Annotation annotation) {
-              if (!eas.hasResourceAccess(annotation))
+              if (!host.hasResourceAccess(annotation, videoInterface.getAccess()))
                 return UNAUTHORIZED;
 
               Resource resource = eas.updateResource(annotation, tags);
@@ -411,15 +405,16 @@ public class VideoEndpoint {
 
   @DELETE
   @Path("tracks/{trackId}/annotations/{id}")
-  public Response deleteAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id) {
+  public Response deleteAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id,
+          @Context final HttpServletRequest request) {
     if (video.isSome() && eas.getTrack(trackId).isSome()) {
-      return run(nil, new Function0<Response>() {
+      return host.run(nil, request, new Function<VideoInterface, Response>() {
         @Override
-        public Response apply() {
+        public Response apply(VideoInterface videoInterface) {
           return eas.getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
             @Override
             public Response some(Annotation a) {
-              if (!eas.hasResourceAccess(a))
+              if (!host.hasResourceAccess(a, videoInterface.getAccess()))
                 return UNAUTHORIZED;
               return eas.deleteAnnotation(a) ? NO_CONTENT : NOT_FOUND;
             }
@@ -439,16 +434,17 @@ public class VideoEndpoint {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("tracks/{trackId}/annotations/{id}")
-  public Response getAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id) {
+  public Response getAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id,
+          @Context final HttpServletRequest request) {
     // TODO optimize querying for the existence of video and track
     if (video.isSome() && eas.getTrack(trackId).isSome()) {
-      return run(nil, new Function0<Response>() {
+      return host.run(nil, request, new Function<VideoInterface, Response>() {
         @Override
-        public Response apply() {
+        public Response apply(VideoInterface videoInterface) {
           return eas.getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
             @Override
             public Response some(Annotation a) {
-              if (!eas.hasResourceAccess(a))
+              if (!host.hasResourceAccess(a, videoInterface.getAccess()))
                 return UNAUTHORIZED;
               return buildOk(AnnotationDto.toJson.apply(eas, a));
             }
@@ -472,10 +468,11 @@ public class VideoEndpoint {
   public Response getAnnotations(@PathParam("trackId") final long trackId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("start") final double start,
           @QueryParam("end") final double end, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr,
+          @Context final HttpServletRequest request) {
+    return host.run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         if (video.isSome()) {
           final Option<Double> startm = start > 0 ? some(start) : none();
           final Option<Double> endm = end > 0 ? some(end) : none();
@@ -495,7 +492,22 @@ public class VideoEndpoint {
                     eas.getAnnotations(trackId, startm, endm, offsetm, limitm,
                             datem.bind(Functions.identity()),
                             tagsAndArray.bind(Functions.identity()),
-                            tagsOrArray.bind(Functions.identity()))));
+                            tagsOrArray.bind(Functions.identity()))
+                            .stream()
+                            .filter(annotation -> {
+                              // TODO This is run in a loop
+                              //   and will probably get the same thing from the database multiple times
+                              // TODO Shouldn't these be filtered by their **own** access as well?!
+                              //   But they weren't before, either, so ... yeah.
+                              Option<Long> labelId = annotation.getLabelId();
+                              if (labelId.isNone()) return true;
+                              return host.hasResourceAccess(eas.getCategory(
+                                      // TODO Is including deleted resources correct here?
+                                      eas.getLabel(labelId.get(), true).get().getCategoryId(), true).get(),
+                                      // TODO Should `getAccess` be able to throw an exception as well?!
+                                      videoInterface.getAccess());
+                            })
+                            .collect(Collectors.toList())));
           }
         } else {
           return NOT_FOUND;
@@ -509,14 +521,14 @@ public class VideoEndpoint {
   @Path("scales")
   public Response postScale(@FormParam("name") final String name, @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
     if (scaleId == null)
-        return host.createScale(some(videoId), name, description, access, tags);
+        return host.createScale(some(videoId), name, description, access, tags, request);
 
     // TODO Why does this not use `createScale`?
-    return run(array(scaleId), new Function0<Response>() {
+    return host.run(array(scaleId), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (eas.getScale(scaleId, false).isNone() || video.isNone()
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
@@ -535,15 +547,16 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}")
   public Response putScale(@PathParam("scaleId") final long id, @FormParam("name") final String name,
-          @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return host.updateScale(some(videoId), id, name, description, tags);
+          @FormParam("description") final String description, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return host.updateScale(some(videoId), id, name, description, tags, request);
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}")
-  public Response getScale(@PathParam("scaleId") final long id) {
-    return host.getScaleResponse(some(videoId), id);
+  public Response getScale(@PathParam("scaleId") final long id, @Context final HttpServletRequest request) {
+    return host.getScaleResponse(some(videoId), id, request);
   }
 
   @GET
@@ -551,14 +564,14 @@ public class VideoEndpoint {
   @Path("scales")
   public Response getScales(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return host.getScalesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {
+    return host.getScalesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   @DELETE
   @Path("scales/{scaleId}")
-  public Response deleteScale(@PathParam("scaleId") final long id) {
-    return host.deleteScaleResponse(some(videoId), id);
+  public Response deleteScale(@PathParam("scaleId") final long id, @Context final HttpServletRequest request) {
+    return host.deleteScaleResponse(some(videoId), id, request);
   }
 
   @POST
@@ -567,8 +580,8 @@ public class VideoEndpoint {
   public Response postScaleValue(@PathParam("scaleId") final long scaleId, @FormParam("name") final String name,
           @DefaultValue("0") @FormParam("value") final double value,
           @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return host.postScaleValueResponse(some(videoId), scaleId, name, value, order, access, tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return host.postScaleValueResponse(some(videoId), scaleId, name, value, order, access, tags, request);
   }
 
   @PUT
@@ -577,15 +590,16 @@ public class VideoEndpoint {
   public Response putScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
           @FormParam("name") final String name, @DefaultValue("0") @FormParam("value") final double value,
           @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return host.putScaleValueResponse(some(videoId), scaleId, id, name, value, order, access, tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return host.putScaleValueResponse(some(videoId), scaleId, id, name, value, order, access, tags, request);
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
-  public Response getScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return host.getScaleValueResponse(some(videoId), scaleId, id);
+  public Response getScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
+          @Context final HttpServletRequest request) {
+    return host.getScaleValueResponse(some(videoId), scaleId, id, request);
   }
 
   @GET
@@ -593,14 +607,16 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}/scalevalues")
   public Response getScaleValues(@PathParam("scaleId") final long scaleId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return host.getScaleValuesResponse(some(videoId), scaleId, limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr,
+          @Context final HttpServletRequest request) {
+    return host.getScaleValuesResponse(some(videoId), scaleId, limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   @DELETE
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
-  public Response deleteScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return host.deleteScaleValueResponse(some(videoId), scaleId, id);
+  public Response deleteScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
+          @Context final HttpServletRequest request) {
+    return host.deleteScaleValueResponse(some(videoId), scaleId, id, request);
   }
 
   @POST
@@ -609,14 +625,13 @@ public class VideoEndpoint {
   public Response postCategory(@FormParam("name") final String name, @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("category_id") final Long id, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
     if (id == null)
-      return host.postCategoryResponse(some(videoId), name, description, scaleId, settings, access,
-              tags);
+      return host.postCategoryResponse(some(videoId), name, description, scaleId, settings, access, tags, request);
 
-    return run(array(id), new Function0<Response>() {
+    return host.run(array(id), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (video.isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
@@ -647,15 +662,15 @@ public class VideoEndpoint {
   public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return host.putCategoryResponse(some(videoId), id, name, description, option(scaleId), settings, tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return host.putCategoryResponse(some(videoId), id, name, description, option(scaleId), settings, tags, request);
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories/{categoryId}")
-  public Response getCategory(@PathParam("categoryId") final long id) {
-    return host.getCategoryResponse(some(videoId), id);
+  public Response getCategory(@PathParam("categoryId") final long id, @Context final HttpServletRequest request) {
+    return host.getCategoryResponse(some(videoId), id, request);
   }
 
   @GET
@@ -663,14 +678,15 @@ public class VideoEndpoint {
   @Path("categories")
   public Response getCategories(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-                                @QueryParam("tags-or") final String tagsOr) {
-    return host.getCategoriesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {
+    return host.getCategoriesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   @DELETE
   @Path("categories/{categoryId}")
-  public Response deleteCategory(@PathParam("categoryId") final long categoryId) {
-    return host.deleteCategoryResponse(some(videoId), categoryId);
+  public Response deleteCategory(@PathParam("categoryId") final long categoryId,
+          @Context final HttpServletRequest request) {
+    return host.deleteCategoryResponse(some(videoId), categoryId, request);
   }
 
   @POST
@@ -679,8 +695,9 @@ public class VideoEndpoint {
   public Response postLabel(@PathParam("categoryId") final long categoryId, @FormParam("value") final String value,
           @FormParam("abbreviation") final String abbreviation, @FormParam("description") final String description,
           @FormParam("access") final Integer access, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return host.postLabelResponse(some(videoId), categoryId, value, abbreviation, description, access, settings, tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return host.postLabelResponse(some(videoId), categoryId, value, abbreviation, description, access, settings, tags,
+            request);
   }
 
   @PUT
@@ -689,16 +706,18 @@ public class VideoEndpoint {
   public Response putLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
           @FormParam("value") final String value, @FormParam("abbreviation") final String abbreviation,
           @FormParam("description") final String description, @FormParam("access") final Integer access,
-          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
+          @FormParam("settings") final String settings, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
     return host.putLabelResponse(some(videoId), categoryId, id, value, abbreviation, description, access, settings,
-            tags);
+            tags, request);
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories/{categoryId}/labels/{labelId}")
-  public Response getLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id) {
-    return host.getLabelResponse(some(videoId), categoryId, id);
+  public Response getLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
+          @Context final HttpServletRequest request) {
+    return host.getLabelResponse(some(videoId), categoryId, id, request);
   }
 
   @GET
@@ -706,14 +725,16 @@ public class VideoEndpoint {
   @Path("categories/{categoryId}/labels")
   public Response getLabels(@PathParam("categoryId") final long categoryId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return host.getLabelsResponse(some(videoId), categoryId, limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr,
+          @Context final HttpServletRequest request) {
+    return host.getLabelsResponse(some(videoId), categoryId, limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   @DELETE
   @Path("categories/{categoryId}/labels/{labelId}")
-  public Response deleteLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id) {
-    return host.deleteLabelResponse(some(videoId), categoryId, id);
+  public Response deleteLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
+          @Context final HttpServletRequest request) {
+    return host.deleteLabelResponse(some(videoId), categoryId, id, request);
   }
 
   @POST
@@ -721,17 +742,17 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations/{annotationId}/comments")
   public Response postComment(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @FormParam("text") final String text,
-          @FormParam("tags") final String tags) {
-    return postCommentResponse(trackId, annotationId, none(), text, tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return postCommentResponse(trackId, annotationId, none(), text, tags, request);
   }
 
   private Response postCommentResponse(final long trackId, final long annotationId, final Option<Long> replyToId,
-          final String text, final String tags) {
+          final String text, final String tags, final HttpServletRequest request) {
     if (video.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
-      return run(array(text), new Function0<Response>() {
+      return host.run(array(text), request, new Function<VideoInterface, Response>() {
         @Override
-        public Response apply() {
+        public Response apply(VideoInterface videoInterface) {
           final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
           if (tagsMap.isSome() && tagsMap.get().isNone())
             return BAD_REQUEST;
@@ -754,12 +775,13 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations/{annotationId}/comments/{commentId}")
   public Response putComment(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @PathParam("commentId") final long commentId,
-          @FormParam("text") final String text, @FormParam("tags") final String tags) {
+          @FormParam("text") final String text, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
     if (video.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
-      return run(array(text), new Function0<Response>() {
+      return host.run(array(text), request, new Function<VideoInterface, Response>() {
         @Override
-        public Response apply() {
+        public Response apply(VideoInterface videoInterface) {
           final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
           if (tagsMap.isSome() && tagsMap.get().isNone())
             return BAD_REQUEST;
@@ -769,7 +791,7 @@ public class VideoEndpoint {
           return eas.getComment(commentId).fold(new Option.Match<Comment, Response>() {
             @Override
             public Response some(Comment c) {
-              if (!eas.hasResourceAccess(c))
+              if (!host.hasResourceAccess(c, videoInterface.getAccess()))
                 return UNAUTHORIZED;
               Resource resource = eas.updateResource(c, tags);
               final Comment updated = new CommentImpl(commentId, annotationId, text, Option.none(), resource);
@@ -802,16 +824,17 @@ public class VideoEndpoint {
   @DELETE
   @Path("tracks/{trackId}/annotations/{annotationId}/comments/{id}")
   public Response deleteComment(@PathParam("trackId") final long trackId,
-          @PathParam("annotationId") final long annotationId, @PathParam("id") final long commentId) {
+          @PathParam("annotationId") final long annotationId, @PathParam("id") final long commentId,
+          @Context final HttpServletRequest request) {
     if (video.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
-      return run(nil, new Function0<Response>() {
+      return host.run(nil, request, new Function<VideoInterface, Response>() {
         @Override
-        public Response apply() {
+        public Response apply(VideoInterface videoInterface) {
           return eas.getComment(commentId).fold(new Option.Match<Comment, Response>() {
             @Override
             public Response some(Comment c) {
-              if (!eas.hasResourceAccess(c))
+              if (!host.hasResourceAccess(c, videoInterface.getAccess()))
                 return UNAUTHORIZED;
               return eas.deleteComment(c) ? NO_CONTENT : NOT_FOUND;
             }
@@ -833,16 +856,17 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("tracks/{trackId}/annotations/{annotationId}/comments/{id}")
   public Response getComment(@PathParam("trackId") final long trackId,
-          @PathParam("annotationId") final long annotationId, @PathParam("id") final long id) {
+          @PathParam("annotationId") final long annotationId, @PathParam("id") final long id,
+          @Context final HttpServletRequest request) {
     if (video.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
-      return run(nil, new Function0<Response>() {
+      return host.run(nil, request, new Function<VideoInterface, Response>() {
         @Override
-        public Response apply() {
+        public Response apply(VideoInterface videoInterface) {
           return eas.getComment(id).fold(new Option.Match<Comment, Response>() {
             @Override
             public Response some(Comment c) {
-              if (!eas.hasResourceAccess(c))
+              if (!host.hasResourceAccess(c, videoInterface.getAccess()))
                 return UNAUTHORIZED;
               return buildOk(CommentDto.toJson.apply(eas, c));
             }
@@ -866,17 +890,19 @@ public class VideoEndpoint {
   public Response getComments(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return getCommentsResponse(trackId, annotationId, none(), limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr,
+          @Context final HttpServletRequest request) {
+    return getCommentsResponse(trackId, annotationId, none(), limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   private Response getCommentsResponse(final long trackId, final long annotationId, final Option<Long> replyToId,
-          final int limit, final int offset, final String date, final String tagsAnd, final String tagsOr) {
+          final int limit, final int offset, final String date, final String tagsAnd, final String tagsOr,
+          final HttpServletRequest request) {
     if (video.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
-      return run(nil, new Function0<Response>() {
+      return host.run(nil, request, new Function<VideoInterface, Response>() {
         @Override
-        public Response apply() {
+        public Response apply(VideoInterface videoInterface) {
           final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
           final Option<Integer> limitm = limit > 0 ? some(limit) : none();
           final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
@@ -907,10 +933,11 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies")
   public Response postReply(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @PathParam("commentId") final long commentId,
-          @FormParam("text") final String text, @FormParam("tags") final String tags) {
+          @FormParam("text") final String text, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
     Option<Comment> comment = eas.getComment(commentId);
     if (comment.isNone()) return BAD_REQUEST;
-    return postCommentResponse(trackId, annotationId, Option.some(comment.get().getId()), text, tags);
+    return postCommentResponse(trackId, annotationId, Option.some(comment.get().getId()), text, tags, request);
   }
 
   @GET
@@ -920,11 +947,11 @@ public class VideoEndpoint {
           @PathParam("annotationId") final long annotationId, @PathParam("commentId") final long commentId,
           @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
+          @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {
     Option<Comment> comment = eas.getComment(commentId);
     if (comment.isNone()) return BAD_REQUEST;
     return getCommentsResponse(trackId, annotationId, some(commentId), limit, offset, date, tagsAnd,
-            tagsOr);
+            tagsOr, request);
   }
 
   @GET

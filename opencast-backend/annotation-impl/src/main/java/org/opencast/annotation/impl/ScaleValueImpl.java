@@ -52,17 +52,6 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
   }
 
   @Override
-  public Option<Long> getVideo(final ExtendedAnnotationService eas) {
-    boolean includeDeleted = true;
-    return eas.getScale(scaleId, includeDeleted).bind(new Function<Scale, Option<Long>>() {
-      @Override
-      public Option<Long> apply(Scale scale) {
-        return scale.getVideo(eas);
-      }
-    });
-  }
-
-  @Override
   public long getScaleId() {
     return scaleId;
   }

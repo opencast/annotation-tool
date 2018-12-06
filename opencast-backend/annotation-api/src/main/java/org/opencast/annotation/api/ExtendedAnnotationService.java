@@ -807,15 +807,8 @@ public interface ExtendedAnnotationService {
    */
   Resource deleteResource(Resource resource);
 
-  /**
-   * Checks if the current user has access to the given resource
-   * 
-   * @param resource
-   *          the resource to check for access
-   * @return true if the current user has access to the resource
-   */
-  boolean hasResourceAccess(Resource resource);
-
+  // TODO Get rid of this, too?
+  //   And maybe other user related methods?
   /**
    * Looks for an annotation tool user that corresponds to the currently logged in Opencast user.
    * The correspondence is established by using the username of the Opencast user as <code>ext_id</code>
@@ -826,12 +819,4 @@ public interface ExtendedAnnotationService {
    * @return the user that was found or created as described above
    */
   User getOrCreateCurrentUser();
-
-  /**
-   * @param mediaPackageId the ID of the media package to interface with
-   * @return a video interface for the given media package ID
-   * @throws VideoInterfaceProviderException when the communication between the service
-   *         and the rest of the Opencast system fails
-   */
-  VideoInterface getVideoInterface(String mediaPackageId) throws VideoInterfaceProviderException;
 }

@@ -59,16 +59,6 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
   }
 
   @Override
-  public Option<Long> getVideo(final ExtendedAnnotationService eas) {
-    return eas.getTrack(trackId).bind(new Function<Track, Option<Long>>() {
-      @Override
-      public Option<Long> apply(Track track) {
-        return track.getVideo(eas);
-      }
-    });
-  }
-
-  @Override
   public long getTrackId() {
     return trackId;
   }
