@@ -25,4 +25,7 @@
   <reference name="trustedHttpClient"
              interface="org.opencastproject.security.api.TrustedHttpClient"
              bind="setTrustedHttpClient"/>
+  <reference name="urlSigningVerifier"
+             interface="org.opencastproject.security.urlsigning.verifier.UrlSigningVerifier"
+             bind="setUrlSigningVerifier"/>
 </scr:component>

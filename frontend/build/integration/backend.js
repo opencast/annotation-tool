@@ -55,15 +55,40 @@ define([
             method = "update";
         }
 
-        options.beforeSend = function () {
+        // TODO Duplication, but not really ...
+        options.beforeSend = function (request) {
             this.url = apiBase + this.url;
+            // TODO Fix the headers
+            request.setRequestHeader(
+                "X-Opencast-Annotate-Signed-URL",
+                window.location
+            );
+            // TODO This information is duplicated ...
+            //   But it's complicated;
+            //   it would seem wrong to look this up
+            //   in the signed URL.
+            request.setRequestHeader(
+                "X-Opencast-Annotate-Media-Package",
+                util.queryParameters.id
+            );
         };
 
         return backboneSync.call(this, method, model, options);
     };
 
-    var mediaPackageId = util.queryParameters.id;
-    var annotationInfo = $.get(apiBase + '/annotate', { mediaPackageId: mediaPackageId });
+    var annotationInfo = $.ajax(apiBase + '/annotate', {
+        beforeSend: function (request) {
+            // TODO Fix the headers
+            request.setRequestHeader(
+                "X-Opencast-Annotate-Signed-URL",
+                window.location
+            );
+            request.setRequestHeader(
+                "X-Opencast-Annotate-Media-Package",
+                util.queryParameters.id
+            );
+        }
+    });
     annotationInfo.fail(function (response) {
         alerts.fatal(response.statusText);
     });
@@ -102,7 +127,7 @@ define([
          * @return {Promise.<string>} video external id
          */
         getVideoExtId: function () {
-            return mediaPackageId;
+            return util.queryParameters.id;
         },
 
         /**

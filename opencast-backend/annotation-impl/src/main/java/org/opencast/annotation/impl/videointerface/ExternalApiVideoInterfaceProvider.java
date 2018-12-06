@@ -59,7 +59,7 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
     User annotateUser = userDirectoryService.loadUser("annotate");
     securityService.setUser(annotateUser);
 
-    String mediaPackageId = request.getParameter("id");
+    String mediaPackageId = request.getHeader("X-Opencast-Annotate-Media-Package");
 
     HttpResponse response = null;
     try {

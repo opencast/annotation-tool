@@ -270,7 +270,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             .filter(Option::isSome)
             .map(Option::get);
     @SuppressWarnings("unchecked")
-    Tuple<String, Object>[] result = (Tuple<String, Object>[]) resultStream.toArray();
+    Tuple<String, Object>[] result = (Tuple<String, Object>[]) resultStream.toArray(Tuple[]::new);
     return result;
   }
 

@@ -1,8 +1,5 @@
 package org.opencast.annotation.api.videointerface;
 
-import org.opencast.annotation.api.videointerface.Access;
-import org.opencast.annotation.api.videointerface.VideoTrack;
-
 /**
  * The Opencast Annotation Tool Backend needs some information
  * about the videos it is supposed to annotate.
@@ -16,15 +13,15 @@ public interface VideoInterface {
   /**
    * @return the title of the relevant event
    */
-  String getTitle();
+  String getTitle() throws VideoInterfaceProviderException;
 
   /**
    * @return the access level the current user has for the relevant event
    */
-  Access getAccess();
+  Access getAccess() throws VideoInterfaceProviderException;
 
   /**
    * @return the list of video URLs belonging to the relevant event
    */
-  Iterable<VideoTrack> getTracks();
+  Iterable<VideoTrack> getTracks() throws VideoInterfaceProviderException;
 }

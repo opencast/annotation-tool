@@ -86,7 +86,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -115,43 +114,46 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/annotate")
   // TODO Rename
-  // TODO We don't even really need the queryparam anymore
-  public Response initialize(@QueryParam("mediaPackageId") final String mediaPackageId,
-          @Context final HttpServletRequest request, @Context final HttpHeaders headers) {
-    return run(array(mediaPackageId), request, new Function<VideoInterface, Response>() {
+  public Response initialize(@Context final HttpServletRequest request) {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
       public Response apply(VideoInterface videoInterface) {
 
-        // TODO Pull this into the REST tier as well
-        User user = eas().getOrCreateCurrentUser();
+        try {
+          // TODO Pull this into the REST tier as well
+          User user = eas().getOrCreateCurrentUser();
 
-        Access access = videoInterface.getAccess();
-        if (access == Access.NOT_FOUND) {
-          return NOT_FOUND;
-        } else if (access == Access.NONE) {
-          return FORBIDDEN;
+          Access access = videoInterface.getAccess();
+          if (access == Access.NOT_FOUND) {
+            return NOT_FOUND;
+          } else if (access == Access.NONE) {
+            return FORBIDDEN;
+          }
+
+          JSONArray videos = new JSONArray();
+          for (VideoTrack track : videoInterface.getTracks()) {
+            JSONObject video = new JSONObject();
+            video.put("url", track.getUrl().toString());
+            video.put("type", track.getType().toString());
+            videos.add(video);
+          }
+
+          JSONObject userJson = UserDto.toJson.apply(eas(), user);
+          String role = "user";
+          if (access == Access.ADMIN) {
+            role = "administrator";
+          }
+          userJson.put("role", role);
+
+          JSONObject responseObject = new JSONObject();
+          responseObject.put("user", userJson);
+          responseObject.put("videos", videos);
+          responseObject.put("title", Objects.toString(videoInterface.getTitle(), ""));
+          return Response.ok(responseObject.toJSONString()).build();
+
+        } catch (VideoInterfaceProviderException e) {
+          throw new UncheckedVideoInterfaceException(e);
         }
-
-        JSONArray videos = new JSONArray();
-        for (VideoTrack track: videoInterface.getTracks()) {
-          JSONObject video = new JSONObject();
-          video.put("url", track.getUrl().toString());
-          video.put("type", track.getType().toString());
-          videos.add(video);
-        }
-
-        JSONObject userJson = UserDto.toJson.apply(eas(), user);
-        String role = "user";
-        if (access == Access.ADMIN) {
-          role = "administrator";
-        }
-        userJson.put("role", role);
-
-        JSONObject responseObject = new JSONObject();
-        responseObject.put("user", userJson);
-        responseObject.put("videos", videos);
-        responseObject.put("title", Objects.toString(videoInterface.getTitle(), ""));
-        return Response.ok(responseObject.toJSONString()).build();
       }
     });
   }
@@ -175,7 +177,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getUserByExtId(userExtId).fold(new Option.Match<User, Response>() {
           @Override
           public Response some(User u) {
-            if (!hasResourceAccess(u, videoInterface.getAccess()))
+            if (!hasResourceAccess(u, videoInterface))
               return UNAUTHORIZED;
 
             Resource resource = eas().updateResource(u, tags);
@@ -247,6 +249,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
       @Override
       public Response apply(VideoInterface videoInterface) {
         try {
+          // TODO Is this even still necessary?
           Access videoAccess = getVideoInterfaceProvider().getVideoInterface(request).getAccess();
           switch (videoAccess) {
             case NOT_FOUND:
@@ -267,7 +270,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getVideoByExtId(videoExtId).fold(new Option.Match<Video, Response>() {
           @Override
           public Response some(Video v) {
-            if (!hasResourceAccess(v, videoInterface.getAccess()))
+            if (!hasResourceAccess(v, videoInterface))
               return UNAUTHORIZED;
 
             Resource resource = eas().updateResource(v, tags);
@@ -353,7 +356,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale scale) {
-            if (!hasResourceAccess(scale, videoInterface.getAccess()))
+            if (!hasResourceAccess(scale, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(scale, tags);
             final Scale updated = new ScaleImpl(id, videoId, name, trimToNone(description), resource);
@@ -395,7 +398,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale s) {
-            if (!hasResourceAccess(s, videoInterface.getAccess()))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             return buildOk(ScaleDto.toJson.apply(eas(), s));
           }
@@ -460,7 +463,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale s) {
-            if (!hasResourceAccess(s, videoInterface.getAccess()))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             return eas().deleteScale(s) ? NO_CONTENT : NOT_FOUND;
           }
@@ -530,7 +533,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
-            if (!hasResourceAccess(s, videoInterface.getAccess()))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(s, tags);
             final ScaleValue updated = new ScaleValueImpl(id, scaleId, name, value, order, resource);
@@ -574,7 +577,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
-            if (!hasResourceAccess(s, videoInterface.getAccess()))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             return buildOk(ScaleValueDto.toJson.apply(eas(), s));
           }
@@ -642,7 +645,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
-            if (!hasResourceAccess(s, videoInterface.getAccess()))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             return eas().deleteScaleValue(s) ? NO_CONTENT : NOT_FOUND;
           }
@@ -715,7 +718,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getCategory(id, false).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
-            if (!hasResourceAccess(c, videoInterface.getAccess()))
+            if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(c, tags);
             final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(description),
@@ -759,7 +762,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getCategory(id, false).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
-            if (!hasResourceAccess(c, videoInterface.getAccess()))
+            if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             return buildOk(CategoryDto.toJson.apply(eas(), c));
           }
@@ -826,7 +829,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getCategory(categoryId, false).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
-            if (!hasResourceAccess(c, videoInterface.getAccess()))
+            if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             return eas().deleteCategory(c) ? NO_CONTENT : NOT_FOUND;
           }
@@ -901,7 +904,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
-            if (!hasResourceAccess(l, videoInterface.getAccess()))
+            if (!hasResourceAccess(l, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(l, tags);
             final Label updated = new LabelImpl(id, categoryId, value, abbreviation, trimToNone(description),
@@ -947,7 +950,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
-            if (!hasResourceAccess(l, videoInterface.getAccess()))
+            if (!hasResourceAccess(l, videoInterface))
               return UNAUTHORIZED;
             return buildOk(LabelDto.toJson.apply(eas(), l));
           }
@@ -1016,7 +1019,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
-            if (!hasResourceAccess(l, videoInterface.getAccess()))
+            if (!hasResourceAccess(l, videoInterface))
               return UNAUTHORIZED;
             return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
           }
@@ -1030,7 +1033,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
-  boolean hasResourceAccess(Resource resource, Access access) {
+  class UncheckedVideoInterfaceException extends RuntimeException {
+    UncheckedVideoInterfaceException(VideoInterfaceProviderException cause) {
+      super(cause);
+    }
+  }
+
+  boolean hasResourceAccess(Resource resource, VideoInterface videoInterface) {
     // TODO Check for annotate access in `run`
     // TODO Or do it in here?!
     //   Or maybe rather separate these things mentally, like:
@@ -1042,7 +1051,11 @@ public abstract class AbstractExtendedAnnotationsRestService {
     //   come from a link that includes a valid media package id
     //   that you have access to
     if (resource.getAccess() == Resource.PUBLIC) return true;
-    if (resource.getAccess() == Resource.SHARED_WITH_ADMIN && access == Access.ADMIN) return true;
+    try {
+      if (resource.getAccess() == Resource.SHARED_WITH_ADMIN && videoInterface.getAccess() == Access.ADMIN) return true;
+    } catch (VideoInterfaceProviderException e) {
+      throw new UncheckedVideoInterfaceException(e);
+    }
     String currentUsername = getSecurityService().getUser().getUsername();
     String createdByExtId = eas().getUser(resource.getCreatedBy().get()).get().getExtId();
     return currentUsername.equals(createdByExtId);
@@ -1062,12 +1075,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   /** Run {@code f} doing common exception transformation. */
   Response run(Object[] mandatoryParams, HttpServletRequest request, Function<VideoInterface, Response> f) {
-    VideoInterface videoInterface;
-    try {
-      videoInterface = getVideoInterfaceProvider().getVideoInterface(request);
-    } catch (VideoInterfaceProviderException e) {
-      throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
-    }
 
     for (Object a : mandatoryParams) {
       if (a == null || StringUtils.isEmpty(a.toString()))
@@ -1075,6 +1082,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     }
 
     try {
+      VideoInterface videoInterface = getVideoInterfaceProvider().getVideoInterface(request);
       return f.apply(videoInterface);
     } catch (ExtendedAnnotationException e) {
       switch (e.getCauseCode()) {
@@ -1087,6 +1095,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
         default:
           return SERVER_ERROR;
       }
+    } catch (VideoInterfaceProviderException | UncheckedVideoInterfaceException e) {
+      // TODO Unwrap one cause in the case of an unchecked exception?!
+      throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 

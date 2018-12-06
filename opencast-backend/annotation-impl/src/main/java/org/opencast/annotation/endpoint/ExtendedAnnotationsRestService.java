@@ -20,10 +20,12 @@ import static org.opencastproject.util.RestUtil.getEndpointUrl;
 
 import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProviderConfiguration;
+import org.opencast.annotation.impl.videointerface.UrlSigningAuthorizationVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.TrustedHttpClient;
 import org.opencastproject.security.api.UserDirectoryService;
+import org.opencastproject.security.urlsigning.verifier.UrlSigningVerifier;
 import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
 
@@ -46,6 +48,10 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   private SecurityService securityService;
   private UserDirectoryService userDirectoryService;
   private TrustedHttpClient trustedHttpClient;
+  // TODO **WE** should not have this ...
+  //   Remember to also remove the OSGi config
+  //   when you change this
+  private UrlSigningVerifier urlSigningVerifier;
   private String endpointBaseUrl;
 
   /** OSGi callback. */
@@ -55,8 +61,9 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
     final Tuple<String, String> endpointUrl = getEndpointUrl(cc);
     endpointBaseUrl = UrlSupport.concat(endpointUrl.getA(), endpointUrl.getB());
 
-    videoInterfaceProvider = new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration,
-            securityService, userDirectoryService, trustedHttpClient);
+    videoInterfaceProvider = new UrlSigningAuthorizationVideoInterfaceProvider(
+            new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration,
+                    securityService, userDirectoryService, trustedHttpClient), urlSigningVerifier);
   }
 
   /** OSGi callback. */
@@ -94,6 +101,12 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   @SuppressWarnings("unused")
   public void setTrustedHttpClient(TrustedHttpClient trustedHttpClient) {
     this.trustedHttpClient = trustedHttpClient;
+  }
+
+  /** OSGi callback. */
+  @SuppressWarnings("unused")
+  public void setUrlSigningVerifier(UrlSigningVerifier urlSigningVerifier) {
+    this.urlSigningVerifier = urlSigningVerifier;
   }
 
   @Override

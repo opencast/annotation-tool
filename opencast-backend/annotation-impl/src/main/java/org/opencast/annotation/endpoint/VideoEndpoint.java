@@ -112,7 +112,7 @@ public class VideoEndpoint {
         return video.fold(new Option.Match<Video, Response>() {
           @Override
           public Response some(Video v) {
-            if (!host.hasResourceAccess(v, videoInterface.getAccess()))
+            if (!host.hasResourceAccess(v, videoInterface))
               return UNAUTHORIZED;
             return buildOk(VideoDto.toJson.apply(eas, v));
           }
@@ -134,7 +134,7 @@ public class VideoEndpoint {
         return video.fold(new Option.Match<Video, Response>() {
           @Override
           public Response some(Video v) {
-            if (!host.hasResourceAccess(v, videoInterface.getAccess()))
+            if (!host.hasResourceAccess(v, videoInterface))
               return UNAUTHORIZED;
             return eas.deleteVideo(v) ? NO_CONTENT : NOT_FOUND;
           }
@@ -194,7 +194,7 @@ public class VideoEndpoint {
             // update track
             @Override
             public Response some(Track track) {
-              if (!host.hasResourceAccess(track, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(track, videoInterface))
                 return UNAUTHORIZED;
 
               final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
@@ -239,7 +239,7 @@ public class VideoEndpoint {
           return eas.getTrack(trackId).fold(new Option.Match<Track, Response>() {
             @Override
             public Response some(Track t) {
-              if (!host.hasResourceAccess(t, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(t, videoInterface))
                 return UNAUTHORIZED;
               return eas.deleteTrack(t) ? NO_CONTENT : NOT_FOUND;
             }
@@ -267,7 +267,7 @@ public class VideoEndpoint {
           return eas.getTrack(id).fold(new Option.Match<Track, Response>() {
             @Override
             public Response some(Track t) {
-              if (!host.hasResourceAccess(t, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(t, videoInterface))
                 return UNAUTHORIZED;
               return buildOk(TrackDto.toJson.apply(eas, t));
             }
@@ -311,7 +311,7 @@ public class VideoEndpoint {
                           tagsAndArray.bind(Functions.identity()),
                           tagsOrArray.bind(Functions.identity()))
                           .stream()
-                          .filter(track -> host.hasResourceAccess(track, videoInterface.getAccess()))
+                          .filter(track -> host.hasResourceAccess(track, videoInterface))
                           .collect(Collectors.toList())));
         }
       }
@@ -370,7 +370,7 @@ public class VideoEndpoint {
             // update annotation
             @Override
             public Response some(Annotation annotation) {
-              if (!host.hasResourceAccess(annotation, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(annotation, videoInterface))
                 return UNAUTHORIZED;
 
               Resource resource = eas.updateResource(annotation, tags);
@@ -414,7 +414,7 @@ public class VideoEndpoint {
           return eas.getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
             @Override
             public Response some(Annotation a) {
-              if (!host.hasResourceAccess(a, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(a, videoInterface))
                 return UNAUTHORIZED;
               return eas.deleteAnnotation(a) ? NO_CONTENT : NOT_FOUND;
             }
@@ -444,7 +444,7 @@ public class VideoEndpoint {
           return eas.getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
             @Override
             public Response some(Annotation a) {
-              if (!host.hasResourceAccess(a, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(a, videoInterface))
                 return UNAUTHORIZED;
               return buildOk(AnnotationDto.toJson.apply(eas, a));
             }
@@ -505,7 +505,7 @@ public class VideoEndpoint {
                                       // TODO Is including deleted resources correct here?
                                       eas.getLabel(labelId.get(), true).get().getCategoryId(), true).get(),
                                       // TODO Should `getAccess` be able to throw an exception as well?!
-                                      videoInterface.getAccess());
+                                      videoInterface);
                             })
                             .collect(Collectors.toList())));
           }
@@ -791,7 +791,7 @@ public class VideoEndpoint {
           return eas.getComment(commentId).fold(new Option.Match<Comment, Response>() {
             @Override
             public Response some(Comment c) {
-              if (!host.hasResourceAccess(c, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(c, videoInterface))
                 return UNAUTHORIZED;
               Resource resource = eas.updateResource(c, tags);
               final Comment updated = new CommentImpl(commentId, annotationId, text, Option.none(), resource);
@@ -834,7 +834,7 @@ public class VideoEndpoint {
           return eas.getComment(commentId).fold(new Option.Match<Comment, Response>() {
             @Override
             public Response some(Comment c) {
-              if (!host.hasResourceAccess(c, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(c, videoInterface))
                 return UNAUTHORIZED;
               return eas.deleteComment(c) ? NO_CONTENT : NOT_FOUND;
             }
@@ -866,7 +866,7 @@ public class VideoEndpoint {
           return eas.getComment(id).fold(new Option.Match<Comment, Response>() {
             @Override
             public Response some(Comment c) {
-              if (!host.hasResourceAccess(c, videoInterface.getAccess()))
+              if (!host.hasResourceAccess(c, videoInterface))
                 return UNAUTHORIZED;
               return buildOk(CommentDto.toJson.apply(eas, c));
             }
