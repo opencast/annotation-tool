@@ -958,28 +958,33 @@ public class VideoEndpoint {
   @Path("/export.csv")
   public Response getExportStatistics(@QueryParam("track") final List<Long> tracks,
           @QueryParam("category") final List<Long> categories,
-          @QueryParam("freetext") final Boolean freeText) {
-    Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
-
-      public void write(OutputStream os) throws IOException, WebApplicationException {
-        CSVWriter writer = null;
-        try {
-          writer = new CSVWriter(new OutputStreamWriter(os));
-          writeExport(writer, tracks, categories, freeText);
-          writer.close();
-        } finally {
-          IOUtils.closeQuietly(os);
-          IoSupport.closeQuietly(writer);
-        }
+          @QueryParam("freetext") final Boolean freeText,
+          @Context final HttpServletRequest request) {
+    return host.run(nil, request, new Function<VideoInterface, Response>() {
+      @Override
+      public Response apply(VideoInterface videoInterface) {
+        Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
+          public void write(OutputStream os) throws IOException, WebApplicationException {
+            CSVWriter writer = null;
+            try {
+              writer = new CSVWriter(new OutputStreamWriter(os));
+              writeExport(writer, tracks, categories, freeText, videoInterface);
+              writer.close();
+            } finally {
+              IOUtils.closeQuietly(os);
+              IoSupport.closeQuietly(writer);
+            }
+          }
+        });
+        response.header("Content-Type", "text/csv");
+        response.header("Content-Disposition", "attachment; filename=export.csv");
+        return response.build();
       }
     });
-    response.header("Content-Type", "text/csv");
-    response.header("Content-Disposition", "attachment; filename=export.csv");
-    return response.build();
   }
 
   private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport,
-          Boolean freeText) {
+          Boolean freeText, VideoInterface videoInterface) {
     // Write headers
     List<String> header = new ArrayList<>();
     header.add("ID");
@@ -1004,18 +1009,22 @@ public class VideoEndpoint {
       List<Track> tracks = eas.getTracks(video.getId(), none(), none(), none(), none(), none());
       for (Track track : tracks) {
         if (tracksToExport != null && !tracksToExport.contains(track.getId())) continue;
+        if (!host.hasResourceAccess(track, videoInterface)) continue;
+
         List<Annotation> annotations = eas.getAnnotations(track.getId(), none(), none(), none(), none(), none(), none(),
                 none());
         for (Annotation annotation : annotations) {
+          final boolean includeDeleted = true;
           Option<Label> label = annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
             @Override
             public Option<Label> apply(Long labelId) {
-              final boolean includeDeleted = true;
               return eas.getLabel(labelId, includeDeleted);
             }
           });
           if (label.isSome()) {
             if (categoriesToExport != null && !categoriesToExport.contains(label.get().getCategoryId())) continue;
+            Category category = eas.getCategory(label.get().getCategoryId(), includeDeleted).get();
+            if (!host.hasResourceAccess(category, videoInterface)) continue;
           } else {
             if (freeText != null && !freeText) continue;
           }
