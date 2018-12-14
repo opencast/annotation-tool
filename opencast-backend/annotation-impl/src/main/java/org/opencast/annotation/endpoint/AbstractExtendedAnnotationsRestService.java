@@ -121,16 +121,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
       public Response apply(VideoInterface videoInterface) {
 
         try {
-          // TODO Pull this into the REST tier as well
-          User user = eas().getOrCreateCurrentUser();
-
-          Access access = videoInterface.getAccess();
-          if (access == Access.NOT_FOUND) {
-            return NOT_FOUND;
-          } else if (access == Access.NONE) {
-            return FORBIDDEN;
-          }
-
           JSONArray videos = new JSONArray();
           for (VideoTrack track : videoInterface.getTracks()) {
             JSONObject video = new JSONObject();
@@ -138,6 +128,11 @@ public abstract class AbstractExtendedAnnotationsRestService {
             video.put("type", track.getType().toString());
             videos.add(video);
           }
+
+          // TODO Pull this into the REST tier as well
+          User user = eas().getOrCreateCurrentUser();
+
+          Access access = videoInterface.getAccess();
 
           JSONObject userJson = UserDto.toJson.apply(eas(), user);
           String role = "user";
@@ -159,6 +154,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
+  // TODO Do we still need this?
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/users")
@@ -215,16 +211,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(videoExtId), request, new Function<VideoInterface, Response>() {
       @Override
       public Response apply(VideoInterface videoInterface) {
-        try {
-          Access access = getVideoInterfaceProvider().getVideoInterface(request).getAccess();
-          switch (access) {
-            case NOT_FOUND: return BAD_REQUEST;
-            case NONE: return FORBIDDEN;
-          }
-        } catch (VideoInterfaceException e) {
-          return SERVER_ERROR;
-        }
-
         if (eas().getVideoByExtId(videoExtId).isSome())
           return CONFLICT;
 
@@ -249,19 +235,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(videoExtId), request, new Function<VideoInterface, Response>() {
       @Override
       public Response apply(VideoInterface videoInterface) {
-        try {
-          // TODO Is this even still necessary?
-          Access videoAccess = getVideoInterfaceProvider().getVideoInterface(request).getAccess();
-          switch (videoAccess) {
-            case NOT_FOUND:
-              return BAD_REQUEST;
-            case NONE:
-              return FORBIDDEN;
-          }
-        } catch (VideoInterfaceException e) {
-          return SERVER_ERROR;
-        }
-
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
@@ -272,6 +245,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @Override
           public Response some(Video v) {
             if (!hasResourceAccess(v, videoInterface))
+              // TODO Unauthorized? Are you sure?
               return UNAUTHORIZED;
 
             Resource resource = eas().updateResource(v, tags);
@@ -1086,7 +1060,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
     try {
       VideoInterface videoInterface = getVideoInterfaceProvider().getVideoInterface(request);
+      Access access = videoInterface.getAccess();
+      if (access == Access.NONE) return FORBIDDEN;
+      else if (access == Access.NOT_FOUND) return NOT_FOUND;
+
       return f.apply(videoInterface);
+
     } catch (ExtendedAnnotationException e) {
       switch (e.getCauseCode()) {
         case UNAUTHORIZED:
