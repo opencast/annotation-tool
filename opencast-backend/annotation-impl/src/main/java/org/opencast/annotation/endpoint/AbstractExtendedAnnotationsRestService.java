@@ -26,6 +26,7 @@ import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.opencast.annotation.api.videointerface.BadVideoInterfaceRequestException;
 import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.api.videointerface.Access;
 
@@ -1097,6 +1098,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
         default:
           return SERVER_ERROR;
       }
+    } catch (BadVideoInterfaceRequestException e) {
+      // TODO I don't like this
+      throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
     } catch (VideoInterfaceException | UncheckedVideoInterfaceException e) {
       // TODO Unwrap one cause in the case of an unchecked exception?!
       throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);

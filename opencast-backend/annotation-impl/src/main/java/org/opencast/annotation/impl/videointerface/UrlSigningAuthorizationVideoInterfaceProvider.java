@@ -2,6 +2,7 @@ package org.opencast.annotation.impl.videointerface;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.opencast.annotation.api.videointerface.Access;
+import org.opencast.annotation.api.videointerface.BadVideoInterfaceRequestException;
 import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.api.videointerface.VideoTrack;
@@ -51,7 +52,8 @@ public class UrlSigningAuthorizationVideoInterfaceProvider implements VideoInter
         try {
           // TODO Should we check this once in the constructor?!
           // TODO URL en- and decoding?
-          String signedUrlString = request.getHeader("X-Opencast-Annotate-Signed-URL");
+          String signedUrlString = Requests.getHeaderOrParam(request, "X-Opencast-Annotate-Signed-URL", "signedUrl");
+
           URL signedUrl = new URL(signedUrlString);
 
           // Extract the base URL from the signed one
@@ -70,6 +72,8 @@ public class UrlSigningAuthorizationVideoInterfaceProvider implements VideoInter
           throw new VideoInterfaceException(e);
         } catch (MalformedURLException | URISyntaxException e) {
           return Access.NONE;
+        } catch (IllegalArgumentException e) {
+          throw new BadVideoInterfaceRequestException(e);
         }
 
         if (verification.getStatus() == ResourceRequest.Status.Ok) {
