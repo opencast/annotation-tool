@@ -1057,8 +1057,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
       throw new UncheckedVideoInterfaceException(e);
     }
     String currentUsername = getSecurityService().getUser().getUsername();
-    String createdByExtId = eas().getUser(resource.getCreatedBy().get()).get().getExtId();
-    return currentUsername.equals(createdByExtId);
+    // TODO Shouldn't we be able to assume that `createdBy` is always set?
+    Option<Long> createdById = resource.getCreatedBy();
+    if (createdById.isNone()) return false;  // TODO What to return here?
+    return currentUsername.equals(eas().getUser(createdById.get()).get().getExtId());
   }
 
   // --
