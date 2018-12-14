@@ -8,7 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.opencast.annotation.api.videointerface.Access;
 import org.opencast.annotation.api.videointerface.VideoInterface;
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.api.videointerface.VideoTrack;
 import org.opencastproject.security.api.Role;
 import org.opencastproject.security.api.SecurityService;
@@ -53,7 +53,7 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
   }
 
   @Override
-  public VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceProviderException {
+  public VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceException {
 
     User originalUser = securityService.getUser();
     User annotateUser = userDirectoryService.loadUser("annotate");
@@ -155,7 +155,7 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
       // **we** can't really recover from it.
       throw new AssertionError(e);
     } catch (ParseException | IOException e) {
-      throw new VideoInterfaceProviderException(e);
+      throw new VideoInterfaceException(e);
     } finally {
       client.close(response);
       securityService.setUser(originalUser);

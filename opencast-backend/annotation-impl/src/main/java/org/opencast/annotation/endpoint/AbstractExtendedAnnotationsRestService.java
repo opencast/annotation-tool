@@ -29,7 +29,7 @@ import org.json.simple.JSONObject;
 import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.api.videointerface.Access;
 
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.api.videointerface.VideoTrack;
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 import org.opencastproject.security.api.SecurityService;
@@ -151,7 +151,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           responseObject.put("title", Objects.toString(videoInterface.getTitle(), ""));
           return Response.ok(responseObject.toJSONString()).build();
 
-        } catch (VideoInterfaceProviderException e) {
+        } catch (VideoInterfaceException e) {
           throw new UncheckedVideoInterfaceException(e);
         }
       }
@@ -220,7 +220,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             case NOT_FOUND: return BAD_REQUEST;
             case NONE: return FORBIDDEN;
           }
-        } catch (VideoInterfaceProviderException e) {
+        } catch (VideoInterfaceException e) {
           return SERVER_ERROR;
         }
 
@@ -257,7 +257,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             case NONE:
               return FORBIDDEN;
           }
-        } catch (VideoInterfaceProviderException e) {
+        } catch (VideoInterfaceException e) {
           return SERVER_ERROR;
         }
 
@@ -1034,7 +1034,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   }
 
   class UncheckedVideoInterfaceException extends RuntimeException {
-    UncheckedVideoInterfaceException(VideoInterfaceProviderException cause) {
+    UncheckedVideoInterfaceException(VideoInterfaceException cause) {
       super(cause);
     }
   }
@@ -1053,7 +1053,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     if (resource.getAccess() == Resource.PUBLIC) return true;
     try {
       if (resource.getAccess() == Resource.SHARED_WITH_ADMIN && videoInterface.getAccess() == Access.ADMIN) return true;
-    } catch (VideoInterfaceProviderException e) {
+    } catch (VideoInterfaceException e) {
       throw new UncheckedVideoInterfaceException(e);
     }
     String currentUsername = getSecurityService().getUser().getUsername();
@@ -1095,7 +1095,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         default:
           return SERVER_ERROR;
       }
-    } catch (VideoInterfaceProviderException | UncheckedVideoInterfaceException e) {
+    } catch (VideoInterfaceException | UncheckedVideoInterfaceException e) {
       // TODO Unwrap one cause in the case of an unchecked exception?!
       throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
     }

@@ -13,15 +13,15 @@ public interface VideoInterface {
   /**
    * @return the title of the relevant event
    */
-  String getTitle() throws VideoInterfaceProviderException;
+  String getTitle() throws VideoInterfaceException;
 
   /**
    * @return the access level the current user has for the relevant event
    */
-  Access getAccess() throws VideoInterfaceProviderException;
+  Access getAccess() throws VideoInterfaceException;
 
   /**
    * @return the list of video URLs belonging to the relevant event
    */
-  Iterable<VideoTrack> getTracks() throws VideoInterfaceProviderException;
+  Iterable<VideoTrack> getTracks() throws VideoInterfaceException;
 }

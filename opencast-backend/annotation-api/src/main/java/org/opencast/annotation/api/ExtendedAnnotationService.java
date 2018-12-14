@@ -15,8 +15,6 @@
  */
 package org.opencast.annotation.api;
 
-import org.opencast.annotation.api.videointerface.VideoInterface;
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
 import org.opencastproject.util.data.Option;
 
 import java.util.Date;
