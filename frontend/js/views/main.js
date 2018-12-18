@@ -519,9 +519,6 @@ define(["jquery",
 
                 this.setupKeyboardShortcuts();
 
-                // Show logout button
-                $("#logout").css("display", "block");
-
                 this.trigger(MainView.EVENTS.READY);
             },
 

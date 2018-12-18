@@ -120,10 +120,16 @@
     "invalid loop length": "Die angegebene Schleifenlänge ist nicht gültig"
   },
   "menu": {
-    "about": "Über diese Software",
-    "export": "Für Statistik exportieren",
-    "logout": "{{username}} abmelden",
-    "print": "Drucken",
+    "help": {
+      "head": "Hilfe",
+      "about": "Über diese Software"
+    },
+    "processing": {
+      "head": "Verarbeiten",
+      "export": "Für Statistik exportieren",
+      "print": "Drucken"
+    },
+    "logout": "Abmelden",
     "view": {
       "annotate": {
         "head": "Annotieren",

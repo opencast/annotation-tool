@@ -28,7 +28,6 @@
             <span id="video-title" class="brand"><span data-i18n="title"></span> - <%= version %></span>
 
             <ul class="nav pull-right">
-              <li><button type="button" id="about" data-i18n="menu.about"></button></li>
               <li class="dropdown" id="view-options">
                 <button type="button" class="dropdown-toggle" data-toggle="dropdown">
                   <span data-i18n="menu.view.head"></span> <b class="caret"></b>
@@ -79,9 +78,31 @@
                   <li><button type="button" class="opt-tracks-select" data-i18n="menu.view.track management"></button></li>
                 </ul>
               </li>
-              <li><button type="button" id="export" data-i18n="menu.export"></button></li>
-              <li><button type="button" id="print" data-i18n="menu.print"></button></li>
-              <li><button type="button" id="logout"></button></li>
+              <li class="dropdown">
+                <button type="button" class="dropdown-toggle" data-toggle="dropdown">
+                  <span data-i18n="menu.processing.head"></span> <b class="caret"></b>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><button type="button" id="export" data-i18n="menu.processing.export"></button></li>
+                  <li><button type="button" id="print" data-i18n="menu.processing.print"></button></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <button type="button" class="dropdown-toggle" data-toggle="dropdown">
+                  <span data-i18n="menu.help.head"></span> <b class="caret"></b>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><button type="button" id="about" data-i18n="menu.help.about"></button></li>
+                </ul>
+              </li>
+              <li id="user-menu" class="dropdown">
+                <button type="button" class="dropdown-toggle" data-toggle="dropdown">
+                  <span id="user-menu-label"></span> <b class="caret"></b>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><button type="button" id="logout" data-i18n="menu.logout"></button></li>
+                </ul>
+              </li>
             </ul>
           </div>
         </div>
