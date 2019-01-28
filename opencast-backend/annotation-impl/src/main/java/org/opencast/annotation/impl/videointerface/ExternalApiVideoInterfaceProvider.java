@@ -90,6 +90,7 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
         public Access getAccess() {
           boolean canRead = false;
           boolean canAnnotate = false;
+          boolean isAdmin = false;
 
           @SuppressWarnings("unchecked")
           ArrayList<JSONObject> acl = (ArrayList<JSONObject>) event.get("acl");
@@ -105,14 +106,31 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
             String role = (String) ace.get("role");
             if (role == null || !applies(role)) continue;
 
+            switch (action) {
+              case "read":
+                canRead = true;
+                break;
+              case "cast-annotate":
+                canAnnotate = true;
+                break;
+              case "cast-annotate-admin":
+                // TODO Fix the name
+                isAdmin = true;
+                break;
+            }
             if (action.equals("read")) {
               canRead = true;
             } else if (action.equals("cast-annotate")) {
               canAnnotate = true;
             }
           }
-
-          return canRead && canAnnotate ? Access.ANNOTATE : Access.NONE;
+          if (!canRead) return Access.NONE;
+          if (isAdmin) {
+            return Access.ADMIN;
+          } else if (canAnnotate) {
+            return Access.ANNOTATE;
+          }
+          return Access.NONE;
         }
 
         @Override
