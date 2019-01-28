@@ -30,14 +30,14 @@ You can find the latest news about the annotation tool on [this page](documentat
 * [Claudio Beffa](beffa.ch)
 
 ### Current Development of this branch
-* [virtUOS, Universität Osnabrück](http://www.virtuos.uni-osnabrueck.de)
+* [virtUOS, UniversitÃ¤t OsnabrÃ¼ck](http://www.virtuos.uni-osnabrueck.de)
 * [ELAN e.V.](http://elan-ev.de)
 
 ### Contact
-* Rüdiger Rolf, [rrolf@uni-osnabrueck.de](mailto://rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
+* RÃ¼diger Rolf, [rrolf@uni-osnabrueck.de](mailto://rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
 
-## [DEMO](http://entwinemedia.github.com/annotations/)
-A demo is available [here](http://entwinemedia.github.com/annotations/). It works with localStorage and no real backend communication. Therefore all the functionalities related to rights management / authorisations are not working on this version.
+## [DEMO](https://interactivevideo.virtuos.uos.de/)
+A demo is available [here](https://interactivevideo.virtuos.uos.de/). You can upload videos there and test these in the annotation tool.
 
 ## License
 [ECL 2.0](http://www.osedu.org/licenses/ECL-2.0)
