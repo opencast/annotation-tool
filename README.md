@@ -36,7 +36,7 @@ You can find the latest news about the annotation tool on [this page](documentat
 ### Contact
 * Rüdiger Rolf, [rrolf@uni-osnabrueck.de](mailto://rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
 
-## [DEMO](http://entwinemedia.github.com/annotations/)
+## [DEMO](https://interactivevideo.virtuos.uos.de/)
 A demo is available [here](https://interactivevideo.virtuos.uos.de/). You can upload videos there and test these in the annotation tool.
 
 ## License
