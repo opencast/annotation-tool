@@ -20,14 +20,17 @@
  * @requires jQuery
  * @requires player-adapter
  * @requires mediaelementplayer
+ * @requires Hls
  */
 define(["jquery",
         "player-adapter",
-        "mediaelementplayer"],
+        "mediaelementplayer",
+        "Hls"],
 
-    function ($, PlayerAdapter, mejs) {
+    function ($, PlayerAdapter, mejs, Hls) {
 
         "use strict";
+        window.Hls = Hls;
 
         /**
          * Implementation of the player adapter for the HTML5 native player
