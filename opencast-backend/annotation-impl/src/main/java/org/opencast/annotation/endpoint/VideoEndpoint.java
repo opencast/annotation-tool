@@ -1028,7 +1028,7 @@ public class VideoEndpoint {
           line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
           line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
           line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-          line.add(option(annotation.getCreatedBy().map(getUserEmail.curry(eas)).getOrElse("")).getOrElse(""));
+          line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
           line.add(track.getName());
 
           double start = annotation.getStart(); // start, stop, duration
@@ -1071,14 +1071,15 @@ public class VideoEndpoint {
     return sdf.format(new Date(millis - TimeZone.getDefault().getRawOffset()));
   }
 
-  private static final Function2<ExtendedAnnotationService, Long, String> getUserEmail = new Function2<ExtendedAnnotationService, Long, String>() {
+  private static final Function2<ExtendedAnnotationService, Long, Option<String>> getUserEmail = new Function2<ExtendedAnnotationService, Long, Option<String>>() {
     @Override
-    public String apply(ExtendedAnnotationService s, Long userId) {
-      Option<User> user = s.getUser(userId);
-      if (user.isNone())
-        return null;
-
-      return user.get().getEmail().getOrElse((String) null);
+    public Option apply(ExtendedAnnotationService s, Long userId) {
+      return s.getUser(userId).flatMap(new Function<User, Option<String>>() {
+        @Override
+        public Option<String> apply(User user) {
+          return user.getEmail();
+        }
+      });
     }
   };
 
@@ -1092,11 +1093,7 @@ public class VideoEndpoint {
   private static final Function2<ExtendedAnnotationService, Label, String> getCategoryName = new Function2<ExtendedAnnotationService, Label, String>() {
     @Override
     public String apply(ExtendedAnnotationService e, Label label) {
-      Option<Category> category = e.getCategory(label.getCategoryId(), true);
-      if (category.isNone())
-        return null;
-
-      return category.get().getName();
+      return e.getCategory(label.getCategoryId(), true).get().getName();
     }
   };
 
@@ -1124,11 +1121,7 @@ public class VideoEndpoint {
   private static final Function2<ExtendedAnnotationService, ScaleValue, String> getScaleName = new Function2<ExtendedAnnotationService, ScaleValue, String>() {
     @Override
     public String apply(ExtendedAnnotationService e, ScaleValue scaleValue) {
-      Option<Scale> scale = e.getScale(scaleValue.getScaleId(), true);
-      if (scale.isNone())
-        return null;
-
-      return scale.get().getName();
+      return e.getScale(scaleValue.getScaleId(), true).get().getName();
     }
   };
 

@@ -13,12 +13,6 @@
  *  permissions and limitations under the License.
  */
 
-/**
- * A module containing helper functions needed in many different places
- * @module util
- * @requires underscore
- * @requires moment
- */
 define([
     "underscore",
     "moment"
@@ -27,16 +21,22 @@ define([
     moment
 ) { "use strict";
 
+/**
+ * A module containing helper functions needed in many different places
+ * @exports util
+ * @requires underscore
+ * @requires moment
+ */
 var util = {
     /**
      * Check whether two closed intervals overlap.
      * Nothe that the <code>start</code> and <code>end</code> properties of the given objects
      * all have to be comparable with one another.
      * @param {Object} interval1 An object representing the first interval.
-     * @param interval1.start The start of the interval
-     * @param interval2.end The end of the interval
+     * @param {Number} interval1.start The start of the interval
+     * @param {Number} interval1.end The end of the interval
      * @param {Object} interval2 The second interval; see <code>interval1</code>
-     * @returns {Boolean} <code>true</code> if the two closed intervals overlap,
+     * @return {Boolean} <code>true</code> if the two closed intervals overlap,
      *     i.e. also when they just touch; otherwise <code>false</code>
     */
     overlaps: function (interval1, interval2) {
@@ -46,7 +46,7 @@ var util = {
     /**
      * Tries to parse many different things to a date.
      * @param value A thing hopefully representing a date
-     * @returns {Date|undefined} <code>value</code> interpreted as a <code>Date</code>
+     * @return {Date|undefined} <code>value</code> interpreted as a <code>Date</code>
      *     or <code>undefined</code> if that failed
      */
     parseDate: function (value) {
@@ -69,7 +69,7 @@ var util = {
      * before comparing their respective timestamps.
      * @param value1 The first value
      * @param value2 The second value
-     * @returns {Boolean} <code>true</code> if the values represent the same date,
+     * @return {Boolean} <code>true</code> if the values represent the same date,
      *     <code>false</code> otherwise
      */
     datesEqual: function (value1, value2) {
@@ -80,7 +80,7 @@ var util = {
      * Parse the given parameter to JSON if given as String
      * @alias module:models-resource.Resource.parseJSONString
      * @param  parameter the parameter as String
-     * @returns {Object} parameter as JSON object
+     * @return {Object} parameter as JSON object
      */
     parseJSONString: function (parameter) {
         if (parameter && _.isString(parameter)) {
@@ -98,10 +98,20 @@ var util = {
     },
 
     /**
+     * A callback to compare two values
+     * @callback comparator
+     * @param a The first object
+     * @param b The second object
+     * @return {Number} A negative number if <code>a</code> is less than <code>b</code>,
+     *     a positive number if <code>a</code> is larger than <code>b</code>,
+     *     and zero if they are euqal.
+     */
+
+    /**
      * Compose an array of comparators into one,
      * comparing inputs lexicographically based on the given functions.
      * @param {comparator[]} comparators The base comparators to compose
-     * @returns {comparator} The lexicographic composition of the given comparators
+     * @return {comparator} The lexicographic composition of the given comparators
      */
     lexicographic: function (comparators) {
         return function (a, b) {
@@ -116,7 +126,7 @@ var util = {
     /**
      * Create a comparator based on whether a given predicate applies to a function or not
      * @param {predicate} predicate The predicate to test
-     * @returns {comparator} A comparator that sorts the first value before the second
+     * @return {comparator} A comparator that sorts the first value before the second
      *     if the predicate is true for it, and vice versa.
      */
     firstWith: function (predicate) {
@@ -130,7 +140,7 @@ var util = {
     /**
      * Coerce anything as an array
      * @param object Any object that is to be coerced to an array
-     * @returns {Array} If the argument is already an array it is returned as it;
+     * @return {Array} If the argument is already an array it is returned as is;
      *     otherwise a singleton array containing it is returned.
      */
     array: function (object) {
@@ -149,19 +159,62 @@ var util = {
         .map(function (keyValuePair) { return keyValuePair.split("="); })
         .object()
         .mapObject(decodeURIComponent)
-        .value()
+        .value(),
+
+    /**
+     * A combinator calling the given method on its argument.
+     * @param {String} name The name of the method to call on the argument of the returned function
+     */
+    caller: function (name) {
+        return function (o) {
+            return o[name].apply(o, arguments);
+        };
+    },
+
+    /**
+     * A function mapping names to values
+     * @callback stringMap
+     * @param {String} a The name to return the value for
+     * @return The value belonging to the given key
+     */
+
+    /**
+     * Dynamically extend a given object with definitions for certain keys
+     * @param {Object} object The object to extend
+     * @param {String[]} properties The properties to add to the object
+     * @param {stringMap} definition A function mapping a property name to its definition
+     * @return {Object} The extended object
+     */
+    extend: function (object, properties, definition) {
+        return _.extend(object, _.object(_.map(properties, function (property) {
+            return [property, definition(property)];
+        })));
+    }
 };
 
-
-/**
- * A callback to compare two values
- * @callback comparator
- * @param a The first object
- * @param b The second object
- * @return {Number} A negative number if <code>a</code> is less than <code>b</code>,
- *     a positive number if <code>a</code> is larger than <code>b</code>,
- *     and zero if they are euqal.
- */
+util.extend(util, [
+    /**
+     * Event handler to prevent the browser's default behavior
+     * @function preventDefault
+     * @static
+     * @param {Event} event The event to handle
+     */
+    "preventDefault",
+    /**
+     * Event handler to stop events from propagating further up/down the chain
+     * @function stopPropagation
+     * @static
+     * @param {Event} event The event to handle
+     */
+    "stopPropagation",
+    /**
+     * Event handler to stop the processing of an event completely
+     * @function stopImmediatePropagation
+     * @static
+     * @param {Event} event The event to handle
+     */
+    "stopImmediatePropagation"
+], util.caller);
 
 return util;
 

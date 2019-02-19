@@ -73,13 +73,6 @@ define(["jquery",
             ID_PREFIX: "catItem-",
 
             /**
-             * Define if the view has been or not deleted
-             * @alias module:views-annotate-category.Category#deleted
-             * @type {boolean}
-             */
-            deleted: false,
-
-            /**
              * Define if the view is or not in edit modus.
              * @alias module:views-annotate-category.Category#editModus
              * @type {boolean}

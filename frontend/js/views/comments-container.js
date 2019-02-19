@@ -31,7 +31,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, CommentView, Template, Handlebars, Backbone) {
+    function ($, _, CommentView, template, Handlebars, Backbone) {
 
         "use strict";
 
@@ -63,7 +63,6 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#template
              * @type {HandlebarsTemplate}
              */
-            template: Template,
 
             /**
              * Events to handle
@@ -77,6 +76,7 @@ define(["jquery",
             },
 
             currentState: false,
+            template: template,
 
             /**
              * constructor
@@ -84,7 +84,7 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                this.commentViews        = [];
+                this.commentViews = [];
 
                 // Bind function to the good context
                 _.bindAll(this,
@@ -121,9 +121,9 @@ define(["jquery",
              */
             resetViews: function () {
                 _.each(this.commentViews, function (commentView, index) {
-                    this.commentViews.splice(index, 1);
-                    commentView.deleteView();
+                    commentView.remove();
                 }, this);
+                this.commentViews = [];
 
                 _.each(this.collection.toArray(), function (comment) {
                     this.addComment(comment);
@@ -161,23 +161,12 @@ define(["jquery",
                 _.find(this.commentViews, function (commentView, index) {
                     if (delComment === commentView.model) {
                         this.commentViews.splice(index, 1);
-                        commentView.deleteView();
+                        commentView.remove();
                         this.render();
                         return true;
                     }
                     return false;
                 }, this);
-            },
-
-            /**
-             * Sort all the comments in the list by date
-             * @alias module:views-comments-container.CommentsContainer#sortViewsByDate
-             */
-            sortViewsByDate: function () {
-                this.commentViews = _.sortBy(this.commentViews, function (commentViews) {
-                    return commentViews.model.get("created_at");
-                });
-                this.render();
             },
 
             /**

@@ -30,6 +30,7 @@
  */
 define(["jquery",
         "underscore",
+        "util",
         "i18next",
         "player-adapter",
         "models/annotation",
@@ -42,7 +43,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, User, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
+    function ($, _, util, i18next, PlayerAdapter, Annotation, User, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
 
         "use strict";
 
@@ -63,13 +64,6 @@ define(["jquery",
             tagName: "div",
 
             className: "annotation",
-
-            /**
-             * Define if the view has been or not deleted
-             * @alias module:views-list-annotation.ListAnnotation#deleted
-             * @type {boolean}
-             */
-            deleted: false,
 
             /**
              * Define if the comments container is currently visible
@@ -101,27 +95,6 @@ define(["jquery",
                 if (!attr.annotation) {
                     throw "The annotations have to be given to the annotate view.";
                 }
-
-                // Bind function to the good context
-                _.bindAll(this, "render",
-                                "deleteFull",
-                                "deleteView",
-                                "onSelect",
-                                "startEdit",
-                                "saveStart",
-                                "saveEnd",
-                                "saveFreeText",
-                                "saveScaling",
-                                "stopPropagation",
-                                "toggleEditState",
-                                "toggleCollapsedState",
-                                "toggleExpandedState",
-                                "toggleCommentsState",
-                                "setCurrentTimeAsStart",
-                                "setCurrentTimeAsEnd",
-                                "setState",
-                                "getState",
-                                "handleEsc");
 
                 this.model = attr.annotation;
 
@@ -159,7 +132,7 @@ define(["jquery",
                 this.listenTo(this.model, "change", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);
                 this.listenTo(this.model.get("comments"), "remove", this.render);
-                this.listenTo(this.model, "destroy", this.deleteView);
+                this.listenTo(this.model, "destroy", this.remove);
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.ANNOTATION;
@@ -216,70 +189,23 @@ define(["jquery",
             },
 
             /**
-             * Delete only this annotation view
-             * @alias module:views-list-annotation.ListAnnotation#deleteView
-             */
-            deleteView: function () {
-                this.remove();
-                this.deleted = true;
-            },
-
-            /**
-             * Move the video current time to this annotation
-             * @alias module:views-list-annotation.ListAnnotation#jumpTo
-             */
-            jumpTo: function () {
-                annotationTool.setSelection([this.model], true);
-            },
-
-            /**
-             * Enter in edit modus
-             * @alias module:views-list-annotation.ListAnnotation#startEdit
-             * @param  {event} event Event object
-             */
-            startEdit: function (event) {
-                var $target = $(event.currentTarget).find("input");
-
-                if (event.stopImmediatePropagation) {
-                    event.stopImmediatePropagation();
-                }
-
-                if (!this.model.get("isMine")) {
-                    return;
-                }
-
-                // Hack for Firefox, add an button over it
-                if ($target.length === 0 && event.currentTarget.className.match(/-btn$/)) {
-                    $target = $(event.currentTarget).parent().find(".input");
-                    $(event.currentTarget).parent().find(".text-container span").hide();
-                }
-
-                if ($target.attr("disabled")) {
-                    $target.removeAttr("disabled");
-                    $target.focus();
-                }
-            },
-
-            /**
              * Save the modification done in the free text field
              * @alias module:views-list-annotation.ListAnnotation#saveFreeText
              * @param  {event} event Event object
              */
             saveFreeText: function (event) {
-                var newValue = this.$el.find(".freetext textarea").val();
 
                 // If keydown event but not enter, value must not be saved
                 if (event.type === "keydown" && !(event.keyCode === 13 && !event.shiftKey)) {
                     return;
                 }
 
-                this.model.set({ text: newValue });
-                this.model.save();
+                var newValue = this.$el.find(".freetext textarea").val();
+                this.model.save({ text: newValue });
 
                 if (event.type === "keydown") {
                     $(event.currentTarget).blur();
                 }
-
                 this.toggleEditState(event);
             },
 
@@ -445,10 +371,6 @@ define(["jquery",
                     selectedScaleValue,
                     title;
 
-                if (this.deleted) {
-                    return "";
-                }
-
                 modelJSON              = this.model.toJSON();
                 modelJSON.track        = this.track.get("name");
                 modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
@@ -468,7 +390,7 @@ define(["jquery",
 
                     if (modelJSON.hasScale && this.scale) {
                         scaleValues = this.scaleValues.toJSON();
-                        selectedScaleValue = _.where(scaleValues, {id: modelJSON.scale_value_id});
+                        selectedScaleValue = _.where(scaleValues, { id: modelJSON.scale_value_id });
 
                         if (selectedScaleValue.length > 0) {
                             selectedScaleValue[0].isSelected = true;
@@ -482,7 +404,6 @@ define(["jquery",
 
                 this.$el.html($(this.currentState.render(modelJSON)));
 
-                this.el = this.$el[0];
                 this.$el.attr("id", this.id);
 
                 if (!_.isUndefined(modelJSON.label) && !_.isNull(modelJSON.label)) {
@@ -550,15 +471,6 @@ define(["jquery",
             }, 100),
 
             /**
-             * Stop the propagation of the given event
-             * @alias module:views-list-annotation.ListAnnotation#stopPropagation
-             * @param  {event} event Event object
-             */
-            stopPropagation: function (event) {
-                event.stopImmediatePropagation();
-            },
-
-            /**
              * Switch in/out edit modus
              * @alias module:views-list-annotation.ListAnnotation#toggleEditState
              * @param  {event} event Event object
@@ -602,8 +514,8 @@ define(["jquery",
             /**
              * Toggle the visibility of the text container
              * @alias module:views-list-annotation.ListAnnotation#toggleExpandedState
-             * @param  {event} event Event object
-             * @param  {boolean} force Force to expand state 
+             * @param {Event} event Event object
+             * @param {boolean} force Force to expand state
              */
             toggleExpandedState: function (event, force) {
                 if (!_.isUndefined(event) && !force) {
@@ -721,10 +633,10 @@ define(["jquery",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment": "toggleCommentsState",
                         "click .toggle-edit": "toggleEditState",
-                        "click .freetext textarea": "stopPropagation",
-                        "click .scaling select": "stopPropagation",
-                        "click .end-value": "stopPropagation",
-                        "click .start-value": "stopPropagation",
+                        "click .freetext textarea": util.stopPropagation,
+                        "click .scaling select": util.stopPropagation,
+                        "click .end-value": util.stopPropagation,
+                        "click .start-value": util.stopPropagation,
                         "click i.delete": "deleteFull",
                         "click button.in": "setCurrentTimeAsStart",
                         "click button.out": "setCurrentTimeAsEnd",

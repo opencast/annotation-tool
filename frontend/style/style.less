@@ -1,9 +1,5 @@
 /* @import of CSS needs to be the first thing according to CSS Spec and may not be nested in @media */
 
-@import "bootstrap/mixins.less";
-@import "bootstrap/variables.less";
-@import "annotations/variables.less";
-
 @import "colorpicker.css" screen;
 @import "timeline/timeline.css" screen;
 @import "mediaelementplayer/mediaelementplayer.min.css" screen;
@@ -12,10 +8,12 @@
 
 @media screen {
     @import "bootstrap/bootstrap.less";
+    @import "annotations/variables.less";
     @import "bootstrap-slider/slider.less";
-    @import "timeline/timeline-custom.less";
-    @import "annotations/style.less";
+    @import "annotations/mixins.less";
     @import "annotations/screen.less";
+    @import "annotations/style.less";
+    @import "timeline/timeline-custom.less";
 }
 
 @media print {

@@ -34,7 +34,7 @@ define(["jquery",
         "views/comments-container",
         "handlebarsHelpers"],
 
-    function ($, _, util, Template, Handlebars, Backbone, CommentsContainer) {
+    function ($, _, util, template, Handlebars, Backbone, CommentsContainer) {
 
         "use strict";
 
@@ -59,7 +59,7 @@ define(["jquery",
              * @alias module:views-comment.Comment#template
              * @type {HandlebarsTemplate}
              */
-            template: Template,
+            template: template,
 
             /**
              * Events to handle
@@ -67,14 +67,14 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click"                     : "stopPropagation",
-                "click i.delete-comment"    : "onDeleteComment",
-                "dblclick span.comment"     : "onEditComment",
-                "click i.edit-comment"      : "onEditComment",
-                "click i.add-reply"         : "onAddReply",
-                "keyup textarea"            : "keyupInsertProxy",
-                "click button[type=submit]" : "onSubmit",
-                "click button[type=button]" : "onCancel"
+                "click": util.stopPropagation,
+                "click i.delete-comment": "onDeleteComment",
+                "dblclick span.comment": "onEditComment",
+                "click i.edit-comment": "onEditComment",
+                "click i.add-reply": "onAddReply",
+                "keyup textarea": "keyupInsertProxy",
+                "click button[type=submit]": "onSubmit",
+                "click button[type=button]": "onCancel"
             },
 
             /**
@@ -90,12 +90,10 @@ define(["jquery",
                 // Bind function to the good context
                 _.bindAll(this,
                           "cancel",
-                          "deleteView",
                           "onDeleteComment",
                           "onEditComment",
                           "onSubmit",
                           "onCancel",
-                          "stopPropagation",
                           "render");
 
                 this.isEditEnable = !!attr.isEditEnable;
@@ -109,24 +107,6 @@ define(["jquery",
                 this.replyContainer = new CommentsContainer({ collection: this.model.replies });
 
                 return this;
-            },
-
-            /**
-             * Stop the propagation of the given event
-             * @alias module:views-comment.Comment#stopPropagation
-             * @param  {event} event Event object
-             */
-            stopPropagation: function (event) {
-                event.stopImmediatePropagation();
-            },
-
-            /**
-             * Delete only this comment
-             * @alias module:views-comment.Comment#deleteView
-             */
-            deleteView: function () {
-                this.remove();
-                this.deleted = true;
             },
 
             /**
@@ -180,11 +160,10 @@ define(["jquery",
                     return;
                 }
 
-                this.model.set({
-                    "text"       : textValue,
-                    "updated_at" : new Date()
+                this.model.save({
+                    text: textValue,
+                    updated_at: new Date()
                 });
-                this.model.save();
 
                 this.cancel();
             },
@@ -226,15 +205,14 @@ define(["jquery",
              */
             render: function () {
                 var data = {
-                        creator: this.model.get("created_by_nickname"),
-                        creationdate: this.model.get("created_at"),
-                        text: this.model.get("text"),
-                        canEdit: this.model.get("isMine"),
-                        numberOfReplies: this.model.replies.countCommentsAndReplies(),
-                        isEditEnable: this.isEditEnable
-                    },
+                    creator: this.model.get("created_by_nickname"),
+                    creationdate: this.model.get("created_at"),
+                    text: this.model.get("text"),
+                    canEdit: this.model.get("isMine"),
+                    numberOfReplies: this.model.replies.countCommentsAndReplies(),
+                    isEditEnable: this.isEditEnable
+                },
                     updatedAt = this.model.get("updated_at");
-
                 if (updatedAt && !util.datesEqual(updatedAt, data.creationdate)) {
                     data.updator = this.model.get("updated_by_nickname");
                     data.updateddate = updatedAt;

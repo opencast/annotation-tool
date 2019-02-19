@@ -77,13 +77,6 @@ define(["jquery",
             ID_PREFIX: "labelItem-",
 
             /**
-             * Define if the view has been or not deleted
-             * @alias module:views-annotate-label.Category#deleted
-             * @type {boolean}
-             */
-            deleted: false,
-
-            /**
              * Define if the view is or not in edit modus.
              * @alias module:views-annotate-label.Category#editModus
              * @type {boolean}

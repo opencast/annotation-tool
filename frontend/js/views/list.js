@@ -83,8 +83,8 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click .collapse-all"   : "collapseAll",
-                "click .expand-all"     : "expandAll"
+                "click .collapse-all": "collapseAll",
+                "click .expand-all": "expandAll"
             },
 
             /**
@@ -102,13 +102,9 @@ define(["jquery",
                                "clearList",
                                "getPosition",
                                "getViewFromAnnotation",
-                               "editAnnotationCallback",
                                "insertView",
-                               "sortViewsbyTime",
                                "select",
-                               "expandAll",
                                "renderSelect",
-                               "collapseAll",
                                "updateView",
                                "potentiallyOpenCurrentItems");
 
@@ -178,7 +174,7 @@ define(["jquery",
             addAnnotation: function (annotation, track, isPartofList) {
                 var view;
 
-                // Wait that the id has be set to the model before to add it
+                // Wait that the id has been set on the model before to add it
                 if (_.isUndefined(annotation.get("id"))) {
                     annotation.once("ready", function () {
                         this.addAnnotation(annotation, track, isPartofList);
@@ -186,7 +182,6 @@ define(["jquery",
                     return;
                 }
                 view = new AnnotationView({ annotation: annotation, track: track });
-                this.listenTo(view, "edit", this.editAnnotationCallback);
                 this.insertView(view);
 
                 if (!isPartofList) {
@@ -225,19 +220,6 @@ define(["jquery",
 
             },
 
-            editAnnotationCallback: function (editView) {
-                _.each(this.annotationViews, function (view) {
-                    if (view.id !== editView.id) {
-                        var state = view.getState();
-                        if (state === AnnotationView.STATES.EDIT) {
-                            view.toggleEditState();
-                        } else if (state === AnnotationView.STATES.COMMENTS) {
-                            view.toggleCommentsState();
-                        }
-                    }
-                }, this);
-            },
-
             /**
              * Updates the position of view of the given annotation in the list
              * @alias module:views-list.List#updateView
@@ -246,7 +228,7 @@ define(["jquery",
             updateView: function (annotation) {
                 var view = this.getViewFromAnnotation(annotation.get("id"));
 
-                // Remove the view in the list if the view index is valid 
+                // Remove the view in the list if the view index is valid
                 if (!_.isUndefined(view.index) && this.annotationViews[view.index] === view) {
                     this.annotationViews.splice(view.index, 1);
                 }
@@ -372,17 +354,6 @@ define(["jquery",
             },
 
             /**
-             * Sort all the annotations in the list by start time
-             * @alias module:views-list.List#sortViewsByTime
-             */
-            sortViewsbyTime: function () {
-                this.annotationViews = _.sortBy(this.annotationViews, function (annotationView) {
-                    return annotationView.model.get("start");
-                });
-                this.render();
-            },
-
-            /**
              * Returns the index of the given view in the list 
              * @alias module:views-list.List#getPosition
              * @param  {Object} view The target view
@@ -402,9 +373,7 @@ define(["jquery",
              * @alias module:views-list.List#expandAll
              */
             expandAll: function (event) {
-                _.each(this.annotationViews, function (annView) {
-                    annView.toggleExpandedState(event, true);
-                });
+                _.invoke(this.annotationViews, "expand");
             },
 
             /**
@@ -412,9 +381,7 @@ define(["jquery",
              * @alias module:views-list.List#collapseAll
              */
             collapseAll: function (event) {
-                _.each(this.annotationViews, function (annView) {
-                    annView.toggleCollapsedState(event, true);
-                });
+                _.invoke(this.annotationViews, "collapse");
             },
 
             /**
