@@ -30,7 +30,6 @@ define(["jquery",
     function ($, PlayerAdapter, mejs, Hls) {
 
         "use strict";
-        window.Hls = Hls;
 
         /**
          * Implementation of the player adapter for the HTML5 native player
@@ -80,11 +79,38 @@ define(["jquery",
 
                 targetElement.style.width = "100%";
                 targetElement.style.height = "100%";
-
+                targetElement.preload = "auto";
+                //targetElement.muted = true;
+                
+                window.Hls = Hls;
                 mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
+                    renderers: ['html5', 'native_hls'],
+                    hls: {
+                        debug: true
+                    },
                     alwaysShowControls: true,
                     stretching: "fill",
                     success: function (mediaElement) {
+                        if (Hls !== undefined) {
+                            mediaElement.addEventListener(Hls.Events.MEDIA_ATTACHED, function () {
+                                // All the code when this event is reached...
+                                console.log('Media attached!');
+
+
+                            });
+                
+                            // Manifest file was parsed, invoke loading method
+                            mediaElement.addEventListener(Hls.Events.MANIFEST_PARSED, function () {
+                                // All the code when this event is reached...
+                                console.log('Manifest parsed!');
+                
+                            });
+                
+                            mediaElement.addEventListener(Hls.Events.FRAG_PARSING_METADATA, function (event, data) {
+                                // All the code when this event is reached...
+                                //console.log(data);
+                            });
+                        }
                         if (sources) {
                             mediaElement.setSrc(sources);
                         }
@@ -215,8 +241,18 @@ define(["jquery",
             this.load = function () {
                 self.initialized = false;
                 self.status = PlayerAdapter.STATUS.INITIALIZING;
+                
                 targetElement.load();
                 targetElement.load();
+                // var playPromise = targetElement.play();
+                // if (playPromise["[[PromiseValue]]"] !== undefined) {
+                //     playPromise.then(_ => {
+                //         targetElement.pause();
+                //     })
+                //     .catch(error => {
+
+                //     });
+                // }
             };
 
             /**
