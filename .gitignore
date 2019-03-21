@@ -43,6 +43,4 @@ Makefile
 
 # Ignore generated frontend documentation
 /frontend/doc
-frontend/.vscode/launch.json
-frontend/package-lock.json
-frontend/package-lock.json
+

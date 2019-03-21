@@ -27,7 +27,7 @@ require.config({
         "i18next-browser-language-detector": "libs/i18nextBrowserLanguageDetector.min",
         "jquery-i18next": "libs/jquery-i18next.min",
         "moment": "libs/moment-with-locales",
-        "Hls":"libs/mediaelement/renderers/hls",
+        "Hls": "libs/mediaelement/renderers/hls",
         "mediaelementplayer": "libs/mediaelement/mediaelement-and-player.min",
         "mediaelement/lang": "libs/mediaelement/lang",
         "sortable": "libs/Sortable.min",
@@ -37,8 +37,9 @@ require.config({
 
     shim: {
         "Hls": {
-            deps: ['require'], 
-            exports: "Hls"},
+            exports: "Hls",
+            deps: ['require']
+            },
 
         "handlebarsHelpers": ["handlebars"],
 
