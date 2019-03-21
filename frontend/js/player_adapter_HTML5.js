@@ -81,10 +81,14 @@ define(["jquery",
                 targetElement.style.width = "100%";
                 targetElement.style.height = "100%";
                 targetElement.preload = "auto";
+                //targetElement.muted = true;
                 
                 window.Hls = Hls;
                 mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
                     renderers: ['html5', 'native_hls'],
+                    hls: {
+                        //debug: true
+                    },
                     alwaysShowControls: true,
                     stretching: "fill",
                     success: function (wrapper) {
@@ -107,7 +111,7 @@ define(["jquery",
                 
                             mediaElement.addEventListener(Hls.Events.FRAG_PARSING_METADATA, function (event, data) {
                                 // All the code when this event is reached...
-                                console.log(data);
+                                //console.log(data);
                             });
                         }
                         /**
