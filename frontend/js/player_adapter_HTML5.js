@@ -20,14 +20,14 @@
  * @requires jQuery
  * @requires player-adapter
  * @requires mediaelementplayer
- * @requires Hls
+ * @requires hls
  */
 define(["jquery",
         "player-adapter",
         "mediaelementplayer",
-        "Hls"],
+        "hls"],
 
-    function ($, PlayerAdapter, mejs, Hls) {
+    function ($, PlayerAdapter, mejs, hls) {
 
         "use strict";
 
@@ -81,35 +81,14 @@ define(["jquery",
                 targetElement.style.width = "100%";
                 targetElement.style.height = "100%";
                 targetElement.preload = "auto";
-                
-                window.Hls = Hls;
+
+                window.hls = hls;
                 mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
                     renderers: ['html5', 'native_hls'],
                     alwaysShowControls: true,
                     stretching: "fill",
                     success: function (wrapper) {
                         mediaElement = wrapper;
-
-                        if (Hls !== undefined) {
-                            mediaElement.addEventListener(Hls.Events.MEDIA_ATTACHED, function () {
-                                // All the code when this event is reached...
-                                console.log('Media attached!');
-
-
-                            });
-                
-                            // Manifest file was parsed, invoke loading method
-                            mediaElement.addEventListener(Hls.Events.MANIFEST_PARSED, function () {
-                                // All the code when this event is reached...
-                                console.log('Manifest parsed!');
-                
-                            });
-                
-                            mediaElement.addEventListener(Hls.Events.FRAG_PARSING_METADATA, function (event, data) {
-                                // All the code when this event is reached...
-                                console.log(data);
-                            });
-                        }
                         /**
                          * Listen the events from the native player
                          */
