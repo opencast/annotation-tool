@@ -35,12 +35,6 @@ require.config({
     waitSeconds: 10,
 
     shim: {
-        "handlebarsHelpers": ["handlebars"],
-
-        "handlebars": {
-            exports: "Handlebars"
-        },
-
         "backbone": {
             deps: ["underscore", "jquery"],
             exports: "Backbone"
@@ -62,8 +56,7 @@ require.config({
         },
 
         "mediaelementplayer": {
-            exports: "mejs",
-            deps: ["jquery"]
+            exports: "mejs"
         }
     }
 });
