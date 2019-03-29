@@ -27,7 +27,7 @@ require.config({
         "i18next-browser-language-detector": "libs/i18nextBrowserLanguageDetector.min",
         "jquery-i18next": "libs/jquery-i18next.min",
         "moment": "libs/moment-with-locales",
-        "mediaelementplayer": "libs/mediaelement/mediaelement-and-player.min",
+        "mediaelementplayer": "libs/mediaelement/mediaelement-and-player",
         "mediaelement/lang": "libs/mediaelement/lang",
         "sortable": "libs/Sortable.min",
         "goldenlayout": "libs/goldenlayout"
