@@ -20,14 +20,14 @@
  * @requires jQuery
  * @requires player-adapter
  * @requires mediaelementplayer
- * @requires hls
+ * @requires Hls
  */
 define(["jquery",
         "player-adapter",
         "mediaelementplayer",
-        "hls"],
+        "Hls"],
 
-    function ($, PlayerAdapter, mejs, hls) {
+    function ($, PlayerAdapter, mejs, Hls) {
 
         "use strict";
 
@@ -82,7 +82,7 @@ define(["jquery",
                 targetElement.style.height = "100%";
                 targetElement.preload = "auto";
 
-                window.hls = hls;
+                window.Hls = Hls;
                 mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
                     renderers: ['html5', 'native_hls'],
                     alwaysShowControls: true,
