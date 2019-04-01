@@ -1023,13 +1023,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
-  @DELETE
-  @Path("/reset")
-  public Response reset() {
-    eas().clearDatabase();
-    return Response.noContent().build();
-  }
-
   // --
 
   public static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
