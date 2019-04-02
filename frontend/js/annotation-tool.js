@@ -167,6 +167,8 @@ define(["jquery",
 
                 this.tracksOrder = [];
 
+                this.freeTextVisible = true;
+
                 this.colorsManager = new ColorsManager();
 
                 this.once(this.EVENTS.USER_LOGGED, function () {
@@ -545,6 +547,15 @@ define(["jquery",
             orderTracks: function (order) {
                 this.tracksOrder = order;
                 this.trigger("order", order);
+            },
+
+            /**
+             * Shows or hides the free text annotations
+             * @alias annotationTool.toggleFreeTextAnnotations
+             */
+            toggleFreeTextAnnotations: function () {
+                this.freeTextVisible = !this.freeTextVisible;
+                this.trigger("togglefreetext");
             },
 
             /**
