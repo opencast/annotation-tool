@@ -161,7 +161,7 @@ define(["jquery",
                             "checkToContinueVideo",
                             "switchEditModus",
                             "keydownOnAnnotate",
-                            "toggleFreeTextAnnotations",
+                            "toggleFreeTextAnnotationPane",
                             "toggleStructuredAnnotations");
 
                 // Parameter for stop on write
@@ -379,9 +379,9 @@ define(["jquery",
 
             /**
              * Toggle layout for free text annotation only
-             * @alias module:views-annotate.Annotate#toggleFreeTextAnnotations
+             * @alias module:views-annotate.Annotate#toggleFreeTextAnnotationPane
              */
-            toggleFreeTextAnnotations: function () {
+            toggleFreeTextAnnotationPane: function () {
                 this.layout.freeText = !this.layout.freeText;
                 // TODO You might have to adapt this as well
                 this.freeTextElement.toggle();
