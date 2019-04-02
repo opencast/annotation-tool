@@ -77,7 +77,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 .flatten()
                 .filter(function (annotation) {
                     var category = annotation.category();
-                    if (!category) return true;
+                    if (!category) return annotationTool.freeTextVisible;
                     return category.get("visible");
                 });
 

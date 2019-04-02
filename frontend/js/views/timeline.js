@@ -332,10 +332,8 @@ define(["util",
                 this.listenTo(this.tracks, "change", this.changeTrack);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
 
-                this.listenTo(annotationTool.video.get("categories"), "change:visible", _.bind(function () {
-                    this.preprocessAllTracks();
-                    this.redraw();
-                }, this));
+                this.listenTo(annotationTool.video.get("categories"), "change:visible", this.update);
+                this.listenTo(annotationTool, "togglefreetext", this.update);
 
                 this.addTracksList(this.tracks.getVisibleTracks());
                 this.timeline.setCustomTime(this.startDate);
@@ -354,16 +352,24 @@ define(["util",
                     event.stopPropagation();
                 }, true);
 
-                this.listenTo(annotationTool, "order", function () {
-                    this.preprocessAllTracks();
-                    this.redraw();
-                });
+                this.listenTo(annotationTool, "order", this.update);
 
                 this.timerangeChange();
                 this.$timeline.scroll(this.updateHeader);
                 this.onPlayerTimeUpdate();
             },
 
+            /**
+             * Update the timeline view.
+             * This recalculates the grouping and stacking for all tracks
+             * and then redraws everything. Call this if something affecting
+             * the visibility/existence of annotations in every track.
+             * @alias module:views-timeline.TimelineView#update
+             */
+            update: function () {
+                this.preprocessAllTracks();
+                this.redraw();
+            },
 
             /**
              * Search for the group/track with the given name in the timeline
@@ -916,8 +922,10 @@ define(["util",
 
                 var items = _.filter(this.annotationItems, function (item) {
                     var category = item.annotation.category();
+                    if (category && !category.get("visible")) return false;
+                    if (!category && !annotationTool.freeTextVisible) return false;
                     // Mind the lose comparison! IDs might be either strings or numbers, but we don't care here.
-                    return item.trackId == trackId && (!category || category.get("visible"));
+                    return item.trackId == trackId;
                 });
 
                 // The height of the track in stack levels. We need (and potentially calculate) that later.
@@ -1568,8 +1576,7 @@ define(["util",
              * @alias module:views-timeline.TimelineView#onWindowsResize
              */
             onWindowResize: function () {
-                this.preprocessAllTracks();
-                this.redraw();
+                this.update();
                 if (annotationTool.selectedTrack) {
                     this.markTrackSelected(annotationTool.selectedTrack);
                 }
