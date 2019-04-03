@@ -406,6 +406,12 @@ define(["jquery",
                 goldenLayout.registerComponent("player", function (container) {
                     self.setLoadingProgress(50, i18next.t("startup.loading video"));
 
+                    // Remember the element the player is rooted in.
+                    // We need it later to check whether it has the focus,
+                    // in order to prevent the play-pause shortcut (space)
+                    // to be handled twice.
+                    self.playerContainer = container.getElement()[0];
+
                     container.on("open", function () {
                         annotationTool.loadVideo(container.getElement()[0]);
                     });
@@ -578,6 +584,17 @@ define(["jquery",
                     event.preventDefault();
                     addComment();
                 });
+                Mousetrap.bind('space', _.bind(function () {
+                    // See whether the player has the focus; it manages this function itself.
+                    if ($.contains(this.playerContainer, document.activeElement)) return;
+
+                    var status = annotationTool.playerAdapter.getStatus();
+                    if (status === PlayerAdapter.STATUS.PLAYING) {
+                        annotationTool.playerAdapter.pause();
+                    } else if (status === PlayerAdapter.STATUS.PAUSED) {
+                        annotationTool.playerAdapter.play();
+                    }
+                }, this));
 
                 this.interruptAnnotationShortcut();
             },
