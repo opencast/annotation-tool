@@ -20,12 +20,12 @@
  * @requires jQuery
  * @requires player-adapter
  * @requires mediaelementplayer
- * @requires Hls
+ * @requires hls
  */
 define(["jquery",
         "player-adapter",
         "mediaelementplayer",
-        "Hls"],
+        "hls"],
 
     function ($, PlayerAdapter, mejs, Hls) {
 
