@@ -43,3 +43,4 @@ Makefile
 
 # Ignore generated frontend documentation
 /frontend/doc
+

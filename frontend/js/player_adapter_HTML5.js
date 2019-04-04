@@ -20,12 +20,14 @@
  * @requires jQuery
  * @requires player-adapter
  * @requires mediaelementplayer
+ * @requires hls
  */
 define(["jquery",
         "player-adapter",
-        "mediaelementplayer"],
+        "mediaelementplayer",
+        "hls"],
 
-    function ($, PlayerAdapter, mejs) {
+    function ($, PlayerAdapter, mejs, Hls) {
 
         "use strict";
 
@@ -68,6 +70,7 @@ define(["jquery",
             this.initialized = false;
 
             var mediaElementPlayer;
+            var mediaElement = targetElement;
 
             /**
              * Initilize the player adapter
@@ -77,97 +80,101 @@ define(["jquery",
 
                 targetElement.style.width = "100%";
                 targetElement.style.height = "100%";
+                targetElement.preload = "auto";
 
+                window.Hls = Hls;
                 mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
+                    renderers: ['html5', 'native_hls'],
                     alwaysShowControls: true,
                     stretching: "fill",
-                    success: function (mediaElement) {
+                    success: function (wrapper) {
+                        mediaElement = wrapper;
+                        /**
+                         * Listen the events from the native player
+                         */
+                        $(mediaElement).bind("canplay durationchange", function () {
+                            // If duration is still not valid
+                            if (isNaN(self.getDuration()) || mediaElement.readyState < 1) {
+                                return;
+                            }
+
+                            if (!self.initialized) {
+                                self.initialized = true;
+                            }
+
+                            // If duration is valid, we changed status
+                            self.status = PlayerAdapter.STATUS.PAUSED;
+                            self.dispatchEvent(new Event(PlayerAdapter.EVENTS.READY));
+
+                            if (self.waitToPlay) {
+                                self.play();
+                            }
+                        });
+
+                        $(mediaElement).bind("play", function () {
+                            if (!self.initialized) {
+                                return;
+                            }
+
+                            self.status = PlayerAdapter.STATUS.PLAYING;
+                            self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PLAY));
+                        });
+
+                        $(mediaElement).bind("playing", function () {
+                            self.status =  PlayerAdapter.STATUS.PLAYING;
+                        });
+
+                        $(mediaElement).bind("pause", function () {
+                            if (!self.initialized) {
+                                return;
+                            }
+
+                            self.status = PlayerAdapter.STATUS.PAUSED;
+                            self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PAUSE));
+                        });
+
+                        $(mediaElement).bind("ended", function () {
+                            self.status = PlayerAdapter.STATUS.ENDED;
+                            self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ENDED));
+                        });
+
+                        $(mediaElement).bind("seeking", function () {
+                            self.oldStatus = self.status;
+                            self.status = PlayerAdapter.STATUS.SEEKING;
+                            self.dispatchEvent(new Event(PlayerAdapter.EVENTS.SEEKING));
+                        });
+
+                        $(mediaElement).bind("seeked", function () {
+                            if (typeof self.oldStatus !== "undefined") {
+                                self.status = self.oldStatus;
+                            } else {
+                                self.status = PlayerAdapter.STATUS.PLAYING;
+                            }
+                        });
+
+                        $(mediaElement).bind("timeupdate", function () {
+                            if (
+                                (self.status == PlayerAdapter.STATUS.PAUSED || self.status == PlayerAdapter.STATUS.SEEKING)
+                                    && !this.paused && !this.ended && this.currentTime > 0
+                            ) {
+                                self.status = PlayerAdapter.STATUS.PLAYING;
+                            }
+                            self.dispatchEvent(new Event(PlayerAdapter.EVENTS.TIMEUPDATE));
+                        });
+
+                        $(mediaElement).bind("error", function () {
+                            self.status = PlayerAdapter.STATUS.ERROR_NETWORK;
+                            self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ERROR));
+                        });
+
+                        $(mediaElement).bind("contextmenu", function (e) {
+                            e.preventDefault();
+                        });
+
                         if (sources) {
                             mediaElement.setSrc(sources);
                         }
                     }
-                });
-
-                /**
-                 * Listen the events from the native player
-                 */
-                $(targetElement).bind("canplay durationchange", function () {
-                    // If duration is still not valid
-                    if (isNaN(self.getDuration()) || targetElement.readyState < 1) {
-                        return;
-                    }
-
-                    if (!self.initialized) {
-                        self.initialized = true;
-                    }
-
-                    // If duration is valid, we changed status
-                    self.status = PlayerAdapter.STATUS.PAUSED;
-                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.READY));
-
-                    if (self.waitToPlay) {
-                        self.play();
-                    }
-                });
-
-                $(targetElement).bind("play", function () {
-                    if (!self.initialized) {
-                        return;
-                    }
-
-                    self.status = PlayerAdapter.STATUS.PLAYING;
-                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PLAY));
-                });
-
-                $(targetElement).bind("playing", function () {
-                    self.status =  PlayerAdapter.STATUS.PLAYING;
-                });
-
-                $(targetElement).bind("pause", function () {
-                    if (!self.initialized) {
-                        return;
-                    }
-
-                    self.status = PlayerAdapter.STATUS.PAUSED;
-                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PAUSE));
-                });
-
-                $(targetElement).bind("ended", function () {
-                    self.status = PlayerAdapter.STATUS.ENDED;
-                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ENDED));
-                });
-
-                $(targetElement).bind("seeking", function () {
-                    self.oldStatus = self.status;
-                    self.status = PlayerAdapter.STATUS.SEEKING;
-                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.SEEKING));
-                });
-
-                $(targetElement).bind("seeked", function () {
-                    if (typeof self.oldStatus !== "undefined") {
-                        self.status = self.oldStatus;
-                    } else {
-                        self.status = PlayerAdapter.STATUS.PLAYING;
-                    }
-                });
-
-                $(targetElement).bind("timeupdate", function () {
-                    if (
-                        (self.status == PlayerAdapter.STATUS.PAUSED || self.status == PlayerAdapter.STATUS.SEEKING)
-                            && !this.paused && !this.ended && this.currentTime > 0
-                    ) {
-                        self.status = PlayerAdapter.STATUS.PLAYING;
-                    }
-                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.TIMEUPDATE));
-                });
-
-                $(targetElement).bind("error", function () {
-                    self.status = PlayerAdapter.STATUS.ERROR_NETWORK;
-                    self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ERROR));
-                });
-
-                $(targetElement).bind("contextmenu", function (e) {
-                    e.preventDefault();
                 });
 
                 return this;
@@ -192,7 +199,7 @@ define(["jquery",
                 case PlayerAdapter.STATUS.PLAYING:
                 case PlayerAdapter.STATUS.ENDED:
                     // If yes, we play it
-                    targetElement.play();
+                    mediaElement.play();
                     self.status =  PlayerAdapter.STATUS.PLAYING;
                     self.waitToPlay = false;
                     break;
@@ -203,7 +210,7 @@ define(["jquery",
              * Pause the video
              */
             this.pause = function () {
-                targetElement.pause();
+                mediaElement.pause();
             };
 
             /**
@@ -212,8 +219,8 @@ define(["jquery",
             this.load = function () {
                 self.initialized = false;
                 self.status = PlayerAdapter.STATUS.INITIALIZING;
-                targetElement.load();
-                targetElement.load();
+                mediaElement.load();
+                mediaElement.load();
             };
 
             /**
@@ -221,21 +228,21 @@ define(["jquery",
              * @param {double} time The time to set in seconds
              */
             this.setCurrentTime = function (time) {
-                targetElement.currentTime = time;
+                mediaElement.currentTime = time;
             };
 
             /**
              * Get the current time of the video
              */
             this.getCurrentTime = function () {
-                return targetElement.currentTime;
+                return mediaElement.currentTime;
             };
 
             /**
              * Get the video duration
              */
             this.getDuration = function () {
-                return targetElement.duration;
+                return mediaElement.duration;
             };
 
             /**
