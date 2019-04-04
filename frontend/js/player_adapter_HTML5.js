@@ -170,15 +170,12 @@ define(["jquery",
                         $(mediaElement).bind("contextmenu", function (e) {
                             e.preventDefault();
                         });
-                        
 
                         if (sources) {
                             mediaElement.setSrc(sources);
                         }
                     }
                 });
-
-
 
                 return this;
             };
@@ -222,10 +219,8 @@ define(["jquery",
             this.load = function () {
                 self.initialized = false;
                 self.status = PlayerAdapter.STATUS.INITIALIZING;
-                
                 mediaElement.load();
                 mediaElement.load();
-
             };
 
             /**

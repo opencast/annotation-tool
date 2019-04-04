@@ -163,13 +163,13 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>6.18</version>
+            <version>8.18</version>
           </dependency>
         </dependencies>
         <configuration>
           <skip>${checkstyle.skip}</skip>
-          <configLocation>${annotation.basedir}/docs/checkstyle/matterhorn-checkstyle.xml</configLocation>
-          <headerLocation>${annotation.basedir}/docs/checkstyle/matterhorn-header.txt</headerLocation>
+          <configLocation>docs/checkstyle/matterhorn-checkstyle.xml</configLocation>
+          <headerLocation>docs/checkstyle/matterhorn-header.txt</headerLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <consoleOutput>true</consoleOutput>
           <logViolationsToConsole>true</logViolationsToConsole>
