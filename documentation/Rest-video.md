@@ -11,8 +11,8 @@ The video is the root resources. It is a representation of the video element fro
 
 ### Attributes
 
-| Name | Type | Description | Default |
-| ------- | ------ | ----- | ----- | -----: |
+| Name | Type | Description | Default | 
+| ------- | ------ | ----- | ----- |
 | id[\*](#required)   |  `Long` | The video id for the annotations tool. | Generated at creation |
 | video_extid[\*](#required) |  `String` | The video id for the used video portal/system (i.e. Opencast Matterhorn). This id will be used by the annotations tool to control/communicate with the player through a player adapter. | 0 |
 | tags | `String` | String of related tags. | NULL |
