@@ -9,7 +9,7 @@
 ### Attributes
 
 | Name | Type | Description | Default |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 | id[\*](#required)  |  `Long` | The annotation id. | Generated at creation |
 | text  |  `String` | The annotation text. Allows free text annotation. | EMPTY |
 | start[\*](#required)  |  `Decimal` | The annotation entry timepoint in seconds. | 0.0 |
@@ -43,7 +43,7 @@ scalevalue:
 dito label -> category
 
 | Name | Type | Description | Default |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 | label  |  [`label json object or label_id`](rest-label) | A JSON representation of the label or a label id for annotation creation operation. | NULL |
 | scalevalue  |  [`scalevalue json object or scalevalue_id`](rest-scalevalue) | A JSON representation of the scale value or a scale value id for annotation creation operation. | NULL |
 
