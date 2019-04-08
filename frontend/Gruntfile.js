@@ -269,6 +269,11 @@ module.exports = function (grunt) {
                 src: '<%= currentProfile.config %>',
                 dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
             },
+            // ... build the configuration
+            'config-build': {
+                src: '<%= currentProfile.config %>',
+                dest: '<%= tempDir %>/js/annotation-tool-configuration.js'
+            },
             // ... code for further processing
             'temp': {
                 expand: true,
@@ -438,9 +443,9 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseBUILD', ['jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseBUILD', ['jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
     grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
