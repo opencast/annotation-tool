@@ -12,7 +12,7 @@ The scale value resources are related to a [scale](Rest-scale.md). The base path
 ### Attributes
 
 | Name | Type | Description | Default |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 | id[\*](#required)   |  `Long` | The scale value id. | Generated at creation |
 | name[\*](#required)   |  `String` | The scale value name. | EMPTY |
 | value[\*](#required)   | `Decimal` | The scale value as decimal. | 0 |
