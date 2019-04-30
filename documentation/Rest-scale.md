@@ -12,7 +12,7 @@
 ### Attributes
 
 | Name | Type | Description | Default |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 | id[\*](#required)  |  `Long` | The scale value id. | Generated at creation |
 | name[\*](#required)  |  `String` | The scale value name. | EMPTY |
 | description  | `String` | The scale description. | EMPTY |
