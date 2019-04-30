@@ -12,7 +12,7 @@ The label resources are related to a [category](Rest-category.md). The base path
 ### Attributes
 
 | Name | Type | Description | Default |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 | id[\*](#required)  |  `Long` | The label id. | Generated at creation |
 | value[\*](#required)  |  `String` | The label value. | EMPTY |
 | abbreviation[\*](#required)  |  `String` | The label abriaviation. Should not be more than 2-3 characters. | EMPTY |
