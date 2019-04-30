@@ -12,7 +12,7 @@ The category resources are related to a [video](Rest-video.md). Enhanced [annota
 ### Attributes
 
 | Name | Type | Description | Default |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 | id[\*](#required)  |  `Long` | The category id. | Generated at creation |
 | name[\*](#required)  |  `String` | The category name. | EMPTY |
 | description  |  `String` | The category description. | EMPTY |
