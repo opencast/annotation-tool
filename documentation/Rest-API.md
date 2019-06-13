@@ -1,8 +1,8 @@
 # Rest API 
 
 
-##[Login and User Handling](Login-and-User-Handling)
-##[General Status Codes and Messages](General-Status-Codes-and-Messages)
+* [Login and User Handling](Login-and-User-Handling)
+* [General Status Codes and Messages](General-Status-Codes-and-Messages)
 
 ## Resources
 * [User](Rest-user.md)
@@ -63,7 +63,7 @@ Sample response:
 ## Tags<a name="tags"></a>
 
 | Name | Type | Description | Default |
-| ------ | ------ | ----- | ----- | -----: |
+| ------ | ------ | ----- | ----- |
 | tags | `String` | Array of JSON key/value tag as URL encoded String. `{"key":"value", "key":"value"}`. Returned as object. | NULL |
 
 Tag is a new optional field created to add a possible scope information. For example, with the futur addition of channel scope, a category could contains a tag "{'channel_id':'1234'}". It would logically mean that this category is related to the mathematics channel. 
@@ -84,7 +84,7 @@ For query on list like on [tracks](rest-track#getAll), [annotations](rest-annota
 ### Parameters<a name="listparam"></a>
 
 | Name | Type | Description | Default | Example | concerned elements |
-| ------ | ------ | ----- | ----- | ----- | ----- |-----: |
+| ------ | ------ | ----- | ----- | ----- | ----- |
 | limit|`Integer`|Maximum number of results accepted, omit or -1 = unlimited|null|`http://resource_url?limit=56` for max 56 results| all |
 | offset|`Integer`|Define the offset for the wanted results, mainly used for pagination.|0|`http://resource_url?offset=4`, return items since 5th result.(Offset: 0 => [1,2,3,4,5,6,7,8], Offset: 4 => [5,6,7] )| all |
 | start|`Decimal`| Define that the queries concerns all the annotations being displayed from this timepoint. |null|`http://resource_url?start=4.5` for all the annotations starting after the 4.5 second or being displayed at this moment | [Annotation](rest-annotation)  |
