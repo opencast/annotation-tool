@@ -34,7 +34,6 @@
                 </goals>
                 <configuration>
                   <nodeVersion>v8.15.0</nodeVersion>
-                  <npmVersion>4.4.4</npmVersion>
                 </configuration>
               </execution>
 
