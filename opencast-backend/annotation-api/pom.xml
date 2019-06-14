@@ -16,7 +16,7 @@
     <dependencies>
     <dependency>
       <groupId>org.opencastproject</groupId>
-      <artifactId>${opencast.artifactPrefix}-common</artifactId>
+      <artifactId>opencast-common</artifactId>
     </dependency>
   </dependencies>
   <build>

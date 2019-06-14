@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>org.opencastproject</groupId>
-      <artifactId>${opencast.artifactPrefix}-common</artifactId>
+      <artifactId>opencast-common</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
