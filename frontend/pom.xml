@@ -54,7 +54,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>install --registry ${nexus.npm}</arguments>
+                  <arguments>install --registry ${nexus.npm} --engine-strict</arguments>
                 </configuration>
               </execution>
               <execution>
