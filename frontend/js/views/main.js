@@ -400,8 +400,8 @@ define(["jquery",
                 goldenLayout.registerComponent("player", function (container) {
                     self.setLoadingProgress(50, i18next.t("startup.loading video"));
 
-                    container.on("resize", function () {
-                        annotationTool.playerAdapter.resetSize();
+                    container.on("open", function () {
+                        annotationTool.loadVideo(container.getElement()[0]);
                     });
 
                     function videoLoaded() {
@@ -415,8 +415,6 @@ define(["jquery",
                             $(annotationTool.playerAdapter).one(PlayerAdapter.EVENTS.READY, videoLoaded);
                         }
                     });
-
-                    annotationTool.loadVideo(container.getElement()[0]);
                 });
 
                 goldenLayout.registerComponent("timeline", function (container) {
