@@ -30,6 +30,12 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 This should build the frontend, include it into the Opencast modules and copies the JARs
 to your Opencast installation.
 
+Note that if you are building against an Opencast version prior to 7,
+you currently need to skip the tests due to an incompatibility
+between Opencast 6 and 7.
+You can do this by passing the additional option `-Dmaven.test.skip`
+to Maven in the command above.
+
 #### As a Karaf Feature
 
 As an alternative, the Annotation Tool is also packaged as a Karaf feature

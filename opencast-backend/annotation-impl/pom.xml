@@ -27,6 +27,12 @@
     </dependency>
     <dependency>
       <groupId>org.opencastproject</groupId>
+      <artifactId>opencast-rest-test-environment</artifactId>
+      <version>${opencast.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opencastproject</groupId>
       <artifactId>opencast-search-service-api</artifactId>
       <version>${opencast.version}</version>
     </dependency>

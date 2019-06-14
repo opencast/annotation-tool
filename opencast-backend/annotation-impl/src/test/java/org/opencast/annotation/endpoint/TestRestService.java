@@ -15,7 +15,7 @@
  */
 package org.opencast.annotation.endpoint;
 
-import static org.opencastproject.rest.RestServiceTestEnv.localhostRandomPort;
+import static org.opencastproject.test.rest.RestServiceTestEnv.localhostRandomPort;
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 

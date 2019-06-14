@@ -26,7 +26,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opencastproject.rest.RestServiceTestEnv;
+import org.opencastproject.test.rest.RestServiceTestEnv;
 
 import javax.ws.rs.core.Response;
 
@@ -42,8 +42,8 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import static org.opencastproject.rest.RestServiceTestEnv.RegexMatcher.regex;
-import static org.opencastproject.rest.RestServiceTestEnv.testEnvForClasses;
+import static org.opencastproject.test.rest.RestServiceTestEnv.RegexMatcher.regex;
+import static org.opencastproject.test.rest.RestServiceTestEnv.testEnvForClasses;
 import static org.opencastproject.util.data.Collections.last;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
