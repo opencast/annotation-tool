@@ -114,6 +114,7 @@ define(["jquery",
                 });
 
                 this.model.fetchComments();
+                this.listenTo(this.model.get("comments"), "add remove reset reply", this.render);
 
                 if (this.model.get("label")) {
                     category = this.model.get("label").category;

@@ -65,10 +65,16 @@ define(["jquery",
                 // Fix up circular dependency
                 if (!Comments) Comments = require("collections/comments");
 
-                if (!this.replies) this.replies = new Comments(null, {
-                    annotation: this.collection.annotation,
-                    replyTo: this
-                });
+                if (!this.replies) {
+                    this.replies = new Comments(null, {
+                        annotation: this.collection.annotation,
+                        replyTo: this
+                    });
+
+                    this.listenTo(this.replies, "add remove reset reply", function () {
+                        this.trigger("reply");
+                    });
+                }
 
                 var invalidResource = Resource.prototype.validate.call(this, attr, {
                     onIdChange: function () {
