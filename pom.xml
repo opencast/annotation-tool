@@ -38,6 +38,7 @@
     <jackson.version>2.7.0</jackson.version>
     <opencast.version>[2.3,)</opencast.version>
     <opencast.artifactPrefix>matterhorn</opencast.artifactPrefix>
+    <opencast.version>[6.0,)</opencast.version>
   </properties>
 
   <modules>
