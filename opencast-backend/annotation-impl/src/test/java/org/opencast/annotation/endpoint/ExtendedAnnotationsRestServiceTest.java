@@ -68,40 +68,6 @@ public class ExtendedAnnotationsRestServiceTest {
   }
 
   @Test
-  public void testClearTables() throws Exception {
-    // create all
-    final String userId = extractLocationId(given().formParam("user_extid", "admin").formParam("nickname", "klausi")
-            .expect().body("user_extid", equalTo("admin")).when().put(host("/users")));
-    final String videoId = extractLocationId(given().formParam("video_extid", "lecture99").expect().statusCode(CREATED)
-            .when().put(host("/videos")));
-    final String trackId = extractLocationId(given().pathParam("videoId", videoId).formParam("name", "track99")
-            .formParam("settings", "{\"type\":\"lecture\"}").formParam("description", "just a track").expect()
-            .statusCode(CREATED).when().post(host("/videos/{videoId}/tracks")));
-    final String annotationId = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .formParam("text", "cool video").formParam("start", 40).expect().statusCode(CREATED).when()
-            .post(host("/videos/{videoId}/tracks/{trackId}/annotations")));
-
-    // get all
-    given().pathParam("id", userId).expect().statusCode(OK).when().get(host("/users/{id}"));
-    given().pathParam("id", videoId).expect().statusCode(OK).when().get(host("/videos/{id}"));
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK).when()
-            .get(host("/videos/{videoId}/tracks/{trackId}"));
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("id", annotationId).expect()
-            .statusCode(OK).when().get(host("/videos/{videoId}/tracks/{trackId}/annotations/{id}"));
-
-    // delete all
-    given().expect().statusCode(NO_CONTENT).when().delete(host("/reset"));
-
-    // get all
-    given().pathParam("id", userId).expect().statusCode(NOT_FOUND).when().get(host("/users/{id}"));
-    given().pathParam("id", videoId).expect().statusCode(NOT_FOUND).when().get(host("/videos/{id}"));
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(BAD_REQUEST).when()
-            .get(host("/videos/{videoId}/tracks/{trackId}"));
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("id", annotationId).expect()
-            .statusCode(BAD_REQUEST).when().get(host("/videos/{videoId}/tracks/{trackId}/annotations/{id}"));
-  }
-
-  @Test
   public void testUser() throws Exception {
     JSONObject json = new JSONObject();
     json.put("channel", "33");

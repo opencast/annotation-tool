@@ -38,7 +38,9 @@ import org.junit.Ignore;
 
 import java.net.URL;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 @Path("/")
 // put @Ignore here to prevent maven surefire from complaining about missing test methods
@@ -57,6 +59,13 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
     return eas;
+  }
+
+  @DELETE
+  @Path("/reset")
+  public Response reset() {
+    eas.clearDatabase();
+    return Response.noContent().build();
   }
 
   private static SecurityService getSecurityService() {
