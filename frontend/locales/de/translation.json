@@ -324,9 +324,9 @@
     "genitive_scale": "die Skala"
   },
   "views": {
-    "annotate view": "Neue Annotationen erstellen",
-    "list view": "Liste von Annotationen",
-    "loop controller": "Schleifensteuerung",
+    "annotate": "Neue Annotationen erstellen",
+    "list": "Liste von Annotationen",
+    "loop": "Schleifensteuerung",
     "timeline": "Zeitleiste",
     "player": "Player"
   },
