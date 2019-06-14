@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.opencast</groupId>
     <artifactId>annotation</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>${version}</version>
   </parent>
   <groupId>org.opencast.annotation</groupId>
   <artifactId>opencast-backend</artifactId>
