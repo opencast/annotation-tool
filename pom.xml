@@ -36,8 +36,6 @@
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
-    <opencast.version>[2.3,)</opencast.version>
-    <opencast.artifactPrefix>matterhorn</opencast.artifactPrefix>
     <opencast.version>[6.0,)</opencast.version>
   </properties>
 

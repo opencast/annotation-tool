@@ -30,10 +30,6 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 This should build the frontend, include it into the Opencast modules and copies the JARs
 to your Opencast installation.
 
-Note that if you build with `opencast.version` set to something `>= 5`, you also have to specify
-`-Dopencast.artifactPrefix=opencast` because of the transition away from the `matterhorn` name
-between versions `4` and `5`.
-
 #### As a Karaf Feature
 
 As an alternative, the Annotation Tool is also packaged as a Karaf feature
