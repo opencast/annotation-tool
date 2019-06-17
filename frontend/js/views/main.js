@@ -77,6 +77,9 @@ define(["jquery",
 
         var goldenLayout;
 
+        var annotationShortcutState;
+        var annotationShortcutTimer;
+
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#View}
@@ -115,7 +118,9 @@ define(["jquery",
                 "click .opt-tracks-select": "tracksSelection",
                 "click #opt-auto-expand": "toggleAutoExpand",
                 "click .opt-view": "toggleView",
-                "click .opt-template": "loadTemplate"
+                "click .opt-template": "loadTemplate",
+                "keyup": "handleAnnotationShortcut",
+                "blur #annotation-shortcut-focus": "interruptAnnotationShortcut"
             },
 
             /**
@@ -130,6 +135,7 @@ define(["jquery",
                                 "print",
                                 "ready",
                                 "setupKeyboardShortcuts",
+                                "interruptAnnotationShortcut",
                                 "tracksSelection",
                                 "setLoadingProgress");
 
@@ -572,6 +578,83 @@ define(["jquery",
                     event.preventDefault();
                     addComment();
                 });
+
+                this.interruptAnnotationShortcut();
+            },
+
+            /**
+             * Handle numeric key sequences to easily insert structured annotations.
+             * Pressing a numeric key selects first the corresponding category,
+             * then the label, and then -- if necessary -- a scale value.
+             * The sequence is interrupted by pressing any other key,
+             * or changing the input focus in any way.
+             * @alias module:views-main.MainView#handleAnnotationShortcut
+             */
+            handleAnnotationShortcut: function (event) {
+                if (
+                    ["input", "textarea"].includes(event.target.tagName.toLowerCase())
+                        || !event.key.match(/^[1-9]$/)
+                ) {
+                    this.interruptAnnotationShortcut();
+                    return;
+                }
+
+                this.$el.find("#annotation-shortcut-focus")[0].focus();
+
+                var selectedEntity = Number(event.key) - 1;
+
+                // Note that this might fail horribly when the entities change in between keys of the sequence
+
+
+                if (!annotationShortcutState.category) {
+                    annotationShortcutState.category = annotationTool.video.get("categories").at(selectedEntity);
+                    if (!annotationShortcutState.category) {
+                        this.interruptAnnotationShortcut();
+                        return;
+                    }
+                    var scaleId = annotationShortcutState.category.get("scale_id");
+                    if (!scaleId) {
+                        var scale = annotationShortcutState.category.get("scale");
+                        if (scale) {
+                            scaleId = scale.id;
+                        }
+                    }
+                    annotationShortcutState.scale = annotationTool.video.get("scales").get(scaleId);
+                } else if (!annotationShortcutState.label) {
+                    annotationShortcutState.label = annotationShortcutState.category.get("labels").at(selectedEntity);
+                    if (!annotationShortcutState.label) {
+                        this.interruptAnnotationShortcut();
+                        return;
+                    }
+                    annotationShortcutState.params.label = annotationShortcutState.label;
+                    annotationShortcutState.params.text = annotationShortcutState.label.get("value");
+                } else {
+                    var scaleValue = annotationShortcutState.scale.get("scaleValues").at(selectedEntity);
+                    if (!scaleValue) {
+                        this.interruptAnnotationShortcut();
+                        return;
+                    }
+                    annotationShortcutState.params.scalevalue = scaleValue;
+                }
+
+                if (scaleValue || annotationShortcutState.label && !annotationShortcutState.scale) {
+                    var annotation = annotationTool.createAnnotation(annotationShortcutState.params);
+                    annotationTool.setSelection([annotation], true);
+                    this.interruptAnnotationShortcut();
+                } else {
+                    clearTimeout(annotationShortcutTimer);
+                    annotationShortcutTimer = setTimeout(this.interruptAnnotationShortcut, 3000);
+                }
+            },
+
+            /**
+             * Interrupt an in-process annotation key combination
+             * @alias module:views-main.MainView#interruptAnnotationShortcut
+             */
+            interruptAnnotationShortcut: function () {
+                annotationShortcutState = { params: {} };
+                clearTimeout(annotationShortcutTimer);
+                annotationShortcutTimer = null;
             },
 
             /**
