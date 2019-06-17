@@ -2,13 +2,13 @@
 
 ## Installing the Annotation Tool
 
-__Note:__ These are the installation instructions for the Opencast 2.3.0 branch or higher.
+__Note:__ These are the installation instructions for the Opencast `r/6.x` branch or higher.
 
 You should make sure that you intended Opencast version was build at least once on the machine you use to build the
-Annotation tool, as this will create the needed dependency for Opencast modules in your local M2_REPO. This may change
+Annotation tool, as this will create the needed dependency for Opencast modules in your local Maven repository. This may change
 in the future when Opencast packages might become available on the Nexus repository server.
 
-In general you should follow the [installation from source](https://docs.opencast.org/r/2.3.x/admin/installation/)
+In general you should follow the [installation from source](https://docs.opencast.org/r/6.x/admin/installation/)
 instructions for Opencast.
 
 If you want to use the annotation tool in your production system, you can copy over the JAR-files from
@@ -114,25 +114,24 @@ Users are only allowed to access the annotation tool if the have the action `ann
 
 Although the Annotation Tool can access a recording when it shows up in the Opencast search service, the Annotation Tool can also be added to the list of publications for an event. 
 
-Within the `etc/workflows/ng-partial-publish` you need to add this operation to the `<operations>` section. It is recommended to add it after the "publish-engage" operation.
+Within the `etc/workflows/partial-publish` you need to add this operation to the `<operations>` section. It is recommended to add it after the "publish-engage" operation.
 
-     <operation
-        id="publish-configure"
-          exception-handler-workflow="ng-partial-error"
-          description="Publish to preview publication channel">
-          <configurations>
-            <configuration key="source-tags">preview</configuration>
-            <configuration key="channel-id">annotation</configuration>
-            <configuration key="url-pattern">http://localhost:8080/annotation-tool/index.html?id=${event_id}</configuration>
-          </configurations>
-        </operation>
+    <operation
+      id="publish-configure"
+      exception-handler-workflow="partial-error"
+      description="Publish to preview publication channel">
+      <configurations>
+        <configuration key="source-tags">preview</configuration>
+        <configuration key="channel-id">annotation</configuration>
+        <configuration key="url-pattern">http://localhost:8080/annotation-tool/index.html?id=${event_id}</configuration>
+      </configurations>
+    </operation>
 
 You can add this operation also to every other workflow definition that should distribute videos to the Annotation Tool.
 
 Additionally you must set the label for the annotation publication channel. Add to the file `etc/listproviders/publication.channel.labels.properties` the following line:
 
     annotation=Annotation Tool
-
 
 ## Using the Tool
 
