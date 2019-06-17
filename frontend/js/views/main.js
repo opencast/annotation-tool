@@ -756,7 +756,7 @@ define(["jquery",
              */
             toggleFreeTextAnnotations: function () {
                 $("#opt-annotate-text").toggleClass("checked");
-                this.views.annotate.toggleFreeTextAnnotations();
+                this.views.annotate.toggleFreeTextAnnotationPane();
             },
 
             /**

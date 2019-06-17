@@ -46,7 +46,9 @@
     "select track prompt": "Select a track to start annotating",
     "upload categories": "Upload categories",
     "hide category": "Hide category",
-    "show category": "Show category"
+    "show category": "Show category",
+    "show free text": "Show free text annotations",
+    "hide free text": "Hide free text annotations"
   },
   "annotation": {
     "author": "Created by",

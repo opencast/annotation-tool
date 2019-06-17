@@ -26,6 +26,7 @@
  * @requires collections-categories
  * @requires templates/annotate
  * @requires templates/annotate-tab-title
+ * @requires templates/annotate-toggle-free-text-button
  * @requires ROLES
  * @requires ACCESS
  * @requires handlebars
@@ -41,12 +42,13 @@ define(["jquery",
         "views/annotate-tab",
         "templates/annotate",
         "templates/annotate-tab-title",
+        "templates/annotate-toggle-free-text-button",
         "roles",
         "access",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, template, TabsButtonTemplate, ROLES, ACCESS, Backbone) {
+    function ($, _, i18next, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, template, TabsButtonTemplate, toggleFreeTextButtonTemplate, ROLES, ACCESS, Backbone) {
 
         "use strict";
 
@@ -102,7 +104,8 @@ define(["jquery",
                 "keydown #new-annotation": "onFocusIn",
                 "focusout #new-annotation": "onFocusOut",
                 "click #label-tabs-buttons a": "showTab",
-                "click #editSwitch": "onSwitchEditModus"
+                "click #editSwitch": "onSwitchEditModus",
+                "click #toggle-free-text button": "toggleFreeTextAnnotations",
             },
 
             /**
@@ -161,13 +164,19 @@ define(["jquery",
                             "checkToContinueVideo",
                             "switchEditModus",
                             "keydownOnAnnotate",
-                            "toggleFreeTextAnnotations",
+                            "toggleFreeTextAnnotationPane",
                             "toggleStructuredAnnotations");
 
                 // Parameter for stop on write
                 this.continueVideo = false;
 
                 this.$el.html(template());
+
+                this.$el.find("#toggle-free-text").html(
+                    toggleFreeTextButtonTemplate({
+                        freeTextVisible: annotationTool.freeTextVisible
+                    })
+                );
 
                 // New annotation input
                 this.input = this.$el.find("#new-annotation");
@@ -379,9 +388,9 @@ define(["jquery",
 
             /**
              * Toggle layout for free text annotation only
-             * @alias module:views-annotate.Annotate#toggleFreeTextAnnotations
+             * @alias module:views-annotate.Annotate#toggleFreeTextAnnotationPane
              */
-            toggleFreeTextAnnotations: function () {
+            toggleFreeTextAnnotationPane: function () {
                 this.layout.freeText = !this.layout.freeText;
                 // TODO You might have to adapt this as well
                 this.freeTextElement.toggle();
@@ -394,6 +403,20 @@ define(["jquery",
             toggleStructuredAnnotations: function () {
                 this.layout.categories = !this.layout.categories;
                 this.categoriesElement.toggle();
+            },
+
+            /**
+             * Shows or hides the free text annotations
+             * @alias module:views-annotate.Annotate#toggleFreeTextAnnotations
+             */
+            toggleFreeTextAnnotations: function () {
+                annotationTool.toggleFreeTextAnnotations();
+
+                this.$el.find("#toggle-free-text").html(
+                    toggleFreeTextButtonTemplate({
+                        freeTextVisible: annotationTool.freeTextVisible
+                    })
+                );
             },
 
             /**

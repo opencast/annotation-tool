@@ -118,6 +118,8 @@ define(["jquery",
 
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
 
+                this.listenTo(annotationTool, "togglefreetext", this.render);
+
                 this.autoExpand = options.autoExpand;
                 annotationTool.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
@@ -420,6 +422,7 @@ define(["jquery",
                 _.each(this.annotationViews, function (annView) {
                     var category = annView.model.category();
                     if (category && !category.get("visible")) return;
+                    if (!category && !annotationTool.freeTextVisible) return;
                     $listContainer.append(annView.$el);
                 });
 

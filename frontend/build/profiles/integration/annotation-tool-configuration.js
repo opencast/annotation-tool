@@ -172,7 +172,8 @@ define(["jquery",
                     "&" +
                     _.map(categories, function (category) {
                         return "category=" + category.id;
-                    }).join("&");
+                    }).join("&") +
+                    "freetext=" + this.freeTextVisible;
             },
 
             tracksToImport: undefined,

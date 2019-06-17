@@ -960,14 +960,15 @@ public class VideoEndpoint {
   @GET
   @Path("/export.csv")
   public Response getExportStatistics(@QueryParam("track") final List<Long> tracks,
-          @QueryParam("category") final List<Long> categories) throws IOException {
+          @QueryParam("category") final List<Long> categories,
+          @QueryParam("freetext") final Boolean freeText) throws IOException {
     Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
 
       public void write(OutputStream os) throws IOException, WebApplicationException {
         CSVWriter writer = null;
         try {
           writer = new CSVWriter(new OutputStreamWriter(os));
-          writeExport(writer, tracks, categories);
+          writeExport(writer, tracks, categories, freeText);
           writer.close();
         } finally {
           IOUtils.closeQuietly(os);
@@ -980,7 +981,8 @@ public class VideoEndpoint {
     return response.build();
   }
 
-  private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport) {
+  private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport,
+          boolean freeText) {
     // Write headers
     List<String> header = new ArrayList<>();
     header.add("ID");
@@ -1020,6 +1022,8 @@ public class VideoEndpoint {
           });
           if (label.isSome()) {
             if (!categoriesToExport.contains(label.get().getCategoryId())) continue;
+          } else {
+            if (!freeText) continue;
           }
 
           List<String> line = new ArrayList<>();

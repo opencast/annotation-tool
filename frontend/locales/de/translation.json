@@ -47,6 +47,8 @@
     "upload categories": "Kategorien hochladen",
     "hide category": "Kategorie verstecken",
     "show category": "Kategorie anzeigen"
+    "show free text": "Freitextannotationen anzeigen",
+    "hide free text": "Freitextannotationen ausblenden"
   },
   "annotation": {
     "author": "Erstellt von",
