@@ -259,6 +259,9 @@ var LoopView = Backbone.View.extend({
         function resetCurrentLoop() {
             addTimelineItem(currentLoop, false);
             syncCurrentLoop();
+            if (annotationTool.annotationConstraints) {
+                annotationTool.annotationConstraints = currentLoopConstraints();
+            }
             timeline.redraw();
         }
 
