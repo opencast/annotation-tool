@@ -14,7 +14,7 @@
   <inceptionYear>2017</inceptionYear>
 
   <properties>
-    <version>2-SNAPSHOT</version>
+    <version>3-SNAPSHOT</version>
     <checkstyle.skip>false</checkstyle.skip>
     <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
     <joda-time.version>2.9.4</joda-time.version>
