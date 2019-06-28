@@ -311,7 +311,7 @@ define(["jquery",
                 mediaPackage.then(function (mediaPackage) {
                     var videos = util.array(mediaPackage.media.track)
                         .filter(_.compose(
-                            RegExp.prototype.test.bind(/video\/.*/),
+                            RegExp.prototype.test.bind(/application\/.*|video\/.*/),
                             _.property("mimetype")
                         ));
                     videos.sort(
