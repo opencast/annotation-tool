@@ -187,9 +187,9 @@
         <artifactId>site-maven-plugin</artifactId>
         <version>0.10</version>
         <configuration>
-          <server>github-pages-opencast-annotation-tool</server>
-          <repositoryOwner>opencast</repositoryOwner>
-          <repositoryName>annotation-tool</repositoryName>
+          <server>switchcast-annotate-github</server>
+          <repositoryOwner>elan-ev</repositoryOwner>
+          <repositoryName>SWITCHcastAnnotate</repositoryName>
           <branch>refs/heads/m2</branch>
           <outputDirectory>${project.build.directory}/m2</outputDirectory>
           <message>Maven artifacts for ${project.version}</message>
