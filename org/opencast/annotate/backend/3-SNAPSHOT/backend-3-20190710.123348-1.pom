@@ -1,0 +1,40 @@
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XML-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.opencast.annotate</groupId>
+    <artifactId>opencast-annotation-tool</artifactId>
+    <version>3-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>backend</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Opencast Annotation Tool :: Backend</name>
+
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
+
+  <modules>
+    <module>annotation-api</module>
+    <module>annotation-impl</module>
+    <module>annotation-tool</module>
+    <module>karaf-feature</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-common</artifactId>
+        <version>${opencast.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
