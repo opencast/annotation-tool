@@ -1,0 +1,19 @@
+language: java
+jdk: openjdk8
+
+before_install:
+  - shopt -s expand_aliases
+  - alias mvn='mvn -DskipTests --batch-mode'
+
+deploy:
+  provider: script
+  script: mvn -s .travis.settings.xml -DskipTests deploy
+  skip_cleanup: true
+  on:
+    branch: master
+
+cache:
+  directories:
+    - $HOME/.m2
+    - frontend/node
+    - frontend/node_modules
