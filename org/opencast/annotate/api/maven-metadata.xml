@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.opencast.annotate</groupId>
+  <artifactId>api</artifactId>
+  <versioning>
+    <versions>
+      <version>3-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20190710123356</lastUpdated>
+  </versioning>
+</metadata>
