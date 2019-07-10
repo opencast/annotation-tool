@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.opencast.annotate</groupId>
+    <groupId>ch.switch.cast.annotate</groupId>
     <artifactId>annotation-tool-backend</artifactId>
     <version>${revision}</version>
   </parent>
@@ -14,7 +14,7 @@
   <artifactId>annotation-tool-frontend-delivery</artifactId>
   <packaging>bundle</packaging>
 
-  <name>Opencast Annotation Tool :: Backend :: Frontend Delivery</name>
+  <name>SWITCHcastAnnotate :: Backend :: Frontend Delivery</name>
 
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
@@ -22,7 +22,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.opencast.annotate</groupId>
+      <groupId>ch.switch.cast.annotate</groupId>
       <artifactId>annotation-tool-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>

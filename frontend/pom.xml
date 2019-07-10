@@ -6,14 +6,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.opencast.annotate</groupId>
-    <artifactId>annotation-tool</artifactId>
+    <groupId>ch.switch.cast.annotate</groupId>
+    <artifactId>switchcast-annotate</artifactId>
     <version>${revision}</version>
   </parent>
 
   <artifactId>annotation-tool-frontend</artifactId>
 
-  <name>Opencast Annotation Tool :: Frontend</name>
+  <name>SWITCHcastAnnotate :: Frontend</name>
 
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
