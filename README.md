@@ -26,7 +26,7 @@ You can find the latest news about the annotation tool on [this page](documentat
 
 ### Initial Development
 * [Entwine](www.entwinemedia.com)
-* [Switch](switch.ch)
+* [SWITCH](switch.ch)
 * [Claudio Beffa](beffa.ch)
 
 ### Current Development of this branch
