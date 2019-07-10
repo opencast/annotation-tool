@@ -1,19 +1,25 @@
 <project
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 >
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
-    <groupId>org.opencast.annotation</groupId>
-    <artifactId>opencast-backend</artifactId>
+    <groupId>org.opencast.annotate</groupId>
+    <artifactId>backend</artifactId>
     <version>3-SNAPSHOT</version>
   </parent>
+
   <artifactId>karaf-feature</artifactId>
   <packaging>feature</packaging>
+
+  <name>Opencast Annotation Tool :: Backend :: Karaf Feature</name>
+
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
   </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -40,18 +46,18 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.opencast</groupId>
-      <artifactId>opencast-annotation-api</artifactId>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opencast</groupId>
-      <artifactId>opencast-annotation-impl</artifactId>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>impl</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opencast</groupId>
-      <artifactId>opencast-annotation-tool</artifactId>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>frontend-delivery</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

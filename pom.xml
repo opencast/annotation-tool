@@ -1,16 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XML-instance"
-  xsi:Location="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XML-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.opencast</groupId>
-  <artifactId>annotation</artifactId>
+  <groupId>org.opencast.annotate</groupId>
+  <artifactId>opencast-annotation-tool</artifactId>
   <version>3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>opencast-annotation</name>
-  <description>Opencast Annotation Tool is an additional module for Opencast to scientifialy annotate videos</description>
-  <url>http://opencast.org</url>
+  <name>Opencast Annotation Tool</name>
+  <description>The Opencast Annotation Tool is an additional module for Opencast to scientifialy annotate videos</description>
+  <url>https://github.com/opencast/annotation-tool</url>
   <inceptionYear>2017</inceptionYear>
 
   <properties>

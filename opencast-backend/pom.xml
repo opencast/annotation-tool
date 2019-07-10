@@ -1,16 +1,20 @@
 <project
-  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XML-instance"
-  xsi:Location="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XML-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 >
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
-    <groupId>org.opencast</groupId>
-    <artifactId>annotation</artifactId>
+    <groupId>org.opencast.annotate</groupId>
+    <artifactId>opencast-annotation-tool</artifactId>
     <version>3-SNAPSHOT</version>
   </parent>
-  <groupId>org.opencast.annotation</groupId>
-  <artifactId>opencast-backend</artifactId>
+
+  <artifactId>backend</artifactId>
   <packaging>pom</packaging>
+
+  <name>Opencast Annotation Tool :: Backend</name>
 
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
