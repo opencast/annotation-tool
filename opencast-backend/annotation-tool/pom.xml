@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.opencast.annotate</groupId>
     <artifactId>backend</artifactId>
-    <version>3-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>frontend-delivery</artifactId>

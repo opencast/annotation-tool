@@ -7,7 +7,7 @@ before_install:
 
 deploy:
   provider: script
-  script: mvn -s .travis.settings.xml -DskipTests deploy
+  script: mvn -s .travis.settings.xml -DskipTests deploy -Drevision="$TRAVIS_BUILD_NUMBER"
   skip_cleanup: true
   on:
     branch: master

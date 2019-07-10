@@ -7,7 +7,7 @@
 
   <groupId>org.opencast.annotate</groupId>
   <artifactId>opencast-annotation-tool</artifactId>
-  <version>3-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
   <name>Opencast Annotation Tool</name>
@@ -16,6 +16,8 @@
   <inceptionYear>2017</inceptionYear>
 
   <properties>
+    <revision>0-SNAPSHOT</revision>
+
     <checkstyle.skip>false</checkstyle.skip>
     <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
     <joda-time.version>2.9.4</joda-time.version>
