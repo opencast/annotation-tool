@@ -17,7 +17,6 @@
 
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
-    <nexus.npm>${opencast.nexus.url}/nexus/content/repositories/npmjs/</nexus.npm>
   </properties>
 
   <profiles>
@@ -48,7 +47,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>install --registry ${nexus.npm} --engine-strict</arguments>
+                  <arguments>install --engine-strict</arguments>
                 </configuration>
               </execution>
               <execution>
