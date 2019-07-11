@@ -385,23 +385,6 @@ module.exports = function (grunt) {
                 }
             }
         },
-
-        gulp: {
-            i18next: () => {
-                const gulp = require('gulp');
-                const i18next = require('i18next-parser');
-                return gulp.src([
-                    'index.html',
-                    grunt.config.get('srcPath.js'),
-                    grunt.config.get('srcPath.tmpl'),
-                    '!js/libs/**/*',
-                    '!js/handlebarsHelpers.js'
-                ]).pipe(i18next({
-                    locales: ['en', 'de'],
-                    ignoreVariables: true
-                })).pipe(gulp.dest('locales'));
-            }
-        }
     });
 
     /**
@@ -432,8 +415,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-mkdir');
-    grunt.loadNpmTasks('grunt-gulp');
-
 
     /** ================================================
      *  Register custom tasks
