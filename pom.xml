@@ -40,7 +40,7 @@
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
-    <opencast.version>[6.0,)</opencast.version>
+    <opencast.version>[6,9)</opencast.version>
   </properties>
 
   <modules>
@@ -359,13 +359,13 @@
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
           <version>3.5.0</version>
-          <inherited>true</inherited>
           <configuration>
             <instructions>
               <Bundle-Category>opencastproject</Bundle-Category>
               <Bundle-DocURL>http://opencastproject.org/</Bundle-DocURL>
               <Bundle-Vendor>The Opencast Project</Bundle-Vendor>
               <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+              <Build-Number>${buildNumber}</Build-Number>
             </instructions>
           </configuration>
         </plugin>
