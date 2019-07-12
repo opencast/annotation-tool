@@ -43,3 +43,5 @@ Makefile
 
 # Ignore generated frontend documentation
 /frontend/doc
+
+.flattened-pom.xml
