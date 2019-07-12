@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opencast.annotate</groupId>
+    <artifactId>backend</artifactId>
+    <version>18</version>
+  </parent>
+  <groupId>org.opencast.annotate</groupId>
+  <artifactId>karaf-feature</artifactId>
+  <version>18</version>
+  <packaging>feature</packaging>
+  <name>Opencast Annotation Tool :: Backend :: Karaf Feature</name>
+  <licenses>
+    <license>
+      <name>Educational Community License, Version 2.0</name>
+      <url>http://www.osedu.org/licenses/ECL-2.0/ecl2.txt</url>
+    </license>
+  </licenses>
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>frontend-delivery</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>${karaf.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <primaryFeatureName>opencast-annotation-tool</primaryFeatureName>
+          <includeTransitiveDependency>false</includeTransitiveDependency>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
