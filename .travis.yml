@@ -1,13 +1,11 @@
 language: java
 jdk: openjdk8
 
-before_install:
-  - shopt -s expand_aliases
-  - alias mvn='mvn -DskipTests --batch-mode -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn'
+before_install: . ./.travis.env.sh
 
 deploy:
   provider: script
-  script: mvn -s .travis.settings.xml -DskipTests deploy -Drevision="$TRAVIS_BUILD_NUMBER"
+  script: ./.travis.deploy.sh
   skip_cleanup: true
   on:
     branch: master
