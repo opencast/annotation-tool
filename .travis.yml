@@ -13,7 +13,7 @@ deploy:
     branch: master
 
 before_cache:
-  - rm -rf ~/.m2/repository/org/opencast/*annotation*
+  - rm -rf ~/.m2/repository/org/opencast/annotate
   - sudo chown -R travis:travis ~/.m2
 
 cache:
