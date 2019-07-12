@@ -5,21 +5,21 @@
   <version>0-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20190712.082221</timestamp>
+      <timestamp>20190712.083000</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
-    <lastUpdated>20190712082221</lastUpdated>
+    <lastUpdated>20190712083000</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>0-20190712.082221-1</value>
-        <updated>20190712082221</updated>
+        <value>0-20190712.083000-1</value>
+        <updated>20190712083000</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>features</classifier>
         <extension>xml</extension>
-        <value>0-20190712.082221-1</value>
-        <updated>20190712082221</updated>
+        <value>0-20190712.083000-1</value>
+        <updated>20190712083000</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
