@@ -3,10 +3,9 @@
   <groupId>org.opencast.annotate</groupId>
   <artifactId>frontend-delivery</artifactId>
   <versioning>
-    <release>18</release>
     <versions>
-      <version>18</version>
+      <version>0-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20190712081104</lastUpdated>
+    <lastUpdated>20190712082214</lastUpdated>
   </versioning>
 </metadata>
