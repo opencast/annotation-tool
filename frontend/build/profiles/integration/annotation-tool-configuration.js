@@ -150,14 +150,6 @@ define(["jquery",
             localStorage: false,
 
             /**
-             * Url for redirect after the logout
-             * @alias module:annotation-tool-configuration.Configuration.logoutUrl
-             * @type {string}
-             * @readOnly
-             */
-            logoutUrl: "/j_spring_security_logout",
-
-            /**
              * Offer the user a spreadsheet version of the annotations for download.
              * @alias module:annotation-tool-configuration.Configuration.export
              * @param {Video} video The video to export
