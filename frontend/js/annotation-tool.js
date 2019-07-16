@@ -24,14 +24,14 @@ define(["jquery",
         "i18next",
         "collections/videos",
         "views/main",
-        "views/alert",
+        "alerts",
         "templates/delete-modal",
         "templates/delete-warning-content",
         "player-adapter",
         "colors",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ColorsManager) {
+    function ($, _, Backbone, i18next, Videos, MainView, alerts, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ColorsManager) {
 
         "use strict";
 
@@ -80,7 +80,7 @@ define(["jquery",
                         };
 
                     if (!target.isEditable()) {
-                        this.alertWarning("You are not authorized to deleted this " + type.name + "!");
+                        alerts.warning("You are not authorized to deleted this " + type.name + "!");
                         return;
                     }
 
@@ -113,14 +113,12 @@ define(["jquery",
                 }
             },
 
-            alertModal: new AlertView(),
-
             /**
              * Initialize the tool
              * @alias   annotationTool.start
              * @param  {module:annotation-tool-configuration.Configuration} config The tool configuration
              */
-            start: function (config) {
+            start: function (config, integration) {
                 _.bindAll(this,
                           "updateSelectionOnTimeUpdate",
                           "createAnnotation",
@@ -141,7 +139,7 @@ define(["jquery",
                           "removeTimeupdateListener",
                           "updateSelectionOnTimeUpdate");
 
-                _.extend(this, config);
+                _.extend(this, config, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.initDeleteModal();
@@ -192,51 +190,15 @@ define(["jquery",
             },
 
             /**
-             * Display an alert modal
-             * @alias   annotationTool.alertError
-             * @param  {String} message The message to display
-             */
-            alertError: function (message) {
-                this.alertModal.show(message, AlertView.TYPES.ERROR);
-            },
-
-            /**
-             * Display a fatal error.
-             * In addition to what {@link alertError} does, this also disables user interaction.
-             * It effectively "crashes" the application with a (hopefully useful) error message.
-             * @alias annotationTool.alertFatal
-             * @param {String} message The error message to display
-             */
-            alertFatal: function (message) {
-                this.alertModal.show(message, AlertView.TYPES.FATAL);
-            },
-
-            /**
-             * Display an warning modal
-             * @alias   annotationTool.alertWarning
-             * @param  {String} message The message to display
-             */
-            alertWarning: function (message) {
-                this.alertModal.show(message, AlertView.TYPES.WARNING);
-            },
-
-            /**
-             * Display an information modal
-             * @alias   annotationTool.alertInfo
-             * @param  {String} message The message to display
-             */
-            alertInfo: function (message) {
-                this.alertModal.show(message, AlertView.TYPES.INFO);
-            },
-
-            /**
              * Function to init the delete warning modal
              * @alias   annotationTool.initDeleteModal
              */
             initDeleteModal: function () {
+                // TODO What the fuck?!
+                //   Why is this initialized with "annotation"?
                 $("#dialogs").append(this.deleteModalTmpl({ type: "annotation" }));
-                this.deleteModal = $("#modal-delete").modal({ show: true, backdrop: false, keyboard: true });
-                this.deleteModal.modal("toggle");
+                // TODO See how this was initialized before; very strange.
+                this.deleteModal = $("#modal-delete");
                 this.deleteModalHeader  = this.deleteModal.find(".modal-header h3");
                 this.deleteModalContent = this.deleteModal.find(".modal-body");
             },
@@ -818,7 +780,7 @@ define(["jquery",
                             video.save(null, {
                                 error: _.bind(function (model, response, options) {
                                     if (response.status === 403) {
-                                        this.alertFatal(i18next.t("annotation not allowed"));
+                                        alerts.fatal(i18next.t("annotation not allowed"));
                                         this.views.main.loadingBox.hide();
                                     }
                                 }, this)

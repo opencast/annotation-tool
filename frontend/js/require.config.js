@@ -4,6 +4,7 @@ require.config({
     paths: {
         "annotation-tool": "annotation-tool",
         "annotation-tool-configuration": "annotation-tool-configuration",
+        "annotation-tool-integration": "annotation-tool-integration",
         "backbone": "libs/backbone/backbone-0.9.9",
         "bootstrap": "libs/bootstrap/bootstrap.min",
         "chroma": "libs/chroma.min",

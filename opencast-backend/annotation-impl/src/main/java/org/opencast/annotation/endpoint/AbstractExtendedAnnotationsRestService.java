@@ -22,14 +22,18 @@ import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.functions.Strings.trimToNone;
 
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
 import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 
-import org.opencastproject.mediapackage.MediaPackage;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.opencast.annotation.api.videointerface.VideoInterface;
+import org.opencast.annotation.api.videointerface.Access;
 
+import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoTrack;
+import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
+import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
@@ -67,7 +71,9 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -78,6 +84,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -91,6 +99,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   protected abstract ExtendedAnnotationService getExtendedAnnotationsService();
 
+  protected abstract SecurityService getSecurityService();
+
+  protected abstract VideoInterfaceProvider getVideoInterfaceProvider();
+
   protected abstract String getEndpointBaseUrl();
 
   // short hand
@@ -98,31 +110,50 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return getExtendedAnnotationsService();
   }
 
-  @POST
+  @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("/users")
-  public Response postUsers(@FormParam("user_extid") final String userExtId,
-          @FormParam("nickname") final String nickname, @FormParam("email") final String email,
-          @FormParam("tags") final String tags) {
-    final Option<String> emailo = trimToNone(email);
-    return run(array(userExtId, nickname), new Function0<Response>() {
+  @Path("/annotate")
+  // TODO Rename
+  public Response initialize(@Context final HttpServletRequest request) {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
-        if (eas().getUserByExtId(userExtId).isSome())
-          return CONFLICT;
+      public Response apply(VideoInterface videoInterface) {
 
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
-          return BAD_REQUEST;
+        try {
+          // TODO Pull this into the REST tier as well
+          User user = eas().getOrCreateCurrentUser();
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-        User u = eas().createUser(userExtId, nickname, emailo, resource);
-        resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
-        u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
-        eas().updateUser(u);
+          Access access = videoInterface.getAccess();
+          if (access == Access.NOT_FOUND) {
+            return NOT_FOUND;
+          } else if (access == Access.NONE) {
+            return FORBIDDEN;
+          }
 
-        return Response.created(userLocationUri(u))
-                .entity(Strings.asStringNull().apply(UserDto.toJson.apply(eas(), u))).build();
+          JSONArray videos = new JSONArray();
+          for (VideoTrack track : videoInterface.getTracks()) {
+            JSONObject video = new JSONObject();
+            video.put("url", track.getUrl().toString());
+            video.put("type", track.getType().toString());
+            videos.add(video);
+          }
+
+          JSONObject userJson = UserDto.toJson.apply(eas(), user);
+          String role = "user";
+          if (access == Access.ADMIN) {
+            role = "administrator";
+          }
+          userJson.put("role", role);
+
+          JSONObject responseObject = new JSONObject();
+          responseObject.put("user", userJson);
+          responseObject.put("videos", videos);
+          responseObject.put("title", Objects.toString(videoInterface.getTitle(), ""));
+          return Response.ok(responseObject.toJSONString()).build();
+
+        } catch (VideoInterfaceProviderException e) {
+          throw new UncheckedVideoInterfaceException(e);
+        }
       }
     });
   }
@@ -132,21 +163,21 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/users")
   public Response putUser(@FormParam("user_extid") final String userExtId,
           @FormParam("nickname") final String nickname, @FormParam("email") final String email,
-          @FormParam("tags") final String tags) {
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
     final Option<String> emailo = trimToNone(email);
-    return run(array(userExtId, nickname), new Function0<Response>() {
+    return run(array(userExtId, nickname), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getUserByExtId(userExtId).fold(new Option.Match<User, Response>() {
           @Override
           public Response some(User u) {
-            if (!eas().hasResourceAccess(u))
+            if (!hasResourceAccess(u, videoInterface))
               return UNAUTHORIZED;
 
             Resource resource = eas().updateResource(u, tags);
@@ -175,65 +206,23 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
-  @DELETE
-  @Path("/users/{id}")
-  public Response deleteUser(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        return eas().getUser(id).fold(new Option.Match<User, Response>() {
-          @Override
-          public Response some(User u) {
-            if (!eas().hasResourceAccess(u))
-              return UNAUTHORIZED;
-            return eas().deleteUser(u) ? NO_CONTENT : NOT_FOUND;
-          }
-
-          @Override
-          public Response none() {
-            return NOT_FOUND;
-          }
-        });
-      }
-    });
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/users/{id}")
-  public Response getUser(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
-      @Override
-      public Response apply() {
-        return eas().getUser(id).fold(new Option.Match<User, Response>() {
-          @Override
-          public Response some(User u) {
-            if (!eas().hasResourceAccess(u))
-              return UNAUTHORIZED;
-
-            return buildOk(UserDto.toJson.apply(eas(), u));
-          }
-
-          @Override
-          public Response none() {
-            return NOT_FOUND;
-          }
-        });
-      }
-    });
-  }
-
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/videos")
-  public Response postVideos(@FormParam("video_extid") final String videoExtId, @FormParam("tags") final String tags) {
-    return run(array(videoExtId), new Function0<Response>() {
+  public Response postVideos(@FormParam("video_extid") final String videoExtId, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return run(array(videoExtId), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
-        final Option<MediaPackage> potentialMediaPackage = eas().findMediaPackage(videoExtId);
-        if (potentialMediaPackage.isNone()) return BAD_REQUEST;
-        final MediaPackage videoMediaPackage = potentialMediaPackage.get();
-        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
+      public Response apply(VideoInterface videoInterface) {
+        try {
+          Access access = getVideoInterfaceProvider().getVideoInterface(request).getAccess();
+          switch (access) {
+            case NOT_FOUND: return BAD_REQUEST;
+            case NONE: return FORBIDDEN;
+          }
+        } catch (VideoInterfaceProviderException e) {
+          return SERVER_ERROR;
+        }
 
         if (eas().getVideoByExtId(videoExtId).isSome())
           return CONFLICT;
@@ -242,7 +231,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()));
         final Video v = eas().createVideo(videoExtId, resource);
         return Response.created(videoLocationUri(v))
                 .entity(Strings.asStringNull().apply(VideoDto.toJson.apply(eas(), v))).build();
@@ -254,25 +243,34 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/videos")
   public Response putVideo(@FormParam("video_extid") final String videoExtId,
-          @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
-    return run(array(videoExtId), new Function0<Response>() {
+          @FormParam("access") final Integer access, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return run(array(videoExtId), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
-        final Option<MediaPackage> potentialMediaPackage = eas().findMediaPackage(videoExtId);
-        if (potentialMediaPackage.isNone()) return BAD_REQUEST;
-        final MediaPackage videoMediaPackage = potentialMediaPackage.get();
-        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
+      public Response apply(VideoInterface videoInterface) {
+        try {
+          // TODO Is this even still necessary?
+          Access videoAccess = getVideoInterfaceProvider().getVideoInterface(request).getAccess();
+          switch (videoAccess) {
+            case NOT_FOUND:
+              return BAD_REQUEST;
+            case NONE:
+              return FORBIDDEN;
+          }
+        } catch (VideoInterfaceProviderException e) {
+          return SERVER_ERROR;
+        }
 
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getVideoByExtId(videoExtId).fold(new Option.Match<Video, Response>() {
           @Override
           public Response some(Video v) {
-            if (!eas().hasResourceAccess(v))
+            if (!hasResourceAccess(v, videoInterface))
               return UNAUTHORIZED;
 
             Resource resource = eas().updateResource(v, tags);
@@ -311,21 +309,21 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/scales")
   public Response postScaleTemplate(@FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return createScale(Option.<Long> none(), name, description, access, tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return createScale(none(), name, description, access, tags, request);
   }
 
   Response createScale(final Option<Long> videoId, final String name, final String description,
-          final Integer access, final String tags) {
-    return run(array(name), new Function0<Response>() {
+          final Integer access, final String tags, HttpServletRequest request) {
+    return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()),
                 option(access));
         final Scale scale = eas().createScale(videoId, name, trimToNone(description), resource);
         return Response.created(scaleLocationUri(scale, videoId.isSome()))
@@ -338,26 +336,27 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/scales/{scaleId}")
   public Response putScale(@PathParam("scaleId") final long id, @FormParam("name") final String name,
-          @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return updateScale(Option.<Long> none(), id, name, description, tags);
+          @FormParam("description") final String description, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return updateScale(none(), id, name, description, tags, request);
   }
 
   Response updateScale(final Option<Long> videoId, final long id, final String name, final String description,
-          final String tags) {
-    return run(array(name), new Function0<Response>() {
+          final String tags, final HttpServletRequest request) {
+    return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale scale) {
-            if (!eas().hasResourceAccess(scale))
+            if (!hasResourceAccess(scale, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(scale, tags);
             final Scale updated = new ScaleImpl(id, videoId, name, trimToNone(description), resource);
@@ -385,21 +384,21 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/scales/{scaleId}")
-  public Response getScale(@PathParam("scaleId") final long id) {
-    return getScaleResponse(Option.<Long> none(), id);
+  public Response getScale(@PathParam("scaleId") final long id, @Context final HttpServletRequest request) {
+    return getScaleResponse(none(), id, request);
   }
 
-  Response getScaleResponse(final Option<Long> videoId, final long id) {
+  Response getScaleResponse(final Option<Long> videoId, final long id, final HttpServletRequest request) {
     if (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
       return BAD_REQUEST;
 
-    return run(nil, new Function0<Response>() {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale s) {
-            if (!eas().hasResourceAccess(s))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             return buildOk(ScaleDto.toJson.apply(eas(), s));
           }
@@ -418,17 +417,17 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/scales")
   public Response getScales(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return getScalesResponse(Option.<Long> none(), limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {
+    return getScalesResponse(none(), limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   Response getScalesResponse(final Option<Long> videoId, final int limit, final int offset, final String date,
-          final String tagsAnd, final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+          final String tagsAnd, final String tagsOr, HttpServletRequest request) {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+      public Response apply(VideoInterface videoInterface) {
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -441,9 +440,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return buildOk(ScaleDto.toJson(
                   eas(),
                   offset,
-                  eas().getScales(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                          tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                          tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                  eas().getScales(videoId, offsetm, limitm, datem.bind(Functions.identity()),
+                          tagsAndArray.bind(Functions.identity()),
+                          tagsOrArray.bind(Functions.identity()))));
         }
       }
     });
@@ -451,20 +450,20 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   @DELETE
   @Path("/scales/{scaleId}")
-  public Response deleteScale(@PathParam("scaleId") final long id) {
-    return deleteScaleResponse(Option.<Long> none(), id);
+  public Response deleteScale(@PathParam("scaleId") final long id, @Context final HttpServletRequest request) {
+    return deleteScaleResponse(none(), id, request);
   }
 
-  Response deleteScaleResponse(final Option<Long> videoId, final long id) {
+  Response deleteScaleResponse(final Option<Long> videoId, final long id, final HttpServletRequest request) {
     if (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
       return BAD_REQUEST;
-    return run(nil, new Function0<Response>() {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale s) {
-            if (!eas().hasResourceAccess(s))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             return eas().deleteScale(s) ? NO_CONTENT : NOT_FOUND;
           }
@@ -484,21 +483,21 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response postScaleValue(@PathParam("scaleId") final long scaleId, @FormParam("name") final String name,
           @DefaultValue("0") @FormParam("value") final double value,
           @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return postScaleValueResponse(Option.<Long> none(), scaleId, name, value, order, access, tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return postScaleValueResponse(none(), scaleId, name, value, order, access, tags, request);
   }
 
   Response postScaleValueResponse(final Option<Long> videoId, final long scaleId, final String name,
-          final double value, final int order, final Integer access, final String tags) {
-    return run(array(name), new Function0<Response>() {
+          final double value, final int order, final Integer access, final String tags, HttpServletRequest request) {
+    return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, false).isNone()
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()),
                 option(access));
         final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
@@ -514,26 +513,27 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response putScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
           @FormParam("name") final String name, @DefaultValue("0") @FormParam("value") final double value,
           @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return putScaleValueResponse(Option.<Long> none(), scaleId, id, name, value, order, access, tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return putScaleValueResponse(none(), scaleId, id, name, value, order, access, tags, request);
   }
 
   Response putScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id,
-          final String name, final double value, final int order, final Integer access, final String tags) {
-    return run(array(name), new Function0<Response>() {
+          final String name, final double value, final int order, final Integer access, final String tags,
+          final HttpServletRequest request) {
+    return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, false).isNone()
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
-            if (!eas().hasResourceAccess(s))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(s, tags);
             final ScaleValue updated = new ScaleValueImpl(id, scaleId, name, value, order, resource);
@@ -561,21 +561,23 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/scales/{scaleId}/scalevalues/{scaleValueId}")
-  public Response getScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return getScaleValueResponse(Option.<Long> none(), scaleId, id);
+  public Response getScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
+          @Context final HttpServletRequest request) {
+    return getScaleValueResponse(none(), scaleId, id, request);
   }
 
-  Response getScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id) {
+  Response getScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id,
+          final  HttpServletRequest request) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, false).isNone())
       return BAD_REQUEST;
 
-    return run(nil, new Function0<Response>() {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
-            if (!eas().hasResourceAccess(s))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             return buildOk(ScaleValueDto.toJson.apply(eas(), s));
           }
@@ -594,17 +596,18 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/scales/{scaleId}/scalevalues")
   public Response getScaleValues(@PathParam("scaleId") final long scaleId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return getScaleValuesResponse(Option.<Long> none(), scaleId, limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr,
+          @Context final HttpServletRequest request) {
+    return getScaleValuesResponse(none(), scaleId, limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   Response getScaleValuesResponse(final Option<Long> videoId, final long scaleId, final int limit,
-          final int offset, final String date, final String tagsAnd, final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+          final int offset, final String date, final String tagsAnd, final String tagsOr, HttpServletRequest request) {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+      public Response apply(VideoInterface videoInterface) {
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -617,30 +620,32 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return buildOk(ScaleValueDto.toJson(
                 eas(),
                 offset,
-                eas().getScaleValues(scaleId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                        tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                        tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                eas().getScaleValues(scaleId, offsetm, limitm, datem.bind(Functions.identity()),
+                        tagsAndArray.bind(Functions.identity()),
+                        tagsOrArray.bind(Functions.identity()))));
       }
     });
   }
 
   @DELETE
   @Path("/scales/{scaleId}/scalevalues/{scaleValueId}")
-  public Response deleteScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return deleteScaleValueResponse(Option.<Long> none(), scaleId, id);
+  public Response deleteScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
+          @Context final  HttpServletRequest request) {
+    return deleteScaleValueResponse(none(), scaleId, id, request);
   }
 
-  Response deleteScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id) {
+  Response deleteScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id,
+          final  HttpServletRequest request) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, false).isNone())
       return BAD_REQUEST;
 
-    return run(nil, new Function0<Response>() {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
-            if (!eas().hasResourceAccess(s))
+            if (!hasResourceAccess(s, videoInterface))
               return UNAUTHORIZED;
             return eas().deleteScaleValue(s) ? NO_CONTENT : NOT_FOUND;
           }
@@ -660,21 +665,23 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response postCategoryTemplate(@FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
-    return postCategoryResponse(Option.<Long> none(), name, description, scaleId, settings, access, tags);
+          @FormParam("access") final Integer access, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return postCategoryResponse(none(), name, description, scaleId, settings, access, tags, request);
   }
 
   Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
-          final Long scaleId, final String settings, final Integer access, final String tags) {
-    return run(array(name), new Function0<Response>() {
+          final Long scaleId, final String settings, final Integer access, final String tags,
+          final HttpServletRequest request) {
+    return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()),
                 option(access));
         final Category category = eas().createCategory(videoId, option(scaleId), name, trimToNone(description),
                 trimToNone(settings), resource);
@@ -691,27 +698,27 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return putCategoryResponse(Option.<Long> none(), id, name, description, option(scaleId), settings,
-            tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, tags, request);
   }
 
   Response putCategoryResponse(final Option<Long> videoId, final long id, final String name,
-          final String description, final Option<Long> scaleId, final String settings, final String tags) {
-    return run(array(name), new Function0<Response>() {
+          final String description, final Option<Long> scaleId, final String settings, final String tags,
+          final HttpServletRequest request) {
+    return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getCategory(id, false).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
-            if (!eas().hasResourceAccess(c))
+            if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(c, tags);
             final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(description),
@@ -741,21 +748,21 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/categories/{categoryId}")
-  public Response getCategory(@PathParam("categoryId") final long id) {
-    return getCategoryResponse(Option.<Long> none(), id);
+  public Response getCategory(@PathParam("categoryId") final long id, @Context final HttpServletRequest request) {
+    return getCategoryResponse(none(), id, request);
   }
 
-  Response getCategoryResponse(final Option<Long> videoId, final long id) {
+  Response getCategoryResponse(final Option<Long> videoId, final long id, final HttpServletRequest request) {
     if (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
       return BAD_REQUEST;
 
-    return run(nil, new Function0<Response>() {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return eas().getCategory(id, false).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
-            if (!eas().hasResourceAccess(c))
+            if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             return buildOk(CategoryDto.toJson.apply(eas(), c));
           }
@@ -774,17 +781,17 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/categories")
   public Response getCategories(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return getCategoriesResponse(Option.<Long> none(), limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {
+    return getCategoriesResponse(none(), limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   Response getCategoriesResponse(final Option<Long> videoId, final int limit, final int offset,
-          final String date, final String tagsAnd, final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+          final String date, final String tagsAnd, final String tagsOr, HttpServletRequest request) {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+      public Response apply(VideoInterface videoInterface) {
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -797,9 +804,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return buildOk(CategoryDto.toJson(
                   eas(),
                   offset,
-                  eas().getCategories(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                          tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                          tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                  eas().getCategories(videoId, offsetm, limitm, datem.bind(Functions.identity()),
+                          tagsAndArray.bind(Functions.identity()),
+                          tagsOrArray.bind(Functions.identity()))));
         }
       }
     });
@@ -807,21 +814,22 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   @DELETE
   @Path("/categories/{categoryId}")
-  public Response deleteCategory(@PathParam("categoryId") final long categoryId) {
-    return deleteCategoryResponse(Option.<Long> none(), categoryId);
+  public Response deleteCategory(@PathParam("categoryId") final long categoryId,
+          @Context final HttpServletRequest request) {
+    return deleteCategoryResponse(none(), categoryId, request);
   }
 
-  Response deleteCategoryResponse(final Option<Long> videoId, final long categoryId) {
+  Response deleteCategoryResponse(final Option<Long> videoId, final long categoryId, final HttpServletRequest request) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getCategory(categoryId, false).isNone())
       return BAD_REQUEST;
 
-    return run(nil, new Function0<Response>() {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return eas().getCategory(categoryId, false).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
-            if (!eas().hasResourceAccess(c))
+            if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             return eas().deleteCategory(c) ? NO_CONTENT : NOT_FOUND;
           }
@@ -841,23 +849,23 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response postLabel(@PathParam("categoryId") final long categoryId, @FormParam("value") final String value,
           @FormParam("abbreviation") final String abbreviation, @FormParam("description") final String description,
           @FormParam("access") final Integer access, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return postLabelResponse(Option.<Long> none(), categoryId, value, abbreviation, description, access, settings,
-            tags);
+          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+    return postLabelResponse(none(), categoryId, value, abbreviation, description, access, settings,
+            tags, request);
   }
 
   Response postLabelResponse(final Option<Long> videoId, final long categoryId, final String value,
           final String abbreviation, final String description, final Integer access, final String settings,
-          final String tags) {
-    return run(array(value, abbreviation), new Function0<Response>() {
+          final String tags, HttpServletRequest request) {
+    return run(array(value, abbreviation), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
                 || eas().getCategory(categoryId, false).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
+        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()),
                 option(access));
         final Label label = eas().createLabel(categoryId, value, abbreviation, trimToNone(description),
                 trimToNone(settings), resource);
@@ -874,28 +882,29 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response putLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
           @FormParam("value") final String value, @FormParam("abbreviation") final String abbreviation,
           @FormParam("description") final String description, @FormParam("access") final Integer access,
-          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
-    return putLabelResponse(Option.<Long> none(), categoryId, id, value, abbreviation, description, access, settings,
-            tags);
+          @FormParam("settings") final String settings, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return putLabelResponse(none(), categoryId, id, value, abbreviation, description, access, settings,
+            tags, request);
   }
 
   Response putLabelResponse(final Option<Long> videoId, final long categoryId, final long id,
           final String value, final String abbreviation, final String description, final Integer access,
-          final String settings, final String tags) {
-    return run(array(value, abbreviation), new Function0<Response>() {
+          final String settings, final String tags, final HttpServletRequest request) {
+    return run(array(value, abbreviation), request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
                 || eas().getCategory(categoryId, false).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
-            if (!eas().hasResourceAccess(l))
+            if (!hasResourceAccess(l, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(l, tags);
             final Label updated = new LabelImpl(id, categoryId, value, abbreviation, trimToNone(description),
@@ -925,21 +934,23 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/categories/{categoryId}/labels/{labelId}")
-  public Response getLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id) {
-    return getLabelResponse(Option.<Long> none(), categoryId, id);
+  public Response getLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
+          @Context final HttpServletRequest request) {
+    return getLabelResponse(none(), categoryId, id, request);
   }
 
-  Response getLabelResponse(final Option<Long> videoId, final long categoryId, final long id) {
+  Response getLabelResponse(final Option<Long> videoId, final long categoryId, final long id,
+          final HttpServletRequest request) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getCategory(categoryId, false).isNone())
       return BAD_REQUEST;
 
-    return run(nil, new Function0<Response>() {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
-            if (!eas().hasResourceAccess(l))
+            if (!hasResourceAccess(l, videoInterface))
               return UNAUTHORIZED;
             return buildOk(LabelDto.toJson.apply(eas(), l));
           }
@@ -958,17 +969,18 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/categories/{categoryId}/labels")
   public Response getLabels(@PathParam("categoryId") final long categoryId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return getLabelsResponse(Option.<Long> none(), categoryId, limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr,
+          @Context final HttpServletRequest request) {
+    return getLabelsResponse(none(), categoryId, limit, offset, date, tagsAnd, tagsOr, request);
   }
 
   Response getLabelsResponse(final Option<Long> videoId, final long categoryId, final int limit,
-          final int offset, final String date, final String tagsAnd, final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+          final int offset, final String date, final String tagsAnd, final String tagsOr, HttpServletRequest request) {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+      public Response apply(VideoInterface videoInterface) {
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -982,30 +994,32 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return buildOk(LabelDto.toJson(
                 eas(),
                 offset,
-                eas().getLabels(categoryId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                        tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                        tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                eas().getLabels(categoryId, offsetm, limitm, datem.bind(Functions.identity()),
+                        tagsAndArray.bind(Functions.identity()),
+                        tagsOrArray.bind(Functions.identity()))));
       }
     });
   }
 
   @DELETE
   @Path("/categories/{categoryId}/labels/{labelId}")
-  public Response deleteLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id) {
-    return deleteLabelResponse(Option.<Long> none(), categoryId, id);
+  public Response deleteLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
+          @Context final HttpServletRequest request) {
+    return deleteLabelResponse(none(), categoryId, id, request);
   }
 
-  Response deleteLabelResponse(final Option<Long> videoId, final long categoryId, final long id) {
+  Response deleteLabelResponse(final Option<Long> videoId, final long categoryId, final long id,
+          final HttpServletRequest request) {
     if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getCategory(categoryId, false).isNone())
       return BAD_REQUEST;
 
-    return run(nil, new Function0<Response>() {
+    return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
-      public Response apply() {
+      public Response apply(VideoInterface videoInterface) {
         return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
-            if (!eas().hasResourceAccess(l))
+            if (!hasResourceAccess(l, videoInterface))
               return UNAUTHORIZED;
             return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
           }
@@ -1019,26 +1033,57 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
+  class UncheckedVideoInterfaceException extends RuntimeException {
+    UncheckedVideoInterfaceException(VideoInterfaceProviderException cause) {
+      super(cause);
+    }
+  }
+
+  boolean hasResourceAccess(Resource resource, VideoInterface videoInterface) {
+    // TODO Check for annotate access in `run`
+    // TODO Or do it in here?!
+    //   Or maybe rather separate these things mentally, like:
+    //   The service tier still checks access using a media package ID
+    //   which it gets from the REST tier, which extracts it from the request.
+    //   At the same time, the REST tier uses the request to check general acces.
+    //   Like: Even though resources like the templates are not bound to a video,
+    //   you might still want them to only be accessible when your requests
+    //   come from a link that includes a valid media package id
+    //   that you have access to
+    if (resource.getAccess() == Resource.PUBLIC) return true;
+    try {
+      if (resource.getAccess() == Resource.SHARED_WITH_ADMIN && videoInterface.getAccess() == Access.ADMIN) return true;
+    } catch (VideoInterfaceProviderException e) {
+      throw new UncheckedVideoInterfaceException(e);
+    }
+    String currentUsername = getSecurityService().getUser().getUsername();
+    String createdByExtId = eas().getUser(resource.getCreatedBy().get()).get().getExtId();
+    return currentUsername.equals(createdByExtId);
+  }
+
   // --
 
-  public static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
-  public static final Response UNAUTHORIZED = Response.status(Response.Status.UNAUTHORIZED).build();
-  public static final Response FORBIDDEN = Response.status(Response.Status.FORBIDDEN).build();
-  public static final Response BAD_REQUEST = Response.status(Response.Status.BAD_REQUEST).build();
-  public static final Response CONFLICT = Response.status(Response.Status.CONFLICT).build();
-  public static final Response SERVER_ERROR = Response.serverError().build();
-  public static final Response NO_CONTENT = Response.noContent().build();
+  static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
+  static final Response UNAUTHORIZED = Response.status(Response.Status.UNAUTHORIZED).build();
+  static final Response FORBIDDEN = Response.status(Response.Status.FORBIDDEN).build();
+  static final Response BAD_REQUEST = Response.status(Response.Status.BAD_REQUEST).build();
+  static final Response CONFLICT = Response.status(Response.Status.CONFLICT).build();
+  static final Response SERVER_ERROR = Response.serverError().build();
+  static final Response NO_CONTENT = Response.noContent().build();
 
-  public static final Object[] nil = new Object[0];
+  static final Object[] nil = new Object[0];
 
-  /** Run <code>f</code> doing common exception transformation. */
-  public static Response run(Object[] mandatoryParams, Function0<Response> f) {
+  /** Run {@code f} doing common exception transformation. */
+  Response run(Object[] mandatoryParams, HttpServletRequest request, Function<VideoInterface, Response> f) {
+
     for (Object a : mandatoryParams) {
       if (a == null || StringUtils.isEmpty(a.toString()))
         return BAD_REQUEST;
     }
+
     try {
-      return f.apply();
+      VideoInterface videoInterface = getVideoInterfaceProvider().getVideoInterface(request);
+      return f.apply(videoInterface);
     } catch (ExtendedAnnotationException e) {
       switch (e.getCauseCode()) {
         case UNAUTHORIZED:
@@ -1050,6 +1095,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
         default:
           return SERVER_ERROR;
       }
+    } catch (VideoInterfaceProviderException | UncheckedVideoInterfaceException e) {
+      // TODO Unwrap one cause in the case of an unchecked exception?!
+      throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -1104,12 +1152,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
     }
   };
 
-  @SuppressWarnings("unchecked")
   static final Function<String, Option<Map<String, String>>> parseToJsonMap = new Function<String, Option<Map<String, String>>>() {
     @Override
     public Option<Map<String, String>> apply(String s) {
       try {
-        return some((Map<String, String>) new JSONParser().parse(s));
+        @SuppressWarnings("unchecked")
+        Map<String, String> result = (Map<String, String>) new JSONParser().parse(s);
+        return some(result);
       } catch (Exception e) {
         return none();
       }

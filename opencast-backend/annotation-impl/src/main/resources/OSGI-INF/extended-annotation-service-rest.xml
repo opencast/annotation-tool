@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
-        name="org.opencast.annotation.endpoint.ExtendedAnnotationsRestService"
-        immediate="true"
-        activate="activate"
-        deactivate="deactivate">
+               name="org.opencast.annotation.endpoint.ExtendedAnnotationsRestService"
+               immediate="true">
   <implementation class="org.opencast.annotation.endpoint.ExtendedAnnotationsRestService"/>
   <service>
     <!-- It's absolutely mandatory to expose the class of the REST service here, otherwise the RestPublisher won't pick it up! -->
@@ -13,8 +11,21 @@
   <property name="opencast.service.type" value="org.opencast.annotation"/>
   <property name="opencast.service.path" value="/extended-annotations"/>
   <reference name="extendedAnnotationsService"
-          interface="org.opencast.annotation.api.ExtendedAnnotationService"
-          cardinality="1..1"
-          policy="static"
-          bind="setExtendedAnnotationsService"/>
+             interface="org.opencast.annotation.api.ExtendedAnnotationService"
+             bind="setExtendedAnnotationsService"/>
+  <reference name="externalApiVideoInterfaceProviderConfiguration"
+             interface="org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProviderConfiguration"
+             bind="setExternalApiVideoInterfaceProviderConfiguration"/>
+  <reference name="securityService"
+             interface="org.opencastproject.security.api.SecurityService"
+             bind="setSecurityService"/>
+  <reference name="userDirectoryService"
+             interface="org.opencastproject.security.api.UserDirectoryService"
+             bind="setUserDirectoryService"/>
+  <reference name="trustedHttpClient"
+             interface="org.opencastproject.security.api.TrustedHttpClient"
+             bind="setTrustedHttpClient"/>
+  <reference name="urlSigningVerifier"
+             interface="org.opencastproject.security.urlsigning.verifier.UrlSigningVerifier"
+             bind="setUrlSigningVerifier"/>
 </scr:component>

@@ -53,11 +53,6 @@ public class CategoryImpl extends ResourceImpl implements Category {
   }
 
   @Override
-  public Option<Long> getVideo(ExtendedAnnotationService eas) {
-    return videoId;
-  }
-
-  @Override
   public Option<Long> getVideoId() {
     return videoId;
   }

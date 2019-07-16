@@ -48,11 +48,6 @@ public class ScaleImpl extends ResourceImpl implements Scale {
   }
 
   @Override
-  public Option<Long> getVideo(ExtendedAnnotationService eas) {
-    return videoId;
-  }
-
-  @Override
   public Option<Long> getVideoId() {
     return videoId;
   }

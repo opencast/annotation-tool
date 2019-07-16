@@ -46,11 +46,6 @@ public final class VideoImpl extends ResourceImpl implements Video {
   }
 
   @Override
-  public Option<Long> getVideo(ExtendedAnnotationService eas) {
-    return some(id);
-  }
-
-  @Override
   public String getExtId() {
     return extId;
   }

@@ -19,6 +19,10 @@ import static org.opencastproject.test.rest.RestServiceTestEnv.localhostRandomPo
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
+import org.opencast.annotation.api.videointerface.VideoInterface;
+import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
+import org.opencast.annotation.api.videointerface.Access;
 import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.search.api.SearchResult;
 import org.opencastproject.search.api.SearchResultItem;
@@ -53,8 +57,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   public static final ExtendedAnnotationService eas = new ExtendedAnnotationServiceJpaImpl(
           persistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
           getSecurityService(),
-          getAuthorizationService(),
-          getSearchService());
+          getVideoInterfaceProvider());
 
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
@@ -76,6 +79,25 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     EasyMock.expect(securityService.getUser()).andReturn(user).anyTimes();
     EasyMock.replay(securityService);
     return securityService;
+  }
+
+  private static VideoInterfaceProvider getVideoInterfaceProvider() {
+    VideoInterface videoInterface = EasyMock.createNiceMock(VideoInterface.class);
+    EasyMock.expect(videoInterface.getAccess())
+            .andReturn(Access.ANNOTATE)
+            .anyTimes();
+    EasyMock.replay(videoInterface);
+
+    VideoInterfaceProvider videoInterfaceProvider = EasyMock.createNiceMock(VideoInterfaceProvider.class);
+    try {
+      EasyMock.expect(videoInterfaceProvider.getVideoInterface(EasyMock.anyString()))
+              .andReturn(videoInterface)
+              .anyTimes();
+    } catch (VideoInterfaceProviderException e) {
+      // This can never happen
+    }
+    EasyMock.replay(videoInterfaceProvider);
+    return videoInterfaceProvider;
   }
 
   private static AuthorizationService getAuthorizationService() {

@@ -54,11 +54,6 @@ public final class TrackImpl extends ResourceImpl implements Track {
   }
 
   @Override
-  public Option<Long> getVideo(ExtendedAnnotationService eas) {
-    return some(videoId);
-  }
-
-  @Override
   public long getVideoId() {
     return videoId;
   }

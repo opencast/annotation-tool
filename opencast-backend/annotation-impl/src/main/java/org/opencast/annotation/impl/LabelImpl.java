@@ -55,17 +55,6 @@ public final class LabelImpl extends ResourceImpl implements Label {
   }
 
   @Override
-  public Option<Long> getVideo(final ExtendedAnnotationService eas) {
-    final boolean includeDeleted = true;
-    return eas.getCategory(categoryId, includeDeleted).bind(new Function<Category, Option<Long>>() {
-      @Override
-      public Option<Long> apply(Category category) {
-        return category.getVideo(eas);
-      }
-    });
-  }
-
-  @Override
   public long getCategoryId() {
     return categoryId;
   }

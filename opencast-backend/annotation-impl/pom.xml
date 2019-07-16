@@ -35,6 +35,21 @@
       <artifactId>opencast-search-service-api</artifactId>
       <version>${opencast.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.opencastproject</groupId>
+      <artifactId>opencast-urlsigning-common</artifactId>
+      <version>${opencast.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencastproject</groupId>
+      <artifactId>opencast-urlsigning-service-api</artifactId>
+      <version>${opencast.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencastproject</groupId>
+      <artifactId>opencast-urlsigning-verifier-service-api</artifactId>
+      <version>${opencast.version}</version>
+    </dependency>
     <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -214,7 +229,8 @@
             </Embed-Dependency>
             <Service-Component>
               OSGI-INF/extended-annotation-service-publisher.xml,
-              OSGI-INF/extended-annotation-service-rest.xml
+              OSGI-INF/extended-annotation-service-rest.xml,
+              OSGI-INF/external-api-video-provider-configuration.xml
             </Service-Component>
             <Meta-Persistence>
               META-INF/persistence.xml

@@ -15,7 +15,8 @@
  */
 package org.opencast.annotation.api;
 
-import org.opencastproject.mediapackage.MediaPackage;
+import org.opencast.annotation.api.videointerface.VideoInterface;
+import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
 import org.opencastproject.util.data.Option;
 
 import java.util.Date;
@@ -806,37 +807,16 @@ public interface ExtendedAnnotationService {
    */
   Resource deleteResource(Resource resource);
 
+  // TODO Get rid of this, too?
+  //   And maybe other user related methods?
   /**
-   * Checks if the current user has access to the given resource
-   * 
-   * @param resource
-   *          the resource to check for access
-   * @return true if the current user has access to the resource
+   * Looks for an annotation tool user that corresponds to the currently logged in Opencast user.
+   * The correspondence is established by using the username of the Opencast user as <code>ext_id</code>
+   * of the annotation tool user.
+   *
+   * If no such user is found, a new one is created.
+   *
+   * @return the user that was found or created as described above
    */
-  boolean hasResourceAccess(Resource resource);
-
-  /**
-   * Checks whether the current user has a certain ACL action on a media package
-   * 
-   * @param mediaPackage
-   *          the media package to check for access
-   * @param access
-   *          a string representing the ACL action to check for
-   * @return true if the user has the given ACL action on the given video
-   */
-  boolean hasVideoAccess(MediaPackage mediaPackage, String access);
-
-  /** String representing the `annotate` ACL action */
-  String ANNOTATE_ACTION = "annotate";
-  /** String representing the `annotate-admin` ACL action */
-  String ANNOTATE_ADMIN_ACTION = "annotate-admin";
-
-  /**
-   * Find the Opencast media package based on its id
-   * 
-   * @param id
-   *          the Opencast-level id of a media package
-   * @return the media package corresponding to the given id, if it can be found
-   */
-  Option<MediaPackage> findMediaPackage(String id);
+  User getOrCreateCurrentUser();
 }
