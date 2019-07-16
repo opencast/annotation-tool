@@ -114,6 +114,8 @@ define([
                 parameters.append("category", category.id);
             });
             parameters.append("freetext", freeText);
+            parameters.append("mediaPackage", util.queryParameters.id);
+            parameters.append("signedUrl", window.location);
             window.location.href =
                 apiBase +
                 "/videos/" +

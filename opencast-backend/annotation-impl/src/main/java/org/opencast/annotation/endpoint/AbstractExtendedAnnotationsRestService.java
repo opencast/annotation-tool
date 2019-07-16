@@ -26,10 +26,11 @@ import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.opencast.annotation.api.videointerface.BadVideoInterfaceRequestException;
 import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.api.videointerface.Access;
 
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.api.videointerface.VideoTrack;
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 import org.opencastproject.security.api.SecurityService;
@@ -120,16 +121,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
       public Response apply(VideoInterface videoInterface) {
 
         try {
-          // TODO Pull this into the REST tier as well
-          User user = eas().getOrCreateCurrentUser();
-
-          Access access = videoInterface.getAccess();
-          if (access == Access.NOT_FOUND) {
-            return NOT_FOUND;
-          } else if (access == Access.NONE) {
-            return FORBIDDEN;
-          }
-
           JSONArray videos = new JSONArray();
           for (VideoTrack track : videoInterface.getTracks()) {
             JSONObject video = new JSONObject();
@@ -137,6 +128,11 @@ public abstract class AbstractExtendedAnnotationsRestService {
             video.put("type", track.getType().toString());
             videos.add(video);
           }
+
+          // TODO Pull this into the REST tier as well
+          User user = eas().getOrCreateCurrentUser();
+
+          Access access = videoInterface.getAccess();
 
           JSONObject userJson = UserDto.toJson.apply(eas(), user);
           String role = "user";
@@ -151,13 +147,14 @@ public abstract class AbstractExtendedAnnotationsRestService {
           responseObject.put("title", Objects.toString(videoInterface.getTitle(), ""));
           return Response.ok(responseObject.toJSONString()).build();
 
-        } catch (VideoInterfaceProviderException e) {
+        } catch (VideoInterfaceException e) {
           throw new UncheckedVideoInterfaceException(e);
         }
       }
     });
   }
 
+  // TODO Do we still need this?
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/users")
@@ -214,16 +211,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(videoExtId), request, new Function<VideoInterface, Response>() {
       @Override
       public Response apply(VideoInterface videoInterface) {
-        try {
-          Access access = getVideoInterfaceProvider().getVideoInterface(request).getAccess();
-          switch (access) {
-            case NOT_FOUND: return BAD_REQUEST;
-            case NONE: return FORBIDDEN;
-          }
-        } catch (VideoInterfaceProviderException e) {
-          return SERVER_ERROR;
-        }
-
         if (eas().getVideoByExtId(videoExtId).isSome())
           return CONFLICT;
 
@@ -248,19 +235,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(array(videoExtId), request, new Function<VideoInterface, Response>() {
       @Override
       public Response apply(VideoInterface videoInterface) {
-        try {
-          // TODO Is this even still necessary?
-          Access videoAccess = getVideoInterfaceProvider().getVideoInterface(request).getAccess();
-          switch (videoAccess) {
-            case NOT_FOUND:
-              return BAD_REQUEST;
-            case NONE:
-              return FORBIDDEN;
-          }
-        } catch (VideoInterfaceProviderException e) {
-          return SERVER_ERROR;
-        }
-
         Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
@@ -271,6 +245,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @Override
           public Response some(Video v) {
             if (!hasResourceAccess(v, videoInterface))
+              // TODO Unauthorized? Are you sure?
               return UNAUTHORIZED;
 
             Resource resource = eas().updateResource(v, tags);
@@ -1034,7 +1009,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   }
 
   class UncheckedVideoInterfaceException extends RuntimeException {
-    UncheckedVideoInterfaceException(VideoInterfaceProviderException cause) {
+    UncheckedVideoInterfaceException(VideoInterfaceException cause) {
       super(cause);
     }
   }
@@ -1053,12 +1028,14 @@ public abstract class AbstractExtendedAnnotationsRestService {
     if (resource.getAccess() == Resource.PUBLIC) return true;
     try {
       if (resource.getAccess() == Resource.SHARED_WITH_ADMIN && videoInterface.getAccess() == Access.ADMIN) return true;
-    } catch (VideoInterfaceProviderException e) {
+    } catch (VideoInterfaceException e) {
       throw new UncheckedVideoInterfaceException(e);
     }
     String currentUsername = getSecurityService().getUser().getUsername();
-    String createdByExtId = eas().getUser(resource.getCreatedBy().get()).get().getExtId();
-    return currentUsername.equals(createdByExtId);
+    // TODO Shouldn't we be able to assume that `createdBy` is always set?
+    Option<Long> createdById = resource.getCreatedBy();
+    if (createdById.isNone()) return false;  // TODO What to return here?
+    return currentUsername.equals(eas().getUser(createdById.get()).get().getExtId());
   }
 
   // --
@@ -1083,7 +1060,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
     try {
       VideoInterface videoInterface = getVideoInterfaceProvider().getVideoInterface(request);
+      Access access = videoInterface.getAccess();
+      if (access == Access.NONE) return FORBIDDEN;
+      else if (access == Access.NOT_FOUND) return NOT_FOUND;
+
       return f.apply(videoInterface);
+
     } catch (ExtendedAnnotationException e) {
       switch (e.getCauseCode()) {
         case UNAUTHORIZED:
@@ -1095,7 +1077,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
         default:
           return SERVER_ERROR;
       }
-    } catch (VideoInterfaceProviderException | UncheckedVideoInterfaceException e) {
+    } catch (BadVideoInterfaceRequestException e) {
+      // TODO I don't like this
+      throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
+    } catch (VideoInterfaceException | UncheckedVideoInterfaceException e) {
       // TODO Unwrap one cause in the case of an unchecked exception?!
       throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
     }

@@ -7,8 +7,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.opencast.annotation.api.videointerface.Access;
+import org.opencast.annotation.api.videointerface.BadVideoInterfaceRequestException;
 import org.opencast.annotation.api.videointerface.VideoInterface;
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.api.videointerface.VideoTrack;
 import org.opencastproject.security.api.Role;
 import org.opencastproject.security.api.SecurityService;
@@ -53,16 +54,16 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
   }
 
   @Override
-  public VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceProviderException {
-
-    User originalUser = securityService.getUser();
-    User annotateUser = userDirectoryService.loadUser("annotate");
-    securityService.setUser(annotateUser);
-
-    String mediaPackageId = request.getHeader("X-Opencast-Annotate-Media-Package");
+  public VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceException {
 
     HttpResponse response = null;
+    User originalUser = securityService.getUser();
     try {
+      securityService.setUser(userDirectoryService.loadUser("annotate"));
+
+      String mediaPackageId = Requests.getHeaderOrParam(request, "X-Opencast-Annotate-Media-Package", "mediaPackage");
+
+      // TODO We need to rename the configuration file for the API base, right?
       HttpGet apiRequest = new HttpGet(new URIBuilder(configuration.getExternalApiBase())
               .setPath("/api/events/" + mediaPackageId)
               .addParameter("withacl", Boolean.toString(true))
@@ -155,7 +156,9 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
       // **we** can't really recover from it.
       throw new AssertionError(e);
     } catch (ParseException | IOException e) {
-      throw new VideoInterfaceProviderException(e);
+      throw new VideoInterfaceException(e);
+    } catch (IllegalArgumentException e) {
+      throw new BadVideoInterfaceRequestException(e);
     } finally {
       client.close(response);
       securityService.setUser(originalUser);

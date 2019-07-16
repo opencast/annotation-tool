@@ -2,8 +2,9 @@ package org.opencast.annotation.impl.videointerface;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.opencast.annotation.api.videointerface.Access;
+import org.opencast.annotation.api.videointerface.BadVideoInterfaceRequestException;
 import org.opencast.annotation.api.videointerface.VideoInterface;
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.api.videointerface.VideoTrack;
 import org.opencastproject.security.urlsigning.verifier.UrlSigningVerifier;
 import org.opencastproject.security.urlsigning.exception.UrlSigningException;
@@ -31,16 +32,16 @@ public class UrlSigningAuthorizationVideoInterfaceProvider implements VideoInter
   }
 
   @Override
-  public VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceProviderException {
+  public VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceException {
     VideoInterface base = this.base.getVideoInterface(request);
     return new VideoInterface() {
       @Override
-      public String getTitle() throws VideoInterfaceProviderException {
+      public String getTitle() throws VideoInterfaceException {
         return base.getTitle();
       }
 
       @Override
-      public Access getAccess() throws VideoInterfaceProviderException {
+      public Access getAccess() throws VideoInterfaceException {
         Access baseAccess = base.getAccess();
         // TODO Should these rules of what can grant more access
         //   really be encoded in here?
@@ -51,7 +52,8 @@ public class UrlSigningAuthorizationVideoInterfaceProvider implements VideoInter
         try {
           // TODO Should we check this once in the constructor?!
           // TODO URL en- and decoding?
-          String signedUrlString = request.getHeader("X-Opencast-Annotate-Signed-URL");
+          String signedUrlString = Requests.getHeaderOrParam(request, "X-Opencast-Annotate-Signed-URL", "signedUrl");
+
           URL signedUrl = new URL(signedUrlString);
 
           // Extract the base URL from the signed one
@@ -67,9 +69,11 @@ public class UrlSigningAuthorizationVideoInterfaceProvider implements VideoInter
           final String ip = null;
           verification = verifier.verify(signedUrl.getQuery(), ip, baseUriBuilder.toString(), strict);
         } catch (UrlSigningException e) {
-          throw new VideoInterfaceProviderException(e);
+          throw new VideoInterfaceException(e);
         } catch (MalformedURLException | URISyntaxException e) {
           return Access.NONE;
+        } catch (IllegalArgumentException e) {
+          throw new BadVideoInterfaceRequestException(e);
         }
 
         if (verification.getStatus() == ResourceRequest.Status.Ok) {
@@ -80,7 +84,7 @@ public class UrlSigningAuthorizationVideoInterfaceProvider implements VideoInter
       }
 
       @Override
-      public Iterable<VideoTrack> getTracks() throws VideoInterfaceProviderException {
+      public Iterable<VideoTrack> getTracks() throws VideoInterfaceException {
         return base.getTracks();
       }
     };

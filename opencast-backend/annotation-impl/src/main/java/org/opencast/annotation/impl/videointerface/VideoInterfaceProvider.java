@@ -1,7 +1,7 @@
 package org.opencast.annotation.impl.videointerface;
 
 import org.opencast.annotation.api.videointerface.VideoInterface;
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,5 +15,5 @@ public interface VideoInterfaceProvider {
    * @return a video interface to get information about the event the {@code request} is about.
    *         Note that the way the event is encoded in {@code request} is implementation defined!
    */
-  VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceProviderException;
+  VideoInterface getVideoInterface(HttpServletRequest request) throws VideoInterfaceException;
 }

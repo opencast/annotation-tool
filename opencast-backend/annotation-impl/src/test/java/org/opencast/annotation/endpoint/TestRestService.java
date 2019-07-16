@@ -20,7 +20,7 @@ import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEn
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
 import org.opencast.annotation.api.videointerface.VideoInterface;
-import org.opencast.annotation.api.videointerface.VideoInterfaceProviderException;
+import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 import org.opencast.annotation.api.videointerface.Access;
 import org.opencastproject.mediapackage.MediaPackage;
@@ -93,7 +93,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
       EasyMock.expect(videoInterfaceProvider.getVideoInterface(EasyMock.anyString()))
               .andReturn(videoInterface)
               .anyTimes();
-    } catch (VideoInterfaceProviderException e) {
+    } catch (VideoInterfaceException e) {
       // This can never happen
     }
     EasyMock.replay(videoInterfaceProvider);
