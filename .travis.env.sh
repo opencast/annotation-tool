@@ -1,2 +1,2 @@
 shopt -s expand_aliases
-alias mvn="mvn --batch-mode -Drevision='$(date +%Y.%m%d.%H%M%S)-$(git rev-parse HEAD)'"
+alias mvn="mvn -Dmaven.test.skip --batch-mode -Drevision='$TRAVIS_BUILD_NUMBER'"
