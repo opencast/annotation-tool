@@ -213,18 +213,18 @@ public class ExtendedAnnotationsRestServiceTest {
 
   @Test
   public void testEqualsIgnoreTimestamp() throws Exception {
-    Resource resource = new ResourceImpl(some(Resource.PRIVATE), none(Long.class), none(Long.class), none(Long.class),
-            some(new Date()), none(Date.class), none(Date.class), new HashMap<String, String>());
-    final Annotation a = new AnnotationImpl(1, 1, some("a text"), 10D, some(20D), some("the settings"), none(-1L),
-            none(-1L), resource);
+    Resource resource = new ResourceImpl(some(Resource.PRIVATE), none(), none(), none(), some(new Date()), none(),
+            none(), new HashMap<String, String>());
+    final Annotation a = new AnnotationImpl(1, 1, some("a text"), 10D, some(20D), some("the settings"), none(), none(),
+            resource);
     Thread.sleep(10);
-    final Annotation b = new AnnotationImpl(1, 1, some("a text"), 10D, some(20D), some("the settings"), none(-1L),
-            none(-1L), new ResourceImpl(some(Resource.PRIVATE), none(Long.class), none(Long.class), none(Long.class),
-                    some(new Date()), none(Date.class), none(Date.class), new HashMap<String, String>()));
-    final Annotation c = new AnnotationImpl(1, 2, some("a text"), 10D, some(10D), some("the settings"), none(-1L),
-            none(-1L), resource);
-    final Annotation d = new AnnotationImpl(1, 1, some("another text"), 10D, some(20D), some("other settings"),
-            none(-1L), none(-1L), resource);
+    final Annotation b = new AnnotationImpl(1, 1, some("a text"), 10D, some(20D), some("the settings"), none(), none(),
+            new ResourceImpl(some(Resource.PRIVATE), none(), none(), none(), some(new Date()), none(), none(),
+            new HashMap<String, String>()));
+    final Annotation c = new AnnotationImpl(1, 2, some("a text"), 10D, some(10D), some("the settings"), none(), none(),
+            resource);
+    final Annotation d = new AnnotationImpl(1, 1, some("another text"), 10D, some(20D), some("other settings"), none(),
+            none(), resource);
     assertTrue(a.equals(b));
     assertFalse(a.equals(c));
     assertFalse(a.equals(d));

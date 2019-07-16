@@ -45,6 +45,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
   private SearchService searchService;
 
   /** OSGi DI */
+  @SuppressWarnings("unused")
   void setEntityManagerFactory(EntityManagerFactory emf) {
     this.emf = emf;
   }
@@ -55,6 +56,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param securityService
    *          the security service
    */
+  @SuppressWarnings("unused")
   public void setSecurityService(SecurityService securityService) {
     this.securityService = securityService;
   }
@@ -65,6 +67,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param authorizationService
    *          the authorization service
    */
+  @SuppressWarnings("unused")
   public void setAuthorizationService(AuthorizationService authorizationService) {
     this.authorizationService = authorizationService;
   }
@@ -75,6 +78,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param searchService
    *          the search service
    */
+  @SuppressWarnings("unused")
   public void setSearchService(SearchService searchService) {
     this.searchService = searchService;
   }
