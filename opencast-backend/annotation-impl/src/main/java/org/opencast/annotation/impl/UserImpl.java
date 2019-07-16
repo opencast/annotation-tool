@@ -41,33 +41,21 @@ public final class UserImpl extends ResourceImpl implements User {
     this.email = email;
   }
 
-  /**
-   * @see org.opencast.annotation.api.User#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.User#getExtId()
-   */
   @Override
   public String getExtId() {
     return extId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.User#getNickname()
-   */
   @Override
   public String getNickname() {
     return nickname;
   }
 
-  /**
-   * @see org.opencast.annotation.api.User#getEmail()
-   */
   @Override
   public Option<String> getEmail() {
     return email;

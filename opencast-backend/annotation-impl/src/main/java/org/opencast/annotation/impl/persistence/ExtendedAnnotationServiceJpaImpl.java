@@ -124,18 +124,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return tx(named.count("User.cont")).intValue();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createUser(String, String, Option, Resource)
-   */
   @Override
   public User createUser(String extId, String nickname, Option<String> email, Resource resource) {
     final UserDto dto = UserDto.create(extId, nickname, email, resource);
     return tx(Queries.persist(dto)).toUser();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateUser(User)
-   */
   @Override
   public void updateUser(final User u) {
     update("User.findById", u.getId(), new Effect<UserDto>() {
@@ -146,9 +140,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteUser(User)
-   */
   @Override
   public boolean deleteUser(User u) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(u);
@@ -158,9 +149,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return true;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#clearDatabase()
-   */
   @Override
   public boolean clearDatabase() throws ExtendedAnnotationException {
     return tx(new Function<EntityManager, Boolean>() {
@@ -187,17 +175,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getUser(long)
-   */
   @Override
   public Option<User> getUser(final long id) {
     return findById(toUser, "User.findById", id);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getUsers(Option, Option, Option)
-   */
   @Override
   public List<User> getUsers(final Option<Integer> offset, final Option<Integer> limit, final Option<Date> since)
           throws ExtendedAnnotationException {
@@ -206,26 +188,17 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return tx(named.<UserDto> findAllM(q, offset, limit, qparams)).map(toUser).value();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getUserByExtId(String)
-   */
   @Override
   public Option<User> getUserByExtId(final String id) {
     return findById(toUser, "User.findByUserId", id);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createVideo(String, Resource)
-   */
   @Override
   public Video createVideo(String extId, Resource resource) throws ExtendedAnnotationException {
     final VideoDto dto = VideoDto.create(extId, resource);
     return tx(Queries.persist(dto)).toVideo();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateVideo(Video)
-   */
   @Override
   public void updateVideo(final Video v) throws ExtendedAnnotationException {
     update("Video.findById", v.getId(), new Effect<VideoDto>() {
@@ -236,9 +209,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteVideo(Video)
-   */
   @Override
   public boolean deleteVideo(Video video) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(video);
@@ -266,9 +236,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return true;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getVideo(long)
-   */
   @Override
   public Option<Video> getVideo(final long id) throws ExtendedAnnotationException {
     return getVideoDto(id).map(toVideo);
@@ -279,17 +246,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return findAllWithoutParams(toVideo, "Video.findAll");
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getVideoByExtId(String)
-   */
   @Override
   public Option<Video> getVideoByExtId(final String id) throws ExtendedAnnotationException {
     return findById(toVideo, "Video.findByExtId", id);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createTrack(long, String, Option, Option, Option, Resource)
-   */
   @Override
   public Track createTrack(final long videoId, final String name, final Option<String> description,
           final Option<String> settings, final Resource resource) throws ExtendedAnnotationException {
@@ -301,9 +262,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     }
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createTrack(Track)
-   */
   @Override
   public Track createTrack(final Track track) throws ExtendedAnnotationException {
     if (getVideoDto(track.getVideoId()).isSome()) {
@@ -313,9 +271,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     }
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteTrack(Track)
-   */
   @Override
   public boolean deleteTrack(Track t) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(t);
@@ -332,9 +287,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return true;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getTrack(long)
-   */
   @Override
   public Option<Track> getTrack(final long trackId) throws ExtendedAnnotationException {
     return findById(toTrack, "Track.findById", trackId);
@@ -369,9 +321,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return tracks;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateTrack(Track)
-   */
   @Override
   public void updateTrack(final Track track) throws ExtendedAnnotationException {
     update("Track.findById", track.getId(), new Effect<TrackDto>() {
@@ -395,9 +344,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     }
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createAnnotation(Annotation)
-   */
   @Override
   public Annotation createAnnotation(final Annotation annotation) throws ExtendedAnnotationException {
     if (getTrackDto(annotation.getTrackId()).isSome()) {
@@ -407,9 +353,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     }
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateAnnotation(Annotation)
-   */
   @Override
   public void updateAnnotation(final Annotation a) throws ExtendedAnnotationException {
     update("Annotation.findById", a.getId(), new Effect<AnnotationDto>() {
@@ -425,9 +368,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     tx(Options.<EntityManager, A> foreach(named.<A> findSingle(q, id(id)), update)).orError(throwNotFound);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteAnnotation(Annotation)
-   */
   @Override
   public boolean deleteAnnotation(Annotation a) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(a);
@@ -438,9 +378,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return true;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getAnnotation(long)
-   */
   @Override
   public Option<Annotation> getAnnotation(long id) throws ExtendedAnnotationException {
     return findById(toAnnotation, "Annotation.findById", id);
@@ -496,9 +433,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     // });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createScale(Option, String, Option, Resource)
-   */
   @Override
   public Scale createScale(Option<Long> videoId, String name, Option<String> description, Resource resource)
           throws ExtendedAnnotationException {
@@ -506,9 +440,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return tx(Queries.persist(dto)).toScale();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createScaleFromTemplate(long, long, Resource)
-   */
   @Override
   public Scale createScaleFromTemplate(long videoId, long templateScaleId, Resource resource)
           throws ExtendedAnnotationException {
@@ -601,9 +532,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return scaleValues;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateScale(Scale)
-   */
   @Override
   public void updateScale(final Scale s) throws ExtendedAnnotationException {
     update("Scale.findById", s.getId(), new Effect<ScaleDto>() {
@@ -614,9 +542,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteScale(Scale)
-   */
   @Override
   public boolean deleteScale(Scale s) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(s);
@@ -638,17 +563,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return (ScaleValue) tx(Queries.persist(dto)).toScaleValue();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getScaleValue(long)
-   */
   @Override
   public Option<ScaleValue> getScaleValue(long id) throws ExtendedAnnotationException {
     return this.<ScaleValueDto> findById("ScaleValue.findById", id).map(toScaleValue);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateScaleValue(ScaleValue)
-   */
   @Override
   public void updateScaleValue(final ScaleValue s) throws ExtendedAnnotationException {
     update("ScaleValue.findById", s.getId(), new Effect<ScaleValueDto>() {
@@ -659,9 +578,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteScaleValue(ScaleValue)
-   */
   @Override
   public boolean deleteScaleValue(ScaleValue s) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(s);
@@ -680,9 +596,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return tx(Queries.persist(dto)).toCategory();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createCategoryFromTemplate(long, long, Resource)
-   */
   @Override
   public Option<Category> createCategoryFromTemplate(final long videoId, final long templateCategoryId,
           final Resource resource) throws ExtendedAnnotationException {
@@ -730,9 +643,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateCategory(Category)
-   */
   @Override
   public void updateCategory(final Category c) throws ExtendedAnnotationException {
     update("Category.findById", c.getId(), new Effect<CategoryDto>() {
@@ -743,9 +653,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getCategory(long, boolean)
-   */
   @Override
   public Option<Category> getCategory(long id, boolean includeDeleted) throws ExtendedAnnotationException {
     Option<CategoryDto> dto;
@@ -809,9 +716,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     // });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteCategory(Category)
-   */
   @Override
   public boolean deleteCategory(Category category) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(category);
@@ -826,10 +730,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return true;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createLabel(long, String, String, Option, Option,
-   *      Resource)
-   */
   @Override
   public Label createLabel(long categoryId, String value, String abbreviation, Option<String> description,
           Option<String> settings, Resource resource) throws ExtendedAnnotationException {
@@ -837,9 +737,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return tx(Queries.persist(dto)).toLabel();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateLabel(Label)
-   */
   @Override
   public void updateLabel(final Label l) throws ExtendedAnnotationException {
     update("Label.findById", l.getId(), new Effect<LabelDto>() {
@@ -850,9 +747,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getLabel(long, boolean)
-   */
   @Override
   public Option<Label> getLabel(long id, boolean includeDeleted) throws ExtendedAnnotationException {
     Option<LabelDto> dto;
@@ -890,9 +784,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return findAllById(toLabel, some(0), some(0), "Label.findAllOfCategory", categoryId);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteLabel(Label)
-   */
   @Override
   public boolean deleteLabel(Label label) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(label);
@@ -903,26 +794,17 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return true;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createComment(long, String, Resource)
-   */
   @Override
   public Comment createComment(long annotationId, Option<Long> replyToId, String text, Resource resource) {
     final CommentDto dto = CommentDto.create(annotationId, text, replyToId, resource);
     return tx(Queries.persist(dto)).toComment();
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getComment(long)
-   */
   @Override
   public Option<Comment> getComment(long id) {
     return findById(toComment, "Comment.findById", id);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#getComments(long, Option, Option, Option, Option, Option)
-   */
   @Override
   public List<Comment> getComments(final long annotationId, final Option<Long> replyToId, final Option<Integer> offset,
           final Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
@@ -955,9 +837,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return comments;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateComment(Comment)
-   */
   @Override
   public void updateComment(final Comment comment) {
     update("Comment.findById", comment.getId(), new Effect<CommentDto>() {
@@ -968,9 +847,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteComment(Comment)
-   */
   @Override
   public boolean deleteComment(Comment comment) {
     Resource deleteResource = deleteResource(comment);
@@ -1071,25 +947,16 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return tuple("id", id);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createResource()
-   */
   @Override
   public Resource createResource() {
     return createResource(Option.<Map<String, String>> none());
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createResource(Option)
-   */
   @Override
   public Resource createResource(final Option<Map<String, String>> tags) {
     return createResource(tags, none(Integer.class));
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#createResource(Option)
-   */
   @Override
   public Resource createResource(final Option<Map<String, String>> tags, final Option<Integer> access) {
     final Option<Long> userId = getCurrentUserId();
@@ -1103,17 +970,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             tagsMap);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateResource(Resource)
-   */
   @Override
   public Resource updateResource(final Resource r) {
     return updateResource(r, some(r.getTags()));
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#updateResource(Resource, Option)
-   */
   @Override
   public Resource updateResource(final Resource r, final Option<Map<String, String>> tags) {
     Map<String, String> tagsMap;
@@ -1125,9 +986,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             r.getCreatedAt(), some(new Date()), r.getDeletedAt(), tagsMap);
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#deleteResource(Resource)
-   */
   @Override
   public Resource deleteResource(final Resource r) {
     return new ResourceImpl(option(r.getAccess()), r.getCreatedBy(), r.getUpdatedBy(), getCurrentUserId(),
@@ -1159,9 +1017,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return getUserId(securityService.getUser());
   }
 
-  /**
-   * @see org.opencast.annotation.api.ExtendedAnnotationService#hasResourceAccess(Resource)
-   */
   @Override
   public boolean hasResourceAccess(Resource resource) {
     org.opencastproject.security.api.User opencastUser = securityService.getUser();

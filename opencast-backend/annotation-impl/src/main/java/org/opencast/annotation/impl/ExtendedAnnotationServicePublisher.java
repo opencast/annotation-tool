@@ -79,17 +79,11 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
     this.searchService = searchService;
   }
 
-  /**
-   * @see org.opencastproject.util.osgi.SimpleServicePublisher#needConfig()
-   */
   @Override
   public boolean needConfig() {
     return false;
   }
 
-  /**
-   * @see org.opencastproject.util.osgi.SimpleServicePublisher#registerService(Dictionary, ComponentContext)
-   */
   @Override
   public ServiceReg registerService(Dictionary properties, ComponentContext cc) throws ConfigurationException {
     final PersistenceEnv penv = persistenceEnvironment(emf);

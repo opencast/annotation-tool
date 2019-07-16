@@ -53,17 +53,11 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
     this.scaleValueId = scaleValueId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Annotation#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
-   */
   @Override
   public Option<Long> getVideo(final ExtendedAnnotationService eas) {
     return eas.getTrack(trackId).bind(new Function<Track, Option<Long>>() {
@@ -74,57 +68,36 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.Annotation#getTrackId()
-   */
   @Override
   public long getTrackId() {
     return trackId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Annotation#getText()
-   */
   @Override
   public Option<String> getText() {
     return text;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Annotation#getStart()
-   */
   @Override
   public double getStart() {
     return start;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Annotation#getDuration()
-   */
   @Override
   public Option<Double> getDuration() {
     return duration;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Annotation#getSettings()
-   */
   @Override
   public Option<String> getSettings() {
     return settings;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Annotation#getLabelId()
-   */
   @Override
   public Option<Long> getLabelId() {
     return labelId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Annotation#getScaleValueId()
-   */
   @Override
   public Option<Long> getScaleValueId() {
     return scaleValueId;

@@ -42,41 +42,26 @@ public class ScaleImpl extends ResourceImpl implements Scale {
     this.description = description;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Scale#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
-   */
   @Override
   public Option<Long> getVideo(ExtendedAnnotationService eas) {
     return videoId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Scale#getVideoId()
-   */
   @Override
   public Option<Long> getVideoId() {
     return videoId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Scale#getName()
-   */
   @Override
   public String getName() {
     return name;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Scale#getDescription()
-   */
   @Override
   public Option<String> getDescription() {
     return description;

@@ -48,49 +48,31 @@ public final class TrackImpl extends ResourceImpl implements Track {
 
   }
 
-  /**
-   * @see org.opencast.annotation.api.Track#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
-   */
   @Override
   public Option<Long> getVideo(ExtendedAnnotationService eas) {
     return some(videoId);
   }
 
-  /**
-   * @see org.opencast.annotation.api.Track#getVideoId()
-   */
   @Override
   public long getVideoId() {
     return videoId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Track#getName()
-   */
   @Override
   public String getName() {
     return name;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Track#getDescription()
-   */
   @Override
   public Option<String> getDescription() {
     return description;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Track#getSettings()
-   */
   @Override
   public Option<String> getSettings() {
     return settings;

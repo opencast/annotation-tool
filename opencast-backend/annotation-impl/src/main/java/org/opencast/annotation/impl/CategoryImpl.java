@@ -49,65 +49,41 @@ public class CategoryImpl extends ResourceImpl implements Category {
     this.settings = settings;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Category#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo
-   */
   @Override
   public Option<Long> getVideo(ExtendedAnnotationService eas) {
     return videoId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Category#getVideoId()
-   */
   @Override
   public Option<Long> getVideoId() {
     return videoId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Category#getScaleId()
-   */
   @Override
   public Option<Long> getScaleId() {
     return scaleId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Category#getName()
-   */
   @Override
   public String getName() {
     return name;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Category#getDescription()
-   */
   @Override
   public Option<String> getDescription() {
     return description;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Category#hasDuration()
-   */
   @Override
   public boolean hasDuration() {
     return hasDuration;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Category#getSettings()
-   */
   @Override
   public Option<String> getSettings() {
     return settings;

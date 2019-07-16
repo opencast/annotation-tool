@@ -46,17 +46,11 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
     this.order = order;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ScaleValue#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
-   */
   @Override
   public Option<Long> getVideo(final ExtendedAnnotationService eas) {
     boolean includeDeleted = true;
@@ -68,33 +62,21 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.ScaleValue#getScaleId()
-   */
   @Override
   public long getScaleId() {
     return scaleId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ScaleValue#getName()
-   */
   @Override
   public String getName() {
     return name;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ScaleValue#getValue()
-   */
   @Override
   public double getValue() {
     return value;
   }
 
-  /**
-   * @see org.opencast.annotation.api.ScaleValue#getOrder()
-   */
   @Override
   public int getOrder() {
     return order;

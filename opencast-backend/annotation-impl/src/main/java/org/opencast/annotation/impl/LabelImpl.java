@@ -49,17 +49,11 @@ public final class LabelImpl extends ResourceImpl implements Label {
     this.settings = settings;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Label#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
-   */
   @Override
   public Option<Long> getVideo(final ExtendedAnnotationService eas) {
     final boolean includeDeleted = true;
@@ -71,41 +65,26 @@ public final class LabelImpl extends ResourceImpl implements Label {
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.Label#getCategoryId()
-   */
   @Override
   public long getCategoryId() {
     return categoryId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Label#getValue()
-   */
   @Override
   public String getValue() {
     return value;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Label#getAbbreviation()
-   */
   @Override
   public String getAbbreviation() {
     return abbreviation;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Label#getDescription()
-   */
   @Override
   public Option<String> getDescription() {
     return description;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Label#getSettings()
-   */
   @Override
   public Option<String> getSettings() {
     return settings;

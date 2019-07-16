@@ -40,25 +40,16 @@ public final class VideoImpl extends ResourceImpl implements Video {
     this.extId = extId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Video#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
-   */
   @Override
   public Option<Long> getVideo(ExtendedAnnotationService eas) {
     return some(id);
   }
 
-  /**
-   * @see org.opencast.annotation.api.Video#getExtId()
-   */
   @Override
   public String getExtId() {
     return extId;

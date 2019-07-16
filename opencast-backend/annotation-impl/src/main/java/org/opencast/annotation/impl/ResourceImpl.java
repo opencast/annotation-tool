@@ -62,73 +62,46 @@ public class ResourceImpl implements Resource {
     }
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getAccess()
-   */
   @Override
   public int getAccess() {
     return access;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo()
-   */
   @Override
   public Option<Long> getVideo(ExtendedAnnotationService eas) {
     return none();
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getCreatedBy()
-   */
   @Override
   public Option<Long> getCreatedBy() {
     return createdBy;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getUpdatedBy()
-   */
   @Override
   public Option<Long> getUpdatedBy() {
     return updatedBy;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getDeletedBy()
-   */
   @Override
   public Option<Long> getDeletedBy() {
     return deletedBy;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getCreatedAt()
-   */
   @Override
   public Option<Date> getCreatedAt() {
     return createdAt;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getUpdatedAt()
-   */
   @Override
   public Option<Date> getUpdatedAt() {
     return updatedAt;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getDeletedAt()
-   */
   @Override
   public Option<Date> getDeletedAt() {
     return deletedAt;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getTags()
-   */
   @Override
   public Map<String, String> getTags() {
     return tags;

@@ -44,17 +44,11 @@ public final class CommentImpl extends ResourceImpl implements Comment {
     this.replyToId = replyToId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Comment#getId()
-   */
   @Override
   public long getId() {
     return id;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Resource#getVideo(ExtendedAnnotationService)
-   */
   public Option<Long> getVideo(final ExtendedAnnotationService eas) {
     return eas.getAnnotation(annotationId).bind(new Function<Annotation, Option<Long>>() {
       @Override
@@ -64,25 +58,16 @@ public final class CommentImpl extends ResourceImpl implements Comment {
     });
   }
 
-  /**
-   * @see org.opencast.annotation.api.Comment#getAnnotationId()
-   */
   @Override
   public long getAnnotationId() {
     return annotationId;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Comment#getText()
-   */
   @Override
   public String getText() {
     return text;
   }
 
-  /**
-   * @see org.opencast.annotation.api.Comment#getReplyToId()
-   */
   @Override
   public Option<Long> getReplyToId() {
     return Option.none();
