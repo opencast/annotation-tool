@@ -50,6 +50,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
   private ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration;
 
   /** OSGi DI */
+  @SuppressWarnings("unused")
   void setEntityManagerFactory(EntityManagerFactory emf) {
     this.emf = emf;
   }
@@ -60,6 +61,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param securityService
    *          the security service
    */
+  @SuppressWarnings("unused")
   public void setSecurityService(SecurityService securityService) {
     this.securityService = securityService;
   }
@@ -70,6 +72,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param userDirectoryService
    *          the user directory service
    */
+  @SuppressWarnings("unused")
   public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
     this.userDirectoryService = userDirectoryService;
   }
@@ -80,6 +83,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param trustedHttpClient
    *          the trusted http client
    */
+  @SuppressWarnings("unused")
   public void setTrustedHttpClient(TrustedHttpClient trustedHttpClient) {
     this.trustedHttpClient = trustedHttpClient;
   }
@@ -90,6 +94,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param externalApiVideoInterfaceProviderConfiguration
    *          the externalApiVideoInterfaceProviderConfiguration
    */
+  @SuppressWarnings("unused")
   public void setExternalApiVideoInterfaceProviderConfiguration(ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration) {
     this.externalApiVideoInterfaceProviderConfiguration = externalApiVideoInterfaceProviderConfiguration;
   }

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Provide access to video information by using the external API.
@@ -37,7 +38,8 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
   private final UserDirectoryService userDirectoryService;
   private final ExternalApiVideoInterfaceProviderConfiguration configuration;
 
-  public ExternalApiVideoInterfaceProvider(ExternalApiVideoInterfaceProviderConfiguration configuration, SecurityService securityService, UserDirectoryService userDirectoryService, TrustedHttpClient client) {
+  public ExternalApiVideoInterfaceProvider(ExternalApiVideoInterfaceProviderConfiguration configuration,
+          SecurityService securityService, UserDirectoryService userDirectoryService, TrustedHttpClient client) {
     this.configuration = configuration;
     this.securityService = securityService;
     this.userDirectoryService = userDirectoryService;
@@ -90,12 +92,13 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
           boolean canRead = false;
           boolean canAnnotate = false;
 
+          @SuppressWarnings("unchecked")
           ArrayList<JSONObject> acl = (ArrayList<JSONObject>) event.get("acl");
           if (acl == null) return Access.NONE;
 
           for (JSONObject ace: acl) {
             Boolean allow = (Boolean) ace.get("allow");
-            if (allow == null || allow == false) continue;
+            if (allow == null || !allow) continue;
 
             String action = (String) ace.get("action");
             if (action == null || !(action.equals("read") || action.equals("cast-annotate"))) continue;
@@ -115,12 +118,13 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
 
         @Override
         public Iterable<VideoTrack> getTracks() {
+          @SuppressWarnings("unchecked")
           ArrayList<JSONObject> publications = (ArrayList<JSONObject>) event.get("publications");
           if (publications == null) return Collections::emptyIterator;
           return publications.stream()
                   .flatMap(publication -> ((ArrayList<JSONObject>) publication.get("media"))
                           .stream()
-                          .filter(medium -> medium != null)
+                          .filter(Objects::nonNull)
                           .map(medium -> new AbstractMap.SimpleEntry<>((String) publication.get("channel"), medium)))
                   .filter(entry -> {
                     String mediaType = (String) entry.getValue().get("mediatype");
@@ -143,7 +147,7 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
                       return null;
                     }
                   })
-                  .filter(track -> track != null)
+                  .filter(Objects::nonNull)
                   ::iterator;
         }
       };
