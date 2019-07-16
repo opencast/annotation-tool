@@ -961,7 +961,7 @@ public class VideoEndpoint {
   @Path("/export.csv")
   public Response getExportStatistics(@QueryParam("track") final List<Long> tracks,
           @QueryParam("category") final List<Long> categories,
-          @QueryParam("freetext") final Boolean freeText) throws IOException {
+          @QueryParam("freetext") final Boolean freeText) {
     Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
 
       public void write(OutputStream os) throws IOException, WebApplicationException {
