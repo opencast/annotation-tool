@@ -924,7 +924,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return getUserByExtId(user.getUsername()).getOrElse(new Function0<User>() {
       @Override
       public User apply() {
-        return createUser(user.getUsername(), user.getUsername(), Option.some(user.getEmail()), createResource());
+        return createUser(user.getUsername(), user.getName(), Option.some(user.getEmail()), createResource());
       }
     });
   }
