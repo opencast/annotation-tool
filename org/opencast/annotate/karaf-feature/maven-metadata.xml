@@ -3,10 +3,10 @@
   <groupId>org.opencast.annotate</groupId>
   <artifactId>karaf-feature</artifactId>
   <versioning>
-    <release>26</release>
+    <release>28</release>
     <versions>
-      <version>26</version>
+      <version>28</version>
     </versions>
-    <lastUpdated>20190716092024</lastUpdated>
+    <lastUpdated>20190716093836</lastUpdated>
   </versioning>
 </metadata>
