@@ -590,8 +590,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Category createCategory(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          boolean hasDuration, Option<String> settings, Resource resource) throws ExtendedAnnotationException {
-    final CategoryDto dto = CategoryDto.create(videoId, scaleId, name, description, hasDuration, settings, resource);
+          Option<String> settings, Resource resource) throws ExtendedAnnotationException {
+    final CategoryDto dto = CategoryDto.create(videoId, scaleId, name, description, settings, resource);
 
     return tx(Queries.persist(dto)).toCategory();
   }
@@ -620,7 +620,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
         // Copy category
         final CategoryDto copyDto = CategoryDto.create(Option.some(videoId), option(scaleId), c.getName(),
-                c.getDescription(), c.hasDuration(), c.getSettings(), resource);
+                c.getDescription(), c.getSettings(), resource);
         Category category = (Category) tx(new Function<EntityManager, Object>() {
           @Override
           public Object apply(EntityManager em) {
@@ -648,7 +648,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     update("Category.findById", c.getId(), new Effect<CategoryDto>() {
       @Override
       public void run(CategoryDto dto) {
-        dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.hasDuration(), c.getSettings(), c);
+        dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c);
       }
     });
   }
@@ -720,8 +720,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public boolean deleteCategory(Category category) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(category);
     final Category updated = new CategoryImpl(category.getId(), category.getVideoId(), category.getScaleId(),
-            category.getName(), category.getDescription(), category.hasDuration(), category.getSettings(),
-            deleteResource);
+            category.getName(), category.getDescription(), category.getSettings(), deleteResource);
     updateCategory(updated);
 
     for (Label l : getLabelsByCategoryId(category.getId())) {

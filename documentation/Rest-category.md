@@ -16,7 +16,6 @@ The category resources are related to a [video](Rest-video.md). Enhanced [annota
 | id[\*](#required)  |  `Long` | The category id. | Generated at creation |
 | name[\*](#required)  |  `String` | The category name. | EMPTY |
 | description  |  `String` | The category description. | EMPTY |
-| has_duration | `Boolean` | Define if the category from this category can have duration. | TRUE |
 | scale_id | [`Scale id`](Rest-scale`) | The scale that can be used for this category. | NULL |
 | settings | `String` | Dictionnary of diverse metadata related to the category | NULL |
 | tags | `String` | String of related tags. | NULL |
@@ -48,7 +47,7 @@ Create a new "template" category.
 #### _Url_
 **POST** `http://api.annotationstool.com/v1/videos/123/categories`
 #### _Content_
-`name=Feelings&description=Category+containing+the+feelings+visible+in+the+video&has_duration=true&scale_id=4
+`name=Feelings&description=Category+containing+the+feelings+visible+in+the+video&scale_id=4
 ### Response content
 Location parameter in header give the URI from the new resource. 
 
@@ -57,7 +56,6 @@ Location parameter in header give the URI from the new resource.
  id: 23,
  name: 'Feelings', 
  description: 'Category containing the feelings visible in the video',
- has_duration: true,
  scale_id: 12,
  access: 0,
  updated_by: 123,
@@ -98,7 +96,6 @@ Location parameter in header give the URI from the new resource.
  id: 24,
  name: 'Feelings', 
  description: 'Category containing the feelings visible in the video',
- has_duration: true,
  scale_id: 12,
  access: 0,
  updated_by: 123,
@@ -127,7 +124,6 @@ NO CONTENT
  id: 23,
  name: 'Feelings', 
  description: 'Category containing the feelings visible in the video',
- has_duration: true,
  scale_id: 12,
  access: 0,
  updated_by: 123,
@@ -164,7 +160,6 @@ NO CONTENT
         id: 23,
  		name: 'Feelings', 
  		description: 'Category containing the feelings visible in the video',
- 		has_duration: true,
  		scale_id: 12,
  		access: 0,
  		updated_by: 123,
@@ -193,7 +188,7 @@ Update the category with the given _categoryId_ or create a new one with this _c
 #### _Content_
 Send the resource parameters as query parameters.
 
-`name=Users+Feelings&description=Category+containing+the+feelings+visible+in+the+video&has_duration=true&scale_id=5`
+`name=Users+Feelings&description=Category+containing+the+feelings+visible+in+the+video&scale_id=5`
 
 ### Response content
 Return the status code corresponding the operation done and the Location in the header if resource created.
@@ -203,7 +198,6 @@ Return the status code corresponding the operation done and the Location in the 
  id: 23,
  name: 'Feelings', 
  description: 'Category containing the feelings visible in the video',
- has_duration: true,
  scale_id: 4,
  access: 1,
  updated_by: 123,

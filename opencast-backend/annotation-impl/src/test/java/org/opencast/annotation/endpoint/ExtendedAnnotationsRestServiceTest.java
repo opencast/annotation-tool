@@ -313,20 +313,17 @@ public class ExtendedAnnotationsRestServiceTest {
     // post template
     final String templateId = extractLocationId(given().formParam("name", "categoryTemplateName")
             .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
-            .body("name", equalTo("categoryTemplateName")).body("has_duration", equalTo(true)).when()
-            .post(host("/categories")));
+            .body("name", equalTo("categoryTemplateName")).when().post(host("/categories")));
 
     given().pathParam("videoId", 333).formParam("name", "categoryName").expect().statusCode(BAD_REQUEST).when()
             .post(host("/videos/{videoId}/categories"));
 
     final String id = extractLocationId(given().pathParam("videoId", videoId).formParam("tags", json.toJSONString())
             .formParam("name", "categoryName").expect().statusCode(CREATED).body("name", equalTo("categoryName"))
-            .body("tags", equalTo(json)).body("has_duration", equalTo(true)).when()
-            .post(host("/videos/{videoId}/categories")));
+            .body("tags", equalTo(json)).when().post(host("/videos/{videoId}/categories")));
 
     given().pathParam("videoId", videoId).formParam("category_id", templateId).expect().statusCode(CREATED)
-            .body("name", equalTo("categoryTemplateName")).body("has_duration", equalTo(true)).when()
-            .post(host("/videos/{videoId}/categories"));
+            .body("name", equalTo("categoryTemplateName")).when().post(host("/videos/{videoId}/categories"));
     // put template
     json.put("channel", "22");
     given().pathParam("videoId", 212).pathParam("categoryId", id).expect().statusCode(BAD_REQUEST).when()

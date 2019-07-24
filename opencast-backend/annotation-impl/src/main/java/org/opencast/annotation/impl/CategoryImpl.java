@@ -32,11 +32,10 @@ public class CategoryImpl extends ResourceImpl implements Category {
   private final Option<Long> scaleId;
   private final String name;
   private final Option<String> description;
-  private final boolean hasDuration;
   private final Option<String> settings;
 
   public CategoryImpl(long id, Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          boolean hasDuration, Option<String> settings, Resource resource) {
+          Option<String> settings, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
             .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
             .getTags());
@@ -45,7 +44,6 @@ public class CategoryImpl extends ResourceImpl implements Category {
     this.scaleId = scaleId;
     this.name = name;
     this.description = description;
-    this.hasDuration = hasDuration;
     this.settings = settings;
   }
 
@@ -80,11 +78,6 @@ public class CategoryImpl extends ResourceImpl implements Category {
   }
 
   @Override
-  public boolean hasDuration() {
-    return hasDuration;
-  }
-
-  @Override
   public Option<String> getSettings() {
     return settings;
   }
@@ -98,13 +91,12 @@ public class CategoryImpl extends ResourceImpl implements Category {
     Category category = (Category) o;
     return id == category.getId() && videoId.equals(category.getVideoId()) && scaleId.equals(category.getScaleId())
             && name.equals(category.getName()) && description.equals(category.getDescription())
-            && hasDuration == category.hasDuration() && settings.equals(category.getSettings())
-            && getTags().equals(category.getTags());
+            && settings.equals(category.getSettings()) && getTags().equals(category.getTags());
   }
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, videoId, scaleId, name, description, hasDuration, settings, getTags());
+    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, getTags());
   }
 
 }

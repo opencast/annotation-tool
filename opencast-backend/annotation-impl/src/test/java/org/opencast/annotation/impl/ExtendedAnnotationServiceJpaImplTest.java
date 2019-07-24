@@ -366,11 +366,11 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Scale s = eas.createScale(Option.<Long> none(), "test scale", some("test description"), resource);
 
     final Category categoryTemplate = eas.createCategory(none(0L), some(s.getId()), "Sozialform",
-            some("description Sozialform"), true, some("sozial form settings"), resource);
+            some("description Sozialform"), some("sozial form settings"), resource);
     eas.createLabel(categoryTemplate.getId(), "Bla", "Test", none(""), none(""), resource);
 
-    final Category c = eas.createCategory(some(3L), some(32L), "Verhalten", some("verhalten "), false,
-            some("settings"), resource);
+    final Category c = eas.createCategory(some(3L), some(32L), "Verhalten", some("verhalten "), some("settings"),
+            resource);
     assertEquals(tags.get(), c.getTags());
     Option<Category> cCopy = eas.createCategoryFromTemplate(20, categoryTemplate.getId(), resource);
     assertTrue(eas.getCategory(categoryTemplate.getId(), false).isSome());
@@ -383,7 +383,6 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertEquals(categoryTemplate.getDescription(), cCopy.get().getDescription());
     assertEquals(categoryTemplate.getSettings(), cCopy.get().getSettings());
     assertFalse(categoryTemplate.getScaleId().equals(cCopy.get().getScaleId()));
-    assertEquals(categoryTemplate.hasDuration(), cCopy.get().hasDuration());
     assertEquals(new Long(20), cCopy.get().getVideoId().get());
     Option<Scale> copyScale = eas.getScale(cCopy.get().getScaleId().get(), false);
     assertTrue(copyScale.isSome());
@@ -404,17 +403,16 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateCategory(new CategoryImpl(1212, some(323L), some(32L), "bla", none(""), false, none(""), resource));
+        eas.updateCategory(new CategoryImpl(1212, some(323L), some(32L), "bla", none(""), none(""), resource));
       }
     });
     // create
-    final Category c = eas.createCategory(none(0L), none(0L), name, some("description Sozialform"), true,
+    final Category c = eas.createCategory(none(0L), none(0L), name, some("description Sozialform"),
             some("sozial form settings"), resource);
     assertEquals(name, eas.getCategory(c.getId(), false).get().getName());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateCategory(new CategoryImpl(c.getId(), some(323L), some(32L), "name2", none(""), false, none(""),
-            updatedResource));
+    eas.updateCategory(new CategoryImpl(c.getId(), some(323L), some(32L), "name2", none(""), none(""), updatedResource));
     assertEquals("name2", eas.getCategory(c.getId(), false).get().getName());
     assertEquals(tags.get(), eas.getCategory(c.getId(), false).get().getTags());
   }
@@ -424,7 +422,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     // create
-    final Category c = eas.createCategory(none(0L), none(0L), "Sozialform", some("description Sozialform"), true,
+    final Category c = eas.createCategory(none(0L), none(0L), "Sozialform", some("description Sozialform"),
             some("sozial form settings"), resource);
     assertTrue(eas.getCategory(c.getId(), false).isSome());
     // delete

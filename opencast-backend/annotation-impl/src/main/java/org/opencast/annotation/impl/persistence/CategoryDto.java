@@ -76,9 +76,6 @@ public class CategoryDto extends AbstractResourceDto {
   @Column(name = "description")
   private String description;
 
-  @Column(name = "has_duration")
-  private boolean hasDuration;
-
   @Column(name = "settings")
   private String settings;
 
@@ -97,20 +94,19 @@ public class CategoryDto extends AbstractResourceDto {
   protected Map<String, String> tags = new HashMap<String, String>();
 
   public static CategoryDto create(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          boolean hasDuration, Option<String> settings, Resource resource) {
-    CategoryDto dto = new CategoryDto().update(name, description, scaleId, hasDuration, settings, resource);
+          Option<String> settings, Resource resource) {
+    CategoryDto dto = new CategoryDto().update(name, description, scaleId, settings, resource);
     dto.videoId = videoId.getOrElse((Long) null);
     dto.scaleId = scaleId.getOrElse((Long) null);
     return dto;
   }
 
-  public CategoryDto update(String name, Option<String> description, Option<Long> scaleId, boolean hasDuration,
-          Option<String> settings, Resource resource) {
+  public CategoryDto update(String name, Option<String> description, Option<Long> scaleId, Option<String> settings,
+          Resource resource) {
     super.update(resource);
     this.name = name;
     this.description = description.getOrElse((String) null);
     this.scaleId = scaleId.getOrElse((Long) null);
-    this.hasDuration = hasDuration;
     this.settings = settings.getOrElse((String) null);
     if (resource.getTags() != null)
       this.tags = resource.getTags();
@@ -118,9 +114,9 @@ public class CategoryDto extends AbstractResourceDto {
   }
 
   public Category toCategory() {
-    return new CategoryImpl(id, option(videoId), option(scaleId), name, option(description), hasDuration,
-            option(settings), new ResourceImpl(option(access), option(createdBy), option(updatedBy), option(deletedBy),
-                    option(createdAt), option(updatedAt), option(deletedAt), tags));
+    return new CategoryImpl(id, option(videoId), option(scaleId), name, option(description), option(settings),
+            new ResourceImpl(option(access), option(createdBy), option(updatedBy), option(deletedBy), option(createdAt),
+                    option(updatedAt), option(deletedAt), tags));
   }
 
   public static final Function<CategoryDto, Category> toCategory = new Function<CategoryDto, Category>() {
@@ -136,7 +132,7 @@ public class CategoryDto extends AbstractResourceDto {
       return conc(
               AbstractResourceDto.toJson.apply(eas, s),
               jO(p("id", s.getId()), p("name", s.getName()), p("description", s.getDescription()),
-                      p("has_duration", s.hasDuration()), p("settings", s.getSettings()), p("scale_id", s.getScaleId())));
+                      p("settings", s.getSettings()), p("scale_id", s.getScaleId())));
     }
   };
 
