@@ -1,15 +1,15 @@
 # Opencast Annotation Tool
 
-The Opencast Annotation Tool (aka Annotating Academic Video by Entwine) is a video annotation service that is suitable for research, teaching or learning.
+The Opencast Annotation Tool (aka Annotating Academic Video by Entwine)
+is a video annotation service that is suitable for research, teaching or learning.
 
-The software devides currently into two parts:
+The software is currently divided into two parts:
 
 * The frontend component, containing the annotation webapp.
-* The Opencast Backend modules, that need to be integrated into an Opencast installation. A recent version of the i
-  frontend is already included in the annotation-tool module.
+* The Opencast Backend modules, that need to be integrated into an Opencast installation.
 
 ## [Installation](documentation/opencast-installation.md)
-The instruction on how to install the Annotation tool in Opencast 2.3+ [can be found here](documentation/opencast-installation.md)
+The instruction on how to install the Annotation tool in Opencast [can be found here](documentation/opencast-installation.md)
 
 ## [Building the Frontend](documentation/build-frontend.md)
 Instructions on how to build the frontend webapp [can be found here](documentation/build-frontend.md).
