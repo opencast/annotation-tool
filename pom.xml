@@ -372,7 +372,6 @@
               <Bundle-DocURL>http://opencastproject.org/</Bundle-DocURL>
               <Bundle-Vendor>The Opencast Project</Bundle-Vendor>
               <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-              <Bundle-Version></Bundle-Version>
             </instructions>
           </configuration>
         </plugin>
