@@ -7,11 +7,11 @@
 
   <parent>
     <groupId>org.opencast.annotate</groupId>
-    <artifactId>opencast-annotation-tool</artifactId>
+    <artifactId>annotation-tool</artifactId>
     <version>${revision}</version>
   </parent>
 
-  <artifactId>frontend</artifactId>
+  <artifactId>annotation-tool-frontend</artifactId>
 
   <name>Opencast Annotation Tool :: Frontend</name>
 

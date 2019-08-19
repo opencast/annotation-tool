@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.opencast.annotate</groupId>
-  <artifactId>opencast-annotation-tool</artifactId>
+  <artifactId>annotation-tool</artifactId>
   <version>${revision}</version>
   <packaging>pom</packaging>
 

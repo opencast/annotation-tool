@@ -7,11 +7,11 @@
 
   <parent>
     <groupId>org.opencast.annotate</groupId>
-    <artifactId>backend</artifactId>
+    <artifactId>annotation-tool-backend</artifactId>
     <version>${revision}</version>
   </parent>
 
-  <artifactId>api</artifactId>
+  <artifactId>annotation-tool-api</artifactId>
   <packaging>bundle</packaging>
 
   <name>Opencast Annotation Tool :: Backend :: API</name>
