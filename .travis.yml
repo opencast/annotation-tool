@@ -5,7 +5,7 @@ before_install: . ./.travis.env.sh
 
 deploy:
   provider: script
-  script: ./.travis.deploy.sh
+  script: ./.travis.deploy.sh deploy
   skip_cleanup: true
   on:
     branch: master

@@ -23,7 +23,7 @@
   <dependencies>
     <dependency>
       <groupId>org.opencast.annotate</groupId>
-      <artifactId>frontend</artifactId>
+      <artifactId>annotation-tool-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

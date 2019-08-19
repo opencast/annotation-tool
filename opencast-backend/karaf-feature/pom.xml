@@ -47,17 +47,17 @@
   <dependencies>
     <dependency>
       <groupId>org.opencast.annotate</groupId>
-      <artifactId>api</artifactId>
+      <artifactId>annotation-tool-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opencast.annotate</groupId>
-      <artifactId>impl</artifactId>
+      <artifactId>annotation-tool-impl</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opencast.annotate</groupId>
-      <artifactId>frontend-delivery</artifactId>
+      <artifactId>annotation-tool-frontend-delivery</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

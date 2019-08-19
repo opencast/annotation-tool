@@ -41,7 +41,7 @@
     <!-- Matterhorn -->
     <dependency>
       <groupId>org.opencast.annotate</groupId>
-      <artifactId>api</artifactId>
+      <artifactId>annotation-tool-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
