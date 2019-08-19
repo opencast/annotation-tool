@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.opencast.annotate</groupId>
+  <artifactId>annotation-tool-frontend-delivery</artifactId>
+  <versioning>
+    <release>2019.0819.101449-65763a8425a45a1a203dd4fa667a9f0dc3aae6fc</release>
+    <versions>
+      <version>2019.0819.101449-65763a8425a45a1a203dd4fa667a9f0dc3aae6fc</version>
+    </versions>
+    <lastUpdated>20190819101551</lastUpdated>
+  </versioning>
+</metadata>
