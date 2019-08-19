@@ -44,12 +44,6 @@ We also try our best to be compatible with Opencast `develop`,
 seeing as how this is going to be our next "premium support" version
 in at most six months time. 😉
 
-## Contributing
-
-Self Merging
-
-Just pushing
-
 ## [Installation](documentation/opencast-installation.md)
 The instruction on how to install the Annotation tool in Opencast [can be found here](documentation/opencast-installation.md)
 
