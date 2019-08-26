@@ -9,7 +9,6 @@ deploy:
   skip_cleanup: true
   on:
     all_branches: true
-    condition: $TRAVIS_BRANCH =~ ^(develop|master)$
 
 before_cache:
   - rm -rf ~/.m2/repository/ch/switch/cast/annotate
