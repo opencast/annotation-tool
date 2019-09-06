@@ -31,7 +31,8 @@ require.config({
         "mediaelementplayer": "libs/mediaelement/mediaelement-and-player",
         "mediaelement/lang": "libs/mediaelement/lang",
         "sortable": "libs/Sortable.min",
-        "goldenlayout": "libs/goldenlayout"
+        "goldenlayout": "libs/goldenlayout",
+        "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min"
     },
     waitSeconds: 10,
 
