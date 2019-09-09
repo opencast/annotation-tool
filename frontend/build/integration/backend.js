@@ -76,22 +76,31 @@ define([
         return backboneSync.call(this, method, model, options);
     };
 
-    var annotationInfo = $.ajax(apiBase + '/annotate', {
-        beforeSend: function (request) {
-            // TODO Fix the headers
-            request.setRequestHeader(
-                "X-Opencast-Annotate-Signed-URL",
-                window.location
-            );
-            request.setRequestHeader(
-                "X-Opencast-Annotate-Media-Package",
-                util.queryParameters.id
-            );
-        }
-    });
-    annotationInfo.fail(function (response) {
-        alerts.fatal(response.statusText);
-    });
+    function getAnnotationInfo() {
+        var annotationInfo = $.ajax(apiBase + '/annotate', {
+            beforeSend: function (request) {
+                // TODO Fix the headers
+                request.setRequestHeader(
+                    "X-Opencast-Annotate-Signed-URL",
+                    window.location
+                );
+                request.setRequestHeader(
+                    "X-Opencast-Annotate-Media-Package",
+                    util.queryParameters.id
+                );
+            }
+        });
+        annotationInfo.fail(function (response) {
+            alerts.fatal(response.statusText);
+        });
+        return annotationInfo;
+    }
+    var annotationInfo = getAnnotationInfo();
+    // codediff SC135:
+    // Establish a heartbeat with the server
+    // to refresh our Shibboleth session.
+    window.setInterval(getAnnotationInfo, 1000 * 60);
+    // end codediff
 
     /**
      * Module containing the tool integration
