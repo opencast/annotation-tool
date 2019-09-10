@@ -63,8 +63,8 @@ define(["underscore",
             /**
              * Parse the given data
              * @alias module:collections-tracks.Tracks#parse
-             * @param  {object} data Object or array containing the data to parse.
-             * @return {object}      the part of the given data related to the tracks
+             * @param {object} data object or array containing the data to parse.
+             * @return {object} the part of the given data related to the tracks
              */
             parse: function (data) {
                 if (data.tracks && _.isArray(data.tracks)) {
@@ -82,7 +82,7 @@ define(["underscore",
              * @return {array} Array containing the list of tracks created by the current user
              */
             getMine: function () {
-                return this.where({isMine: true});
+                return this.where({ isMine: true });
             },
 
             /**
@@ -91,7 +91,7 @@ define(["underscore",
              * @return {array} Array containing the list of the visible tracks
              */
             getTracksForLocalStorage: function () {
-                return this.remove(this.where({isMine: false, access: 0}));
+                return this.remove(this.where({ isMine: false, access: 0 }));
             },
 
             /**
@@ -106,8 +106,8 @@ define(["underscore",
 
             /**
              * Displays the given tracks and hide the current displayed tracks.
-             * @param  {array} tracks an array containing the tracks to display
-             * @param  {boolean} keepPrevious should previously visible tracks stay visible?
+             * @param {array} tracks an array containing the tracks to display
+             * @param {boolean} keepPrevious should previously visible tracks stay visible?
              */
             showTracks: function (tracks, keepPrevious) {
                 var selectedTrack = annotationTool.selectedTrack;
@@ -142,7 +142,7 @@ define(["underscore",
             /**
              * Get the url for this collection
              * @alias module:collections-tracks.Tracks#url
-             * @return {String} The url of this collection
+             * @return {String} the url of this collection
              */
             url: function () {
                 return _.result(this.video, "url") + "/tracks";

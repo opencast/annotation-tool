@@ -43,7 +43,7 @@ define(["underscore",
              * @static
              */
             defaults: {
-                start   : 0,
+                start: 0,
                 duration: 0
             },
 

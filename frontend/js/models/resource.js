@@ -123,11 +123,11 @@ var Resource = Backbone.Model.extend({
     /**
      * Parse the attribute list passed to the model
      * @alias module:models-resource.Resource#parse
-     * @param  {object} data Object literal containing the model attribute to parse.
+     * @param {object} data Object literal containing the model attribute to parse.
      * @param {function} callback Callback function that parses and potentially modifies <tt>data</tt>
      *   It does not need to worry about whether a POJO or a Backbone model was passed
      *   and it does not have to return anything. It works directly on the passed hash
-     * @return {object}  The object literal with the list of parsed model attribute.
+     * @return {object} The object literal with the list of parsed model attribute.
      */
     parse: function (data, callback) {
         var annotationTool = window.annotationTool || {};

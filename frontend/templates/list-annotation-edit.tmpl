@@ -4,75 +4,139 @@
             <i class="icon-chevron-down"></i>
         </button>
 
-        <button class="btn in" title="{{t "annotation.edit.set start to playhead.long"}}">{{t "annotation.edit.set start to playhead.short"}}</button>
+        <button
+            class="btn in"
+            title="{{t "annotation.edit.set start to playhead.long"}}"
+        >{{t "annotation.edit.set start to playhead.short"}}</button>
         <span class="start">
-                <input title="{{t "annotation.edit.start time"}} {{#if isMine}}({{t "annotation.edit.double click to edit"}}){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}"></input>
+            <input
+                title="{{t "annotation.edit.start time"}}{{#if isMine}} ({{t "annotation.edit.double click to edit"}}){{/if}}"
+                id="start-{{id}}"
+                class="start-value"
+                type="text"
+                value="{{time start}}"
+            ></input>
         </span>
 
-        <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}}">
-                <input title="{{t "annotation.edit.end time"}}{{#if isMine}} ({{t "annotation.edit.double click to edit"}}){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}"></input>
+        <span class="
+            end
+            {{#if duration}}
+                has-duration
+            {{else}}
+                no-duration
+            {{/if}}
+        ">
+            <input
+                title="{{t "annotation.edit.end time"}}{{#if isMine}} ({{t "annotation.edit.double click to edit"}}){{/if}}"
+                id="end-{{id}}"
+                class="end-value"
+                type="text"
+                value="{{end start duration}}"
+            ></input>
         </span>
-        <button class="btn out" title="{{t "annotation.edit.set end to playhead.long"}}">{{t "annotation.edit.set end to playhead.short"}}</button>
+        <button
+            class="btn out"
+            title="{{t "annotation.edit.set end to playhead.long"}}"
+        >{{t "annotation.edit.set end to playhead.short"}}</button>
 
         {{#if isMine}}
-        <i class="private icon-user" title="{{t "annotation.you own"}}"></i>
+            <i
+                class="private icon-user"
+                title="{{t "annotation.you own"}}"
+            ></i>
         {{/if}}
 
         {{#if scalevalues}}
-        <span class="scaling">
+            <span class="scaling">
                 {{#if isMine}}
-                <select>
+                    <select>
                         {{#each scalevalues}}
-                        <option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
+                            <option
+                                value="{{this.id}}"
+                                {{#if this.isSelected}}
+                                    selected="selected"
+                                {{/if}}
+                            >{{this.name}}</option>
                         {{/each}}
-                </select>
+                    </select>
                 {{/if}}
                 {{#if scalevalue}}
-                <span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
+                    <span
+                        class="read-only"
+                        title="{{scalevalue.name}}"
+                    >{{scalevalue.name}}</span>
                 {{/if}}
-        </span>
+            </span>
         {{/if}}
 
-        <span class="category" {{#if label}}title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"{{/if}}>
-                {{#if label}}
-                    <span class="abbreviation">{{label.abbreviation}}</span>
-                    <span class="label-value print">{{label.value}}</span>
-                    {{#if scalevalue}}
-                        <span class="scalevalue print">{{scalevalue.name}} ({{scalevalue.value}})</span>
-                    {{/if}}
-                {{else}}
-                    <span class="no-label">{{text}}</span>
+        <span
+            class="category"
+            {{#if label}}
+                title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"
+            {{/if}}
+        >
+            {{#if label}}
+                <span class="abbreviation">{{label.abbreviation}}</span>
+                <span class="label-value print">{{label.value}}</span>
+                {{#if scalevalue}}
+                    <span class="scalevalue print">
+                        {{scalevalue.name}} ({{scalevalue.value}})
+                    </span>
                 {{/if}}
+            {{else}}
+                <span class="no-label">{{text}}</span>
+            {{/if}}
         </span>
     </div>
 
     <div class="right">
         {{#if isMine}}
-        <i class="delete icon-trash" title="{{t "annotation.edit.delete"}}"></i>
-
-        <i class="toggle-edit icon-pencil" title="{{t "annotation.edit.edit"}}"></i>
+            <i
+                class="delete icon-trash"
+                title="{{t "annotation.edit.delete"}}"
+            ></i>
+            <i
+                class="toggle-edit icon-pencil"
+                title="{{t "annotation.edit.edit"}}"
+            ></i>
         {{/if}}
 
-        <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{t "annotation.comments.count" count=numberOfComments}}">
+        <i
+            class="{{#if numberOfComments}}
+                icon-comment-amount
+            {{else}}
+                icon-comment
+            {{/if}}"
+            title="{{t "annotation.comments.count" count=numberOfComments}}"
+        >
             {{#if numberOfComments}}
-            <span class="comment-amount">{{numberOfComments}}</span>
+                <span class="comment-amount">
+                    {{numberOfComments}}
+                </span>
             {{/if}}
         </i>
     </div>
 </div>
 
 {{#unless label}}
-<div id="text-container{{id}}" class="in text-container">
-    <span class="text">
+    <div id="text-container{{id}}" class="in text-container">
+        <span class="text">
             <span class="freetext">
-                <textarea placeholder="{{t "annotation.edit.free text placeholder"}}" style="height: {{textHeight}}px">{{text}}</textarea>
+                <textarea
+                    placeholder="{{t "annotation.edit.free text placeholder"}}"
+                    style="height: {{textHeight}}px"
+                >{{text}}</textarea>
             </span>
             <div class="button-bar">
-                <button type="button" class="btn">Cancel</button>
-                <button type="submit" class="btn btn-primary">OK</button>
+                <button type="button" class="btn">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    OK
+                </button>
             </div>
-    </span>
-</div>
+        </span>
+    </div>
 {{/unless}}
 
 <div class="comments"></div>

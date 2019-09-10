@@ -42,12 +42,12 @@ define(["jquery",
         var annotationTool = window.annotationTool = _.extend({}, Backbone.Events, {
 
             EVENTS: {
-                ANNOTATION_SELECTION : "at:annotation-selection",
-                ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
-                MODELS_INITIALIZED   : "at:models-initialized",
-                TIMEUPDATE           : "at:timeupdate",
-                USER_LOGGED          : "at:logged",
-                VIDEO_LOADED         : "at:video-loaded"
+                ANNOTATION_SELECTION: "at:annotation-selection",
+                ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus",
+                MODELS_INITIALIZED: "at:models-initialized",
+                TIMEUPDATE: "at:timeupdate",
+                USER_LOGGED: "at:logged",
+                VIDEO_LOADED: "at:video-loaded"
             },
 
             timeupdateIntervals: [],
@@ -834,9 +834,6 @@ define(["jquery",
              * @param {Integer} trackId Id of the track containing the annotation
              */
             deleteAnnotation: function (annotationId, trackId) {
-                var annotation,
-                    self = this;
-
                 if (typeof trackId === "undefined") {
                     this.video.get("tracks").each(function (track) {
                         if (track.get("annotations").get(annotationId)) {
@@ -845,12 +842,12 @@ define(["jquery",
                     });
                 }
 
-                annotation = self.video.getAnnotation(annotationId, trackId);
-
+                var annotation = this.video.getAnnotation(annotationId, trackId);
                 if (annotation) {
-                    self.deleteOperation.start(annotation, self.deleteOperation.targetTypes.ANNOTATION);
-                } else {
-                    console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
+                    this.deleteOperation.start(
+                        annotation,
+                        this.deleteOperation.targetTypes.ANNOTATION
+                    );
                 }
             },
 

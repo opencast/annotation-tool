@@ -588,10 +588,11 @@ define(["jquery",
              * @alias module:views-main.MainView#handleAnnotationShortcut
              */
             handleAnnotationShortcut: function (event) {
-                if (
+                if ((
                     ["input", "textarea"].includes(event.target.tagName.toLowerCase())
-                        || !event.key.match(/^[1-9]$/)
-                ) {
+                ) || (
+                    !event.key.match(/^[1-9]$/)
+                )) {
                     this.interruptAnnotationShortcut();
                     return;
                 }
