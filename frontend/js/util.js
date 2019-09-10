@@ -42,6 +42,22 @@ var util = {
     },
 
     /**
+     * @param {number} n
+     * @return {Date} The date <code>n</code> seconds after the epoch
+     */
+    dateFromSeconds: function (n) {
+        return new Date(n * 1000);
+    },
+
+    /**
+     * @param {Date} d
+     * @return {number} The number of seconds between <code>d</code> and the epoch
+     */
+    secondsFromDate: function (d) {
+        return d.getTime() / 1000;
+    },
+
+    /**
      * Tries to parse many different things to a date.
      * @param value A thing hopefully representing a date
      * @return {Date|undefined} <code>value</code> interpreted as a <code>Date</code>

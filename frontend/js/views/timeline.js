@@ -229,7 +229,6 @@ define([
                       "generateItem",
                       "changeItem",
                       "changeTrack",
-                      "getFormatedDate",
                       "getSelectedItemAndAnnotation",
                       "onWindowResize",
                       "onTimelineResetZoom",
@@ -253,8 +252,8 @@ define([
             this.typeForDeleteAnnotation = annotationTool.deleteOperation.targetTypes.ANNOTATION;
             this.typeForDeleteTrack = annotationTool.deleteOperation.targetTypes.TRACK;
 
-            this.startDate = this.getFormatedDate(0);
-            this.endDate = this.getFormatedDate(this.playerAdapter.getDuration());
+            this.startDate = new Date(0);
+            this.endDate = util.dateFromSeconds(this.playerAdapter.getDuration());
 
             // Options for the links timeline
             this.options = {
@@ -489,41 +488,36 @@ define([
          */
         moveToCurrentTime: function () {
             var currentChartRange = this.timeline.getVisibleChartRange(),
-                start             = this.getTimeInSeconds(currentChartRange.start),
-                end               = this.getTimeInSeconds(currentChartRange.end),
-                size              = end - start,
-                currentTime       = this.playerAdapter.getCurrentTime(),
-                videoDuration     = this.playerAdapter.getDuration(),
-                marge             = size / 20,
-                startInSecond;
+                currentStart = util.secondsFromDate(currentChartRange.start),
+                size = util.secondsFromDate(currentChartRange.end) - currentStart,
+                currentTime = this.playerAdapter.getCurrentTime(),
+                start = currentStart;
 
             if (annotationTool.timelineFollowPlayhead) {
-                if ((currentTime - size / 2) < 0) {
-                    start = this.getFormatedDate(0);
-                    end = this.getFormatedDate(size);
-                } else if ((currentTime + size / 2) > videoDuration) {
-                    start = this.getFormatedDate(videoDuration - size);
-                    end = this.getFormatedDate(videoDuration);
-                } else {
-                    start = this.getFormatedDate(currentTime - size / 2);
-                    end = this.getFormatedDate(currentTime + size / 2);
-                }
+                start = currentTime - size / 2;
             } else {
-                if (((currentTime + marge) >= end && end != videoDuration) || (currentTime > end || currentTime < start)) {
-                    startInSecond = Math.max(currentTime - marge, 0);
-                    start = this.getFormatedDate(startInSecond);
-                    end = this.getFormatedDate(Math.min(startInSecond + size, videoDuration));
-                } else {
-                    start = this.getFormatedDate(start);
-                    end = this.getFormatedDate(end);
+                var margin = size / 20;
+                if (currentTime < start + margin || currentTime > end - margin) {
+                    start = currentTime - margin;
                 }
             }
 
-
-
-            if (currentChartRange.start.getTime() != start.getTime() || currentChartRange.end.getTime() !== end.getTime()) {
-                this.timeline.setVisibleChartRange(start, end);
+            if (start < 0) {
+                start = 0;
             }
+
+            if (start === currentStart) return;
+
+            var end = start + size;
+            var duration = this.playerAdapter.getDuration();
+            if (end > duration) {
+                end = duration;
+                start = end - size;
+            }
+            start = util.dateFromSeconds(start);
+            end = util.dateFromSeconds(end);
+
+            this.timeline.setVisibleChartRange(start, end);
         },
 
         /**
@@ -714,8 +708,8 @@ define([
             // Calculate start/end time
             startTime = annotation.get("start");
             endTime = startTime + this.annotationItemDuration(annotation);
-            start = this.getFormatedDate(startTime);
-            end = this.getFormatedDate(endTime);
+            start = util.dateFromSeconds(startTime);
+            end = util.dateFromSeconds(endTime);
 
             // If annotation is at the end of the video, we mark it for styling
             annotationJSON.atEnd = (videoDuration - endTime) < 3;
@@ -1158,7 +1152,7 @@ define([
          */
         onPlayerTimeUpdate: function () {
             var currentTime = this.playerAdapter.getCurrentTime(),
-                newDate = this.getFormatedDate(currentTime);
+                newDate = util.dateFromSeconds(currentTime);
 
             this.timeline.setCustomTime(newDate);
 
@@ -1215,7 +1209,7 @@ define([
          * @param {Event} event Event object
          */
         onTimelineMoved: function (event) {
-            var newTime = this.getTimeInSeconds(event.time),
+            var newTime = util.secondsFromDate(event.time),
                 hasToPlay = (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING);
 
 
@@ -1256,8 +1250,8 @@ define([
                 return;
             }
 
-            start = this.getTimeInSeconds(values.item.start);
-            end = this.getTimeInSeconds(values.item.end);
+            start = util.secondsFromDate(values.item.start);
+            end = util.secondsFromDate(values.item.end);
             duration = end - start;
 
             // If the annotation is not owned by the current user or the annotation is moved outside the timeline,
@@ -1572,30 +1566,6 @@ define([
         /* --------------------------------------
            Utils functions
            ----------------------------------------*/
-
-        /**
-         * Get the formated date for the timeline with the given seconds.
-         * The timeline displays dates/times in local time,
-         * which is why we bias the time towards UTC.
-         * @alias module:views-timeline.TimelineView#getFormatedDate
-         * @param {Double} seconds The time in seconds to convert to Date
-         * @returns {Date} Formated date for the timeline
-         */
-        getFormatedDate: function (seconds) {
-            var newDate = new Date(seconds * 1000);
-            newDate.setTime(newDate.getTime() + newDate.getTimezoneOffset() * 60 * 1000);
-            return newDate;
-        },
-
-        /**
-         * Transform the given date into a time in seconds
-         * @alias module:views-timeline.TimelineView#getTimeInSeconds
-         * @param {Date} date The formated date from timeline
-         * @returns {Number} Date converted to time in seconds
-         */
-        getTimeInSeconds: function (date) {
-            return date.getTime() / 1000 - date.getTimezoneOffset() * 60;
-        },
 
         /**
          * Get the current selected annotion as object containing the timeline item and the annotation
