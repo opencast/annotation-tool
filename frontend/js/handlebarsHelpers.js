@@ -23,20 +23,20 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
     });
 
     /**
-     * Handlebars helper to secure the text field
+     * Handlebars helper to display the annotation start time
      * @alias module:Handlebars#time
-     * @param  {double} start The start time
-     * @return {string}      The formated time
+     * @param {number} start The start time
+     * @return {string} The formated time
      */
     Handlebars.registerHelper("time", function (start) {
         return annotationTool.getWellFormatedTime(start);
     });
 
     /**
-     * Handlebars helper to display the annotation duration
+     * Handlebars helper to display the annotation end time
      * @alias module:Handlebars#end
-     * @param  {double} start The start time
-     * @param  {double} duration The annotation duration
+     * @param  {number} start The start time
+     * @param  {number} duration The annotation duration
      * @return {string}      The formated time
      */
     Handlebars.registerHelper("end", function (start, duration) {
@@ -46,7 +46,7 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
     /**
      * Handlebars helper to get user nickname
      * @alias module:Handlebars#nickname
-     * @param  {User | integer} user The user object or its id
+     * @param {User | number} user The user object or its id
      * @return {string} The user nickname
      */
     Handlebars.registerHelper("nickname", function (user) {
@@ -61,7 +61,7 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
      * Handlebars helper to format a date to the configured format
      * @alias module:Handlebars#formatDate
      * @param  {date} date The date to format
-     * @return {string}      The formated date
+     * @return {string} The formated date
      */
     Handlebars.registerHelper("formatDate", function (date) {
         return util.formatDate(date);

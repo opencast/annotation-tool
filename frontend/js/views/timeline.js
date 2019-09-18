@@ -176,7 +176,7 @@ define([
         /**
          * Items from external sources.
          * @see module:views-loop
-         * @alias module:views-timeline.TimelineView#trackItems
+         * @alias module:views-timeline.TimelineView#extraItems
          * @type {map}
          */
         extraItems: {},
@@ -363,7 +363,7 @@ define([
         /**
          * Search for the group/track with the given name in the timeline
          * @alias module:views-timeline.TimelineView#findGroup
-         * @param {Annotation} groupName the name of the group/track to search
+         * @param {string} groupName the name of the group/track to search
          * @return {Object} The search group/track as timeline-group if found, or undefined
          */
         findGroup: function (groupName) {

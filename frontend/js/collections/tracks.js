@@ -37,7 +37,7 @@ define(["underscore",
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-tracks.Tracks#initialize
+             * @alias module:collections-tracks.Tracks#model
              */
             model: Track,
 
