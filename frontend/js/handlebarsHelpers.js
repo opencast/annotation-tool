@@ -29,7 +29,7 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
      * @return {string} The formated time
      */
     Handlebars.registerHelper("time", function (start) {
-        return annotationTool.getWellFormatedTime(start);
+        return util.formatTime(start);
     });
 
     /**
@@ -40,7 +40,7 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
      * @return {string}      The formated time
      */
     Handlebars.registerHelper("end", function (start, duration) {
-        return annotationTool.getWellFormatedTime(start + (duration || 0.0));
+        return util.formatTime(start + (duration || 0));
     });
 
     /**

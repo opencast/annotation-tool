@@ -453,7 +453,7 @@ define([
          * @alias module:views-timeline.TimelineView#changeTitleFromCustomPlayhead
          */
         changeTitleFromCustomPlayhead: function () {
-            this.$el.find(".timeline-customtime").attr("title", annotationTool.getWellFormatedTime(this.playerAdapter.getCurrentTime()));
+            this.$el.find(".timeline-customtime").attr("title", util.formatTime(this.playerAdapter.getCurrentTime()));
         },
 
         /**
@@ -1156,7 +1156,7 @@ define([
 
             this.timeline.setCustomTime(newDate);
 
-            this.$el.find("span.time").html(annotationTool.getWellFormatedTime(currentTime, true));
+            this.$el.find("span.time").html(util.formatTime(currentTime));
 
             this.moveToCurrentTime();
         },

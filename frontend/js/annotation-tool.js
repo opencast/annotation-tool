@@ -274,24 +274,6 @@ define(["jquery",
             },
 
             /**
-             * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
-             * @alias   annotationTool.getWellFormatedTime
-             * @param {number} time the time in seconds
-             * @param {boolean} [noRounted] Define if the number should be rounded or if the decimal should be simply removed. Default is rounding (false).
-             */
-            getWellFormatedTime: function (time, noRounding) {
-                var twoDigit = function (number) {
-                    return (number < 10 ? "0" : "") + number;
-                },
-                    base    = (_.isUndefined(noRounding) || !noRounding) ? Math.round(time) : Math.floor(time),
-                    seconds = base % 60,
-                    minutes = ((base - seconds) / 60) % 60,
-                    hours   = (base - seconds - minutes * 60) / 3600;
-
-                return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
-            },
-
-            /**
              * Listen and retrigger timeupdate event from player adapter events with added intervals
              * @alias   annotationTool.onTimeUpdate
              */

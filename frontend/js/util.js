@@ -21,6 +21,14 @@ define([
     moment
 ) { "use strict";
 
+function zeroPad(n) {
+    if (n < 10) {
+        return "0" + n;
+    } else {
+        return n;
+    }
+}
+
 /**
  * A module containing helper functions needed in many different places
  * @exports util
@@ -55,6 +63,25 @@ var util = {
      */
     secondsFromDate: function (d) {
         return d.getTime() / 1000;
+    },
+
+    /**
+     * @param time {number} A point in time,
+     *     defined by the number of seconds between it and the epoch.
+     * @return {string} A string representing <code>time</code>
+     *     in the format <code>h:mm:ss</code>,
+     *     where <code>h</code>, <code>mm</code> and <code>ss</code>
+     *     are the hours, minutes, and seconds, respectively,
+     *     since the epoch.
+     *     The minutes and seconds are zero-padded to two places.
+     */
+    formatTime: function (time) {
+        time = Math.floor(time);
+        var seconds = time % 60;
+        time = Math.floor(time / 60);
+        var minutes = time % 60;
+        var hours = Math.floor(time / 60);
+        return hours + ":" + zeroPad(minutes) + ":" + zeroPad(seconds);
     },
 
     /**
