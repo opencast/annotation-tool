@@ -3,6 +3,11 @@
          (eval . (progn
                    (c-set-offset 'arglist-cont-nonempty 8)
                    (require 'grep)
-                   (add-to-list (make-local-variable 'grep-find-ignored-directories)
-                                "node_modules")))))
+                   (make-local-variable 'grep-find-ignored-directories)
+                   (dolist (dir '("node_modules"
+                                  "frontend/js/libs"
+                                  "frontend/www"
+                                  "target"
+                                  "opencast-backend/annotation-tool/src/main/resources/ui"))
+                     (add-to-list 'grep-find-ignored-directories dir))))))
  (js2-mode . ((js2-basic-offset . 4))))
