@@ -88,14 +88,5 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
         );
     });
 
-    /**
-     * Concatenate strings and possibly variables.
-     * Mainly used for nesting helpers.
-     * @alias module:Handlebars#concat
-     */
-    Handlebars.registerHelper("concat", function () {
-        return Array.prototype.slice.call(arguments, 0, -1).join('');
-    });
-
     return Handlebars;
 });
