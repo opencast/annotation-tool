@@ -35,6 +35,24 @@ function zeroPad(n) {
  */
 var util = {
     /**
+     * Some side effect on a thing.
+     * The return value of this function is not used.
+     * @callback effect
+     * @param o The object to effect
+     */
+
+    /**
+     * Function to execute some side effect on a thing in the context of an expression.
+     * @param o The object to effect
+     * @param {effect} f The side effect to execute
+     * @return <code>o</code>
+     */
+    inspect: function (o, f) {
+        f(o);
+        return o;
+    },
+
+    /**
      * Check whether two closed intervals overlap.
      * Nothe that the <code>start</code> and <code>end</code> properties of the given objects
      * all have to be comparable with one another.
