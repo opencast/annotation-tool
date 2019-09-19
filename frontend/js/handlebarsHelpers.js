@@ -28,9 +28,7 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
      * @param {number} start The start time
      * @return {string} The formated time
      */
-    Handlebars.registerHelper("time", function (start) {
-        return util.formatTime(start);
-    });
+    Handlebars.registerHelper("time", util.formatTime);
 
     /**
      * Handlebars helper to display the annotation end time
@@ -50,7 +48,7 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
      * @return {string} The user nickname
      */
     Handlebars.registerHelper("nickname", function (user) {
-        if (!_.isObject(user)) {
+        if (_.isNumber(user)) {
             return annotationTool.users.get(user).get("nickname");
         } else {
             return user.nickname;
@@ -63,9 +61,7 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
      * @param  {date} date The date to format
      * @return {string} The formated date
      */
-    Handlebars.registerHelper("formatDate", function (date) {
-        return util.formatDate(date);
-    });
+    Handlebars.registerHelper("formatDate", util.formatDate);
 
     /**
      * Translate a string using `i18next`
