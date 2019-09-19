@@ -23,23 +23,12 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
     });
 
     /**
-     * Handlebars helper to display the annotation start time
+     * Handlebars helper to display a point in time on the timeline
      * @alias module:Handlebars#time
-     * @param {number} start The start time
+     * @param {number} start The time to format in seconds
      * @return {string} The formated time
      */
     Handlebars.registerHelper("time", util.formatTime);
-
-    /**
-     * Handlebars helper to display the annotation end time
-     * @alias module:Handlebars#end
-     * @param  {number} start The start time
-     * @param  {number} duration The annotation duration
-     * @return {string}      The formated time
-     */
-    Handlebars.registerHelper("end", function (start, duration) {
-        return util.formatTime(start + (duration || 0));
-    });
 
     /**
      * Handlebars helper to get user nickname

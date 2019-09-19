@@ -1085,7 +1085,16 @@ define([
                                 trackId: trackId,
                                 itemContent: PlaceholderTmpl({
                                     track: trackId,
-                                    hiddenItems: spilledStack.items
+                                    hiddenItems: _.map(
+                                        spilledStack.items,
+                                        function (item) {
+                                            var annotation = item.annotation.attributes;
+                                            return _.extend({}, item, {
+                                                start: annotation.start,
+                                                end: annotation.duration && annotation.start + annotation.duration
+                                            });
+                                        }
+                                    )
                                 }),
                                 className: this.PREFIX_STACKING_CLASS + 2,
                                 editable: false

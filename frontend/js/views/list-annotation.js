@@ -389,6 +389,7 @@ define(["jquery",
 
                 modelJSON.numberOfComments = this.model.get("comments").countCommentsAndReplies();
                 modelJSON.state = this.getState().id;
+                modelJSON.end = modelJSON.start + modelJSON.duration;
 
                 this.$el.html(this.currentState.render(modelJSON));
 

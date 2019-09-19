@@ -7,15 +7,13 @@
     title="{{t "timeline.hidden items" count=hiddenItems.length}}"
     data-content="<dl>
         {{#each hiddenItems}}
-            {{#with annotation.attributes}}
-                <dt>
-                    {{time this.start}}{{!
-                    }}{{#if this.duration}}{{!
-                        }}&ndash;{{!
-                        }}{{end this.start this.duration}}{{!
-                    }}{{/if}}
-                </dt>
-            {{/with}}
+            <dt>
+                {{time start}}{{!
+                }}{{#if end}}{{!
+                    }}&ndash;{{!
+                    }}{{time end}}{{!
+                }}{{/if}}
+            </dt>
             <dd>
                 {{itemContent}}
             </dd>
