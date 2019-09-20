@@ -72,24 +72,6 @@ define(["underscore",
                 } else {
                     return null;
                 }
-            },
-
-            /**
-             * Get the categories created by the current user
-             * @alias module:collections-categories.Categories#getMine
-             * @return {array} Array containing the list of categories created by the current user
-             */
-            getMine: function () {
-                return this.where({ isMine: true });
-            },
-
-            /**
-             * Get the categories visible by everyone
-             * @alias module:collections-categories.Categories#getPublic
-             * @return {array} Array containing the list of categories visible by everyone
-             */
-            getPublic: function () {
-                return this.where({ isPublic: true });
             }
         });
 

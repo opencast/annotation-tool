@@ -231,7 +231,6 @@ define([
                       "changeTrack",
                       "getFormatedDate",
                       "getSelectedItemAndAnnotation",
-                      "getTrack",
                       "onWindowResize",
                       "onTimelineResetZoom",
                       "initTrackModal",
@@ -288,8 +287,6 @@ define([
             };
 
             this.groupModals = {};
-
-            this.$navbar = this.$el.find(".navbar");
 
             // Create the timeline
             this.$timeline = this.$el.find("#timeline");
@@ -1701,26 +1698,6 @@ define([
         annotationItemDuration: function (annotation) {
             var duration = annotation.get("duration");
             return duration && duration > this.DEFAULT_DURATION ? duration : this.DEFAULT_DURATION;
-        },
-
-        /**
-         * Get track with the given track id. Fallback method include if issues with the standard one.
-         * @alias module:views-timeline.TimelineView#getTrack
-         * @param {int} trackId The id from the targeted track
-         * @return {Track} a track if existing, or undefined.
-         */
-        getTrack: function (trackId) {
-            var rTrack = this.tracks.get(trackId);
-
-            if (!rTrack) {
-                // Fallback method
-                this.tracks.each(function (track) {
-                    if (track.id === trackId) {
-                        rTrack = track;
-                    }
-                }, this);
-            }
-            return rTrack;
         }
     });
     return Timeline;
