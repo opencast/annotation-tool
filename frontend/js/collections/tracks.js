@@ -53,15 +53,13 @@ define(["underscore",
              */
             initialize: function (models, video) {
                 _.bindAll(this, "showTracks",
-                                "showTracksById",
-                                "hideTracks",
                                 "getTracksForLocalStorage");
 
                 this.video = video;
 
                 this.on("add", function (track) {
                     // Show the new track
-                    this.showTracks(track, true);
+                    this.showTracks([track], true);
 
                     // Select the new track
                     annotationTool.selectedTrack = track;
@@ -111,92 +109,37 @@ define(["underscore",
             },
 
             /**
-             * Displays the tracks  with the given Ids and hide the current displayed tracks.
-             * @param  {array} tracks an array containing the tracks ids to display
-             */
-            showTracksById: function (ids) {
-                var tracks = [];
-
-                _.each(ids, function (id) {
-                    tracks.push(this.get(id));
-                }, this);
-
-                this.showTracks(tracks);
-            },
-
-            /**
              * Displays the given tracks and hide the current displayed tracks.
              * @param  {array} tracks an array containing the tracks to display
              * @param  {boolean} keepPrevious should previously visible tracks stay visible?
              */
             showTracks: function (tracks, keepPrevious) {
-                var self = this,
-                    selectedTrack = annotationTool.selectedTrack,
-                    showTrack = function (track) {
-                        track.set(Track.FIELDS.VISIBLE, true);
-                        self.visibleTracks.push(track);
-                    };
-
-                if (_.isUndefined(tracks)) {
-                    return;
-                } else if (!_.isArray(tracks)) {
-                    tracks = [tracks];
-                }
+                var selectedTrack = annotationTool.selectedTrack;
 
                 if (!keepPrevious) {
-                    this.hideTracks(this.visibleTracks);
+                    _.each(this.visibleTracks, function (track) {
+                        // TODO Is this field even used?
+                        track.set(Track.FIELDS.VISIBLE, false);
+                    });
+                    this.visibleTracks = [];
                 }
 
                 _.each(tracks, function (track) {
                     if (!track.get("annotationsLoaded")) {
                         track.fetchAnnotations();
                     }
-                    showTrack(track);
+                    track.set(Track.FIELDS.VISIBLE, true);
+                    this.visibleTracks.push(track);
                 }, this);
 
-                if (_.isUndefined(selectedTrack) || (!_.isUndefined(selectedTrack) && !selectedTrack.get(Track.FIELDS.VISIBLE))) {
+                if (!selectedTrack || !selectedTrack.get("visible")) {
                     selectedTrack = _.find(this.visibleTracks, function (track) {
                         return track.get("isMine");
                     }, this);
                     annotationTool.selectTrack(selectedTrack);
                 }
 
-                annotationTool.selectTrack(selectedTrack);
-
                 this.trigger("visibility", this.visibleTracks);
-            },
-
-            /**
-             * Hides the given tracks.
-             * @param  {array} tracks an array containing the tracks to hide.
-             */
-            hideTracks: function (tracks) {
-                var newVisibleTracks = [],
-                    idsToRemove = [];
-
-                // Check if the given tracks are valid
-                if (_.isUndefined(tracks)) {
-                    return;
-                } else if (!_.isArray(tracks)) {
-                    tracks = [tracks];
-                }
-
-                // Create a list of tracks id to remove
-                _.each(tracks, function (track) {
-                    idsToRemove.push(track.id);
-                }, this);
-
-                // Go through the list of tracks to see which one has to be removed
-                _.each(this.visibleTracks, function (track) {
-                    if (_.contains(idsToRemove, track.id)) {
-                        track.set(Track.FIELDS.VISIBLE, false);
-                    } else {
-                        newVisibleTracks.push(track);
-                    }
-                }, this);
-
-
-                this.visibleTracks = newVisibleTracks;
             },
 
             /**

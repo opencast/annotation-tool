@@ -186,10 +186,10 @@ define(["jquery",
              * @alias module:views-tracks-selection.Alert#confirm
              */
             confirm: function () {
-                this.tracks.showTracksById(
-                    trackCheckboxes.filter(":checked").map(function (index, checkbox) {
-                        return checkbox.value;
-                    })
+                this.tracks.showTracks(
+                    trackCheckboxes.filter(":checked").map(_.bind(function (index, checkbox) {
+                        return this.tracks.get(checkbox.value);
+                    }, this))
                 );
 
                 annotationTool.orderTracks(this.sortableTrackSelection.toArray());
