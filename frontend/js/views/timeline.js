@@ -42,10 +42,10 @@ define([
     PlayerAdapter,
     Track,
     template,
-    GroupTmpl,
-    ItemTmpl,
-    PlaceholderTmpl,
-    ModalGroupTmpl,
+    groupTemplate,
+    itemTemplate,
+    placeholderTemplate,
+    groupModalTemplate,
     ACCESS,
     Backbone,
     links
@@ -70,27 +70,6 @@ define([
      * @alias module:views-timeline.TimelineView
      */
     var Timeline = Backbone.View.extend({
-        /**
-         * Group template
-         * @alias module:views-timeline.TimelineView#groupTemplate
-         * @type {HandlebarsTemplate}
-         */
-        groupTemplate: GroupTmpl,
-
-        /**
-         * Item template
-         * @alias module:views-timeline.TimelineView#itemTemplate
-         * @type {HandlebarsTemplate}
-         */
-        itemTemplate: ItemTmpl,
-
-        /**
-         * Modal template for groups
-         * @alias module:views-timeline.TimelineView#modalGroupTemplate
-         * @type {HandlebarsTemplate}
-         */
-        modalGroupTemplate: ModalGroupTmpl,
-
         /**
          * Events to handle by the timeline view
          * @alias module:views-timeline.TimelineView#event
@@ -394,7 +373,7 @@ define([
                     start: this.startDate - 5000,
                     end: this.startDate - 4500,
                     content: this.VOID_ITEM_TMPL,
-                    group: this.groupTemplate(this.VOID_TRACK)
+                    group: groupTemplate(this.VOID_TRACK)
                 }];
             }
 
@@ -659,7 +638,7 @@ define([
             if (trackAttributes.access || trackAttributes.access === 0) {
                 trackAttributes.access = accessIdentifier(trackAttributes.access);
             }
-            return this.groupTemplate(trackAttributes);
+            return groupTemplate(trackAttributes);
         },
 
         /**
@@ -724,7 +703,7 @@ define([
                 editable: track.get("isMine"),
                 start: start,
                 end: end,
-                itemContent: this.itemTemplate(annotationJSON),
+                itemContent: itemTemplate(annotationJSON),
                 groupContent: this.renderTrack(track)
             };
         },
@@ -760,7 +739,7 @@ define([
             var modal = this.groupModals[action] = this.$el.find("#modal-" + action + "-group");
             modal.off();
             modal.html(
-                this.modalGroupTemplate(_.extend(
+                groupModalTemplate(_.extend(
                     { action: action },
                     track && track.attributes
                 ))
@@ -1083,7 +1062,7 @@ define([
                                 end: spilledStack.end,
                                 groupContent: spilledStack.items[0].groupContent,
                                 trackId: trackId,
-                                itemContent: PlaceholderTmpl({
+                                itemContent: placeholderTemplate({
                                     track: trackId,
                                     hiddenItems: _.map(
                                         spilledStack.items,
@@ -1332,7 +1311,7 @@ define([
                         start: values.item.start,
                         end: values.item.end,
                         groupContent: values.item.groupContent,
-                        itemContent: self.itemTemplate(annJSON),
+                        itemContent: itemTemplate(annJSON),
                         id: annJSON.id,
                         trackId: values.newTrack.id,
                         isPublic: values.newTrack.get("isPublic"),
