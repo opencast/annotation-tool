@@ -18,26 +18,30 @@
  * A module representing the track model
  * @module models-track
  */
-define(["underscore",
-        "collections/annotations",
-        "access",
-        "models/resource"],
+define([
+    "underscore",
+    "collections/annotations",
+    "access",
+    "models/resource"
+], function (
+    _,
+    Annotations,
+    ACCESS,
+    Resource
+) {
 
-    function (_, Annotations, ACCESS, Resource) {
+    "use strict";
 
-        "use strict";
-
-        /**
-         * @constructor
-         * @see {@link http://www.backbonejs.org/#Model}
-         * @augments module:Backbone.Model
-         * @memberOf module:models-track
-         * @alias module:models-track.Track
-         */
-        var Track = Resource.extend(
-            /** @lends module:models-track~Track.prototype */
-            {
-
+    /**
+     * @constructor
+     * @see {@link http://www.backbonejs.org/#Model}
+     * @augments module:Backbone.Model
+     * @memberOf module:models-track
+     * @alias module:models-track.Track
+     */
+    var Track = Resource.extend(
+        /** @lends module:models-track~Track.prototype */
+        {
             /**
              * Default models value
              * @alias module:models-scalevalue.Scalevalue#defaults
@@ -55,8 +59,8 @@ define(["underscore",
              */
             initialize: function (attr) {
                 _.bindAll(this,
-                        "getAnnotation",
-                        "fetchAnnotations");
+                          "getAnnotation",
+                          "fetchAnnotations");
 
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
@@ -152,11 +156,11 @@ define(["underscore",
                 CREATED_BY          : "created_by",
                 CREATED_BY_NICKNAME : "created_by_nickname"
             }
-        });
+        }
+    );
 
-        /**
-         * @exports Track
-         */
-        return Track;
-    }
-);
+    /**
+     * @exports Track
+     */
+    return Track;
+});
