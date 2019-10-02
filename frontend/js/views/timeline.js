@@ -235,7 +235,7 @@ define([
             this.endDate = util.dateFromSeconds(this.playerAdapter.getDuration());
 
             // Options for the links timeline
-            this.options = {
+            var options = {
                 width            : "100%",
                 height           : "auto",
                 style            : "box",
@@ -270,7 +270,7 @@ define([
             this.$timeline = this.$el.find("#timeline");
             this.timeline = new links.Timeline(this.$timeline[0]);
             // Draw the timeline initially, so that it's HTML elements are available for attaching listeners, etc.
-            this.timeline.draw([], this.options);
+            this.timeline.draw([], options);
 
             // Ensure that the timeline is redraw on window resize
             $(window).resize(this.onWindowResize);
