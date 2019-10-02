@@ -131,7 +131,6 @@ define(["jquery",
                           "getTracks",
                           "getSelectedTrack",
                           "fetchData",
-                          "importTracks",
                           "importCategories",
                           "hasSelection",
                           "onDestroyRemoveSelection",
@@ -171,43 +170,6 @@ define(["jquery",
                 this.once(this.EVENTS.MODELS_INITIALIZED, function () {
                     this.views.main = new MainView();
                 }, this);
-
-                var importTracks = function () {
-
-                    var updateTracksOrder = _.bind(function (tracks) {
-                        this.tracksOrder = _.chain(tracks.getVisibleTracks())
-                            .map("id")
-                            .sortBy(function (trackId) {
-                                return _.indexOf(this.tracksOrder, trackId);
-                            }, this).value();
-                    }, this);
-                    this.listenTo(this.video, "change:tracks", updateTracksOrder);
-                    updateTracksOrder(this.getTracks());
-
-                    var trackImported = false;
-
-                    if (!_.isUndefined(this.tracksToImport)) {
-                        if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
-                            this.importTracks(this.tracksToImport());
-                            trackImported = true;
-                        } else {
-                            $(this.playerAdapter).one(
-                                PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,
-                                _.bind(function () {
-                                    if (trackImported) {
-                                        return;
-                                    }
-
-                                    this.importTracks(this.tracksToImport());
-                                    trackImported = true;
-                                }, this)
-                            );
-                        }
-                    }
-                };
-                importTracks = _.after(2, importTracks, this);
-                this.once(this.EVENTS.MODELS_INITIALIZED, importTracks);
-                this.once(this.EVENTS.VIDEO_LOADED, importTracks);
 
                 this.once(this.EVENTS.VIDEO_LOADED, function () {
 
@@ -733,25 +695,6 @@ define(["jquery",
             ////////////////
             // IMPORTERs  //
             ////////////////
-
-            /**
-             * Import the given tracks in the tool
-             * @alias annotationTool.importTracks
-             * @param {PlainObject} tracks Object containing the tracks in the tool
-             */
-            importTracks: function (tracks) {
-                _.each(tracks, function (track) {
-                    this.setLoadingProgress(
-                        this.loadingPercent,
-                        i18next.t("startup.importing track", { track: track.name })
-                    );
-                    if (_.isUndefined(this.getTrack(track.id))) {
-                        this.video.get("tracks").create(track);
-                    } else {
-                        console.info("Can not import track %s: A track with this ID already exist.", track.id);
-                    }
-                }, this);
-            },
 
             /**
              * Import the given categories in the tool
