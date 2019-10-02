@@ -26,11 +26,6 @@ define(["underscore",
 
         "use strict";
 
-        var EVENTS = {
-            VISIBILITY : "visiblity",
-            SELECTED   : "selected_track"
-        },
-
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#Collection}
@@ -38,7 +33,7 @@ define(["underscore",
          * @memberOf module:collections-tracks
          * @alias module:collections-tracks.Tracks
          */
-        Tracks = Backbone.Collection.extend({
+        var Tracks = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
@@ -186,7 +181,7 @@ define(["underscore",
 
                 annotationTool.selectTrack(selectedTrack);
 
-                this.trigger(EVENTS.VISIBILITY, this.visibleTracks);
+                this.trigger("visibility", this.visibleTracks);
             },
 
             /**
@@ -230,8 +225,6 @@ define(["underscore",
             url: function () {
                 return _.result(this.video, "url") + "/tracks";
             }
-        }, {
-            EVENTS: EVENTS
         });
 
         return Tracks;

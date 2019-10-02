@@ -19,13 +19,12 @@
  * @module views-list
  */
 define(["underscore",
-        "collections/tracks",
         "views/list-annotation",
         "templates/list",
         "backbone",
         "bootstrap"],
 
-    function (_, Tracks, AnnotationView, template, Backbone) {
+    function (_, AnnotationView, template, Backbone) {
 
         "use strict";
 
@@ -102,7 +101,7 @@ define(["underscore",
                 this.playerAdapter   = options.playerAdapter;
 
                 this.listenTo(this.tracks, "change:access", this.render);
-                this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
+                this.listenTo(this.tracks, "visibility", this.addTrackList);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);

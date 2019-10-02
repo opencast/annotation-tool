@@ -676,7 +676,7 @@ define(["jquery",
              */
             selectTrack: function (track) {
                 this.selectedTrack = track;
-                this.video.get("tracks").trigger("selected_track", track);
+                this.video.get("tracks").trigger("select", track);
             },
 
             /**

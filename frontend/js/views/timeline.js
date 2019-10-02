@@ -23,7 +23,6 @@ define(["util",
         "i18next",
         "player-adapter",
         "models/track",
-        "collections/tracks",
         "templates/timeline",
         "templates/timeline-group",
         "templates/timeline-item",
@@ -36,7 +35,7 @@ define(["util",
         "handlebarsHelpers"
     ],
 
-       function (util, $, _, i18next, PlayerAdapter, Track, Tracks, template, GroupTmpl,
+       function (util, $, _, i18next, PlayerAdapter, Track, template, GroupTmpl,
             ItemTmpl, PlaceholderTmpl, ModalGroupTmpl, ACCESS, Backbone, links) {
 
         "use strict";
@@ -305,8 +304,8 @@ define(["util",
                 links.events.addListener(this.timeline, "rangechange", this.timerangeChange);
 
                 this.tracks = annotationTool.video.get("tracks");
-                this.listenTo(this.tracks, "selected_track", this.markTrackSelected);
-                this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTracksList);
+                this.listenTo(this.tracks, "select", this.markTrackSelected);
+                this.listenTo(this.tracks, "visibility", this.addTracksList);
                 this.listenTo(this.tracks, "change", this.changeTrack);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
 
