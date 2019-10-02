@@ -127,18 +127,15 @@ define(["underscore",
             /**
              * Displays the given tracks and hide the current displayed tracks.
              * @param  {array} tracks an array containing the tracks to display
-             * @param  {boolean} keepPrevious define if the previous visible tracks should be kept if enough place
+             * @param  {boolean} keepPrevious should previously visible tracks stay visible?
              */
             showTracks: function (tracks, keepPrevious) {
-                var max = annotationTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE,
-                    self = this,
+                var self = this,
                     selectedTrack = annotationTool.selectedTrack,
                     showTrack = function (track) {
                         track.set(Track.FIELDS.VISIBLE, true);
                         self.visibleTracks.push(track);
-                    },
-                    tracksToHide = this.visibleTracks,
-                    i;
+                    };
 
                 if (_.isUndefined(tracks)) {
                     return;
@@ -146,24 +143,9 @@ define(["underscore",
                     tracks = [tracks];
                 }
 
-                if (tracks.length > max) {
-                    console.warn("The list of tracks to show is higher than the maximum number of visible tracks. \
-                                    Only the first " + max + " will be displayed.");
-
-                    for (i = tracks.length - 1; i >= max; i--) {
-                        tracks.splice(i, 1);
-                    }
+                if (!keepPrevious) {
+                    this.hideTracks(this.visibleTracks);
                 }
-
-                if (keepPrevious && tracks.length < max) {
-                    tracksToHide = [];
-                    for (i = 0; i < ((this.visibleTracks.length - max) + tracks.length); i++) {
-                        tracksToHide.push(this.visibleTracks[i]);
-                    }
-                }
-
-                // Remove the current visible track
-                this.hideTracks(tracksToHide);
 
                 _.each(tracks, function (track) {
                     if (!track.get("annotationsLoaded")) {

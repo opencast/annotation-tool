@@ -903,10 +903,7 @@ define(["jquery",
                             });
                         } else {
                             tracks.showTracks(
-                                _.first(
-                                    tracks.where({ isMine: true }),
-                                    this.MAX_VISIBLE_TRACKS || Number.MAX_VALUE
-                                )
+                                tracks.where({ isMine: true })
                             );
                             concludeInitialization();
                         }
