@@ -38,7 +38,7 @@
     "new category name": "NEW CATEGORY",
     "new label placeholder": "Label value …",
     "new": {
-      "placeholder": "Write a free text annotation. $t(annotate.new.title)",
+      "placeholder": "Write a free text annotation. ($t(annotate.new.title))",
       "title": "Use “ shift + return” keys to create a new line."
     },
     "no selected track": "No tracak selected",
