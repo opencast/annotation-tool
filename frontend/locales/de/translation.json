@@ -39,7 +39,7 @@
     "new label placeholder": "Wert des Kennzeichens …",
     "new": {
       "placeholder": "Freitextannotation schreiben ($t(annotate.new.title))",
-      "title": "\"Shift + Return\" drücken, um eine neue Zeile einzufügen."
+      "title": "„Shift + Return“ drücken, um eine neue Zeile einzufügen."
     },
     "no selected track": "Keine Spur ausgewählt",
     "pause while editing": "Video während des Schreibens anhalten",
@@ -97,7 +97,7 @@
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
     "title": "Löschen",
-    "warning": "Wollen Sie $t(models.genitive, {'context': {{context}} }) \"{{content}}\" wirklich löschen?"
+    "warning": "Wollen Sie $t(models.genitive, {'context': {{context}} }) „{{content}}“ wirklich löschen?"
   },
   "description": "Werkzeug zur Videoannotation",
   "list annotation": {
