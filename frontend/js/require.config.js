@@ -17,7 +17,6 @@ require.config({
         "slider": "libs/bootstrap/bootstrap-slider",
         "templates": "../templates",
         "text": "libs/require/text",
-        "timeline": "libs/timeline-min",
         "underscore": "libs/underscore-min",
         "raf": "libs/rAF",
         "email-addresses": "libs/email-addresses.min",
@@ -51,10 +50,6 @@ require.config({
 
         "email-addresses": {
             exports: "emailAddresses"
-        },
-
-        "timeline": {
-            exports: "links"
         },
 
         "mediaelementplayer": {
