@@ -369,7 +369,7 @@
           <configuration>
             <instructions>
               <Bundle-Category>opencastproject</Bundle-Category>
-              <Bundle-DocURL>http://opencastproject.org/</Bundle-DocURL>
+              <Bundle-DocURL>https://opencast.org</Bundle-DocURL>
               <Bundle-Vendor>The Opencast Project</Bundle-Vendor>
               <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             </instructions>
@@ -700,7 +700,7 @@
 
   <organization>
     <name>Opencast Project</name>
-    <url>http://www.opencastproject.org/</url>
+    <url>https://opencast.org</url>
   </organization>
 
   <!-- Active contributors to Opencast -->
