@@ -183,28 +183,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <version>0.10</version>
-        <configuration>
-          <server>opencast-annotation-tool-github</server>
-          <repositoryOwner>opencast</repositoryOwner>
-          <repositoryName>annotation-tool</repositoryName>
-          <branch>refs/heads/m2</branch>
-          <outputDirectory>${project.build.directory}/m2</outputDirectory>
-          <message>Maven artifacts for ${project.version}</message>
-          <merge>true</merge>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>site</goal>
-            </goals>
-            <phase>deploy</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
         <version>1.1.0</version>
@@ -881,9 +859,9 @@
 
   <distributionManagement>
     <repository>
-      <id>internal.repo</id>
-      <name>Temporary Staging Repository</name>
-      <url>file://${project.build.directory}/m2</url>
+      <id>github-opencast-annotation-tool</id>
+      <name>GitHub Package Registry</name>
+      <url>https://maven.pkg.github.com/opencast/annotation-tool</url>
     </repository>
   </distributionManagement>
 </project>
