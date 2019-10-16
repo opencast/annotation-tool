@@ -56,7 +56,7 @@ define(["underscore",
                     this.showTracks([track], true);
 
                     // Select the new track
-                    annotationTool.selectedTrack = track;
+                    annotationTool.selectTrack(track);
                 });
             },
 
