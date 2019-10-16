@@ -1533,11 +1533,9 @@ define([
          */
         onSelectTrack: function (event) {
             var track = this.getTrackFromGroupHeader(event.target);
-            if (!track.get("isMine")) return;
             if (!track) return;
-            annotationTool.selectTrack(
-                this.getTrackFromGroupHeader(event.target)
-            );
+            if (!track.get("isMine")) return;
+            annotationTool.selectTrack(track);
         },
 
         /**
