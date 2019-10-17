@@ -759,7 +759,7 @@ define(["jquery",
                     concludeInitialization = _.bind(function () {
 
                         // At least one private track should exist, we select the first one
-                        var selectedTrack = tracks.getMine()[0];
+                        var selectedTrack = tracks.where({ isMine: true })[0];
 
                         if (!selectedTrack.get("id")) {
                             selectedTrack.on("ready", concludeInitialization, this);
@@ -778,11 +778,7 @@ define(["jquery",
 
                         tracks = this.video.get("tracks");
 
-                        if (this.localStorage) {
-                            tracks = tracks.getTracksForLocalStorage();
-                        }
-
-                        if (tracks.getMine().length === 0) {
+                        if (!tracks.where({ isMine: true }).length) {
                             tracks.create({
                                 name: i18next.t("default track.name", {
                                     nickname: this.user.get("nickname")

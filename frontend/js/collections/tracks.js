@@ -20,9 +20,10 @@
  */
 define(["underscore",
         "models/track",
-        "backbone"],
+        "backbone",
+        "access"],
 
-    function (_, Track, Backbone) {
+    function (_, Track, Backbone, ACCESS) {
 
         "use strict";
 
@@ -46,9 +47,6 @@ define(["underscore",
              * @alias module:collections-tracks.Tracks#initialize
              */
             initialize: function (models, options) {
-                _.bindAll(this, "showTracks",
-                                "getTracksForLocalStorage");
-
                 this.video = options.video;
 
                 this.on("add", function (track) {
@@ -57,7 +55,7 @@ define(["underscore",
 
                     // Select the new track
                     annotationTool.selectTrack(track);
-                });
+                }, this);
             },
 
             /**
@@ -68,30 +66,24 @@ define(["underscore",
              */
             parse: function (data) {
                 if (data.tracks && _.isArray(data.tracks)) {
-                    return data.tracks;
-                } else if (_.isArray(data)) {
-                    return data;
-                } else {
-                    return null;
+                    data = data.tracks;
                 }
-            },
-
-            /**
-             * Get the tracks created by the current user
-             * @alias module:collections-tracks.Tracks#getMine
-             * @return {array} Array containing the list of tracks created by the current user
-             */
-            getMine: function () {
-                return this.where({ isMine: true });
-            },
-
-            /**
-             * Simulate access to limited track for localStorage prototype.
-             * @alias module:collections-tracks.Tracks#getVisibleTracks
-             * @return {array} Array containing the list of the visible tracks
-             */
-            getTracksForLocalStorage: function () {
-                return this.remove(this.where({ isMine: false, access: 0 }));
+                return _.filter(data, function (track) {
+                    if (track.access === ACCESS.PUBLIC) {
+                        return true;
+                    }
+                    if (track.created_by === annotationTool.user.id) {
+                        return true;
+                    }
+                    if ((
+                        track.access === ACCESS.SHARED_WITH_ADMIN
+                    ) && (
+                        annotationTool.user.isAdmin()
+                    )) {
+                        return true;
+                    }
+                    return false;
+                });
             },
 
             /**
