@@ -124,7 +124,6 @@ define(["jquery",
                 _.bindAll(this,
                           "updateSelectionOnTimeUpdate",
                           "createAnnotation",
-                          "deleteAnnotation",
                           "getAnnotation",
                           "getSelection",
                           "getTrack",
@@ -746,34 +745,6 @@ define(["jquery",
                         });
                     }
                 });
-            },
-
-            //////////////
-            // DELETERs //
-            //////////////
-
-            /**
-             * Delete the annotation with the given id with the track with the given track id
-             * @alias annotationTool.deleteAnnotation
-             * @param {Integer} annotationId The id of the annotation to delete
-             * @param {Integer} trackId Id of the track containing the annotation
-             */
-            deleteAnnotation: function (annotationId, trackId) {
-                if (typeof trackId === "undefined") {
-                    this.video.get("tracks").each(function (track) {
-                        if (track.get("annotations").get(annotationId)) {
-                            trackId = track.get("id");
-                        }
-                    });
-                }
-
-                var annotation = this.video.getAnnotation(annotationId, trackId);
-                if (annotation) {
-                    this.deleteOperation.start(
-                        annotation,
-                        this.deleteOperation.targetTypes.ANNOTATION
-                    );
-                }
             },
 
             /**

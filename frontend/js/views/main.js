@@ -130,8 +130,6 @@ define(["jquery",
 
                 annotationTool.scaleEditor = new ScaleEditorView();
 
-                this.listenTo(annotationTool, "deleteAnnotation", annotationTool.deleteAnnotation);
-
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
                 this.once(MainView.EVENTS.READY, function () {
@@ -799,35 +797,13 @@ define(["jquery",
                     event.preventDefault();
 
                     annotation = annotationTool.getSelection()[0];
+                    console.log(annotation.trackId);
                     if (annotation) {
-                        annotationTool.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
+                        annotationTool.deleteOperation.start(
+                            annotation,
+                            annotationTool.deleteOperation.targetTypes.ANNOTATION
+                        );
                     }
-                }
-            },
-
-            /**
-             * Delete the annotation with the given id with the track with the given track id
-             * @alias module:views-main.MainView#deleteAnnotation
-             * @param {integer} annotationId The id of the annotation to delete
-             * @param {integer} trackId Id of the track containing the annotation
-             */
-            deleteAnnotation: function (annotationId, trackId) {
-                var annotation;
-
-                if (typeof trackId === "undefined") {
-                    annotationTool.video.get("tracks").each(function (track) {
-                        if (track.get("annotations").get(annotationId)) {
-                            trackId = track.get("id");
-                        }
-                    });
-                }
-
-                annotation = annotationTool.video.getAnnotation(annotationId, trackId);
-
-                if (annotation) {
-                    annotationTool.deleteOperation.start(annotation, annotationTool.deleteOperation.targetTypes.ANNOTATION);
-                } else {
-                    console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
                 }
             },
 
