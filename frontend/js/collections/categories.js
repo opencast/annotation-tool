@@ -45,8 +45,8 @@ define(["underscore",
              * constructor
              * @alias module:collections-categories.Categories#initialize
              */
-            initialize: function (models, video) {
-                this.video = video;
+            initialize: function (models, options) {
+                this.video = options.video;
             },
 
             /**

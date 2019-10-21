@@ -48,7 +48,7 @@ define([
          * constructor
          * @alias module:collections-annotations.Annotations#initialize
          */
-        initialize: function (models, track) {
+        initialize: function (models, options) {
             _.bindAll(this, "updateAccess", "setAccess");
 
             /**
@@ -58,10 +58,10 @@ define([
              */
             this.access = undefined;
 
-            if (!_.isUndefined(track)) {
-                this.track = track;
-                track.on("change:access", this.updateAccess, this);
-                this.updateAccess(track);
+            if (!_.isUndefined(options.track)) {
+                this.track = options.track;
+                this.track.on("change:access", this.updateAccess, this);
+                this.updateAccess(options.track);
             }
 
             if (!_.isUndefined(models) && _.isArray(models) && models.length > 0 && !(models[0] instanceof Annotation)) {

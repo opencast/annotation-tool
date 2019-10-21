@@ -76,12 +76,12 @@ define(["underscore",
                 this.set("settings", _.extend({ hasScale: true }, this.get("settings")));
 
                 if (attr.labels && _.isArray(attr.labels)) {
-                    this.attributes.labels  = new Labels(attr.labels, this);
+                    this.attributes.labels  = new Labels(attr.labels, { category: this });
                     delete attr.labels;
                 } else if (!attr.labels) {
-                    this.attributes.labels  = new Labels([], this);
+                    this.attributes.labels  = new Labels([], { category: this });
                 } else if (_.isObject(attr.labels) && attr.labels.model) {
-                    this.attributes.labels = new Labels(attr.labels.models, this);
+                    this.attributes.labels = new Labels(attr.labels.models, { category: this });
                     delete attr.labels;
                 }
 
@@ -101,7 +101,7 @@ define(["underscore",
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
                     if (annotationTool.localStorage && _.isArray(attr.labels)) {
-                        attr.labels = new Labels(attr.labels, this);
+                        attr.labels = new Labels(attr.labels, { category: this });
                     }
 
                     if (!annotationTool.localStorage && attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {

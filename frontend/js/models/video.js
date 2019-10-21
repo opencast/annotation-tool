@@ -75,23 +75,23 @@ define(["underscore",
 
                 // Check if tracks are given
                 if (attr.tracks && _.isArray(attr.tracks)) {
-                    this.set({ tracks: new Tracks(attr.tracks, this) });
+                    this.set({ tracks: new Tracks(attr.tracks, { video: this }) });
                 }  else {
-                    this.set({ tracks: new Tracks([], this) });
+                    this.set({ tracks: new Tracks([], { video: this }) });
                 }
 
                 // Check if supported categories are given
                 if (attr.categories && _.isArray(attr.categories)) {
-                    this.set({ categories: new Categories(attr.categories, this) });
+                    this.set({ categories: new Categories(attr.categories, { video: this }) });
                 } else {
-                    this.set({ categories: new Categories([], this) });
+                    this.set({ categories: new Categories([], { video: this }) });
                 }
 
                 // Check if the possible video scales are given
                 if (attr.scales && _.isArray(attr.scales)) {
-                    this.set({ scales: new Scales(attr.scales, this) });
+                    this.set({ scales: new Scales(attr.scales, { video: this }) });
                 } else {
-                    this.set({ scales: new Scales([], this) });
+                    this.set({ scales: new Scales([], { video: this }) });
                 }
 
                 if (attr.id) {
