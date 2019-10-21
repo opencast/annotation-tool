@@ -307,7 +307,7 @@ define(["jquery",
                             _.property("mimetype")
                         ));
                     videos.sort(
-                        util.lexicographic(
+                        util.lexicographic([
                             util.firstWith(_.compose(
                                 RegExp.prototype.test.bind(/presenter\/.*/),
                                 _.property("type")
@@ -316,7 +316,7 @@ define(["jquery",
                                 RegExp.prototype.test.bind(/presentation\/.*/),
                                 _.property("type")
                             ))
-                        )
+                        ])
                     );
 
                     var videoElement = document.createElement("video");

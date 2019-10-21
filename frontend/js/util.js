@@ -115,8 +115,8 @@ var util = {
      */
     lexicographic: function (comparators) {
         return function (a, b) {
-            for (var f in comparators) {
-                var d = f(a, b);
+            for (var i = 0; i < comparators.length; ++i) {
+                var d = comparators[i](a, b);
                 if (d) return d;
             }
             return 0;
