@@ -17,10 +17,6 @@
 /**
  * A module representing the scalevalue model
  * @module models-scalevalue
- * @requires underscore
- * @requires ACCESS
- * @requires backbone
- * @requires models/resource
  */
 define(["underscore",
         "access",

@@ -17,16 +17,6 @@
 /**
  * A module representing the view for an item of the annotations list
  * @module views-list-annotation
- * @requires jquery
- * @requires underscore
- * @requires i18next
- * @requires player-adapter
- * @requires models-annotation
- * @requires models-user
- * @requires views-comments-container
- * @requires templates/list-annotation.tmpl
- * @requires backbone
- * @requires handlebars
  */
 define(["jquery",
         "underscore",

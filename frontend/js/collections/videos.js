@@ -17,8 +17,6 @@
 /**
  * A module representing a videos collection
  * @module collections-videos
- * @requires models-video
- * @requires backbone
  */
 define(["models/video",
         "backbone"],

@@ -17,7 +17,6 @@
 /**
  * A module containing the player adapter prototype
  * @module player-adapter
- * @requires event-target
  */
 define(["event-target"], function (EventTarget) {
 

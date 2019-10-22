@@ -17,20 +17,6 @@
 /**
  * A module representing the main view to create anotation
  * @module views-annotate
- * @requires jQuery
- * @requires underscore
- * @requires i18next
- * @requires player-adapter
- * @requires models-annotation
- * @requires collections-annotations
- * @requires collections-categories
- * @requires templates/annotate
- * @requires templates/annotate-tab-title
- * @requires templates/annotate-toggle-free-text-button
- * @requires ROLES
- * @requires ACCESS
- * @requires handlebars
- * @requires backbone
  */
 define(["jquery",
         "underscore",

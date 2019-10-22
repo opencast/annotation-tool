@@ -17,13 +17,6 @@
 /**
  * A module representing the label view for each item contained in annotate window
  * @module views-annotate-label
- * @requires jquery
- * @requires underscore
- * @requires backbone
- * @requires models/annotation
- * @requires templates/annotate-label.tmpl
- * @requires handlebars
- * @requires jquery.colorPicker
  */
 define(["jquery",
         "underscore",

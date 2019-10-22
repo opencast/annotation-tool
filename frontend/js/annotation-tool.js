@@ -17,17 +17,6 @@
 /**
  * Module containing the tool main object
  * @module annotation-tool
- * @requires jQuery
- * @requires backbone
- * @requires i18next
- * @requires views-main
- * @requires views-alert
- * @requires views-list-annotation
- * @requires templates/delete-modal.tmpl
- * @requires templates/delete-warning-content.tmpl
- * @requires player-adapter
- * @requires player-adapter
- * @requires handlebars
  */
 define(["jquery",
         "underscore",

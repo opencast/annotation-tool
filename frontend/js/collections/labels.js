@@ -17,9 +17,6 @@
 /**
  * A module representing a labels collection
  * @module collections-labels
- * @requires underscore
- * @requires backbone
- * @requires models/label
  */
 define(["underscore",
         "backbone",

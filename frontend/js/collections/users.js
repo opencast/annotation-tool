@@ -17,8 +17,6 @@
 /**
  * A module representing a users collection
  * @module collections-users
- * @requires models-user
- * @requires backbone
  */
 define(["models/user",
         "backbone"],

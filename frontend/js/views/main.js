@@ -17,25 +17,6 @@
 /**
  * A module representing the main view
  * @module views-main
- * @requires jquery
- * @requires underscore
- * @requires mousetrap
- * @requires i18next
- * @requires player-adapter
- * @requires collections-annotations
- * @requires views-annotate
- * @requires views-list
- * @requires views-timeline
- * @requires views-loop
- * @requires views-scale-editor
- * @requires models-user
- * @requires models-track
- * @requires models-video
- * @requires roles
- * @requires filters-manager
- * @requires backbone
- * @requires localstorage
- * @requires bootstrap
  */
 define(["jquery",
         "underscore",

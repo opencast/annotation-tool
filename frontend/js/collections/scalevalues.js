@@ -17,9 +17,6 @@
 /**
  * A module representing a scale values collection
  * @module collections-scalevalues
- * @requires underscore
- * @requires models-scalevalue
- * @requires backbone
  */
 define(["underscore",
         "models/scalevalue",

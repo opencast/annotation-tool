@@ -16,13 +16,6 @@
 /**
  * A module representing the alert modal
  * @module views-alert
- * @requires jquery
- * @requires underscore
- * @requires Backbone
- * @requires i18next
- * @requires templates/alert-modal.tmpl
- * @requires ROLES
- * @requires hanldebars
  */
 define(["jquery",
         "underscore",

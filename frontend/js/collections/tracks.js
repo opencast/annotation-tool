@@ -17,9 +17,6 @@
 /**
  * A module representing a tracks collection
  * @module collections-tracks
- * @requires underscore
- * @requires models-scale
- * @requires backbone
  */
 define(["underscore",
         "models/track",

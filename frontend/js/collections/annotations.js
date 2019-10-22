@@ -17,9 +17,6 @@
 /**
  * A module representing an annotations collection
  * @module collections-annotations
- * @requires underscore
- * @requires models-annotation
- * @requires backbone
  */
 define(["underscore",
         "models/annotation",

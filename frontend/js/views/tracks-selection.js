@@ -16,12 +16,6 @@
 /**
  * A module representing the tracks selection modal
  * @module views-tracks-selection
- * @requires jQuery
- * @requires underscore
- * @requires Backbone
- * @requires Sortable
- * @requires templates/tracks-selection-modal.tmpl
- * @requires hanldebars
  */
 define(["jquery",
         "underscore",

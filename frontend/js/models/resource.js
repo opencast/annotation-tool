@@ -17,11 +17,6 @@
 /**
  * A module representing a generic annotation tool resource.
  * @module models-resource
- * @requires underscore
- * @requires backbone
- * @requires util
- * @requires access
- * @requires roles
  */
 define(["underscore", "backbone", "util", "access", "roles"], function (_, Backbone, util, ACCESS, ROLES) {
 "use strict";

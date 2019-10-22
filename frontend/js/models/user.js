@@ -17,12 +17,6 @@
 /**
  * A module representing the user model
  * @module models-user
- * @requires underscore
- * @requires ROLES
- * @requires ACCESS
- * @requires backbone
- * @requires models/resource
- * @requires email-addresses
  */
 define(["roles",
         "access",

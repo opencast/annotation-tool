@@ -18,13 +18,6 @@
  * A module representing the login modal.
  * Note that this is currently only used in the local configurations.
  * @module views-login
- * @requires jquery
- * @requires underscore
- * @requires backbone
- * @requires i18next
- * @requires templates/user-login.tmpl
- * @requires ROLES
- * @requires handlebars
  */
 define([
     "jquery",

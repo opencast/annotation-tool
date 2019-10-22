@@ -17,17 +17,6 @@
 /**
  * A module representing the scale editor
  * @module views-scale-editor
- * @requires jquery
- * @requires underscore
- * @requires backbone
- * @requires i18next
- * @requires models-scale
- * @requires collections-scales
- * @requires templates/scale-editor.tmpl
- * @requires templates/scale-editor-select.tmpl
- * @requires templates/scale-editor-content.tmpl
- * @requires ACCESS
- * @requires handlebars
  */
 define(["jquery",
         "underscore",

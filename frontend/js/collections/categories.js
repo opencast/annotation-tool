@@ -17,9 +17,6 @@
 /**
  * A module representing a categories collection
  * @module collections-categories
- * @requires underscore
- * @requires models-category
- * @requires backbone
  */
 define(["underscore",
         "models/category",

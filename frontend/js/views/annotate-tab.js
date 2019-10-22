@@ -20,25 +20,6 @@
 /**
  * A module representing the view for the categories tab
  * @module views-annotate-tab
- * @requires jQuery
- * @requires underscore
- * @requires i18next
- * @requires models-label
- * @requires models-scale
- * @requires models-scalevalue
- * @requires collections-categories
- * @requires collections-labels
- * @requires collections-scalevalues
- * @requires views-annotate-category
- * @requires templates/annotate-tab.tmpl
- * @requires handlebars
- * @requires backbone
- * @requires ACCESS
- * @requires blob
- * @requires blobBuilder
- * @requires swfObject
- * @requires FileSaver
- * @requires jquery.FileReader
  */
 define(["jquery",
         "underscore",

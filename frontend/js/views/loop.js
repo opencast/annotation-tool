@@ -16,13 +16,6 @@
 /**
  * A module representing the loop modal
  * @module views-loop
- * @requires jquery
- * @requires underscore
- * @requires player-adapter
- * @requires Backbone
- * @requires i18next
- * @requires templates/loop-modal
- * @requires templates/loop-timeline-item
  */
 define([
     "jquery",

@@ -16,12 +16,6 @@
 /**
  * A module representing the view for a comments container
  * @module views-comments-container
- * @requires jQuery
- * @requires underscore
- * @requires views-comment
- * @requires templates/comments-container.tmpl
- * @requires handlebars
- * @requires backbone
  */
 define(["underscore",
         "views/comment",

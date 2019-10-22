@@ -17,10 +17,6 @@
 /**
  * A module representing the player adapter implementation for the HTML5 native player
  * @module player-adapter-HTML5
- * @requires jQuery
- * @requires player-adapter
- * @requires mediaelementplayer
- * @requires hls
  */
 define(["jquery",
         "player-adapter",

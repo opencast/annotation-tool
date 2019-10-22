@@ -17,12 +17,6 @@
 /**
  * A module representing the category model
  * @module models-category
- * @requires underscore
- * @requires collections-labels
- * @requires ACCESS
- * @requires backbone
- * @requires modles/resource
- * @requires localstorage
  */
 define(["underscore",
         "collections/labels",

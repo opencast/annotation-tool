@@ -17,9 +17,6 @@
 /**
  * A module representing a comments collection
  * @module collections-comments
- * @requires underscore
- * @requires models-comment
- * @requires backbone
  */
 define(["underscore",
         "models/comment",

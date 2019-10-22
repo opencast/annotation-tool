@@ -17,11 +17,6 @@
 /**
  * A module representing the comment model
  * @module models-comment
- * @requires underscore
- * @requires ACCESS
- * @requires backbone
- * @requires models/resource
- * @requires collections/comments
  */
 define(["underscore",
         "access",

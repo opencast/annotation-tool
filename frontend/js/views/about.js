@@ -16,10 +16,6 @@
 /**
  * The about dialog
  * @module views-about
- * @requires version
- * @requires backbone
- * @requires templates/about
- * @requires handlebarsHelpers
  */
 define([
     "version",

@@ -17,11 +17,6 @@
 /**
  * A module representing the scale model
  * @module models-scale
- * @requires underscore
- * @requires ACCESS
- * @requires collections-scalevalues
- * @requires backbone
- * @requires models/resource
  */
 define(["underscore",
         "access",

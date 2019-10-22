@@ -17,15 +17,6 @@
 /**
  * A module representing the category view in the annotate part
  * @module views-annotate-category
- * @requires jquery
- * @requires underscore
- * @requires backbone
- * @requires i18next
- * @requires util
- * @requires views-annotate-label
- * @requires templates/annotate-category.tmpl
- * @requires handlebars
- * @requires jquery.colorPicker
  */
 define(["jquery",
         "underscore",

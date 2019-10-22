@@ -17,12 +17,6 @@
 /**
  * A module representing the video model
  * @module models-video
- * @requires underscore
- * @requires collections-categories
- * @requires collections-scales
- * @requires ACCESS
- * @requires backbone
- * @requires models/resource
  */
 define(["underscore",
         "collections/tracks",

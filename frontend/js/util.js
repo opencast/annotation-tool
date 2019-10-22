@@ -24,8 +24,6 @@ define([
 /**
  * A module containing helper functions needed in many different places
  * @exports util
- * @requires underscore
- * @requires moment
  */
 var util = {
     /**

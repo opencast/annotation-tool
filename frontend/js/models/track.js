@@ -17,11 +17,6 @@
 /**
  * A module representing the track model
  * @module models-track
- * @requires underscore
- * @requires collections-annotations
- * @requires ACCESS
- * @requires backbone
- * @requires models/resource
  */
 define(["underscore",
         "collections/annotations",

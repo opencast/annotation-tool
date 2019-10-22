@@ -16,13 +16,6 @@
 /**
  * A module representing the annotation model
  * @module models-annotation
- * @requires underscore
- * @requires util
- * @requires collections-comments
- * @requires ACCESS
- * @requires backbone
- * @requires models/resource
- * @requires localstorage
  */
 define(["underscore",
         "util",

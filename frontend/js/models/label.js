@@ -17,11 +17,6 @@
 /**
  * A module representing the label model
  * @module models-label
- * @requires underscore
- * @requires util
- * @requires ACCESS
- * @requires backbone
- * @requires models/resource
  */
 define(["underscore",
         "util",

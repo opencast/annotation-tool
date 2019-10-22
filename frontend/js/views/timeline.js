@@ -16,25 +16,6 @@
 /**
  * A module representing the timeline view
  * @module views-timeline
- * @requires util
- * @requires jquery
- * @requires underscore
- * @requires i18next
- * @requires player-adapter
- * @requires models-annotation
- * @requires collections-annotations
- * @requires templates/timeline.tmpl
- * @requires templates/timeline-group.tmpl
- * @requires templates/timeline-item.tmpl
- * @requires templates/timeline-placeholder.tmpl
- * @requires templates/timeline-modal-group.tmpl
- * @requires ACCESS
- * @requires ROLES
- * @requires filters-manager
- * @requires backbone
- * @requires timeline
- * @requires bootstrap
- * @requires handlebarsHelpers
  */
 define(["util",
         "jquery",

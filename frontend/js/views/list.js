@@ -17,13 +17,6 @@
 /**
  * A module representing the annotations list view
  * @module views-list
- * @requires jQuery
- * @requires underscore
- * @requires player-adapter
- * @requires models-annotation
- * @requires views-list-annotation
- * @requires backbone
- * @requires filters-manager
  */
 define(["underscore",
         "collections/tracks",
