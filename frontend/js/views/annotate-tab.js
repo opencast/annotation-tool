@@ -43,41 +43,21 @@
 define(["jquery",
         "underscore",
         "i18next",
-        "models/category",
-        "models/label",
-        "models/scale",
-        "models/scalevalue",
-        "collections/categories",
-        "collections/labels",
-        "collections/scalevalues",
         "views/annotate-category",
         "templates/annotate-tab",
         "backbone",
         "handlebars",
-        "access",
         "handlebarsHelpers",
-        "libs/Blob",
-        "libs/BlobBuilder",
-        "libs/swfobject",
-        "libs/FileSaver",
         "jquery.FileReader"],
 
     function (
         $,
         _,
         i18next,
-        Category,
-        Label,
-        Scale,
-        ScaleValue,
-        Categories,
-        Labels,
-        ScaleValues,
         CategoryView,
         Template,
         Backbone,
-        Handlebars,
-        ACCESS
+        Handlebars
     ) {
 
         "use strict";

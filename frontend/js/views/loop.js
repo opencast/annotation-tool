@@ -26,7 +26,6 @@
  */
 define([
     "jquery",
-    "underscore",
     "i18next",
     "player-adapter",
     "backbone",
@@ -36,7 +35,6 @@ define([
     "handlebarsHelpers"
 ], function (
     $,
-    _,
     i18next,
     PlayerAdapter,
     Backbone,

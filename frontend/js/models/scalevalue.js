@@ -17,19 +17,16 @@
 /**
  * A module representing the scalevalue model
  * @module models-scalevalue
- * @requires jQuery
  * @requires underscore
  * @requires ACCESS
  * @requires backbone
  * @requires models/resource
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "access",
-        "backbone",
         "models/resource"],
 
-    function ($, _, ACCESS, Backbone, Resource) {
+    function (_, ACCESS, Resource) {
 
         "use strict";
 

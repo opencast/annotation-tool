@@ -25,18 +25,14 @@
  * @requires backbone
  * @requires filters-manager
  */
-define(["jquery",
-        "underscore",
-        "player-adapter",
-        "models/annotation",
-        "collections/annotations",
+define(["underscore",
         "collections/tracks",
         "views/list-annotation",
         "templates/list",
         "backbone",
         "bootstrap"],
 
-    function ($, _, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, template, Backbone) {
+    function (_, Tracks, AnnotationView, template, Backbone) {
 
         "use strict";
 

@@ -52,7 +52,6 @@ define(["jquery",
         "views/print",
         "backbone",
         "goldenlayout",
-        "handlebars",
         "localstorage",
         "bootstrap"],
 

@@ -28,11 +28,10 @@
 define(["jquery",
         "underscore",
         "backbone",
-        "models/annotation",
         "templates/annotate-label",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, Annotation, Template) {
+    function ($, _, Backbone, Template) {
 
         "use strict";
 

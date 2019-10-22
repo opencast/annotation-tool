@@ -23,15 +23,13 @@
  * @requires handlebars
  * @requires backbone
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "views/comment",
         "templates/comments-container",
-        "handlebars",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, CommentView, template, Handlebars, Backbone) {
+    function (_, CommentView, template, Backbone) {
 
         "use strict";
 

@@ -17,21 +17,18 @@
 /**
  * A module representing the label model
  * @module models-label
- * @requires jQuery
  * @requires underscore
  * @requires util
  * @requires ACCESS
  * @requires backbone
  * @requires models/resource
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "util",
         "access",
-        "backbone",
         "models/resource"],
 
-    function ($, _, util, ACCESS, Backbone, Resource) {
+    function (_, util, ACCESS, Resource) {
 
         "use strict";
 

@@ -36,9 +36,6 @@ define(["jquery",
         "underscore",
         "i18next",
         "player-adapter",
-        "models/annotation",
-        "collections/annotations",
-        "collections/categories",
         "views/annotate-tab",
         "templates/annotate",
         "templates/annotate-tab-title",
@@ -48,7 +45,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, i18next, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, template, TabsButtonTemplate, toggleFreeTextButtonTemplate, ROLES, ACCESS, Backbone) {
+    function ($, _, i18next, PlayerAdapter, AnnotateTab, template, TabsButtonTemplate, toggleFreeTextButtonTemplate, ROLES, ACCESS, Backbone) {
 
         "use strict";
 

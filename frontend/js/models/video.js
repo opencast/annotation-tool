@@ -17,7 +17,6 @@
 /**
  * A module representing the video model
  * @module models-video
- * @requires jquery
  * @requires underscore
  * @requires collections-categories
  * @requires collections-scales
@@ -25,16 +24,14 @@
  * @requires backbone
  * @requires models/resource
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "collections/tracks",
         "collections/categories",
         "collections/scales",
         "access",
-        "backbone",
         "models/resource"],
 
-    function ($, _, Tracks, Categories, Scales, ACCESS, Backbone, Resource) {
+    function (_, Tracks, Categories, Scales, ACCESS, Resource) {
 
         "use strict";
 

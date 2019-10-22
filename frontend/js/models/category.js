@@ -17,7 +17,6 @@
 /**
  * A module representing the category model
  * @module models-category
- * @requires jQuery
  * @requires underscore
  * @requires collections-labels
  * @requires ACCESS
@@ -25,15 +24,13 @@
  * @requires modles/resource
  * @requires localstorage
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "collections/labels",
         "access",
-        "backbone",
         "models/resource",
         "localstorage"],
 
-    function ($, _, Labels, ACCESS, Backbone, Resource) {
+    function (_, Labels, ACCESS, Resource) {
 
         "use strict";
 

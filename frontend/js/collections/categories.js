@@ -17,17 +17,15 @@
 /**
  * A module representing a categories collection
  * @module collections-categories
- * @requires jquery
  * @requires underscore
  * @requires models-category
  * @requires backbone
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "models/category",
         "backbone"],
 
-    function ($, _, Category, Backbone) {
+    function (_, Category, Backbone) {
 
         "use strict";
 

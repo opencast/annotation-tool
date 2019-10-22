@@ -17,17 +17,15 @@
 /**
  * A module representing a comments collection
  * @module collections-comments
- * @requires jQuery
  * @requires underscore
  * @requires models-comment
  * @requires backbone
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "models/comment",
         "backbone"],
 
-    function ($, _, Comment, Backbone) {
+    function (_, Comment, Backbone) {
 
         "use strict";
 

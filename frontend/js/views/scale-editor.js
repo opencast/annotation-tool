@@ -33,16 +33,12 @@ define(["jquery",
         "underscore",
         "backbone",
         "i18next",
-        "models/scale",
-        "collections/scales",
         "views/scalevalue-editor",
         "templates/scale-editor",
         "templates/scale-editor-select",
         "templates/scale-editor-content",
-        "access",
-        "handlebars",
         "handlebarsHelpers"],
-    function ($, _, Backbone, i18next, Scale, Scales, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
+    function ($, _, Backbone, i18next, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
 
             "use strict";
 

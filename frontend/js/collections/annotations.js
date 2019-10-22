@@ -17,18 +17,15 @@
 /**
  * A module representing an annotations collection
  * @module collections-annotations
- * @requires jQuery
  * @requires underscore
  * @requires models-annotation
  * @requires backbone
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "models/annotation",
-        "backbone",
-        "access"],
+        "backbone"],
 
-    function ($, _, Annotation, Backbone) {
+    function (_, Annotation, Backbone) {
 
         "use strict";
 

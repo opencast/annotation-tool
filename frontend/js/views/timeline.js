@@ -41,9 +41,7 @@ define(["util",
         "underscore",
         "i18next",
         "player-adapter",
-        "models/annotation",
         "models/track",
-        "collections/annotations",
         "collections/tracks",
         "templates/timeline",
         "templates/timeline-group",
@@ -51,15 +49,14 @@ define(["util",
         "templates/timeline-placeholder",
         "templates/timeline-modal-group",
         "access",
-        "roles",
         "backbone",
         "timeline",
         "bootstrap",
         "handlebarsHelpers"
     ],
 
-       function (util, $, _, i18next, PlayerAdapter, Annotation, Track, Annotations, Tracks, template, GroupTmpl,
-            ItemTmpl, PlaceholderTmpl, ModalGroupTmpl, ACCESS, ROLES, Backbone, links) {
+       function (util, $, _, i18next, PlayerAdapter, Track, Tracks, template, GroupTmpl,
+            ItemTmpl, PlaceholderTmpl, ModalGroupTmpl, ACCESS, Backbone, links) {
 
         "use strict";
 

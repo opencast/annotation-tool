@@ -36,15 +36,13 @@ define(["jquery",
         "collections/videos",
         "views/main",
         "views/alert",
-        "views/list-annotation",
         "templates/delete-modal",
         "templates/delete-warning-content",
         "player-adapter",
-        "roles",
         "colors",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, Videos, MainView, AlertView, ListAnnotation, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ROLES, ColorsManager) {
+    function ($, _, Backbone, i18next, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ColorsManager) {
 
         "use strict";
 

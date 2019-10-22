@@ -17,17 +17,15 @@
 /**
  * A module representing a scales collection
  * @module collections-scales
- * @requires jquery
  * @requires underscore
  * @requires models-scale
  * @requires backbone
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "models/scale",
         "backbone"],
 
-    function ($, _, Scale, Backbone) {
+    function (_, Scale, Backbone) {
 
         "use strict";
 

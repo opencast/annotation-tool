@@ -32,9 +32,6 @@ define(["jquery",
         "underscore",
         "util",
         "i18next",
-        "player-adapter",
-        "models/annotation",
-        "models/user",
         "views/comments-container",
         "templates/comments-container-header",
         "templates/list-annotation",
@@ -43,7 +40,7 @@ define(["jquery",
         "backbone",
         "handlebarsHelpers"],
 
-    function ($, _, util, i18next, PlayerAdapter, Annotation, User, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
+    function ($, _, util, i18next, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
 
         "use strict";
 

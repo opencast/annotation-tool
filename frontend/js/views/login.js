@@ -34,7 +34,6 @@ define([
     "i18next",
     "templates/user-login",
     "roles",
-    "handlebars",
     "handlebarsHelpers"
 ], function (
     $,

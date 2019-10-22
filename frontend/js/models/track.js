@@ -17,21 +17,18 @@
 /**
  * A module representing the track model
  * @module models-track
- * @requires jQuery
  * @requires underscore
  * @requires collections-annotations
  * @requires ACCESS
  * @requires backbone
  * @requires models/resource
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "collections/annotations",
         "access",
-        "backbone",
         "models/resource"],
 
-    function ($, _, Annotations, ACCESS, Backbone, Resource) {
+    function (_, Annotations, ACCESS, Resource) {
 
         "use strict";
 

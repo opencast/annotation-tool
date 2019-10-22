@@ -17,15 +17,13 @@
 /**
  * A module representing a videos collection
  * @module collections-videos
- * @requires jQuery
  * @requires models-video
  * @requires backbone
  */
-define(["jquery",
-        "models/video",
+define(["models/video",
         "backbone"],
 
-    function ($, Video, Backbone) {
+    function (Video, Backbone) {
 
         "use strict";
 

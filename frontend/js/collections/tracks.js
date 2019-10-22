@@ -17,18 +17,15 @@
 /**
  * A module representing a tracks collection
  * @module collections-tracks
- * @requires jquery
  * @requires underscore
  * @requires models-scale
  * @requires backbone
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "models/track",
-        "access",
         "backbone"],
 
-    function ($, _, Track, ACCESS, Backbone) {
+    function (_, Track, Backbone) {
 
         "use strict";
 

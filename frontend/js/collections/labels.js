@@ -17,17 +17,15 @@
 /**
  * A module representing a labels collection
  * @module collections-labels
- * @requires jquery
  * @requires underscore
  * @requires backbone
  * @requires models/label
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "backbone",
         "models/label"],
 
-    function ($, _, Backbone, Label) {
+    function (_, Backbone, Label) {
 
         "use strict";
 

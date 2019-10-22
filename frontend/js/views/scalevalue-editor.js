@@ -24,13 +24,11 @@
  * @requires templates/scale-value-editor.tmpl
  * @requires handlebars
  */
-define(["jquery",
-        "underscore",
+define(["underscore",
         "backbone",
-        "models/scalevalue",
         "templates/scale-value-editor",
         "handlebarsHelpers"],
-       function ($, _, Backbone, ScaleValue, ScaleValueEditorTmpl) {
+       function (_, Backbone, ScaleValueEditorTmpl) {
 
             "use strict";
 
