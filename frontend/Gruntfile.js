@@ -395,7 +395,7 @@ module.exports = function (grunt) {
     function setProfile(profile) {
         var config = grunt.config.get('profiles')[profile];
         if (!config) {
-            grunt.fail.fatal('The profile "' + profileName + '" does not exist in the Gruntfile.');
+            grunt.fail.fatal('The profile "' + profile + '" does not exist in the Gruntfile.');
         }
         grunt.config.set('currentProfile', config);
         grunt.option('profile', profile);
