@@ -397,7 +397,11 @@ module.exports = function (grunt) {
                     'jquery.colorPicker',
                     'jquery.FileReader',
                     'slider',
-                    'bootstrap'
+                    'bootstrap',
+                    'libs/Blob',
+                    'libs/BlobBuilder',
+                    'libs/swfobject',
+                    'libs/FileSaver'
                 ]
             },
             all: {

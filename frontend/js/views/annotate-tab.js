@@ -29,6 +29,10 @@ define(["jquery",
         "backbone",
         "handlebars",
         "handlebarsHelpers",
+        "libs/Blob",
+        "libs/BlobBuilder",
+        "libs/swfobject",
+        "libs/FileSaver",
         "jquery.FileReader"],
 
     function (
