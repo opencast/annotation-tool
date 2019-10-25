@@ -42,12 +42,6 @@ define(["underscore",
             model: Track,
 
             /**
-             * List of visible tracks
-             * @type {Array}
-             */
-            visibleTracks: [],
-
-            /**
              * constructor
              * @alias module:collections-tracks.Tracks#initialize
              */
@@ -105,7 +99,9 @@ define(["underscore",
              * @return {array} an array containing the visible tracks
              */
             getVisibleTracks: function () {
-                return this.visibleTracks;
+                return this.filter(function (track) {
+                    return track.get(Track.FIELDS.VISIBLE);
+                });
             },
 
             /**
@@ -115,13 +111,14 @@ define(["underscore",
              */
             showTracks: function (tracks, keepPrevious) {
                 var selectedTrack = annotationTool.selectedTrack;
+                var visibleTracks = this.getVisibleTracks();
 
                 if (!keepPrevious) {
-                    _.each(this.visibleTracks, function (track) {
+                    _.each(visibleTracks, function (track) {
                         // TODO Is this field even used?
                         track.set(Track.FIELDS.VISIBLE, false);
                     });
-                    this.visibleTracks = [];
+                    visibleTracks = [];
                 }
 
                 _.each(tracks, function (track) {
@@ -129,17 +126,17 @@ define(["underscore",
                         track.fetchAnnotations();
                     }
                     track.set(Track.FIELDS.VISIBLE, true);
-                    this.visibleTracks.push(track);
+                    visibleTracks.push(track);
                 }, this);
 
                 if (!selectedTrack || !selectedTrack.get("visible")) {
-                    selectedTrack = _.find(this.visibleTracks, function (track) {
+                    selectedTrack = _.find(visibleTracks, function (track) {
                         return track.get("isMine");
                     }, this);
                     annotationTool.selectTrack(selectedTrack);
                 }
 
-                this.trigger("visibility", this.visibleTracks);
+                this.trigger("visibility", visibleTracks);
             },
 
             /**
