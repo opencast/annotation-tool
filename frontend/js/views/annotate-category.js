@@ -146,7 +146,7 @@ define(["jquery",
                     this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
                 }
 
-                $(window).bind("resize.annotate-category", this.updateInputWidth);
+                $(window).on("resize.annotate-category", this.updateInputWidth);
 
                 //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
@@ -395,7 +395,7 @@ define(["jquery",
                 _.each(this.labelViews, function (labelView) {
                     labelView.remove();
                 });
-                $(window).unbind(".annotate-category");
+                $(window).off(".annotate-category");
                 Backbone.View.prototype.remove.call(this);
             }
         });

@@ -57,7 +57,7 @@ define(["underscore",
 
                 if (!_.isUndefined(track)) {
                     this.track = track;
-                    track.bind("change:access", this.updateAccess, this);
+                    track.on("change:access", this.updateAccess, this);
                     this.updateAccess(track);
                 }
 
