@@ -60,10 +60,7 @@ define(["underscore",
                 _.bindAll(this, "showTracks",
                                 "showTracksById",
                                 "hideTracks",
-                                "isTrackVisible",
-                                "getTracksForLocalStorage",
-                                "getAllCreators",
-                                "showTracksByCreators");
+                                "getTracksForLocalStorage");
 
                 this.video = video;
 
@@ -116,58 +113,6 @@ define(["underscore",
              */
             getVisibleTracks: function () {
                 return this.visibleTracks;
-            },
-
-            /**
-             * Get all the different public tracks creators 
-             * @alias module:collections-tracks.Tracks#getAllCreators
-             * @return {Array} the array containing a list of creator with their nickname and id as properties.
-             * @example
-             * {
-             *     id       : "c12",
-             *     nickname : "Didi"
-             * }
-             */
-            getAllCreators: function () {
-                var creatorsSets = this.groupBy(function (track) {
-                                            return track.get(Track.FIELDS.CREATED_BY);
-                                        }),
-                    creators = [];
-
-                _.each(creatorsSets, function (tracks) {
-                    var visible = true;
-
-                    _.each(tracks, function (track) {
-                        if (!track.get(Track.FIELDS.VISIBLE)) {
-                            visible = false;
-                        }
-                    }, this);
-
-                    creators.push({
-                        "id"       : tracks[0].get(Track.FIELDS.CREATED_BY),
-                        "nickname" : tracks[0].get(Track.FIELDS.CREATED_BY_NICKNAME),
-                        "visible"  : visible
-                    });
-                }, this);
-
-                return creators;
-            },
-
-            showTracksByCreators: function (usersIds) {
-                var creatorsSets = this.groupBy(function (track) {
-                                            return track.get("created_by");
-                                        }),
-                    tracksIds = [];
-
-                _.each(creatorsSets, function (tracks, index) {
-                    if (_.contains(usersIds, index)) {
-                        _.each(tracks, function (track) {
-                            tracksIds.push(track.get("id"));
-                        }, this);
-                    }
-                }, this);
-
-                this.showTracksById(tracksIds);
             },
 
             /**
@@ -243,27 +188,6 @@ define(["underscore",
 
                 this.trigger(EVENTS.VISIBILITY, this.visibleTracks);
             },
-
-            isTrackVisible: function (id) {
-                return !_.isUndefined(_.find(this.visibleTracks, function (track) {
-                    return track.id === id;
-                }, this));
-            },
-
-            /**
-             * Hides the tracks with the given ids.
-             * @param  {array} tracks an array containing the tracks ids to hide.
-             */
-            hideTracksById: function (ids) {
-                var tracks = [];
-
-                _.each(ids, function (id) {
-                    tracks.push(this.get(id));
-                }, this);
-
-                this.hideTracks(tracks);
-            },
-
 
             /**
              * Hides the given tracks.
