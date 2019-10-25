@@ -756,6 +756,7 @@ define(["util",
                 if (this.groupModals[action]) return;
 
                 var modal = this.groupModals[action] = this.$el.find("#modal-" + action + "-group");
+                modal.off();
                 modal.html(
                     this.modalGroupTemplate(_.extend(
                         { action: action },
