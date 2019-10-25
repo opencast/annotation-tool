@@ -179,8 +179,8 @@ define(["underscore",
 
                 if (_.isUndefined(selectedTrack) || (!_.isUndefined(selectedTrack) && !selectedTrack.get(Track.FIELDS.VISIBLE))) {
                     selectedTrack = _.find(this.visibleTracks, function (track) {
-                                        return track.get("isMine");
-                                    }, this);
+                        return track.get("isMine");
+                    }, this);
                     annotationTool.selectTrack(selectedTrack);
                 }
 
