@@ -544,27 +544,15 @@ define(["jquery",
              * @return {Object} The created annotation
              */
             createAnnotation: function (params) {
-                if (!params.created_by && this.user) {
-                    params.created_by = this.user.id;
-                }
-                if (!params.time) {
-                    var time = Math.round(this.playerAdapter.getCurrentTime());
-                    if (!_.isNumber(time) || time < 0) {
-                        return undefined;
-                    }
-                    params.start = time;
-                }
-
-                var options = {};
-                if (!this.localStorage) {
-                    options.wait = true;
-                }
-
-                // The loop controller can constrain annotations to the current loop using this.
-                // @see module:views-loop.Loop#toggleConstrainAnnotations
-                _.extend(params, this.annotationConstraints);
-
-                var annotation = this.selectedTrack.get("annotations").create(params, options);
+                var annotation = this.selectedTrack.get("annotations")
+                    .create(_.extend(
+                        params,
+                        { start: Math.round(this.playerAdapter.getCurrentTime()) },
+                        // The loop controller can constrain annotations
+                        // to the current loop using this.
+                        // @see module:views-loop.Loop#toggleConstrainAnnotations
+                        this.annotationConstraints
+                    ), { wait: true });
                 this.activeAnnotation = annotation;
                 return annotation;
             },
