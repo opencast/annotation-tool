@@ -40,7 +40,7 @@
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
-    <opencast.version>[6,9)</opencast.version>
+    <opencast.version>[7,10)</opencast.version>
   </properties>
 
   <modules>
