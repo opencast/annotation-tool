@@ -982,7 +982,7 @@ public class VideoEndpoint {
   }
 
   private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport,
-          boolean freeText) {
+          Boolean freeText) {
     // Write headers
     List<String> header = new ArrayList<>();
     header.add("ID");
@@ -1008,7 +1008,7 @@ public class VideoEndpoint {
       List<Track> tracks = eas.getTracks(video.getId(), Option.<Integer> none(), Option.<Integer> none(),
               Option.<Date> none(), Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
       for (Track track : tracks) {
-        if (!tracksToExport.contains(track.getId())) continue;
+        if (tracksToExport != null && !tracksToExport.contains(track.getId())) continue;
         List<Annotation> annotations = eas.getAnnotations(track.getId(), none(Double.class), none(Double.class),
                 none(Integer.class), none(Integer.class), none(Date.class), Option.<Map<String, String>> none(),
                 Option.<Map<String, String>> none());
@@ -1021,9 +1021,9 @@ public class VideoEndpoint {
             }
           });
           if (label.isSome()) {
-            if (!categoriesToExport.contains(label.get().getCategoryId())) continue;
+            if (categoriesToExport != null && !categoriesToExport.contains(label.get().getCategoryId())) continue;
           } else {
-            if (!freeText) continue;
+            if (freeText != null && !freeText) continue;
           }
 
           List<String> line = new ArrayList<>();
