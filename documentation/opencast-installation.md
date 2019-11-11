@@ -74,7 +74,7 @@ change it to this (the change is in the last two lines):
         mvn:org.apache.karaf.features/framework/4.0.9/xml/features, \
         mvn:org.apache.karaf.features/standard/4.0.9/xml/features, \
         mvn:org.ops4j.pax.web/pax-web-features/4.3.0/xml/features, \
-        mvn:org.opencast.annotation/karaf-feature/${version}/xml/features
+        mvn:org.opencast.annotate/karaf-feature/${version}/xml/features
 
 Note that the version numbers appearing in your configuration file
 will probably differ from those in this example snippet!
