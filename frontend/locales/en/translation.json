@@ -38,8 +38,8 @@
     "new category name": "NEW CATEGORY",
     "new label placeholder": "Label value …",
     "new": {
-      "placeholder": "Write a free text annotation. $t(annotate.new.title)",
-      "title": "Use \"shift + return\" keys to create a new line."
+      "placeholder": "Write a free text annotation. ($t(annotate.new.title))",
+      "title": "Use “ shift + return” keys to create a new line."
     },
     "no selected track": "No tracak selected",
     "pause while editing": "Pause video during writing",
@@ -97,7 +97,7 @@
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
     "title": "Delete",
-      "warning": "Do you really want to delete the {{context}} \"{{content}}\"?"
+    "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
   },
   "description": "Video annotation tool",
   "list annotation": {
