@@ -328,7 +328,7 @@ define(["jquery",
                 visitComponents(layout, function (component) {
                     component.title = i18next.t("views." + component.componentName);
                 });
-                _.extend(layout.settings, {
+                layout.settings = _.extend(layout.settings || {}, {
                     showPopoutIcon: false,
                     showMaximiseIcon: false,
                     selectionEnabled: true
