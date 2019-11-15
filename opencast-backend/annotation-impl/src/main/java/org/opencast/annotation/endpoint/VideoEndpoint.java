@@ -635,12 +635,11 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories")
   public Response postCategory(@FormParam("name") final String name, @FormParam("description") final String description,
-          @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("category_id") final Long id, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
     if (id == null)
-      return host.postCategoryResponse(some(videoId), name, description, hasDuration, scaleId, settings, access,
+      return host.postCategoryResponse(some(videoId), name, description, scaleId, settings, access,
               tags);
 
     return run(array(id), new Function0<Response>() {
@@ -675,10 +674,9 @@ public class VideoEndpoint {
   @Path("categories/{categoryId}")
   public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description,
-          @DefaultValue("true") @FormParam("has_duration") final boolean hasDuration,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("tags") final String tags) {
-    return host.putCategoryResponse(some(videoId), id, name, description, hasDuration, option(scaleId), settings, tags);
+    return host.putCategoryResponse(some(videoId), id, name, description, option(scaleId), settings, tags);
   }
 
   @GET

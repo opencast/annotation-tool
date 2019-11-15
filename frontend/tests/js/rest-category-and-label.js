@@ -94,7 +94,6 @@ define(['models/category',
                                     equal(data.name, category.get("name"), "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
                                     ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
-                                    equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -117,7 +116,6 @@ define(['models/category',
                     equal(data.name, category.get("name"), "Name is correct");
                     equal(data.description, category.get("description"), "Description is correct");
                     ok(_.isEqual(JSON.parse(data.tags), category.get("tags")), "Tags are correct");
-                    equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                     ok(data.created_at, "Created_at date is set");
                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                     ok(data.updated_at, "Updated_at date is set");
@@ -143,7 +141,6 @@ define(['models/category',
                                     equal(data.name, category.get("name"), "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
                                     ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
-                                    equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -171,7 +168,6 @@ define(['models/category',
                                     equal(data.name, newName, "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
                                     ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
-                                    equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
@@ -199,7 +195,6 @@ define(['models/category',
                                     equal(data.name, newName, "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
                                     ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
-                                    equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");

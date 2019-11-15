@@ -36,9 +36,6 @@ public interface Category extends Resource {
   /** The category description */
   Option<String> getDescription();
 
-  /** <code>true</code> if the category has a duration */
-  boolean hasDuration();
-
   /** The category settings */
   Option<String> getSettings();
 

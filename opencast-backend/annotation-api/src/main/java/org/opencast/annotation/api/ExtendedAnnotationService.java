@@ -519,8 +519,6 @@ public interface ExtendedAnnotationService {
    *          the category name
    * @param description
    *          the category description
-   * @param hasDuration
-   *          <code>true</code> if the category can have duration
    * @param settings
    *          the category settings
    * @param resource
@@ -530,7 +528,7 @@ public interface ExtendedAnnotationService {
    *           if an error occurs while storing/retrieving from persistence storage
    */
   Category createCategory(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          boolean hasDuration, Option<String> settings, Resource resource) throws ExtendedAnnotationException;
+          Option<String> settings, Resource resource) throws ExtendedAnnotationException;
 
   /**
    * Creates a category
@@ -543,8 +541,6 @@ public interface ExtendedAnnotationService {
    *          the category name
    * @param description
    *          the category description
-   * @param hasDuration
-   *          <code>true</code> if the category can have duration
    * @param settings
    *          the category settings
    * @param resource
