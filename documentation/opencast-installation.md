@@ -133,6 +133,47 @@ Additionally you must set the label for the annotation publication channel. Add 
 
     annotation=Annotation Tool
 
+### Security Configuration
+
+In order to be able to access the tool,
+you need to make some additions to your Spring Security configuration.
+In a single-tenant setup,
+this can be found at `<opencast-etc>/security/mh_default_org.xml`.
+If you have a multi-tenant setup,
+you probably know where this configuration needs to go
+better than I do. :wink:
+
+What you need is something to the effect of the following two lines:
+
+    <sec:intercept-url pattern="/annotation-tool/**" access="ROLE_ANONYMOUS" />
+    <sec:intercept-url pattern="/extended-annotations/**" access="ROLE_ANONYMOUS" />
+
+Note that this grants **everyone** access to every resource
+under the paths `/annotation-tool` and `/extended-annotations`.
+If you don't do anything out of the ordinary this should be fine,
+since all of the Annotation Tool endpoints that need to
+handle their own authentication.
+
+If you start from the default configuration file,
+these lines should go somewhere in the section titled
+
+    <!-- ################ -->
+    <!-- # URL SECURITY # -->
+    <!-- ################ -->
+
+but before the wildcard rule
+
+    <sec:intercept-url pattern="/**" access="ROLE_ADMIN, ROLE_COURSE_ADMIN" />
+
+---
+
+Note that the rules
+
+    <sec:intercept-url pattern="/annotation/**" method="GET" access="ROLE_ANONYMOUS" />
+    <sec:intercept-url pattern="/annotation/**" method="PUT" access="ROLE_ANONYMOUS" />
+
+have **nothing** to do with the Opencast Annotation Tool whatsoever!
+
 ## Using the Tool
 
 To use the Annotation Tool you need to open it with the event-ID:
