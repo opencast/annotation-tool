@@ -291,7 +291,7 @@ define(["util",
 
                 annotationTool.addTimeupdateListener(this.onPlayerTimeUpdate, 1);
 
-                this.$el.find(".timeline-frame > div:first-child").bind("click", function (event) {
+                this.$el.find(".timeline-frame > div:first-child").on("click", function (event) {
                     if ($(event.target).find(".timeline-event").length > 0) {
                         annotationTool.setSelection([]);
                     }
@@ -593,7 +593,7 @@ define(["util",
                     this.onPlayerTimeUpdate();
                 }
 
-                annotation.bind("destroy", this.onAnnotationDestroyed, this);
+                annotation.on("destroy", this.onAnnotationDestroyed, this);
             },
 
             /**
@@ -612,7 +612,7 @@ define(["util",
 
                 // If track has not id, we save it to have an id
                 if (!track.id) {
-                    track.bind("ready", this.addTrack, this);
+                    track.on("ready", this.addTrack, this);
                     return;
                 }
 
@@ -621,8 +621,8 @@ define(["util",
 
                 annotations = track.get("annotations");
                 annotations.each(annotationWithList, this);
-                annotations.bind("add", proxyToAddAnnotation, this);
-                annotations.bind("change", this.changeItem, this);
+                annotations.on("add", proxyToAddAnnotation, this);
+                annotations.on("change", this.changeItem, this);
 
                 this.preprocessTrack(track.id);
                 this.redraw();
@@ -756,6 +756,7 @@ define(["util",
                 if (this.groupModals[action]) return;
 
                 var modal = this.groupModals[action] = this.$el.find("#modal-" + action + "-group");
+                modal.off();
                 modal.html(
                     this.modalGroupTemplate(_.extend(
                         { action: action },
@@ -804,14 +805,14 @@ define(["util",
                     dismissModal();
                 }, this);
 
-                modal.find(".submit").bind("click", saveTrack);
-                modal.bind("keypress", function (event) {
+                modal.find(".submit").on("click", saveTrack);
+                modal.on("keypress", function (event) {
                     if (event.keyCode === 13) {
                         saveTrack();
                     }
                 });
 
-                modal.find(".cancel").bind("click", dismissModal);
+                modal.find(".cancel").on("click", dismissModal);
 
                 modal.on("shown", function () {
                     modal.find("#name").focus();
@@ -1435,7 +1436,7 @@ define(["util",
                 }
 
                 // Destroy the track and redraw the timeline
-                callback = $.proxy(function () {
+                callback = _.bind(function () {
                     _.each(this.annotationItems, function (item) {
                         if (item.trackId === track.id) {
                             delete this.annotationItems[item.id];

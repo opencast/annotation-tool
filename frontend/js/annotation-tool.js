@@ -100,12 +100,12 @@ define(["jquery",
                     this.deleteModal.find("#confirm-delete").one("click", confirm);
 
                     // Add possiblity to confirm with return key
-                    $(window).bind("keypress", confirmWithEnter);
+                    $(window).on("keypress", confirmWithEnter);
 
                     // Unbind the listeners when the modal is hidden
                     this.deleteModal.one("hide", function () {
-                        $("#confirm-delete").unbind("click");
-                        $(window).unbind("keypress", confirmWithEnter);
+                        $("#confirm-delete").off("click");
+                        $(window).off("keypress", confirmWithEnter);
                     });
 
                     // Show the modal
@@ -215,7 +215,7 @@ define(["jquery",
                         throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
                     }
 
-                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
+                    $(this.playerAdapter).on("pa_timeupdate", this.onTimeUpdate);
 
                     this.playerAdapter.load();
                 }, this);
@@ -869,7 +869,7 @@ define(["jquery",
                         var selectedTrack = tracks.getMine()[0];
 
                         if (!selectedTrack.get("id")) {
-                            selectedTrack.bind("ready", concludeInitialization, this);
+                            selectedTrack.on("ready", concludeInitialization, this);
                         } else {
                             this.selectedTrack = selectedTrack;
 

@@ -413,7 +413,7 @@ define(["jquery",
                             }
                         };
 
-                    scaleValues.bind("add", addScaleValue, this);
+                    scaleValues.on("add", addScaleValue, this);
                     scaleValues = scaleValues.sortBy(sortModelByOrderValue, this);
                     _.each(scaleValues, addScaleValue, this);
 

@@ -132,7 +132,7 @@ define(["jquery",
 
                 this.listenTo(annotationTool, "deleteAnnotation", annotationTool.deleteAnnotation);
 
-                $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
+                $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
                 this.once(MainView.EVENTS.READY, function () {
                     this.updateTitle(annotationTool.video);

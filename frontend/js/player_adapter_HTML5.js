@@ -88,7 +88,7 @@ define(["jquery",
                         /**
                          * Listen the events from the native player
                          */
-                        $(mediaElement).bind("canplay durationchange", function () {
+                        $(mediaElement).on("canplay durationchange", function () {
                             // If duration is still not valid
                             if (isNaN(self.getDuration()) || mediaElement.readyState < 1) {
                                 return;
@@ -107,7 +107,7 @@ define(["jquery",
                             }
                         });
 
-                        $(mediaElement).bind("play", function () {
+                        $(mediaElement).on("play", function () {
                             if (!self.initialized) {
                                 return;
                             }
@@ -116,11 +116,11 @@ define(["jquery",
                             self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PLAY));
                         });
 
-                        $(mediaElement).bind("playing", function () {
+                        $(mediaElement).on("playing", function () {
                             self.status =  PlayerAdapter.STATUS.PLAYING;
                         });
 
-                        $(mediaElement).bind("pause", function () {
+                        $(mediaElement).on("pause", function () {
                             if (!self.initialized) {
                                 return;
                             }
@@ -129,18 +129,18 @@ define(["jquery",
                             self.dispatchEvent(new Event(PlayerAdapter.EVENTS.PAUSE));
                         });
 
-                        $(mediaElement).bind("ended", function () {
+                        $(mediaElement).on("ended", function () {
                             self.status = PlayerAdapter.STATUS.ENDED;
                             self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ENDED));
                         });
 
-                        $(mediaElement).bind("seeking", function () {
+                        $(mediaElement).on("seeking", function () {
                             self.oldStatus = self.status;
                             self.status = PlayerAdapter.STATUS.SEEKING;
                             self.dispatchEvent(new Event(PlayerAdapter.EVENTS.SEEKING));
                         });
 
-                        $(mediaElement).bind("seeked", function () {
+                        $(mediaElement).on("seeked", function () {
                             if (typeof self.oldStatus !== "undefined") {
                                 self.status = self.oldStatus;
                             } else {
@@ -148,7 +148,7 @@ define(["jquery",
                             }
                         });
 
-                        $(mediaElement).bind("timeupdate", function () {
+                        $(mediaElement).on("timeupdate", function () {
                             if (
                                 (self.status == PlayerAdapter.STATUS.PAUSED || self.status == PlayerAdapter.STATUS.SEEKING)
                                     && !this.paused && !this.ended && this.currentTime > 0
@@ -158,12 +158,12 @@ define(["jquery",
                             self.dispatchEvent(new Event(PlayerAdapter.EVENTS.TIMEUPDATE));
                         });
 
-                        $(mediaElement).bind("error", function () {
+                        $(mediaElement).on("error", function () {
                             self.status = PlayerAdapter.STATUS.ERROR_NETWORK;
                             self.dispatchEvent(new Event(PlayerAdapter.EVENTS.ERROR));
                         });
 
-                        $(mediaElement).bind("contextmenu", function (e) {
+                        $(mediaElement).on("contextmenu", function (e) {
                             e.preventDefault();
                         });
 

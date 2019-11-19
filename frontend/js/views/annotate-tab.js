@@ -211,9 +211,9 @@ define(["jquery",
                 this.addCategories(this.categories, this.filter);
 
                 this.titleLink = attr.button;
-                this.titleLink.find("i.add").bind("click", this.onAddCategory);
-                this.titleLink.find("i.export").bind("click", this.onExport);
-                this.titleLink.find("i.import").bind("click", this.chooseFile);
+                this.titleLink.find("i.add").on("click", this.onAddCategory);
+                this.titleLink.find("i.export").on("click", this.onExport);
+                this.titleLink.find("i.import").on("click", this.chooseFile);
 
                 this.titleLink.find(".file").fileReader({
                     id            : "fileReaderSWFObject",
@@ -226,7 +226,7 @@ define(["jquery",
                     extensions    : "*.json"
                 });
 
-                this.titleLink.find(".file").bind("click", function (event) {
+                this.titleLink.find(".file").on("click", function (event) {
                     // We need to stop the propagation of this click event,
                     // which we trigger ourselves in `chooseFile`
                     // to open the file dialog,
@@ -235,7 +235,7 @@ define(["jquery",
                     // using `preventDefault`.
                     event.stopPropagation();
                 });
-                this.titleLink.find(".file").bind("change", this.onImport);
+                this.titleLink.find(".file").on("change", this.onImport);
 
                 this.listenTo(this.categories, "add", this.addCategory);
                 this.listenTo(this.categories, "remove", this.removeOne);
@@ -420,7 +420,7 @@ define(["jquery",
             initCarousel: function () {
                 this.carouselElement
                     .carousel({ interval: false })
-                    .bind("slid", this.onCarouselSlid);
+                    .on("slid", this.onCarouselSlid);
             },
 
             /**
