@@ -50,7 +50,7 @@ define(["jquery",
                 VIDEO_LOADED: "at:video-loaded"
             },
 
-            timeupdateIntervals: [],
+            timeUpdateIntervals: [],
 
             views: {},
 
@@ -239,40 +239,29 @@ define(["jquery",
              * @alias   annotationTool.onTimeUpdate
              */
             onTimeUpdate: function () {
-                var currentPlayerTime = this.playerAdapter.getCurrentTime(),
-                    currentTime = new Date().getTime(),
-                    value,
-                    i;
+                var currentPlayerTime = this.playerAdapter.getCurrentTime();
+                var currentTime = Date.now();
+                var shouldUpdateAll = (
+                    _.isUndefined(this.lastTimeUpdate)
+                ) || (
+                    this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING
+                ) || (
+                    currentTime - this.lastTimeUpdate > 1000
+                );
 
-                // Ensure that this is an timeupdate due to normal playback, otherwise trigger timeupdate event for all intervals
-                if ((_.isUndefined(this.lastTimeUpdate)) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) ||
-                    (currentTime - this.lastTimeUpdate > 1000)) {
-
-                    // Ensure that the timestamp from the last update is set
-                    if (_.isUndefined(this.lastTimeUpdate)) {
-                        this.lastTimeUpdate = 1;
+                _.each(this.timeUpdateIntervals, function (interval) {
+                    if (shouldUpdateAll || (
+                        (currentTime - interval.lastUpdate) > interval.interval
+                    )) {
+                        this.trigger(
+                            this.EVENTS.TIMEUPDATE + ":" + interval.interval,
+                            currentPlayerTime
+                        );
+                        interval.lastUpdate = currentTime;
                     }
+                }, this);
 
-                    for (i = 0; i < this.timeupdateIntervals.length; i++) {
-                        value = this.timeupdateIntervals[i];
-                        this.trigger(this.EVENTS.TIMEUPDATE + ":" + value.interval, currentPlayerTime);
-                        this.timeupdateIntervals[i].lastUpdate = currentTime;
-                    }
-
-                } else {
-                    // Trigger all the current events
-                    this.trigger(this.EVENTS.TIMEUPDATE + ":all", currentPlayerTime);
-
-                    for (i = 0; i < this.timeupdateIntervals.length; i++) {
-                        value = this.timeupdateIntervals[i];
-                        if ((currentTime - value.lastUpdate) > parseInt(value.interval, 10)) {
-                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + value.interval, currentPlayerTime);
-                            this.timeupdateIntervals[i].lastUpdate = currentTime;
-                        }
-                    }
-                }
-
-                this.lastTimeUpdate = new Date().getTime();
+                this.lastTimeUpdate = currentTime;
             },
 
             /**
@@ -289,11 +278,11 @@ define(["jquery",
 
                     // Check if the interval needs to be added to list
                     // TODO Use `findWhere` once that is available
-                    if (!_.find(this.timeupdateIntervals, function (value) {
+                    if (!_.find(this.timeUpdateIntervals, function (value) {
                         return value.interval === interval;
                     }, this)) {
                         // Add interval to list
-                        this.timeupdateIntervals.push({
+                        this.timeUpdateIntervals.push({
                             interval: interval,
                             lastUpdate: 0
                         });
