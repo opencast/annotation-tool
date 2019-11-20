@@ -21,7 +21,7 @@
 define([
     "underscore",
     "models/annotation",
-    "backbone",
+    "backbone"
 ], function (
     _,
     Annotation,
@@ -37,7 +37,6 @@ define([
      * @alias module:collections-annotations.Annotations
      */
     var Annotations = Backbone.Collection.extend({
-
         /**
          * Model of the instances contained in this collection
          * @alias module:collections-annotations.Annotations#initialize
@@ -49,26 +48,7 @@ define([
          * @alias module:collections-annotations.Annotations#initialize
          */
         initialize: function (models, options) {
-            _.bindAll(this, "updateAccess", "setAccess");
-
-            /**
-             * Access value for all the annotations in the collection
-             * @alias module:collections-annotations.Annotations#access
-             * @type {integer}
-             */
-            this.access = undefined;
-
-            if (!_.isUndefined(options.track)) {
-                this.track = options.track;
-                this.track.on("change:access", this.updateAccess, this);
-                this.updateAccess(options.track);
-            }
-
-            if (!_.isUndefined(models) && _.isArray(models) && models.length > 0 && !(models[0] instanceof Annotation)) {
-                _.each(models, function (annotation) {
-                    this.create(annotation);
-                }, this);
-            }
+            this.track = options.track;
         },
 
         /**
@@ -81,32 +61,6 @@ define([
         },
 
         /**
-         * Listener on track acess changes, keep the annotations access value up to date.
-         * @alias module:collections-annotations.Annotations#updateAccess
-         * @param  {object} [track] The track containing the annotations
-         */
-        updateAccess: function (track) {
-            var newAccess = (_.isUndefined(track)) ? this.track.get("access") : track.get("access");
-            if (this.access !== newAccess) {
-                this.access = newAccess;
-                this.each(this.setAccess, this);
-            }
-        },
-
-        /**
-         * Set access for the model
-         * @alias module:collections-annotations.Annotations#setAccess
-         * @param {model} model The model to update
-         */
-        setAccess: function (model) {
-            if (!_.isUndefined(model.attributes)) {
-                model.set({ access: this.access }, { silent: true });
-            } else {
-                model.access = this.access;
-            }
-        },
-
-        /**
          * Parse the given data
          * @alias module:collections-annotations.Annotations#parse
          * @param  {object} data Object or array containing the data to parse.
@@ -114,10 +68,8 @@ define([
          */
         parse: function (data) {
             if (data.annotations && _.isArray(data.annotations)) {
-                _.each(data.annotations, this.setAccess, this);
                 return data.annotations;
             } else if (_.isArray(data)) {
-                _.each(data, this.setAccess, this);
                 return data;
             } else {
                 return null;
