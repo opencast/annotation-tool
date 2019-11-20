@@ -579,7 +579,7 @@ define(["jquery",
                 _.each(this.categoryViews, function (categoryView) {
                     categoryView.remove();
                 });
-                Backbone.View.prototype.remove.call(this);
+                Backbone.View.prototype.remove.apply(this, arguments);
             }
         });
 

@@ -580,7 +580,7 @@ define(["jquery",
              */
             remove: function () {
                 this.commentContainer.remove();
-                Backbone.View.prototype.remove.call(this);
+                Backbone.View.prototype.remove.apply(this, arguments);
             }
         }, {
 

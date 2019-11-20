@@ -446,7 +446,7 @@ define(["underscore",
                 _.each(this.annotationViews, function (annotationView) {
                     annotationView.remove();
                 });
-                Backbone.View.prototype.remove.call(this);
+                Backbone.View.prototype.remove.apply(this, arguments);
             }
         });
 
