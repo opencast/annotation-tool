@@ -694,11 +694,18 @@ define(["jquery",
              * @alias module:views-main.Main#export
              */
             export: function () {
-                var tracksToExport = annotationTool.video.get("tracks").getVisibleTracks();
-                var categoriesToExport = annotationTool.video.get("categories").filter(function (category) {
-                    return category.get("visible");
-                });
-                annotationTool.export(annotationTool.video, tracksToExport, categoriesToExport);
+                var tracksToExport = annotationTool.video
+                    .get("tracks").getVisibleTracks();
+                var categoriesToExport = annotationTool.video
+                    .get("categories").filter(function (category) {
+                        return category.get("visible");
+                    });
+                annotationTool.export(
+                    annotationTool.video,
+                    tracksToExport,
+                    categoriesToExport,
+                    annotationTool.freeTextVisible
+                );
             },
 
             /**

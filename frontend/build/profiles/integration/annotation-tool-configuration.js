@@ -155,17 +155,22 @@ define(["jquery",
              * @param {Video} video The video to export
              * @param {Track[]} tracks The tracks to include in the export
              * @param {Category[]} categories The tracks to include in the export
+             * @param {Boolean} freeText Should free-text annotations be exported?
              */
-            export: function (video, tracks, categories) {
-                window.location.href = "../extended-annotations/videos/" + video.id + "/export.csv?" +
-                    _.map(tracks, function (track) {
-                        return "track=" + track.id;
-                    }).join("&") +
-                    "&" +
-                    _.map(categories, function (category) {
-                        return "category=" + category.id;
-                    }).join("&") +
-                    "freetext=" + this.freeTextVisible;
+            export: function (video, tracks, categories, freeText) {
+                var parameters = new URLSearchParams();
+                _.each(tracks, function (track) {
+                    parameters.append("track", track.id);
+                });
+                _.each(categories, function (category) {
+                    parameters.append("category", category.id);
+                });
+                parameters.append("freetext", freeText);
+                window.location.href =
+                    "../extended-annotations/videos/" +
+                    video.id +
+                    "/export.csv?" +
+                    parameters;
             },
 
             tracksToImport: undefined,
