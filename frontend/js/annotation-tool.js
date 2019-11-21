@@ -1057,30 +1057,11 @@ define(["jquery",
                     return target.get("name");
                 },
                 destroy: function (track, callback) {
-                    var annotations = track.get("annotations"),
-                        /**
-                         * Recursive function to delete synchronously all annotations
-                         */
-                        destroyAnnotation = function () {
-                            var annotation;
-
-                            // End state, no more annotation
-                            if (annotations.length === 0) {
-                                return;
-                            }
-                            annotation = annotations.at(0);
-                            annotation.destroy({
-                                error: function () {
-                                    throw "Cannot delete annotation!";
-                                },
-                                success: function () {
-                                    annotations.remove(annotation);
-                                    destroyAnnotation();
-                                }
-                            });
-                        };
-                    // Call the recursive function
-                    destroyAnnotation();
+                    _.invoke(
+                        _.clone(track.get("annotations").models),
+                        "destroy",
+                        { error: function () { throw "cannot delete annotation"; } }
+                    );
                     track.destroy({
                         success: function () {
                             if (annotationTool.localStorage) {
@@ -1103,31 +1084,11 @@ define(["jquery",
                     return target.get("name");
                 },
                 destroy: function (category, callback) {
-                    var labels = category.get("labels"),
-                        /**
-                         * Recursive function to delete synchronously all labels
-                         */
-                        destroyLabels = function () {
-                            var label;
-
-                            // End state, no more label
-                            if (labels.length === 0) {
-                                return;
-                            }
-
-                            label = labels.at(0);
-                            label.destroy({
-                                error: function () {
-                                    throw "Cannot delete label!";
-                                },
-                                success: function () {
-                                    labels.remove(label);
-                                    destroyLabels();
-                                }
-                            });
-                        };
-                    // Call the recursive function
-                    destroyLabels();
+                    _.invoke(
+                        _.clone(category.get("labels").models),
+                        "destroy",
+                        { error: function () { throw "cannot delete label"; } }
+                    );
                     category.destroy({
                         success: function () {
                             if (annotationTool.localStorage) {
@@ -1179,31 +1140,11 @@ define(["jquery",
                     return target.get("name");
                 },
                 destroy: function (scale, callback) {
-                    var scaleValues = scale.get("scaleValues"),
-                        /**
-                         * Recursive function to delete synchronously all scaleValues
-                         */
-                        destroyScaleValues = function () {
-                            var scaleValue;
-                            // End state, no more label
-                            if (scaleValues.length === 0) {
-                                return;
-                            }
-                            scaleValue = scaleValues.at(0);
-                            scaleValue.destroy({
-                                error: function () {
-                                    throw "Cannot delete scaleValue!";
-                                },
-                                success: function () {
-                                    scaleValues.remove(scaleValue);
-                                    destroyScaleValues();
-                                }
-                            });
-                        };
-
-                    // Call the recursive function
-                    destroyScaleValues();
-
+                    _.invoke(
+                        _.clone(scale.get("scalevalues").models),
+                        "destroy",
+                        { error: function () { throw "cannot delete scale value"; } }
+                    );
                     scale.destroy({
                         success: function () {
                             if (window.annotationTool.localStorage) {
