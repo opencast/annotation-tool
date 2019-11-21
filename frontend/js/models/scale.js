@@ -72,9 +72,9 @@ define(["underscore",
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.scaleValues && _.isArray(attr.scaleValues)) {
-                    this.set({ scaleValues: new ScaleValues(attr.scaleValues, this) });
+                    this.set({ scaleValues: new ScaleValues(attr.scaleValues, { scale: this }) });
                 } else {
-                    this.set({ scaleValues: new ScaleValues([], this) });
+                    this.set({ scaleValues: new ScaleValues([], { scale: this }) });
                 }
 
                 if (attr.id) {

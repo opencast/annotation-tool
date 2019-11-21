@@ -56,7 +56,7 @@ define(["underscore",
              * constructor
              * @alias module:collections-tracks.Tracks#initialize
              */
-            initialize: function (models, video) {
+            initialize: function (models, options) {
                 _.bindAll(this, "showTracks",
                                 "showTracksById",
                                 "hideTracks",
@@ -65,7 +65,7 @@ define(["underscore",
                                 "getAllCreators",
                                 "showTracksByCreators");
 
-                this.video = video;
+                this.video = options.video;
 
                 this.on("add", function (track) {
                     // Show the new track

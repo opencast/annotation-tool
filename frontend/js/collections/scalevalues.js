@@ -45,8 +45,8 @@ define(["underscore",
              * constructor
              * @alias module:collections-scalevalues.ScaleValues#initialize
              */
-            initialize: function (models, scale) {
-                this.scale = scale;
+            initialize: function (models, options) {
+                this.scale = options.scale;
             },
 
             /**

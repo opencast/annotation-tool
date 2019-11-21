@@ -18,110 +18,64 @@
  * A module representing an annotations collection
  * @module collections-annotations
  */
-define(["underscore",
-        "models/annotation",
-        "backbone"],
+define([
+    "underscore",
+    "models/annotation",
+    "backbone"
+], function (
+    _,
+    Annotation,
+    Backbone
+) {
+    "use strict";
 
-    function (_, Annotation, Backbone) {
-
-        "use strict";
+    /**
+     * @constructor
+     * @see {@link http://www.backbonejs.org/#Collection}
+     * @augments module:Backbone.Collection
+     * @memberOf module:collections-annotations
+     * @alias module:collections-annotations.Annotations
+     */
+    var Annotations = Backbone.Collection.extend({
+        /**
+         * Model of the instances contained in this collection
+         * @alias module:collections-annotations.Annotations#initialize
+         */
+        model: Annotation,
 
         /**
-         * @constructor
-         * @see {@link http://www.backbonejs.org/#Collection}
-         * @augments module:Backbone.Collection
-         * @memberOf module:collections-annotations
-         * @alias module:collections-annotations.Annotations
+         * constructor
+         * @alias module:collections-annotations.Annotations#initialize
          */
-        var Annotations = Backbone.Collection.extend({
+        initialize: function (models, options) {
+            this.track = options.track;
+        },
 
-            /**
-             * Model of the instances contained in this collection
-             * @alias module:collections-annotations.Annotations#initialize
-             */
-            model: Annotation,
+        /**
+         * Get the url for this collection
+         * @alias module:collections-annotations.Annotations#url
+         * @return {String} The url of this collection
+         */
+        url: function () {
+            return _.result(this.track, "url") + "/annotations";
+        },
 
-            /**
-             * constructor
-             * @alias module:collections-annotations.Annotations#initialize
-             */
-            initialize: function (models, track) {
-                _.bindAll(this, "updateAccess", "setAccess");
-
-                /**
-                 * Access value for all the annotations in the collection
-                 * @alias module:collections-annotations.Annotations#access
-                 * @type {integer}
-                 */
-                this.access = undefined;
-
-                if (!_.isUndefined(track)) {
-                    this.track = track;
-                    track.on("change:access", this.updateAccess, this);
-                    this.updateAccess(track);
-                }
-
-                if (!_.isUndefined(models) && _.isArray(models) && models.length > 0 && !(models[0] instanceof Annotation)) {
-                    _.each(models, function (annotation) {
-                        this.create(annotation);
-                    }, this);
-                }
-            },
-
-            /**
-             * Get the url for this collection
-             * @alias module:collections-annotations.Annotations#url
-             * @return {String} The url of this collection
-             */
-            url: function () {
-                return _.result(this.track, "url") + "/annotations";
-            },
-
-            /**
-             * Listener on track acess changes, keep the annotations access value up to date.
-             * @alias module:collections-annotations.Annotations#updateAccess
-             * @param  {object} [track] The track containing the annotations
-             */
-            updateAccess: function (track) {
-                var newAccess = (_.isUndefined(track)) ? this.track.get("access") : track.get("access");
-                if (this.access !== newAccess) {
-                    this.access = newAccess;
-                    this.each(this.setAccess, this);
-                }
-            },
-
-            /**
-             * Set access for the model
-             * @alias module:collections-annotations.Annotations#setAccess
-             * @param {model} model The model to update
-             */
-            setAccess: function (model) {
-                if (!_.isUndefined(model.attributes)) {
-                    model.set({ access: this.access }, { silent: true });
-                } else {
-                    model.access = this.access;
-                }
-            },
-
-            /**
-             * Parse the given data
-             * @alias module:collections-annotations.Annotations#parse
-             * @param  {object} data Object or array containing the data to parse.
-             * @return {object}      the part of the given data related to the annotations
-             */
-            parse: function (data) {
-                if (data.annotations && _.isArray(data.annotations)) {
-                    _.each(data.annotations, this.setAccess, this);
-                    return data.annotations;
-                } else if (_.isArray(data)) {
-                    _.each(data, this.setAccess, this);
-                    return data;
-                } else {
-                    return null;
-                }
+        /**
+         * Parse the given data
+         * @alias module:collections-annotations.Annotations#parse
+         * @param  {object} data Object or array containing the data to parse.
+         * @return {object}      the part of the given data related to the annotations
+         */
+        parse: function (data) {
+            if (data.annotations && _.isArray(data.annotations)) {
+                return data.annotations;
+            } else if (_.isArray(data)) {
+                return data;
+            } else {
+                return null;
             }
-        });
+        }
+    });
 
-        return Annotations;
-    }
-);
+    return Annotations;
+});

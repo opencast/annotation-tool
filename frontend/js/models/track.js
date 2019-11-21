@@ -71,9 +71,9 @@ define(["underscore",
                 });
 
                 if (attr.annotations && _.isArray(attr.annotations)) {
-                    this.set({ annotations: new Annotations(attr.annotations, this) });
+                    this.set({ annotations: new Annotations(attr.annotations, { track: this }) });
                 } else {
-                    this.set({ annotations: new Annotations([], this) });
+                    this.set({ annotations: new Annotations([], { track: this }) });
                 }
             },
 

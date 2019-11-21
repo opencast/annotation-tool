@@ -45,8 +45,8 @@ define(["underscore",
              * constructor
              * @alias module:collections-labels.Labels#initialize
              */
-            initialize: function (models, category) {
-                this.category = category;
+            initialize: function (models, options) {
+                this.category = options.category;
             },
 
             /**
