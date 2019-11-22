@@ -51,12 +51,6 @@ define(["jquery",
          */
         var Configuration =  {
             /**
-             * The maximal number of tracks visible in the timeline at the same time
-             * @type {Number}
-             */
-            MAX_VISIBLE_TRACKS: 0,
-
-            /**
              * The minmal duration used for annotation representation on timeline
              * @alias module:annotation-tool-configuration.Configuration.MINIMAL_DURATION
              * @memberOf module:annotation-tool-configuration.Configuration

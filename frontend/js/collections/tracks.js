@@ -26,11 +26,6 @@ define(["underscore",
 
         "use strict";
 
-        var EVENTS = {
-            VISIBILITY : "visiblity",
-            SELECTED   : "selected_track"
-        },
-
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#Collection}
@@ -38,7 +33,7 @@ define(["underscore",
          * @memberOf module:collections-tracks
          * @alias module:collections-tracks.Tracks
          */
-        Tracks = Backbone.Collection.extend({
+        var Tracks = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
@@ -47,29 +42,18 @@ define(["underscore",
             model: Track,
 
             /**
-             * List of visible tracks
-             * @type {Array}
-             */
-            visibleTracks: [],
-
-            /**
              * constructor
              * @alias module:collections-tracks.Tracks#initialize
              */
             initialize: function (models, options) {
                 _.bindAll(this, "showTracks",
-                                "showTracksById",
-                                "hideTracks",
-                                "isTrackVisible",
-                                "getTracksForLocalStorage",
-                                "getAllCreators",
-                                "showTracksByCreators");
+                                "getTracksForLocalStorage");
 
                 this.video = options.video;
 
                 this.on("add", function (track) {
                     // Show the new track
-                    this.showTracks(track, true);
+                    this.showTracks([track], true);
 
                     // Select the new track
                     annotationTool.selectedTrack = track;
@@ -115,187 +99,44 @@ define(["underscore",
              * @return {array} an array containing the visible tracks
              */
             getVisibleTracks: function () {
-                return this.visibleTracks;
-            },
-
-            /**
-             * Get all the different public tracks creators 
-             * @alias module:collections-tracks.Tracks#getAllCreators
-             * @return {Array} the array containing a list of creator with their nickname and id as properties.
-             * @example
-             * {
-             *     id       : "c12",
-             *     nickname : "Didi"
-             * }
-             */
-            getAllCreators: function () {
-                var creatorsSets = this.groupBy(function (track) {
-                                            return track.get(Track.FIELDS.CREATED_BY);
-                                        }),
-                    creators = [];
-
-                _.each(creatorsSets, function (tracks) {
-                    var visible = true;
-
-                    _.each(tracks, function (track) {
-                        if (!track.get(Track.FIELDS.VISIBLE)) {
-                            visible = false;
-                        }
-                    }, this);
-
-                    creators.push({
-                        "id"       : tracks[0].get(Track.FIELDS.CREATED_BY),
-                        "nickname" : tracks[0].get(Track.FIELDS.CREATED_BY_NICKNAME),
-                        "visible"  : visible
-                    });
-                }, this);
-
-                return creators;
-            },
-
-            showTracksByCreators: function (usersIds) {
-                var creatorsSets = this.groupBy(function (track) {
-                                            return track.get("created_by");
-                                        }),
-                    tracksIds = [];
-
-                _.each(creatorsSets, function (tracks, index) {
-                    if (_.contains(usersIds, index)) {
-                        _.each(tracks, function (track) {
-                            tracksIds.push(track.get("id"));
-                        }, this);
-                    }
-                }, this);
-
-                this.showTracksById(tracksIds);
-            },
-
-            /**
-             * Displays the tracks  with the given Ids and hide the current displayed tracks.
-             * @param  {array} tracks an array containing the tracks ids to display
-             */
-            showTracksById: function (ids) {
-                var tracks = [];
-
-                _.each(ids, function (id) {
-                    tracks.push(this.get(id));
-                }, this);
-
-                this.showTracks(tracks);
+                return this.filter(function (track) {
+                    return track.get(Track.FIELDS.VISIBLE);
+                });
             },
 
             /**
              * Displays the given tracks and hide the current displayed tracks.
              * @param  {array} tracks an array containing the tracks to display
-             * @param  {boolean} keepPrevious define if the previous visible tracks should be kept if enough place
+             * @param  {boolean} keepPrevious should previously visible tracks stay visible?
              */
             showTracks: function (tracks, keepPrevious) {
-                var max = annotationTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE,
-                    self = this,
-                    selectedTrack = annotationTool.selectedTrack,
-                    showTrack = function (track) {
-                        track.set(Track.FIELDS.VISIBLE, true);
-                        self.visibleTracks.push(track);
-                    },
-                    tracksToHide = this.visibleTracks,
-                    i;
+                var selectedTrack = annotationTool.selectedTrack;
+                var visibleTracks = this.getVisibleTracks();
 
-                if (_.isUndefined(tracks)) {
-                    return;
-                } else if (!_.isArray(tracks)) {
-                    tracks = [tracks];
+                if (!keepPrevious) {
+                    _.each(visibleTracks, function (track) {
+                        // TODO Is this field even used?
+                        track.set(Track.FIELDS.VISIBLE, false);
+                    });
+                    visibleTracks = [];
                 }
-
-                if (tracks.length > max) {
-                    console.warn("The list of tracks to show is higher than the maximum number of visible tracks. \
-                                    Only the first " + max + " will be displayed.");
-
-                    for (i = tracks.length - 1; i >= max; i--) {
-                        tracks.splice(i, 1);
-                    }
-                }
-
-                if (keepPrevious && tracks.length < max) {
-                    tracksToHide = [];
-                    for (i = 0; i < ((this.visibleTracks.length - max) + tracks.length); i++) {
-                        tracksToHide.push(this.visibleTracks[i]);
-                    }
-                }
-
-                // Remove the current visible track
-                this.hideTracks(tracksToHide);
 
                 _.each(tracks, function (track) {
                     if (!track.get("annotationsLoaded")) {
                         track.fetchAnnotations();
                     }
-                    showTrack(track);
+                    track.set(Track.FIELDS.VISIBLE, true);
+                    visibleTracks.push(track);
                 }, this);
 
-                if (_.isUndefined(selectedTrack) || (!_.isUndefined(selectedTrack) && !selectedTrack.get(Track.FIELDS.VISIBLE))) {
-                    selectedTrack = _.find(this.visibleTracks, function (track) {
-                                        return track.get("isMine");
-                                    }, this);
+                if (!selectedTrack || !selectedTrack.get("visible")) {
+                    selectedTrack = _.find(visibleTracks, function (track) {
+                        return track.get("isMine");
+                    }, this);
                     annotationTool.selectTrack(selectedTrack);
                 }
 
-                annotationTool.selectTrack(selectedTrack);
-
-                this.trigger(EVENTS.VISIBILITY, this.visibleTracks);
-            },
-
-            isTrackVisible: function (id) {
-                return !_.isUndefined(_.find(this.visibleTracks, function (track) {
-                    return track.id === id;
-                }, this));
-            },
-
-            /**
-             * Hides the tracks with the given ids.
-             * @param  {array} tracks an array containing the tracks ids to hide.
-             */
-            hideTracksById: function (ids) {
-                var tracks = [];
-
-                _.each(ids, function (id) {
-                    tracks.push(this.get(id));
-                }, this);
-
-                this.hideTracks(tracks);
-            },
-
-
-            /**
-             * Hides the given tracks.
-             * @param  {array} tracks an array containing the tracks to hide.
-             */
-            hideTracks: function (tracks) {
-                var newVisibleTracks = [],
-                    idsToRemove = [];
-
-                // Check if the given tracks are valid
-                if (_.isUndefined(tracks)) {
-                    return;
-                } else if (!_.isArray(tracks)) {
-                    tracks = [tracks];
-                }
-
-                // Create a list of tracks id to remove
-                _.each(tracks, function (track) {
-                    idsToRemove.push(track.id);
-                }, this);
-
-                // Go through the list of tracks to see which one has to be removed
-                _.each(this.visibleTracks, function (track) {
-                    if (_.contains(idsToRemove, track.id)) {
-                        track.set(Track.FIELDS.VISIBLE, false);
-                    } else {
-                        newVisibleTracks.push(track);
-                    }
-                }, this);
-
-
-                this.visibleTracks = newVisibleTracks;
+                this.trigger("visibility", visibleTracks);
             },
 
             /**
@@ -306,8 +147,6 @@ define(["underscore",
             url: function () {
                 return _.result(this.video, "url") + "/tracks";
             }
-        }, {
-            EVENTS: EVENTS
         });
 
         return Tracks;

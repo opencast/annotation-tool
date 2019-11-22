@@ -173,7 +173,7 @@ define(["jquery",
                 this.changeTrack(annotationTool.selectedTrack);
 
                 this.tracks = annotationTool.video.get("tracks");
-                this.listenTo(this.tracks, "selected_track", this.changeTrack);
+                this.listenTo(this.tracks, "select", this.changeTrack);
                 this.playerAdapter = attr.playerAdapter;
 
                 this.layout = _.pick(attr, "freeText", "categories");
