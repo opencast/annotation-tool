@@ -1022,14 +1022,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
   // --
 
   public static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
-  public static final Response NOT_MODIFIED = Response.status(Response.Status.NOT_MODIFIED).build();
   public static final Response UNAUTHORIZED = Response.status(Response.Status.UNAUTHORIZED).build();
   public static final Response FORBIDDEN = Response.status(Response.Status.FORBIDDEN).build();
   public static final Response BAD_REQUEST = Response.status(Response.Status.BAD_REQUEST).build();
   public static final Response CONFLICT = Response.status(Response.Status.CONFLICT).build();
   public static final Response SERVER_ERROR = Response.serverError().build();
   public static final Response NO_CONTENT = Response.noContent().build();
-  public static final Response OK = Response.ok().build();
 
   public static final Object[] nil = new Object[0];
 
@@ -1047,8 +1045,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return UNAUTHORIZED;
         case DUPLICATE:
           return CONFLICT;
-        case SERVER_ERROR:
-          return SERVER_ERROR;
         case NOT_FOUND:
           return NOT_FOUND;
         default:
