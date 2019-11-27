@@ -82,30 +82,30 @@ public class ExtendedAnnotationsRestServiceTest {
             .header(LOCATION, regex(host("/users/[0-9]+"))).body("nickname", equalTo("klausi"))
             .body("tags", equalTo(json)).when().post(host("/users")));
     // get
-    given().pathParam("id", id).expect().statusCode(OK).log().all().body("user_extid", equalTo("admin"))
+    given().pathParam("id", id).expect().statusCode(OK).body("user_extid", equalTo("admin"))
             .body("nickname", equalTo("klausi")).body("tags", equalTo(json)).when().get(host("/users/{id}"));
     // update
     json.put("channel", "22");
     given().formParam("user_extid", "admin").formParam("nickname", "santa").formParam("tags", json.toJSONString())
             .expect().statusCode(OK).body("nickname", equalTo("santa")).when().put(host("/users"));
-    given().pathParam("id", id).expect().statusCode(OK).log().all().body("nickname", equalTo("santa"))
+    given().pathParam("id", id).expect().statusCode(OK).body("nickname", equalTo("santa"))
             .body("tags", equalTo(json)).when().get(host("/users/{id}"));
     // get all
     // Removed get all method until Sprint X
-    // given().expect().statusCode(OK).log().all().body("users", iterableWithSize(1)).when().get(host("/users"));
+    // given().expect().statusCode(OK).body("users", iterableWithSize(1)).when().get(host("/users"));
     // Thread.sleep(10);
-    // given().log().all().queryParam("since", ISODateTimeFormat.dateTime().print(new Date().getTime())).expect()
-    // .statusCode(OK).log().all().body("users", iterableWithSize(0)).when().get(host("/users"));
+    // given().queryParam("since", ISODateTimeFormat.dateTime().print(new Date().getTime())).expect()
+    // .statusCode(OK).body("users", iterableWithSize(0)).when().get(host("/users"));
     // Calendar c = Calendar.getInstance();
     // c.add(Calendar.MINUTE, -1);
     // given().queryParam("since",
-    // ISODateTimeFormat.dateTime().print(c.getTimeInMillis())).expect().statusCode(OK).log()
-    // .all().body("users", iterableWithSize(1)).when().get(host("/users"));
+    // ISODateTimeFormat.dateTime().print(c.getTimeInMillis())).expect().statusCode(OK)
+    // .body("users", iterableWithSize(1)).when().get(host("/users"));
     // post/another one
     given().formParam("user_extid", "klaus2").formParam("nickname", "klausi2").expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/users/[0-9]+"))).body("nickname", equalTo("klausi2")).when()
             .put(host("/users"));
-    // given().expect().statusCode(OK).log().all().body("users", iterableWithSize(2)).when().get(host("/users"));
+    // given().expect().statusCode(OK).body("users", iterableWithSize(2)).when().get(host("/users"));
     // post duplicated
     given().formParam("user_extid", "klaus2").formParam("nickname", "klausi2").expect().statusCode(CONFLICT).when()
             .post(host("/users"));
@@ -170,7 +170,6 @@ public class ExtendedAnnotationsRestServiceTest {
     // given().pathParam("videoId", videoId)
     // .pathParam("id", trackId)
     // .expect().statusCode(OK)
-    // .log().all()
     // .body("tracks", iterableWithSize(1))
     // .when().get(host("/videos/{videoId}/tracks/{id}");
     // post/create with same name
@@ -179,7 +178,7 @@ public class ExtendedAnnotationsRestServiceTest {
     // get/not found
     given().expect().statusCode(NOT_FOUND).when().get(host("/videos/abc/tracks/1"));
     // get
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK)
             .body("name", equalTo("track")).body("description", equalTo("just a track"))
             // .body("settings.type", equalTo("lecture")) todo
             .when().get(host("/videos/{videoId}/tracks/{trackId}"));
@@ -190,14 +189,14 @@ public class ExtendedAnnotationsRestServiceTest {
             .body("tags", equalTo(json)).when().put(host("/videos/{videoId}/tracks/{trackId}"));
 
     // get all
-    given().pathParam("videoId", videoId).expect().statusCode(OK).log().all().body("tracks", iterableWithSize(2))
+    given().pathParam("videoId", videoId).expect().statusCode(OK).body("tracks", iterableWithSize(2))
             .when().get(host("/videos/{videoId}/tracks"));
-    given().pathParam("videoId", videoId).queryParam("tags-or", json.toJSONString()).expect().statusCode(OK).log()
-            .all().body("tracks", iterableWithSize(1))
+    given().pathParam("videoId", videoId).queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
+            .body("tracks", iterableWithSize(1))
             // .body("tracks.name", hasItems("track", "track"))
             .when().get(host("/videos/{videoId}/tracks"));
-    given().pathParam("videoId", videoId).queryParam("tags-and", json.toJSONString()).expect().statusCode(OK).log()
-            .all().body("tracks", iterableWithSize(1))
+    given().pathParam("videoId", videoId).queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
+            .body("tracks", iterableWithSize(1))
             // .body("tracks.name", hasItems("track", "track"))
             .when().get(host("/videos/{videoId}/tracks"));
     // delete
@@ -257,34 +256,34 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("id", id).expect().statusCode(OK)
             .body("text", equalTo("cool video")).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{id}"));
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK)
             .body("annotations", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     // get all since temporary removed!
     // Thread.sleep(10);
-    // given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
+    // given().pathParam("videoId", videoId).pathParam("trackId", trackId)
     // .queryParam("since", ISODateTimeFormat.dateTime().print(new Date().getTime())).expect().statusCode(OK)
-    // .log().all().body("annotations", iterableWithSize(0)).when()
+    // .body("annotations", iterableWithSize(0)).when()
     // .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     // Calendar c = Calendar.getInstance();
     // c.add(Calendar.MINUTE, -1);
     // given().pathParam("videoId", videoId).pathParam("trackId", trackId)
-    // .queryParam("since", ISODateTimeFormat.dateTime().print(c.getTimeInMillis())).expect().statusCode(OK).log()
-    // .all().body("annotations", iterableWithSize(1)).when()
+    // .queryParam("since", ISODateTimeFormat.dateTime().print(c.getTimeInMillis())).expect().statusCode(OK)
+    // .body("annotations", iterableWithSize(1)).when()
     // .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     // post/another one
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("text", "nice")
             .formParam("start", 50).expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+")))
             .body("text", equalTo("nice")).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK)
             .body("annotations", iterableWithSize(2)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).queryParam("tags-and", json.toJSONString())
-            .expect().statusCode(OK).log().all().body("annotations", iterableWithSize(1)).when()
+            .expect().statusCode(OK).body("annotations", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).queryParam("tags-or", json.toJSONString())
-            .expect().statusCode(OK).log().all().body("annotations", iterableWithSize(1)).when()
+            .expect().statusCode(OK).body("annotations", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     // delete
     given().pathParam("videoId", 12345).pathParam("trackId", 12345).pathParam("id", 12345).expect()
@@ -341,20 +340,20 @@ public class ExtendedAnnotationsRestServiceTest {
             .get(host("/videos/{videoId}/categories/{categoryId}"));
     // get all
     json.put("channel", "33");
-    given().log().all().expect().statusCode(OK).log().all().body("categories", iterableWithSize(1)).when()
+    given().expect().statusCode(OK).body("categories", iterableWithSize(1)).when()
             .get(host("/categories"));
-    given().log().all().queryParam("tags-and", json.toJSONString()).expect().statusCode(OK).log().all()
+    given().queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
             .body("categories", iterableWithSize(1)).when().get(host("/categories"));
-    given().log().all().queryParam("tags-or", json.toJSONString()).expect().statusCode(OK).log().all()
+    given().queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
             .body("categories", iterableWithSize(1)).when().get(host("/categories"));
-    given().log().all().pathParam("videoId", videoId).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).expect().statusCode(OK)
             .body("categories", iterableWithSize(2)).when().get(host("/videos/{videoId}/categories"));
     json.put("channel", "22");
-    given().log().all().queryParam("tags-and", json.toJSONString()).pathParam("videoId", videoId).expect()
-            .statusCode(OK).log().all().body("categories", iterableWithSize(1)).when()
+    given().queryParam("tags-and", json.toJSONString()).pathParam("videoId", videoId).expect()
+            .statusCode(OK).body("categories", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/categories"));
-    given().log().all().queryParam("tags-or", json.toJSONString()).pathParam("videoId", videoId).expect()
-            .statusCode(OK).log().all().body("categories", iterableWithSize(1)).when()
+    given().queryParam("tags-or", json.toJSONString()).pathParam("videoId", videoId).expect()
+            .statusCode(OK).body("categories", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/categories"));
   }
 
@@ -398,20 +397,20 @@ public class ExtendedAnnotationsRestServiceTest {
             .get(host("/videos/{videoId}/scales/{scaleId}"));
     // get all
     json.put("channel", "33");
-    given().log().all().expect().statusCode(OK).log().all().body("scales", iterableWithSize(1)).when()
+    given().expect().statusCode(OK).body("scales", iterableWithSize(1)).when()
             .get(host("/scales"));
-    given().log().all().queryParam("tags-and", json.toJSONString()).expect().statusCode(OK).log().all()
+    given().queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
             .body("scales", iterableWithSize(1)).when().get(host("/scales"));
-    given().log().all().queryParam("tags-or", json.toJSONString()).expect().statusCode(OK).log().all()
+    given().queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
             .body("scales", iterableWithSize(1)).when().get(host("/scales"));
-    given().log().all().pathParam("videoId", videoId).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).expect().statusCode(OK)
             .body("scales", iterableWithSize(2)).when().get(host("/videos/{videoId}/scales"));
     json.put("channel", "22");
-    given().log().all().queryParam("tags-and", json.toJSONString()).pathParam("videoId", videoId).expect()
-            .statusCode(OK).log().all().body("scales", iterableWithSize(1)).when()
+    given().queryParam("tags-and", json.toJSONString()).pathParam("videoId", videoId).expect()
+            .statusCode(OK).body("scales", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/scales"));
-    given().log().all().queryParam("tags-or", json.toJSONString()).pathParam("videoId", videoId).expect()
-            .statusCode(OK).log().all().body("scales", iterableWithSize(1)).when()
+    given().queryParam("tags-or", json.toJSONString()).pathParam("videoId", videoId).expect()
+            .statusCode(OK).body("scales", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/scales"));
     // delete
     given().pathParam("scaleId", 12345).expect().statusCode(NOT_FOUND).when().delete(host("/scales/{scaleId}"));
@@ -472,23 +471,23 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("scaleId", 323).pathParam("scaleValueId", id).expect()
             .statusCode(BAD_REQUEST).when().get(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
     // get all
-    given().log().all().pathParam("scaleId", scaleId).expect().statusCode(OK).log().all()
+    given().pathParam("scaleId", scaleId).expect().statusCode(OK)
             .body("scaleValues", iterableWithSize(2)).when().get(host("/scales/{scaleId}/scalevalues"));
-    given().log().all().queryParam("tags-and", json.toJSONString()).pathParam("scaleId", scaleId).expect()
-            .statusCode(OK).log().all().body("scaleValues", iterableWithSize(1)).when()
+    given().queryParam("tags-and", json.toJSONString()).pathParam("scaleId", scaleId).expect()
+            .statusCode(OK).body("scaleValues", iterableWithSize(1)).when()
             .get(host("/scales/{scaleId}/scalevalues"));
-    given().log().all().queryParam("tags-or", json.toJSONString()).pathParam("scaleId", scaleId).expect()
-            .statusCode(OK).log().all().body("scaleValues", iterableWithSize(1)).when()
+    given().queryParam("tags-or", json.toJSONString()).pathParam("scaleId", scaleId).expect()
+            .statusCode(OK).body("scaleValues", iterableWithSize(1)).when()
             .get(host("/scales/{scaleId}/scalevalues"));
-    given().log().all().pathParam("videoId", videoId).pathParam("scaleId", scaleId).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).expect().statusCode(OK)
             .body("scaleValues", iterableWithSize(2)).when()
             .get(host("/videos/{videoId}/scales/{scaleId}/scalevalues"));
-    given().log().all().pathParam("videoId", videoId).pathParam("scaleId", scaleId)
-            .queryParam("tags-and", json.toJSONString()).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("scaleId", scaleId)
+            .queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
             .body("scaleValues", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/scales/{scaleId}/scalevalues"));
-    given().log().all().pathParam("videoId", videoId).pathParam("scaleId", scaleId)
-            .queryParam("tags-or", json.toJSONString()).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("scaleId", scaleId)
+            .queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
             .body("scaleValues", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/scales/{scaleId}/scalevalues"));
     // delete
@@ -561,22 +560,22 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("categoryId", 323).pathParam("labelId", id).expect()
             .statusCode(BAD_REQUEST).when().get(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
     // get all
-    given().log().all().pathParam("categoryId", categoryId).expect().statusCode(OK).log().all()
+    given().pathParam("categoryId", categoryId).expect().statusCode(OK)
             .body("labels", iterableWithSize(2)).when().get(host("/categories/{categoryId}/labels"));
-    given().log().all().pathParam("categoryId", categoryId).queryParam("tags-and", json.toJSONString()).expect()
-            .statusCode(OK).log().all().body("labels", iterableWithSize(1)).when()
+    given().pathParam("categoryId", categoryId).queryParam("tags-and", json.toJSONString()).expect()
+            .statusCode(OK).body("labels", iterableWithSize(1)).when()
             .get(host("/categories/{categoryId}/labels"));
-    given().log().all().pathParam("categoryId", categoryId).queryParam("tags-or", json.toJSONString()).expect()
-            .statusCode(OK).log().all().body("labels", iterableWithSize(1)).when()
+    given().pathParam("categoryId", categoryId).queryParam("tags-or", json.toJSONString()).expect()
+            .statusCode(OK).body("labels", iterableWithSize(1)).when()
             .get(host("/categories/{categoryId}/labels"));
-    given().log().all().pathParam("videoId", videoId).pathParam("categoryId", categoryId).expect().statusCode(OK).log()
-            .all().body("labels", iterableWithSize(2)).when()
+    given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).expect().statusCode(OK)
+            .body("labels", iterableWithSize(2)).when()
             .get(host("/videos/{videoId}/categories/{categoryId}/labels"));
-    given().log().all().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
-            .queryParam("tags-and", json.toJSONString()).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
+            .queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
             .body("labels", iterableWithSize(1)).when().get(host("/videos/{videoId}/categories/{categoryId}/labels"));
-    given().log().all().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
-            .queryParam("tags-or", json.toJSONString()).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
+            .queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
             .body("labels", iterableWithSize(1)).when().get(host("/videos/{videoId}/categories/{categoryId}/labels"));
     // delete
     given().pathParam("categoryId", categoryId).pathParam("labelId", 12345).expect().statusCode(NOT_FOUND).when()
@@ -670,17 +669,17 @@ public class ExtendedAnnotationsRestServiceTest {
             .formParam("text", "Second comment").expect().statusCode(CREATED).when()
             .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments"));
 
-    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .pathParam("annotationId", annotationId).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).expect().statusCode(OK)
             .body("comments", iterableWithSize(2)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments"));
-    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId)
             .pathParam("annotationId", annotationId).queryParam("tags-and", json.toJSONString()).expect()
-            .statusCode(OK).log().all().body("comments", iterableWithSize(1)).when()
+            .statusCode(OK).body("comments", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments"));
-    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId)
             .pathParam("annotationId", annotationId).queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
-            .log().all().body("comments", iterableWithSize(1)).when()
+            .body("comments", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments"));
 
     // delete
@@ -725,7 +724,7 @@ public class ExtendedAnnotationsRestServiceTest {
     // post
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("text", "cool video")
             .formParam("start", 40).formParam("settings", "{\"type\":\"test\"}").formParam("label_id", labelId)
-            .formParam("scale_value_id", scaleValueId).expect().log().all().statusCode(CREATED)
+            .formParam("scale_value_id", scaleValueId).expect().statusCode(CREATED)
             .body(containsString("label")).body(containsString("scalevalue")).body(containsString("scale"))
             .body(containsString("category")).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
   }
@@ -818,8 +817,8 @@ public class ExtendedAnnotationsRestServiceTest {
             .statusCode(CREATED).when()
             .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments")));
 
-    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .pathParam("annotationId", annotationId).expect().statusCode(OK).log().all()
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).expect().statusCode(OK)
             .body("comments", iterableWithSize(2)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments"));
 
@@ -832,13 +831,13 @@ public class ExtendedAnnotationsRestServiceTest {
             .statusCode(CREATED).when()
             .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
 
-    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .pathParam("annotationId", annotationId).pathParam("commentId", commentId).expect().statusCode(OK).log()
-            .all().body("comments", iterableWithSize(2)).when()
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).pathParam("commentId", commentId).expect().statusCode(OK)
+            .body("comments", iterableWithSize(2)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
-    given().log().all().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .pathParam("annotationId", annotationId).pathParam("commentId", commentId2).expect().statusCode(OK).log()
-            .all().body("comments", iterableWithSize(1)).when()
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .pathParam("annotationId", annotationId).pathParam("commentId", commentId2).expect().statusCode(OK)
+            .body("comments", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
 
     // delete
