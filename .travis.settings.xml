@@ -5,9 +5,7 @@
 >
   <servers>
     <server>
-      <id>github-opencast-annotation-tool</id>
-      <!-- NOTE: The username is ignored, but it can't be empty or absent! -->
-      <username>opencast</username>
+      <id>github-pages-opencast-annotation-tool</id>
       <password>${env.GITHUB_DEPLOY_TOKEN}</password>
     </server>
   </servers>
