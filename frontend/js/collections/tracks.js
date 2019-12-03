@@ -20,9 +20,10 @@
  */
 define(["underscore",
         "models/track",
-        "backbone"],
+        "backbone",
+        "access"],
 
-    function (_, Track, Backbone) {
+    function (_, Track, Backbone, ACCESS) {
 
         "use strict";
 
@@ -37,7 +38,7 @@ define(["underscore",
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-tracks.Tracks#initialize
+             * @alias module:collections-tracks.Tracks#model
              */
             model: Track,
 
@@ -46,9 +47,6 @@ define(["underscore",
              * @alias module:collections-tracks.Tracks#initialize
              */
             initialize: function (models, options) {
-                _.bindAll(this, "showTracks",
-                                "getTracksForLocalStorage");
-
                 this.video = options.video;
 
                 this.on("add", function (track) {
@@ -56,42 +54,36 @@ define(["underscore",
                     this.showTracks([track], true);
 
                     // Select the new track
-                    annotationTool.selectedTrack = track;
-                });
+                    annotationTool.selectTrack(track);
+                }, this);
             },
 
             /**
              * Parse the given data
              * @alias module:collections-tracks.Tracks#parse
-             * @param  {object} data Object or array containing the data to parse.
-             * @return {object}      the part of the given data related to the tracks
+             * @param {object} data object or array containing the data to parse.
+             * @return {object} the part of the given data related to the tracks
              */
             parse: function (data) {
                 if (data.tracks && _.isArray(data.tracks)) {
-                    return data.tracks;
-                } else if (_.isArray(data)) {
-                    return data;
-                } else {
-                    return null;
+                    data = data.tracks;
                 }
-            },
-
-            /**
-             * Get the tracks created by the current user
-             * @alias module:collections-tracks.Tracks#getMine
-             * @return {array} Array containing the list of tracks created by the current user
-             */
-            getMine: function () {
-                return this.where({isMine: true});
-            },
-
-            /**
-             * Simulate access to limited track for localStorage prototype.
-             * @alias module:collections-tracks.Tracks#getVisibleTracks
-             * @return {array} Array containing the list of the visible tracks
-             */
-            getTracksForLocalStorage: function () {
-                return this.remove(this.where({isMine: false, access: 0}));
+                return _.filter(data, function (track) {
+                    if (track.access === ACCESS.PUBLIC) {
+                        return true;
+                    }
+                    if (track.created_by === annotationTool.user.id) {
+                        return true;
+                    }
+                    if ((
+                        track.access === ACCESS.SHARED_WITH_ADMIN
+                    ) && (
+                        annotationTool.user.isAdmin()
+                    )) {
+                        return true;
+                    }
+                    return false;
+                });
             },
 
             /**
@@ -106,8 +98,8 @@ define(["underscore",
 
             /**
              * Displays the given tracks and hide the current displayed tracks.
-             * @param  {array} tracks an array containing the tracks to display
-             * @param  {boolean} keepPrevious should previously visible tracks stay visible?
+             * @param {array} tracks an array containing the tracks to display
+             * @param {boolean} keepPrevious should previously visible tracks stay visible?
              */
             showTracks: function (tracks, keepPrevious) {
                 var selectedTrack = annotationTool.selectedTrack;
@@ -142,7 +134,7 @@ define(["underscore",
             /**
              * Get the url for this collection
              * @alias module:collections-tracks.Tracks#url
-             * @return {String} The url of this collection
+             * @return {String} the url of this collection
              */
             url: function () {
                 return _.result(this.video, "url") + "/tracks";

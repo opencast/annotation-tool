@@ -222,7 +222,7 @@ define(["underscore",
              */
             remove: function () {
                 this.replyContainer.remove();
-                Backbone.View.prototype.remove.call(this);
+                Backbone.View.prototype.remove.apply(this, arguments);
             }
         });
         return CommentView;

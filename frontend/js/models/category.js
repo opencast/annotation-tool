@@ -139,7 +139,7 @@ define(["underscore",
 
                 if (attr.labels) {
                     attr.labels.each(function (value) {
-                        var parseValue = value.parse({category: this.toJSON()});
+                        var parseValue = value.parse({ category: this.toJSON() });
 
                         if (parseValue.category) {
                             parseValue = parseValue.category;

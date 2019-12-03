@@ -86,6 +86,13 @@ define(["roles",
                 }
 
                 return undefined;
+            },
+
+            /**
+             * @return {boolean} Whether or not this user is an admin
+             */
+            isAdmin: function () {
+                return this.get("role") === ROLES.ADMINISTRATOR;
             }
         });
         return User;

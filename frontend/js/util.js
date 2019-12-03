@@ -21,11 +21,37 @@ define([
     moment
 ) { "use strict";
 
+function zeroPad(n) {
+    if (n < 10) {
+        return "0" + n;
+    } else {
+        return n;
+    }
+}
+
 /**
  * A module containing helper functions needed in many different places
  * @exports util
  */
 var util = {
+    /**
+     * Some side effect on a thing.
+     * The return value of this function is not used.
+     * @callback effect
+     * @param o The object to effect
+     */
+
+    /**
+     * Function to execute some side effect on a thing in the context of an expression.
+     * @param o The object to effect
+     * @param {effect} f The side effect to execute
+     * @return <code>o</code>
+     */
+    inspect: function (o, f) {
+        f(o);
+        return o;
+    },
+
     /**
      * Check whether two closed intervals overlap.
      * Nothe that the <code>start</code> and <code>end</code> properties of the given objects
@@ -39,6 +65,41 @@ var util = {
     */
     overlaps: function (interval1, interval2) {
         return interval1.start <= interval2.end && interval2.start <= interval1.end;
+    },
+
+    /**
+     * @param {number} n
+     * @return {Date} The date <code>n</code> seconds after the epoch
+     */
+    dateFromSeconds: function (n) {
+        return new Date(n * 1000);
+    },
+
+    /**
+     * @param {Date} d
+     * @return {number} The number of seconds between <code>d</code> and the epoch
+     */
+    secondsFromDate: function (d) {
+        return d.getTime() / 1000;
+    },
+
+    /**
+     * @param time {number} A point in time,
+     *     defined by the number of seconds between it and the epoch.
+     * @return {string} A string representing <code>time</code>
+     *     in the format <code>h:mm:ss</code>,
+     *     where <code>h</code>, <code>mm</code> and <code>ss</code>
+     *     are the hours, minutes, and seconds, respectively,
+     *     since the epoch.
+     *     The minutes and seconds are zero-padded to two places.
+     */
+    formatTime: function (time) {
+        time = Math.floor(time);
+        var seconds = time % 60;
+        time = Math.floor(time / 60);
+        var minutes = time % 60;
+        var hours = Math.floor(time / 60);
+        return hours + ":" + zeroPad(minutes) + ":" + zeroPad(seconds);
     },
 
     /**

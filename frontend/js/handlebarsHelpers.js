@@ -23,34 +23,21 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
     });
 
     /**
-     * Handlebars helper to secure the text field
+     * Handlebars helper to display a point in time on the timeline
      * @alias module:Handlebars#time
-     * @param  {double} start The start time
-     * @return {string}      The formated time
+     * @param {number} start The time to format in seconds
+     * @return {string} The formated time
      */
-    Handlebars.registerHelper("time", function (start) {
-        return annotationTool.getWellFormatedTime(start);
-    });
-
-    /**
-     * Handlebars helper to display the annotation duration
-     * @alias module:Handlebars#end
-     * @param  {double} start The start time
-     * @param  {double} duration The annotation duration
-     * @return {string}      The formated time
-     */
-    Handlebars.registerHelper("end", function (start, duration) {
-        return annotationTool.getWellFormatedTime(start + (duration || 0.0));
-    });
+    Handlebars.registerHelper("time", util.formatTime);
 
     /**
      * Handlebars helper to get user nickname
      * @alias module:Handlebars#nickname
-     * @param  {User | integer} user The user object or its id
+     * @param {User | number} user The user object or its id
      * @return {string} The user nickname
      */
     Handlebars.registerHelper("nickname", function (user) {
-        if (!_.isObject(user)) {
+        if (_.isNumber(user)) {
             return annotationTool.users.get(user).get("nickname");
         } else {
             return user.nickname;
@@ -61,11 +48,9 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
      * Handlebars helper to format a date to the configured format
      * @alias module:Handlebars#formatDate
      * @param  {date} date The date to format
-     * @return {string}      The formated date
+     * @return {string} The formated date
      */
-    Handlebars.registerHelper("formatDate", function (date) {
-        return util.formatDate(date);
-    });
+    Handlebars.registerHelper("formatDate", util.formatDate);
 
     /**
      * Translate a string using `i18next`
@@ -86,15 +71,6 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
         return new Handlebars.SafeString(
             _.escape(text).replace(/\n/g, "<br/>")
         );
-    });
-
-    /**
-     * Concatenate strings and possibly variables.
-     * Mainly used for nesting helpers.
-     * @alias module:Handlebars#concat
-     */
-    Handlebars.registerHelper("concat", function () {
-        return Array.prototype.slice.call(arguments, 0, -1).join('');
     });
 
     return Handlebars;

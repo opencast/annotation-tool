@@ -396,7 +396,7 @@ define(["jquery",
                     labelView.remove();
                 });
                 $(window).off(".annotate-category");
-                Backbone.View.prototype.remove.call(this);
+                Backbone.View.prototype.remove.apply(this, arguments);
             }
         });
 

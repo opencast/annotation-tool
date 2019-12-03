@@ -42,15 +42,15 @@ define(["jquery",
         var annotationTool = window.annotationTool = _.extend({}, Backbone.Events, {
 
             EVENTS: {
-                ANNOTATION_SELECTION : "at:annotation-selection",
-                ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
-                MODELS_INITIALIZED   : "at:models-initialized",
-                TIMEUPDATE           : "at:timeupdate",
-                USER_LOGGED          : "at:logged",
-                VIDEO_LOADED         : "at:video-loaded"
+                ANNOTATION_SELECTION: "at:annotation-selection",
+                ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus",
+                MODELS_INITIALIZED: "at:models-initialized",
+                TIMEUPDATE: "at:timeupdate",
+                USER_LOGGED: "at:logged",
+                VIDEO_LOADED: "at:video-loaded"
             },
 
-            timeupdateIntervals: [],
+            timeUpdateIntervals: [],
 
             views: {},
 
@@ -124,14 +124,12 @@ define(["jquery",
                 _.bindAll(this,
                           "updateSelectionOnTimeUpdate",
                           "createAnnotation",
-                          "deleteAnnotation",
                           "getAnnotation",
                           "getSelection",
                           "getTrack",
                           "getTracks",
                           "getSelectedTrack",
                           "fetchData",
-                          "importTracks",
                           "importCategories",
                           "hasSelection",
                           "onDestroyRemoveSelection",
@@ -171,43 +169,6 @@ define(["jquery",
                 this.once(this.EVENTS.MODELS_INITIALIZED, function () {
                     this.views.main = new MainView();
                 }, this);
-
-                var importTracks = function () {
-
-                    var updateTracksOrder = _.bind(function (tracks) {
-                        this.tracksOrder = _.chain(tracks.getVisibleTracks())
-                            .map("id")
-                            .sortBy(function (trackId) {
-                                return _.indexOf(this.tracksOrder, trackId);
-                            }, this).value();
-                    }, this);
-                    this.listenTo(this.video, "change:tracks", updateTracksOrder);
-                    updateTracksOrder(this.getTracks());
-
-                    var trackImported = false;
-
-                    if (!_.isUndefined(this.tracksToImport)) {
-                        if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
-                            this.importTracks(this.tracksToImport());
-                            trackImported = true;
-                        } else {
-                            $(this.playerAdapter).one(
-                                PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,
-                                _.bind(function () {
-                                    if (trackImported) {
-                                        return;
-                                    }
-
-                                    this.importTracks(this.tracksToImport());
-                                    trackImported = true;
-                                }, this)
-                            );
-                        }
-                    }
-                };
-                importTracks = _.after(2, importTracks, this);
-                this.once(this.EVENTS.MODELS_INITIALIZED, importTracks);
-                this.once(this.EVENTS.VIDEO_LOADED, importTracks);
 
                 this.once(this.EVENTS.VIDEO_LOADED, function () {
 
@@ -274,69 +235,40 @@ define(["jquery",
             },
 
             /**
-             * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
-             * @alias   annotationTool.getWellFormatedTime
-             * @param {number} time the time in seconds
-             * @param {boolean} [noRounted] Define if the number should be rounded or if the decimal should be simply removed. Default is rounding (false).
-             */
-            getWellFormatedTime: function (time, noRounding) {
-                var twoDigit = function (number) {
-                    return (number < 10 ? "0" : "") + number;
-                },
-                    base    = (_.isUndefined(noRounding) || !noRounding) ? Math.round(time) : Math.floor(time),
-                    seconds = base % 60,
-                    minutes = ((base - seconds) / 60) % 60,
-                    hours   = (base - seconds - minutes * 60) / 3600;
-
-                return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
-            },
-
-            /**
              * Listen and retrigger timeupdate event from player adapter events with added intervals
              * @alias   annotationTool.onTimeUpdate
              */
             onTimeUpdate: function () {
-                var currentPlayerTime = this.playerAdapter.getCurrentTime(),
-                    currentTime = new Date().getTime(),
-                    value,
-                    i;
+                var currentPlayerTime = this.playerAdapter.getCurrentTime();
+                var currentTime = Date.now();
+                var shouldUpdateAll = (
+                    _.isUndefined(this.lastTimeUpdate)
+                ) || (
+                    this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING
+                ) || (
+                    currentTime - this.lastTimeUpdate > 1000
+                );
 
-                // Ensure that this is an timeupdate due to normal playback, otherwise trigger timeupdate event for all intervals
-                if ((_.isUndefined(this.lastTimeUpdate)) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) ||
-                    (currentTime - this.lastTimeUpdate > 1000)) {
-
-                    // Ensure that the timestamp from the last update is set
-                    if (_.isUndefined(this.lastTimeUpdate)) {
-                        this.lastTimeUpdate = 1;
+                _.each(this.timeUpdateIntervals, function (interval) {
+                    if (shouldUpdateAll || (
+                        (currentTime - interval.lastUpdate) > interval.interval
+                    )) {
+                        this.trigger(
+                            this.EVENTS.TIMEUPDATE + ":" + interval.interval,
+                            currentPlayerTime
+                        );
+                        interval.lastUpdate = currentTime;
                     }
+                }, this);
 
-                    for (i = 0; i < this.timeupdateIntervals.length; i++) {
-                        value = this.timeupdateIntervals[i];
-                        this.trigger(this.EVENTS.TIMEUPDATE + ":" + value.interval, currentPlayerTime);
-                        this.timeupdateIntervals[i].lastUpdate = currentTime;
-                    }
-
-                } else {
-                    // Trigger all the current events
-                    this.trigger(this.EVENTS.TIMEUPDATE + ":all", currentPlayerTime);
-
-                    for (i = 0; i < this.timeupdateIntervals.length; i++) {
-                        value = this.timeupdateIntervals[i];
-                        if ((currentTime - value.lastUpdate) > parseInt(value.interval, 10)) {
-                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + value.interval, currentPlayerTime);
-                            this.timeupdateIntervals[i].lastUpdate = currentTime;
-                        }
-                    }
-                }
-
-                this.lastTimeUpdate = new Date().getTime();
+                this.lastTimeUpdate = currentTime;
             },
 
             /**
              * Add a timeupdate listener with the given interval
              * @alias   annotationTool.addTimeupdateListener
              * @param {Object} callback the listener callback
-             * @param {Number} (interval) the interval between each timeupdate event
+             * @param {Number} interval the interval between each timeupdate event
              */
             addTimeupdateListener: function (callback, interval) {
                 var timeupdateEvent = this.EVENTS.TIMEUPDATE;
@@ -346,11 +278,11 @@ define(["jquery",
 
                     // Check if the interval needs to be added to list
                     // TODO Use `findWhere` once that is available
-                    if (!_.find(this.timeupdateIntervals, function (value) {
+                    if (!_.find(this.timeUpdateIntervals, function (value) {
                         return value.interval === interval;
                     }, this)) {
                         // Add interval to list
-                        this.timeupdateIntervals.push({
+                        this.timeUpdateIntervals.push({
                             interval: interval,
                             lastUpdate: 0
                         });
@@ -601,27 +533,15 @@ define(["jquery",
              * @return {Object} The created annotation
              */
             createAnnotation: function (params) {
-                if (!params.created_by && this.user) {
-                    params.created_by = this.user.id;
-                }
-                if (!params.time) {
-                    var time = Math.round(this.playerAdapter.getCurrentTime());
-                    if (!_.isNumber(time) || time < 0) {
-                        return undefined;
-                    }
-                    params.start = time;
-                }
-
-                var options = {};
-                if (!this.localStorage) {
-                    options.wait = true;
-                }
-
-                // The loop controller can constrain annotations to the current loop using this.
-                // @see module:views-loop.Loop#toggleConstrainAnnotations
-                _.extend(params, this.annotationConstraints);
-
-                var annotation = this.selectedTrack.get("annotations").create(params, options);
+                var annotation = this.selectedTrack.get("annotations")
+                    .create(_.extend(
+                        params,
+                        { start: Math.round(this.playerAdapter.getCurrentTime()) },
+                        // The loop controller can constrain annotations
+                        // to the current loop using this.
+                        // @see module:views-loop.Loop#toggleConstrainAnnotations
+                        this.annotationConstraints
+                    ), { wait: true });
                 this.activeAnnotation = annotation;
                 return annotation;
             },
@@ -753,25 +673,6 @@ define(["jquery",
             ////////////////
 
             /**
-             * Import the given tracks in the tool
-             * @alias annotationTool.importTracks
-             * @param {PlainObject} tracks Object containing the tracks in the tool
-             */
-            importTracks: function (tracks) {
-                _.each(tracks, function (track) {
-                    this.setLoadingProgress(
-                        this.loadingPercent,
-                        i18next.t("startup.importing track", { track: track.name })
-                    );
-                    if (_.isUndefined(this.getTrack(track.id))) {
-                        this.video.get("tracks").create(track);
-                    } else {
-                        console.info("Can not import track %s: A track with this ID already exist.", track.id);
-                    }
-                }, this);
-            },
-
-            /**
              * Import the given categories in the tool
              * @alias annotationTool.importCategories
              * @param {PlainObject} imported Object containing the .categories and .scales to insert in the tool
@@ -823,37 +724,6 @@ define(["jquery",
                 });
             },
 
-            //////////////
-            // DELETERs //
-            //////////////
-
-            /**
-             * Delete the annotation with the given id with the track with the given track id
-             * @alias annotationTool.deleteAnnotation
-             * @param {Integer} annotationId The id of the annotation to delete
-             * @param {Integer} trackId Id of the track containing the annotation
-             */
-            deleteAnnotation: function (annotationId, trackId) {
-                var annotation,
-                    self = this;
-
-                if (typeof trackId === "undefined") {
-                    this.video.get("tracks").each(function (track) {
-                        if (track.get("annotations").get(annotationId)) {
-                            trackId = track.get("id");
-                        }
-                    });
-                }
-
-                annotation = self.video.getAnnotation(annotationId, trackId);
-
-                if (annotation) {
-                    self.deleteOperation.start(annotation, self.deleteOperation.targetTypes.ANNOTATION);
-                } else {
-                    console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
-                }
-            },
-
             /**
              * Get all the annotations for the current user
              * @alias annotationTool.fetchData
@@ -866,7 +736,7 @@ define(["jquery",
                     concludeInitialization = _.bind(function () {
 
                         // At least one private track should exist, we select the first one
-                        var selectedTrack = tracks.getMine()[0];
+                        var selectedTrack = tracks.where({ isMine: true })[0];
 
                         if (!selectedTrack.get("id")) {
                             selectedTrack.on("ready", concludeInitialization, this);
@@ -885,11 +755,7 @@ define(["jquery",
 
                         tracks = this.video.get("tracks");
 
-                        if (this.localStorage) {
-                            tracks = tracks.getTracksForLocalStorage();
-                        }
-
-                        if (tracks.getMine().length === 0) {
+                        if (!tracks.where({ isMine: true }).length) {
                             tracks.create({
                                 name: i18next.t("default track.name", {
                                     nickname: this.user.get("nickname")

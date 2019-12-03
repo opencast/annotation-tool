@@ -246,7 +246,7 @@ define(["underscore",
                 _.each(this.commentViews, function (commentView) {
                     commentView.remove();
                 });
-                Backbone.View.prototype.remove.call(this);
+                Backbone.View.prototype.remove.apply(this, arguments);
             }
         }, {
             /**

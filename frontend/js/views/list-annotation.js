@@ -85,7 +85,7 @@ define(["jquery",
 
                 this.model = attr.annotation;
 
-                this.id = this.model.get("id");
+                this.$el.attr("id", this.model.id);
 
                 this.commentContainer = new CommentsContainer({
                     collection: this.model.get("comments")
@@ -389,10 +389,9 @@ define(["jquery",
 
                 modelJSON.numberOfComments = this.model.get("comments").countCommentsAndReplies();
                 modelJSON.state = this.getState().id;
+                modelJSON.end = modelJSON.start + modelJSON.duration;
 
-                this.$el.html($(this.currentState.render(modelJSON)));
-
-                this.$el.attr("id", this.id);
+                this.$el.html(this.currentState.render(modelJSON));
 
                 if (!_.isUndefined(modelJSON.label) && !_.isNull(modelJSON.label)) {
                     title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
@@ -581,7 +580,7 @@ define(["jquery",
              */
             remove: function () {
                 this.commentContainer.remove();
-                Backbone.View.prototype.remove.call(this);
+                Backbone.View.prototype.remove.apply(this, arguments);
             }
         }, {
 

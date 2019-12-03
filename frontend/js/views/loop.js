@@ -18,6 +18,7 @@
  * @module views-loop
  */
 define([
+    "util",
     "jquery",
     "i18next",
     "player-adapter",
@@ -27,6 +28,7 @@ define([
     "slider",
     "handlebarsHelpers"
 ], function (
+    util,
     $,
     i18next,
     PlayerAdapter,
@@ -164,8 +166,8 @@ var LoopView = Backbone.View.extend({
         function addTimelineItem(loop, isCurrent) {
             var boundaries = loops[loop];
             timeline.addItem("loop-" + loop, {
-                start: timeline.getFormatedDate(boundaries.start),
-                end: timeline.getFormatedDate(boundaries.end),
+                start: util.dateFromSeconds(boundaries.start),
+                end: util.dateFromSeconds(boundaries.end),
                 group: "<div class=\"loop-group\">Loops",
                 content: timelineItemTemplate({
                     current: isCurrent,
