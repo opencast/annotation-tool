@@ -167,6 +167,15 @@ define(["jquery",
                 }, this);
 
                 this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                    this.listenTo(
+                        this.video.get("tracks"),
+                        "add remove reset visibility",
+                        function () {
+                            this.orderTracks(this.tracksOrder);
+                        }
+                    );
+                    this.orderTracks(this.tracksOrder);
+
                     this.views.main = new MainView();
                 }, this);
 
@@ -467,8 +476,15 @@ define(["jquery",
              * @param {Array} order The new track order
              */
             orderTracks: function (order) {
-                this.tracksOrder = order;
-                this.trigger("order", order);
+                //   Make sure every visible track is represented in the order,
+                // and only those, with non-explicitly ordered tracks in front.
+                this.tracksOrder = _.chain(this.getTracks().getVisibleTracks())
+                    .sortBy(function (track) {
+                        return order.indexOf(track.id);
+                    }, this)
+                    .map("id")
+                    .value();
+                this.trigger("order", this.tracksOrder);
             },
 
             /**
@@ -477,7 +493,7 @@ define(["jquery",
              */
             toggleFreeTextAnnotations: function () {
                 this.freeTextVisible = !this.freeTextVisible;
-                this.trigger("togglefreetext");
+                this.trigger("togglefreetext", this.freeTextVisible);
             },
 
             /**
@@ -595,8 +611,11 @@ define(["jquery",
              * @param  {Object} track the track to select
              */
             selectTrack: function (track) {
+                if (track === this.selectedTrack) return;
+                var previousTrack = this.selectedTrack;
                 this.selectedTrack = track;
-                this.video.get("tracks").trigger("select", track);
+                this.video.get("tracks")
+                    .trigger("select", track, previousTrack);
             },
 
             /**
@@ -923,6 +942,9 @@ define(["jquery",
                     return target.get("name");
                 },
                 destroy: function (track, callback) {
+                    if (track === annotationTool.selectedTrack) {
+                        annotationTool.selectTrack(null);
+                    }
                     _.invoke(
                         _.clone(track.get("annotations").models),
                         "destroy",

@@ -187,6 +187,41 @@ define(["underscore",
             },
 
             /**
+             * @alias module:models-video.Video#getAnnotations
+             * @return {Annotation[]} This video's annotations
+             *     across all tracks, potentially filtered
+             *     by a given category.
+             * @param {(Category | null)?} category
+             *     A category to filter the returned annotations by.
+             *     <code>null</code> means free text annotations.
+             *     <code>undefined</code> means all annotations.
+             */
+            getAnnotations: function (category) {
+                var result = [];
+                var handleAnnotation;
+                if (_.isUndefined(category)) {
+                    handleAnnotation = _.bind(Array.prototype.push, result);
+                } else if (category) {
+                    handleAnnotation = function (annotation) {
+                        var label = annotation.get("label");
+                        if (label && label.category.id === category.id) {
+                            result.push(annotation);
+                        }
+                    };
+                } else {
+                    handleAnnotation = function (annotation) {
+                        if (!annotation.get("label")) {
+                            result.push(annotation);
+                        }
+                    };
+                }
+                this.get("tracks").each(function (track) {
+                    track.get("annotations").each(handleAnnotation);
+                });
+                return result;
+            },
+
+            /**
              * Get the annotation with the given id on the given track
              * @alias module:models-video.Video#getAnnotation
              * @param  {integer} annotationId The id from the wanted annotation

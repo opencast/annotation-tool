@@ -18,7 +18,11 @@
  * A module containing the ACCESS values enum.
  * @module ACCESS
  */
-define([], function () {
+define([
+    "underscore"
+], function (
+    _
+) {
 
     "use strict";
 
@@ -31,6 +35,27 @@ define([], function () {
     return {
         PRIVATE: 0,
         PUBLIC: 1,
-        SHARED_WITH_ADMIN: 2
+        SHARED_WITH_ADMIN: 2,
+
+        /**
+         * @param {string} specifier an access specifier
+         *     <code>kebab-case</code>
+         * @return {number} the numerical constant
+         *     representing that access specifier
+         */
+        parse: function (specifier) {
+            return this[specifier.replace(/-/g, "_").toUpperCase()];
+        },
+
+        /**
+         * @param {number} access a numerical access identifier
+         * @return {string} a string representation of that identifier
+         *     for use in the UI
+         */
+        render: function (access) {
+            return _.findKey(this, function (value) {
+                return value === access;
+            }).replace(/_/g, "-").toLowerCase();
+        }
     };
 });

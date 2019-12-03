@@ -19,22 +19,22 @@
  */
 define([
     "util",
+    "underscore",
     "jquery",
     "i18next",
     "player-adapter",
     "backbone",
     "templates/loop-control",
-    "templates/loop-timeline-item",
     "slider",
     "handlebarsHelpers"
 ], function (
     util,
+    _,
     $,
     i18next,
     PlayerAdapter,
     Backbone,
-    loopTemplate,
-    timelineItemTemplate
+    loopTemplate
 ) { "use strict";
 
 var DEFAULT_LOOP_COUNT = 10;
@@ -113,7 +113,6 @@ var LoopView = Backbone.View.extend({
 
             cleanupLoops();
             setupLoops();
-            timeline.redraw();
         }
 
         function calcNumberOfLoops() {
@@ -121,11 +120,7 @@ var LoopView = Backbone.View.extend({
         }
 
         function cleanupLoops() {
-            // We assume that the number of loops has not changed since generating the timeline items
-            // because we of course would have called `cleanupLoops` otherwise!
-            for (var i = 0; i < numberOfLoops; ++i) {
-                timeline.removeItem("loop-" + i);
-            }
+            timeline.items.remove(_.map(loops, "id"));
         }
 
         var loops;
@@ -135,13 +130,19 @@ var LoopView = Backbone.View.extend({
             var end = loopLength;
             for (var loop = 0; loop < numberOfLoops; ++loop) {
                 loops[loop] = {
-                    start: start,
-                    end: Math.min(end, duration)
+                    id: "loop-" + loop,
+                    start: util.dateFromSeconds(start),
+                    end: util.dateFromSeconds(Math.min(end, duration)),
+                    group: "loops",
+                    type: "range",
+                    selectable: false,
+                    content: "",
+                    className: "loop"
                 };
                 start += loopLength;
                 end += loopLength;
-                addTimelineItem(loop, false);
             }
+            timeline.items.add(loops);
             syncCurrentLoop();
         }
 
@@ -156,33 +157,22 @@ var LoopView = Backbone.View.extend({
                 nextButton.prop("disabled", true);
             }
 
-            addTimelineItem(currentLoop, true);
+            timeline.items.update({
+                id: "loop-" + currentLoop,
+                className: "loop current"
+            });
         }
 
         function findCurrentLoop() {
             return Math.floor(playerAdapter.getCurrentTime() / loopLength);
         }
 
-        function addTimelineItem(loop, isCurrent) {
-            var boundaries = loops[loop];
-            timeline.addItem("loop-" + loop, {
-                start: util.dateFromSeconds(boundaries.start),
-                end: util.dateFromSeconds(boundaries.end),
-                group: "<div class=\"loop-group\">Loops",
-                content: timelineItemTemplate({
-                    current: isCurrent,
-                    index: loop
-                }),
-                editable: false
-            });
-        }
-
         var $playerAdapter = $(playerAdapter);
         $playerAdapter.on(PlayerAdapter.EVENTS.TIMEUPDATE + ".loop", function () {
             if (!enabled) return;
             var boundaries = loops[currentLoop];
-            if (playerAdapter.getCurrentTime() >= boundaries.end) {
-                playerAdapter.setCurrentTime(boundaries.start);
+            if (playerAdapter.getCurrentTime() >= util.secondsFromDate(boundaries.end)) {
+                playerAdapter.setCurrentTime(util.secondsFromDate(boundaries.start));
             }
         });
         $playerAdapter.on(PlayerAdapter.EVENTS.ENDED + ".loop", function () {
@@ -195,9 +185,15 @@ var LoopView = Backbone.View.extend({
             resetCurrentLoop();
         });
 
-        timeline.$el.on("click.loop", ".loop", function (event) {
-            var loop = event.target.dataset.loop;
-            jumpToLoop(loop);
+        timeline.timeline.on("click", function (properties) {
+            if ((
+                properties.what !== "item"
+            ) || (
+                properties.group !== "loops"
+            )) return;
+            playerAdapter.setCurrentTime(util.secondsFromDate(
+                timeline.items.get(properties.item).start
+            ));
         });
 
         this.events = {
@@ -236,33 +232,43 @@ var LoopView = Backbone.View.extend({
         function toggle(on) {
             enabled = on;
             window.toggleClass("disabled", !on);
+            timeline.groups.update({
+                id: "loops",
+                content: "Loops",
+                className: "loop-group",
+                order: -1,
+                visible: on
+            });
             if (on) {
                 setupLoops();
             } else {
                 cleanupLoops();
             }
-            timeline.redraw();
         }
 
         function jumpToLoop(loop) {
-            playerAdapter.setCurrentTime(loops[loop].start);
-            resetCurrentLoop();
+            playerAdapter.setCurrentTime(util.secondsFromDate(
+                loops[loop].start
+            ));
         }
 
         function resetCurrentLoop() {
-            addTimelineItem(currentLoop, false);
+            timeline.items.update({
+                id: "loop-" + currentLoop,
+                className: "loop"
+            });
             syncCurrentLoop();
             if (annotationTool.annotationConstraints) {
                 annotationTool.annotationConstraints = currentLoopConstraints();
             }
-            timeline.redraw();
         }
 
         function currentLoopConstraints() {
             var boundaries = loops[currentLoop];
+            var start = util.secondsFromDate(boundaries.start);
             return {
-                start: boundaries.start,
-                duration: boundaries.end - boundaries.start
+                start: start,
+                duration: util.secondsFromDate(boundaries.end) - start
             };
         }
 

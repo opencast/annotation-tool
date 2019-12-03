@@ -1,0 +1,92 @@
+#timeline {
+    background-color: white;
+}
+
+.vis-custom-time {
+    background-color: red;
+    z-index: 3;
+}
+
+#timeline-navigation {
+    flex-grow: 0;
+    display: flex;
+    background-color: @grayLight;
+    border-color: @grayDark;
+    border-style: solid;
+    border-width: 1px 0;
+    padding: 0;
+
+    .btn-group {
+        margin: 0 -@baseBorderRadius;
+    }
+
+    .btn {
+        border-top: none;
+        border-bottom: none;
+    }
+
+    :nth-child(1) {
+        order: 2;
+    }
+
+    &::after {
+        content: '';
+        order: 1;
+        flex-grow: 1;
+    }
+}
+
+.vis-item {
+    border-color: rgba(0, 0, 0, 0.25);
+    background-color: @grayLight;
+    height: 24px;
+
+    &.selection {
+        z-index: 0;
+        background-color: @grayLight;
+    }
+
+    &.vis-selected {
+        border-color: @gray;
+        background-color: @grayLight;
+        box-shadow: inset 0px 0px 2px 1px red;
+    }
+
+    &.vis-range .vis-item-content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: absolute;
+        right: 0;
+    }
+}
+
+.vis-custom-time .vis-custom-time-marker {
+    background-color: transparent;
+    padding: 0;
+    width: 0;
+    height: 0;
+    margin-left: -4px;
+    border-top: 10px solid red;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+}
+
+.vis-label {
+    button {
+        .link-button();
+    }
+
+    &.selected {
+        background-color: @grayLight;
+    }
+}
+
+.vis-group.selected {
+    background-color: @grayLight;
+}
+
+div.visibility button {
+    .link-button();
+    width: 23px;
+    text-align: center;
+}

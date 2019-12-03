@@ -271,6 +271,7 @@
       "long": "No track corresponding with the current filter(s)."
     },
     "track management": "$t(track management.action)",
+    "navigation": "Navigation",
     "hidden items": "One hidden item",
     "hidden items_plural": "{{count}} hidden items",
     "private only": {

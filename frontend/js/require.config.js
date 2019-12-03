@@ -6,6 +6,7 @@ require.config({
         "annotation-tool-configuration": "annotation-tool-configuration",
         "backbone": "libs/backbone/backbone-0.9.9",
         "bootstrap": "libs/bootstrap/bootstrap.min",
+        "chroma": "libs/chroma.min",
         "domReady": "libs/require/domReady",
         "handlebars": "libs/handlebars",
         "handlebarsHelpers": "handlebarsHelpers",
