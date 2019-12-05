@@ -49,7 +49,8 @@ define([
              * @static
              */
             defaults: {
-                access: ACCESS.PRIVATE
+                access: ACCESS.PRIVATE,
+                visible: false
             },
 
             /**
@@ -58,27 +59,11 @@ define([
              * @param {Object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
-                _.bindAll(this,
-                          "getAnnotation",
-                          "fetchAnnotations");
-
-                if (!attr || _.isUndefined(attr.name)) {
-                    throw "'name' attribute is required";
-                }
+                _.bindAll(this, "fetchAnnotations");
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                // the tack is not visible at initialisation
-                this.set({
-                    visible: false,
-                    annotationsLoaded: false
-                });
-
-                if (attr.annotations && _.isArray(attr.annotations)) {
-                    this.set({ annotations: new Annotations(attr.annotations, { track: this }) });
-                } else {
-                    this.set({ annotations: new Annotations([], { track: this }) });
-                }
+                this.annotations = new Annotations(null, { track: this });
             },
 
             /**
@@ -107,36 +92,20 @@ define([
              * Method to fetch the annotations
              * @alias module:models-track.Track#fetchAnnotations
              */
-            fetchAnnotations: function (optSuccess) {
-                var self = this,
-                    annotations = this.get("annotations"),
-                    success = function () {
-                        if (!_.isUndefined(optSuccess)) {
-                            optSuccess();
-                        }
+            fetchAnnotations: function () {
 
-                        self.set("annotationsLoaded", true);
-                    };
+                if (this.annotationsLoaded) return;
 
                 if (!this.get("ready")) {
                     this.once("ready", this.fetchAnnotations);
                 }
 
-                if (annotations && (annotations.length) === 0) {
-                    annotations.fetch({async: false,
-                                       add: true,
-                                       success: success});
-                }
-            },
-
-            /**
-             * Get the annotation with the given id
-             * @alias module:models-track.Track#getAnnotation
-             * @param  {Integer} annotationId The id from the wanted annotation
-             * @return {Annotation}           The annotation with the given id
-             */
-            getAnnotation: function (annotationId) {
-                return this.get("annotations").get(annotationId);
+                this.annotations.fetch({
+                    async: false,
+                    success: _.bind(function () {
+                        this.annotationsLoaded = true;
+                    }, this)
+                });
             },
 
             /**
@@ -145,10 +114,10 @@ define([
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function () {
-                var json = Resource.prototype.toJSON.call(this);
-                delete json.annotations;
-
-                return json;
+                return _.omit(
+                    Resource.prototype.toJSON.apply(this, arguments),
+                    ["visible"]
+                );
             }
         }, {
             FIELDS: {

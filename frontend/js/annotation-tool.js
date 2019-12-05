@@ -507,7 +507,7 @@ define(["jquery",
                 }
                 return this.video.get("tracks")
                     .chain()
-                    .map(function (track) { return track.get("annotations").models; })
+                    .map(function (track) { return track.annotations.models; })
                     .flatten()
                     .filter(function (annotation) { return annotation.covers(time, this.MINIMAL_DURATION); }, this)
                     .value();
@@ -549,7 +549,7 @@ define(["jquery",
              * @return {Object} The created annotation
              */
             createAnnotation: function (params) {
-                var annotation = this.selectedTrack.get("annotations")
+                var annotation = this.selectedTrack.annotations
                     .create(_.extend(
                         params,
                         { start: Math.round(this.playerAdapter.getCurrentTime()) },
@@ -638,7 +638,7 @@ define(["jquery",
                         console.warn("Not able to find the track with the given Id");
                         return undefined;
                     } else {
-                        return track.getAnnotation(annotationId);
+                        return track.annotations.get(annotationId);
                     }
                 } else {
                     // If no trackId present, we search through all tracks
@@ -675,12 +675,12 @@ define(["jquery",
                     if (!_.isUndefined(trackId)) {
                         track = this.getTrack(trackId);
                         if (!_.isUndefined(track)) {
-                            annotations = track.get("annotations").toArray();
+                            annotations = track.annotations.toArray();
                         }
                     } else {
                         tracks = this.video.get("tracks");
                         tracks.each(function (t) {
-                            annotations = _.union(annotations, t.get("annotations").toArray());
+                            annotations = _.union(annotations, t.annotations.toArray());
                         }, this);
                     }
                 }
@@ -865,8 +865,8 @@ define(["jquery",
                         success: function () {
                             if (annotationTool.localStorage) {
                                 annotationTool.video.get("tracks").each(function (value) {
-                                    if (value.get("annotations").get(target.id)) {
-                                        value.get("annotations").remove(target);
+                                    if (value.annotations.get(target.id)) {
+                                        value.annotations.remove(target);
                                         value.save(null, { wait: true });
                                         return false;
                                     }
@@ -946,7 +946,7 @@ define(["jquery",
                         annotationTool.selectTrack(null);
                     }
                     _.invoke(
-                        _.clone(track.get("annotations").models),
+                        _.clone(track.annotations.models),
                         "destroy",
                         { error: function () { throw "cannot delete annotation"; } }
                     );

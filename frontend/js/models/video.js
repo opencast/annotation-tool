@@ -216,7 +216,7 @@ define(["underscore",
                     };
                 }
                 this.get("tracks").each(function (track) {
-                    track.get("annotations").each(handleAnnotation);
+                    track.annotations.each(handleAnnotation);
                 });
                 return result;
             },

@@ -53,7 +53,7 @@ define([
     "use strict";
 
     function groupFromTrack(track) {
-        var group = track.toJSON();
+        var group = _.clone(track.attributes);
         if (annotationTool.selectedTrack === track) {
             group.className = "selected";
         } else {
@@ -102,9 +102,12 @@ define([
     };
 
     function prepareTrack(track) {
-        var annotations = track.get("annotations");
+        var annotations = track.annotations;
         this.listenTo(annotations, "add change", function (annotation) {
             this.items.update(itemFromAnnotation(annotation));
+        });
+        this.listenTo(annotations, "reset", function (annotations) {
+            this.items.update(annotations.map(itemFromAnnotation));
         });
         this.listenTo(annotations, "remove", function (annotation) {
             this.items.remove(annotation.id);
@@ -231,13 +234,15 @@ define([
 
             this.groups = new vis.DataSet(
                 [PLACEHOLDER_TRACK].concat(
-                    _.map(annotationTool.tracksOrder, function (trackId, index) {
-                        var group = prepareTrack.call(this, this.tracks.get(trackId));
-                        group.order = index;
-                        return group;
-                    }, this)
+                    this.tracks.map(prepareTrack, this)
                 )
             );
+            this.groups.update(_.map(
+                annotationTool.tracksOrder,
+                function (trackId, index) {
+                    return { id: trackId, order: index };
+                }
+            ));
 
             this.groupHeaders = {};
 
@@ -293,7 +298,7 @@ define([
             this.items = new vis.DataSet(
                 this.tracks.chain()
                     .map(function (track) {
-                        return track.get("annotations").map(itemFromAnnotation);
+                        return track.annotations.map(itemFromAnnotation);
                     })
                     .flatten()
                     .value()
@@ -314,7 +319,7 @@ define([
                         var end = util.secondsFromDate(item[0].end);
                         var duration = end - start;
                         var annotation = this.tracks.get(item[0].group)
-                            .get("annotations").get(item[0].id);
+                            .annotations.get(item[0].id);
                         annotation.save({
                             start: start,
                             duration: end - start

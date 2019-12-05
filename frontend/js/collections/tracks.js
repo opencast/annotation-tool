@@ -114,9 +114,7 @@ define(["underscore",
                 }
 
                 _.each(tracks, function (track) {
-                    if (!track.get("annotationsLoaded")) {
-                        track.fetchAnnotations();
-                    }
+                    track.fetchAnnotations();
                     track.set(Track.FIELDS.VISIBLE, true);
                     visibleTracks.push(track);
                 }, this);
