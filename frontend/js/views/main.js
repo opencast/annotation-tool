@@ -413,9 +413,6 @@ define(["jquery",
                             el: container.getElement(),
                             playerAdapter: player
                         });
-                        container.on("resize", function () {
-                            timeline.onWindowResize();
-                        });
                         resolveView("timeline", timeline);
                     });
                 });
@@ -797,7 +794,6 @@ define(["jquery",
                     event.preventDefault();
 
                     annotation = annotationTool.getSelection()[0];
-                    console.log(annotation.trackId);
                     if (annotation) {
                         annotationTool.deleteOperation.start(
                             annotation,

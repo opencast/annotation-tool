@@ -213,6 +213,9 @@ define(["underscore",
              */
             toJSON: function () {
                 var json = Resource.prototype.toJSON.call(this);
+
+                json.end = json.start + json.duration;
+
                 delete json.comments;
 
                 if (json.label && json.label.toJSON) {

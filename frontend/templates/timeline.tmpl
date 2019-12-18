@@ -7,30 +7,26 @@
         </div>
     </div>
 
-    <div id="timeline-content">
-        <div id="timeline"></div>
+    <div id="timeline"></div>
 
-        <div id="timeline-custom-navigation">
-            <div class="timeline-bottom-controls">
-                <div class="btn-group dropup">
-                    <button type="button" class="btn opt-tracks-select">{{t "timeline.track management"}}</button>
-                </div>
-                <button type="button" id="add-track" class="btn">
-                    + <span>{{t "timeline.track modals.button" context="add"}}</span>
-                </button>
-            </div>
-
-            <div class="timeline-bottom-controls" id="reset-zoom">
-                <button type="button" class="btn">
-                    <i class="icon-eye-open"></i> <span>{{t "timeline.reset zoom"}}</span>
-                </button>
-            </div>
-            <div class="timeline-bottom-controls" id="move-left"><button type="button" class="btn">&lt;</button></div>
-            <div class="timeline-bottom-controls" id="zoom-in"><button type="button" class="btn">+</button></div>
-            <div class="timeline-bottom-controls" id="zoom-out"><button type="button" class="btn">-</button></div>
-            <div class="timeline-bottom-controls" id="move-right"><button type="button" class="btn">></button></div>
+    <div id="timeline-navigation">
+        <div class="btn-group" role="group" aria-label="{{t "timeline.track management"}}">
+            <button type="button" class="btn opt-tracks-select">{{t "timeline.track management"}}</button>
+            <button type="button" id="add-track" class="btn">
+                + <span>{{t "timeline.track modals.button" context="add"}}</span>
+            </button>
         </div>
-        <div class="modal" id="modal-add-group" style="display: none;"></div>
-        <div class="modal" id="modal-update-group" style="display: none;"></div>
+
+        <div class="btn-group" role="group" aria-label="{{t "timeline.navigation"}}">
+            <button id="reset-zoom" type="button" class="btn">
+                <i class="icon-eye-open"></i> <span>{{t "timeline.reset zoom"}}</span>
+            </button>
+            <button id="move-left" type="button" class="btn">&lt;</button>
+            <button id="zoom-in" type="button" class="btn">+</button>
+            <button id="zoom-out" type="button" class="btn">-</button>
+            <button id="move-right" type="button" class="btn">></button>
+        </div>
     </div>
+    <div class="modal" id="modal-add-group" style="display: none;"></div>
+    <div class="modal" id="modal-update-group" style="display: none;"></div>
 </div>

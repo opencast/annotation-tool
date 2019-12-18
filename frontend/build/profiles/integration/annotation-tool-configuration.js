@@ -214,13 +214,6 @@ define(["jquery",
             },
 
             /**
-             * Sets the behavior of the timeline. Enable it to follow the playhead.
-             * @alias module:annotation-tool-configuration.Configuration.timelineFollowPlayhead
-             * @type {Boolean}
-             */
-            timelineFollowPlayhead: true,
-
-            /**
              * Get the external parameters related to video. The supported parameters are now the following:
              *     - title: The title of the video
              *     - src_owner: The owner of the video in the system

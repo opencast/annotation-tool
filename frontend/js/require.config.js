@@ -6,6 +6,7 @@ require.config({
         "annotation-tool-configuration": "annotation-tool-configuration",
         "backbone": "libs/backbone/backbone-0.9.9",
         "bootstrap": "libs/bootstrap/bootstrap.min",
+        "chroma": "libs/chroma.min",
         "domReady": "libs/require/domReady",
         "handlebars": "libs/handlebars",
         "handlebarsHelpers": "handlebarsHelpers",
@@ -17,7 +18,6 @@ require.config({
         "slider": "libs/bootstrap/bootstrap-slider",
         "templates": "../templates",
         "text": "libs/require/text",
-        "timeline": "libs/timeline-min",
         "underscore": "libs/underscore-min",
         "raf": "libs/rAF",
         "email-addresses": "libs/email-addresses.min",
@@ -31,7 +31,8 @@ require.config({
         "mediaelementplayer": "libs/mediaelement/mediaelement-and-player",
         "mediaelement/lang": "libs/mediaelement/lang",
         "sortable": "libs/Sortable.min",
-        "goldenlayout": "libs/goldenlayout"
+        "goldenlayout": "libs/goldenlayout",
+        "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min"
     },
     waitSeconds: 10,
 
@@ -50,10 +51,6 @@ require.config({
 
         "email-addresses": {
             exports: "emailAddresses"
-        },
-
-        "timeline": {
-            exports: "links"
         },
 
         "mediaelementplayer": {
