@@ -350,20 +350,22 @@ define([
                 }
             });
 
-            function trackButtonClicked(properties) {
-                return !!this.groupHeaders[properties.group].$el
-                    .find("button")
-                    .has(properties.event.target).length;
+            function clickedOnOneOfMyTracks(properties) {
+                var track = this.tracks.get(properties.group);
+                if (!track) return false;
+                if (!track.get("isMine")) return false;
+                if (
+                    this.groupHeaders[properties.group].$el
+                        .find("button")
+                        .has(properties.event.target).length
+                ) return false;
+                return track;
             }
             this.timeline.on("click", _.bind(function (properties) {
                 if (properties.what === "group-label") {
-                    if (!this.tracks.get(properties.group)) return;
-                    if (
-                        trackButtonClicked.call(this, properties)
-                    ) return;
-                    annotationTool.selectTrack(
-                        this.tracks.get(properties.group)
-                    );
+                    var myTrack = clickedOnOneOfMyTracks.call(this, properties);
+                    if (!myTrack) return;
+                    annotationTool.selectTrack(myTrack);
                 } else if (properties.what === "axis") {
                     this.playerAdapter.setCurrentTime(
                         util.secondsFromDate(properties.time)
@@ -372,14 +374,9 @@ define([
             }, this));
             this.timeline.on("doubleClick", _.bind(function (properties) {
                 if (properties.what === "group-label") {
-                    if (!this.tracks.get(properties.group)) return;
-                    if (
-                        trackButtonClicked.call(this, properties)
-                    ) return;
-                    this.initTrackModal(
-                        properties.event,
-                        this.tracks.get(properties.group)
-                    );
+                    var myTrack = clickedOnOneOfMyTracks.call(this, properties);
+                    if (!myTrack) return;
+                    this.initTrackModal(properties.event, myTrack);
                 }
             }, this));
 
