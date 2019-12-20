@@ -160,13 +160,6 @@ define(["jquery",
             },
 
             /**
-             * Define if the private-only mode is enabled
-             * @alias module:annotation-tool-configuration.Configuration.isPrivateOnly
-             * @type {boolean}
-             */
-            isPrivateOnly: false,
-
-            /**
              * Define if the free text annotations are or not enabled
              * @alias module:annotation-tool-configuration.Configuration.isFreeTextEnabled
              * @return {boolean} True if this feature is enabled

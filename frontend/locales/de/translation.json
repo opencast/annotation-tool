@@ -270,9 +270,6 @@
     "track management": "$t(track management.action)",
     "hidden items": "Ein verstecktes Element",
     "hidden items_plural": "{{count}} versteckte Elemente",
-    "private only": {
-      "no public tracks allowed": "Dieses Video erlaubt keine öffentlichen Spuren"
-    },
     "reset zoom": "Zoom zurücksetzen",
     "scripts not allowed": "Skripte sind nicht erlaubt.",
     "track": {

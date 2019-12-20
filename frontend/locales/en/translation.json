@@ -274,9 +274,6 @@
     "navigation": "Navigation",
     "hidden items": "One hidden item",
     "hidden items_plural": "{{count}} hidden items",
-    "private only": {
-      "no public tracks allowed": "Public tracks have been disallowed for this video."
-    },
     "reset zoom": "Reset zoom",
     "scripts not allowed": "Scripts are not allowed!",
     "track": {
