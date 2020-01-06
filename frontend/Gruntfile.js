@@ -86,7 +86,7 @@ module.exports = function (grunt) {
             // Watch HTML files
             html: {
                 files: ['<%= srcPath.html %>'],
-                tasks: ['processhtml:dev']
+                tasks: ['processhtml:index']
             },
             // Watch LESS files
             less: {
@@ -341,12 +341,7 @@ module.exports = function (grunt) {
                 },
                 process: true
             },
-            dev: {
-                files: {
-                    '<%= currentProfile.target %>/index.html': ['index.html']
-                }
-            },
-            build: {
+            index: {
                 files: {
                     '<%= currentProfile.target %>/index.html': ['index.html']
                 }
@@ -436,11 +431,11 @@ module.exports = function (grunt) {
 
     // Default task
     grunt.registerTask('default', ['amdcheck', 'jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['amdcheck', 'mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
-    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['amdcheck', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:index', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['amdcheck', 'mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:index', 'copy:config', 'copy:locales']);
+    grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:index', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:integration', 'processhtml:index', 'copy:config', 'copy:locales']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['amdcheck', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:index', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
