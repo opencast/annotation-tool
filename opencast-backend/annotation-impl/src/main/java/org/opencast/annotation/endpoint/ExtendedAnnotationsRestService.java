@@ -18,7 +18,7 @@ package org.opencast.annotation.endpoint;
 
 import static org.opencastproject.util.RestUtil.getEndpointUrl;
 
-import org.opencast.annotation.impl.videointerface.AdminVideoInterfaceProvider;
+import org.opencast.annotation.impl.videointerface.PrivilegedUsersVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProviderConfiguration;
 import org.opencast.annotation.impl.videointerface.UrlSigningAuthorizationVideoInterfaceProvider;
@@ -62,7 +62,7 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
     final Tuple<String, String> endpointUrl = getEndpointUrl(cc);
     endpointBaseUrl = UrlSupport.concat(endpointUrl.getA(), endpointUrl.getB());
 
-    videoInterfaceProvider = new AdminVideoInterfaceProvider(new UrlSigningAuthorizationVideoInterfaceProvider(
+    videoInterfaceProvider = new PrivilegedUsersVideoInterfaceProvider(new UrlSigningAuthorizationVideoInterfaceProvider(
             new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration,
                     securityService, userDirectoryService, trustedHttpClient), urlSigningVerifier), securityService);
   }
