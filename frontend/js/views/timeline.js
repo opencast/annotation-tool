@@ -338,7 +338,7 @@ define([
 
             this.timeline.addCustomTime();
             this.timeline.setCustomTime(this.startDate);
-            this.timeline.setCustomTimeMarker();
+            this.timeline.setCustomTimeMarker("");
 
             this.timeClock = this.$el.find(".time");
             annotationTool.addTimeupdateListener(_.bind(this.onPlayerTimeUpdate, this), 1);
