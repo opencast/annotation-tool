@@ -86,7 +86,9 @@ define([
                 )
             ].join(";");
         }
-        item.type = "range";
+        if (item.duration) {
+            item.type = "range";
+        }
         item.model = annotation;
         return item;
     }
