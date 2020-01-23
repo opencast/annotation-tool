@@ -69,6 +69,9 @@
     border-top: 10px solid red;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
+    /* Put the marker behind the line so we can drag it, */
+    /* or rather the line now over it, as well. */
+    z-index: -1;
 }
 
 .vis-label {
