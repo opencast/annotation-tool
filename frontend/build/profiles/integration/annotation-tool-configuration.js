@@ -299,6 +299,10 @@ define(["jquery",
                     videos.sort(
                         util.lexicographic([
                             util.firstWith(_.compose(
+                                RegExp.prototype.test.bind(/HLS/),
+                                _.property("transport")
+                            )),
+                            util.firstWith(_.compose(
                                 RegExp.prototype.test.bind(/presenter\/.*/),
                                 _.property("type")
                             )),
