@@ -443,22 +443,13 @@ module.exports = function (grunt) {
      ==================================================*/
 
     // Default task
-<<<<<<< HEAD
     grunt.registerTask('default', ['amdcheck', 'jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:index', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['amdcheck', 'mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:index', 'copy:config', 'copy:locales']);
     grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:index', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
-    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:integration', 'processhtml:index', 'copy:config', 'copy:locales']);
+    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:integration', 'processhtml:index', 'copy:config', 'copy:locales']);    
+    grunt.registerTask('baseINTEGRATION_EXTAPI', ['amdcheck', 'handlebars:all', 'less', 'copy:integration_extapi', 'processhtml:index', 'copy:config', 'copy:locales']);
     grunt.registerTask('baseINTEGRATIONMINIFIED', ['amdcheck', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:index', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
-=======
-    grunt.registerTask('default', ['jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:dev', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseBUILD', ['jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:build', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
-    grunt.registerTask('baseINTEGRATION', ['handlebars:all', 'less', 'copy:integration', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATION_EXTAPI', ['handlebars:all', 'less', 'copy:integration_extapi', 'processhtml:dev', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['handlebars:temp', 'less', 'copy:integration', 'processhtml:build', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
->>>>>>> - New config profile called integration_ExtApi
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
