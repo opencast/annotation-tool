@@ -45,3 +45,6 @@ Makefile
 /frontend/doc
 
 .flattened-pom.xml
+
+#Ignore VScode files
+*.vscode
