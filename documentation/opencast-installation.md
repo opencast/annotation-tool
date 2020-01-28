@@ -30,11 +30,17 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 This should build the frontend, include it into the Opencast modules and copies the JARs
 to your Opencast installation.
 
-Note that if you are building against an Opencast version prior to 7,
-you currently need to skip the tests due to an incompatibility
+Note that **if you are building against an Opencast version prior to 7,**
+**you currently need to skip the tests** due to an incompatibility
 between Opencast 6 and 7.
 You can do this by passing the additional option `-Dmaven.test.skip`
 to Maven in the command above.
+
+#### Use the External API
+The annotation tool is made to use the search endpoint by default, if you want to build the Annotation 
+tool to work with the External API instead of the search endpoint use the flag `-Denvironment=ExtApi`
+
+If you have a multicluster deployment, remember that the External API is only available on the admin node.
 
 #### As a Karaf Feature
 
@@ -121,6 +127,7 @@ Within the `etc/workflows/partial-publish` you need to add this operation to the
       exception-handler-workflow="partial-error"
       description="Publish to preview publication channel">
       <configurations>
+        <configuration key="source-flavors">dublincore/*,security/*</configuration>
         <configuration key="source-tags">preview</configuration>
         <configuration key="channel-id">annotation</configuration>
         <configuration key="url-pattern">http://localhost:8080/annotation-tool/index.html?id=${event_id}</configuration>
