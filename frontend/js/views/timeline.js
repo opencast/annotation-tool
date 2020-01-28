@@ -213,6 +213,8 @@ define([
                     return itemTemplate(item);
                 },
                 onMoving: _.bind(function (item, move) {
+                    if (!item.isMine) return;
+
                     var originalItem = this.items.get(item.id);
 
                     var start = util.secondsFromDate(item.start);
