@@ -20,11 +20,11 @@
 define(["jquery",
         "underscore",
         "backbone",
-        "i18next",
         "templates/alert-modal",
-        "handlebarsHelpers"],
+        "handlebarsHelpers",
+        "bootstrap"],
 
-    function ($, _, Backbone, i18next, AlertTemplate) {
+    function ($, _, Backbone, AlertTemplate) {
 
         "use strict";
 
@@ -106,11 +106,11 @@ define(["jquery",
              */
             TYPES: {
                 ERROR: {
-                    title: i18next.t("alert.error.title"),
+                    title: "alert.error.title",
                     className: "alert-error"
                 },
                 FATAL: {
-                    title: i18next.t("alert.fatal.title"),
+                    title: "alert.fatal.title",
                     className: "alert-error",
                     hideButtons: true,
                     modalOptions: {
@@ -119,11 +119,11 @@ define(["jquery",
                     }
                 },
                 WARNING: {
-                    title: i18next.t("alert.warning.title"),
+                    title: "alert.warning.title",
                     className: ""
                 },
                 INFO : {
-                    title: i18next.t("alert.info.title"),
+                    title: "alert.info.title",
                     className: "alert-info"
                 }
             }
