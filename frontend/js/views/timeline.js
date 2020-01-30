@@ -211,7 +211,54 @@ define([
                 template: function (item) {
                     if (item.content != null) return item.content;
                     return itemTemplate(item);
-                }
+                },
+                onMoving: _.bind(function (item, move) {
+                    var originalItem = this.items.get(item.id);
+
+                    var start = util.secondsFromDate(item.start);
+                    var end = util.secondsFromDate(item.end);
+                    var originalStart = util.secondsFromDate(originalItem.start);
+                    var originalEnd = util.secondsFromDate(originalItem.end);
+
+                    var startChanged = start !== originalStart;
+                    var endChanged = end !== originalEnd;
+                    if (!(startChanged || endChanged)) {
+                        // Nothing changed, and we assume the item was okay before,
+                        // so we just pass it through here.
+                        // This way we can always assume that at least one bound changed
+                        // in the following code!
+                        return move(item);
+                    }
+
+                    // don't allow resizing past the beginning and end
+                    if (item.end - item.start < 0) {
+                        if (item.start > originalItem.start) {
+                            // moving the start time to the right
+                            item.start = item.end;
+                        } else if (item.end < originalItem.end) {
+                            // moving the end time to the left
+                            item.end = item.start;
+                        }
+                    }
+
+                    // don't allow moving/resizing outsie of the video
+                    var moving = startChanged && endChanged;
+
+                    var videoDuration = this.playerAdapter.getDuration();
+                    if (start < 0) {
+                        item.start = util.dateFromSeconds(0);
+                        if (moving) {
+                            item.end = util.dateFromSeconds(item.duration);
+                        }
+                    } else if (end > videoDuration) {
+                        item.end = util.dateFromSeconds(videoDuration);
+                        if (moving) {
+                            item.start = util.dateFromSeconds(videoDuration - item.duration);
+                        }
+                    }
+
+                    return move(item);
+                }, this)
                 //stack: false,
                 //cluster: {
                 //    maxItems: 1,
