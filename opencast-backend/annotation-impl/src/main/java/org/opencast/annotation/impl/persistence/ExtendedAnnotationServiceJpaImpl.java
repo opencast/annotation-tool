@@ -31,7 +31,6 @@ import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.Tuple.tuple;
-import static org.opencastproject.util.persistence.Queries.named;
 
 import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.search.api.SearchResultItem;
@@ -43,11 +42,11 @@ import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.util.data.Effect;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
+import org.opencastproject.util.data.Monadics;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.Option.Match;
 import org.opencastproject.util.data.Predicate;
 import org.opencastproject.util.data.Tuple;
-import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Options;
 import org.opencastproject.util.data.functions.Tuples;
 import org.opencastproject.util.persistence.PersistenceEnv;
@@ -78,25 +77,22 @@ import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.UserImpl;
 import org.opencast.annotation.impl.VideoImpl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.RollbackException;
+import javax.persistence.TypedQuery;
 
 /**
  * JPA-based implementation of the {@link ExtendedAnnotationService}.
  */
 public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotationService {
-  /** The logger */
-  private static final Logger logger = LoggerFactory.getLogger(ExtendedAnnotationServiceJpaImpl.class);
 
   private final PersistenceEnv penv;
   private final SecurityService securityService;
@@ -120,10 +116,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return penv.<A> tx().rethrow(exhandler).apply(f);
   }
 
-  private int getTotal() {
-    return tx(named.count("User.cont")).intValue();
-  }
-
   @Override
   public User createUser(String extId, String nickname, Option<String> email, Resource resource) {
     final UserDto dto = UserDto.create(extId, nickname, email, resource);
@@ -145,14 +137,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     Resource deleteResource = deleteResource(u);
     final User updated = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), deleteResource);
     updateUser(updated);
-    // return deleteById("User.deleteById", u.getId());
     return true;
   }
 
   @Override
   public boolean clearDatabase() throws ExtendedAnnotationException {
     return tx(new Function<EntityManager, Boolean>() {
-      @SuppressWarnings("unchecked")
       @Override
       public Boolean apply(EntityManager em) {
         named.update(em, "Annotation.clear");
@@ -183,7 +173,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public List<User> getUsers(final Option<Integer> offset, final Option<Integer> limit, final Option<Date> since)
           throws ExtendedAnnotationException {
-    final Tuple<String, Object>[] qparams = qparams(since.map(Tuples.<String, Object> tupleB("since")));
+    final Tuple<String, Object>[] qparams = qparams(since.map(Tuples.tupleB("since")));
     final String q = since.isSome() ? "User.findAllSince" : "User.findAll";
     return tx(named.<UserDto> findAllM(q, offset, limit, qparams)).map(toUser).value();
   }
@@ -215,24 +205,20 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     final Video updated = new VideoImpl(video.getId(), video.getExtId(), deleteResource);
     updateVideo(updated);
 
-    List<Track> tracks = getTracks(video.getId(), none(0), none(0), none(Date.class),
-            Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
+    List<Track> tracks = getTracks(video.getId(), none(), none(), none(), none(), none());
     for (Track track : tracks) {
       deleteTrack(track);
     }
 
-    List<Category> categories = getCategories(some(video.getId()), none(0), none(0), none(Date.class),
-            Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
+    List<Category> categories = getCategories(some(video.getId()), none(), none(), none(), none(), none());
     for (Category category : categories) {
       deleteCategory(category);
     }
 
-    List<Scale> scales = getScales(some(video.getId()), none(0), none(0), none(Date.class),
-            Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
+    List<Scale> scales = getScales(some(video.getId()), none(), none(), none(), none(), none());
     for (Scale scale : scales) {
       deleteScale(scale);
     }
-    // return deleteById("Video.deleteById", video.getId());
     return true;
   }
 
@@ -243,7 +229,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public List<Video> getVideos() throws ExtendedAnnotationException {
-    return findAllWithoutParams(toVideo, "Video.findAll");
+    return tx(named.<VideoDto> findAllM("Video.findAll")).map(toVideo).value();
   }
 
   @Override
@@ -278,12 +264,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             deleteResource);
     updateTrack(updated);
 
-    List<Annotation> annotations = getAnnotations(t.getId(), none(Double.class), none(Double.class), none(0), none(0),
-            none(Date.class), Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
+    List<Annotation> annotations = getAnnotations(t.getId(), none(), none(), none(), none(), none(), none(), none());
     for (Annotation a : annotations) {
       deleteAnnotation(a);
     }
-    // return deleteById("Track.deleteById", track.getId());
     return true;
   }
 
@@ -293,9 +277,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   /** Remove all none values from the list of query parameters. */
-  @SuppressWarnings("unchecked")
-  public static Tuple<String, Object>[] qparams(Option<Tuple<String, Object>>... p) {
-    return mlist(p).bind(Functions.<Option<Tuple<String, Object>>> identity()).value().toArray(new Tuple[0]);
+  @SafeVarargs
+  private static Tuple<String, Object>[] qparams(Option<Tuple<String, Object>>... p) {
+    return Arrays.stream(p)
+            .filter(Option::isSome)
+            .map(Option::get)
+            .toArray(Tuple[]::new);
   }
 
   @Override
@@ -303,12 +290,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           Option<Date> since, final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
           throws ExtendedAnnotationException {
 
-    final Tuple<String, Object>[] qparams = qparams(some(ExtendedAnnotationServiceJpaImpl.<Object> id(videoId)),
-            since.map(Tuples.<String, Object> tupleB("since")));
+    final Tuple<String, Object>[] qparams = qparams(some(id(videoId)),
+            since.map(Tuples.tupleB("since")));
 
     final String q = since.isSome() ? "Track.findAllOfVideoSince" : "Track.findAllOfVideo";
 
-    List<Track> tracks = findAllWithParams(toTrack, offset, limit, q, videoId, qparams);
+    List<Track> tracks = findAllWithParams(toTrack, offset, limit, q, qparams);
 
     if (tagsAnd.isSome())
       tracks = filterAndTags(tracks, tagsAnd.get());
@@ -365,7 +352,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   /** Generic update method. */
   private <A> void update(String q, long id, Effect<A> update) {
-    tx(Options.<EntityManager, A> foreach(named.<A> findSingle(q, id(id)), update)).orError(throwNotFound);
+    tx(Options.foreach(named.findSingle(q, id(id)), update)).orError(throwNotFound);
   }
 
   @Override
@@ -374,7 +361,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     final Annotation updated = new AnnotationImpl(a.getId(), a.getTrackId(), a.getText(), a.getStart(),
             a.getDuration(), a.getSettings(), a.getLabelId(), a.getScaleValueId(), deleteResource);
     updateAnnotation(updated);
-    // return deleteById("Annotation.deleteById", annotation.getId());
     return true;
   }
 
@@ -392,13 +378,13 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     List<Annotation> annotations;
     // TODO refactoring with since
     if (start.isSome() && end.isSome()) {
-      annotations = findAllWithParams(toAnnotation, offset, limit, "Annotation.findAllOfTrackStartEnd", trackId,
+      annotations = findAllWithParams(toAnnotation, offset, limit, "Annotation.findAllOfTrackStartEnd",
               tuple("start", start.get()), tuple("end", end.get()));
     } else if (start.isSome()) {
-      annotations = findAllWithParams(toAnnotation, offset, limit, "Annotation.findAllOfTrackStart", trackId,
+      annotations = findAllWithParams(toAnnotation, offset, limit, "Annotation.findAllOfTrackStart",
               tuple("start", start.get()));
     } else if (end.isSome()) {
-      annotations = findAllWithParams(toAnnotation, offset, limit, "Annotation.findAllOfTrackEnd", trackId,
+      annotations = findAllWithParams(toAnnotation, offset, limit, "Annotation.findAllOfTrackEnd",
               tuple("end", end.get()));
     } else {
       annotations = findAllById(toAnnotation, offset, limit, "Annotation.findAllOfTrack", trackId);
@@ -414,23 +400,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     annotations = filterByCategoryAccess(annotations);
 
     return annotations;
-    // return since.fold(new Option.Match<Date, List<Annotation>>() {
-    // @Override
-    // public List<Annotation> some(final Date since) {
-    // return penv.tx(new Function<EntityManager, List<Annotation>>() {
-    // @Override
-    // public List<Annotation> apply(EntityManager em) {
-    // return findAll(em, toAnnotation, offset, limit, "Annotation.findAllOfTrackSince", id(trackId),
-    // tuple("since", since));
-    // }
-    // });
-    // }
-    //
-    // @Override
-    // public List<Annotation> none() {
-    // return findAllById(toAnnotation, offset, limit, "Annotation.findAllOfTrack", trackId);
-    // }
-    // });
   }
 
   @Override
@@ -491,25 +460,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       scales = filterOrTags(scales, tagsOr.get());
 
     return scales;
-    // return since.fold(new Option.Match<Date, List<Scale>>() {
-    // @Override
-    // public List<Scale> some(final Date since) {
-    // return penv.tx(new Function<EntityManager, List<Scale>>() {
-    // @Override
-    // public List<Scale> apply(EntityManager em) {
-    // return findAll(em, toScale, offset, limit, "Scale.findAllOfVideoSince", id(videoId), tuple("since", since));
-    // }
-    // });
-    // }
-    //
-    // @Override
-    // public List<Scale> none() {
-    // return findAllById(toScale, offset, limit, "Scale.findAllOfVideo", videoId);
-    // }
-    // });
   }
 
-  public List<ScaleValue> getScaleValuesByScaleId(final long scaleId) throws ExtendedAnnotationException {
+  private List<ScaleValue> getScaleValuesByScaleId(final long scaleId) throws ExtendedAnnotationException {
     return findAllById(toScaleValue, some(0), some(0), "ScaleValue.findAllOfScale", scaleId);
   }
 
@@ -517,8 +470,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public List<ScaleValue> getScaleValues(final long scaleId, final Option<Integer> offset, final Option<Integer> limit,
           Option<Date> since, final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
           throws ExtendedAnnotationException {
-    final Tuple<String, Object>[] qparams = qparams(some(ExtendedAnnotationServiceJpaImpl.<Object> id(scaleId)),
-            since.map(Tuples.<String, Object> tupleB("since")));
+    final Tuple<String, Object>[] qparams = qparams(some(id(scaleId)),
+            since.map(Tuples.tupleB("since")));
     final String q = since.isSome() ? "Scale.findAllOfScaleSince" : "ScaleValue.findAllOfScale";
     List<ScaleValue> scaleValues = tx(named.<ScaleValueDto> findAllM(q, offset, limit, qparams)).map(toScaleValue)
             .value();
@@ -551,7 +504,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     for (ScaleValue sv : getScaleValuesByScaleId(s.getId())) {
       deleteScaleValue(sv);
     }
-    // return deleteById("Video.deleteById", video.getId());
     return true;
   }
 
@@ -560,7 +512,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           throws ExtendedAnnotationException {
     final ScaleValueDto dto = ScaleValueDto.create(scaleId, name, value, order, resource);
 
-    return (ScaleValue) tx(Queries.persist(dto)).toScaleValue();
+    return tx(Queries.persist(dto)).toScaleValue();
   }
 
   @Override
@@ -584,7 +536,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     final ScaleValue updated = new ScaleValueImpl(s.getId(), s.getScaleId(), s.getName(), s.getValue(), s.getAccess(),
             deleteResource);
     updateScaleValue(updated);
-    // return deleteById("Video.deleteById", video.getId());
     return true;
   }
 
@@ -599,9 +550,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public Option<Category> createCategoryFromTemplate(final long videoId, final long templateCategoryId,
           final Resource resource) throws ExtendedAnnotationException {
-    return getCategory(templateCategoryId, false).fold(new Option.Match<Category, Option<Category>>() {
+    return getCategory(templateCategoryId, false).map(new Function<Category, Category>() {
       @Override
-      public Option<Category> some(Category c) {
+      public Category apply(Category c) {
         Long scaleId = null;
 
         // Copy scale
@@ -633,12 +584,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           createLabel(category.getId(), l.getValue(), l.getAbbreviation(), l.getDescription(), l.getSettings(),
                   resource);
         }
-        return Option.some(category);
-      }
-
-      @Override
-      public Option<Category> none() {
-        return Option.none(Category.class);
+        return category;
       }
     });
   }
@@ -676,10 +622,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
       @Override
       public List<Category> none() {
-        return (List<Category>) tx(new Function<EntityManager, Object>() {
+        return tx(new Function<EntityManager, List<Category>>() {
           @Override
-          public Object apply(EntityManager em) {
-            Query query = Queries.named.query(em, "Category.findAllOfTemplate", CategoryDto.class);
+          public List<Category> apply(EntityManager em) {
+            TypedQuery<CategoryDto> query = named.query(em, "Category.findAllOfTemplate", CategoryDto.class);
             for (Integer l : limit)
               query.setMaxResults(l);
             for (Integer o : offset)
@@ -697,23 +643,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       categories = filterOrTags(categories, tagsOr.get());
 
     return categories;
-    // return since.fold(new Option.Match<Date, List<Category>>() {
-    // @Override
-    // public List<Category> some(final Date since) {
-    // return penv.tx(new Function<EntityManager, List<Category>>() {
-    // @Override
-    // public List<Category> apply(EntityManager em) {
-    // return findAll(em, toCategory, offset, limit, "Category.findAllOfVideoSince", id(videoId),
-    // tuple("since", since));
-    // }
-    // });
-    // }
-    //
-    // @Override
-    // public List<Category> none() {
-    // return findAllById(toCategory, offset, limit, "Category.findAllOfVideo", videoId);
-    // }
-    // });
   }
 
   @Override
@@ -762,13 +691,13 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           final Option<Date> since, final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
           throws ExtendedAnnotationException {
 
-    List<Label> labels = null;
+    List<Label> labels;
 
     if (since.isSome())
-      labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategorySince", categoryId,
+      labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategorySince",
               tuple("since", since.get()));
     else
-      labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategory", categoryId, tuple("id", categoryId));
+      labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategory", tuple("id", categoryId));
 
     if (tagsAnd.isSome())
       labels = filterAndTags(labels, tagsAnd.get());
@@ -779,7 +708,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return labels;
   }
 
-  public List<Label> getLabelsByCategoryId(final long categoryId) throws ExtendedAnnotationException {
+  private List<Label> getLabelsByCategoryId(final long categoryId) throws ExtendedAnnotationException {
     return findAllById(toLabel, some(0), some(0), "Label.findAllOfCategory", categoryId);
   }
 
@@ -789,7 +718,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     final Label updated = new LabelImpl(label.getId(), label.getCategoryId(), label.getValue(),
             label.getAbbreviation(), label.getDescription(), label.getSettings(), deleteResource);
     updateLabel(updated);
-    // return deleteById("Video.deleteById", video.getId());
     return true;
   }
 
@@ -809,21 +737,21 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           final Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
           Option<Map<String, String>> tagsOr) {
 
-    List<Comment> comments = null;
+    List<Comment> comments;
 
     if (replyToId.isSome()) {
       if (since.isSome())
-        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllRepliesSince", annotationId,
+        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllRepliesSince",
                 tuple("since", since.get()), tuple("id", replyToId.get()));
       else
-        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllReplies", annotationId,
+        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllReplies",
                 tuple("id", replyToId.get()));
     } else {
       if (since.isSome())
-        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllOfAnnotationSince", annotationId,
+        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllOfAnnotationSince",
                 tuple("since", since.get()), tuple("id", annotationId));
       else
-        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllOfAnnotation", annotationId,
+        comments = findAllWithParams(toComment, offset, limit, "Comment.findAllOfAnnotation",
                 tuple("id", annotationId));
     }
 
@@ -849,17 +777,16 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public boolean deleteComment(Comment comment) {
     Resource deleteResource = deleteResource(comment);
-    final Comment updated = new CommentImpl(comment.getId(), comment.getAnnotationId(), comment.getText(),
-            none(Long.class), deleteResource);
+    final Comment updated = new CommentImpl(comment.getId(), comment.getAnnotationId(), comment.getText(), none(),
+            deleteResource);
     updateComment(updated);
-    // return deleteById("Comment.deleteById", comment.getId());
     return true;
   }
 
   // --
 
   /** Transform any exception from the JPA persistence layer into an API exception. */
-  public static final Function<Exception, ExtendedAnnotationException> exhandler = new Function<Exception, ExtendedAnnotationException>() {
+  private static final Function<Exception, ExtendedAnnotationException> exhandler = new Function<Exception, ExtendedAnnotationException>() {
     @Override
     public ExtendedAnnotationException apply(Exception e) {
       if (e instanceof ExtendedAnnotationException) {
@@ -876,7 +803,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   private static final ExtendedAnnotationException notFound = new ExtendedAnnotationException(Cause.NOT_FOUND);
 
-  public static final Function0<ExtendedAnnotationException> throwNotFound = new Function0<ExtendedAnnotationException>() {
+  private static final Function0<ExtendedAnnotationException> throwNotFound = new Function0<ExtendedAnnotationException>() {
     @Override
     public ExtendedAnnotationException apply() {
       return notFound;
@@ -900,11 +827,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    *          value of the ":id" parameter in the named query.
    */
   private <A> Option<A> findById(final String queryName, final Object id) {
-    return tx(named.<A> findSingle(queryName, id(id)));
-  }
-
-  private <A, B> List<A> findAllWithoutParams(final Function<B, A> toA, final String queryName) {
-    return tx(named.<B> findAllM(queryName)).map(toA).value();
+    return tx(named.findSingle(queryName, id(id)));
   }
 
   /**
@@ -918,19 +841,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return tx(named.<B> findAllM(queryName, offset, limit, id(id))).map(toA).value();
   }
 
-  private <A, B> List<A> findAllWithParams(final Function<B, A> toA, final Option<Integer> offset,
-          final Option<Integer> limit, final String queryName, final Object id, final Tuple<String, ?>... params) {
+  @SafeVarargs
+  private final <A, B> List<A> findAllWithParams(final Function<B, A> toA, final Option<Integer> offset,
+          final Option<Integer> limit, final String queryName, final Tuple<String, ?>... params) {
     return tx(named.<B> findAllM(queryName, offset, limit, params)).map(toA).value();
-  }
-
-  /**
-   * Do not nest inside a tx!
-   *
-   * @param id
-   *          value of the ":id" parameter in the named query.
-   */
-  private boolean deleteById(final String queryName, final Object id) {
-    return tx(named.update(queryName, id(id)));
   }
 
   private Option<VideoDto> getVideoDto(final long id) {
@@ -948,12 +862,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Resource createResource() {
-    return createResource(Option.<Map<String, String>> none());
+    return createResource(none());
   }
 
   @Override
   public Resource createResource(final Option<Map<String, String>> tags) {
-    return createResource(tags, none(Integer.class));
+    return createResource(tags, none());
   }
 
   @Override
@@ -965,8 +879,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       tagsMap = tags.get();
     else
       tagsMap = new HashMap<>();
-    return new ResourceImpl(access.orElse(some(Resource.PRIVATE)), userId, userId, none(0L), now, now, none(Date.class),
-            tagsMap);
+    return new ResourceImpl(access.orElse(some(Resource.PRIVATE)), userId, userId, none(), now, now, none(), tagsMap);
   }
 
   @Override
@@ -1073,7 +986,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
   }
 
-  public final Function<Resource, Boolean> hasResourceAccess = new Function<Resource, Boolean>() {
+  private final Function<Resource, Boolean> hasResourceAccess = new Function<Resource, Boolean>() {
     @Override
     public Boolean apply(Resource resource) {
       return hasResourceAccess(resource);
@@ -1119,7 +1032,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     if (tags.size() < 1)
       return originalList;
 
-    List<T> list = new ArrayList<T>();
+    List<T> list = new ArrayList<>();
 
     // OR
     resource: for (T resource : originalList) {
@@ -1161,4 +1074,38 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       }).value();
     }
   }
+
+  /**
+   * Wrapper for {@link org.opencastproject.util.persistence.Queries#named}
+   * to support safe varargs without warnings
+   */
+  private static class NamedWrapper {
+    @SafeVarargs
+    public final boolean update(EntityManager em, String q, Tuple<String, ?>... params) {
+      return Queries.named.update(em, q, params);
+    }
+
+    @SafeVarargs
+    final <A> Function<EntityManager, Monadics.ListMonadic<A>> findAllM(
+            @SuppressWarnings("SameParameterValue") String q, Tuple<String, ?>... params) {
+      return Queries.named.findAllM(q, params);
+    }
+
+    @SafeVarargs
+    final <A> Function<EntityManager, Monadics.ListMonadic<A>> findAllM(String q, Option<Integer> offset,
+            Option<Integer> limit, Tuple<String, ?>... params) {
+      return Queries.named.findAllM(q, offset, limit, params);
+    }
+
+    @SafeVarargs
+    final <A> Function<EntityManager, Option<A>> findSingle(String q, Tuple<String, ?>... params) {
+      return Queries.named.findSingle(q, params);
+    }
+
+    @SafeVarargs
+    final <A> TypedQuery<A> query(EntityManager em, String q, Class<A> type, Tuple<String, Object>... params) {
+      return Queries.named.query(em, q, type, params);
+    }
+  }
+  private static final NamedWrapper named = new NamedWrapper();
 }

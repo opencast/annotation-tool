@@ -238,12 +238,12 @@ public final class Collections {
 
   /** Return the last element of the list. */
   public static <A> Option<A> last(List<A> as) {
-    return as.size() > 0 ? some(as.get(as.size() - 1)) : Option.<A> none();
+    return as.size() > 0 ? some(as.get(as.size() - 1)) : Option.none();
   }
 
   /** Return the last element of the array. */
   public static <A> Option<A> last(A[] as) {
-    return as.length > 0 ? some(as[as.length - 1]) : Option.<A> none();
+    return as.length > 0 ? some(as[as.length - 1]) : Option.none();
   }
 
   /** Make a string from a collection separating each element by <code>sep</code>. */
@@ -320,12 +320,12 @@ public final class Collections {
 
   /** Return nil if <code>a</code> is null or a list containing <code>a</code> otherwise. */
   public static <A> List<A> toList(A a) {
-    return a != null ? list(a) : Collections.<A> nil();
+    return a != null ? list(a) : Collections.nil();
   }
 
   /** Return the list as is or nil, if <code>as</code> is null. */
   public static <A> List<A> mkList(List<A> as) {
-    return as != null ? as : Collections.<A> nil();
+    return as != null ? as : Collections.nil();
   }
 
   /** Create a list from an array. */

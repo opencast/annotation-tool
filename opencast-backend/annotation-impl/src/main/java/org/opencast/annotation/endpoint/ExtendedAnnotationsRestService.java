@@ -40,6 +40,7 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   private String endpointBaseUrl;
 
   /** OSGi callback. */
+  @SuppressWarnings("unused")
   public void activate(ComponentContext cc) {
     logger.info("Start");
     final Tuple<String, String> endpointUrl = getEndpointUrl(cc);
@@ -47,11 +48,13 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   }
 
   /** OSGi callback. */
+  @SuppressWarnings("unused")
   public void deactivate() {
     logger.info("Stop");
   }
 
   /** OSGi callback. */
+  @SuppressWarnings("unused")
   public void setExtendedAnnotationsService(ExtendedAnnotationService eas) {
     this.eas = eas;
   }
@@ -65,5 +68,4 @@ public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsR
   protected String getEndpointBaseUrl() {
     return endpointBaseUrl;
   }
-
 }
