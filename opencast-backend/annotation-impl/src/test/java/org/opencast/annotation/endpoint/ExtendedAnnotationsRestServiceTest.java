@@ -48,10 +48,6 @@ import static org.opencastproject.util.data.Collections.last;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
 
-//import static com.jayway.restassured.RestAssured.*;
-//import static com.jayway.restassured.matcher.RestAssuredMatchers.*;
-//import static org.hamcrest.Matchers.*;
-
 public class ExtendedAnnotationsRestServiceTest {
 
   private static final int BAD_REQUEST = Response.Status.BAD_REQUEST.getStatusCode();
@@ -863,10 +859,8 @@ public class ExtendedAnnotationsRestServiceTest {
 
   private static final RestServiceTestEnv rt = testEnvForClasses(TestRestService.BASE_URL, TestRestService.class);
 
-  // Great. Checkstyle: "This method should no be static". JUnit: "Method setUp() should be static." ;)
-  // CHECKSTYLE:OFF
   @BeforeClass
-  public static void setUp() throws Exception {
+  public static void setUp() {
     rt.setUpServer();
   }
 
@@ -874,8 +868,6 @@ public class ExtendedAnnotationsRestServiceTest {
   public static void tearDownAfterClass() {
     rt.tearDownServer();
   }
-
-  // CHECKSTYLE:ON
 
   // shortcut to testEnv.host
   public static String host(String path) {

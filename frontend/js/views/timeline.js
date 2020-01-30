@@ -338,17 +338,11 @@ define([
 
             this.timeline.addCustomTime();
             this.timeline.setCustomTime(this.startDate);
-            this.timeline.setCustomTimeMarker();
+            this.timeline.setCustomTimeMarker("");
 
             this.timeClock = this.$el.find(".time");
             annotationTool.addTimeupdateListener(_.bind(this.onPlayerTimeUpdate, this), 1);
             this.onPlayerTimeUpdate();
-
-            this.$el.find(".timeline-frame > div:first-child").on("click", function (event) {
-                if ($(event.target).find(".timeline-event").length > 0) {
-                    annotationTool.setSelection([]);
-                }
-            });
 
             function trackButtonClicked(properties) {
                 return !!this.groupHeaders[properties.group].$el

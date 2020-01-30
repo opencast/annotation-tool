@@ -22,6 +22,7 @@ define([
     "underscore",
     "jquery",
     "i18next",
+    "alerts",
     "player-adapter",
     "backbone",
     "templates/loop-control",
@@ -32,6 +33,7 @@ define([
     _,
     $,
     i18next,
+    alerts,
     PlayerAdapter,
     Backbone,
     loopTemplate
@@ -213,7 +215,7 @@ var LoopView = Backbone.View.extend({
             "change #loop-length": function (event) {
                 var newLength = parseInt(event.target.value, 10);
                 if (isNaN(newLength) || newLength <= 0 || newLength > duration) {
-                    annotationTool.alertError(i18next.t("loop controller.invalid loop length"));
+                    alerts.error(i18next.t("loop controller.invalid loop length"));
                     lengthInput.val(loopLength);
                     slider.slider("setValue", loopLength);
                     return;

@@ -120,10 +120,16 @@
     "invalid loop length": "The given value for the loop length is not valid!"
   },
   "menu": {
-    "about": "About",
-    "export": "Export for statistics",
-    "logout": "Log out {{username}}",
-    "print": "Print",
+    "help": {
+      "head": "Help",
+      "about": "About"
+    },
+    "processing": {
+      "head": "Process",
+      "export": "Export for statistics",
+      "print": "Print"
+    },
+    "logout": "Log out",
     "view": {
       "annotate": {
         "head": "Annotate",
