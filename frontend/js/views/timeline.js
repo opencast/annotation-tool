@@ -474,6 +474,14 @@ define([
                     );
                 }
             );
+            // Long-pressing is normally only used for multiple selections,
+            // which we don't support.
+            // Additionally this is a problem when you select an item
+            // and then start holding the mouse button to move it,
+            // but take to long to actually start moving.
+            // If we let this event through,
+            // the item would just be deselected in that scenario.
+            this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
                 annotationTool.setSelectionById(
                     _.map(properties.items, function (itemId) {
