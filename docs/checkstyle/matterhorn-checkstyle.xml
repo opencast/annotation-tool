@@ -27,11 +27,8 @@
   <module name="Translation" />
 
   <module name="TreeWalker">
-
     <!-- Allow Java code to suppress checkstyle audits via CHECKSTYLE:OFF and CHECKSTYLE:ON comments -->
-    <module name="SuppressionCommentFilter" />
-
-    <property name="cacheFile" value="${checkstyle.cache.file}" />
+    <module name="SuppressionCommentFilter"/>
 
     <!-- Checks for Naming Conventions.                  -->
     <!-- See http://checkstyle.sf.net/config_naming.html -->
