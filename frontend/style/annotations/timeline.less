@@ -99,6 +99,17 @@
     }
 }
 
+/* Hide anchor lines behind non-selected tracks */
+.vis-line {
+    z-index: -1;
+}
+.selected .vis-line {
+    z-index: 1;
+}
+.vis-line.vis-selected {
+    z-index: 2;
+}
+
 .vis-group.selected {
     background-color: @grayLight;
 }
