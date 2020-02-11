@@ -440,7 +440,7 @@ define([
                     Math.max(
                         0,
                         Math.min(
-                            this.playerAdapter.getDuration(),
+                            this.playerAdapter.getDuration() - 0.02,
                             newTime
                         )
                     )
