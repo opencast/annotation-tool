@@ -1052,7 +1052,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   /** Run {@code f} doing common exception transformation. */
   Response run(Object[] mandatoryParams, HttpServletRequest request, Function<VideoInterface, Response> f) {
-
     for (Object a : mandatoryParams) {
       if (a == null || StringUtils.isEmpty(a.toString()))
         return BAD_REQUEST;

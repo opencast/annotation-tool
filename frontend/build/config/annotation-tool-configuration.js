@@ -44,12 +44,6 @@ define(function () {
         },
 
         /**
-         * Define if the private-only mode is enabled
-         * @return {boolean} True if this mode is enabled
-         */
-        isPrivateOnly: false,
-
-        /**
          * Define if the free text annotations are or not enabled
          * @return {boolean} True if this feature is enabled
          */

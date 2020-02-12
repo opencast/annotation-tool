@@ -211,7 +211,56 @@ define([
                 template: function (item) {
                     if (item.content != null) return item.content;
                     return itemTemplate(item);
-                }
+                },
+                onMoving: _.bind(function (item, move) {
+                    if (!item.isMine) return;
+
+                    var originalItem = this.items.get(item.id);
+
+                    var start = util.secondsFromDate(item.start);
+                    var end = util.secondsFromDate(item.end);
+                    var originalStart = util.secondsFromDate(originalItem.start);
+                    var originalEnd = util.secondsFromDate(originalItem.end);
+
+                    var startChanged = start !== originalStart;
+                    var endChanged = end !== originalEnd;
+                    if (!(startChanged || endChanged)) {
+                        // Nothing changed, and we assume the item was okay before,
+                        // so we just pass it through here.
+                        // This way we can always assume that at least one bound changed
+                        // in the following code!
+                        return move(item);
+                    }
+
+                    // don't allow resizing past the beginning and end
+                    if (item.end - item.start < 0) {
+                        if (item.start > originalItem.start) {
+                            // moving the start time to the right
+                            item.start = item.end;
+                        } else if (item.end < originalItem.end) {
+                            // moving the end time to the left
+                            item.end = item.start;
+                        }
+                    }
+
+                    // don't allow moving/resizing outsie of the video
+                    var moving = startChanged && endChanged;
+
+                    var videoDuration = this.playerAdapter.getDuration();
+                    if (start < 0) {
+                        item.start = util.dateFromSeconds(0);
+                        if (moving) {
+                            item.end = util.dateFromSeconds(item.duration);
+                        }
+                    } else if (end > videoDuration) {
+                        item.end = util.dateFromSeconds(videoDuration);
+                        if (moving) {
+                            item.start = util.dateFromSeconds(videoDuration - item.duration);
+                        }
+                    }
+
+                    return move(item);
+                }, this)
                 //stack: false,
                 //cluster: {
                 //    maxItems: 1,
@@ -338,32 +387,28 @@ define([
 
             this.timeline.addCustomTime();
             this.timeline.setCustomTime(this.startDate);
-            this.timeline.setCustomTimeMarker();
+            this.timeline.setCustomTimeMarker("");
 
             this.timeClock = this.$el.find(".time");
             annotationTool.addTimeupdateListener(_.bind(this.onPlayerTimeUpdate, this), 1);
             this.onPlayerTimeUpdate();
 
-            this.$el.find(".timeline-frame > div:first-child").on("click", function (event) {
-                if ($(event.target).find(".timeline-event").length > 0) {
-                    annotationTool.setSelection([]);
-                }
-            });
-
-            function trackButtonClicked(properties) {
-                return !!this.groupHeaders[properties.group].$el
-                    .find("button")
-                    .has(properties.event.target).length;
+            function clickedOnOneOfMyTracks(properties) {
+                var track = this.tracks.get(properties.group);
+                if (!track) return false;
+                if (!track.get("isMine")) return false;
+                if (
+                    this.groupHeaders[properties.group].$el
+                        .find("button")
+                        .has(properties.event.target).length
+                ) return false;
+                return track;
             }
             this.timeline.on("click", _.bind(function (properties) {
                 if (properties.what === "group-label") {
-                    if (!this.tracks.get(properties.group)) return;
-                    if (
-                        trackButtonClicked.call(this, properties)
-                    ) return;
-                    annotationTool.selectTrack(
-                        this.tracks.get(properties.group)
-                    );
+                    var myTrack = clickedOnOneOfMyTracks.call(this, properties);
+                    if (!myTrack) return;
+                    annotationTool.selectTrack(myTrack);
                 } else if (properties.what === "axis") {
                     this.playerAdapter.setCurrentTime(
                         util.secondsFromDate(properties.time)
@@ -372,14 +417,9 @@ define([
             }, this));
             this.timeline.on("doubleClick", _.bind(function (properties) {
                 if (properties.what === "group-label") {
-                    if (!this.tracks.get(properties.group)) return;
-                    if (
-                        trackButtonClicked.call(this, properties)
-                    ) return;
-                    this.initTrackModal(
-                        properties.event,
-                        this.tracks.get(properties.group)
-                    );
+                    var myTrack = clickedOnOneOfMyTracks.call(this, properties);
+                    if (!myTrack) return;
+                    this.initTrackModal(properties.event, myTrack);
                 }
             }, this));
 
@@ -433,6 +473,14 @@ define([
                     );
                 }
             );
+            // Long-pressing is normally only used for multiple selections,
+            // which we don't support.
+            // Additionally this is a problem when you select an item
+            // and then start holding the mouse button to move it,
+            // but take to long to actually start moving.
+            // If we let this event through,
+            // the item would just be deselected in that scenario.
+            this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
                 annotationTool.setSelectionById(
                     _.map(properties.items, function (itemId) {

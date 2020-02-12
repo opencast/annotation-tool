@@ -19,11 +19,9 @@ module.exports = function (grunt) {
         /** Paths for the different types of ressource */
         srcPath: {
             js      : 'js/**/*.js',
-            test_js : 'tests/js/**/*.js',
             less    : 'style/**/*.less',
             html    : '**/*.html',
             tmpl    : 'templates/*.tmpl',
-            tests   : 'tests/',
             www     : '<%= webServerDir %>/**/*',
             locales : 'locales/**/*.json'
         },
@@ -70,7 +68,7 @@ module.exports = function (grunt) {
             },
             // Watch Javascript files
             js: {
-                files: ['<%= srcPath.js %>', '<%= srcPath.test_js %>'],
+                files: ['<%= srcPath.js %>'],
                 tasks: ['copy:target']
             },
             // Watch configuration files
@@ -206,7 +204,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten : false,
                     expand  : true,
-                    src     : ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
+                    src     : ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css'],
                     dest    : '<%= currentProfile.target %>'
                 }]
             },
@@ -220,7 +218,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -239,7 +237,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -247,7 +245,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },

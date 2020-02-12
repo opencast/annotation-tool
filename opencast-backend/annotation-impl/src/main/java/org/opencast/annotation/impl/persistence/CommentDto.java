@@ -106,7 +106,7 @@ public class CommentDto extends AbstractResourceDto {
   }
 
   public Comment toComment() {
-    return new CommentImpl(id, annotationId, text, none(Long.class), new ResourceImpl(option(access), option(createdBy),
+    return new CommentImpl(id, annotationId, text, none(), new ResourceImpl(option(access), option(createdBy),
             option(updatedBy), option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), tags));
   }
 

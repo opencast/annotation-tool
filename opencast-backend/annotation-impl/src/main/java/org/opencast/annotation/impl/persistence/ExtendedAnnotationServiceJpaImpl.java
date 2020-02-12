@@ -266,12 +266,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   /** Remove all none values from the list of query parameters. */
   @SafeVarargs
   private static Tuple<String, Object>[] qparams(Option<Tuple<String, Object>>... p) {
-    Stream<Tuple<String, Object>> resultStream = Arrays.stream(p)
+    return Arrays.stream(p)
             .filter(Option::isSome)
-            .map(Option::get);
-    @SuppressWarnings("unchecked")
-    Tuple<String, Object>[] result = (Tuple<String, Object>[]) resultStream.toArray(Tuple[]::new);
-    return result;
+            .map(Option::get)
+            .toArray(Tuple[]::new);
   }
 
   @Override
