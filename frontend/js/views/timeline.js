@@ -86,7 +86,9 @@ define([
                 )
             ].join(";");
         }
-        item.type = "range";
+        if (item.duration) {
+            item.type = "range";
+        }
         item.model = annotation;
         return item;
     }
@@ -165,6 +167,13 @@ define([
             // Options for the vis timeline
             var options = {
                 height: "100%",
+                margin: {
+                    axis: 5,
+                    item: {
+                        vertical: 5,
+                        horizontal: 0
+                    }
+                },
                 verticalScroll: true,
                 preferZoom: true,
                 //zoomKey: 'shiftKey',
@@ -187,7 +196,6 @@ define([
                 max: this.endDate,
                 snap: null,
                 orientation: 'top',
-                margin: 0,
                 showMajorLabels: false,
                 format: { minorLabels: function (moment) {
                     return util.formatTime(moment.unix());
