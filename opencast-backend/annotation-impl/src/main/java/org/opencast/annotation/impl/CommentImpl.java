@@ -61,7 +61,7 @@ public final class CommentImpl extends ResourceImpl implements Comment {
 
   @Override
   public Option<Long> getReplyToId() {
-    return Option.none();
+    return this.replyToId;
   }
 
   @Override

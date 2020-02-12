@@ -1003,6 +1003,15 @@ public class VideoEndpoint {
     header.add("Scale name");
     header.add("Scale value name");
     header.add("Scale value value");
+    // TODO Factor this out?
+    //   See `addResource`
+    header.add("Comment ID");
+    header.add("Comment creation date");
+    header.add("Last comment update");
+    header.add("Comment author name");
+    header.add("Comment author mail");
+    header.add("Comment text");
+    header.add("Comment replies to");
     writer.writeNext(header.toArray(new String[0]));
 
     for (Video video: this.video) {
@@ -1032,10 +1041,7 @@ public class VideoEndpoint {
           List<String> line = new ArrayList<>();
 
           line.add(Long.toString(annotation.getId()));
-          line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-          line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
+          addResource(annotation, line);
           line.add(track.getName());
 
           double start = annotation.getStart(); // start, stop, duration
@@ -1067,9 +1073,41 @@ public class VideoEndpoint {
           }
 
           writer.writeNext(line.toArray(new String[0]));
+
+          List<Comment> comments = eas.getComments(annotation.getId(), none(), none(), none(), none(), none(), none());
+          for (Comment comment : comments) {
+            writeComment(writer, annotation, line, comment);
+          }
         }
       }
     }
+  }
+
+  private void writeComment(CSVWriter writer, Annotation annotation, List<String> line, Comment comment) {
+    List<String> commentLine = new ArrayList<>(line);
+    // TODO Why is this not in `addResource`?
+    commentLine.add(Long.toString(comment.getId()));
+    addResource(comment, commentLine);
+    commentLine.add(comment.getText());
+    commentLine.add(comment.getReplyToId().map(new Function<Long, String>() {
+      @Override
+      public String apply(Long replyToId) {
+        return replyToId.toString();
+      }
+    }).getOrElse(""));
+    writer.writeNext(commentLine.toArray(new String[0]));
+    List<Comment> replies = eas.getComments(annotation.getId(), some(comment.getId()), none(), none(), none(),
+            none(), none());
+    for (Comment reply : replies) {
+      writeComment(writer, annotation, line, reply);
+    }
+  }
+
+  private void addResource(Resource annotation, List<String> line) {
+    line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
+    line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
   }
 
   private static String toVideoTimeString(double seconds) {
