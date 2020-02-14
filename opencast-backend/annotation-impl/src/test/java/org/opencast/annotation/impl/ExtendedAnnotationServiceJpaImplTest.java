@@ -15,16 +15,6 @@
  */
 package org.opencast.annotation.impl;
 
-import org.opencast.annotation.impl.ScaleValueImpl;
-import org.opencast.annotation.impl.AnnotationImpl;
-import org.opencast.annotation.impl.CategoryImpl;
-import org.opencast.annotation.impl.UserImpl;
-import org.opencast.annotation.impl.TrackImpl;
-import org.opencast.annotation.impl.LabelImpl;
-import org.opencast.annotation.impl.VideoImpl;
-import org.opencast.annotation.impl.ScaleImpl;
-import org.opencast.annotation.impl.CommentImpl;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -214,7 +204,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testTrack() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture1", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // try adding a track to a non existing video
@@ -275,7 +265,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateAndFindAnnotation() throws Exception {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // create

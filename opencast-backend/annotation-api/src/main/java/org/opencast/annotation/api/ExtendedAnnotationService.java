@@ -769,13 +769,13 @@ public interface ExtendedAnnotationService {
   /**
    * Create the base {@link Resource} for logging with tags and access
    * 
-   * @param tags
-   *          the tags map
    * @param access
    *          the access level from the resource
+   * @param tags
+   *          the tags map
    * @return the base resource
    */
-  Resource createResource(Option<Map<String, String>> tags, Option<Integer> access);
+  Resource createResource(Option<Integer> access, Option<Map<String, String>> tags);
 
   /**
    * Update the resource update information
