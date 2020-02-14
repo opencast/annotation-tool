@@ -21,9 +21,6 @@ import org.opencastproject.util.data.Option;
 /** A class representing a category of the annotation tool. */
 public interface Category extends Resource {
 
-  /** The category id */
-  long getId();
-
   /** The video id where the category is */
   Option<Long> getVideoId();
 

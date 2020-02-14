@@ -60,6 +60,11 @@ public class ResourceImpl implements Resource {
   }
 
   @Override
+  public long getId() {
+    throw new IllegalStateException("Abstract resources don't have IDs");
+  }
+
+  @Override
   public int getAccess() {
     return access;
   }
