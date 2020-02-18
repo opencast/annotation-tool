@@ -79,14 +79,6 @@ define(["jquery",
             initialize: function (attr) {
                 var category;
 
-                if (!attr.annotation) {
-                    throw "The annotations have to be given to the annotate view.";
-                }
-
-                this.model = attr.annotation;
-
-                this.$el.attr("id", this.model.id);
-
                 this.commentContainer = new CommentsContainer({
                     collection: this.model.get("comments")
                 });
@@ -120,16 +112,11 @@ define(["jquery",
                 this.listenTo(this.model, "change", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);
                 this.listenTo(this.model.get("comments"), "remove", this.render);
-                this.listenTo(this.model, "destroy", this.remove);
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.ANNOTATION;
 
-                if (attr.track) {
-                    this.track = attr.track;
-                } else {
-                    this.track = annotationTool.selectedTrack;
-                }
+                this.track = this.model.collection.track;
 
                 this.currentState = ListAnnotation.STATES.COLLAPSED;
 
