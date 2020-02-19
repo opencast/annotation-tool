@@ -112,3 +112,17 @@ div.visibility button {
     width: 23px;
     text-align: center;
 }
+
+.vis-line, .vis-dot {
+    opacity: 0.3;
+}
+.selected {
+    .vis-line, .vis-dot {
+        opacity: 1;
+    }
+}
+.vis-selected {
+    &.vis-line, &.vis-dot {
+        opacity: 1;
+    }
+}
