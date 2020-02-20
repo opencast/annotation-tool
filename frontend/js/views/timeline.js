@@ -78,9 +78,10 @@ define([
         if (label) {
             item.className = "category-" + label.category.id;
         }
-        if (item.duration) {
-            item.type = "range";
-        }
+        console.log(item.duration);
+        item.type = item.duration
+            ? "range"
+            : "box";
         item.model = annotation;
         return item;
     }
