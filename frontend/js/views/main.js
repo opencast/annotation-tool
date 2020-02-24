@@ -629,7 +629,6 @@ define(["jquery",
 
                 if (scaleValue || annotationShortcutState.label && !annotationShortcutState.scale) {
                     var annotation = annotationTool.createAnnotation(annotationShortcutState.params);
-                    annotationTool.setSelection([annotation], true);
                     this.interruptAnnotationShortcut();
                 } else {
                     clearTimeout(annotationShortcutTimer);

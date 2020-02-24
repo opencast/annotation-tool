@@ -185,7 +185,6 @@ define(["underscore",
                         }
                     });
 
-                    annotationTool.setSelection([annotation], false);
                     lastAddedAnnotationView = view;
                 }
             },

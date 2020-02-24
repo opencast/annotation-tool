@@ -180,7 +180,6 @@ define(["jquery",
                     };
 
                 annotation = annotationTool.createAnnotation(params);
-                annotationTool.setSelection([annotation], true);
             },
 
             /**
@@ -199,7 +198,6 @@ define(["jquery",
                     text : this.model.get("value"),
                     label: this.model
                 });
-                annotationTool.setSelection([annotation], true);
             },
 
             /**

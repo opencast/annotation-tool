@@ -483,6 +483,7 @@ define(["jquery",
                         // @see module:views-loop.Loop#toggleConstrainAnnotations
                         this.annotationConstraints
                     ), { wait: true });
+                this.setSelection([annotation], true);
                 this.activeAnnotation = annotation;
                 return annotation;
             },
