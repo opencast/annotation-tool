@@ -482,13 +482,10 @@ define([
             // the item would just be deselected in that scenario.
             this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
-                annotationTool.setSelectionById(
+                annotationTool.setSelection(
                     _.map(properties.items, function (itemId) {
                         var item = this.items.get(itemId);
-                        return {
-                            id: item.id,
-                            trackId: item.group,
-                        };
+                        return item.model;
                     }, this),
                     true, // move playhead
                     true // manually selected

@@ -134,7 +134,6 @@ define(["jquery",
                           "onTimeUpdate",
                           "selectTrack",
                           "setSelection",
-                          "setSelectionById",
                           "addTimeupdateListener",
                           "removeTimeupdateListener",
                           "updateSelectionOnTimeUpdate");
@@ -291,36 +290,6 @@ define(["jquery",
                     this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
                     this.currentSelection = newSelection;
                 }
-            },
-
-            /**
-             * Set the given annotation(s) as current selection
-             * @alias   annotationTool.setSelectionById
-             * @param {Array} selection The new selection. This is an array of object containing the id of the annotation and optionnaly the track id. See example below.
-             * @example
-             * {
-             *     id: "a123", // The id of the annotations
-             *     trackId: "b23", // The track id (optional)
-             * }
-             * @param {Boolean} moveTo define if the video should be move to the start point of the selection
-             * @param {Boolean} isManuallySelected define if the selection has been done manually or through a video timeupdate
-             */
-            setSelectionById: function (selectedIds, moveTo, isManuallySelected) {
-                var selectionAsArray = [],
-                    tmpAnnotation;
-
-                if (_.isArray(selectedIds) && selectedIds.length > 0) {
-                    _.each(selectedIds, function (selection) {
-                        tmpAnnotation = this.getAnnotation(selection.id, selection.trackId);
-                        if (!_.isUndefined(tmpAnnotation)) {
-                            selectionAsArray.push(tmpAnnotation);
-                        }
-                    }, this);
-                } else {
-                    console.warn("Invalid selection: " + selectedIds);
-                }
-
-                this.setSelection(selectionAsArray, moveTo, isManuallySelected);
             },
 
             /**
