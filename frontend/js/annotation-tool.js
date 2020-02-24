@@ -277,21 +277,19 @@ define(["jquery",
 
             /**
              * Listener for destroy event on selected annotation to update the selection
-             * @alias   annotationTool.onDestroyRemoveSelection
-             * @param  {Object} annotation The destroyed annotation
+             * @alias annotationTool.onDestroyRemoveSelection
+             * @param {Object} annotation The destroyed annotation
              */
             onDestroyRemoveSelection: function (annotation) {
-                var currentSelection = this.currentSelection,
-                    item,
-                    i;
-
-                for (i = 0; i < currentSelection.length; i++) {
-                    item = currentSelection[i];
-                    if (item.get("id") == annotation.get("id")) {
-                        currentSelection.splice(i, 1);
-                        this.trigger(this.EVENTS.ANNOTATION_SELECTION, currentSelection);
-                        return;
+                var newSelection = _.reject(
+                    this.currentSelection,
+                    function (selection) {
+                        return annotation.id === selection.id;
                     }
+                );
+                if (newSelection.length !== this.currentSelection.length) {
+                    this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
+                    this.currentSelection = newSelection;
                 }
             },
 
