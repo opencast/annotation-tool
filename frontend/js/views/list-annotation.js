@@ -259,7 +259,7 @@ define(["jquery",
                     }
 
                     $target.parent().parent().find("tr.text-container span").show();
-                    this.model.set("duration", Math.round(seconds - this.model.get("start")));
+                    this.model.set("duration", seconds - this.model.get("start"));
                     this.model.save(null, { silent: true });
                 }
             },
@@ -308,7 +308,7 @@ define(["jquery",
                     $target.parent().find("span").show();
                     this.model.set({
                         start   : seconds,
-                        duration: Math.round(this.model.get("duration") + this.model.get("start") - seconds)
+                        duration: this.model.get("duration") + this.model.get("start") - seconds
                     });
                     this.model.save(null, { silent: true });
                 }
@@ -320,7 +320,7 @@ define(["jquery",
              * @param  {event} event Event object
              */
             setCurrentTimeAsStart: function (event) {
-                var currentTime = Math.round(annotationTool.playerAdapter.getCurrentTime()),
+                var currentTime = annotationTool.playerAdapter.getCurrentTime(),
                     end = this.model.get("start") + this.model.get("duration");
 
                 event.stopImmediatePropagation();
@@ -340,7 +340,7 @@ define(["jquery",
              * @param  {event} event Event object
              */
             setCurrentTimeAsEnd: function (event) {
-                var currentTime = Math.round(annotationTool.playerAdapter.getCurrentTime());
+                var currentTime = annotationTool.playerAdapter.getCurrentTime();
                 event.stopImmediatePropagation();
                 if (currentTime > this.model.get("start")) {
                     this.model.set({ duration: currentTime - this.model.get("start") });
