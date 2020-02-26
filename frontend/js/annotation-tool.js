@@ -197,7 +197,6 @@ define(["jquery",
                 $("#dialogs").append(this.deleteModalTmpl({ type: "annotation" }));
                 this.deleteModal = $("#modal-delete").modal({ show: true, backdrop: false, keyboard: true });
                 this.deleteModal.modal("toggle");
-                this.deleteModal = $("#modal-delete");
                 this.deleteModalHeader  = this.deleteModal.find(".modal-header h3");
                 this.deleteModalContent = this.deleteModal.find(".modal-body");
             },
