@@ -78,7 +78,6 @@ define([
         if (label) {
             item.className = "category-" + label.category.id;
         }
-        console.log(item.duration);
         item.type = item.duration
             ? "range"
             : "box";
