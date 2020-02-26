@@ -146,7 +146,8 @@ define(["jquery",
                     this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
                 }
 
-                $(window).on("resize.annotate-category", this.updateInputWidth);
+                var onResize = _.debounce(this.updateInputWidth, 250);
+                $(window).on("resize.annotate-category", onResize);
 
                 //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
