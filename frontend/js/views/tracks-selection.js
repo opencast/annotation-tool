@@ -195,7 +195,7 @@ define(["jquery",
                     }, this))
                 );
 
-                annotationTool.orderTracks(this.sortableTrackSelection.toArray().map(id => parseInt(id, 10)));
+                annotationTool.orderTracks(this.sortableTrackSelection.toArray());
 
                 this.hide();
             },
