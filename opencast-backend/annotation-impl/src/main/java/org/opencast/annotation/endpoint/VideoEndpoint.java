@@ -964,7 +964,7 @@ public class VideoEndpoint {
       public void write(OutputStream os) throws IOException, WebApplicationException {
         CSVWriter writer = null;
         try {
-          writer = new CSVWriter(new OutputStreamWriter(os));
+          writer = new CSVWriter(new OutputStreamWriter(os), ',', '"', "\r\n");
           writeExport(writer, tracks, categories, freeText);
           writer.close();
         } finally {
