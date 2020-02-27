@@ -76,17 +76,11 @@ define([
         item.end = util.dateFromSeconds(item.end);
         var label = item.label;
         if (label) {
-            var color = label.category.settings.color;
-            item.style = [
-                "background-color:" + color,
-                "color:" + (
-                    chroma(color).luminance() < 0.5
-                        ? "white"
-                        : "black"
-                )
-            ].join(";");
+            item.className = "category-" + label.category.id;
         }
-        item.type = "range";
+        if (item.duration) {
+            item.type = "range";
+        }
         item.model = annotation;
         return item;
     }
@@ -165,6 +159,13 @@ define([
             // Options for the vis timeline
             var options = {
                 height: "100%",
+                margin: {
+                    axis: 20,
+                    item: {
+                        vertical: 10,
+                        horizontal: 0
+                    }
+                },
                 verticalScroll: true,
                 preferZoom: true,
                 //zoomKey: 'shiftKey',
@@ -187,7 +188,6 @@ define([
                 max: this.endDate,
                 snap: null,
                 orientation: 'top',
-                margin: 0,
                 showMajorLabels: false,
                 format: { minorLabels: function (moment) {
                     return util.formatTime(moment.unix());
@@ -545,6 +545,34 @@ define([
                 html: true,
                 container: "body"
             });
+
+            // Maintain a stylesheet for structured annotations
+            function createCategoryStylesheet() {
+                var stylesheet = annotationTool.video.get("categories")
+                    .map(function (category) {
+                        var color = category.get("settings").color;
+                        return ".vis-item.category-" + category.id + "," +
+                            ".vis-item.vis-selected.category-" + category.id + "{" +
+                            "background-color:" + color + ";" +
+                            "color:" + (
+                                chroma(color).luminance() < 0.5
+                                    ? "white"
+                                    : "black"
+                            ) +
+                            ";}";
+                            }).join("");
+                return $("<style>" + stylesheet + "</style>")
+                    .appendTo('html > head');
+            }
+            this.categoryStylesheet = createCategoryStylesheet();
+            this.listenTo(
+                annotationTool.video.get("categories"),
+                "change add remove",
+                function () {
+                    this.categoryStylesheet.remove();
+                    this.categoryStylesheet = createCategoryStylesheet();
+                }
+            );
         },
 
         /**
@@ -556,6 +584,7 @@ define([
             });
             this.timeline.destroy();
             this.$el.popover("destroy");
+            this.categoryStylesheet.remove();
             return Backbone.View.prototype.remove.apply(this, arguments);
         },
 
