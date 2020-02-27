@@ -146,7 +146,7 @@ define(["jquery",
                     this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
                 }
 
-                var onResize = _.debounce(this.updateInputWidth, 250);
+                var onResize = _.debounce(this.updateInputWidth, 30);
                 $(window).on("resize.annotate-category", onResize);
 
                 //this.render();

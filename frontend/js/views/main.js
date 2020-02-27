@@ -512,7 +512,7 @@ define(["jquery",
                 this.setLoadingProgress(100, i18next.t("startup.ready"));
                 this.loadingBox.hide();
                 this.onWindowResize();
-                var onResize = _.debounce(this.onWindowResize, 250)
+                var onResize = _.debounce(this.onWindowResize, 30)
                 $(window).resize(onResize);
 
                 this.setupKeyboardShortcuts();
