@@ -56,7 +56,7 @@ define(["jquery",
              * @memberOf module:annotation-tool-configuration.Configuration
              * @type {Object}
              */
-            MINIMAL_DURATION: 5,
+            MINIMAL_DURATION: 1,
 
             /**
              * Define the number of categories pro tab in the annotate box. Bigger is number, thinner will be the columns for the categories.
