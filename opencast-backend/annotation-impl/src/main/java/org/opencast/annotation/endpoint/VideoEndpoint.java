@@ -1078,12 +1078,12 @@ public class VideoEndpoint {
     header.add(StringUtils.capitalize(prefix + "author mail"));
   }
 
-  private void addResource(Resource annotation, List<String> line) {
-    line.add(Long.toString(annotation.getId()));
-    line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-    line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-    line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-    line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
+  private void addResource(Resource resource, List<String> line) {
+    line.add(Long.toString(resource.getId()));
+    line.add(resource.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(resource.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(resource.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
+    line.add(resource.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
   }
 
   private void writeComment(CSVWriter writer, Annotation annotation, List<String> line, Comment comment) {
