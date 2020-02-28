@@ -7,19 +7,6 @@ body {
     overflow: hidden;
 }
 
-#screen {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-#main-container {
-    flex-grow: 1;
-    // This would normally be unnecessary in a flexbox layout/
-    // but GoldenLayout seems to need this to recalculate its size.
-    height: 100%;
-}
-
 .lm_content .window {
     height: 100%;
 }
@@ -30,8 +17,6 @@ body {
 
 .window {
     background-color: @gray;
-    border: 2px solid @grayDark;
-    .standard_border_radius;
 
     .window-title {
         .navbar-text;

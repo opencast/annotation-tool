@@ -2,6 +2,13 @@
     background-color: white;
     display: flex;
     flex-basis: 0;
+
+
+    .vis-foreground .vis-group, .vis-label {
+        &:last-child {
+            border-bottom: 1px solid #bfbfbf;
+        }
+    }
 }
 
 .vis-timeline {
@@ -44,8 +51,12 @@
 
 .vis-item {
     border-color: rgba(0, 0, 0, 0.25);
-    background-color: @grayLight;
-    height: 24px;
+    background-color: @grayLighter;
+
+    &.vis-box, &.vis-range {
+        height: 20px;
+        box-sizing: content-box;
+    }
 
     &.selection {
         z-index: 0;
@@ -60,16 +71,25 @@
 
     &.vis-selected {
         border-color: @gray;
-        background-color: @grayLight;
+        background-color: @grayLighter;
         .selected-annotation();
     }
 
-    &.vis-range .vis-item-content {
+    .vis-item-content {
         overflow: hidden;
         text-overflow: ellipsis;
-        position: absolute;
-        right: 0;
+        width: 100%;
+        /* The vertical align can't be `baseline` (the default) */
+        /* because the content of ranged annotations are set */
+        /* as `inline-block`-s. `baseline` alignment would add */
+        /* space for descending characters below the content block. */
+        vertical-align: middle;
+        padding: 2px 5px;
     }
+}
+
+.vis-box {
+    width: 2.6ex;
 }
 
 .vis-custom-time .vis-custom-time-marker {
@@ -104,4 +124,22 @@ div.visibility button {
     .link-button();
     width: 23px;
     text-align: center;
+
+    i {
+        margin-top: 0;
+    }
+}
+
+.vis-line, .vis-dot {
+    opacity: 0.3;
+}
+.selected {
+    .vis-line, .vis-dot {
+        opacity: 1;
+    }
+}
+.vis-selected {
+    &.vis-line, &.vis-dot {
+        opacity: 1;
+    }
 }

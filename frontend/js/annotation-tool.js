@@ -334,11 +334,14 @@ define(["jquery",
              * @param {Array} order The new track order
              */
             orderTracks: function (order) {
+                // convert the new order to string to compare reliably
+                var strOrder = order.map(function (item) { return "" + item; });
                 //   Make sure every visible track is represented in the order,
                 // and only those, with non-explicitly ordered tracks in front.
                 this.tracksOrder = _.chain(this.getTracks().getVisibleTracks())
                     .sortBy(function (track) {
-                        return order.indexOf(track.id);
+                        // convert each track ID to string to reliably compare them
+                        return strOrder.indexOf("" + track.id);
                     }, this)
                     .map("id")
                     .value();

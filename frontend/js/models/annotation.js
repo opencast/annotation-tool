@@ -242,8 +242,9 @@ define(["underscore",
              */
             covers: function (time, minDuration) {
                 var start = this.get("start");
-                var duration = Math.max(minDuration, this.get("duration") || 0);
-                var end = start + duration;
+                var duration = this.get("duration");
+                var end = start + (duration || minDuration);
+ 
                 return start <= time && time <= end;
             },
 

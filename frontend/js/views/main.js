@@ -389,9 +389,11 @@ define(["jquery",
                     // in order to prevent the play-pause shortcut (space)
                     // to be handled twice.
                     self.playerContainer = container.getElement()[0];
+                    var view = $("<div class='window'></div>")
+                        .appendTo(self.playerContainer);
 
                     container.on("open", function () {
-                        annotationTool.loadVideo(container.getElement()[0]);
+                        annotationTool.loadVideo(view[0]);
                     });
 
                     function videoLoaded() {
@@ -800,6 +802,8 @@ define(["jquery",
              * @alias module:views-main.MainView#onWindowResize
              */
             onWindowResize: function () {
+                var mainContainer = this.$el.find("#main-container");
+                mainContainer.height($(window).height() - mainContainer.position().top);
                 goldenLayout.updateSize();
             },
 
