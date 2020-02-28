@@ -444,17 +444,8 @@ define(["jquery",
              * Listener for click on this annotation
              * @alias module:views-list-annotation.ListAnnotation#onSelect
              */
-            onSelect: _.debounce(function (force) {
-                // If annotation already selected
-                if (annotationTool.hasSelection() && annotationTool.getSelection()[0].get("id") === this.model.get("id")) {
-                    if (!_.isBoolean(force) || (_.isBoolean(force) && !force)) {
-                        annotationTool.setSelection();
-                        this.isSelected = false;
-                    }
-                } else {
-                    this.isSelected = true;
-                    annotationTool.setSelection([this.model], true, true);
-                }
+            onSelect: _.debounce(function () {
+                annotationTool.setSelection(this.model, true);
             }, 100),
 
             /**
@@ -472,7 +463,6 @@ define(["jquery",
 
                 if (this.isEditEnable) {
                     this.trigger("edit", this);
-                    this.onSelect(true);
                 }
 
                 this.render();

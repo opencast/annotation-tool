@@ -468,9 +468,27 @@ define([
                 annotationTool,
                 annotationTool.EVENTS.ANNOTATION_SELECTION,
                 function (selection) {
-                    this.timeline.setSelection(
-                        _.map(selection, "id")
-                    );
+                    this.timeline.setSelection(selection && selection.id);
+                }
+            );
+            this.listenTo(
+                annotationTool,
+                annotationTool.EVENTS.ACTIVE_ANNOTATIONS,
+                function (currentAnnotations, previousAnnotations) {
+                    // TDOO We could probably speed this up;
+                    //   maybe we could even receive the diff somehow?
+                    this.items.update(_.map(previousAnnotations, function (annotation) {
+                        return {
+                            id: annotation.id,
+                            className: ""
+                        };
+                    }, this));
+                    this.items.update(_.map(currentAnnotations, function (annotation) {
+                        return {
+                            id: annotation.id,
+                            className: "active"
+                        };
+                    }, this));
                 }
             );
             // Long-pressing is normally only used for multiple selections,
@@ -483,12 +501,8 @@ define([
             this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
                 annotationTool.setSelection(
-                    _.map(properties.items, function (itemId) {
-                        var item = this.items.get(itemId);
-                        return item.model;
-                    }, this),
-                    true, // move playhead
-                    true // manually selected
+                    this.items.get(properties.items[0]).model,
+                    true // move playhead
                 );
             }, this));
 

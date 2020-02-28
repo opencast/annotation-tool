@@ -524,19 +524,22 @@ define(["jquery",
             setupKeyboardShortcuts: function () {
 
                 var setActiveAnnotationDuration = function () {
-                    if (!annotationTool.activeAnnotation) return;
+                    var selection = annotationTool.getSelection();
+                    if (!selection) return;
 
                     var currentTime = annotationTool.playerAdapter.getCurrentTime();
-                    var start = annotationTool.activeAnnotation.get("start");
-                    annotationTool.activeAnnotation.set("duration", currentTime - start);
-                    annotationTool.activeAnnotation.save();
+                    var start = selection.get("start");
+                    selection.set("duration", currentTime - start);
+                    selection.save();
                 };
 
                 var addComment = _.bind(function () {
-                    if (!annotationTool.activeAnnotation) return;
                     if (!this.views.list) return;
+                    var selection = annotationTool.getSelection();
+                    if (!selection) return;
+
                     var annotationView = this.views.list.getViewFromAnnotation(
-                        annotationTool.activeAnnotation.get("id")
+                        selection.id
                     );
                     annotationView.toggleCommentsState();
                     var wasPlaying = annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
@@ -779,24 +782,17 @@ define(["jquery",
              * @param  {Event} event Event object
              */
             onDeletePressed: function (event) {
-                var annotation;
-
                 if (event.keyCode !== 8 ||
-                    document.activeElement.tagName.toUpperCase() === "TEXTAREA" ||
-                    document.activeElement.tagName.toUpperCase() === "INPUT" ||
-                    !annotationTool.hasSelection()) {
-                    return;
-                } else {
-                    event.preventDefault();
+                    document.activeElement.tagName === "TEXTAREA" ||
+                    document.activeElement.tagName === "INPUT" ||
+                    !annotationTool.hasSelection()) return;
 
-                    annotation = annotationTool.getSelection()[0];
-                    if (annotation) {
-                        annotationTool.deleteOperation.start(
-                            annotation,
-                            annotationTool.deleteOperation.targetTypes.ANNOTATION
-                        );
-                    }
-                }
+                event.preventDefault();
+
+                annotationTool.deleteOperation.start(
+                    annotationTool.getSelection(),
+                    annotationTool.deleteOperation.targetTypes.ANNOTATION
+                );
             },
 
             /**

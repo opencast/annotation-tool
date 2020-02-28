@@ -83,18 +83,15 @@ define(["underscore",
             initialize: function (options) {
                 // Bind functions to the good context
                 _.bindAll(this, "render",
-                               "addTrackList",
-                               "addTrack",
-                               "addAnnotation",
-                               "addList",
-                               "clearList",
-                               "getPosition",
-                               "getViewFromAnnotation",
-                               "insertView",
-                               "select",
-                               "renderSelect",
-                               "updateView",
-                               "potentiallyOpenCurrentItems");
+                                "addTrackList",
+                                "addTrack",
+                                "addAnnotation",
+                                "addList",
+                                "clearList",
+                                "getPosition",
+                                "getViewFromAnnotation",
+                                "insertView",
+                                "updateView");
 
                 this.annotationViews = [];
                 this.tracks          = annotationTool.video.get("tracks");
@@ -102,14 +99,14 @@ define(["underscore",
 
                 this.listenTo(this.tracks, "change:access", this.render);
                 this.listenTo(this.tracks, "visibility", this.addTrackList);
-                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
+                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.renderSelection);
+                this.listenTo(annotationTool, annotationTool.EVENTS.ACTIVE_ANNOTATIONS, this.renderActive);
 
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.render);
 
                 this.listenTo(annotationTool, "togglefreetext", this.render);
 
                 this.autoExpand = options.autoExpand;
-                annotationTool.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
                 this.$el.html(template());
                 this.scrollableArea = this.$el.find("#content-list-scroll");
@@ -118,8 +115,8 @@ define(["underscore",
                 this.addTrackList(this.tracks.getVisibleTracks());
 
                 this.render();
-
-                window.requestAnimationFrame(this.renderSelect);
+                this.renderSelection(annotationTool.getSelection());
+                this.renderActive(annotationTool.getCurrentAnnotations());
 
                 return this;
             },
@@ -242,90 +239,104 @@ define(["underscore",
             },
 
             /**
-             * Select the given annotation
-             * @alias module:views-list.List#select
-             * @param  {Annotation} annotations The annotation to select
+             * Update the annotation views to reflect the current selection
+             * @alias module:views-list.List#renderSelection
+             * @param {Annotation?} selection the currently selected annotation
+             * @param {Annotation?} previousSelection the previously selected annotation
              */
-            select: function (annotations) {
-                var annotation,
-                    i,
-                    view,
-                    selectedAnnotations = [];
-
-                // only remove the annotations
-                for (i = 0; i < annotations.length; i++) {
-                    annotation = annotations[i];
-                    if (annotation) {
-                        view = this.getViewFromAnnotation(annotation.get("id"));
-
-                        // If view not found, annotation has been newly created
-                        if (!_.isUndefined(view)) {
-                            selectedAnnotations[i] = view;
-                        }
-                    }
+            renderSelection: function (selection, previousSelection) {
+                if (previousSelection) {
+                    this.getViewFromAnnotation(previousSelection.id)
+                        .$el.removeClass("selected");
                 }
+                if (selection) {
+                    var view = this.getViewFromAnnotation(selection.id).$el;
+                    view.addClass("selected");
 
-                this.oldSelectedAnnotations = this.selectedAnnotations;
-                this.selectedAnnotations = selectedAnnotations;
-
-                this.selectionUpdated = true;
-
-                if (this.scheduledAnimationFrame) {
-                    return;
+                    this.scrollIntoView(view, view);
                 }
-
-                this.scheduledAnimationFrame = true;
-                window.requestAnimationFrame(this.renderSelect);
             },
 
             /**
-             * Render the annotations selection on the list
-             * @alias module:views-list.List#renderSelect
+             * Update the annotation views to reflect the currently active annotations
+             * @alias module:views-list.List#renderActive
+             * @param {Array<Annotation>} selection the currently active annotations
+             * @param {Array<Annotation>} previousSelection the previously active annotations
              */
-            renderSelect: function () {
-                var annotations = this.selectedAnnotations,
-                    oldAnnotations = this.oldSelectedAnnotations,
-                    view,
-                    i;
+            renderActive: function (currentAnnotations, previousAnnotations) {
+                _.each(previousAnnotations, function (annotation) {
+                    var view = this.getViewFromAnnotation(annotation.id);
+                    view.$el.removeClass("active");
+                    if (this.autoExpand) {
+                        view.collapse(true);
+                    }
+                }, this);
+                var firstView, lastView;
+                _.each(currentAnnotations, function (annotation, index) {
+                    var view = this.getViewFromAnnotation(annotation.id);
 
-                // Display selection only if it has been updated
-                if (this.selectionUpdated) {
-
-                    for (i = 0; i < oldAnnotations.length; i++) {
-                        view = oldAnnotations[i];
-                        if (_.isUndefined(view)) {
-                            continue;
-                        }
-                        view.$el.removeClass("selected");
-                        view.isSelected = false;
+                    if (this.autoExpand) {
+                        view.expand(true);
                     }
 
-                    for (i = 0; i < annotations.length; i++) {
-                        view = annotations[i];
-                        if (_.isUndefined(view)) {
-                            continue;
-                        }
-                        view.$el.addClass("selected");
+                    view = view.$el;
 
-                        // Only scroll the list to the first item of the selection
-                        if (i === 0 && !view.isSelected) {
-                            this.scrollableArea.scrollTop(view.$el.offset().top - this.scrollableArea.offset().top);
-                        }
+                    view.addClass("active");
 
-                        view.isSelected = true;
+                    if (!firstView || view.offset().top < firstView.offset().top) {
+                        firstView = view;
+                    }
+                    if (!lastView || view.offset().top > lastView.offset().top) {
+                        lastView = view;
                     }
 
-                    this.selectionUpdated = false;
+                    return view;
+                }, this);
+
+                if (firstView) {
+                    this.scrollIntoView(firstView, lastView);
                 }
+            },
 
-                this.scheduledAnimationFrame = false;
+            /**
+             * Scroll the list in such a way that both <code>firstView</code>
+             * and <code>lastView</code> are visible, and so that the area between them
+             * is roughly centered within the view.
+             * However, don't scroll past the top of <code>firstView</code>
+             * while doing so
+             * @alias module:views-list.List#scrollIntoView
+             * @param {$} firstView the top-most view you want to see
+             * @param {$} lastView the bottom-most view that should be visible
+             */
+            scrollIntoView: function (firstView, lastView) {
+                this.scrollableArea.scrollTop(
+                    this.getOffset(firstView) -
+                        Math.max(
+                            0,
+                            this.scrollableArea.height() -
+                                lastView.offset().top -
+                                lastView.height() +
+                                firstView.offset().top
+                        ) / 2
+                );
+            },
+
+            /**
+             * @alias module:views-list.List#getOffset
+             * @param {$} view an element inside the scrollable area
+             * @return {Number} the offset of the given view within the scrollable area
+             */
+            getOffset: function (view) {
+                return view.offset().top -
+                    this.scrollableArea.offset().top +
+                    this.scrollableArea.scrollTop();
             },
 
             /**
              * Get the view representing the given annotation
              * @alias module:views-list.List#getViewFromAnnotation
-             * @param  {String} id The target annotation id
-             * @return {ListAnnotation}            The view representing the annotation
+             * @param {String} id The target annotation id
+             * @return {ListAnnotation} The view representing the annotation
              */
             getViewFromAnnotation: function (id) {
                 var annotationViews = this.annotationViews,
@@ -372,26 +383,6 @@ define(["underscore",
             collapseAll: function (event) {
                 _.invoke(this.annotationViews, "collapse");
             },
-
-            /**
-             * Listener for player "timeupdate" event to open the current annotations in the list view
-             * @alias module:views-list.List#potentiallyOpenCurrentItems
-             */
-            potentiallyOpenCurrentItems: function () {
-                var previousAnnotations = [];
-                return function () {
-                    if (!this.autoExpand) return;
-
-                    _.each(previousAnnotations, function (annotation) {
-                        this.getViewFromAnnotation(annotation.id).collapse(true);
-                    }, this);
-                    var currentAnnotations = annotationTool.getCurrentAnnotations();
-                    _.each(currentAnnotations, function (annotation) {
-                        this.getViewFromAnnotation(annotation.id).expand(true);
-                    }, this);
-                    previousAnnotations = currentAnnotations;
-                };
-            }(),
 
             /**
              * Display the list
