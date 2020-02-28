@@ -167,9 +167,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response none() {
             Resource resource = eas().createResource();
             User u = eas().createUser(userExtId, nickname, emailo, resource);
+            // This might have been the first user, which would mean
+            // that the resource above has no owner.
+            // To fix this, we just recreate it and update the user to persist it.
             resource = eas().createResource(tags);
             u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
-            eas().updateUser(new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource));
+            eas().updateUser(u);
             return Response.created(userLocationUri(u))
                     .entity(Strings.asStringNull().apply(UserDto.toJson.apply(eas(), u))).build();
           }
