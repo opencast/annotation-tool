@@ -284,11 +284,10 @@ define(["jquery",
 
             /**
              * Set the given annotation(s) as current selection
-             * @alias   annotationTool.setSelection
+             * @alias annotationTool.setSelection
              * @param {Array} selection The new selection
-             * @param {Boolean} moveTo define if the video should be move to the start point of the selection
              */
-            setSelection: function (selection, moveTo) {
+            setSelection: function (selection) {
                 if (this.selection) {
                     this.stopListening(this.selection, "destroy", this.onDestroyRemoveSelection);
 
@@ -302,7 +301,6 @@ define(["jquery",
 
                 if (this.selection) {
                     this.listenTo(this.selection, "destroy", this.onDestroyRemoveSelection);
-                    if (moveTo) this.playerAdapter.setCurrentTime(this.selection.get("start"));
                 }
 
                 this.trigger(

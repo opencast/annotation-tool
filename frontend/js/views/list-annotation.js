@@ -443,15 +443,27 @@ define(["jquery",
             /**
              * Listener for click on this annotation
              * @alias module:views-list-annotation.ListAnnotation#onSelect
+             * @param {Event} event the click event
              */
-            onSelect: _.debounce(function () {
-                annotationTool.setSelection(this.model, true);
+            onSelect: _.debounce(function (event) {
+                if (event.originalEvent.detail > 1) return;
+                annotationTool.setSelection(this.model);
             }, 100),
+
+            /**
+             * Navigate to this view's annotation
+             * @alias module:views-list-annotation.ListAnnotation#moveTo
+             */
+            moveTo: function () {
+                annotationTool.playerAdapter.setCurrentTime(
+                    this.model.get("start")
+                );
+            },
 
             /**
              * Switch in/out edit modus
              * @alias module:views-list-annotation.ListAnnotation#toggleEditState
-             * @param  {event} event Event object
+             * @param {Event} event Event object
              */
             toggleEditState: function (event) {
                 if (!_.isUndefined(event)) {
@@ -582,6 +594,7 @@ define(["jquery",
                     id: "collapsed",
                     events: {
                         "click": "onSelect",
+                        "dblclick": "moveTo",
                         "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment": "toggleCommentsState"
@@ -593,6 +606,7 @@ define(["jquery",
                     id: "expanded",
                     events: {
                         "click": "onSelect",
+                        "dblclick": "moveTo",
                         "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment": "toggleCommentsState",
@@ -606,6 +620,7 @@ define(["jquery",
                     id: "edit-annotation",
                     events: {
                         "click": "onSelect",
+                        "dblclick": "moveTo",
                         "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment": "toggleCommentsState",
@@ -635,6 +650,7 @@ define(["jquery",
                     id: "add-comment",
                     events: {
                         "click": "onSelect",
+                        "dblclick": "moveTo",
                         "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment": "toggleCommentsState",

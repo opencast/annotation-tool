@@ -420,6 +420,10 @@ define([
                     var myTrack = clickedOnOneOfMyTracks.call(this, properties);
                     if (!myTrack) return;
                     this.initTrackModal(properties.event, myTrack);
+                } else if (properties.what === "item") {
+                    this.playerAdapter.setCurrentTime(util.secondsFromDate(
+                        this.items.get(properties.item).start
+                    ));
                 }
             }, this));
 
@@ -500,9 +504,14 @@ define([
             // the item would just be deselected in that scenario.
             this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
+                if (properties.event.tapCount > 1) {
+                    // Restore the selection
+                    var selection = annotationTool.getSelection();
+                    this.timeline.setSelection(selection && selection.id);
+                    return;
+                }
                 annotationTool.setSelection(
-                    this.items.get(properties.items[0]).model,
-                    true // move playhead
+                    this.items.get(properties.items[0]).model
                 );
             }, this));
 
