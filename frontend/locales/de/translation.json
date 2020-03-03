@@ -96,7 +96,7 @@
   "delete modal": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
-    "title": "Löschen",
+    "title": "$t(models.nominative, {'context': {{context}} }) löschen",
     "warning": "Wollen Sie $t(models.accusative, {'context': {{context}} }) „{{content}}“ wirklich löschen?"
   },
   "description": "Werkzeug zur Videoannotation",
@@ -319,6 +319,13 @@
   },
   "version": "Version: {{version}}",
   "models": {
+    "nominative_annotation": "Annotation",
+    "nominative_comment": "Kommentar",
+    "nominative_label": "Etikett",
+    "nominative_track": "Spur",
+    "nominative_category": "Kategorie",
+    "nominative_scale value": "Skalenwert",
+    "nominative_scale": "Skala",
     "accusative_annotation": "die Annotation",
     "accusative_comment": "den kommentar",
     "accusative_label": "das Kennzeichen",
