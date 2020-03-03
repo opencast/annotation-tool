@@ -97,7 +97,7 @@
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
     "title": "Löschen",
-    "warning": "Wollen Sie $t(models.genitive, {'context': {{context}} }) „{{content}}“ wirklich löschen?"
+    "warning": "Wollen Sie $t(models.accusative, {'context': {{context}} }) „{{content}}“ wirklich löschen?"
   },
   "description": "Werkzeug zur Videoannotation",
   "list annotation": {
@@ -319,13 +319,13 @@
   },
   "version": "Version: {{version}}",
   "models": {
-    "genitive_annotation": "die Annotation",
-    "genitive_comment": "den kommentar",
-    "genitive_label": "das Kennzeichen",
-    "genitive_track": "die Spur",
-    "genitive_category": "die Kategorie",
-    "genitive_scale value": "den Skalenwert",
-    "genitive_scale": "die Skala"
+    "accusative_annotation": "die Annotation",
+    "accusative_comment": "den kommentar",
+    "accusative_label": "das Kennzeichen",
+    "accusative_track": "die Spur",
+    "accusative_category": "die Kategorie",
+    "accusative_scale value": "den Skalenwert",
+    "accusative_scale": "die Skala"
   },
   "views": {
     "annotate": "Neue Annotationen erstellen",
