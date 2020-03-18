@@ -11,7 +11,7 @@
     "start": "grunt dev"
   },
   "devDependencies": {
-    "grunt": "^1.0.4",
+    "grunt": "^1.1.0",
     "grunt-amdcheck": "^1.3.2",
     "grunt-cli": "^1.3.2",
     "grunt-concurrent": "^2.3.1",
