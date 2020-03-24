@@ -23,7 +23,7 @@ In this manual we use `<annotationtool-dir>` for the base dir of the Annotation 
 
     git clone https://github.com/opencast/annotation-tool.git
 
-#### Prequisites
+#### Prerequisites
 
 Make sure that you have openjdk-8-jdk and maven installed.
 
@@ -33,8 +33,6 @@ Make sure that you have openjdk-8-jdk and maven installed.
 
 This should build the frontend, include it into the Opencast modules and copies the JARs
 to your Opencast installation. You should provide the built Opencast directory, e.g. `-DdeployTo=/home/user/opencast/build/opencast-dist-develop-8-SNAPSHOT/`
-
-There is an additional, special property `opencast.version` to specify the Opencast version number.
 
 Note that if you are building against an Opencast version prior to 7,
 you currently need to skip the tests due to an incompatibility
