@@ -100,11 +100,11 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
             Boolean allow = (Boolean) ace.get("allow");
             if (allow == null || !allow) continue;
 
-            String action = (String) ace.get("action");
-            if (action == null || !(action.equals("read") || action.equals("cast-annotate"))) continue;
-
             String role = (String) ace.get("role");
             if (role == null || !applies(role)) continue;
+
+            String action = (String) ace.get("action");
+            if (action == null) continue;
 
             switch (action) {
               case "read":
@@ -117,8 +117,11 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
                 // TODO Fix the name
                 isAdmin = true;
                 break;
+              default:
+                continue;
             }
           }
+
           if (!canRead) return Access.NONE;
           if (isAdmin) {
             return Access.ADMIN;
