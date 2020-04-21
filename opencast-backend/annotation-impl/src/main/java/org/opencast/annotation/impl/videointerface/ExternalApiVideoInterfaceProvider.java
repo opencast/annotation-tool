@@ -118,11 +118,6 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
                 isAdmin = true;
                 break;
             }
-            if (action.equals("read")) {
-              canRead = true;
-            } else if (action.equals("cast-annotate")) {
-              canAnnotate = true;
-            }
           }
           if (!canRead) return Access.NONE;
           if (isAdmin) {
