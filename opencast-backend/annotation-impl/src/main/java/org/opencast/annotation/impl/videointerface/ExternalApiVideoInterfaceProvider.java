@@ -108,13 +108,13 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
 
             switch (action) {
               case "read":
+                // TODO Is `read` even the correct action?
                 canRead = true;
                 break;
               case "cast-annotate":
                 canAnnotate = true;
                 break;
-              case "cast-annotate-admin":
-                // TODO Fix the name
+              case "write":
                 isAdmin = true;
                 break;
               default:
