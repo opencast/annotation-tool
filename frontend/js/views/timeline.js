@@ -88,6 +88,7 @@ define([
             item.className = "category-" + labels[0].get("category").id;
             item.label = labels[0].toJSON();
         }
+        item.contentItems = annotation.get("content").invoke("toJSON");
         item.type = item.duration
             ? "range"
             : "box";

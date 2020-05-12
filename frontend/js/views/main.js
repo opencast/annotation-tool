@@ -31,6 +31,7 @@ define(["jquery",
         "views/scale-editor",
         "views/tracks-selection",
         "views/print",
+        "views/questionnaire",
         "backbone",
         "goldenlayout",
         "localstorage",
@@ -50,6 +51,7 @@ define(["jquery",
         ScaleEditorView,
         TracksSelectionView,
         PrintView,
+        QuestionnaireView,
         Backbone,
         GoldenLayout
     ) {
@@ -167,10 +169,11 @@ define(["jquery",
                     "timeline",
                     "annotate",
                     "list",
-                    "loop"
+                    "loop",
+                    "questionnaire"
                 ];
 
-                var closableViews = ["list", "annotate", "loop"];
+                var closableViews = ["list", "annotate", "loop", "questionnaire"];
                 this.viewConfigs = _.object(_.map(views, function (view) { return [
                     view, {
                         type: "component",
@@ -201,6 +204,22 @@ define(["jquery",
                             type: "column",
                             content: [
                                 "annotate",
+                                "list"
+                            ].map(viewConfig)
+                        }]
+                    },
+                    "questionnaire": {
+                        type: "row",
+                        content: [{
+                            type: "column",
+                            content: [
+                                "player",
+                                "timeline"
+                            ].map(viewConfig)
+                        }, {
+                            type: "column",
+                            content: [
+                                "questionnaire",
                                 "list"
                             ].map(viewConfig)
                         }]
@@ -266,6 +285,7 @@ define(["jquery",
                         //   instead of relying on the keys of the above map
                         //   to impose an order!
                         "default",
+                        "questionnaire",
                         "with loops",
                         "alternative",
                         "reviewing",
@@ -454,6 +474,16 @@ define(["jquery",
                             el: container.getElement(),
                             freeText: $("#opt-annotate-text").hasClass("checked"),
                             categories: $("#opt-annotate-categories").hasClass("checked")
+                        }));
+                    });
+                });
+                goldenLayout.registerComponent("questionnaire", function (container) {
+                    container.getElement().addClass("golden-layout-component-questionnaire");
+                    requireViews(["player"], function (player) {
+                        setupClosing("questionnaire", container);
+                        resolveView("questionnaire", new QuestionnaireView({
+                            playerAdapter: player,
+                            el: container.getElement(),
                         }));
                     });
                 });

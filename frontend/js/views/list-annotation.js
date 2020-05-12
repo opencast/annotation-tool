@@ -320,6 +320,8 @@ define(
                     }
                 );
 
+                modelJSON.hasQuestionnaire = !!annotationTool.video.getQuestionnaire();
+
                 var partials = _.extend(
                     {
                         category: TmplCategory,

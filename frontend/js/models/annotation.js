@@ -25,10 +25,11 @@ define(
         "collections/annotation-content",
         "models/content-item",
         "models/resource",
+        "i18next",
         "localstorage"
     ],
 
-    function (_, util, Comments, AnnotationContent, ContentItem, Resource) {
+    function (_, util, Comments, AnnotationContent, ContentItem, Resource, i18next) {
 
         "use strict";
 
@@ -284,6 +285,11 @@ define(
 
                 case "text":
                     title = this.get("content").first().get("value");
+                    break;
+
+                case "multi":
+                    var empty = !this.get("content").size();
+                    title = "<" + i18next.t(empty ? "annotation.types.empty" : "annotation.types.multi") + ">";
                     break;
                 }
 

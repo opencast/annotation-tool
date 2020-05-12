@@ -710,7 +710,7 @@ define(["jquery",
             ANNOTATION: {
                 name: "annotation",
                 getContent: function (target) {
-                    return target.get("text");
+                    return target.getTitleAttribute();
                 },
                 destroy: function (target, callback) {
 

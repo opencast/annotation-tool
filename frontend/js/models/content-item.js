@@ -59,6 +59,12 @@ define(["underscore", "backbone"], function(_, Backbone) {
             return labelId && _.findWhere(annotationTool.video.getLabels(), { id: labelId });
         },
 
+        getScaleValue: function() {
+            return this.getType() === "scaling"
+                ? _.findWhere(annotationTool.video.getScaleValues(), { id: this.get("value").scaling })
+                : undefined;
+        },
+
         /**
          * Get a short text describing this content item.
          * @alias module:models-content-item.ContentItem#getText

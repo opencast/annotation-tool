@@ -279,6 +279,17 @@ define(
             },
 
             /**
+             * Get questionnaire.
+             * @alias module:models-video.Video#getQuestionnaire
+             * @return {object|undefined} an object describing a questionnaire if there is one connected to this video
+             */
+            getQuestionnaire: function() {
+                // TODO: this has to be provided by the backend
+                // return undefined
+                return {};
+            },
+
+            /**
              * Override the default toJSON function to ensure complete JSONing.
              * @alias module:models-video.Video#toJSON
              * @return {JSON} JSON representation of the instane

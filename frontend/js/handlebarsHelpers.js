@@ -83,6 +83,10 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
         );
     });
 
+    /**
+     * Compare two values for equality.
+     * @alias module:Handlebars#ifeq
+     */
     Handlebars.registerHelper('ifeq', function (a, b, options) {
         if (a == b) {
             return options.fn(this);
@@ -90,12 +94,20 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
         return options.inverse(this);
     });
 
+    /**
+     * Given an ID, create a new context with the matching scale value
+     * @alias module:Handlebars#ifeq
+     */
     Handlebars.registerHelper("withScaleValue", function (id) {
         var scaleValue = _.findWhere(annotationTool.video.getScaleValues(), { id: id });
 
         return scaleValue && scaleValue.toJSON();
     });
 
+    /**
+     * Given an ID, create a new context with the matching label
+     * @alias module:Handlebars#ifeq
+     */
     Handlebars.registerHelper("withLabel", function (id) {
         var label = _.findWhere(annotationTool.video.getLabels(), { id: id });
 

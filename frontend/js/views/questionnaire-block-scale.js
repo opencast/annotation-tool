@@ -14,83 +14,62 @@
  *
  */
 define([
-    "templates/modal-add-labelled",
-    "templates/partial-label-chooser",
+    "models/content_item",
+    "templates/questionnaire-block-scale",
+    "templates/questionnaire-block-layout",
     "templates/partial-scale-chooser",
     "backbone",
     "bootstrap"
-], function(template, tmplLabelChooser, tmplScaleChooser, Backbone) {
+], function(ContentItem, template, tmplLayout, tmplScaleChooser, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
-        /**
-         * Events to handle
-         * @alias module:views-modal-edit-labelled.ModalEditLabelled#events
-         * @type {object}
-         */
+        tagName: "section",
+        className: "questionnaire-block-scale",
         events: {
-            "click .btn.label": "onLabelledContent",
-            "click .btn.label-and-scale": "onScalingContent"
+            "click .btn": "onClick"
         },
-
-        /**
-         * Constructor
-         * @alias module:views-modal-edit-labelled.ModalEditLabelled#initialize
-         */
         initialize: function(options) {
-            this.category = options.category;
-            this.contentItem = options.contentItem;
+            this.item = options.item;
+            this.model = new ContentItem({ type: "scaling", title: this.item.title, value: {} });
+            this.validationErrors = [];
         },
-
-        /**
-         * Render this view
-         * @alias module:views-modal-edit-labelled.ModalEditLabelled#render
-         */
         render: function() {
+            var category = getCategoryByName(this.item.category);
             this.$el.html(
                 template(
                     {
-                        color: getColor(this.category),
-                        labels: getLabels(this.category, this.contentItem),
-                        scale: getScale(this.category, this.contentItem)
+                        item: this.item,
+                        color: getColor(category),
+                        labels: getLabels(category, this.model),
+                        scale: getScale(category, this.model)
                     },
-                    {
-                        partials: {
-                            labelChooser: tmplLabelChooser,
-                            scaleChooser: tmplScaleChooser
-                        }
-                    }
+                    { partials: { layout: tmplLayout, scaleChooser: tmplScaleChooser } }
                 )
             );
-
             return this;
         },
+        validate: function() {
+            var value = this.model.get("value");
+            if (!_.isObject(value) || !value.label || !value.scaling) {
+                this.validationErrors = ["validation errors.empty"];
+                return false;
+            }
+            this.validationErrors = [];
 
-        /**
-         * Listener for click on a button to add a `label` content item
-         * @alias module:views-modal-edit-labelled.ModalEditLabelled#onLabelledContent
-         */
-        onLabelledContent: function(event) {
-            var $button = $(event.currentTarget);
-            var labelId = $button.data("label");
-
-            this.contentItem.set("value", labelId);
-            this.model.save();
-            this.trigger("modal:request-close");
+            return true;
         },
-
-        /**
-         * Listener for click on a button to add a `scaling` content item
-         * @alias module:views-modal-edit-labelled.ModalEditLabelled#onScalingContent
-         */
-        onScalingContent: function(event) {
+        getContentItems: function() {
+            return this.model;
+        },
+        onClick: function(event) {
+            event.preventDefault();
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
             var scaleValueId = $button.data("scalevalue");
 
-            this.contentItem.set("value", { label: labelId, scaling: scaleValueId });
-            this.model.save();
-            this.trigger("modal:request-close");
+            this.model.set("value", { label: labelId, scaling: scaleValueId });
+            this.render();
         }
     });
 
@@ -101,12 +80,12 @@ define([
     }
 
     function getLabels(category, contentItem) {
-        var selectedLabel = contentItem.getLabel();
+        var labelId = contentItem.get("value").label;
         var labels = category
             .get("labels")
             .toJSON()
             .map(function(label) {
-                return _.extend(label, { selected: label.id === selectedLabel.id });
+                return _.extend(label, { selected: label.id === labelId });
             });
 
         return labels;
@@ -127,5 +106,11 @@ define([
         }
 
         return scale;
+    }
+
+    function getCategoryByName(name) {
+        return annotationTool.video.get("categories").models.find(function(category) {
+            return category.get("name") === name;
+        });
     }
 });

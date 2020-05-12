@@ -57,6 +57,8 @@
     "track": "auf",
     "empty text": "ohne Inhalt",
     "types": {
+      "empty": "ohne Inhalte",
+      "multi": "mehrere Inhalte",
       "free text": "Freitextannotation",
       "label": "Kennzeichen",
       "scaling": "Kennzeichen mit Skalenwert"
@@ -204,6 +206,12 @@
       }
     },
     "title": "Name des Videos: {{title}}"
+  },
+  "questionnaire": {
+    "form prompt": "Fragebogengestütze Annotation erstellen",
+    "blank slate": {
+      "start": "Video annotatieren"
+    }
   },
   "required fields": "Pflichtfelder",
   "scale editor": {
