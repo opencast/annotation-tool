@@ -110,8 +110,6 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                var scaleId;
-
                 if (!attr.label || !_.isObject(attr.label)) {
                     throw "Label object must be given as constuctor attribute!";
                 }
@@ -170,16 +168,9 @@ define(["jquery",
             annnotateWithScaling: function (event) {
                 event.stopImmediatePropagation();
 
-                var id = event.target.getAttribute("value"),
-                    scalevalue = this.scaleValues.get(id),
-                    annotation,
-                    params = {
-                        text: this.model.get("value"),
-                        label: this.model,
-                        scalevalue: scalevalue.toJSON()
-                    };
-
-                annotation = annotationTool.createAnnotation(params);
+                var id = event.target.getAttribute("value");
+                var annotation = annotationTool.createAnnotation({});
+                annotation.addContent({ type: "scaling", value: { label: this.model.id, scaling: id } });
                 annotationTool.setSelection([annotation], true);
             },
 
@@ -195,11 +186,9 @@ define(["jquery",
                     return;
                 }
 
-                var annotation = annotationTool.createAnnotation({
-                    text : this.model.get("value"),
-                    label: this.model
-                });
+                var annotation = annotationTool.createAnnotation({ });
                 annotationTool.setSelection([annotation], true);
+                annotation.addContent({ type: "label", value: this.model.id });
             },
 
             /**

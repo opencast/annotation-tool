@@ -68,13 +68,18 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 return tracks.get(trackId);
             });
             var annotations = _.chain(tracks)
-                .invoke('get', 'annotations')
+                .map(function (track) { return track.annotations; })
                 .pluck("models")
                 .flatten()
                 .filter(function (annotation) {
-                    var category = annotation.category();
-                    if (!category) return annotationTool.freeTextVisible;
-                    return category.get("visible");
+                    if (!annotation) {
+                        return false;
+                    }
+                    var categories = annotation.getCategories();
+                    if (!categories.length) {
+                        return annotationTool.freeTextVisible;
+                    }
+                    return _.every(_.invoke(categories, "get", "visible"));
                 });
 
             var users = annotations
@@ -86,9 +91,9 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
 
             // Get all used categories and and their scales
             var labels = annotations
-                .filter(function (annotation) { return annotation.has("label"); })
-                .invoke("get", "label")
-                .uniq("id");
+                .map(function (annotation) { return annotation.getLabels(); })
+                .flatten()
+
             var categories = labels.pluck("category")
                 .sortBy("name")
                 .uniq("id")
@@ -114,7 +119,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 .unzip()
                 .map(function (labels) {
                     return {
-                        labels: labels
+                        labels: _.invoke(labels, "toJSON")
                     };
                 }).value();
 
@@ -127,14 +132,30 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                     result.author = annotation.get("created_by_nickname");
 
                     // Assign text for free text annotations
-                    var label = annotation.get("label");
-                    if (!label) result.free = annotation.get("text");
+                    var labels = annotation.getLabels();
+                    if (!labels.length) {
+                        result.free = annotation.get("content").reduce(function (memo, item) {
+                            if (item.get("type") === "text") {
+                                memo.push(item.get("value"));
+                            }
+                            return memo;
+                        }, []).join(", ");
+                    }
 
                     // Build the display code
-                    if (label) {
-                        result.codes = label.abbreviation;
-                        var scaleValue = annotation.get("scalevalue");
-                        if (scaleValue) result.codes += " " + scaleValue.name;
+                    var scaleValues = annotationTool.video.getScaleValues();
+                    if (labels.length) {
+                        result.codes = labels.map(function (label) { return label.get("abbreviation"); }).join(", ");
+                        var scaleValue = annotation.get("content").reduce(function (memo, item) {
+                            if (item.get("type") === "scaling") {
+                                var scaleValue = _.findWhere(scaleValues, { id: item.get("value").scaling });
+                                if (scaleValue) {
+                                    memo.push(scaleValue.get("name"));
+                                }
+                            }
+
+                            return memo
+                        }, []).join(" ");
                     } else {
                         result.codes = "Free";
                     }
@@ -201,6 +222,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                     }
                 }
             }));
+
             return this;
         }
     });

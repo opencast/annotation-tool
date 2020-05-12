@@ -18,19 +18,31 @@
  * A module representing the view for an item of the annotations list
  * @module views-list-annotation
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "util",
         "i18next",
         "views/comments-container",
+        "views/modal-add-free-text",
+        "views/modal-add-labelled",
+        "views/modal-edit-free-text",
+        "views/modal-edit-labelled",
         "templates/comments-container-header",
         "templates/list-annotation",
         "templates/list-annotation-expanded",
         "templates/list-annotation-edit",
+        "templates/list-annotation-category",
+        "templates/content-type-text",
+        "templates/content-type-label",
+        "templates/content-type-scaling",
+        "templates/content-item-header",
         "backbone",
-        "handlebarsHelpers"],
+        "handlebarsHelpers"
+    ],
 
-    function ($, _, util, i18next, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
+    function ($, _, util, i18next, CommentsContainer, AddFreeTextModal, AddLabelledModal, EditFreeTextModal, EditLabelledModal, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, TmplCategory, TmplTypeText, TmplTypeLabel, TmplTypeScaling, TmplContentItemHeader, Backbone) {
 
         "use strict";
 
@@ -102,21 +114,6 @@ define(["jquery",
 
                 this.model.fetchComments();
                 this.listenTo(this.model.get("comments"), "add remove reset reply", this.render);
-
-                if (this.model.get("label")) {
-                    category = this.model.get("label").category;
-
-                    if (!category) {
-                        category = this.model.get("label").get("category");
-                    }
-
-                    this.scale = annotationTool.video.get("scales").get(category.scale_id);
-                }
-
-                if (this.scale) {
-                    this.scaleValues = this.scale.get("scaleValues");
-                }
-
                 this.listenTo(this.model, "change", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);
                 this.listenTo(this.model.get("comments"), "remove", this.render);
@@ -174,50 +171,6 @@ define(["jquery",
                     event.stopImmediatePropagation();
                 }
                 annotationTool.deleteOperation.start(this.model, this.typeForDelete);
-            },
-
-            /**
-             * Save the modification done in the free text field
-             * @alias module:views-list-annotation.ListAnnotation#saveFreeText
-             * @param  {event} event Event object
-             */
-            saveFreeText: function (event) {
-
-                // If keydown event but not enter, value must not be saved
-                if (event.type === "keydown" && !(event.keyCode === 13 && !event.shiftKey)) {
-                    return;
-                }
-
-                var newValue = this.$el.find(".freetext textarea").val();
-                this.model.save({ text: newValue });
-
-                if (event.type === "keydown") {
-                    $(event.currentTarget).blur();
-                }
-                this.toggleEditState(event);
-            },
-
-            /**
-             * Save the scaling value
-             * @alias module:views-list-annotation.ListAnnotation#saveScaling
-             * @param  {event} event Event object
-             */
-            saveScaling: function (event) {
-                var newValue = _.escape(this.$el.find(".scaling select").val());
-
-                // If keydown event but not enter, value must not be saved
-                if (event.type === "keydown" && event.keyCode !== 13) {
-                    return;
-                }
-
-                if (newValue === "OFF") {
-                    this.model.unset("scalevalue");
-                } else {
-                    this.model.set({ scalevalue: this.scaleValues.get(newValue).toJSON() });
-                    this.$el.find(".scaling span").html(this.scaleValues.get(newValue).get("name"));
-                }
-
-                this.model.save();
             },
 
             /**
@@ -354,9 +307,6 @@ define(["jquery",
              */
             render: function () {
                 var modelJSON,
-                    scaleValues,
-                    category,
-                    selectedScaleValue,
                     title;
 
                 modelJSON              = this.model.toJSON();
@@ -365,42 +315,39 @@ define(["jquery",
                 modelJSON.duration     = (modelJSON.duration || 0.0);
                 modelJSON.textHeight   = this.$el.find("span.freetext").height();
 
-                if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
-                    category = annotationTool.video.get("categories").get(this.model.get("label").category.id);
-
-                    // Check if the category is still linked to the video to get the current version
-                    if (category) {
-                        modelJSON.hasScale = category.get("settings").hasScale;
-                    } else {
-                        // Othervise use the json copy
-                        modelJSON.hasScale = this.model.get("label").category.settings.hasScale;
-                    }
-
-                    if (modelJSON.hasScale && this.scale) {
-                        scaleValues = this.scaleValues.toJSON();
-                        selectedScaleValue = _.where(scaleValues, { id: modelJSON.scale_value_id });
-
-                        if (selectedScaleValue.length > 0) {
-                            selectedScaleValue[0].isSelected = true;
-                        }
-                    }
-                    modelJSON.scalevalues = scaleValues;
-                }
-
                 modelJSON.numberOfComments = this.model.get("comments").countCommentsAndReplies();
                 modelJSON.state = this.getState().id;
                 modelJSON.end = modelJSON.start + modelJSON.duration;
 
-                this.$el.html(this.currentState.render(modelJSON));
+                modelJSON.labels = annotationTool.video.getLabels();
 
-                if (!_.isUndefined(modelJSON.label) && !_.isNull(modelJSON.label)) {
-                    title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
-                    if (!_.isUndefined(modelJSON.label.category)) {
-                        this.$el.css("background-color", modelJSON.label.category.settings.color);
+                modelJSON.categories = annotationTool.video.get("categories").map(
+                    function (category) {
+                        var labels = category.get("labels").toJSON();
+                        var scale = null;
+                        if (category.get("scale_id")) {
+                            scale = annotationTool.video.get("scales").get(category.get("scale_id"));
+                            scale = _.extend(scale.toJSON(), { scaleValues: scale.get("scaleValues").toJSON() });
+                        }
+                        return _.extend(category.toJSON(), { labels: labels, scale: scale });
                     }
-                } else {
-                    title = modelJSON.text;
+                );
+
+                var partials = _.extend(
+                    {
+                        category: TmplCategory,
+                        "content-item-header": TmplContentItemHeader
+                    },
+                    this.currentState.partials || {}
+                );
+                this.$el.html(this.currentState.render(modelJSON, { partials: partials }));
+
+                var color = this.model.getColor();
+                if (color) {
+                    this.$el.css("background-color", color);
                 }
+
+                title = this.model.getTitleAttribute();
 
                 if (this.getState() == ListAnnotation.STATES.EDIT) {
                     title += " edit-on";
@@ -445,6 +392,14 @@ define(["jquery",
              * @alias module:views-list-annotation.ListAnnotation#onSelect
              */
             onSelect: _.debounce(function (force) {
+
+                if (arguments.length === 1 && !_.isBoolean(arguments[0])) {
+                    var event = arguments[0];
+                    if ($(event.target).is(".btn, .content-item header i")) {
+                        return;
+                    }
+                }
+
                 // If annotation already selected
                 if (annotationTool.hasSelection() && annotationTool.getSelection()[0].get("id") === this.model.get("id")) {
                     if (!_.isBoolean(force) || (_.isBoolean(force) && !force)) {
@@ -581,6 +536,99 @@ define(["jquery",
             remove: function () {
                 this.commentContainer.remove();
                 Backbone.View.prototype.remove.apply(this, arguments);
+            },
+
+            /**
+             * Add a new annotation with a content item containing free text.
+             * @alias module:views-list-annotation.ListAnnotation#addFreetextContent
+             * @param {Event} event Event object
+             */
+            addFreeTextContent(event) {
+                event && event.stopPropagation();
+
+                annotationTool.addModal(
+                    i18next.t("annotation.add content.add free text"),
+                    new AddFreeTextModal({ model: this.model }),
+                    i18next.t("common actions.insert")
+                );
+            },
+
+            /**
+             * Add a new annotation with a content item containing a label w/ or w/o a scale value.
+             * @alias module:views-list-annotation.ListAnnotation#addLabelledContent
+             * @param {Event} event Event object
+             */
+            addLabelledContent(event) {
+                event && event.stopPropagation();
+
+                var categoryID = $(event.target).data("category");
+                var category = annotationTool.video.get("categories").get(categoryID);
+
+                annotationTool.addModal(
+                    i18next.t("annotation.add content.category") + " " + category.get("name"),
+                    new AddLabelledModal({ model: this.model, category: category })
+                );
+            },
+
+            /**
+             * Edit an annotation's content item in a modal dialog.
+             * @alias module:views-list-annotation.ListAnnotation#editContentitem
+             * @param {Event} event Event object
+             */
+            editContentItem: function (event) {
+                var $contentItem = $(event.target).closest(".content-item");
+                var position = $contentItem.prevAll().length;
+                var contentItems = this.model.get("content");
+                var contentItem = contentItems.at(position);
+
+                switch (contentItem.getType()) {
+                case "text":
+                    annotationTool.addModal(
+                        i18next.t("annotation.edit.edit"),
+                        new EditFreeTextModal({
+                            model: this.model,
+                            contentItem: contentItem
+                        }),
+                        i18next.t("common actions.save")
+                    );
+                    break;
+
+                case "label":
+                case "scaling":
+                    annotationTool.addModal(
+                        i18next.t("annotation.edit.edit"),
+                        new EditLabelledModal({
+                            model: this.model,
+                            category: contentItem.getCategory(),
+                            contentItem: contentItem
+                        })
+                    );
+                    break;
+                }
+            },
+
+            /**
+             * Remove an annotation's content item.
+             * @alias module:views-list-annotation.ListAnnotation#removeContentitem
+             * @param {Event} event Event object
+             */
+            removeContentItem: function (event) {
+                var $contentItem = $(event.target).closest(".content-item");
+                var position = $contentItem.prevAll().length;
+                var contentItems = this.model.get("content");
+                contentItems.remove(contentItems.at(position));
+                this.model.save();
+                this.model.trigger("change", this.model, {});
+            },
+
+            /**
+             * Toggle between expanding and collapsing an annotation's content item.
+             * @alias module:views-list-annotation.ListAnnotation#toggleContentItem
+             * @param {Event} event Event object
+             */
+            toggleContentItem: function (event) {
+                var $contentItem = $(event.target).closest(".content-item");
+                $contentItem.toggleClass("open");
             }
         }, {
 
@@ -599,6 +647,11 @@ define(["jquery",
                 },
                 EXPANDED: {
                     render: TmplExpanded,
+                    partials: {
+                        "text": TmplTypeText,
+                        "label": TmplTypeLabel,
+                        "scaling": TmplTypeScaling
+                    },
                     withComments: true,
                     id: "expanded",
                     events: {
@@ -607,7 +660,13 @@ define(["jquery",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment": "toggleCommentsState",
                         "click .toggle-edit": "toggleEditState",
-                        "click i.delete": "deleteFull"
+                        "click i.delete": "deleteFull",
+                        "click button.add-free-text-content": "addFreeTextContent",
+                        "click button.add-labelled-content": "addLabelledContent",
+                        "click .content-item-expand": "toggleContentItem",
+                        "click .content-item-collapse": "toggleContentItem",
+                        "click .content-item-edit": "editContentItem",
+                        "click .content-item-trash": "removeContentItem",
                     }
                 },
                 EDIT: {
@@ -629,13 +688,9 @@ define(["jquery",
                         "click button.out": "setCurrentTimeAsEnd",
                         "keydown .start-value": "saveStart",
                         "keydown .end-value": "saveEnd",
-                        "keydown .freetext textarea": "saveFreeText",
                         "focusout .start-value": "saveStart",
                         "focusout .end-value": "saveEnd",
-                        "click button[type=submit]": "saveFreeText",
                         "click button[type=button]": "toggleEditState",
-                        "focusout .freetext textarea": "saveFreeText",
-                        "change .scaling select": "saveScaling",
                         "keyup": "handleEsc"
                     }
                 },
@@ -655,5 +710,7 @@ define(["jquery",
                 }
             }
         });
+
     return ListAnnotation;
+
 });

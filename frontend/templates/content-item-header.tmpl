@@ -1,0 +1,19 @@
+<header>
+    <span class="icons">
+        <i class="icon-chevron-down content-item-collapse"></i>
+        <i class="icon-chevron-right content-item-expand"></i>
+    </span>
+    <span class="title">
+        {{> @partial-block }}
+    </span>
+    <span class="actions">
+        {{#if annotation.isMine}}
+        <i class="icon-pencil content-item-edit"
+           title="{{t "annotation.edit.edit"}}"
+        ></i>
+        <i class="icon-trash content-item-trash"
+           title="{{t "annotation.edit.delete"}}"
+        ></i>
+        {{/if}}
+    </span>
+</header>

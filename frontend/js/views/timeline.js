@@ -74,14 +74,27 @@ define([
         item.group = annotation.collection.track.id;
         item.start = util.dateFromSeconds(item.start);
         item.end = util.dateFromSeconds(item.end);
-        var label = item.label;
-        if (label) {
-            item.className = "category-" + label.category.id;
+        delete item.content
+        delete item.text
+
+        item.text = annotation.get("content")
+            .chain()
+            .sortBy(function (c) { return c.get("type"); })
+            .invoke("getText")
+            .value()
+            .join(", ");
+
+        var labels = annotation.getLabels();
+        if (labels.length === 1) {
+            item.className = "category-" + labels[0].get("category").id;
+            item.label = labels[0].toJSON();
         }
+
         if (item.duration) {
             item.type = "range";
         }
         item.model = annotation;
+
         return item;
     }
 

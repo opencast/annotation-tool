@@ -18,14 +18,18 @@
  * A module representing the video model
  * @module models-video
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "collections/tracks",
         "collections/categories",
         "collections/scales",
         "access",
-        "models/resource"],
+        "models/resource",
+        "backbone"
+    ],
 
-    function (_, Tracks, Categories, Scales, ACCESS, Resource) {
+    function (_, Tracks, Categories, Scales, ACCESS, Resource, Backbone) {
 
         "use strict";
 
@@ -67,8 +71,9 @@ define(["underscore",
             initialize: function (attr) {
 
                 _.bindAll(this,
-                        "getTrack",
                         "getAnnotation",
+                        "getLabels",
+                        "getTrack",
                         "loadTracks");
 
                 Resource.prototype.initialize.apply(this, arguments);
@@ -203,14 +208,18 @@ define(["underscore",
                     handleAnnotation = _.bind(Array.prototype.push, result);
                 } else if (category) {
                     handleAnnotation = function (annotation) {
-                        var label = annotation.get("label");
-                        if (label && label.category.id === category.id) {
+                        var labels = annotation.getLabels();
+                        var anyMatches = _.some(labels, function (label) {
+                            return category.id === label.get('category').id;
+                        });
+                        if (anyMatches) {
                             result.push(annotation);
                         }
                     };
                 } else {
                     handleAnnotation = function (annotation) {
-                        if (!annotation.get("label")) {
+                        var labels = annotation.getLabels();
+                        if (!labels.length) {
                             result.push(annotation);
                         }
                     };
@@ -241,6 +250,32 @@ define(["underscore",
                     });
                     return tmpAnnotation;
                 }
+            },
+
+            /**
+             * Get all labels present in all of this video's categories
+             * @alias module:models-video.Video#getLabels
+             * @return {array} an array of all the labels
+             */
+            getLabels: function() {
+                return _.flatten(this.get("categories").map(
+                    function (category) {
+                        return category.get("labels").models;
+                    }
+                ));
+            },
+
+            /**
+             * Get all scale values present in all of this video's categories
+             * @alias module:models-video.Video#getScaleValues
+             * @return {array} an array of all the scale values
+             */
+            getScaleValues: function() {
+                return _.flatten(this.get("scales").map(
+                    function (scale) {
+                        return scale.get("scaleValues").models;
+                    }
+                ));
             },
 
             /**

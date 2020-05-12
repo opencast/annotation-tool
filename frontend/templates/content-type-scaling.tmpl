@@ -1,0 +1,29 @@
+{{#with (withLabel value.label) as |label|}}
+<div class="content-item" data-position="{{@index}}"{{#if category.settings.color}} style="background-color: {{category.settings.color}}"{{/if}}>
+    {{#> content-item-header annotation=../annotation}}
+    <b>{{label.category.name}}</b> <i>({{t "annotation.types.scaling"}})</i>
+    {{/content-item-header}}
+    {{/with}}
+
+    <div class="well">
+        {{#with (withScaleValue value.scaling) as |scaleValue|}}
+        <span class="scaling">
+            <span class="read-only" title="{{scaleValue.name}}">{{scaleValue.name}}</span>
+        </span>
+        {{/with}}
+
+
+        {{#with (withLabel value.label) as |label|}}
+        <span class="category" title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})">
+            <span class="abbreviation">{{label.abbreviation}}</span>
+            <span class="label-value print">{{label.value}}</span>
+            {{/with}}
+
+            {{#with (withScaleValue value.scaling) as |scaleValue|}}
+            <span class="scalevalue print">
+                {{scaleValue.name}} ({{scaleValue.value}})
+            </span>
+            {{/with}}
+        </span>
+    </div>
+</div>

@@ -26,36 +26,6 @@
                 title="{{t "annotation.you own"}}"
             ></i>
         {{/if}}
-
-        {{#if scalevalue}}
-            <span class="scaling">
-                {{#if scalevalue}}
-                    <span
-                        class="read-only"
-                        title="{{scalevalue.name}}"
-                    >{{scalevalue.name}}</span>
-                {{/if}}
-            </span>
-        {{/if}}
-
-        <span
-            class="category"
-            {{#if label}}
-                title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"
-            {{/if}}
-        >
-            {{#if label}}
-                <span class="abbreviation">{{label.abbreviation}}</span>
-                <span class="label-value print">{{label.value}}</span>
-                {{#if scalevalue}}
-                    <span class="scalevalue print">
-                        {{scalevalue.name}} ({{scalevalue.value}})
-                    </span>
-                {{/if}}
-            {{else}}
-                <span class="no-label">{{text}}</span>
-            {{/if}}
-        </span>
     </div>
 
     <div class="right">
@@ -96,13 +66,28 @@
         {{t "annotation.track"}}
         <span class="track">{{track}}</span>
     </div>
-    <span class="text freetext read-only">
-        {{#if label}}
-            {{label.value}}
-        {{else}}
-            {{{textReadOnly}}}
-        {{/if}}
-    </span>
+
+    <div id="accordion-container-{{id}}" class="accordion content-items">
+        {{#each content}}
+            {{> (lookup . 'type') annotation=..}}
+        {{/each}}
+    </div>
+
+    {{#if isMine}}
+        <div>
+            <span>{{t "annotation.add content.list prompt"}}</span>
+            <button class="btn add-free-text-content" type="button">
+                {{t "annotation.add content.free text"}}
+            </button>
+
+            {{#each categories}}
+            <button class="btn add-labelled-content" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
+                {{t "annotation.add content.category"}} {{name}}
+            </button>
+            {{/each}}
+
+        </div>
+    {{/if}}
 </div>
 
 <div class="comments"></div>

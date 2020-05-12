@@ -17,13 +17,18 @@
  * A module representing the annotation model
  * @module models-annotation
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "util",
         "collections/comments",
+        "collections/annotation_content",
+        "models/content_item",
         "models/resource",
-        "localstorage"],
+        "localstorage"
+    ],
 
-    function (_, util, Comments, Resource) {
+    function (_, util, Comments, AnnotationContent, ContentItem, Resource) {
 
         "use strict";
 
@@ -71,6 +76,12 @@ define(["underscore",
                     this.attributes.comments = attr.comments;
                     delete attr.comments;
                 }
+
+                if (_.isObject(attr.content)) {
+                    this.attributes.content = attr.content;
+                } else {
+                    this.attributes.content = new AnnotationContent(attr.content || []);
+                }
             },
 
             /**
@@ -81,54 +92,17 @@ define(["underscore",
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    var tempSettings,
-                        categories,
-                        tempLabel,
-                        label;
-
-                    if (attr.scaleValue) {
-                        attr.scalevalue = attr.scaleValue;
-                        delete attr.scaleValue;
-                    }
-
                     if (annotationTool.user.get("id") === attr.created_by) {
                         attr.isMine = true;
                     } else {
                         attr.isMine = false;
                     }
 
-                    if (attr.label) {
-                        if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
-                            attr.label.category.settings = tempSettings;
-                        }
-
-                        if ((tempSettings = util.parseJSONString(attr.label.settings))) {
-                            attr.label.settings = tempSettings;
-                        }
-                    }
-
                     if (annotationTool.localStorage && _.isArray(attr.comments)) {
                         attr.comments = new Comments(attr.comments, { annotation: this });
                     }
 
-                    if (!annotationTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
-                        categories = annotationTool.video.get("categories");
-
-                        categories.each(function (cat) {
-
-                            if ((tempLabel = cat.attributes.labels.get(attr.label_id))) {
-                                label = tempLabel;
-                                return true;
-                            }
-
-                        }, this);
-
-                        attr.label = label;
-                    }
-
-                    if (!annotationTool.localStorage &&  attr.scalevalue) {
-                        attr.scaleValue = attr.scalevalue;
-                    }
+                    attr.content = new AnnotationContent(attr.content);
                 });
             },
 
@@ -145,14 +119,6 @@ define(["underscore",
                     }
                 });
                 if (invalidResource) return invalidResource;
-
-                if (!annotationTool.localStorage && attr.label) {
-                    if (attr.label.id) {
-                        this.attributes.label_id = attr.label.id;
-                    } else if (attr.label.attributes) {
-                        this.attributes.label_id = attr.label.get("id");
-                    }
-                }
 
                 if (attr.start &&  !_.isNumber(attr.start)) {
                     return "\"start\" attribute must be a number!";
@@ -179,7 +145,7 @@ define(["underscore",
 
             /**
              * Load the list of comments from the server
-             * @param  {Function} [callback] Optional callback to call when comments are loaded 
+             * @param  {Function} [callback] Optional callback to call when comments are loaded
              * @alias module:models-annotation.Annotation#fetchComments
              */
             fetchComments: function (callback) {
@@ -218,18 +184,23 @@ define(["underscore",
 
                 delete json.comments;
 
-                if (json.label && json.label.toJSON) {
-                    json.label = json.label.toJSON();
+                if (json.content && json.content.toJSON) {
+                    json.content = json.content.toJSON();
                 }
 
-                if (json.scalevalue) {
-                    if (json.scalevalue.attributes) {
-                        json.scale_value_id = json.scalevalue.attributes.id;
-                    } else if (json.scalevalue.id) {
-                        json.scale_value_id = json.scalevalue.id;
-                    }
-                }
                 return json;
+            },
+
+            /**
+             * Add a content item to this annotation.
+             * @alias module:models-annotation.Annotation#addContent
+             * @param {object} JSON representation of the content item
+             */
+            addContent: function (content) {
+                var contentItem = new ContentItem(content);
+                this.attributes.content.add(contentItem);
+                this.save()
+                this.trigger("change", this, {});
             },
 
             /**
@@ -244,21 +215,107 @@ define(["underscore",
                 var start = this.get("start");
                 var duration = this.get("duration");
                 var end = start + (duration || minDuration);
- 
+
                 return start <= time && time <= end;
             },
 
             /**
-             * Access an annotations category, if it has any.
-             * @alias module:models-annotation.Annotation#category
-             * @return {Category} The category this annotations label belongs to, if it has a label
+             * Access an annotation's categories, if it has any.
+             * @alias module:models-annotation.Annotation#getCategories
+             * @return {array} The array of categories this annotation' labels belongs to, if it has any labels
              */
-            category: function () {
-                var label = this.get("label");
-                return label && annotationTool.video.get("categories").get(label.category.id);
+            getCategories: function () {
+                return this.get("content").reduce(function(memo, item) {
+                    var category = item.getCategory();
+                    if (category) {
+                        memo.push(category);
+                    }
+                    return memo;
+                }, []);
+            },
+
+            /**
+             * Access an annotation's color, if it has any.
+             * @alias module:models-annotation.Annotation#getColor
+             * @return {string} The string containing a CSS color value.
+             */
+            getColor: function () {
+                var color;
+                var content = this.get("content");
+
+                if (getAnnotationType(this) === "multi") {
+                    color = "white";
+                } else {
+                    var label = content.first().getLabel();
+                    color = getColorFromLabel(label);
+                }
+
+                return color;
+            },
+
+            /**
+             * Access an annotation's content items' labels, if it has any.
+             * @alias module:models-annotation.Annotation#getLabels
+             * @return {Label[]} An array of labels.
+             */
+            getLabels: function () {
+                return this.get("content").reduce(function(memo, item) {
+                    var label = item.getLabel();
+                    if (label) {
+                        memo.push(label);
+                    }
+                    return memo;
+                }, []);
+            },
+
+            /**
+             * Generate a `title` attribute according to this annotation's content items.
+             * @alias module:models-annotation.Annotation#getTitleAttribute
+             * @return {string} A string containing the value for the `title` attribute.
+             */
+            getTitleAttribute: function () {
+                var title;
+                switch (getAnnotationType(this)) {
+                case "label":
+                case "scaling":
+                    var label = this.get("content").first().getLabel();
+                    title = getTitleFromLabel(label);
+                    break;
+
+                case "text":
+                    title = this.get("content").first().get("value");
+                    break;
+                }
+
+                return title;
             }
         });
 
         return Annotation;
+
+        // return the type of an annotation's single content item and `multi` otherwise
+        function getAnnotationType(annotation) {
+            var content = annotation.get("content") || [];
+            return content.models.length !== 1 ? "multi" : content.first().get("type");
+        }
+
+        function getColorFromLabel(label) {
+            var color;
+            if (label) {
+                var category = label.get("category");
+                if (category && category.settings && category.settings.color) {
+                    color = category.settings.color;
+                }
+            }
+            return color;
+        }
+
+        function getTitleFromLabel(label) {
+            var title;
+            if (label) {
+                title = label.get("abbreviation") + " - " + label.get("value");
+            }
+            return title;
+        }
     }
 );

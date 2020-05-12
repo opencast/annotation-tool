@@ -1,0 +1,11 @@
+<textarea
+    required
+    placeholder="{{t "annotate.new.placeholder"}}"
+    title="{{t "annotate.new.title"}}"
+    rows="3">{{contentItem.value}}</textarea>
+
+{{#error}}
+<div class="alert alert-error">
+    {{t "validation errors.empty"}}
+</div>
+{{/error}}

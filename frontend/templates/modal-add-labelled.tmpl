@@ -1,0 +1,41 @@
+{{#*inline "withScale"}}
+<table class="scale-chooser">
+    {{#each labels as |label|}}
+    <tr>
+        <th{{#if ../category.settings.color}} style="background-color:{{../category.settings.color}};"{{/if}}>{{label.value}}</th>
+        {{#each ../scale.scaleValues}}
+        <td>
+            <a class="btn label-and-scale{{#ifeq label.id ../../contentItem.value.label}}{{#ifeq id ../../contentItem.value.scaling}} btn-primary{{/ifeq}}{{/ifeq}}"
+                href="#" data-label="{{../id}}" data-scalevalue="{{id}}">
+                <span> {{name}} ({{value}})</span>
+            </a>
+        </td>
+        {{/each}}
+    </tr>
+    {{/each}}
+</table>
+{{/inline}}
+
+
+{{!-- ***** Ohne Skala ***** --}}
+{{#*inline "withoutScale"}}
+<div class="label-chooser">
+    {{#each labels as |label|}}
+    <a class="btn label{{#ifeq label.id ../contentItem.value}} btn-primary{{/ifeq}}" data-label="{{label.id}}"
+        href="#"{{#if ../category.settings.color}} style="background-color:{{../category.settings.color}};"{{/if}}>
+        <span> {{label.abbreviation}} </span>
+    </a>
+    {{/each}}
+</div>
+{{/inline}}
+
+
+
+
+<h2>{{t "annotation.add content.please choose"}}</h2>
+
+{{#if scale}}
+{{> withScale }}
+{{else}}
+{{> withoutScale }}
+{{/if}}

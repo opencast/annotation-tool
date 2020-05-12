@@ -24,6 +24,7 @@ define(["jquery",
         "i18next",
         "collections/videos",
         "views/main",
+        "views/modal-container",
         "alerts",
         "templates/delete-modal",
         "templates/delete-warning-content",
@@ -31,7 +32,7 @@ define(["jquery",
         "colors",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, Videos, MainView, alerts, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ColorsManager) {
+       function ($, _, Backbone, i18next, Videos, MainView, ModalContainerView, alerts, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ColorsManager) {
 
         "use strict";
 
@@ -794,6 +795,20 @@ define(["jquery",
                         }
                     }, this)
                 );
+            },
+
+            addModal: function (header, contentView, buttonText) {
+                var container = new ModalContainerView(
+                    {
+                        buttonText: buttonText,
+                        contentView: contentView,
+                        header: header
+                    }
+                );
+
+                return function closeModal() {
+                    container.close();
+                };
             }
         });
 

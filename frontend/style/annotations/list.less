@@ -126,11 +126,17 @@
             height: @headerSumHeight;
             border: 1px solid @btnBorder;
             vertical-align: top;
-            line-height: headerHeight;
+            line-height: @headerHeight;
             &.collapse {
                 .link-button();
             }
             padding: @headerPadding;
+        }
+
+        a.btn {
+            height: @headerSumHeight;
+            box-sizing: border-box;
+            border-radius: 0;
         }
 
         /* Content Elements in headerbar*/
@@ -304,6 +310,44 @@
                 font-style: italic;
             }
         }
+
+        .content-items {
+            border-top: 1px solid #ccc;
+            margin-left: 5px;
+            margin-top: 10px;
+            padding-top: 10px;
+            & > div {
+                margin-bottom: 16px;
+            }
+        }
+
+        .content-item:not(.open) {
+            span.icons i:nth-child(1) {
+                display: none;
+            }
+            div.well {
+                display: none;
+            }
+        }
+
+        .content-item.open {
+            span.icons i:nth-child(2) {
+                display: none;
+            }
+        }
+
+        .content-item header {
+            line-height: 25px;
+        }
+
+        .content-item .actions {
+            float: right;
+            margin-right: 0.5em;
+
+            i {
+                margin-left: 8px;
+            }
+        }
     }
 
     .button-bar {
@@ -382,6 +426,46 @@
                 margin-left: 5px;
                 float: right;
             }
+        }
+    }
+}
+
+.label-chooser {
+    a.btn {
+        line-height: 24px;
+        margin: 12px 8px;
+        padding: 0;
+
+        &:not(.btn-primary) {
+            background-image: none;
+        }
+
+        span {
+            background-color: rgba(255,255,255,0.6);
+            display: inline-block;
+            padding: 4px 12px;
+        }
+
+        &:hover span {
+            background-color: rgba(255,255,255,0.4);
+        }
+    }
+}
+
+.scale-chooser {
+    border-collapse: separate;
+    border-spacing: 8px 24px;
+
+    th {
+        font-size: 1.2em;
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    a.btn {
+        line-height: 24px;
+        span {
+            padding: 4px 12px;
         }
     }
 }
