@@ -1,0 +1,8 @@
+<div class="label-chooser">
+    {{#each labels as |label|}}
+    <a class="btn label{{#if label.selected}} btn-primary{{/if}}" data-label="{{label.id}}"
+        href="#"{{#if ../color}} style="background-color:{{../color}};"{{/if}}>
+        <span> {{label.abbreviation}} </span>
+    </a>
+    {{/each}}
+</div>

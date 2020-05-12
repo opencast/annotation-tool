@@ -30,6 +30,7 @@
     "edit category scaling": "Skala für diese Kategorie bearbeiten",
     "edit mode": "Bearbeiten",
     "insert": "$t(common actions.insert)",
+    "insert mca": "Erstelle Multi-Content-Annotation",
     "items visibility": {
       "collapse all": "Alle zuklappen",
       "expand all": "Alle aufklappen",
@@ -54,6 +55,12 @@
     "author": "Erstellt von",
     "created": "am",
     "track": "auf",
+    "empty text": "ohne Inhalt",
+    "types": {
+      "free text": "Freitextannotation",
+      "label": "Kennzeichen",
+      "scaling": "Kennzeichen mit Skalenwert"
+    },
     "comments": {
       "author": "Kommentar von",
       "cancel": "$t(common actions.cancel)",
@@ -70,6 +77,13 @@
       "modified": "zuletzt verändert am {{date}}",
       "placeholder": "Einen Kommentar für diese Annotation schreiben",
       "title": "Kommentare"
+    },
+    "add content": {
+      "add free text": "Freitext hinzufügen",
+      "category": "Kategorie:",
+      "free text": "Freitext",
+      "list prompt": "Inhalt hinzufügen:",
+      "please choose": "Wählen Sie bitte ein Kennzeichen"
     },
     "edit": {
       "delete": "Annotation löschen.",
@@ -340,6 +354,9 @@
     "loop": "Schleifensteuerung",
     "timeline": "Zeitleiste",
     "player": "Player"
+  },
+  "validation errors": {
+    "empty": "Dieses Feld darf nicht leer sein"
   },
   "common actions": {
     "cancel": "Abbrechen",

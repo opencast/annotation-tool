@@ -357,9 +357,20 @@ define(["underscore",
                 this.$list.empty();
 
                 _.each(this.annotationViews, function (annView) {
-                    var category = annView.model.category();
-                    if (category && !category.get("visible")) return;
-                    if (!category && !annotationTool.freeTextVisible) return;
+                    var categories = annView.model.getCategories();
+
+                    if (categories.length) {
+                        if (_.some(
+                            categories,
+                            function (category) {
+                                return !category.get("visible");
+                            }
+                        )) {
+                            return;
+                        }
+                    } else {
+                        if (!annotationTool.freeTextVisible) return;
+                    }
                     this.$list.append(annView.$el);
                 }, this);
 

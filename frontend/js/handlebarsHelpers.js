@@ -73,5 +73,34 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
         );
     });
 
+    /**
+     * Useful for debugging templates.
+     * @alias module:Handlebars#json
+     */
+    Handlebars.registerHelper("json", function (value) {
+        return new Handlebars.SafeString(
+            JSON.stringify(value)
+        );
+    });
+
+    Handlebars.registerHelper('ifeq', function (a, b, options) {
+        if (a == b) {
+            return options.fn(this);
+        }
+        return options.inverse(this);
+    });
+
+    Handlebars.registerHelper("withScaleValue", function (id) {
+        var scaleValue = _.findWhere(annotationTool.video.getScaleValues(), { id: id });
+
+        return scaleValue && scaleValue.toJSON();
+    });
+
+    Handlebars.registerHelper("withLabel", function (id) {
+        var label = _.findWhere(annotationTool.video.getLabels(), { id: id });
+
+        return label && label.toJSON();
+    });
+
     return Handlebars;
 });

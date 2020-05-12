@@ -1,0 +1,71 @@
+{{!-- Skalenwerte zuerst --}}
+{{#each content}}
+    {{#ifeq type "scaling"}}
+        <span class="scaling">
+            {{#with (withScaleValue value.scaling) as |scaleValue|}}
+                <span class="read-only" title="{{scaleValue.name}}" >{{scaleValue.name}}</span>
+            {{/with}}
+        </span>
+    {{/ifeq}}
+{{/each}}
+
+{{#each content}}
+
+    {{!-- Annotationen mit Kennzeichen und Skalenwert --}}
+    {{#ifeq type "scaling"}}
+
+      {{#with (withLabel value) as |label|}}
+    <span class="category" title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})">
+
+      <span class="abbreviation">
+        {{label.abbreviation}}
+      </span>
+
+      <span class="label-value print">
+        {{label.value}}
+      </span>
+      {{/with}}
+
+      {{#with (withScaleValue value.scaling) as |scaleValue|}}
+      <span class="scalevalue print">
+        {{scaleValue.name}} ({{scaleValue.value}})
+      </span>
+      {{/with}}
+
+    </span>
+    {{/ifeq}}
+
+    {{!-- Annotationen mit Kennzeichen --}}
+    {{#ifeq type "label"}}
+
+        {{#with (withLabel value) as |label|}}
+            <span class="category" title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})">
+                <span class="abbreviation">
+                    {{label.abbreviation}}
+                </span>
+
+                <span class="label-value print">
+                    {{label.value}}
+                </span>
+            </span>
+        {{/with}}
+    {{/ifeq}}
+
+    {{!-- Freitextannotationen --}}
+    {{#ifeq type "text"}}
+        <span class="category">
+            <span class="no-label">
+                {{value}}
+            </span>
+        </span>
+    {{/ifeq}}
+
+{{/each}}
+
+{{#unless content}}
+    <span class="category">
+        <span class="no-label">
+            <i>{{t "annotation.empty text"}}</i>
+        </span>
+    </span>
+{{/unless}}

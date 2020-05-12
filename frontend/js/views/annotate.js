@@ -83,6 +83,7 @@ define(["jquery",
              */
             events: {
                 "keyup #new-annotation": "keydownOnAnnotate",
+                "click #insert-mca": "insertMCA",
                 "click #insert": "insert",
                 "keydown #new-annotation": "onFocusIn",
                 "focusout #new-annotation": "onFocusOut",
@@ -139,6 +140,7 @@ define(["jquery",
                 // Set the current context for all these functions
                 _.bindAll(this,
                             "insert",
+                            "insertMCA",
                             "onFocusIn",
                             "onFocusOut",
                             "changeTrack",
@@ -204,6 +206,11 @@ define(["jquery",
                 }
             },
 
+            insertMCA: function (event) {
+                event.stopImmediatePropagation();
+                annotationTool.createAnnotation({});
+            },
+
             /**
              * Insert a new annotation
              * @alias module:views-annotate.Annotate#insert
@@ -220,7 +227,8 @@ define(["jquery",
                     return;
                 }
 
-                annotationTool.createAnnotation({ text: value });
+                var annotation = annotationTool.createAnnotation({});
+                annotation.addContent({ type: "text", title: null, value: value });
 
                 if (this.continueVideo) {
                     this.playerAdapter.play();

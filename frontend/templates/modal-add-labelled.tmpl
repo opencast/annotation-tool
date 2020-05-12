@@ -1,0 +1,12 @@
+<header>
+    {{#if contentItem.title}}
+    <h2>{{contentItem.title}}</h2>
+    {{/if}}
+    <h3>{{t "annotation.add content.please choose"}}</h3>
+</header>
+
+{{#if scale}}
+{{> scaleChooser }}
+{{else}}
+{{> labelChooser }}
+{{/if}}
