@@ -9,24 +9,19 @@ import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.User;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 import static org.opencastproject.security.api.SecurityConstants.GLOBAL_ADMIN_ROLE;
 
 // TODO JavaDoc and Copyright
-public class PrivilegedUsersVideoInterfaceProvider implements VideoInterfaceProvider {
+public class AdminVideoInterfaceProvider implements VideoInterfaceProvider {
 
   private final VideoInterfaceProvider baseProvider;
   private final SecurityService securityService;
 
-  private final Map<String, String> producerRoles;
-
-  public PrivilegedUsersVideoInterfaceProvider(VideoInterfaceProvider baseProvider, SecurityService securityService) {
+  public AdminVideoInterfaceProvider(VideoInterfaceProvider baseProvider, SecurityService securityService) {
     this.baseProvider = baseProvider;
     this.securityService = securityService;
-
-    this.producerRoles = new HashMap<>();
   }
 
   @Override
@@ -42,21 +37,8 @@ public class PrivilegedUsersVideoInterfaceProvider implements VideoInterfaceProv
       public Access getAccess() throws VideoInterfaceException {
 
         User user = securityService.getUser();
-
-        // TODO This check should probably be in it's own provider
-        String producerRole = producerRoles.computeIfAbsent(user.getOrganization().getId(),
-                // TODO Are these the correct steps to build this role?
-                tenant -> "ROLE_GROUP_" + tenant.replace('-', '_').toUpperCase() + "_PRODUCERS");
-        String orgAdminRole = securityService.getOrganization().getAdminRole();
-
-        for (Role role : user.getRoles()) {
-          String roleName = role.getName();
-
-          if (roleName.equals(producerRole)
-                  || roleName.equals(orgAdminRole)
-                  || roleName.equals(GLOBAL_ADMIN_ROLE)) {
-            return Access.ADMIN;
-          }
+        if (user.hasRole(securityService.getOrganization().getAdminRole()) || user.hasRole(GLOBAL_ADMIN_ROLE)) {
+          return Access.ADMIN;
         }
 
         return baseInterface.getAccess();
