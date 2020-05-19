@@ -844,34 +844,6 @@
     </plugins>
   </reporting>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>opencast</id>
-      <name>Opencast Repo</name>
-      <url>${opencast.nexus.url}/nexus/content/groups/public</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <repositories>
-    <repository>
-      <id>opencast</id>
-      <name>Opencast Repo</name>
-      <url>${opencast.nexus.url}/nexus/content/groups/public</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
   <distributionManagement>
     <repository>
       <id>internal.repo</id>
