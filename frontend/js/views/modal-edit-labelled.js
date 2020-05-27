@@ -13,13 +13,19 @@
  *  permissions and limitations under the License.
  *
  */
-define(["templates/modal-add-labelled", "backbone", "bootstrap"], function(template, Backbone) {
+define([
+    "templates/modal-add-labelled",
+    "templates/partial-label-chooser",
+    "templates/partial-scale-chooser",
+    "backbone",
+    "bootstrap"
+], function(template, tmplLabelChooser, tmplScaleChooser, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
         events: {
-            "click .btn.label": "updateLabelledContent",
-            "click .btn.label-and-scale": "updateScalingContent",
+            "click .btn.label": "onLabelledContent",
+            "click .btn.label-and-scale": "onScalingContent"
         },
 
         initialize: function(options) {
@@ -28,42 +34,77 @@ define(["templates/modal-add-labelled", "backbone", "bootstrap"], function(templ
         },
 
         render: function() {
-            var labels = this.category.get("labels").toJSON();
-            var scale = null;
-            if (this.category.get("scale_id")) {
-                scale = annotationTool.video.get("scales").get(this.category.get("scale_id"));
-                scale = _.extend(scale.toJSON(), { scaleValues: scale.get("scaleValues").toJSON() });
-            }
-
-            this.$el.html(template({
-                cid: this.cid,
-                annotation: this.model.toJSON(),
-                category: this.category.toJSON(),
-                contentItem: this.contentItem.toJSON(),
-                labels: labels,
-                scale: scale
-            }));
+            this.$el.html(
+                template(
+                    {
+                        color: getColor(this.category),
+                        labels: getLabels(this.category, this.contentItem),
+                        scale: getScale(this.category, this.contentItem)
+                    },
+                    {
+                        partials: {
+                            labelChooser: tmplLabelChooser,
+                            scaleChooser: tmplScaleChooser
+                        }
+                    }
+                )
+            );
 
             return this;
         },
 
-        updateLabelledContent: function (event) {
+        onLabelledContent: function(event) {
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
 
-            this.contentItem.set('value', labelId);
+            this.contentItem.set("value", labelId);
             this.model.save();
             this.trigger("modal:request-close");
         },
 
-        updateScalingContent: function (event) {
+        onScalingContent: function(event) {
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
             var scaleValueId = $button.data("scalevalue");
 
-            this.contentItem.set('value', { label: labelId, scaling: scaleValueId });
+            this.contentItem.set("value", { label: labelId, scaling: scaleValueId });
             this.model.save();
             this.trigger("modal:request-close");
-        },
+        }
     });
 });
+
+function getColor(category) {
+    var json = category.toJSON();
+
+    return json && json.settings && json.settings.color;
+}
+
+function getLabels(category, contentItem) {
+    var selectedLabel = contentItem.getLabel();
+    var labels = category
+        .get("labels")
+        .toJSON()
+        .map(function(label) {
+            return _.extend(label, { selected: label.id === selectedLabel.id });
+        });
+
+    return labels;
+}
+
+function getScale(category, contentItem) {
+    var scale;
+    if (category.get("scale_id")) {
+        var selectedScaleValueId = contentItem.get("value").scaling;
+        scale = annotationTool.video.get("scales").get(category.get("scale_id"));
+        var scaleValues = scale
+            .get("scaleValues")
+            .toJSON()
+            .map(function(scaleValue) {
+                return _.extend(scaleValue, { selected: scaleValue.id === selectedScaleValueId });
+            });
+        scale = _.extend(scale.toJSON(), { scaleValues: scaleValues });
+    }
+
+    return scale;
+}

@@ -13,13 +13,19 @@
  *  permissions and limitations under the License.
  *
  */
-define(["templates/modal-add-labelled", "backbone", "bootstrap"], function(template, Backbone) {
+define([
+    "templates/modal-add-labelled",
+    "templates/partial-label-chooser",
+    "templates/partial-scale-chooser",
+    "backbone",
+    "bootstrap"
+], function(template, tmplLabelChooser, tmplScaleChooser, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
         events: {
-            "click .btn.label": "addLabelledContent",
-            "click .btn.label-and-scale": "addScalingContent",
+            "click .btn.label": "onLabelledContent",
+            "click .btn.label-and-scale": "onScalingContent"
         },
 
         initialize: function(options) {
@@ -27,25 +33,26 @@ define(["templates/modal-add-labelled", "backbone", "bootstrap"], function(templ
         },
 
         render: function() {
-            var labels = this.category.get("labels").toJSON();
-            var scale = null;
-            if (this.category.get("scale_id")) {
-                scale = annotationTool.video.get("scales").get(this.category.get("scale_id"));
-                scale = _.extend(scale.toJSON(), { scaleValues: scale.get("scaleValues").toJSON() });
-            }
-
-            this.$el.html(template({
-                cid: this.cid,
-                annotation: this.model.toJSON(),
-                category: this.category.toJSON(),
-                labels: labels,
-                scale: scale
-            }));
+            this.$el.html(
+                template(
+                    {
+                        color: getColor(this.category),
+                        labels: this.category.get("labels").toJSON(),
+                        scale: getScale(this.category)
+                    },
+                    {
+                        partials: {
+                            labelChooser: tmplLabelChooser,
+                            scaleChooser: tmplScaleChooser
+                        }
+                    }
+                )
+            );
 
             return this;
         },
 
-        addLabelledContent: function (event) {
+        onLabelledContent: function(event) {
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
 
@@ -56,7 +63,7 @@ define(["templates/modal-add-labelled", "backbone", "bootstrap"], function(templ
             this.trigger("modal:request-close");
         },
 
-        addScalingContent: function (event) {
+        onScalingContent: function(event) {
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
             var scaleValueId = $button.data("scalevalue");
@@ -66,6 +73,22 @@ define(["templates/modal-add-labelled", "backbone", "bootstrap"], function(templ
                 value: { label: labelId, scaling: scaleValueId }
             });
             this.trigger("modal:request-close");
-        },
+        }
     });
 });
+
+function getColor(category) {
+    var json = category.toJSON();
+
+    return json && json.settings && json.settings.color;
+}
+
+function getScale(category) {
+    var scale = null;
+    if (category.get("scale_id")) {
+        scale = annotationTool.video.get("scales").get(category.get("scale_id"));
+        scale = _.extend(scale.toJSON(), { scaleValues: scale.get("scaleValues").toJSON() });
+    }
+
+    return scale;
+}
