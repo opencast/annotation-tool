@@ -1,7 +1,12 @@
 {{#with (withLabel value.label) as |label|}}
 <div class="content-item" data-position="{{@index}}"{{#if category.settings.color}} style="background-color: {{category.settings.color}}"{{/if}}>
     {{#> content-item-header annotation=../annotation}}
-    <b>{{label.category.name}}</b> <i>({{t "annotation.types.scaling"}})</i>
+        {{#if title}}
+            <b>{{title}}</b>
+        {{^}}
+            <b> {{label.category.name}} </b>
+            <i>({{t "annotation.types.scaling"}})</i>
+        {{/if}}
     {{/content-item-header}}
     {{/with}}
 

@@ -231,7 +231,7 @@ define(["jquery",
                 }
 
                 var annotation = annotationTool.createAnnotation({ text: value });
-                annotation.addContent({ type: "text", value: value });
+                annotation.addContent({ type: "text", title: null, value: value });
 
                 if (this.continueVideo) {
                     this.playerAdapter.play();

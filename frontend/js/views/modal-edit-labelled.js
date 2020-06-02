@@ -95,7 +95,7 @@ function getLabels(category, contentItem) {
 function getScale(category, contentItem) {
     var scale;
     if (category.get("scale_id")) {
-        var selectedScaleValueId = contentItem.get("value").scaling;
+        var selectedScaleValueId = contentItem && contentItem.get("value").scaling;
         scale = annotationTool.video.get("scales").get(category.get("scale_id"));
         var scaleValues = scale
             .get("scaleValues")

@@ -58,6 +58,7 @@ define([
 
             this.model.addContent({
                 type: "label",
+                title: null,
                 value: labelId
             });
             this.trigger("modal:request-close");
@@ -70,6 +71,7 @@ define([
 
             this.model.addContent({
                 type: "scaling",
+                title: null,
                 value: { label: labelId, scaling: scaleValueId }
             });
             this.trigger("modal:request-close");

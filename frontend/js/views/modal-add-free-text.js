@@ -29,7 +29,7 @@ define(["templates/modal-add-free-text", "backbone", "bootstrap"], function(temp
             this.error = false;
             var value = this.$("textarea").val();
             if (value.length) {
-                this.model.addContent({ type: "text", value: value });
+                this.model.addContent({ type: "text", title: null, value: value });
                 this.trigger("modal:request-close");
             } else {
                 this.error = true;

@@ -1,7 +1,12 @@
 {{#with (withLabel value) as |label|}}
 <div class="content-item" data-position="{{@index}}"{{#if category.settings.color}} style="background-color: {{category.settings.color}}"{{/if}}>
     {{#> content-item-header annotation=../annotation}}
-    <b>{{label.category.name}}</b> <i>({{t "annotation.types.label"}})</i>
+        {{#if title}}
+            <b>{{title}}</b>
+        {{^}}
+            <b> {{label.category.name}} </b>
+            <i>({{t "annotation.types.label"}})</i>
+        {{/if}}
     {{/content-item-header}}
     <div class="well">
         <span class="text">{{label.category.name}} - {{label.value}} ({{label.abbreviation}})</span>
