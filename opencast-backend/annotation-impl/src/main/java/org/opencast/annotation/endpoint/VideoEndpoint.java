@@ -99,12 +99,20 @@ public class VideoEndpoint {
         ANNOTATE_ADMIN
     }
 
-    final Video video;
-    final Access access;
+    private final Video video;
+    private final Access access;
 
     VideoData(final Video video, final Access access) {
       this.video = video;
       this.access = access;
+    }
+
+    public Video getVideo() {
+      return video;
+    }
+
+    public Access getAccess() {
+      return access;
     }
   }
 
@@ -132,7 +140,7 @@ public class VideoEndpoint {
     });
 
     for (VideoData videoData: this.videoData) {
-      if (videoData.access == VideoData.Access.NONE) {
+      if (videoData.getAccess() == VideoData.Access.NONE) {
         throw new WebApplicationException(FORBIDDEN);
       }
     }
@@ -147,9 +155,9 @@ public class VideoEndpoint {
         return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
           public Response some(VideoData v) {
-            if (!eas.hasResourceAccess(v.video))
+            if (!eas.hasResourceAccess(v.getVideo()))
               return UNAUTHORIZED;
-            return buildOk(VideoDto.toJson.apply(eas, v.video));
+            return buildOk(VideoDto.toJson.apply(eas, v.getVideo()));
           }
 
           @Override
@@ -169,9 +177,9 @@ public class VideoEndpoint {
         return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
           public Response some(VideoData v) {
-            if (!eas.hasResourceAccess(v.video))
+            if (!eas.hasResourceAccess(v.getVideo()))
               return UNAUTHORIZED;
-            return eas.deleteVideo(v.video) ? NO_CONTENT : NOT_FOUND;
+            return eas.deleteVideo(v.getVideo()) ? NO_CONTENT : NOT_FOUND;
           }
 
           @Override
@@ -998,7 +1006,7 @@ public class VideoEndpoint {
     writer.writeNext(header.toArray(new String[0]));
 
     for (VideoData videoData : this.videoData) {
-      Video video = videoData.video;
+      Video video = videoData.getVideo();
       List<Track> tracks = eas.getTracks(video.getId(), none(), none(), none(), none(), none());
       for (Track track : tracks) {
         if (tracksToExport != null && !tracksToExport.contains(track.getId())) continue;
@@ -1135,7 +1143,7 @@ public class VideoEndpoint {
             "comments", c.getId());
   }
 
-  static private Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
+  private static Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
     if (e.getCauseCode() == ExtendedAnnotationException.Cause.NOT_FOUND) {
       return BAD_REQUEST;
     } else {

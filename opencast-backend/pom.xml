@@ -16,10 +16,6 @@
 
   <name>Opencast Annotation Tool :: Backend</name>
 
-  <properties>
-    <checkstyle.skip>true</checkstyle.skip>
-  </properties>
-
   <modules>
     <module>annotation-api</module>
     <module>annotation-impl</module>

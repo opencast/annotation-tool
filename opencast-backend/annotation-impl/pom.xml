@@ -16,9 +16,6 @@
 
   <name>Opencast Annotation Tool :: Backend :: Implementation</name>
 
-  <properties>
-    <checkstyle.skip>true</checkstyle.skip>
-  </properties>
   <dependencies>
     <!-- Matterhorn -->
     <dependency>

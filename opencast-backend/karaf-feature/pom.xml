@@ -16,10 +16,6 @@
 
   <name>Opencast Annotation Tool :: Backend :: Karaf Feature</name>
 
-  <properties>
-    <checkstyle.skip>true</checkstyle.skip>
-  </properties>
-
   <build>
     <plugins>
       <plugin>

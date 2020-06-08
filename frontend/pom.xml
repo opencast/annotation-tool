@@ -15,10 +15,6 @@
 
   <name>Opencast Annotation Tool :: Frontend</name>
 
-  <properties>
-    <checkstyle.skip>true</checkstyle.skip>
-  </properties>
-
   <build>
     <plugins>
       <plugin>

@@ -53,5 +53,4 @@ public interface Resource {
 
   /** The tags */
   Map<String, String> getTags();
-
 }

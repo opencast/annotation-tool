@@ -18,7 +18,6 @@
   <properties>
     <revision>0-SNAPSHOT</revision>
 
-    <checkstyle.skip>false</checkstyle.skip>
     <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
     <joda-time.version>2.9.4</joda-time.version>
     <json-simple.version>1.1.1</json-simple.version>
@@ -148,7 +147,6 @@
           </dependency>
         </dependencies>
         <configuration>
-          <skip>${checkstyle.skip}</skip>
           <configLocation>docs/checkstyle/matterhorn-checkstyle.xml</configLocation>
           <headerLocation>docs/checkstyle/matterhorn-header.txt</headerLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
