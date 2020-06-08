@@ -109,11 +109,6 @@
       <artifactId>guava</artifactId>
       <version>18.0</version>
     </dependency>
-    <dependency>
-      <groupId>com.entwinemedia.common</groupId>
-      <artifactId>functional</artifactId>
-      <version>1.1.1</version>
-    </dependency>
     <!-- Testing -->
     <dependency>
       <groupId>junit</groupId>
