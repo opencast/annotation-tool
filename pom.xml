@@ -119,10 +119,6 @@
         </executions>
       </plugin>
 
-      <!-- Attach sources for all builds -->
-      <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-source-plugin</artifactId> <executions>
-        <execution> <id>attach-sources</id> <phase>verify</phase> <goals> <goal>jar-no-fork</goal> <goal>test-jar-no-fork</goal>
-        </goals> </execution> </executions> </plugin> -->
       <!-- Run tests and display test output in the console -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
