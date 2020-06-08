@@ -24,7 +24,6 @@ import static org.opencast.annotation.impl.persistence.ScaleValueDto.toScaleValu
 import static org.opencast.annotation.impl.persistence.TrackDto.toTrack;
 import static org.opencast.annotation.impl.persistence.UserDto.toUser;
 import static org.opencast.annotation.impl.persistence.VideoDto.toVideo;
-
 import static org.opencastproject.util.data.Arrays.head;
 import static org.opencastproject.util.data.Monadics.mlist;
 import static org.opencastproject.util.data.Option.none;
@@ -32,10 +31,34 @@ import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.Tuple.tuple;
 
+import org.opencast.annotation.api.Annotation;
+import org.opencast.annotation.api.Category;
+import org.opencast.annotation.api.Comment;
+import org.opencast.annotation.api.ExtendedAnnotationException;
+import org.opencast.annotation.api.ExtendedAnnotationException.Cause;
+import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.api.Label;
+import org.opencast.annotation.api.Resource;
+import org.opencast.annotation.api.Scale;
+import org.opencast.annotation.api.ScaleValue;
+import org.opencast.annotation.api.Track;
+import org.opencast.annotation.api.User;
+import org.opencast.annotation.api.Video;
+import org.opencast.annotation.impl.AnnotationImpl;
+import org.opencast.annotation.impl.CategoryImpl;
+import org.opencast.annotation.impl.CommentImpl;
+import org.opencast.annotation.impl.LabelImpl;
+import org.opencast.annotation.impl.ResourceImpl;
+import org.opencast.annotation.impl.ScaleImpl;
+import org.opencast.annotation.impl.ScaleValueImpl;
+import org.opencast.annotation.impl.TrackImpl;
+import org.opencast.annotation.impl.UserImpl;
+import org.opencast.annotation.impl.VideoImpl;
+
 import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.search.api.SearchQuery;
 import org.opencastproject.search.api.SearchResultItem;
 import org.opencastproject.search.api.SearchService;
-import org.opencastproject.search.api.SearchQuery;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
@@ -51,31 +74,6 @@ import org.opencastproject.util.data.functions.Options;
 import org.opencastproject.util.data.functions.Tuples;
 import org.opencastproject.util.persistence.PersistenceEnv;
 import org.opencastproject.util.persistence.Queries;
-
-import org.opencast.annotation.api.Annotation;
-import org.opencast.annotation.api.Category;
-import org.opencast.annotation.api.Comment;
-import org.opencast.annotation.api.ExtendedAnnotationException;
-import org.opencast.annotation.api.ExtendedAnnotationException.Cause;
-import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Label;
-import org.opencast.annotation.api.Resource;
-import org.opencast.annotation.api.Scale;
-import org.opencast.annotation.api.ScaleValue;
-import org.opencast.annotation.api.Track;
-import org.opencast.annotation.api.User;
-import org.opencast.annotation.api.Video;
-
-import org.opencast.annotation.impl.AnnotationImpl;
-import org.opencast.annotation.impl.CategoryImpl;
-import org.opencast.annotation.impl.CommentImpl;
-import org.opencast.annotation.impl.LabelImpl;
-import org.opencast.annotation.impl.ResourceImpl;
-import org.opencast.annotation.impl.ScaleImpl;
-import org.opencast.annotation.impl.ScaleValueImpl;
-import org.opencast.annotation.impl.TrackImpl;
-import org.opencast.annotation.impl.UserImpl;
-import org.opencast.annotation.impl.VideoImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;

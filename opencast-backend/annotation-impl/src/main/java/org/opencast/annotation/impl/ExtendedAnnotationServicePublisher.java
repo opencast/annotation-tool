@@ -17,6 +17,9 @@ package org.opencast.annotation.impl;
 
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
+
 import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityService;
@@ -29,10 +32,6 @@ import org.osgi.service.component.ComponentContext;
 import java.util.Dictionary;
 
 import javax.persistence.EntityManagerFactory;
-
-import org.opencast.annotation.api.ExtendedAnnotationService;
-
-import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
 
 /**
  * Create and register an implementation of {@link org.opencast.annotation.api.ExtendedAnnotationService} .
