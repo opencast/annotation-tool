@@ -594,7 +594,9 @@ define(["jquery",
                         "click": "onSelect",
                         "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "click i.icon-comment": "toggleCommentsState"
+                        "click i.icon-comment": "toggleCommentsState",
+                        "click .toggle-edit": "toggleEditState",
+                        "click i.delete": "deleteFull"
                     }
                 },
                 EXPANDED: {
