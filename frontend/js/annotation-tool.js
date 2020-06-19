@@ -513,7 +513,7 @@ define(["jquery",
                 var annotation = this.selectedTrack.annotations
                     .create(_.extend(
                         params,
-                        { start: Math.round(this.playerAdapter.getCurrentTime()) },
+                        { start: this.playerAdapter.getCurrentTime() },
                         // The loop controller can constrain annotations
                         // to the current loop using this.
                         // @see module:views-loop.Loop#toggleConstrainAnnotations
