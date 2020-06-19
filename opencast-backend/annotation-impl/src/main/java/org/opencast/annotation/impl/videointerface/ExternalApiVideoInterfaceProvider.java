@@ -100,30 +100,28 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
             Boolean allow = (Boolean) ace.get("allow");
             if (allow == null || !allow) continue;
 
-            String action = (String) ace.get("action");
-            if (action == null || !(action.equals("read") || action.equals("cast-annotate"))) continue;
-
             String role = (String) ace.get("role");
             if (role == null || !applies(role)) continue;
 
+            String action = (String) ace.get("action");
+            if (action == null) continue;
+
             switch (action) {
               case "read":
+                // TODO Is `read` even the correct action?
                 canRead = true;
                 break;
               case "cast-annotate":
                 canAnnotate = true;
                 break;
-              case "cast-annotate-admin":
-                // TODO Fix the name
+              case "write":
                 isAdmin = true;
                 break;
-            }
-            if (action.equals("read")) {
-              canRead = true;
-            } else if (action.equals("cast-annotate")) {
-              canAnnotate = true;
+              default:
+                continue;
             }
           }
+
           if (!canRead) return Access.NONE;
           if (isAdmin) {
             return Access.ADMIN;
