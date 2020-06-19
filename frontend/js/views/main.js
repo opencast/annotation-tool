@@ -90,6 +90,7 @@ define(["jquery",
              */
             events: {
                 "click #export": "export",
+                "click #export_xlxs": "export_xlxs",
                 "click #about": "about",
                 "click #logout": "onLogout",
                 "click #print": "print",
@@ -126,6 +127,7 @@ define(["jquery",
                 if (annotationTool.localStorage) {
                     // Remove link for statistics exports, work only with backend implementation
                     this.$el.find("#export").parent().remove();
+                    this.$el.find("#export_xlxs").parent().remove();
                 }
 
                 annotationTool.scaleEditor = new ScaleEditorView();
@@ -696,6 +698,26 @@ define(["jquery",
                         return category.get("visible");
                     });
                 annotationTool.export(
+                    annotationTool.video,
+                    tracksToExport,
+                    categoriesToExport,
+                    annotationTool.freeTextVisible
+                );
+            },
+
+
+            /**
+             * MEH
+             * @alias module:views-main.Main#export_xlxs
+             */
+            export_xlxs: function () {
+                var tracksToExport = annotationTool.video
+                    .get("tracks").getVisibleTracks();
+                var categoriesToExport = annotationTool.video
+                    .get("categories").filter(function (category) {
+                        return category.get("visible");
+                    });
+                annotationTool.export_xlxs(
                     annotationTool.video,
                     tracksToExport,
                     categoriesToExport,
