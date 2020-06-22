@@ -54,6 +54,7 @@ import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -207,8 +208,7 @@ public class VideoEndpoint {
 
         try {
 
-          Resource resource = eas.createResource(tagsMap.bind(Functions.identity()),
-                  option(access));
+          Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
           final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
           return Response.created(trackLocationUri(t))
@@ -554,8 +554,7 @@ public class VideoEndpoint {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.identity()),
-                option(access));
+        Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();
@@ -969,7 +968,7 @@ public class VideoEndpoint {
       public void write(OutputStream os) throws IOException, WebApplicationException {
         CSVWriter writer = null;
         try {
-          writer = new CSVWriter(new OutputStreamWriter(os));
+          writer = new CSVWriter(new OutputStreamWriter(os), ',', '"', "\r\n");
           writeExport(writer, tracks, categories, freeText);
           writer.close();
         } finally {
@@ -987,11 +986,7 @@ public class VideoEndpoint {
           Boolean freeText) {
     // Write headers
     List<String> header = new ArrayList<>();
-    header.add("ID");
-    header.add("Creation date");
-    header.add("Last update");
-    header.add("Author nickname");
-    header.add("Author mail");
+    addResourceHeaders(header, none());
     header.add("Track name");
     header.add("Leadin");
     header.add("Leadout");
@@ -1003,6 +998,9 @@ public class VideoEndpoint {
     header.add("Scale name");
     header.add("Scale value name");
     header.add("Scale value value");
+    addResourceHeaders(header, some("comment"));
+    header.add("Comment text");
+    header.add("Comment replies to");
     writer.writeNext(header.toArray(new String[0]));
 
     for (VideoData videoData : this.videoData) {
@@ -1028,11 +1026,7 @@ public class VideoEndpoint {
 
           List<String> line = new ArrayList<>();
 
-          line.add(Long.toString(annotation.getId()));
-          line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-          line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
+          addResource(annotation, line);
           line.add(track.getName());
 
           double start = annotation.getStart(); // start, stop, duration
@@ -1064,8 +1058,53 @@ public class VideoEndpoint {
           }
 
           writer.writeNext(line.toArray(new String[0]));
+
+          List<Comment> comments = eas.getComments(annotation.getId(), none(), none(), none(), none(), none(), none());
+          for (Comment comment : comments) {
+            writeComment(writer, annotation, line, comment);
+          }
         }
       }
+    }
+  }
+
+  private void addResourceHeaders(List<String> header, Option<String> optionalResource) {
+    String prefix = "";
+    String suffix = "";
+    for (String resource : optionalResource) {
+      prefix = resource + " ";
+      suffix = " of " + resource;
+    }
+    header.add(StringUtils.capitalize(prefix + "ID"));
+    header.add(StringUtils.capitalize(prefix + "creation date"));
+    header.add("Last update" + suffix);
+    header.add(StringUtils.capitalize(prefix + "author nickname"));
+    header.add(StringUtils.capitalize(prefix + "author mail"));
+  }
+
+  private void addResource(Resource resource, List<String> line) {
+    line.add(Long.toString(resource.getId()));
+    line.add(resource.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(resource.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(resource.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
+    line.add(resource.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
+  }
+
+  private void writeComment(CSVWriter writer, Annotation annotation, List<String> line, Comment comment) {
+    List<String> commentLine = new ArrayList<>(line);
+    addResource(comment, commentLine);
+    commentLine.add(comment.getText());
+    commentLine.add(comment.getReplyToId().map(new Function<Long, String>() {
+      @Override
+      public String apply(Long replyToId) {
+        return replyToId.toString();
+      }
+    }).getOrElse(""));
+    writer.writeNext(commentLine.toArray(new String[0]));
+    List<Comment> replies = eas.getComments(annotation.getId(), some(comment.getId()), none(), none(), none(), none(),
+            none());
+    for (Comment reply : replies) {
+      writeComment(writer, annotation, line, reply);
     }
   }
 
