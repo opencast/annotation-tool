@@ -79,14 +79,6 @@ define(["jquery",
             initialize: function (attr) {
                 var category;
 
-                if (!attr.annotation) {
-                    throw "The annotations have to be given to the annotate view.";
-                }
-
-                this.model = attr.annotation;
-
-                this.$el.attr("id", this.model.id);
-
                 this.commentContainer = new CommentsContainer({
                     collection: this.model.get("comments")
                 });
@@ -120,16 +112,11 @@ define(["jquery",
                 this.listenTo(this.model, "change", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);
                 this.listenTo(this.model.get("comments"), "remove", this.render);
-                this.listenTo(this.model, "destroy", this.remove);
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.ANNOTATION;
 
-                if (attr.track) {
-                    this.track = attr.track;
-                } else {
-                    this.track = annotationTool.selectedTrack;
-                }
+                this.track = this.model.collection.track;
 
                 this.currentState = ListAnnotation.STATES.COLLAPSED;
 
@@ -259,7 +246,7 @@ define(["jquery",
                     }
 
                     $target.parent().parent().find("tr.text-container span").show();
-                    this.model.set("duration", Math.round(seconds - this.model.get("start")));
+                    this.model.set("duration", seconds - this.model.get("start"));
                     this.model.save(null, { silent: true });
                 }
             },
@@ -308,7 +295,7 @@ define(["jquery",
                     $target.parent().find("span").show();
                     this.model.set({
                         start   : seconds,
-                        duration: Math.round(this.model.get("duration") + this.model.get("start") - seconds)
+                        duration: this.model.get("duration") + this.model.get("start") - seconds
                     });
                     this.model.save(null, { silent: true });
                 }
@@ -320,7 +307,7 @@ define(["jquery",
              * @param  {event} event Event object
              */
             setCurrentTimeAsStart: function (event) {
-                var currentTime = Math.round(annotationTool.playerAdapter.getCurrentTime()),
+                var currentTime = annotationTool.playerAdapter.getCurrentTime(),
                     end = this.model.get("start") + this.model.get("duration");
 
                 event.stopImmediatePropagation();
@@ -340,7 +327,7 @@ define(["jquery",
              * @param  {event} event Event object
              */
             setCurrentTimeAsEnd: function (event) {
-                var currentTime = Math.round(annotationTool.playerAdapter.getCurrentTime());
+                var currentTime = annotationTool.playerAdapter.getCurrentTime();
                 event.stopImmediatePropagation();
                 if (currentTime > this.model.get("start")) {
                     this.model.set({ duration: currentTime - this.model.get("start") });
@@ -594,7 +581,9 @@ define(["jquery",
                         "click": "onSelect",
                         "click .collapse": "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "click i.icon-comment": "toggleCommentsState"
+                        "click i.icon-comment": "toggleCommentsState",
+                        "click .toggle-edit": "toggleEditState",
+                        "click i.delete": "deleteFull"
                     }
                 },
                 EXPANDED: {

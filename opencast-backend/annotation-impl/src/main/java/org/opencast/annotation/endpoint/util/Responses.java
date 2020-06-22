@@ -22,8 +22,9 @@ import org.json.simple.JSONObject;
 import javax.ws.rs.core.Response;
 
 /** Utilities to make responding simpler. */
-public class Responses {
-  private Responses() {}
+public final class Responses {
+  private Responses() {
+  }
 
   /**
    * Generates a <tt>200 OK</tt> response with a JSON body.

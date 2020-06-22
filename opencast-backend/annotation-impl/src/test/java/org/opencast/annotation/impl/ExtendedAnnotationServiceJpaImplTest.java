@@ -19,19 +19,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.persistence.PersistenceUtil.newPersistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
-
-import org.opencastproject.search.api.SearchService;
-import org.opencastproject.security.api.AuthorizationService;
-import org.opencastproject.security.api.DefaultOrganization;
-import org.opencastproject.security.api.SecurityService;
-import org.opencastproject.security.util.SecurityUtil;
-import org.opencastproject.util.data.Effect0;
-import org.opencastproject.util.data.Option;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
@@ -46,8 +37,16 @@ import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
+
+import org.opencastproject.search.api.SearchService;
+import org.opencastproject.security.api.AuthorizationService;
+import org.opencastproject.security.api.DefaultOrganization;
+import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.util.SecurityUtil;
+import org.opencastproject.util.data.Effect0;
+import org.opencastproject.util.data.Option;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;

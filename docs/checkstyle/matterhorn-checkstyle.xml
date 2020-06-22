@@ -2,15 +2,6 @@
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 <module name="Checker">
 
-  <!-- Check for license header                                 -->
-  <!-- See http://checkstyle.sourceforge.net/config_header.html -->
-  <module name="Header">
-    <property name="headerFile" value="${checkstyle.header.file}" />
-    <property name="ignoreLines" value="3" />
-    <property name="fileExtensions" value="java, js" />
-    <property name="severity" value="error" />
-  </module>
-
   <!-- Checks whether spaces are used as opposed to tabs                    -->
   <!-- See http://checkstyle.sf.net/config_whitespace.html#FileTabCharacter -->
   <module name="FileTabCharacter" />
@@ -70,7 +61,7 @@
       <property name="severity" value="error" />
     </module>
     <module name="ImportOrder">
-      <property name="groups" value="org.opencastproject,com,net,org,java,javax" />
+      <property name="groups" value="org.opencast,org.opencastproject,com,net,org,java,javax" />
       <property name="ordered" value="true" />
       <property name="separated" value="true" />
       <property name="option" value="top" />

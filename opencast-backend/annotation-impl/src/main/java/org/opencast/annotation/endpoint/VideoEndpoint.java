@@ -1,6 +1,25 @@
 package org.opencast.annotation.endpoint;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.FORBIDDEN;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
+import static org.opencast.annotation.endpoint.util.Responses.buildOk;
+import static org.opencastproject.util.UrlSupport.uri;
+import static org.opencastproject.util.data.Arrays.array;
+import static org.opencastproject.util.data.Option.none;
+import static org.opencastproject.util.data.Option.option;
+import static org.opencastproject.util.data.Option.some;
+import static org.opencastproject.util.data.functions.Strings.trimToNone;
+
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
@@ -13,26 +32,10 @@ import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.TrackImpl;
-
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.FORBIDDEN;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
-
 import org.opencast.annotation.impl.persistence.AbstractResourceDto;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
@@ -42,7 +45,6 @@ import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
-
 import org.opencastproject.util.IoSupport;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
@@ -51,16 +53,20 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
-import static org.opencastproject.util.UrlSupport.uri;
-import static org.opencastproject.util.data.Arrays.array;
-import static org.opencastproject.util.data.Option.none;
-import static org.opencastproject.util.data.Option.option;
-import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.data.functions.Strings.trimToNone;
-
-import au.com.bytecode.opencsv.CSVWriter;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -77,17 +83,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class VideoEndpoint {
 
@@ -104,12 +100,20 @@ public class VideoEndpoint {
         ANNOTATE_ADMIN
     }
 
-    final Video video;
-    final Access access;
+    private final Video video;
+    private final Access access;
 
     VideoData(final Video video, final Access access) {
       this.video = video;
       this.access = access;
+    }
+
+    public Video getVideo() {
+      return video;
+    }
+
+    public Access getAccess() {
+      return access;
     }
   }
 
@@ -137,7 +141,7 @@ public class VideoEndpoint {
     });
 
     for (VideoData videoData: this.videoData) {
-      if (videoData.access == VideoData.Access.NONE) {
+      if (videoData.getAccess() == VideoData.Access.NONE) {
         throw new WebApplicationException(FORBIDDEN);
       }
     }
@@ -152,9 +156,9 @@ public class VideoEndpoint {
         return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
           public Response some(VideoData v) {
-            if (!eas.hasResourceAccess(v.video))
+            if (!eas.hasResourceAccess(v.getVideo()))
               return UNAUTHORIZED;
-            return buildOk(VideoDto.toJson.apply(eas, v.video));
+            return buildOk(VideoDto.toJson.apply(eas, v.getVideo()));
           }
 
           @Override
@@ -174,9 +178,9 @@ public class VideoEndpoint {
         return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
           public Response some(VideoData v) {
-            if (!eas.hasResourceAccess(v.video))
+            if (!eas.hasResourceAccess(v.getVideo()))
               return UNAUTHORIZED;
-            return eas.deleteVideo(v.video) ? NO_CONTENT : NOT_FOUND;
+            return eas.deleteVideo(v.getVideo()) ? NO_CONTENT : NOT_FOUND;
           }
 
           @Override
@@ -1000,7 +1004,7 @@ public class VideoEndpoint {
     writer.writeNext(header.toArray(new String[0]));
 
     for (VideoData videoData : this.videoData) {
-      Video video = videoData.video;
+      Video video = videoData.getVideo();
       List<Track> tracks = eas.getTracks(video.getId(), none(), none(), none(), none(), none());
       for (Track track : tracks) {
         if (tracksToExport != null && !tracksToExport.contains(track.getId())) continue;
@@ -1178,7 +1182,7 @@ public class VideoEndpoint {
             "comments", c.getId());
   }
 
-  static private Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
+  private static Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
     if (e.getCauseCode() == ExtendedAnnotationException.Cause.NOT_FOUND) {
       return BAD_REQUEST;
     } else {

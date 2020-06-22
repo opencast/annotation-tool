@@ -434,11 +434,14 @@ define(["jquery",
              * @param {Array} order The new track order
              */
             orderTracks: function (order) {
+                // convert the new order to string to compare reliably
+                var strOrder = order.map(function (item) { return "" + item; });
                 //   Make sure every visible track is represented in the order,
                 // and only those, with non-explicitly ordered tracks in front.
                 this.tracksOrder = _.chain(this.getTracks().getVisibleTracks())
                     .sortBy(function (track) {
-                        return order.indexOf(track.id);
+                        // convert each track ID to string to reliably compare them
+                        return strOrder.indexOf("" + track.id);
                     }, this)
                     .map("id")
                     .value();
@@ -510,7 +513,7 @@ define(["jquery",
                 var annotation = this.selectedTrack.annotations
                     .create(_.extend(
                         params,
-                        { start: Math.round(this.playerAdapter.getCurrentTime()) },
+                        { start: this.playerAdapter.getCurrentTime() },
                         // The loop controller can constrain annotations
                         // to the current loop using this.
                         // @see module:views-loop.Loop#toggleConstrainAnnotations
