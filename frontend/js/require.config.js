@@ -32,7 +32,8 @@ require.config({
         "mediaelement/lang": "libs/mediaelement/lang",
         "sortable": "libs/Sortable.min",
         "goldenlayout": "libs/goldenlayout",
-        "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min"
+        "xlsx": "libs/xlsx.full.min",
+        "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min",
     },
     waitSeconds: 10,
 

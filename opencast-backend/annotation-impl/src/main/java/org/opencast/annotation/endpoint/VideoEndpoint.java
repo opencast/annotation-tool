@@ -53,11 +53,9 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
+import com.google.gson.Gson;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -987,43 +985,70 @@ public class VideoEndpoint {
     return response.build();
   }
 
-
   @GET
   @Path("/export.xlxs")
+  public Response getExportStatisticsJson(@QueryParam("track") final List<Long> tracks,
+          @QueryParam("category") final List<Long> categories,
+          @QueryParam("freetext") final Boolean freeText) {
+    Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
+
+      public void write(OutputStream os) throws IOException, WebApplicationException {
+
+        List<List<String>> bookData = gatherDataForExport(tracks, categories, freeText);
+
+        Gson gson = new Gson();
+        String s = gson.toJson(bookData);
+
+        try {
+          os.write(s.getBytes());
+        } finally {
+          IOUtils.closeQuietly(os);
+        }
+      }
+    });
+
+    response.header("Content-Type", "text/json");
+    response.header("Content-Disposition", "attachment; filename=export.json");
+    return response.build();
+  }
+
+  @GET
+  @Path("/export.xlxs_OLD")
   public Response getExportStatisticsXlxs(@QueryParam("track") final List<Long> tracks,
           @QueryParam("category") final List<Long> categories,
           @QueryParam("freetext") final Boolean freeText) {
     Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
 
       public void write(OutputStream os) throws IOException, WebApplicationException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("FirstSheet");
+        // XSSFWorkbook workbook = new XSSFWorkbook();
+        // XSSFSheet sheet = workbook.createSheet("FirstSheet");
 
-        List<List<String>> bookData = gatherDataForExport(tracks, categories, freeText);
+        // List<List<String>> bookData = gatherDataForExport(tracks, categories, freeText);
 
-        int rowCount = 0;
-        for (List<String> aBook : bookData) {
-          Row row = sheet.createRow(++rowCount);
+        // int rowCount = 0;
+        // for (List<String> aBook : bookData) {
+        //   Row row = sheet.createRow(++rowCount);
 
-          int columnCount = 0;
+        //   int columnCount = 0;
 
-          for (Object field : aBook) {
-            Cell cell = row.createCell(++columnCount);
-            if (field instanceof String) {
-              cell.setCellValue((String) field);
-            } else if (field instanceof Integer) {
-              cell.setCellValue((Integer) field);
-            }
-          }
-        }
+        //   for (Object field : aBook) {
+        //     Cell cell = row.createCell(++columnCount);
+        //     if (field instanceof String) {
+        //       cell.setCellValue((String) field);
+        //     } else if (field instanceof Integer) {
+        //       cell.setCellValue((Integer) field);
+        //     }
+        //   }
+        // }
 
-        try {
-          workbook.write(os);
-        } finally {
-          IOUtils.closeQuietly(os);
-        }
-      }
+        // try {
+        //   workbook.write(os);
+        // } finally {
+        //   IOUtils.closeQuietly(os);
+        // }
+       }
     });
+
     response.header("Content-Type", "text/xlxs");
     response.header("Content-Disposition", "attachment; filename=export.xlxs");
     return response.build();

@@ -248,6 +248,18 @@ var util = {
         return _.extend(object, _.object(_.map(properties, function (property) {
             return [property, definition(property)];
         })));
+    },
+
+    /**
+     * Capitalize a string
+     * @param {*} s The string to capitalize
+     * @return {s} The capitalized string
+     */
+    capitalize: function (s) {
+        if (typeof s !== 'string') {
+            return '';
+        }
+        return s.charAt(0).toUpperCase() + s.slice(1);
     }
 };
 

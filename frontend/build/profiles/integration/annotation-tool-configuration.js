@@ -23,13 +23,15 @@ define(["jquery",
         "backbone",
         "util",
         "models/user",
+        "collections/users",
         "roles",
         "player_adapter_HTML5",
+        "xlsx",
         "localstorage"
         // Add the files (PlayerAdapter, ...) required for your configuration here
         ],
 
-    function ($, _, Backbone, util, User, ROLES, HTML5PlayerAdapter) {
+    function ($, _, Backbone, util, User, Users, ROLES, HTML5PlayerAdapter, XLSX) {
 
         "use strict";
 
@@ -176,19 +178,172 @@ define(["jquery",
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
             export_xlxs: function (video, tracks, categories, freeText) {
-                var parameters = new URLSearchParams();
+                var bookData = [];
+                var header = [];
+                addResourceHeaders(header);
+                header.push("Track name");
+                header.push("Leadin");
+                header.push("Leadout");
+                header.push("Duration");
+                header.push("Text");
+                header.push("Category name");
+                header.push("Label name");
+                header.push("Label abbreviation");
+                header.push("Scale name");
+                header.push("Scale value name");
+                header.push("Scale value value");
+                addResourceHeaders(header, "comment");
+                header.push("Comment text");
+                header.push("Comment replies to");
+                bookData.push(header);
+
                 _.each(tracks, function (track) {
-                    parameters.append("track", track.id);
+                    _.each(annotationTool.getAnnotations(track.id), function (annotation) {
+                        var line = [];
+
+                        let label = annotation.attributes.label;
+                        // No idea what this check is good for tbh
+                        if(label) {
+                            if(categories && !categories.map(category => category.id).includes(label.category.id)) return;
+                        } else {
+                            if(!freeText) return;
+                        }
+                        
+                        addResource(line, annotation)
+                        line.push(track.attributes.name);
+
+                        line.push(util.formatTime(annotation.attributes.start));
+                        line.push(util.formatTime(annotation.attributes.start + annotation.attributes.duration));
+                        line.push(util.formatTime(annotation.attributes.duration));
+                        line.push(annotation.attributes.text);
+
+                        if (label) {
+                            line.push(label.category.name)
+                            line.push(label.value)
+                            line.push(label.abbreviation)
+                        } else {
+                            line.push("")
+                            line.push("")
+                            line.push("")
+                        }
+                        
+                        // What the heck is the difference between 'scalevalue' and 'scaleValue'?
+                        // They seem to contain the exact same data
+                        if(annotation.attributes.scalevalue) {
+                            line.push(annotation.attributes.scalevalue.scale.name);
+                            line.push(annotation.attributes.scalevalue.name);
+                            line.push(annotation.attributes.scalevalue.value);
+                        } else {
+                            line.push("")
+                            line.push("")
+                            line.push("")
+                        }
+
+
+                        bookData.push(line);
+
+                        // Get comments by user
+                        if (!annotation.areCommentsLoaded()) {
+                            annotation.fetchComments();
+                        }
+
+                        _.each(annotation.attributes.comments.models, function (comment) {
+                            addCommentLine(line, comment);
+                            
+                            if(comment.replies.length > 0) {
+                                comment_replies(line, comment.replies.models)
+                            }
+                        });
+
+                    });  
                 });
-                _.each(categories, function (category) {
-                    parameters.append("category", category.id);
-                });
-                parameters.append("freetext", freeText);
-                window.location.href =
-                    "../extended-annotations/videos/" +
-                    video.id +
-                    "/export.xlxs?" +
-                    parameters;
+                function addResourceHeaders(header, presuffix = "") {
+                    let prefix = ""
+                    let suffix = ""
+                    if(presuffix) {
+                        prefix = presuffix + " "
+                        suffix = " of " + presuffix
+                    }
+                    header.push(util.capitalize(prefix + "ID"));
+                    header.push(util.capitalize(prefix + "Creation date"));
+                    header.push(util.capitalize("Last update" + suffix));
+                    header.push(util.capitalize(prefix + "Author nickname"));
+                    header.push(util.capitalize(prefix + "Author mail"));
+                }
+                function addResource(line, resource) {
+                    line.push(resource.id);
+                    line.push(resource.attributes.created_at.toISOString());
+                    line.push(resource.attributes.updated_at.toISOString());
+                    line.push(resource.attributes.created_by_nickname);
+                    line.push("");// created_by userEmail
+                }
+                function addCommentLine(line, comment) {
+                    let commentLine = []
+                    Array.prototype.push.apply(commentLine, line)
+                    
+                    addResource(commentLine, comment);
+
+                    commentLine.push(comment.attributes.text);
+                    if (comment.collection.replyTo) {
+                        commentLine.push(comment.collection.replyTo.id);
+                    } else {
+                        commentLine.push("");
+                    }
+
+                    bookData.push(commentLine);
+                }
+                function comment_replies(line, replies) {
+                    _.each(replies, function (comment) {
+                        addCommentLine(line, comment);
+
+                        comment_replies(line, comment.attributes.replies)
+                    });
+                }
+
+                // Generate workbook
+                var wb = XLSX.utils.book_new();
+                wb.SheetNames.push("Sheet 1");
+
+                // Generate worksheet
+                var ws = XLSX.utils.aoa_to_sheet(bookData)
+
+                // Scale column width to content (which is apparently non built-in in SheetJS)
+                let objectMaxLength = []
+
+                bookData.map(arr => {
+                  Object.keys(arr).map(key => {
+                    let value = arr[key] === null ? '' : arr[key]
+                
+                    //if (typeof value === 'number')
+                    //{
+                    //  return objectMaxLength[key] = 10
+                    //}
+                
+                    objectMaxLength[key] = objectMaxLength[key] >= value.length ? objectMaxLength[key]  : value.length
+                  })
+                })
+                
+                let worksheetCols = objectMaxLength.map(width => {
+                  return {
+                    width
+                  }
+                })
+                
+                ws["!cols"] = worksheetCols;
+
+                // Put worksheet
+                wb.Sheets["Sheet 1"] = ws;
+
+                // Export workbook
+                var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
+                function s2ab(s) { 
+                    var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+                    var view = new Uint8Array(buf);  //create uint8array as viewer
+                    for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+                    return buf;    
+                }
+
+                saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'export.xlsx');
             },
 
             /**
