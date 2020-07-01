@@ -127,6 +127,7 @@
     "processing": {
       "head": "Process",
       "export": "Export for statistics",
+      "export_xlxs": "Export for Excel",
       "print": "Print"
     },
     "logout": "Log out",

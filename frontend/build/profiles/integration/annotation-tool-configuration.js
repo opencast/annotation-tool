@@ -170,7 +170,7 @@ define(["jquery",
             },
 
             /**
-             * MEH
+             * Offer the user an excel version of the annotations for download.
              * @alias module:annotation-tool-configuration.Configuration.export
              * @param {Video} video The video to export
              * @param {Track[]} tracks The tracks to include in the export
@@ -203,10 +203,10 @@ define(["jquery",
 
                         let label = annotation.attributes.label;
                         // No idea what this check is good for tbh
-                        if(label) {
-                            if(categories && !categories.map(category => category.id).includes(label.category.id)) return;
+                        if (label) {
+                            if (categories && !categories.map(category => category.id).includes(label.category.id)) return;
                         } else {
-                            if(!freeText) return;
+                            if (!freeText) return;
                         }
                         
                         addResource(line, annotation)
@@ -239,7 +239,6 @@ define(["jquery",
                             line.push("")
                         }
 
-
                         bookData.push(line);
 
                         // Get comments by user
@@ -257,6 +256,7 @@ define(["jquery",
 
                     });  
                 });
+
                 function addResourceHeaders(header, presuffix = "") {
                     let prefix = ""
                     let suffix = ""
@@ -270,13 +270,15 @@ define(["jquery",
                     header.push(util.capitalize(prefix + "Author nickname"));
                     header.push(util.capitalize(prefix + "Author mail"));
                 }
+
                 function addResource(line, resource) {
                     line.push(resource.id);
                     line.push(resource.attributes.created_at.toISOString());
                     line.push(resource.attributes.updated_at.toISOString());
                     line.push(resource.attributes.created_by_nickname);
-                    line.push("");// created_by userEmail
+                    line.push(resource.attributes.created_by_email);
                 }
+
                 function addCommentLine(line, comment) {
                     let commentLine = []
                     Array.prototype.push.apply(commentLine, line)
@@ -292,6 +294,7 @@ define(["jquery",
 
                     bookData.push(commentLine);
                 }
+
                 function comment_replies(line, replies) {
                     _.each(replies, function (comment) {
                         addCommentLine(line, comment);

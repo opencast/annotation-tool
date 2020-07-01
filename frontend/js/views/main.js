@@ -707,7 +707,7 @@ define(["jquery",
 
 
             /**
-             * MEH
+             * Offer the user an excel version of the annotations for download.
              * @alias module:views-main.Main#export_xlxs
              */
             export_xlxs: function () {
