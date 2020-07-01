@@ -23,7 +23,6 @@ define(["jquery",
         "backbone",
         "util",
         "models/user",
-        "collections/users",
         "roles",
         "player_adapter_HTML5",
         "xlsx",
@@ -31,7 +30,7 @@ define(["jquery",
         // Add the files (PlayerAdapter, ...) required for your configuration here
         ],
 
-    function ($, _, Backbone, util, User, Users, ROLES, HTML5PlayerAdapter, XLSX) {
+    function ($, _, Backbone, util, User, ROLES, HTML5PlayerAdapter, XLSX) {
 
         "use strict";
 
