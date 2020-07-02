@@ -676,6 +676,18 @@
     </dependencies>
   </dependencyManagement>
 
+  <!--
+    Configure a temporary maven repository to deploy to,
+    for the GitHub deployment to get it's artifacts from.
+  -->
+  <distributionManagement>
+    <repository>
+      <id>internal.repo</id>
+      <name>Temporary Staging Repository</name>
+      <url>file://${project.build.directory}/m2</url>
+    </repository>
+  </distributionManagement>
+
   <!-- All non-build related project data below here -->
 
   <organization>
@@ -830,12 +842,4 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <distributionManagement>
-    <repository>
-      <id>internal.repo</id>
-      <name>Temporary Staging Repository</name>
-      <url>file://${project.build.directory}/m2</url>
-    </repository>
-  </distributionManagement>
 </project>
