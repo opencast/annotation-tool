@@ -15,12 +15,11 @@
  */
 package org.opencast.annotation.impl;
 
+import org.opencast.annotation.api.Category;
+import org.opencast.annotation.api.Resource;
+
 import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
-
-import org.opencast.annotation.api.Category;
-import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Resource;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Category}.

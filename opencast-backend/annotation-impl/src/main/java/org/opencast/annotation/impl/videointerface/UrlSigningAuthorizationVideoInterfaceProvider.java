@@ -1,20 +1,23 @@
 package org.opencast.annotation.impl.videointerface;
 
-import org.apache.http.client.utils.URIBuilder;
 import org.opencast.annotation.api.videointerface.Access;
 import org.opencast.annotation.api.videointerface.BadVideoInterfaceRequestException;
 import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.api.videointerface.VideoTrack;
-import org.opencastproject.security.urlsigning.verifier.UrlSigningVerifier;
+
 import org.opencastproject.security.urlsigning.exception.UrlSigningException;
+import org.opencastproject.security.urlsigning.verifier.UrlSigningVerifier;
 import org.opencastproject.urlsigning.common.ResourceRequest;
 
-import javax.servlet.http.HttpServletRequest;
+import org.apache.http.client.utils.URIBuilder;
+
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 // TODO I don't like this design;
 //   Checking access and getting tracks
@@ -60,9 +63,9 @@ public class UrlSigningAuthorizationVideoInterfaceProvider implements VideoInter
           URIBuilder baseUriBuilder = new URIBuilder(signedUrlString);
           baseUriBuilder.setParameters(baseUriBuilder.getQueryParams()
                   .stream()
-                  .filter(param -> !(param.getName().equals("policy") ||
-                          param.getName().equals("signature") ||
-                          param.getName().equals("keyId")))
+                  .filter(param -> !(param.getName().equals("policy")
+                          || param.getName().equals("signature")
+                          || param.getName().equals("keyId")))
                   .collect(Collectors.toList()));
 
           final boolean strict = true;

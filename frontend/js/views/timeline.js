@@ -76,19 +76,11 @@ define([
         item.end = util.dateFromSeconds(item.end);
         var label = item.label;
         if (label) {
-            var color = label.category.settings.color;
-            item.style = [
-                "background-color:" + color,
-                "color:" + (
-                    chroma(color).luminance() < 0.5
-                        ? "white"
-                        : "black"
-                )
-            ].join(";");
+            item.className = "category-" + label.category.id;
         }
-        if (item.duration) {
-            item.type = "range";
-        }
+        item.type = item.duration
+            ? "range"
+            : "box";
         item.model = annotation;
         return item;
     }
@@ -168,9 +160,9 @@ define([
             var options = {
                 height: "100%",
                 margin: {
-                    axis: 5,
+                    axis: 20,
                     item: {
-                        vertical: 5,
+                        vertical: 10,
                         horizontal: 0
                     }
                 },
@@ -189,7 +181,7 @@ define([
                 //groupEditable: {
                 //    order: true
                 //},
-                zoomMin: 5000,
+                zoomMin: Math.min(5000, this.endDate - this.startDate),
                 start: this.startDate,
                 end: this.endDate,
                 min: this.startDate,
@@ -553,6 +545,34 @@ define([
                 html: true,
                 container: "body"
             });
+
+            // Maintain a stylesheet for structured annotations
+            function createCategoryStylesheet() {
+                var stylesheet = annotationTool.video.get("categories")
+                    .map(function (category) {
+                        var color = category.get("settings").color;
+                        return ".vis-item.category-" + category.id + "," +
+                            ".vis-item.vis-selected.category-" + category.id + "{" +
+                            "background-color:" + color + ";" +
+                            "color:" + (
+                                chroma(color).luminance() < 0.5
+                                    ? "white"
+                                    : "black"
+                            ) +
+                            ";}";
+                            }).join("");
+                return $("<style>" + stylesheet + "</style>")
+                    .appendTo('html > head');
+            }
+            this.categoryStylesheet = createCategoryStylesheet();
+            this.listenTo(
+                annotationTool.video.get("categories"),
+                "change add remove",
+                function () {
+                    this.categoryStylesheet.remove();
+                    this.categoryStylesheet = createCategoryStylesheet();
+                }
+            );
         },
 
         /**
@@ -564,6 +584,7 @@ define([
             });
             this.timeline.destroy();
             this.$el.popover("destroy");
+            this.categoryStylesheet.remove();
             return Backbone.View.prototype.remove.apply(this, arguments);
         },
 

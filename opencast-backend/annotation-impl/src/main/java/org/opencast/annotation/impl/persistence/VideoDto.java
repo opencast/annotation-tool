@@ -18,18 +18,17 @@ package org.opencast.annotation.impl.persistence;
 import static org.opencast.annotation.impl.Jsons.conc;
 import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.p;
-
 import static org.opencastproject.util.data.Option.option;
-
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function2;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.VideoImpl;
+
+import org.opencastproject.util.data.Function;
+import org.opencastproject.util.data.Function2;
+
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;

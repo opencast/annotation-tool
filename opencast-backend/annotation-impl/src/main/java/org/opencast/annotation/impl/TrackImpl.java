@@ -15,14 +15,11 @@
  */
 package org.opencast.annotation.impl;
 
-import static org.opencastproject.util.data.Option.some;
+import org.opencast.annotation.api.Resource;
+import org.opencast.annotation.api.Track;
 
 import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
-
-import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Resource;
-import org.opencast.annotation.api.Track;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Track}.

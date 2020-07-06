@@ -18,19 +18,19 @@ package org.opencast.annotation.endpoint;
 
 import static org.opencastproject.util.RestUtil.getEndpointUrl;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.impl.videointerface.AdminVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProviderConfiguration;
 import org.opencast.annotation.impl.videointerface.UrlSigningAuthorizationVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
+
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.TrustedHttpClient;
 import org.opencastproject.security.api.UserDirectoryService;
 import org.opencastproject.security.urlsigning.verifier.UrlSigningVerifier;
 import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
-
-import org.opencast.annotation.api.ExtendedAnnotationService;
 
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;

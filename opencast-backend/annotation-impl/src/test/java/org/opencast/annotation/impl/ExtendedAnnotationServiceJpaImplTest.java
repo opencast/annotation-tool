@@ -19,18 +19,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.persistence.PersistenceUtil.newPersistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
-
-import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
-import org.opencastproject.security.api.DefaultOrganization;
-import org.opencastproject.security.api.SecurityService;
-import org.opencastproject.security.util.SecurityUtil;
-import org.opencastproject.util.data.Effect0;
-import org.opencastproject.util.data.Option;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
@@ -45,8 +37,15 @@ import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
+import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
+
+import org.opencastproject.security.api.DefaultOrganization;
+import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.util.SecurityUtil;
+import org.opencastproject.util.data.Effect0;
+import org.opencastproject.util.data.Option;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -203,7 +202,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testTrack() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture1", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // try adding a track to a non existing video
@@ -264,7 +263,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateAndFindAnnotation() throws Exception {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // create

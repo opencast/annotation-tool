@@ -20,9 +20,6 @@ import org.opencastproject.util.data.Option;
 /** A class representing a comment of an annotation. */
 public interface Comment extends Resource {
 
-  /** The comment id */
-  long getId();
-
   /** The annotation that is used for this comment. */
   long getAnnotationId();
 

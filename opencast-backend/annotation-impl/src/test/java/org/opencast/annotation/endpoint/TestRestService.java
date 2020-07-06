@@ -19,24 +19,24 @@ import static org.opencastproject.test.rest.RestServiceTestEnv.localhostRandomPo
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.api.videointerface.Access;
 import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.api.videointerface.VideoInterfaceException;
+import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
-import org.opencast.annotation.api.videointerface.Access;
+
 import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.search.api.SearchQuery;
 import org.opencastproject.search.api.SearchResult;
 import org.opencastproject.search.api.SearchResultItem;
 import org.opencastproject.search.api.SearchService;
-import org.opencastproject.search.api.SearchQuery;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.User;
 import org.opencastproject.security.util.SecurityUtil;
 
-import org.opencast.annotation.api.ExtendedAnnotationService;
-
-import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
 import org.easymock.EasyMock;
 import org.junit.Ignore;
 

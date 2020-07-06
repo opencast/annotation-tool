@@ -1,16 +1,11 @@
 package org.opencast.annotation.impl.videointerface;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.opencast.annotation.api.videointerface.Access;
 import org.opencast.annotation.api.videointerface.BadVideoInterfaceRequestException;
 import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.api.videointerface.VideoTrack;
+
 import org.opencastproject.security.api.Role;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.TrustedHttpClient;
@@ -18,7 +13,13 @@ import org.opencastproject.security.api.User;
 import org.opencastproject.security.api.UserDirectoryService;
 import org.opencastproject.util.MimeTypes;
 
-import javax.servlet.http.HttpServletRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -30,6 +31,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Provide access to video information by using the external API.

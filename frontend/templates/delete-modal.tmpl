@@ -1,8 +1,9 @@
 <div class="modal" id="modal-delete" style="display:none;">
   <div class="modal-header">
-    <h3>{{t "delete modal.title"}}</h3>
+    <h3>{{t "delete modal.title" context=context}}</h3>
   </div>
   <div class="modal-body">
+    {{t "delete modal.warning" context=context content=content}}
   </div>
   <div class="modal-footer">
     <button type="button" class="btn" data-dismiss="modal">{{t "delete modal.cancel"}}</button>

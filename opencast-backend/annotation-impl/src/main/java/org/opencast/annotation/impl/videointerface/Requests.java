@@ -4,7 +4,10 @@ package org.opencast.annotation.impl.videointerface;
 import javax.servlet.http.HttpServletRequest;
 
 // TODO JavaDoc
-public class Requests {
+public final class Requests {
+  private Requests() {
+  }
+
   public static String getHeaderOrParam(HttpServletRequest request, String name) {
     return getHeaderOrParam(request, name, name);
   }

@@ -1,5 +1,21 @@
 package org.opencast.annotation.endpoint;
 
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
+import static org.opencast.annotation.endpoint.util.Responses.buildOk;
+import static org.opencastproject.util.UrlSupport.uri;
+import static org.opencastproject.util.data.Arrays.array;
+import static org.opencastproject.util.data.Option.none;
+import static org.opencastproject.util.data.Option.option;
+import static org.opencastproject.util.data.Option.some;
+import static org.opencastproject.util.data.functions.Strings.trimToNone;
+
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
@@ -12,23 +28,11 @@ import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.api.videointerface.VideoInterface;
 import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.TrackImpl;
-
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
-
 import org.opencast.annotation.impl.persistence.AbstractResourceDto;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
@@ -44,16 +48,21 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
-import static org.opencastproject.util.UrlSupport.uri;
-import static org.opencastproject.util.data.Arrays.array;
-import static org.opencastproject.util.data.Option.none;
-import static org.opencastproject.util.data.Option.option;
-import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.data.functions.Strings.trimToNone;
-
-import au.com.bytecode.opencsv.CSVWriter;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -72,18 +81,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.stream.Collectors;
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class VideoEndpoint {
 
@@ -164,8 +162,7 @@ public class VideoEndpoint {
 
         try {
 
-          Resource resource = eas.createResource(tagsMap.bind(Functions.identity()),
-                  option(access));
+          Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
           final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
           return Response.created(trackLocationUri(t))
@@ -534,8 +531,7 @@ public class VideoEndpoint {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.identity()),
-                option(access));
+        Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();
@@ -967,7 +963,7 @@ public class VideoEndpoint {
           public void write(OutputStream os) throws IOException, WebApplicationException {
             CSVWriter writer = null;
             try {
-              writer = new CSVWriter(new OutputStreamWriter(os));
+              writer = new CSVWriter(new OutputStreamWriter(os), ',', '"', "\r\n");
               writeExport(writer, tracks, categories, freeText, videoInterface);
               writer.close();
             } finally {
@@ -987,11 +983,7 @@ public class VideoEndpoint {
           Boolean freeText, VideoInterface videoInterface) {
     // Write headers
     List<String> header = new ArrayList<>();
-    header.add("ID");
-    header.add("Creation date");
-    header.add("Last update");
-    header.add("Author nickname");
-    header.add("Author mail");
+    addResourceHeaders(header, none());
     header.add("Track name");
     header.add("Leadin");
     header.add("Leadout");
@@ -1003,13 +995,7 @@ public class VideoEndpoint {
     header.add("Scale name");
     header.add("Scale value name");
     header.add("Scale value value");
-    // TODO Factor this out?
-    //   See `addResource`
-    header.add("Comment ID");
-    header.add("Comment creation date");
-    header.add("Last comment update");
-    header.add("Comment author name");
-    header.add("Comment author mail");
+    addResourceHeaders(header, some("comment"));
     header.add("Comment text");
     header.add("Comment replies to");
     writer.writeNext(header.toArray(new String[0]));
@@ -1040,7 +1026,6 @@ public class VideoEndpoint {
 
           List<String> line = new ArrayList<>();
 
-          line.add(Long.toString(annotation.getId()));
           addResource(annotation, line);
           line.add(track.getName());
 
@@ -1083,10 +1068,30 @@ public class VideoEndpoint {
     }
   }
 
+  private void addResourceHeaders(List<String> header, Option<String> optionalResource) {
+    String prefix = "";
+    String suffix = "";
+    for (String resource : optionalResource) {
+      prefix = resource + " ";
+      suffix = " of " + resource;
+    }
+    header.add(StringUtils.capitalize(prefix + "ID"));
+    header.add(StringUtils.capitalize(prefix + "creation date"));
+    header.add("Last update" + suffix);
+    header.add(StringUtils.capitalize(prefix + "author nickname"));
+    header.add(StringUtils.capitalize(prefix + "author mail"));
+  }
+
+  private void addResource(Resource resource, List<String> line) {
+    line.add(Long.toString(resource.getId()));
+    line.add(resource.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(resource.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(resource.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
+    line.add(resource.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
+  }
+
   private void writeComment(CSVWriter writer, Annotation annotation, List<String> line, Comment comment) {
     List<String> commentLine = new ArrayList<>(line);
-    // TODO Why is this not in `addResource`?
-    commentLine.add(Long.toString(comment.getId()));
     addResource(comment, commentLine);
     commentLine.add(comment.getText());
     commentLine.add(comment.getReplyToId().map(new Function<Long, String>() {
@@ -1096,18 +1101,11 @@ public class VideoEndpoint {
       }
     }).getOrElse(""));
     writer.writeNext(commentLine.toArray(new String[0]));
-    List<Comment> replies = eas.getComments(annotation.getId(), some(comment.getId()), none(), none(), none(),
-            none(), none());
+    List<Comment> replies = eas.getComments(annotation.getId(), some(comment.getId()), none(), none(), none(), none(),
+            none());
     for (Comment reply : replies) {
       writeComment(writer, annotation, line, reply);
     }
-  }
-
-  private void addResource(Resource annotation, List<String> line) {
-    line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-    line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-    line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-    line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
   }
 
   private static String toVideoTimeString(double seconds) {
@@ -1184,7 +1182,7 @@ public class VideoEndpoint {
             "comments", c.getId());
   }
 
-  static private Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
+  private static Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
     if (e.getCauseCode() == ExtendedAnnotationException.Cause.NOT_FOUND) {
       return BAD_REQUEST;
     } else {

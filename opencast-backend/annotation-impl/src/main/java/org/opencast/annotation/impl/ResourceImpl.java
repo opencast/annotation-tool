@@ -15,12 +15,9 @@
  */
 package org.opencast.annotation.impl;
 
-import static org.opencastproject.util.data.Option.none;
+import org.opencast.annotation.api.Resource;
 
 import org.opencastproject.util.data.Option;
-
-import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Resource;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -46,20 +43,22 @@ public class ResourceImpl implements Resource {
   public ResourceImpl(Option<Integer> access, Option<Long> createdBy, Option<Long> updatedBy, Option<Long> deletedBy,
           Option<Date> createdAt, Option<Date> updatedAt, Option<Date> deletedAt, Map<String, String> tags) {
 
+    this.access = access.getOrElse(PRIVATE);
+
     this.createdBy = createdBy;
     this.updatedBy = updatedBy;
     this.deletedBy = deletedBy;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
+
     if (tags != null)
       this.tags = tags;
+  }
 
-    if (access.isSome()) {
-      this.access = access.get();
-    } else {
-      this.access = PRIVATE;
-    }
+  @Override
+  public long getId() {
+    throw new IllegalStateException("Abstract resources don't have IDs");
   }
 
   @Override
