@@ -63,10 +63,16 @@
         background-color: @grayLight;
     }
 
+    &.active {
+        border-color: @gray;
+        background-color: @grayLight;
+        .active-annotation();
+    }
+
     &.vis-selected {
         border-color: @gray;
         background-color: @grayLighter;
-        box-shadow: inset 0px 0px 2px 1px red;
+        .selected-annotation();
     }
 
     .vis-item-content {
