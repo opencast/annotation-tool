@@ -15,24 +15,14 @@
  */
 package org.opencast.annotation.endpoint;
 
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
+import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 import static org.opencastproject.util.UrlSupport.uri;
 import static org.opencastproject.util.data.Arrays.array;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.functions.Strings.trimToNone;
-
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
-
-import org.opencastproject.mediapackage.MediaPackage;
-
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Option;
-import org.opencastproject.util.data.functions.Functions;
-import org.opencastproject.util.data.functions.Strings;
 
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationException;
@@ -43,7 +33,6 @@ import org.opencast.annotation.api.Scale;
 import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.impl.CategoryImpl;
 import org.opencast.annotation.impl.LabelImpl;
 import org.opencast.annotation.impl.ResourceImpl;
@@ -57,6 +46,13 @@ import org.opencast.annotation.impl.persistence.ScaleDto;
 import org.opencast.annotation.impl.persistence.ScaleValueDto;
 import org.opencast.annotation.impl.persistence.UserDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
+
+import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.util.data.Function;
+import org.opencastproject.util.data.Function0;
+import org.opencastproject.util.data.Option;
+import org.opencastproject.util.data.functions.Functions;
+import org.opencastproject.util.data.functions.Strings;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
@@ -115,9 +111,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
+        Resource resource = eas().createResource(tags);
         User u = eas().createUser(userExtId, nickname, emailo, resource);
-        resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        // This might have been the first user, which would mean
+        // that the resource above has no owner.
+        // To fix this, we just recreate it and update the user to persist it.
+        resource = eas().createResource(tags);
         u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
         eas().updateUser(u);
 
@@ -164,9 +164,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response none() {
             Resource resource = eas().createResource();
             User u = eas().createUser(userExtId, nickname, emailo, resource);
+            // This might have been the first user, which would mean
+            // that the resource above has no owner.
+            // To fix this, we just recreate it and update the user to persist it.
             resource = eas().createResource(tags);
             u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
-            eas().updateUser(new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource));
+            eas().updateUser(u);
             return Response.created(userLocationUri(u))
                     .entity(Strings.asStringNull().apply(UserDto.toJson.apply(eas(), u))).build();
           }
@@ -325,8 +328,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()),
-                option(access));
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas().createScale(videoId, name, trimToNone(description), resource);
         return Response.created(scaleLocationUri(scale, videoId.isSome()))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), scale))).build();
@@ -498,8 +500,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()),
-                option(access));
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
         return Response.created(scaleValueLocationUri(scaleValue, videoId))
@@ -547,7 +548,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
           @Override
           public Response none() {
-            Resource resource = eas().createResource(tags, option(access));
+            Resource resource = eas().createResource(option(access), tags);
             final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
             return Response.created(scaleValueLocationUri(scaleValue, videoId))
@@ -674,8 +675,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()),
-                option(access));
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Category category = eas().createCategory(videoId, option(scaleId), name, trimToNone(description),
                 trimToNone(settings), resource);
 
@@ -856,8 +856,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || eas().getCategory(categoryId, false).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()),
-                option(access));
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Label label = eas().createLabel(categoryId, value, abbreviation, trimToNone(description),
                 trimToNone(settings), resource);
 
@@ -909,7 +908,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
           @Override
           public Response none() {
-            Resource resource = eas().createResource(tags, option(access));
+            Resource resource = eas().createResource(option(access), tags);
             final Label label = eas().createLabel(categoryId, value, abbreviation, trimToNone(description),
                     trimToNone(settings), resource);
 

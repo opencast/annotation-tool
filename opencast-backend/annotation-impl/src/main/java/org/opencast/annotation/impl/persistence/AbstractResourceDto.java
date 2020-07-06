@@ -20,14 +20,14 @@ import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.jOTags;
 import static org.opencast.annotation.impl.Jsons.p;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.api.Resource;
+import org.opencast.annotation.api.User;
+
 import org.opencastproject.util.DateTimeSupport;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
-
-import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Resource;
-import org.opencast.annotation.api.User;
 
 import org.json.simple.JSONObject;
 

@@ -21,9 +21,6 @@ import org.opencastproject.util.data.Option;
 /** A class representing a user of the annotation tool. */
 public interface User extends Resource {
 
-  /** The user's id within the annotation tool. */
-  long getId();
-
   /** The user's id in the surrounding video portal. */
   String getExtId();
 

@@ -1,5 +1,25 @@
 package org.opencast.annotation.endpoint;
 
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.FORBIDDEN;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
+import static org.opencast.annotation.endpoint.util.Responses.buildOk;
+import static org.opencastproject.util.UrlSupport.uri;
+import static org.opencastproject.util.data.Arrays.array;
+import static org.opencastproject.util.data.Option.none;
+import static org.opencastproject.util.data.Option.option;
+import static org.opencastproject.util.data.Option.some;
+import static org.opencastproject.util.data.functions.Strings.trimToNone;
+
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
@@ -12,26 +32,10 @@ import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.TrackImpl;
-
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.FORBIDDEN;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
-
 import org.opencast.annotation.impl.persistence.AbstractResourceDto;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
@@ -41,7 +45,6 @@ import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
-
 import org.opencastproject.util.IoSupport;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
@@ -50,16 +53,20 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
-import static org.opencastproject.util.UrlSupport.uri;
-import static org.opencastproject.util.data.Arrays.array;
-import static org.opencastproject.util.data.Option.none;
-import static org.opencastproject.util.data.Option.option;
-import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.data.functions.Strings.trimToNone;
-
-import au.com.bytecode.opencsv.CSVWriter;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -76,17 +83,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class VideoEndpoint {
 
@@ -103,12 +100,20 @@ public class VideoEndpoint {
         ANNOTATE_ADMIN
     }
 
-    final Video video;
-    final Access access;
+    private final Video video;
+    private final Access access;
 
     VideoData(final Video video, final Access access) {
       this.video = video;
       this.access = access;
+    }
+
+    public Video getVideo() {
+      return video;
+    }
+
+    public Access getAccess() {
+      return access;
     }
   }
 
@@ -136,7 +141,7 @@ public class VideoEndpoint {
     });
 
     for (VideoData videoData: this.videoData) {
-      if (videoData.access == VideoData.Access.NONE) {
+      if (videoData.getAccess() == VideoData.Access.NONE) {
         throw new WebApplicationException(FORBIDDEN);
       }
     }
@@ -151,9 +156,9 @@ public class VideoEndpoint {
         return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
           public Response some(VideoData v) {
-            if (!eas.hasResourceAccess(v.video))
+            if (!eas.hasResourceAccess(v.getVideo()))
               return UNAUTHORIZED;
-            return buildOk(VideoDto.toJson.apply(eas, v.video));
+            return buildOk(VideoDto.toJson.apply(eas, v.getVideo()));
           }
 
           @Override
@@ -173,9 +178,9 @@ public class VideoEndpoint {
         return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
           public Response some(VideoData v) {
-            if (!eas.hasResourceAccess(v.video))
+            if (!eas.hasResourceAccess(v.getVideo()))
               return UNAUTHORIZED;
-            return eas.deleteVideo(v.video) ? NO_CONTENT : NOT_FOUND;
+            return eas.deleteVideo(v.getVideo()) ? NO_CONTENT : NOT_FOUND;
           }
 
           @Override
@@ -203,8 +208,7 @@ public class VideoEndpoint {
 
         try {
 
-          Resource resource = eas.createResource(tagsMap.bind(Functions.identity()),
-                  option(access));
+          Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
           final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
           return Response.created(trackLocationUri(t))
@@ -550,8 +554,7 @@ public class VideoEndpoint {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.identity()),
-                option(access));
+        Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();
@@ -965,7 +968,7 @@ public class VideoEndpoint {
       public void write(OutputStream os) throws IOException, WebApplicationException {
         CSVWriter writer = null;
         try {
-          writer = new CSVWriter(new OutputStreamWriter(os));
+          writer = new CSVWriter(new OutputStreamWriter(os), ',', '"', "\r\n");
           writeExport(writer, tracks, categories, freeText);
           writer.close();
         } finally {
@@ -983,11 +986,7 @@ public class VideoEndpoint {
           Boolean freeText) {
     // Write headers
     List<String> header = new ArrayList<>();
-    header.add("ID");
-    header.add("Creation date");
-    header.add("Last update");
-    header.add("Author nickname");
-    header.add("Author mail");
+    addResourceHeaders(header, none());
     header.add("Track name");
     header.add("Leadin");
     header.add("Leadout");
@@ -999,10 +998,13 @@ public class VideoEndpoint {
     header.add("Scale name");
     header.add("Scale value name");
     header.add("Scale value value");
+    addResourceHeaders(header, some("comment"));
+    header.add("Comment text");
+    header.add("Comment replies to");
     writer.writeNext(header.toArray(new String[0]));
 
     for (VideoData videoData : this.videoData) {
-      Video video = videoData.video;
+      Video video = videoData.getVideo();
       List<Track> tracks = eas.getTracks(video.getId(), none(), none(), none(), none(), none());
       for (Track track : tracks) {
         if (tracksToExport != null && !tracksToExport.contains(track.getId())) continue;
@@ -1024,11 +1026,7 @@ public class VideoEndpoint {
 
           List<String> line = new ArrayList<>();
 
-          line.add(Long.toString(annotation.getId()));
-          line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-          line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
+          addResource(annotation, line);
           line.add(track.getName());
 
           double start = annotation.getStart(); // start, stop, duration
@@ -1060,8 +1058,53 @@ public class VideoEndpoint {
           }
 
           writer.writeNext(line.toArray(new String[0]));
+
+          List<Comment> comments = eas.getComments(annotation.getId(), none(), none(), none(), none(), none(), none());
+          for (Comment comment : comments) {
+            writeComment(writer, annotation, line, comment);
+          }
         }
       }
+    }
+  }
+
+  private void addResourceHeaders(List<String> header, Option<String> optionalResource) {
+    String prefix = "";
+    String suffix = "";
+    for (String resource : optionalResource) {
+      prefix = resource + " ";
+      suffix = " of " + resource;
+    }
+    header.add(StringUtils.capitalize(prefix + "ID"));
+    header.add(StringUtils.capitalize(prefix + "creation date"));
+    header.add("Last update" + suffix);
+    header.add(StringUtils.capitalize(prefix + "author nickname"));
+    header.add(StringUtils.capitalize(prefix + "author mail"));
+  }
+
+  private void addResource(Resource resource, List<String> line) {
+    line.add(Long.toString(resource.getId()));
+    line.add(resource.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(resource.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
+    line.add(resource.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
+    line.add(resource.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
+  }
+
+  private void writeComment(CSVWriter writer, Annotation annotation, List<String> line, Comment comment) {
+    List<String> commentLine = new ArrayList<>(line);
+    addResource(comment, commentLine);
+    commentLine.add(comment.getText());
+    commentLine.add(comment.getReplyToId().map(new Function<Long, String>() {
+      @Override
+      public String apply(Long replyToId) {
+        return replyToId.toString();
+      }
+    }).getOrElse(""));
+    writer.writeNext(commentLine.toArray(new String[0]));
+    List<Comment> replies = eas.getComments(annotation.getId(), some(comment.getId()), none(), none(), none(), none(),
+            none());
+    for (Comment reply : replies) {
+      writeComment(writer, annotation, line, reply);
     }
   }
 
@@ -1139,7 +1182,7 @@ public class VideoEndpoint {
             "comments", c.getId());
   }
 
-  static private Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
+  private static Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
     if (e.getCauseCode() == ExtendedAnnotationException.Cause.NOT_FOUND) {
       return BAD_REQUEST;
     } else {

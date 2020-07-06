@@ -15,16 +15,15 @@
  */
 package org.opencast.annotation.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.opencast.annotation.impl.Jsons.conc;
 import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.p;
 
 import org.json.simple.JSONObject;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class JsonsTest {
   @Test

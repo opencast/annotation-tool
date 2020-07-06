@@ -15,38 +15,36 @@
  */
 package org.opencast.annotation.endpoint;
 
-import org.opencast.annotation.api.Annotation;
-import org.opencast.annotation.api.Resource;
-
-import org.opencast.annotation.impl.AnnotationImpl;
-import org.opencast.annotation.impl.ResourceImpl;
-import org.json.simple.JSONObject;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import org.opencastproject.test.rest.RestServiceTestEnv;
-
-import javax.ws.rs.core.Response;
-
-import java.util.Date;
-import java.util.HashMap;
-
 import static com.jayway.restassured.RestAssured.given;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 import static org.opencastproject.test.rest.RestServiceTestEnv.RegexMatcher.regex;
 import static org.opencastproject.test.rest.RestServiceTestEnv.testEnvForClasses;
 import static org.opencastproject.util.data.Collections.last;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
+
+import org.opencast.annotation.api.Annotation;
+import org.opencast.annotation.api.Resource;
+import org.opencast.annotation.impl.AnnotationImpl;
+import org.opencast.annotation.impl.ResourceImpl;
+
+import org.opencastproject.test.rest.RestServiceTestEnv;
+
+import org.json.simple.JSONObject;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.Date;
+import java.util.HashMap;
+
+import javax.ws.rs.core.Response;
 
 public class ExtendedAnnotationsRestServiceTest {
 

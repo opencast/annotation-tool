@@ -21,9 +21,6 @@ import org.opencastproject.util.data.Option;
 /** Class representing an annotation. */
 public interface Annotation extends Resource {
 
-  /** The annotation id. */
-  long getId();
-
   /** The track id where the annotation is */
   long getTrackId();
 

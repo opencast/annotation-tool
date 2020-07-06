@@ -18,13 +18,10 @@ package org.opencast.annotation.endpoint;
 
 import static org.opencastproject.util.RestUtil.getEndpointUrl;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
+
 import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
-
-import org.opencastproject.search.api.SearchService;
-import org.opencastproject.security.api.AuthorizationService;
-
-import org.opencast.annotation.api.ExtendedAnnotationService;
 
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
