@@ -26,12 +26,11 @@ define(["jquery",
         "views/main",
         "alerts",
         "templates/delete-modal",
-        "templates/delete-warning-content",
         "player-adapter",
         "colors",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, Videos, MainView, alerts, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, ColorsManager) {
+    function ($, _, Backbone, i18next, Videos, MainView, alerts, DeleteModalTmpl, PlayerAdapter, ColorsManager) {
 
         "use strict";
 
@@ -56,10 +55,6 @@ define(["jquery",
 
             modelsInitialized: false,
 
-            deleteModalTmpl: DeleteModalTmpl,
-
-            deleteContentTmpl: DeleteContentTmpl,
-
             deleteOperation: {
                 /**
                  * Function to delete element with warning
@@ -69,47 +64,40 @@ define(["jquery",
                  */
                 start: function (target, type, callback) {
 
-                    var confirm = function () {
-                        type.destroy(target, callback);
-                        this.deleteModal.modal("toggle");
-                    },
-                        confirmWithEnter = function (event) {
-                            if (event.keyCode === 13) {
-                                confirm();
-                            }
-                        };
-
                     if (!target.isEditable()) {
                         alerts.warning("You are not authorized to deleted this " + type.name + "!");
                         return;
                     }
 
-                    confirmWithEnter = _.bind(confirmWithEnter, this);
-                    confirm = _.bind(confirm, this);
-
-                    // Change modal title
-                    this.deleteModalHeader.text("Delete " + type.name);
-
-                    // Change warning content
-                    this.deleteModalContent.html(this.deleteContentTmpl({
-                        type: type.name,
+                    var deleteModal = $(DeleteModalTmpl({
+                        context: type.name,
                         content: type.getContent(target)
                     }));
 
+                    function confirm() {
+                        type.destroy(target, callback);
+                        deleteModal.modal("toggle");
+                    }
+                    function confirmWithEnter(event) {
+                        if (event.keyCode === 13) {
+                            confirm();
+                        }
+                    };
+
                     // Listener for delete confirmation
-                    this.deleteModal.find("#confirm-delete").one("click", confirm);
+                    deleteModal.find("#confirm-delete").one("click", confirm);
 
                     // Add possiblity to confirm with return key
                     $(window).on("keypress", confirmWithEnter);
 
                     // Unbind the listeners when the modal is hidden
-                    this.deleteModal.one("hide", function () {
-                        $("#confirm-delete").off("click");
+                    deleteModal.one("hide", function () {
                         $(window).off("keypress", confirmWithEnter);
+                        deleteModal.remove();
                     });
 
                     // Show the modal
-                    this.deleteModal.modal("show");
+                    deleteModal.modal("show");
                 }
             },
 
@@ -142,7 +130,6 @@ define(["jquery",
                 _.extend(this, config);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
-                this.initDeleteModal();
 
                 this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
 
@@ -187,18 +174,6 @@ define(["jquery",
                 }, this);
 
                 this.authenticate();
-            },
-
-            /**
-             * Function to init the delete warning modal
-             * @alias   annotationTool.initDeleteModal
-             */
-            initDeleteModal: function () {
-                $("#dialogs").append(this.deleteModalTmpl({ type: "annotation" }));
-                this.deleteModal = $("#modal-delete").modal({ show: true, backdrop: false, keyboard: true });
-                this.deleteModal.modal("toggle");
-                this.deleteModalHeader  = this.deleteModal.find(".modal-header h3");
-                this.deleteModalContent = this.deleteModal.find(".modal-body");
             },
 
             /**

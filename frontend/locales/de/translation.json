@@ -25,7 +25,7 @@
       "mine": "Meine",
       "public": "Öffentlich"
     },
-    "create a label": "Kennzeichen erstellen",
+    "create a label": "Etikett erstellen",
     "download categories": "Kategorien herunterladen",
     "edit category scaling": "Skala für diese Kategorie bearbeiten",
     "edit mode": "Bearbeiten",
@@ -36,7 +36,7 @@
       "head": "Sichtbarkeit"
     },
     "new category name": "NEUE KATEGORIE",
-    "new label placeholder": "Wert des Kennzeichens …",
+    "new label placeholder": "Wert des Etiketts …",
     "new": {
       "placeholder": "Freitextannotation schreiben ($t(annotate.new.title))",
       "title": "„Shift + Return“ drücken, um eine neue Zeile einzufügen."
@@ -96,8 +96,8 @@
   "delete modal": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
-    "title": "Löschen",
-    "warning": "Wollen Sie $t(models.genitive, {'context': {{context}} }) „{{content}}“ wirklich löschen?"
+    "title": "$t(models.nominative, {'context': {{context}} }) löschen",
+    "warning": "Wollen Sie $t(models.accusative, {'context': {{context}} }) „{{content}}“ wirklich löschen?"
   },
   "description": "Werkzeug zur Videoannotation",
   "list annotation": {
@@ -319,13 +319,20 @@
   },
   "version": "Version: {{version}}",
   "models": {
-    "genitive_annotation": "die Annotation",
-    "genitive_comment": "den kommentar",
-    "genitive_label": "das Kennzeichen",
-    "genitive_track": "die Spur",
-    "genitive_category": "die Kategorie",
-    "genitive_scale value": "den Skalenwert",
-    "genitive_scale": "die Skala"
+    "nominative_annotation": "Annotation",
+    "nominative_comment": "Kommentar",
+    "nominative_label": "Etikett",
+    "nominative_track": "Spur",
+    "nominative_category": "Kategorie",
+    "nominative_scale value": "Skalenwert",
+    "nominative_scale": "Skala",
+    "accusative_annotation": "die Annotation",
+    "accusative_comment": "den Kommentar",
+    "accusative_label": "das Etikett",
+    "accusative_track": "die Spur",
+    "accusative_category": "die Kategorie",
+    "accusative_scale value": "den Skalenwert",
+    "accusative_scale": "die Skala"
   },
   "views": {
     "annotate": "Neue Annotationen erstellen",
