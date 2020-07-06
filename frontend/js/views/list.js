@@ -264,6 +264,13 @@ define(["underscore",
              * @param {Array<Annotation>} previousSelection the previously active annotations
              */
             renderActive: function (currentAnnotations, previousAnnotations) {
+                var selection = annotationTool.getSelection();
+                var refocusSelection = selection && this.autoExpand;
+                if (refocusSelection) {
+                    var selectionView = this.getViewFromAnnotation(selection.id).$el;
+                    var selectionOffset = this.getOffset(selectionView);
+                }
+
                 _.each(previousAnnotations, function (annotation) {
                     var view = this.getViewFromAnnotation(annotation.id);
                     view.$el.removeClass("active");
@@ -283,17 +290,25 @@ define(["underscore",
 
                     view.addClass("active");
 
-                    if (!firstView || view.offset().top < firstView.offset().top) {
-                        firstView = view;
-                    }
-                    if (!lastView || view.offset().top > lastView.offset().top) {
-                        lastView = view;
+                    if (!refocusSelection) {
+                        if (!firstView || view.offset().top < firstView.offset().top) {
+                            firstView = view;
+                        }
+                        if (!lastView || view.offset().top > lastView.offset().top) {
+                            lastView = view;
+                        }
                     }
 
                     return view;
                 }, this);
 
-                if (firstView) {
+                if (refocusSelection) {
+                    this.scrollableArea.scrollTop(
+                        this.getOffset(selectionView) -
+                            selectionOffset +
+                            this.scrollableArea.scrollTop()
+                    );
+                } else if (!selection && firstView) {
                     this.scrollIntoView(firstView, lastView);
                 }
             },
