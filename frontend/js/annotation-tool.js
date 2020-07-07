@@ -392,8 +392,12 @@ define(["jquery",
                         // to the current loop using this.
                         // @see module:views-loop.Loop#toggleConstrainAnnotations
                         this.annotationConstraints
-                    ), { wait: true });
-                this.setSelection(annotation, true);
+                    ), {
+                        wait: true,
+                        success: _.bind(function () {
+                            this.setSelection(annotation, true);
+                        }, this)
+                    });
                 return annotation;
             },
 
