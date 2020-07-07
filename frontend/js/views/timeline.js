@@ -76,7 +76,7 @@ define([
         item.end = util.dateFromSeconds(item.end);
         var label = item.label;
         if (label) {
-            item.className = "category-" + label.category.id;
+            item.className = "category-" + label.category.id + " category";
         }
         item.type = item.duration
             ? "range"
