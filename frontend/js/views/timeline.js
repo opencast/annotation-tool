@@ -580,7 +580,7 @@ define([
                                     : "black"
                             ) +
                             ";}";
-                            }).join("");
+                    }).join("");
                 return $("<style>" + stylesheet + "</style>")
                     .appendTo('html > head');
             }
