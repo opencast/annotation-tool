@@ -81,13 +81,7 @@ define(["underscore",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (options) {
-                var _this = _(this);
-                _this.bindAll(
-                    "renderSelect",
-                    "potentiallyOpenCurrentItems"
-                );
-
-                _this.extend(_(options).pick(
+                _(this).extend(_(options).pick(
                     "playerAdapter",
                     "autoExpand"
                 ));
@@ -95,12 +89,11 @@ define(["underscore",
                 this.tracks = annotationTool.video.get("tracks");
 
                 this.listenTo(this.tracks, "visibility", this.setTrackList);
-                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.select);
+                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.renderSelection);
+                this.listenTo(annotationTool, annotationTool.EVENTS.ACTIVE_ANNOTATIONS, this.renderActive);
 
                 this.listenTo(annotationTool.video.get("categories"), "change:visible", this.updateVisibility);
                 this.listenTo(annotationTool, "togglefreetext", this.updateVisibility);
-
-                annotationTool.addTimeupdateListener(this.potentiallyOpenCurrentItems, 900);
 
                 this.$el.html(template());
                 this.scrollableArea = this.$el.find("#content-list-scroll");
@@ -108,7 +101,8 @@ define(["underscore",
 
                 this.setTrackList(this.tracks.getVisibleTracks());
 
-                window.requestAnimationFrame(this.renderSelect);
+                this.renderSelection(annotationTool.getSelection());
+                this.renderActive(annotationTool.getCurrentAnnotations());
 
                 return this;
             },
@@ -175,7 +169,6 @@ define(["underscore",
                         }
                     });
 
-                    annotationTool.setSelection([annotation], false);
                     lastAddedAnnotationView = view;
                 }
             },
@@ -199,83 +192,112 @@ define(["underscore",
             },
 
             /**
-             * Select the given annotation
-             * @alias module:views-list.List#select
-             * @param  {Annotation} annotations The annotation to select
+             * Update the annotation views to reflect the current selection
+             * @alias module:views-list.List#renderSelection
+             * @param {Annotation?} selection the currently selected annotation
+             * @param {Annotation?} previousSelection the previously selected annotation
              */
-            select: function (annotations) {
-                var annotation,
-                    i,
-                    view,
-                    selectedAnnotations = [];
-
-                // only remove the annotations
-                for (i = 0; i < annotations.length; i++) {
-                    annotation = annotations[i];
-                    if (annotation) {
-                        view = this.getViewFromAnnotation(annotation.get("id"));
-
-                        // If view not found, annotation has been newly created
-                        if (!_.isUndefined(view)) {
-                            selectedAnnotations[i] = view;
-                        }
-                    }
+            renderSelection: function (selection, previousSelection) {
+                if (previousSelection) {
+                    this.getViewFromAnnotation(previousSelection.id)
+                        .$el.removeClass("selected");
                 }
+                if (selection) {
+                    var view = this.getViewFromAnnotation(selection.id).$el;
+                    view.addClass("selected");
 
-                this.oldSelectedAnnotations = this.selectedAnnotations;
-                this.selectedAnnotations = selectedAnnotations;
-
-                this.selectionUpdated = true;
-
-                if (this.scheduledAnimationFrame) {
-                    return;
+                    this.scrollIntoView(view, view);
                 }
-
-                this.scheduledAnimationFrame = true;
-                window.requestAnimationFrame(this.renderSelect);
             },
 
             /**
-             * Render the annotations selection on the list
-             * @alias module:views-list.List#renderSelect
+             * Update the annotation views to reflect the currently active annotations
+             * @alias module:views-list.List#renderActive
+             * @param {Array<Annotation>} selection the currently active annotations
+             * @param {Array<Annotation>} previousSelection the previously active annotations
              */
-            renderSelect: function () {
-                var annotations = this.selectedAnnotations,
-                    oldAnnotations = this.oldSelectedAnnotations,
-                    view,
-                    i;
-
-                // Display selection only if it has been updated
-                if (this.selectionUpdated) {
-
-                    for (i = 0; i < oldAnnotations.length; i++) {
-                        view = oldAnnotations[i];
-                        if (_.isUndefined(view)) {
-                            continue;
-                        }
-                        view.$el.removeClass("selected");
-                        view.isSelected = false;
-                    }
-
-                    for (i = 0; i < annotations.length; i++) {
-                        view = annotations[i];
-                        if (_.isUndefined(view)) {
-                            continue;
-                        }
-                        view.$el.addClass("selected");
-
-                        // Only scroll the list to the first item of the selection
-                        if (i === 0 && !view.isSelected) {
-                            this.scrollableArea.scrollTop(view.$el.offset().top - this.scrollableArea.offset().top);
-                        }
-
-                        view.isSelected = true;
-                    }
-
-                    this.selectionUpdated = false;
+            renderActive: function (currentAnnotations, previousAnnotations) {
+                var selection = annotationTool.getSelection();
+                var refocusSelection = selection && this.autoExpand;
+                if (refocusSelection) {
+                    var selectionView = this.getViewFromAnnotation(selection.id).$el;
+                    var selectionOffset = this.getOffset(selectionView);
                 }
 
-                this.scheduledAnimationFrame = false;
+                _.each(previousAnnotations, function (annotation) {
+                    var view = this.getViewFromAnnotation(annotation.id);
+                    view.$el.removeClass("active");
+                    if (this.autoExpand) {
+                        view.collapse(true);
+                    }
+                }, this);
+                var firstView, lastView;
+                _.each(currentAnnotations, function (annotation, index) {
+                    var view = this.getViewFromAnnotation(annotation.id);
+
+                    if (this.autoExpand) {
+                        view.expand(true);
+                    }
+
+                    view = view.$el;
+
+                    view.addClass("active");
+
+                    if (!refocusSelection) {
+                        if (!firstView || view.offset().top < firstView.offset().top) {
+                            firstView = view;
+                        }
+                        if (!lastView || view.offset().top > lastView.offset().top) {
+                            lastView = view;
+                        }
+                    }
+
+                    return view;
+                }, this);
+
+                if (refocusSelection) {
+                    this.scrollableArea.scrollTop(
+                        this.getOffset(selectionView) -
+                            selectionOffset +
+                            this.scrollableArea.scrollTop()
+                    );
+                } else if (!selection && firstView) {
+                    this.scrollIntoView(firstView, lastView);
+                }
+            },
+
+            /**
+             * Scroll the list in such a way that both <code>firstView</code>
+             * and <code>lastView</code> are visible, and so that the area between them
+             * is roughly centered within the view.
+             * However, don't scroll past the top of <code>firstView</code>
+             * while doing so
+             * @alias module:views-list.List#scrollIntoView
+             * @param {$} firstView the top-most view you want to see
+             * @param {$} lastView the bottom-most view that should be visible
+             */
+            scrollIntoView: function (firstView, lastView) {
+                this.scrollableArea.scrollTop(
+                    this.getOffset(firstView) -
+                        Math.max(
+                            0,
+                            this.scrollableArea.height() -
+                                lastView.offset().top -
+                                lastView.height() +
+                                firstView.offset().top
+                        ) / 2
+                );
+            },
+
+            /**
+             * @alias module:views-list.List#getOffset
+             * @param {$} view an element inside the scrollable area
+             * @return {Number} the offset of the given view within the scrollable area
+             */
+            getOffset: function (view) {
+                return view.offset().top -
+                    this.scrollableArea.offset().top +
+                    this.scrollableArea.scrollTop();
             },
 
             /**
@@ -322,26 +344,6 @@ define(["underscore",
             collapseAll: function (event) {
                 _.invoke(this.annotationViews, "collapse");
             },
-
-            /**
-             * Listener for player "timeupdate" event to open the current annotations in the list view
-             * @alias module:views-list.List#potentiallyOpenCurrentItems
-             */
-            potentiallyOpenCurrentItems: function () {
-                var previousAnnotations = [];
-                return function () {
-                    if (!this.autoExpand) return;
-
-                    _.each(previousAnnotations, function (annotation) {
-                        this.getViewFromAnnotation(annotation.id).collapse(true);
-                    }, this);
-                    var currentAnnotations = annotationTool.getCurrentAnnotations();
-                    _.each(currentAnnotations, function (annotation) {
-                        this.getViewFromAnnotation(annotation.id).expand(true);
-                    }, this);
-                    previousAnnotations = currentAnnotations;
-                };
-            }(),
 
             /**
              * Display the list
