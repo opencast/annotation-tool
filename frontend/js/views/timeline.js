@@ -160,9 +160,9 @@ define([
             var options = {
                 height: "100%",
                 margin: {
-                    axis: 20,
+                    axis: 12.5,
                     item: {
-                        vertical: 10,
+                        vertical: 5,
                         horizontal: 0
                     }
                 },
