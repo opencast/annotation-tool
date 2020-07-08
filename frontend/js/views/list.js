@@ -230,6 +230,9 @@ define(["underscore",
 
                 _.each(previousAnnotations, function (annotation) {
                     var view = this.getViewFromAnnotation(annotation.id);
+                    // The annotation might have been on a track that is now hidden,
+                    // in which case we don't have a view for it anymore
+                    if (!view) return;
                     view.$el.removeClass("active");
                     if (this.autoExpand) {
                         view.collapse(true);
@@ -255,8 +258,6 @@ define(["underscore",
                             lastView = view;
                         }
                     }
-
-                    return view;
                 }, this);
 
                 if (refocusSelection) {
