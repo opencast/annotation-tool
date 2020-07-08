@@ -3,10 +3,10 @@
   <groupId>org.opencast.annotate</groupId>
   <artifactId>annotation-tool</artifactId>
   <versioning>
-    <release>2020.0707.124126-8317273671f6cd771f5cde24323b5a5045e77734</release>
+    <release>2020.0708.063700-008d1c84d08bd9638fed532aa70e92522a1633f3</release>
     <versions>
-      <version>2020.0707.124126-8317273671f6cd771f5cde24323b5a5045e77734</version>
+      <version>2020.0708.063700-008d1c84d08bd9638fed532aa70e92522a1633f3</version>
     </versions>
-    <lastUpdated>20200707124147</lastUpdated>
+    <lastUpdated>20200708063720</lastUpdated>
   </versioning>
 </metadata>
