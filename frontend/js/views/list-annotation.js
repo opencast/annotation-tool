@@ -432,10 +432,14 @@ define(["jquery",
              * @alias module:views-list-annotation.ListAnnotation#onSelect
              * @param {Event} event the click event
              */
-            onSelect: _.debounce(function (event) {
-                if (event.originalEvent.detail > 1) return;
-                annotationTool.setSelection(this.model);
-            }, 100),
+            onSelect: function (event) {
+                annotationTool.setSelection(
+                    this.model,
+                    // Toggle selection on single click,
+                    // unconditionally select on double click
+                    event.originalEvent.detail > 1
+                );
+            },
 
             /**
              * Navigate to this view's annotation
