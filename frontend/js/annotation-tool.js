@@ -261,12 +261,14 @@ define(["jquery",
              * Set the given annotation(s) as current selection
              * @alias annotationTool.setSelection
              * @param {Array} selection The new selection
+             * @param {Boolean} noToggle don't toggle already selected annotations
              */
-            setSelection: function (selection) {
+            setSelection: function (selection, noToggle) {
                 if (this.selection) {
                     this.stopListening(this.selection, "destroy", this.onDestroyRemoveSelection);
 
                     if (selection && this.selection.id === selection.id) {
+                        if (noToggle) return;
                         selection = null;
                     }
                 } else if (!selection) return;  // Both selections are `null`, nothing to do
