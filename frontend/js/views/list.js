@@ -251,8 +251,6 @@ define(["underscore",
                             lastView = view;
                         }
                     }
-
-                    return view;
                 }, this);
 
                 if (refocusSelection) {
