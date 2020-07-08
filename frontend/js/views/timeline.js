@@ -76,7 +76,7 @@ define([
         item.end = util.dateFromSeconds(item.end);
         var label = item.label;
         if (label) {
-            item.className = "category-" + label.category.id;
+            item.className = "category-" + label.category.id + " category";
         }
         item.type = item.duration
             ? "range"
@@ -160,9 +160,9 @@ define([
             var options = {
                 height: "100%",
                 margin: {
-                    axis: 20,
+                    axis: 12.5,
                     item: {
-                        vertical: 10,
+                        vertical: 5,
                         horizontal: 0
                     }
                 },
@@ -580,7 +580,7 @@ define([
                                     : "black"
                             ) +
                             ";}";
-                            }).join("");
+                    }).join("");
                 return $("<style>" + stylesheet + "</style>")
                     .appendTo('html > head');
             }
