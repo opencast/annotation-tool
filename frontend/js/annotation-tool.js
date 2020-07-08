@@ -395,7 +395,7 @@ define(["jquery",
                     ), {
                         wait: true,
                         success: _.bind(function () {
-                            this.setSelection(annotation, true);
+                            this.setSelection(annotation);
                         }, this)
                     });
                 return annotation;
