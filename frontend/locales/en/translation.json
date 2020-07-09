@@ -100,6 +100,8 @@
         "short": "IN"
       },
       "start time": "Start time"
+      "duration": "Duration",
+      "no duration": "no duration"
     },
     "you own": "You own this annotation"
   },
@@ -165,7 +167,8 @@
         "with loops": "With loops",
         "alternative": "Alternative",
         "reviewing": "Reviewing",
-        "fullscreen timeline": "Fullscreen timeline"
+        "fullscreen timeline": "Fullscreen timeline",
+        "questionnaire": "Questionnaire"
       },
       "auto expand": "Automatically expand active annotations",
       "drag here": "Drag icon to place element"
@@ -207,6 +210,16 @@
       }
     },
     "title": "Name of the video: {{title}}"
+  },
+  "questionnaire": {
+    "form prompt": "Create an annotation using a questionnaire",
+    "blank slate": {
+      "heading": "Questionnaire-based Annotations",
+      "start": "Annotate video"
+    },
+    "help timestamp": "Format: 0:00:00",
+    "help min items singular": "You have to select at least one label.",
+    "help min items plural": "You have to select at least {{count}} labels."
   },
   "required fields": "Required fields",
   "scale editor": {
@@ -339,11 +352,15 @@
     "list": "Annotation list",
     "loop": "Loop controller",
     "timeline": "Timeline",
-    "player": "Player"
+    "player": "Player",
+    "questionnaire": "Questionnaire"
   },
   "version": "Version: {{version}}",
   "validation errors": {
-    "empty": "This field must not be empty"
+    "empty": "This field must not be empty",
+    "min items": "You have to choose the required number of items.",
+    "start after end": "Start time must be before end time",
+    "wrong format": "Wrong format"
   },
   "common actions": {
     "cancel": "Cancel",

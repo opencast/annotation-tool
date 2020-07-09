@@ -89,6 +89,7 @@ define([
             item.label = labels[0].toJSON();
         }
         item.contentItems = annotation.get("content").invoke("toJSON");
+        item.hasTextContentItems = _.any(item.contentItems, function (item) { return item.type === "text"; });
         item.type = item.duration
             ? "range"
             : "box";

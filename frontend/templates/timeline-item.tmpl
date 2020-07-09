@@ -34,10 +34,10 @@
 {{/inline}}
 
 
-{{#*inline "contentItemText"}}
-<span class="content-item-text" title="{{value}}">
-    <i class="icon-align-left"></i>
-</span>
+{{#*inline "concatTextContentItems"}}
+{{#each contentItems as |contentItem|}}
+    {{#ifeq contentItem.type "text"}} {{value}}{{/ifeq}}
+{{/each}}
 {{/inline}}
 
 {{#*inline "singleContentItemText"}}
@@ -47,22 +47,22 @@
 <span title="{{text}}" data-annotationid="{{id}}" data-trackid="{{track}}" style="min-width: 10em;">
     {{!-- show labels and scale values first --}}
     {{#each contentItems as |contentItem|}}
-    {{#ifeq contentItem.type "label"}} {{> contentItemLabel}} {{/ifeq}}
-    {{#ifeq contentItem.type "scaling"}} {{> contentItemScaling}} {{/ifeq}}
+        {{#ifeq contentItem.type "label"}} {{> contentItemLabel}} {{/ifeq}}
+        {{#ifeq contentItem.type "scaling"}} {{> contentItemScaling}} {{/ifeq}}
     {{/each}}
 
-    {{!-- annotation contains only a single text item --}}
-    {{#ifeq contentItems.length 1}}
-    {{#each contentItems as |contentItem|}}
-    {{#ifeq contentItem.type "text"}} {{> singleContentItemText}} {{/ifeq}}
-    {{/each}}
+    {{#if hasTextContentItems}}
 
-    {{^}}
-    {{!-- otherwise we hide the text as the title of an icon --}}
-    {{#each contentItems as |contentItem|}}
-    {{#ifeq contentItem.type "text"}} {{> contentItemText}} {{/ifeq}}
-    {{/each}}
+        {{!-- Annotation contains only a single text item. Just show it. --}}
+        {{#ifeq contentItems.length 1}}
+            {{#each contentItems as |contentItem|}} {{> singleContentItemText}} {{/each}}
 
-    {{/ifeq}}
+        {{!-- otherwise we hide the text as the title of an icon --}}
+        {{^}}
+            <span class="content-item-text" title="{{> concatTextContentItems}}">
+                <i class="icon-align-left"></i>
+            </span>
+        {{/ifeq}}
+    {{/if}}
 
 </span>

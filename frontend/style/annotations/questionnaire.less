@@ -13,6 +13,27 @@
 
 .questionnaire-form {
     overflow: scroll;
+
+    input.start-value, input.end-value {
+        transition: all .4s;
+    }
+
+    .questionnaire-timestamps {
+        .control-group {
+            margin-bottom: 2em;
+        }
+
+        input:disabled {
+            background: transparent;
+            border-color: transparent;
+            box-shadow: none;
+            cursor: initial;
+        }
+
+        i.toggle-edit:hover {
+            #list-container .iconStateSelected();
+        }
+    }
 }
 
 .questionnaire-items section {

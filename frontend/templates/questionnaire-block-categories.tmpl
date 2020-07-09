@@ -2,12 +2,30 @@
 <div class="control-group{{#if validationErrors}} error{{/if}}">
     <label class="control-label">{{item.title}}{{#if item.minItems}} *{{/if}}</label>
     <div class="controls">
+        {{#if validationErrors}}
         <div class="well">
-          {{#each validationErrors as |error|}}
-          <span class="help-block"> {{t error}} </span>
-          {{/each}}
-          <span class="help-block">{{item.description}}</span>
+            {{#each validationErrors as |error|}}
+            <span class="help-block"> {{t error}} </span>
+            {{/each}}
         </div>
+        {{/if}}
+
+        <p>
+            <span class="help-block">{{item.description}}</span>
+        </p>
+
+        {{#if item.minItems}}
+        <span class="help-block">
+            <b>
+                {{#ifeq item.minItems 1}}
+                {{t "questionnaire.help min items singular"}}
+                {{else}}
+                {{t "questionnaire.help min items plural" count=item.minItems}}
+                {{/ifeq}}
+            </b>
+        </span>
+        {{/if}}
+
 
         {{#if contentItems}}
         <ul class="questionnaire-content-items">
