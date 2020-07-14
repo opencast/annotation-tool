@@ -3,6 +3,11 @@
     <i class="{{#if visible}}icon-eye-open{{else}}icon-eye-close{{/if}} visibility" title="{{#if visible}}{{t "annotate.hide category"}}{{else}}{{t "annotate.show category"}}{{/if}}"></i>
     <i class="icon-pencil scale edit" title="{{t "annotate.edit category scaling"}}"></i>
     <i class="icon-trash delete edit"></i>
+    {{#if isMine}}
+    <i class="icon-public sharedVis edit" data-sharedVis='public'></i>
+    <i class="icon-private sharedVis edit" data-sharedVis='private'></i>
+    <i class="icon-shared-with-admin sharedVis edit" data-sharedVis='shared-with-admin'></i>
+    {{/if}}
     <div class="colorpicker">
         <input id="color-{{name}}" type="text" class="colorpicker edit" value="{{#if settings}}{{settings.color}}{{/if}}" /></div>
     </div>

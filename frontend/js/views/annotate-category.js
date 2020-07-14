@@ -23,13 +23,14 @@ define(["jquery",
         "backbone",
         "i18next",
         "util",
+        "access",
         "views/annotate-label",
         "templates/annotate-category",
         "handlebarsHelpers",
         "jquery.colorPicker"],
 
 
-    function ($, _, Backbone, i18next, util, LabelView, Template) {
+    function ($, _, Backbone, i18next, util, ACCESS, LabelView, Template) {
 
         "use strict";
 
@@ -86,10 +87,12 @@ define(["jquery",
                 "click .catItem-header i.visibility": "toggleVisibility",
                 "click .catItem-header i.delete": "onDeleteCategory",
                 "click .catItem-header i.scale": "editScale",
+                "click .catItem-header i.sharedVis": "onChangeSharedVis",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
-                "click .catItem-add": "onCreateLabel"
+                "click .catItem-add": "onCreateLabel",
             },
+
 
             /**
              * Constructor
@@ -116,6 +119,7 @@ define(["jquery",
                   "removeOne",
                   "onCreateLabel",
                   "editScale",
+                  "onChangeSharedVis",
                   "updateInputWidth");
 
 
@@ -188,6 +192,18 @@ define(["jquery",
                     labelView.changeCategory(this.model.toJSON());
                 }, this);
                 this.render();
+            },
+
+            onChangeSharedVis: function (event) {
+                alert(this.model.get("access"));
+                alert($(event.currentTarget).data("sharedvis"));
+                this.model.save({
+                    access: ACCESS.parse(
+                        $(event.currentTarget).data("sharedvis")
+                    )
+                });
+                //this.model.set("access", $(ev.currentTarget).data('sharedVis'));
+                alert(this.model.get("access"));
             },
 
             /**
