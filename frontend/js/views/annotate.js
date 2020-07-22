@@ -52,7 +52,8 @@ define(["jquery",
                 id        : "public",
                 name      : i18next.t("annotate.categories.public"),
                 filter    : function (category) {
-                    return category.get("isPublic");
+                    return !category.get("settings").createdAsMine;
+                    //return category.get("isPublic");
                 },
                 roles     : [ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PUBLIC }
@@ -61,7 +62,8 @@ define(["jquery",
                 id        : "mine",
                 name      : i18next.t("annotate.categories.mine"),
                 filter    : function (category) {
-                    return category.get("isMine") && !category.get("isPublic");
+                    return category.get("settings").createdAsMine && category.get("created_by") === annotationTool.user.get("id");
+                    //return category.get("isMine") && !category.get("isPublic");
                 },
                 roles     : [ROLES.USER, ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PRIVATE }
@@ -187,6 +189,41 @@ define(["jquery",
                 _.each(DEFAULT_TABS, function (params) {
                     this.addTab(categories, params);
                 }, this);
+
+                // Create tabs for users
+                // By getting all unique user Ids from existing categories
+                var categoriesPerUserIds = {};
+                
+                _.each(categories.models, function (category) {
+                    if(!categoriesPerUserIds[category.get("created_by")]) {
+                        categoriesPerUserIds[category.get("created_by")] = []
+                    }
+                    categoriesPerUserIds[category.get("created_by")].push(category);
+                })
+
+                _.each(categoriesPerUserIds, function (categoriesPerUserId) {
+                    // If it's the current users category, don't create it
+                    if(categoriesPerUserId[0].get("created_by") !== annotationTool.user.get("id")) {
+                        // Need to pass all categories here, else code ceases to work
+                        this.addTab(categories, {   
+                            id        : "user_" + categoriesPerUserId[0].get("created_by"),
+                            name      : categoriesPerUserId[0].get("created_by_nickname"),
+                            filter    : function (category) {
+                                // Does the current user have permission to see the category?
+                                return ((annotationTool.user.get("role") === ROLES.ADMINISTRATOR && (category.get("access") === ACCESS.PUBLIC 
+                                        || category.get("access") === ACCESS.SHARED_WITH_ADMIN))
+                                || (annotationTool.user.get("role") === ROLES.USER && (category.get("access")) === ACCESS.PUBLIC))
+                                // Is it from the mine category?
+                                && category.get("settings").createdAsMine
+                                // Was the category created by the user of the tab? 
+                                && category.get("created_by") === categoriesPerUserId[0].get("created_by");
+                            },
+                            roles     : [],
+                            attributes: { access: ACCESS.PRIVATE },
+                        })
+                    }
+                }, this);
+
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
                 this.tabsButtonsElement.find("a:first-child").parent().first().addClass("active");

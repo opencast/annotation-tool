@@ -136,6 +136,10 @@ define(["jquery",
                 }
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
+                // Not our category but someone elses? Should not be clickable
+                if(attr.category.get("settings").createdAsMine && attr.category.get("created_by") !== annotationTool.user.get("id")) {
+                    this.$el.addClass("read-only");
+                }
                 this.model = attr.category;
 
                 this.render();
@@ -195,15 +199,8 @@ define(["jquery",
             },
 
             onChangeSharedVis: function (event) {
-                alert(this.model.get("access"));
-                alert($(event.currentTarget).data("sharedvis"));
-                this.model.save({
-                    access: ACCESS.parse(
-                        $(event.currentTarget).data("sharedvis")
-                    )
-                });
-                //this.model.set("access", $(ev.currentTarget).data('sharedVis'));
-                alert(this.model.get("access"));
+                this.model.set("access", ACCESS.parse($(event.currentTarget).data("sharedvis")));
+                this.model.save();
             },
 
             /**

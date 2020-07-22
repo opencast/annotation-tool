@@ -89,6 +89,19 @@ define(["underscore",
                     this.attributes.labels.fetch({ async: false });
                 }
 
+                var settings = _.clone(this.get("settings"));
+
+                if (!_.isUndefined(settings) && _.isUndefined(settings.createdAsMine)) {
+                    if(attr.isMine) {
+                        _.extend({ createdAsMine: true }, settings)
+                    } else {
+                        _.extend({ createdAsMine: false }, settings) 
+                    }
+
+                }
+
+                this.set("settings", settings);
+
                 this.attributes.visible = true;
             },
 
