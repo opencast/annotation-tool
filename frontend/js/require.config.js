@@ -34,6 +34,7 @@ require.config({
         "goldenlayout": "libs/goldenlayout",
         "xlsx": "libs/xlsx.full.min",
         "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min",
+        "papaparse": "libs/papaparse.min",
     },
     waitSeconds: 10,
 

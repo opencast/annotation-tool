@@ -26,11 +26,12 @@ define(["jquery",
         "roles",
         "player_adapter_HTML5",
         "xlsx",
+        "papaparse",
         "localstorage"
         // Add the files (PlayerAdapter, ...) required for your configuration here
         ],
 
-    function ($, _, Backbone, util, User, ROLES, HTML5PlayerAdapter, XLSX) {
+    function ($, _, Backbone, util, User, ROLES, HTML5PlayerAdapter, XLSX, PapaParse) {
 
         "use strict";
 
@@ -152,20 +153,13 @@ define(["jquery",
              * @param {Category[]} categories The tracks to include in the export
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
-            export: function (video, tracks, categories, freeText) {
-                var parameters = new URLSearchParams();
-                _.each(tracks, function (track) {
-                    parameters.append("track", track.id);
-                });
-                _.each(categories, function (category) {
-                    parameters.append("category", category.id);
-                });
-                parameters.append("freetext", freeText);
-                window.location.href =
-                    "../extended-annotations/videos/" +
-                    video.id +
-                    "/export.csv?" +
-                    parameters;
+            export_csv: function (video, tracks, categories, freeText) {
+                let bookData = this.gatherExportData(tracks, categories, freeText);
+
+                var json = JSON.stringify(bookData);
+                var csv = PapaParse.unparse(json);
+
+                saveAs(new Blob([csv], {type:"text/csv;charset=utf-8;"}), 'export.csv');
             },
 
             /**
@@ -177,6 +171,50 @@ define(["jquery",
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
             export_xlxs: function (video, tracks, categories, freeText) {
+                let bookData = this.gatherExportData(tracks, categories, freeText);
+
+                // Generate workbook
+                var wb = XLSX.utils.book_new();
+                wb.SheetNames.push("Sheet 1");
+
+                // Generate worksheet
+                var ws = XLSX.utils.aoa_to_sheet(bookData)
+
+                // Scale column width to content (which is apparently non built-in in SheetJS)
+                let objectMaxLength = []
+
+                bookData.map(arr => {
+                  Object.keys(arr).map(key => {
+                    let value = arr[key] === null ? '' : arr[key]
+                
+                    objectMaxLength[key] = objectMaxLength[key] >= value.length ? objectMaxLength[key]  : value.length
+                  })
+                })
+                
+                let worksheetCols = objectMaxLength.map(width => {
+                  return {
+                    width
+                  }
+                })
+                
+                ws["!cols"] = worksheetCols;
+
+                // Put worksheet
+                wb.Sheets["Sheet 1"] = ws;
+
+                // Export workbook
+                var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
+                function s2ab(s) { 
+                    var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+                    var view = new Uint8Array(buf);  //create uint8array as viewer
+                    for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+                    return buf;    
+                }
+
+                saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'export.xlsx');
+            },
+
+            gatherExportData: function(tracks, categories, freeText) {
                 var bookData = [];
                 var header = [];
                 addResourceHeaders(header);
@@ -256,6 +294,8 @@ define(["jquery",
                     });  
                 });
 
+                return bookData;
+
                 function addResourceHeaders(header, presuffix = "") {
                     let prefix = ""
                     let suffix = ""
@@ -301,51 +341,6 @@ define(["jquery",
                         comment_replies(line, comment.attributes.replies)
                     });
                 }
-
-                // Generate workbook
-                var wb = XLSX.utils.book_new();
-                wb.SheetNames.push("Sheet 1");
-
-                // Generate worksheet
-                var ws = XLSX.utils.aoa_to_sheet(bookData)
-
-                // Scale column width to content (which is apparently non built-in in SheetJS)
-                let objectMaxLength = []
-
-                bookData.map(arr => {
-                  Object.keys(arr).map(key => {
-                    let value = arr[key] === null ? '' : arr[key]
-                
-                    //if (typeof value === 'number')
-                    //{
-                    //  return objectMaxLength[key] = 10
-                    //}
-                
-                    objectMaxLength[key] = objectMaxLength[key] >= value.length ? objectMaxLength[key]  : value.length
-                  })
-                })
-                
-                let worksheetCols = objectMaxLength.map(width => {
-                  return {
-                    width
-                  }
-                })
-                
-                ws["!cols"] = worksheetCols;
-
-                // Put worksheet
-                wb.Sheets["Sheet 1"] = ws;
-
-                // Export workbook
-                var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
-                function s2ab(s) { 
-                    var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
-                    var view = new Uint8Array(buf);  //create uint8array as viewer
-                    for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
-                    return buf;    
-                }
-
-                saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'export.xlsx');
             },
 
             /**

@@ -67,12 +67,6 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
-    <!-- CSV -->
-    <dependency>
-      <groupId>net.sf.opencsv</groupId>
-      <artifactId>opencsv</artifactId>
-      <version>2.3</version>
-    </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-library</artifactId>
@@ -196,9 +190,6 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Embed-Dependency>
-              opencsv;inline=true
-            </Embed-Dependency>
             <Service-Component>
               OSGI-INF/extended-annotation-service-publisher.xml,
               OSGI-INF/extended-annotation-service-rest.xml

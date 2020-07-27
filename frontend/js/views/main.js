@@ -89,7 +89,7 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #export": "export",
+                "click #export_csv": "export_csv",
                 "click #export_xlxs": "export_xlxs",
                 "click #about": "about",
                 "click #logout": "onLogout",
@@ -126,7 +126,7 @@ define(["jquery",
 
                 if (annotationTool.localStorage) {
                     // Remove link for statistics exports, work only with backend implementation
-                    this.$el.find("#export").parent().remove();
+                    this.$el.find("#export_csv").parent().remove();
                     this.$el.find("#export_xlxs").parent().remove();
                 }
 
@@ -690,39 +690,43 @@ define(["jquery",
              * Offer the user a spreadsheet version of the annotations for download.
              * @alias module:views-main.Main#export
              */
-            export: function () {
-                var tracksToExport = annotationTool.video
-                    .get("tracks").getVisibleTracks();
-                var categoriesToExport = annotationTool.video
-                    .get("categories").filter(function (category) {
-                        return category.get("visible");
-                    });
-                annotationTool.export(
-                    annotationTool.video,
-                    tracksToExport,
-                    categoriesToExport,
-                    annotationTool.freeTextVisible
-                );
+            export_csv: function () {
+                this.exportas("csv");
             },
-
 
             /**
              * Offer the user an excel version of the annotations for download.
              * @alias module:views-main.Main#export_xlxs
              */
             export_xlxs: function () {
+                this.exportas("xlxs");
+            },
+
+            exportas: function (format) {
                 var tracksToExport = annotationTool.video
                     .get("tracks").getVisibleTracks();
                 var categoriesToExport = annotationTool.video
                     .get("categories").filter(function (category) {
                         return category.get("visible");
                     });
-                annotationTool.export_xlxs(
-                    annotationTool.video,
-                    tracksToExport,
-                    categoriesToExport,
-                    annotationTool.freeTextVisible
-                );
+                switch (format) {
+                    case "csv":
+                        annotationTool.export_csv(
+                            annotationTool.video,
+                            tracksToExport,
+                            categoriesToExport,
+                            annotationTool.freeTextVisible
+                        );
+                        break;
+                    case "xlxs":
+                        annotationTool.export_xlxs(
+                            annotationTool.video,
+                            tracksToExport,
+                            categoriesToExport,
+                            annotationTool.freeTextVisible
+                        );                   
+                        break;
+                }
             },
 
             /**

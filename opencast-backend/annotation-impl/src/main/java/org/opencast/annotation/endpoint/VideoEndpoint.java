@@ -36,7 +36,6 @@ import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.TrackImpl;
-import org.opencast.annotation.impl.persistence.AbstractResourceDto;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
 import org.opencast.annotation.impl.persistence.CommentDto;
@@ -45,7 +44,6 @@ import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.util.IoSupport;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Function2;
@@ -53,16 +51,9 @@ import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
-import org.apache.commons.io.IOUtils;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -80,9 +71,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class VideoEndpoint {
 
@@ -957,116 +945,6 @@ public class VideoEndpoint {
     if (comment.isNone()) return BAD_REQUEST;
     return getCommentsResponse(trackId, annotationId, some(commentId), limit, offset, date, tagsAnd,
             tagsOr);
-  }
-
-  @GET
-  @Path("/export.csv")
-  public Response getExportStatistics(@QueryParam("track") final List<Long> tracks,
-          @QueryParam("category") final List<Long> categories,
-          @QueryParam("freetext") final Boolean freeText) {
-    Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
-
-      public void write(OutputStream os) throws IOException, WebApplicationException {
-        CSVWriter writer = null;
-        try {
-          writer = new CSVWriter(new OutputStreamWriter(os));
-          writeExport(writer, tracks, categories, freeText);
-          writer.close();
-        } finally {
-          IOUtils.closeQuietly(os);
-          IoSupport.closeQuietly(writer);
-        }
-      }
-    });
-    response.header("Content-Type", "text/csv");
-    response.header("Content-Disposition", "attachment; filename=export.csv");
-    return response.build();
-  }
-
-  private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport,
-          Boolean freeText) {
-    // Write headers
-    List<String> header = new ArrayList<>();
-    header.add("ID");
-    header.add("Creation date");
-    header.add("Last update");
-    header.add("Author nickname");
-    header.add("Author mail");
-    header.add("Track name");
-    header.add("Leadin");
-    header.add("Leadout");
-    header.add("Duration");
-    header.add("Text");
-    header.add("Category name");
-    header.add("Label name");
-    header.add("Label abbreviation");
-    header.add("Scale name");
-    header.add("Scale value name");
-    header.add("Scale value value");
-    writer.writeNext(header.toArray(new String[0]));
-
-    for (VideoData videoData : this.videoData) {
-      Video video = videoData.getVideo();
-      List<Track> tracks = eas.getTracks(video.getId(), none(), none(), none(), none(), none());
-      for (Track track : tracks) {
-        if (tracksToExport != null && !tracksToExport.contains(track.getId())) continue;
-        List<Annotation> annotations = eas.getAnnotations(track.getId(), none(), none(), none(), none(), none(), none(),
-                none());
-        for (Annotation annotation : annotations) {
-          Option<Label> label = annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
-            @Override
-            public Option<Label> apply(Long labelId) {
-              final boolean includeDeleted = true;
-              return eas.getLabel(labelId, includeDeleted);
-            }
-          });
-          if (label.isSome()) {
-            if (categoriesToExport != null && !categoriesToExport.contains(label.get().getCategoryId())) continue;
-          } else {
-            if (freeText != null && !freeText) continue;
-          }
-
-          List<String> line = new ArrayList<>();
-
-          line.add(Long.toString(annotation.getId()));
-          line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-          line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
-          line.add(track.getName());
-
-          double start = annotation.getStart(); // start, stop, duration
-          line.add(toVideoTimeString(start));
-          double end = start;
-          if (annotation.getDuration().isSome()) {
-            end += annotation.getDuration().get();
-            line.add(toVideoTimeString(end));
-            line.add(toVideoTimeString(annotation.getDuration().get()));
-          } else {
-            line.add(toVideoTimeString(end));
-            line.add("");
-          }
-          line.add(annotation.getText().getOrElse(""));
-
-          line.add(label.map(getCategoryName.curry(eas)).getOrElse(""));
-          line.add(label.map(getLabelName).getOrElse(""));
-          line.add(label.map(getLabelAbbreviation).getOrElse(""));
-
-          if (annotation.getScaleValueId().isSome()) {
-            Option<ScaleValue> scaleValue = eas.getScaleValue(annotation.getScaleValueId().get());
-            line.add(scaleValue.map(getScaleName.curry(eas)).getOrElse(""));
-            line.add(scaleValue.map(getScaleValueName).getOrElse(""));
-            line.add(scaleValue.map(getScaleValue).getOrElse(""));
-          } else {
-            line.add("");
-            line.add("");
-            line.add("");
-          }
-
-          writer.writeNext(line.toArray(new String[0]));
-        }
-      }
-    }
   }
 
   private static String toVideoTimeString(double seconds) {
