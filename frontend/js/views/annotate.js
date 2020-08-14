@@ -190,41 +190,6 @@ define(["jquery",
                     this.addTab(categories, params);
                 }, this);
 
-                // Create tabs for users
-                // By getting all unique user Ids from existing categories
-                var categoriesPerUserIds = {};
-                
-                _.each(categories.models, function (category) {
-                    if(!categoriesPerUserIds[category.get("created_by")]) {
-                        categoriesPerUserIds[category.get("created_by")] = []
-                    }
-                    categoriesPerUserIds[category.get("created_by")].push(category);
-                })
-
-                _.each(categoriesPerUserIds, function (categoriesPerUserId) {
-                    // If it's the current users category, don't create it
-                    if(categoriesPerUserId[0].get("created_by") !== annotationTool.user.get("id")) {
-                        // Need to pass all categories here, else code ceases to work
-                        this.addTab(categories, {   
-                            id        : "user_" + categoriesPerUserId[0].get("created_by"),
-                            name      : categoriesPerUserId[0].get("created_by_nickname"),
-                            filter    : function (category) {
-                                // Does the current user have permission to see the category?
-                                return ((annotationTool.user.get("role") === ROLES.ADMINISTRATOR && (category.get("access") === ACCESS.PUBLIC 
-                                        || category.get("access") === ACCESS.SHARED_WITH_ADMIN))
-                                || (annotationTool.user.get("role") === ROLES.USER && (category.get("access")) === ACCESS.PUBLIC))
-                                // Is it from the mine category?
-                                && category.get("settings").createdAsMine
-                                // Was the category created by the user of the tab? 
-                                && category.get("created_by") === categoriesPerUserId[0].get("created_by");
-                            },
-                            roles     : [],
-                            attributes: { access: ACCESS.PRIVATE },
-                        })
-                    }
-                }, this);
-
-
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
                 this.tabsButtonsElement.find("a:first-child").parent().first().addClass("active");
             },
@@ -373,6 +338,19 @@ define(["jquery",
 
                 this.categoriesTabs[attr.id] = annotateTab;
                 this.tabsContainerElement.append(annotateTab.$el);
+            },
+
+            /**
+             * Remove a categories tab from the annotate view based on the associated id
+             * @param {object} id the associated id
+             */
+            removeTab: function (id) {
+                delete this.categoriesTabs[id];
+
+                let wot = this.tabsButtonsElement.find('a[data-tabid="'+id+'"]').parent().remove();
+                
+                this.tabsContainerElement = this.$el.find("div#label-tabs-contents");
+                let lol = this.tabsContainerElement.children("#labelTab-"+id).remove();
             },
 
             /**
