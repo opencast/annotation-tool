@@ -63,6 +63,8 @@
         @headerPadding: 2px;
         @headerSumHeight: @headerHeight + (2 * @headerPadding);
 
+        .selectable-annotation();
+
         > div:first-child {
             /* Layout of headerbar*/
             height: @headerSumHeight;
@@ -79,10 +81,6 @@
 
         .creator {
             display: none;
-        }
-
-        &:hover {
-            cursor: pointer;
         }
 
         &.first-child {
@@ -195,9 +193,6 @@
                 background: transparent;
                 z-index: 100;
                 border: none;
-                //cursor: text;
-                cursor: pointer;
-
             }
 
             input {
