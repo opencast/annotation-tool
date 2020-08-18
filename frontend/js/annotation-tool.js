@@ -339,8 +339,7 @@ define(["jquery",
              * @alias annotationTool.getCurrentAnnotations
              */
             getCurrentAnnotations: function () {
-                return this.video.get("tracks")
-                    .chain()
+                return _.chain(this.video.get("tracks").getVisibleTracks())
                     .map(function (track) { return track.annotations.models; })
                     .flatten()
                     .filter(function (annotation) { return annotation.covers(
