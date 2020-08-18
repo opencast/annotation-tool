@@ -63,13 +63,14 @@
         @headerPadding: 2px;
         @headerSumHeight: @headerHeight + (2 * @headerPadding);
 
+        .selectable-annotation();
+
         > div:first-child {
             /* Layout of headerbar*/
             height: @headerSumHeight;
             line-height: @headerSumHeight;
         }
 
-        background-color: @white;
         border-left: 1px solid @gray;
         border-right: 1px solid @gray;
         border-top: 1px solid @gray;
@@ -80,10 +81,6 @@
 
         .creator {
             display: none;
-        }
-
-        &:hover {
-            cursor: pointer;
         }
 
         &.first-child {
@@ -98,7 +95,6 @@
         }
 
         &.selected {
-            .active();
             .selected-annotation();
         }
 
@@ -197,9 +193,6 @@
                 background: transparent;
                 z-index: 100;
                 border: none;
-                //cursor: text;
-                cursor: pointer;
-
             }
 
             input {

@@ -50,6 +50,8 @@
 }
 
 .vis-item {
+    .selectable-annotation();
+
     border-color: rgba(0, 0, 0, 0.25);
     background-color: @grayLighter;
 
@@ -65,7 +67,7 @@
 
     &.active {
         border-color: @gray;
-        background-color: @grayLight;
+        background-color: @grayLighter;
         .active-annotation();
     }
 
