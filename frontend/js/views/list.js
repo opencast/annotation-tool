@@ -86,9 +86,9 @@ define(["underscore",
                     "autoExpand"
                 ));
 
-                this.tracks = annotationTool.video.get("tracks");
+                var tracks = annotationTool.video.get("tracks");
 
-                this.listenTo(this.tracks, "visibility", this.setTrackList);
+                this.listenTo(tracks, "visibility", this.setTrackList);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATION_SELECTION, this.renderSelection);
                 this.listenTo(annotationTool, annotationTool.EVENTS.ACTIVE_ANNOTATIONS, this.renderActive);
 
@@ -99,7 +99,7 @@ define(["underscore",
                 this.scrollableArea = this.$el.find("#content-list-scroll");
                 this.$list = this.scrollableArea.find("#content-list");
 
-                this.setTrackList(this.tracks.getVisibleTracks());
+                this.setTrackList(tracks.getVisibleTracks());
 
                 this.renderSelection(annotationTool.getSelection());
                 this.renderActive(annotationTool.getCurrentAnnotations());
@@ -112,6 +112,10 @@ define(["underscore",
              * @param {array} tracks Tracks to insert
              */
             setTrackList: function (tracks) {
+                _.each(tracks, function (track) {
+                    this.stopListening(track.annotations);
+                }, this);
+                this.tracks = tracks;
                 this.removeAnnotationViews();
                 this.annotationViews = [];
                 _.each(tracks, this.addTrack, this);
