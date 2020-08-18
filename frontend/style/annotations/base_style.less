@@ -192,10 +192,12 @@ input, textarea, select, .uneditable-input {
     }
 }
 
+@annotationSelectionColor: rgba(0, 0, 0, 0.15);
+
 .selectable-annotation {
     cursor: pointer;
     &:hover {
-        filter: brightness(75%);
+        background-image: linear-gradient(@annotationSelectionColor, @annotationSelectionColor);
     }
 }
 
@@ -208,7 +210,7 @@ input, textarea, select, .uneditable-input {
         315deg,
         transparent,
         transparent 10px,
-        rgba(0, 0, 0, 0.15) 10px,
-        rgba(0, 0, 0, 0.15) 20px
+        @annotationSelectionColor 10px,
+        @annotationSelectionColor 20px
     );
 }
