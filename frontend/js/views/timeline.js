@@ -160,9 +160,9 @@ define([
             var options = {
                 height: "100%",
                 margin: {
-                    axis: 20,
+                    axis: 12.5,
                     item: {
-                        vertical: 10,
+                        vertical: 5,
                         horizontal: 0
                     }
                 },
@@ -484,17 +484,26 @@ define([
                     this.items.update(_.map(previousAnnotations, function (annotation) {
                         return {
                             id: annotation.id,
-                            className: ""
+                            className: _.without(
+                                getClassName.call(this, annotation).split(" "),
+                                "active"
+                            ).join(' ')
                         };
                     }, this));
                     this.items.update(_.map(currentAnnotations, function (annotation) {
                         return {
                             id: annotation.id,
-                            className: "active"
+                            className: _.uniq(
+                                getClassName.call(this, annotation).split(" ")
+                                    .concat(["active"])
+                            ).join(' ')
                         };
                     }, this));
                 }
             );
+            function getClassName(annotation) {
+                return this.items.get(annotation.id).className || "";
+            }
             // Long-pressing is normally only used for multiple selections,
             // which we don't support.
             // Additionally this is a problem when you select an item
@@ -580,7 +589,7 @@ define([
                                     : "black"
                             ) +
                             ";}";
-                            }).join("");
+                    }).join("");
                 return $("<style>" + stylesheet + "</style>")
                     .appendTo('html > head');
             }
