@@ -192,10 +192,18 @@ input, textarea, select, .uneditable-input {
     }
 }
 
+.selectable-annotation {
+    cursor: pointer;
+    &:hover {
+        filter: brightness(75%);
+    }
+}
+
 .active-annotation {
     --annotation-highlight-color: orange;
     box-shadow: inset 0px 0px 2px 1px var(--annotation-highlight-color);
 }
+
 .selected-annotation {
     .active-annotation();
     --annotation-highlight-color: red;
