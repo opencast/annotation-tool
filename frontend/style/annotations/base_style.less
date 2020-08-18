@@ -200,11 +200,15 @@ input, textarea, select, .uneditable-input {
 }
 
 .active-annotation {
-    --annotation-highlight-color: orange;
-    box-shadow: inset 0px 0px 2px 1px var(--annotation-highlight-color);
+    box-shadow: inset 0px 0px 2px 1px red;
 }
 
 .selected-annotation {
-    .active-annotation();
-    --annotation-highlight-color: red;
+    background-image: repeating-linear-gradient(
+        315deg,
+        transparent,
+        transparent 10px,
+        rgba(0, 0, 0, 0.15) 10px,
+        rgba(0, 0, 0, 0.15) 20px
+    );
 }

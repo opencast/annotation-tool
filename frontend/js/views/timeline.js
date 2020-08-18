@@ -513,14 +513,11 @@ define([
             // the item would just be deselected in that scenario.
             this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
-                if (properties.event.tapCount > 1) {
-                    // Restore the selection
-                    var selection = annotationTool.getSelection();
-                    this.timeline.setSelection(selection && selection.id);
-                    return;
-                }
                 annotationTool.setSelection(
-                    this.items.get(properties.items[0]).model
+                    this.items.get(properties.items[0]).model,
+                    // Toggle selection on single click,
+                    // unconditionally select on double click
+                    properties.event.tapCount > 1
                 );
             }, this));
 
