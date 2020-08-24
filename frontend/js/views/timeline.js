@@ -601,9 +601,7 @@ define([
             );
         },
 
-        /**
-         * @override
-         */
+        /** @override */
         remove: function () {
             _.each(this.groupHeaders, function (groupHeader) {
                 groupHeader.remove();
