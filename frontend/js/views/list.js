@@ -98,7 +98,6 @@ define(["underscore",
                 }, this);
                 this.tracks = tracks;
                 this.removeAnnotationViews();
-                this.annotationViews = [];
                 _.each(tracks, this.addTrack, this);
                 this.updateVisibility();
             },
@@ -352,11 +351,12 @@ define(["underscore",
             },
 
             /**
-             * Remove all the child annotation views from the DOM
+             * Remove all the child annotation views
              * @alias module:views-list.List#removeAnnotationViews
              */
             removeAnnotationViews: function () {
                 _.invoke(this.annotationViews, "remove");
+                this.annotationViews = [];
             },
 
 
