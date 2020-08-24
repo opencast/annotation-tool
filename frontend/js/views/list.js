@@ -46,26 +46,6 @@ define(["underscore",
             annotationViews: [],
 
             /**
-             * List of views of selected annotation
-             * @type {Array}
-             */
-            selectedAnnotations: [],
-
-            /**
-             * Old list of views of selected annotation
-             * @type {Array}
-             */
-            oldSelectedAnnotations: [],
-
-            /**
-             * Define if the selection have been updated
-             * @type {Boolean}
-             */
-            selectionUpdated: false,
-
-            visible: true,
-
-            /**
              * Events to handle
              * @alias module:views-list.List#events
              * @type {object}
@@ -131,7 +111,7 @@ define(["underscore",
                 var annotations = track.annotations;
 
                 this.listenTo(annotations, "add", function (newAnnotation) {
-                    this.addAnnotation(newAnnotation, track);
+                    this.addAnnotation(newAnnotation);
                 });
 
                 this.listenTo(annotations, "remove", function (annotation) {
@@ -147,7 +127,7 @@ define(["underscore",
                 });
 
                 annotations.each(function (annotation) {
-                    this.addAnnotation(annotation, track, true);
+                    this.addAnnotation(annotation, true);
                 }, this);
             },
 
@@ -155,10 +135,9 @@ define(["underscore",
              * Add an annotation as view to the list
              * @alias module:views-list.List#addAnnotation
              * @param {Annotation} the annotation to add as view
-             * @param {Track} track Annotation target
              * @param {Boolean} isPartofList Define if the annotation is added with a whole list
              */
-            addAnnotation: function (annotation, track, isPartofList) {
+            addAnnotation: function (annotation, isPartofList) {
                 var view = new AnnotationView({ model: annotation });
                 this.insertView(view);
 
@@ -239,7 +218,7 @@ define(["underscore",
                     }
                 }, this);
                 var firstView, lastView;
-                _.each(currentAnnotations, function (annotation, index) {
+                _.each(currentAnnotations, function (annotation) {
                     var view = this.getViewFromAnnotation(annotation.id);
 
                     if (this.autoExpand) {
