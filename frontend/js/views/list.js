@@ -89,6 +89,7 @@ define(["underscore",
 
             /**
              * Tracks bulk insertion
+             * @alias module:views-list.List#setTrackList
              * @param {array} tracks Tracks to insert
              */
             setTrackList: function (tracks) {
@@ -104,7 +105,7 @@ define(["underscore",
 
             /**
              * Add one track
-             * @alias module:views-list.List#initialize
+             * @alias module:views-list.List#addTrack
              * @param {Track} track to add
              */
             addTrack: function (track) {
@@ -350,14 +351,16 @@ define(["underscore",
                 return this;
             },
 
+            /**
+             * Remove all the child annotation views from the DOM
+             * @alias module:views-list.List#removeAnnotationViews
+             */
             removeAnnotationViews: function () {
                 _.invoke(this.annotationViews, "remove");
             },
 
-            /**
-             * Remove this view from the DOM and clean up all of its data and event handlers
-             * @alias module:views-list.List#remove
-             */
+
+            /** @override */
             remove: function () {
                 this.removeAnnotationViews();
                 Backbone.View.prototype.remove.apply(this, arguments);
