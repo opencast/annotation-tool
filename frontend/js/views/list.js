@@ -182,14 +182,17 @@ define(["underscore",
              */
             renderSelection: function (selection, previousSelection) {
                 if (previousSelection) {
-                    this.getViewFromAnnotation(previousSelection.id)
-                        .$el.removeClass("selected");
+                    var oldView = this.getViewFromAnnotation(previousSelection.id);
+                    // If the annotation got deleted, we probably already removed the view
+                    if (oldView) {
+                        oldView.$el.removeClass("selected");
+                    }
                 }
                 if (selection) {
-                    var view = this.getViewFromAnnotation(selection.id).$el;
-                    view.addClass("selected");
+                    var newView = this.getViewFromAnnotation(selection.id).$el;
+                    newView.addClass("selected");
 
-                    this.scrollIntoView(view, view);
+                    this.scrollIntoView(newView, newView);
                 }
             },
 
