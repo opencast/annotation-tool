@@ -115,15 +115,17 @@ define(["underscore",
                 });
 
                 this.listenTo(annotations, "remove", function (annotation) {
-                    var view = this.getViewFromAnnotation(annotation.id);
+                    var index = this.getViewIndexFromAnnotation(annotation.id);
+                    var view = this.annotationViews[index];
+                    this.annotationViews.splice(index, 1);
                     view.remove();
-                    this.annotationViews.splice(view.index, 1);
                 });
 
                 this.listenTo(annotations, "change:start", function (annotation) {
-                    this.insertView(
-                        this.getViewFromAnnotation(annotation.get("id"))
-                    );
+                    var index = this.getViewIndexFromAnnotation(annotation.id);
+                    var view = this.annotationViews[index];
+                    this.annotationViews.splice(index, 1);
+                    this.insertView(view);
                 });
 
                 annotations.each(function (annotation) {
@@ -162,15 +164,22 @@ define(["underscore",
              * @param  {Object} view The view to add
              */
             insertView: function (view) {
-                var index = this.getPosition(view);
-                view.index = index;
-
+                var index = _.sortedIndex(
+                    this.annotationViews,
+                    view,
+                    function (annotationView) {
+                        return annotationView.model.get("start");
+                    },
+                    this
+                );
                 this.annotationViews.splice(index, 0, view);
 
-                if (index === 0) {
-                    this.$list.prepend(view.$el);
-                } else {
-                    this.annotationViews[index - 1].$el.after(view.$el);
+                if (annotationTool.isVisible(view.model)) {
+                    if (index === 0) {
+                        this.$list.prepend(view.$el);
+                    } else {
+                        this.annotationViews[index - 1].$el.after(view.$el);
+                    }
                 }
             },
 
@@ -294,26 +303,22 @@ define(["underscore",
              * @return {ListAnnotation} The view representing the annotation
              */
             getViewFromAnnotation: function (id) {
-                return _.find(this.annotationViews, function (view) {
-                    return view.model.id === id;
-                });
+                return this.annotationViews[
+                    this.getViewIndexFromAnnotation(id)
+                ];
             },
 
             /**
-             * Returns the index of the given view in the list
-             * @alias module:views-list.List#getPosition
-             * @param  {Object} view The target view
-             * @return {Integer} The view index
+             * Get the index of the view representing the given annotation
+             * in the {@link annotationViews} list.
+             * @alias module:views-list.List#getViewFromAnnotation
+             * @param {String} id The target annotation id
+             * @return {ListAnnotation} The view representing the annotation
              */
-            getPosition: function (view) {
-                return _.sortedIndex(
-                    this.annotationViews,
-                    view,
-                    function (annotationView) {
-                        return annotationView.model.get("start");
-                    },
-                    this
-                );
+            getViewIndexFromAnnotation: function (id) {
+                return _.findIndex(this.annotationViews, function (view) {
+                    return view.model.id === id;
+                });
             },
 
             /**
