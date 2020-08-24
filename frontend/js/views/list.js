@@ -93,7 +93,7 @@ define(["underscore",
              * @param {array} tracks Tracks to insert
              */
             setTrackList: function (tracks) {
-                _.each(tracks, function (track) {
+                _.each(this.tracks, function (track) {
                     this.stopListening(track.annotations);
                 }, this);
                 this.tracks = tracks;
