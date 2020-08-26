@@ -484,17 +484,26 @@ define([
                     this.items.update(_.map(previousAnnotations, function (annotation) {
                         return {
                             id: annotation.id,
-                            className: ""
+                            className: _.without(
+                                getClassName.call(this, annotation).split(" "),
+                                "active"
+                            ).join(' ')
                         };
                     }, this));
                     this.items.update(_.map(currentAnnotations, function (annotation) {
                         return {
                             id: annotation.id,
-                            className: "active"
+                            className: _.uniq(
+                                getClassName.call(this, annotation).split(" ")
+                                    .concat(["active"])
+                            ).join(' ')
                         };
                     }, this));
                 }
             );
+            function getClassName(annotation) {
+                return this.items.get(annotation.id).className || "";
+            }
             // Long-pressing is normally only used for multiple selections,
             // which we don't support.
             // Additionally this is a problem when you select an item
@@ -504,14 +513,11 @@ define([
             // the item would just be deselected in that scenario.
             this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
-                if (properties.event.tapCount > 1) {
-                    // Restore the selection
-                    var selection = annotationTool.getSelection();
-                    this.timeline.setSelection(selection && selection.id);
-                    return;
-                }
                 annotationTool.setSelection(
-                    this.items.get(properties.items[0]).model
+                    this.items.get(properties.items[0]).model,
+                    // Toggle selection on single click,
+                    // unconditionally select on double click
+                    properties.event.tapCount > 1
                 );
             }, this));
 
@@ -595,9 +601,7 @@ define([
             );
         },
 
-        /**
-         * @override
-         */
+        /** @override */
         remove: function () {
             _.each(this.groupHeaders, function (groupHeader) {
                 groupHeader.remove();
