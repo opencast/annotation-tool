@@ -158,6 +158,29 @@ define(["jquery",
 
                 //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
+
+                this.tooltipSelector =
+                ".myvisibility[data-id=" + this.model.id + "] button";
+
+                $("body").on(
+                    "click",
+                    this.tooltipSelector,
+                    _.bind(function (event) {
+                        this.onChangeSharedVis(event);
+                    }, this)
+                );
+
+                $(document).on(
+                    "click.myvisibilityTooltip",
+                    _.bind(function (event) {
+                        if (this.visibilityButton && (
+                            !this.visibilityButton.has(event.target).length
+                        )) {
+                            this.visibilityButton.tooltip("hide");
+                        }
+                    }, this)
+                );
+
                 return this;
             },
 
@@ -364,6 +387,7 @@ define(["jquery",
                 this.undelegateEvents();
 
                 modelJSON.notEdit = !this.editModus;
+                modelJSON.access = ACCESS.render(this.model.get("access"));
 
                 _.each(this.labelViews, function (view) {
                     view.$el.detach();
@@ -397,6 +421,15 @@ define(["jquery",
 
                 this.delegateEvents(this.events);
 
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+                this.visibilityButton = this.$el.find(".myvisibility")
+                .tooltip({
+                    container: 'body',
+                    html: true
+                });
+
                 return this;
             },
 
@@ -409,6 +442,13 @@ define(["jquery",
                     labelView.remove();
                 });
                 $(window).off(".annotate-category");
+
+                $(document).off("click.myvisibilityTooltip");
+                $("body").off("click", this.tooltipSelector);
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+
                 Backbone.View.prototype.remove.apply(this, arguments);
             }
         });
