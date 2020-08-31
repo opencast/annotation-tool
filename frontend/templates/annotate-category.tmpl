@@ -4,15 +4,15 @@
     <i class="icon-pencil scale edit" title="{{t "annotate.edit category scaling"}}"></i>
     <i class="icon-trash delete edit"></i>
     {{#if settings.createdAsMine}}
-        <i class="icon-public sharedVis edit" data-sharedVis='public'></i>
+        <!-- <i class="icon-public sharedVis edit" data-sharedVis='public'></i>
         <i class="icon-private sharedVis edit" data-sharedVis='private'></i>
-        <i class="icon-shared-with-admin sharedVis edit" data-sharedVis='shared-with-admin'></i>
+        <i class="icon-shared-with-admin sharedVis edit" data-sharedVis='shared-with-admin'></i> -->
         <button
         type="button"
-        class="myvisibility"
+        class="sharedVisibility"
         data-trigger="click"
         title="
-            <div class='myvisibility' data-id='{{id}}'>
+            <div class='sharedVisibility' data-id='{{id}}'>
                 <button type='button' data-sharedVis='public'>
                     <i
                         class='icon-white icon-public sharedVis'
@@ -38,7 +38,7 @@
         >
             <i
             title="{{t "timeline.change myvisibility.tooltip"}}"
-            class="icon-dark-grey icon-{{access}}"
+            class="icon-dark-grey icon-{{access}} edit"
             ></i>
         </button>
     {{/if}}
