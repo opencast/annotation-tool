@@ -46,26 +46,6 @@ define(["underscore",
             annotationViews: [],
 
             /**
-             * List of views of selected annotation
-             * @type {Array}
-             */
-            selectedAnnotations: [],
-
-            /**
-             * Old list of views of selected annotation
-             * @type {Array}
-             */
-            oldSelectedAnnotations: [],
-
-            /**
-             * Define if the selection have been updated
-             * @type {Boolean}
-             */
-            selectionUpdated: false,
-
-            visible: true,
-
-            /**
              * Events to handle
              * @alias module:views-list.List#events
              * @type {object}
@@ -109,45 +89,47 @@ define(["underscore",
 
             /**
              * Tracks bulk insertion
+             * @alias module:views-list.List#setTrackList
              * @param {array} tracks Tracks to insert
              */
             setTrackList: function (tracks) {
-                _.each(tracks, function (track) {
+                _.each(this.tracks, function (track) {
                     this.stopListening(track.annotations);
                 }, this);
                 this.tracks = tracks;
                 this.removeAnnotationViews();
-                this.annotationViews = [];
                 _.each(tracks, this.addTrack, this);
                 this.updateVisibility();
             },
 
             /**
              * Add one track
-             * @alias module:views-list.List#initialize
+             * @alias module:views-list.List#addTrack
              * @param {Track} track to add
              */
             addTrack: function (track) {
                 var annotations = track.annotations;
 
                 this.listenTo(annotations, "add", function (newAnnotation) {
-                    this.addAnnotation(newAnnotation, track);
+                    this.addAnnotation(newAnnotation);
                 });
 
                 this.listenTo(annotations, "remove", function (annotation) {
-                    var view = this.getViewFromAnnotation(annotation.id);
+                    var index = this.getViewIndexFromAnnotation(annotation.id);
+                    var view = this.annotationViews[index];
+                    this.annotationViews.splice(index, 1);
                     view.remove();
-                    this.annotationViews.splice(view.index, 1);
                 });
 
                 this.listenTo(annotations, "change:start", function (annotation) {
-                    this.insertView(
-                        this.getViewFromAnnotation(annotation.get("id"))
-                    );
+                    var index = this.getViewIndexFromAnnotation(annotation.id);
+                    var view = this.annotationViews[index];
+                    this.annotationViews.splice(index, 1);
+                    this.insertView(view);
                 });
 
                 annotations.each(function (annotation) {
-                    this.addAnnotation(annotation, track, true);
+                    this.addAnnotation(annotation, true);
                 }, this);
             },
 
@@ -155,10 +137,9 @@ define(["underscore",
              * Add an annotation as view to the list
              * @alias module:views-list.List#addAnnotation
              * @param {Annotation} the annotation to add as view
-             * @param {Track} track Annotation target
              * @param {Boolean} isPartofList Define if the annotation is added with a whole list
              */
-            addAnnotation: function (annotation, track, isPartofList) {
+            addAnnotation: function (annotation, isPartofList) {
                 var view = new AnnotationView({ model: annotation });
                 this.insertView(view);
 
@@ -183,15 +164,22 @@ define(["underscore",
              * @param  {Object} view The view to add
              */
             insertView: function (view) {
-                var index = this.getPosition(view);
-                view.index = index;
-
+                var index = _.sortedIndex(
+                    this.annotationViews,
+                    view,
+                    function (annotationView) {
+                        return annotationView.model.get("start");
+                    },
+                    this
+                );
                 this.annotationViews.splice(index, 0, view);
 
-                if (index === 0) {
-                    this.$list.prepend(view.$el);
-                } else {
-                    this.annotationViews[index - 1].$el.after(view.$el);
+                if (annotationTool.isVisible(view.model)) {
+                    if (index === 0) {
+                        this.$list.prepend(view.$el);
+                    } else {
+                        this.annotationViews[index - 1].$el.after(view.$el);
+                    }
                 }
             },
 
@@ -203,14 +191,17 @@ define(["underscore",
              */
             renderSelection: function (selection, previousSelection) {
                 if (previousSelection) {
-                    this.getViewFromAnnotation(previousSelection.id)
-                        .$el.removeClass("selected");
+                    var oldView = this.getViewFromAnnotation(previousSelection.id);
+                    // If the annotation got deleted, we probably already removed the view
+                    if (oldView) {
+                        oldView.$el.removeClass("selected");
+                    }
                 }
                 if (selection) {
-                    var view = this.getViewFromAnnotation(selection.id).$el;
-                    view.addClass("selected");
+                    var newView = this.getViewFromAnnotation(selection.id).$el;
+                    newView.addClass("selected");
 
-                    this.scrollIntoView(view, view);
+                    this.scrollIntoView(newView, newView);
                 }
             },
 
@@ -239,7 +230,7 @@ define(["underscore",
                     }
                 }, this);
                 var firstView, lastView;
-                _.each(currentAnnotations, function (annotation, index) {
+                _.each(currentAnnotations, function (annotation) {
                     var view = this.getViewFromAnnotation(annotation.id);
 
                     if (this.autoExpand) {
@@ -312,26 +303,22 @@ define(["underscore",
              * @return {ListAnnotation} The view representing the annotation
              */
             getViewFromAnnotation: function (id) {
-                return _.find(this.annotationViews, function (view) {
-                    return view.model.id === id;
-                });
+                return this.annotationViews[
+                    this.getViewIndexFromAnnotation(id)
+                ];
             },
 
             /**
-             * Returns the index of the given view in the list
-             * @alias module:views-list.List#getPosition
-             * @param  {Object} view The target view
-             * @return {Integer} The view index
+             * Get the index of the view representing the given annotation
+             * in the {@link annotationViews} list.
+             * @alias module:views-list.List#getViewFromAnnotation
+             * @param {String} id The target annotation id
+             * @return {ListAnnotation} The view representing the annotation
              */
-            getPosition: function (view) {
-                return _.sortedIndex(
-                    this.annotationViews,
-                    view,
-                    function (annotationView) {
-                        return annotationView.model.get("start");
-                    },
-                    this
-                );
+            getViewIndexFromAnnotation: function (id) {
+                return _.findIndex(this.annotationViews, function (view) {
+                    return view.model.id === id;
+                });
             },
 
             /**
@@ -362,23 +349,25 @@ define(["underscore",
                 this.$list.empty();
 
                 _.each(this.annotationViews, function (annView) {
-                    var category = annView.model.category();
-                    if (category && !category.get("visible")) return;
-                    if (!category && !annotationTool.freeTextVisible) return;
-                    this.$list.append(annView.$el);
+                    if (annotationTool.isVisible(annView.model)) {
+                        this.$list.append(annView.$el);
+                    }
                 }, this);
 
                 return this;
             },
 
+            /**
+             * Remove all the child annotation views
+             * @alias module:views-list.List#removeAnnotationViews
+             */
             removeAnnotationViews: function () {
                 _.invoke(this.annotationViews, "remove");
+                this.annotationViews = [];
             },
 
-            /**
-             * Remove this view from the DOM and clean up all of its data and event handlers
-             * @alias module:views-list.List#remove
-             */
+
+            /** @override */
             remove: function () {
                 this.removeAnnotationViews();
                 Backbone.View.prototype.remove.apply(this, arguments);

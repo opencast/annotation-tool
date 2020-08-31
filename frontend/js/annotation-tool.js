@@ -370,6 +370,18 @@ define(["jquery",
                 );
             },
 
+            /**
+             * Check whether an annotation should be visible in the current configuration
+             * @alias annotationTool.isVisible
+             */
+            isVisible: function (annotation) {
+                if (!annotation.collection.track.get("visible")) return false;
+                var category = annotation.category();
+                if (category && !category.get("visible")) return false;
+                if (!category && !annotationTool.freeTextVisible) return false;
+                return true;
+            },
+
             //////////////
             // CREATORs //
             //////////////
