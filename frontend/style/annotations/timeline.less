@@ -9,6 +9,18 @@
             border-bottom: 1px solid #bfbfbf;
         }
     }
+
+    // Make the "border" of the annotation anchors
+    // (which consist of nothing but (rounded) borders)
+    // transparent, for the background to shine through.
+    // The background is potentially the color of the category
+    // of the annotation.
+    // Do this here, globally, but also with higher specificity
+    // than the default styles provided by vis.js,
+    // so that it works for all combinations of the selected and active states.
+    .vis-item.vis-dot {
+        border-color: rgba(0, 0, 0, 0.25);
+    }
 }
 
 .vis-timeline {
@@ -73,9 +85,6 @@
 
     &.vis-selected {
         border-color: @gray;
-        &.vis-dot {
-            border-color: rgba(0, 0, 0, 0.25);
-        }
         background-color: @grayLighter;
         .selected-annotation();
     }
