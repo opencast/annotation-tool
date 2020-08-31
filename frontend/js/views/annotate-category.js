@@ -160,7 +160,7 @@ define(["jquery",
                 this.nameInput = this.$el.find(".catItem-header input");
 
                 this.tooltipSelector =
-                ".myvisibility[data-id=" + this.model.id + "] button";
+                ".sharedVisibility[data-id=" + this.model.id + "] button";
 
                 $("body").on(
                     "click",
@@ -171,7 +171,7 @@ define(["jquery",
                 );
 
                 $(document).on(
-                    "click.myvisibilityTooltip",
+                    "click.sharedVisibilityTooltip",
                     _.bind(function (event) {
                         if (this.visibilityButton && (
                             !this.visibilityButton.has(event.target).length
@@ -382,6 +382,10 @@ define(["jquery",
              * @return {CategoryView} this category view
              */
             render: function () {
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+                
                 var modelJSON = this.model.toJSON();
 
                 this.undelegateEvents();
@@ -421,10 +425,8 @@ define(["jquery",
 
                 this.delegateEvents(this.events);
 
-                if (this.visibilityButton) {
-                    this.visibilityButton.tooltip("destroy");
-                }
-                this.visibilityButton = this.$el.find(".myvisibility")
+
+                this.visibilityButton = this.$el.find(".sharedVisibility")
                 .tooltip({
                     container: 'body',
                     html: true
