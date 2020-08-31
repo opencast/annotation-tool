@@ -63,13 +63,14 @@
         @headerPadding: 2px;
         @headerSumHeight: @headerHeight + (2 * @headerPadding);
 
+        .selectable-annotation();
+
         > div:first-child {
             /* Layout of headerbar*/
             height: @headerSumHeight;
             line-height: @headerSumHeight;
         }
 
-        background-color: @white;
         border-left: 1px solid @gray;
         border-right: 1px solid @gray;
         border-top: 1px solid @gray;
@@ -82,28 +83,19 @@
             display: none;
         }
 
-        &:hover {
-            cursor: pointer;
-        }
-
         &.first-child {
             border-top: none;
         }
 
-        &.selected {
-
+        &.active {
             tr:first-child {
-                //background-position: top;
-                //background-image: url("../img/annotation/pattern.png");
-                //background-repeat: repeat-x;
                 background-color: darken(@grayLighter, 10%);
             }
+            .active-annotation();
+        }
 
-            box-shadow: inset 0px 0px 2px 1px red;
-
-            //border: 1px solid @red;
-            //border-bottom: 2px solid @red;
-            //border-top: 2px solid @red;
+        &.selected {
+            .selected-annotation();
         }
 
         .right {
@@ -182,7 +174,6 @@
         .start,.end {
             display: inline-block;
             position: relative;
-            color: @black;
 
             &.no-duration {
                 display: none;
@@ -195,15 +186,11 @@
                 margin: 0;
                 padding: 0;
                 box-shadow: none;
-                color: @black;
                 text-align: center;
                 font-family: monospace;
                 background: transparent;
                 z-index: 100;
                 border: none;
-                //cursor: text;
-                cursor: pointer;
-
             }
 
             input {
@@ -214,7 +201,6 @@
                 margin: 0;
                 padding: 0;
                 box-shadow: none;
-                color: @black;
                 text-align: center;
                 font-family: monospace;
                 background: @white;
@@ -268,10 +254,8 @@
         }
 
         span.category {
-            color: @gray;
-
             span.abbreviation {
-                color: @black;
+                font-weight: bold;
             }
 
             span.category-name {

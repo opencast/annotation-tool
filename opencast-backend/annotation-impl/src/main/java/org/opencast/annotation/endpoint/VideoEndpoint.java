@@ -195,8 +195,7 @@ public class VideoEndpoint {
 
         try {
 
-          Resource resource = eas.createResource(tagsMap.bind(Functions.identity()),
-                  option(access));
+          Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
           final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
           return Response.created(trackLocationUri(t))
@@ -542,8 +541,7 @@ public class VideoEndpoint {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.identity()),
-                option(access));
+        Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();

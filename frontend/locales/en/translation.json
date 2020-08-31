@@ -96,7 +96,7 @@
   "delete modal": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
-    "title": "Delete",
+    "title": "Delete {{context}}",
     "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
   },
   "description": "Video annotation tool",
