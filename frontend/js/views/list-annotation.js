@@ -437,7 +437,8 @@ define(["jquery",
                     this.model,
                     // Toggle selection on single click,
                     // unconditionally select on double click
-                    event.originalEvent.detail > 1
+                    event.originalEvent.detail > 1,
+                    "list"
                 );
             },
 
