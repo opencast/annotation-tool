@@ -203,7 +203,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testTrack() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture1", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // try adding a track to a non existing video
@@ -264,7 +264,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateAndFindAnnotation() throws Exception {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // create

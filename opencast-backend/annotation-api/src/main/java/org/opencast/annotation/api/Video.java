@@ -19,9 +19,6 @@ package org.opencast.annotation.api;
 /** A class representing a video */
 public interface Video extends Resource {
 
-  /** The video's id within the annotation tool. */
-  long getId();
-
   /** Get the video's id in the surrounding video portal. */
   String getExtId();
 }

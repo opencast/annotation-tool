@@ -864,19 +864,21 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Resource createResource(final Option<Map<String, String>> tags) {
-    return createResource(tags, none());
+    return createResource(none(), tags);
   }
 
   @Override
-  public Resource createResource(final Option<Map<String, String>> tags, final Option<Integer> access) {
+  public Resource createResource(final Option<Integer> access, final Option<Map<String, String>> tags) {
     final Option<Long> userId = getCurrentUserId();
     final Option<Date> now = some(new Date());
     Map<String, String> tagsMap;
-    if (tags.isSome())
-      tagsMap = tags.get();
-    else
-      tagsMap = new HashMap<>();
-    return new ResourceImpl(access.orElse(some(Resource.PRIVATE)), userId, userId, none(), now, now, none(), tagsMap);
+    tagsMap = tags.getOrElse(new Function0<Map<String, String>>() {
+      @Override
+      public Map<String, String> apply() {
+        return new HashMap<>();
+      }
+    });
+    return new ResourceImpl(access, userId, userId, none(), now, now, none(), tagsMap);
   }
 
   @Override

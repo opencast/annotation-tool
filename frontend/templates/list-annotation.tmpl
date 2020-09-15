@@ -63,6 +63,17 @@
     </div>
 
     <div class="right">
+        {{#if isMine}}
+            <i
+                class="delete icon-trash"
+                title="{{t "annotation.edit.delete"}}"
+            ></i>
+            <i
+                class="toggle-edit icon-pencil"
+                title="{{t "annotation.edit.edit"}}"
+            ></i>
+        {{/if}}
+
         <i
             class="{{#if numberOfComments}}
                 icon-comment-amount

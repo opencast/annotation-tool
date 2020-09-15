@@ -19,9 +19,6 @@ package org.opencast.annotation.api;
 /** A class representing a scale value of the annotation tool. */
 public interface ScaleValue extends Resource {
 
-  /** The scale value id */
-  long getId();
-
   /** The scale that is used for this scale value */
   long getScaleId();
 
