@@ -153,7 +153,7 @@ define(["jquery",
              * @param {Category[]} categories The tracks to include in the export
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
-            export_csv: function (video, tracks, categories, freeText) {
+            exportCsv: function (video, tracks, categories, freeText) {
                 let bookData = this.gatherExportData(tracks, categories, freeText);
 
                 var json = JSON.stringify(bookData);
@@ -170,7 +170,7 @@ define(["jquery",
              * @param {Category[]} categories The tracks to include in the export
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
-            export_xlxs: function (video, tracks, categories, freeText) {
+            exportXlxs: function (video, tracks, categories, freeText) {
                 let bookData = this.gatherExportData(tracks, categories, freeText);
 
                 // Generate workbook

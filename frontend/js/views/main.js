@@ -89,8 +89,8 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #export_csv": "export_csv",
-                "click #export_xlxs": "export_xlxs",
+                "click #export-csv": "exportCsv",
+                "click #export-xlxs": "exportXlxs",
                 "click #about": "about",
                 "click #logout": "onLogout",
                 "click #print": "print",
@@ -123,12 +123,6 @@ define(["jquery",
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
 
                 this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
-
-                if (annotationTool.localStorage) {
-                    // Remove link for statistics exports, work only with backend implementation
-                    this.$el.find("#export_csv").parent().remove();
-                    this.$el.find("#export_xlxs").parent().remove();
-                }
 
                 annotationTool.scaleEditor = new ScaleEditorView();
 
@@ -690,7 +684,7 @@ define(["jquery",
              * Offer the user a spreadsheet version of the annotations for download.
              * @alias module:views-main.Main#export
              */
-            export_csv: function () {
+            exportCsv: function () {
                 this.exportas("csv");
             },
 
@@ -698,7 +692,7 @@ define(["jquery",
              * Offer the user an excel version of the annotations for download.
              * @alias module:views-main.Main#export_xlxs
              */
-            export_xlxs: function () {
+            exportXlxs: function () {
                 this.exportas("xlxs");
             },
 
@@ -711,7 +705,7 @@ define(["jquery",
                     });
                 switch (format) {
                     case "csv":
-                        annotationTool.export_csv(
+                        annotationTool.exportCsv(
                             annotationTool.video,
                             tracksToExport,
                             categoriesToExport,
@@ -719,7 +713,7 @@ define(["jquery",
                         );
                         break;
                     case "xlxs":
-                        annotationTool.export_xlxs(
+                        annotationTool.exportXlxs(
                             annotationTool.video,
                             tracksToExport,
                             categoriesToExport,

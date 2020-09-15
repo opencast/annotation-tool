@@ -252,13 +252,10 @@ var util = {
 
     /**
      * Capitalize a string
-     * @param {*} s The string to capitalize
-     * @return {s} The capitalized string
+     * @param {string} s The string to capitalize
+     * @return {string} The capitalized string
      */
     capitalize: function (s) {
-        if (typeof s !== 'string') {
-            return '';
-        }
         return s.charAt(0).toUpperCase() + s.slice(1);
     }
 };
