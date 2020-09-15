@@ -207,7 +207,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       deleteTrack(track);
     }
 
-    List<Category> categories = getCategories(some(video.getId()), none(), none(), none(), none(), none());
+    List<Category> categories = getCategories(some(video.getId()), none(), none(), none(), none(), none(), none());
     for (Category category : categories) {
       deleteCategory(category);
     }
@@ -538,15 +538,15 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Category createCategory(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource) throws ExtendedAnnotationException {
-    final CategoryDto dto = CategoryDto.create(videoId, scaleId, name, description, settings, resource);
+          Option<String> settings, Resource resource, Option<String> seriesExtId) throws ExtendedAnnotationException {
+    final CategoryDto dto = CategoryDto.create(videoId, scaleId, name, description, settings, resource, seriesExtId);
 
     return tx(Queries.persist(dto)).toCategory();
   }
 
   @Override
   public Option<Category> createCategoryFromTemplate(final long videoId, final long templateCategoryId,
-          final Resource resource) throws ExtendedAnnotationException {
+          final Resource resource, final String seriesExtId) throws ExtendedAnnotationException {
     return getCategory(templateCategoryId, false).map(new Function<Category, Category>() {
       @Override
       public Category apply(Category c) {
@@ -568,7 +568,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
         // Copy category
         final CategoryDto copyDto = CategoryDto.create(Option.some(videoId), option(scaleId), c.getName(),
-                c.getDescription(), c.getSettings(), resource);
+                c.getDescription(), c.getSettings(), resource, option(seriesExtId));
         Category category = (Category) tx(new Function<EntityManager, Object>() {
           @Override
           public Object apply(EntityManager em) {
@@ -610,10 +610,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public List<Category> getCategories(final Option<Long> videoId, final Option<Integer> offset,
           final Option<Integer> limit, Option<Date> since, final Option<Map<String, String>> tagsAnd,
-          final Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException {
+          final Option<Map<String, String>> tagsOr, final Option<String> seriesExtId) throws ExtendedAnnotationException {
     List<Category> categories = videoId.fold(new Option.Match<Long, List<Category>>() {
       @Override
       public List<Category> some(Long id) {
+        List<Category> cat = findAllById(toCategory, offset, limit, "Category.findAllOfVideo", id);
         return findAllById(toCategory, offset, limit, "Category.findAllOfVideo", id);
       }
 
@@ -633,6 +634,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       }
     });
 
+    if (seriesExtId.isSome()) {
+      List<Category> list = new ArrayList<>(categories);
+      list.addAll(findAllById(toCategory, offset, limit, "Category.findAllOfExtSeries", seriesExtId.get()));
+      categories = list;
+    }
+
     if (tagsAnd.isSome())
       categories = filterAndTags(categories, tagsAnd.get());
 
@@ -646,7 +653,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public boolean deleteCategory(Category category) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(category);
     final Category updated = new CategoryImpl(category.getId(), category.getVideoId(), category.getScaleId(),
-            category.getName(), category.getDescription(), category.getSettings(), deleteResource);
+            category.getName(), category.getDescription(), category.getSettings(), deleteResource,
+            category.getSeriesExtId());
     updateCategory(updated);
 
     for (Label l : getLabelsByCategoryId(category.getId())) {

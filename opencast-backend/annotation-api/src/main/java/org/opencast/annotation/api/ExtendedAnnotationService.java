@@ -528,7 +528,7 @@ public interface ExtendedAnnotationService {
    *           if an error occurs while storing/retrieving from persistence storage
    */
   Category createCategory(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource) throws ExtendedAnnotationException;
+          Option<String> settings, Resource resource, Option<String> seriesExtId) throws ExtendedAnnotationException;
 
   /**
    * Creates a category
@@ -549,7 +549,8 @@ public interface ExtendedAnnotationService {
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Option<Category> createCategoryFromTemplate(long videoId, long templateCategoryId, Resource resource)
+  Option<Category> createCategoryFromTemplate(long videoId, long templateCategoryId, Resource resource,
+          String seriesExtId)
           throws ExtendedAnnotationException;
 
   /**
@@ -585,7 +586,7 @@ public interface ExtendedAnnotationService {
    *           if an error occurs while storing/retrieving from persistence storage
    */
   List<Category> getCategories(Option<Long> videoId, Option<Integer> offset, Option<Integer> limit, Option<Date> since,
-          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr, Option<String> seriesExtId) throws ExtendedAnnotationException;
 
   /**
    * Update a category.

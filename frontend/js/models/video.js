@@ -73,6 +73,19 @@ define(["underscore",
 
                 Resource.prototype.initialize.apply(this, arguments);
 
+                var allCategories = new Categories([], { video: null, seriesExtId: "65e0f334-2fdc-466a-a459-f39a1119a0ab" });
+                var allCategoriesURL = allCategories.url();
+                //allCategories.urlRoot = allCategories.url();
+                allCategories.fetch({
+                    success: function(collection, response, options) {
+                        console.info('~ Response::SUCCESS', collection, response, options);
+                    },
+                    
+                    error: function(collection, response, options) {
+                        console.info('~ Response::ERROR', collection, response, options);
+                    }
+                });
+
                 // Check if tracks are given
                 if (attr.tracks && _.isArray(attr.tracks)) {
                     this.set({ tracks: new Tracks(attr.tracks, { video: this }) });

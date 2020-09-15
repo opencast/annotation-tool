@@ -33,9 +33,10 @@ public class CategoryImpl extends ResourceImpl implements Category {
   private final String name;
   private final Option<String> description;
   private final Option<String> settings;
+  private final Option<String> seriesExtId;
 
   public CategoryImpl(long id, Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource) {
+          Option<String> settings, Resource resource, Option<String> seriesExtId) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
             .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
             .getTags());
@@ -45,6 +46,7 @@ public class CategoryImpl extends ResourceImpl implements Category {
     this.name = name;
     this.description = description;
     this.settings = settings;
+    this.seriesExtId = seriesExtId;
   }
 
   @Override
@@ -83,6 +85,11 @@ public class CategoryImpl extends ResourceImpl implements Category {
   }
 
   @Override
+  public Option<String> getSeriesExtId() {
+    return seriesExtId;
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o)
       return true;
@@ -96,7 +103,7 @@ public class CategoryImpl extends ResourceImpl implements Category {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, getTags());
+    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, seriesExtId, getTags());
   }
 
 }

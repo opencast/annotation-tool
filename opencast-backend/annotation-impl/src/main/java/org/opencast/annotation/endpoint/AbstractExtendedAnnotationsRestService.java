@@ -661,12 +661,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response postCategoryTemplate(@FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
-    return postCategoryResponse(none(), name, description, scaleId, settings, access, tags);
+          @FormParam("access") final Integer access, @FormParam("tags") final String tags,
+          @FormParam("seriesExtId") final String seriesExtId) {
+    return postCategoryResponse(none(), name, description, scaleId, settings, access, tags, seriesExtId);
   }
 
   Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
-          final Long scaleId, final String settings, final Integer access, final String tags) {
+          final Long scaleId, final String settings, final Integer access, final String tags, final String seriesExtId) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -677,7 +678,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Category category = eas().createCategory(videoId, option(scaleId), name, trimToNone(description),
-                trimToNone(settings), resource);
+                trimToNone(settings), resource, option(seriesExtId));
 
         return Response.created(categoryLocationUri(category, videoId.isSome()))
                 .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();
@@ -691,12 +692,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, tags);
+          @FormParam("tags") final String tags, @FormParam("seriesExtId") final String seriesExtId) {
+    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, tags, seriesExtId);
   }
 
   Response putCategoryResponse(final Option<Long> videoId, final long id, final String name,
-          final String description, final Option<Long> scaleId, final String settings, final String tags) {
+          final String description, final Option<Long> scaleId, final String settings, final String tags,
+          final String seriesExtId) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -714,7 +716,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(c, tags);
             final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(description),
-                    trimToNone(settings), resource);
+                    trimToNone(settings), resource, trimToNone((seriesExtId)));
             if (!c.equals(updated)) {
               eas().updateCategory(updated);
               c = updated;
@@ -727,7 +729,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response none() {
             Resource resource = eas().createResource(tags);
             final Category category = eas().createCategory(videoId, scaleId, name, trimToNone(description),
-                    trimToNone(settings), resource);
+                    trimToNone(settings), resource, trimToNone(seriesExtId));
 
             return Response.created(categoryLocationUri(category, videoId.isSome()))
                     .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();
@@ -773,12 +775,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/categories")
   public Response getCategories(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return getCategoriesResponse(none(), limit, offset, date, tagsAnd, tagsOr);
+          @QueryParam("tags-or") final String tagsOr, @QueryParam("seriesExtId") final String seriesExtId) {
+    return getCategoriesResponse(none(), limit, offset, date, tagsAnd, tagsOr, seriesExtId);
   }
 
   Response getCategoriesResponse(final Option<Long> videoId, final int limit, final int offset,
-          final String date, final String tagsAnd, final String tagsOr) {
+          final String date, final String tagsAnd, final String tagsOr, final String seriesExtId) {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
@@ -787,6 +789,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
+        final Option<String> seriesExtIdm = trimToNone(seriesExtId);
 
         if (datem.isSome() && datem.get().isNone() || (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
                 || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
@@ -798,7 +801,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
                   offset,
                   eas().getCategories(videoId, offsetm, limitm, datem.bind(Functions.identity()),
                           tagsAndArray.bind(Functions.identity()),
-                          tagsOrArray.bind(Functions.identity()))));
+                          tagsOrArray.bind(Functions.identity()),
+                          seriesExtIdm)));
         }
       }
     });

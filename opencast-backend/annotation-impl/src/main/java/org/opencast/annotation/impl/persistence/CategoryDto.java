@@ -59,6 +59,7 @@ import javax.persistence.Table;
         @NamedQuery(name = "Category.findById", query = "select a from Category a where a.id = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfTemplate", query = "select a from Category a where a.videoId IS NULL and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfVideo", query = "select a from Category a where a.videoId = :id and a.deletedAt IS NULL"),
+        @NamedQuery(name = "Category.findAllOfExtSeries", query = "select a from Category a where a.seriesExtId = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfVideoSince", query = "select a from Category a where a.videoId = :id and a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
         @NamedQuery(name = "Category.deleteById", query = "delete from Category a where a.id = :id"),
         @NamedQuery(name = "Category.count", query = "select count(a) from Category a where a.deletedAt IS NULL"),
@@ -86,6 +87,9 @@ public class CategoryDto extends AbstractResourceDto {
   @Column(name = "scale_id")
   private Long scaleId;
 
+  @Column(name = "series_ext_id")
+  private String seriesExtId;
+
   @ElementCollection
   @MapKeyColumn(name = "name")
   @Column(name = "value")
@@ -93,10 +97,11 @@ public class CategoryDto extends AbstractResourceDto {
   protected Map<String, String> tags = new HashMap<String, String>();
 
   public static CategoryDto create(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource) {
+          Option<String> settings, Resource resource, Option<String> seriesExtId) {
     CategoryDto dto = new CategoryDto().update(name, description, scaleId, settings, resource);
     dto.videoId = videoId.getOrElse((Long) null);
     dto.scaleId = scaleId.getOrElse((Long) null);
+    dto.seriesExtId = seriesExtId.getOrElse((String) null);
     return dto;
   }
 
@@ -115,7 +120,8 @@ public class CategoryDto extends AbstractResourceDto {
   public Category toCategory() {
     return new CategoryImpl(id, option(videoId), option(scaleId), name, option(description), option(settings),
             new ResourceImpl(option(access), option(createdBy), option(updatedBy), option(deletedBy), option(createdAt),
-                    option(updatedAt), option(deletedAt), tags));
+                    option(updatedAt), option(deletedAt), tags),
+            option(seriesExtId));
   }
 
   public static final Function<CategoryDto, Category> toCategory = new Function<CategoryDto, Category>() {
@@ -131,7 +137,8 @@ public class CategoryDto extends AbstractResourceDto {
       return conc(
               AbstractResourceDto.toJson.apply(eas, s),
               jO(p("id", s.getId()), p("name", s.getName()), p("description", s.getDescription()),
-                      p("settings", s.getSettings()), p("scale_id", s.getScaleId())));
+                      p("settings", s.getSettings()), p("scale_id", s.getScaleId()),
+                      p("series_ext_id", s.getSeriesExtId())));
     }
   };
 

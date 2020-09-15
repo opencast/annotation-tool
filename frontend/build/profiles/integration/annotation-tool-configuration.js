@@ -195,6 +195,17 @@ define(["jquery",
             },
 
             /**
+             * Get the current series id of the video (series_extid)
+             * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
+             * @return {Promise.<string>} video external id
+             */
+            getSeriesExtId: function () {
+                return mediaPackage.then(function (mediaPackage) {
+                    return mediaPackage.series;
+                }.bind(this));
+            },
+
+            /**
              * Returns the time interval between each timeupdate event to take into account.
              * It can improve a bit the performance if the amount of annotations is important.
              * @alias module:annotation-tool-configuration.Configuration.getTimeupdateIntervalForTimeline

@@ -643,6 +643,7 @@ define(["jquery",
                                         video = videos.create(videoParameters, { wait: true });
                                     } else {
                                         video = videos.at(0);
+                                        var test = this.getSeriesExtId();
                                         video.set(videoParameters);
                                     }
 
@@ -656,6 +657,7 @@ define(["jquery",
                             video = videos.at(0);
                             this.video = video;
                             video.set(videoParameters);
+                            var test = this.getSeriesExtId();
                             video.save(null, {
                                 error: _.bind(function (model, response, options) {
                                     if (response.status === 403) {

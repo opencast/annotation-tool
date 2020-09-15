@@ -36,4 +36,6 @@ public interface Category extends Resource {
   /** The category settings */
   Option<String> getSettings();
 
+  /** The category settings */
+  Option<String> getSeriesExtId();
 }

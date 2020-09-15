@@ -88,7 +88,8 @@ define(["jquery",
                 "click .catItem-header i.scale": "editScale",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
-                "click .catItem-add": "onCreateLabel"
+                "click .catItem-add": "onCreateLabel",
+                "click .catItem-header i.series": "series"
             },
 
             /**
@@ -151,6 +152,13 @@ define(["jquery",
                 //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
                 return this;
+            },
+
+            series: function() {
+                var lol = annotationTool.video.get("categories");
+
+                this.model.toggleSeries();
+                this.model.save(null, { wait: true });
             },
 
             /**

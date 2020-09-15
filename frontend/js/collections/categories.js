@@ -47,6 +47,7 @@ define(["underscore",
              */
             initialize: function (models, options) {
                 this.video = options.video;
+                this.seriesExtId = options.seriesExtId;
             },
 
             /**
@@ -55,7 +56,7 @@ define(["underscore",
              * @return {String} The url of this collection
              */
             url: function () {
-                return (this.video ? _.result(this.video, "url") : "") + "/categories";
+                return (this.video ? _.result(this.video, "url") : "") + "/categories" + (this.seriesExtId ? "?seriesExtId=" + this.seriesExtId : "");
             },
 
             /**
