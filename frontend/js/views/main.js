@@ -90,7 +90,7 @@ define(["jquery",
              */
             events: {
                 "click #export-csv": "exportCsv",
-                "click #export-xlxs": "exportXlxs",
+                "click #export-xlsx": "exportXlsx",
                 "click #about": "about",
                 "click #logout": "onLogout",
                 "click #print": "print",
@@ -687,18 +687,18 @@ define(["jquery",
              * @alias module:views-main.Main#export
              */
             exportCsv: function () {
-                this.exportas("csv");
+                this.exportAs("csv");
             },
 
             /**
              * Offer the user an excel version of the annotations for download.
              * @alias module:views-main.Main#export_xlxs
              */
-            exportXlxs: function () {
-                this.exportas("xlxs");
+            exportXlsx: function () {
+                this.exportAs("xlxs");
             },
 
-            exportas: function (format) {
+            exportAs: function (format) {
                 var tracksToExport = annotationTool.video
                     .get("tracks").getVisibleTracks();
                 var categoriesToExport = annotationTool.video
@@ -708,15 +708,13 @@ define(["jquery",
                 switch (format) {
                     case "csv":
                         annotationTool.exportCsv(
-                            annotationTool.video,
                             tracksToExport,
                             categoriesToExport,
                             annotationTool.freeTextVisible
                         );
                         break;
                     case "xlxs":
-                        annotationTool.exportXlxs(
-                            annotationTool.video,
+                        annotationTool.exportXlsx(
                             tracksToExport,
                             categoriesToExport,
                             annotationTool.freeTextVisible

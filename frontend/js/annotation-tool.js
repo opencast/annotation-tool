@@ -705,8 +705,8 @@ define(["jquery",
             exportCsv: function (tracks, categories, freeText) {
                 let bookData = this.gatherExportData(tracks, categories, freeText);
 
-                var json = JSON.stringify(bookData);
-                var csv = PapaParse.unparse(json);
+                //var json = JSON.stringify(bookData);
+                var csv = PapaParse.unparse(JSON.stringify(bookData));
 
                 saveAs(new Blob([csv], {type:"text/csv;charset=utf-8;"}), 'export.csv');
             },
@@ -718,7 +718,7 @@ define(["jquery",
              * @param {Category[]} categories The tracks to include in the export
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
-            exportXlxs: function (tracks, categories, freeText) {
+            exportXlsx: function (tracks, categories, freeText) {
                 let bookData = this.gatherExportData(tracks, categories, freeText);
 
                 // Generate workbook
@@ -787,7 +787,7 @@ define(["jquery",
                         var line = [];
 
                         let label = annotation.attributes.label;
-                        // No idea what this check is good for tbh
+                        // Exclude annotations that are currently not visible
                         if (label) {
                             if (categories && !categories.map(category => category.id).includes(label.category.id)) return;
                         } else {
@@ -835,7 +835,7 @@ define(["jquery",
                             addCommentLine(line, comment);
                             
                             if(comment.replies.length > 0) {
-                                comment_replies(line, comment.replies.models)
+                                commentReplies(line, comment.replies.models)
                             }
                         });
 
@@ -882,11 +882,11 @@ define(["jquery",
                     bookData.push(commentLine);
                 }
 
-                function comment_replies(line, replies) {
+                function commentReplies(line, replies) {
                     _.each(replies, function (comment) {
                         addCommentLine(line, comment);
 
-                        comment_replies(line, comment.attributes.replies)
+                        commentReplies(line, comment.attributes.replies)
                     });
                 }
             },
