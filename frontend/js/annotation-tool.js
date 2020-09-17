@@ -812,8 +812,6 @@ define(["jquery",
                             line.push("")
                         }
                         
-                        // What the heck is the difference between 'scalevalue' and 'scaleValue'?
-                        // They seem to contain the exact same data
                         if(annotation.attributes.scalevalue) {
                             line.push(annotation.attributes.scalevalue.scale.name);
                             line.push(annotation.attributes.scalevalue.name);
@@ -1108,9 +1106,6 @@ define(["jquery",
                 }
             }
         };
-
-        
-
         return annotationTool;
     }
 );
