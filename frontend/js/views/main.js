@@ -692,10 +692,10 @@ define(["jquery",
 
             /**
              * Offer the user an excel version of the annotations for download.
-             * @alias module:views-main.Main#export_xlxs
+             * @alias module:views-main.Main#export_xlsx
              */
             exportXlsx: function () {
-                this.exportAs("xlxs");
+                this.exportAs("xlsx");
             },
 
             exportAs: function (format) {
@@ -713,7 +713,7 @@ define(["jquery",
                             annotationTool.freeTextVisible
                         );
                         break;
-                    case "xlxs":
+                    case "xlsx":
                         annotationTool.exportXlsx(
                             tracksToExport,
                             categoriesToExport,
