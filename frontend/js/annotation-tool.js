@@ -104,8 +104,8 @@ define(["jquery",
 
             /**
              * Initialize the tool
-             * @alias   annotationTool.start
-             * @param  {module:annotation-tool-configuration.Configuration} config The tool configuration
+             * @alias annotationTool.start
+             * @param {module:annotation-tool-configuration.Configuration} config The tool configuration
              */
             start: function (config) {
                 _.bindAll(this,
@@ -176,7 +176,7 @@ define(["jquery",
 
             /**
              * Listen and retrigger timeupdate event from player adapter events with added intervals
-             * @alias   annotationTool.onTimeUpdate
+             * @alias annotationTool.onTimeUpdate
              */
             onTimeUpdate: function () {
                 var currentPlayerTime = this.playerAdapter.getCurrentTime();
@@ -206,7 +206,7 @@ define(["jquery",
 
             /**
              * Add a timeupdate listener with the given interval
-             * @alias   annotationTool.addTimeupdateListener
+             * @alias annotationTool.addTimeupdateListener
              * @param {Object} callback the listener callback
              * @param {Number} interval the interval between each timeupdate event
              */
@@ -234,9 +234,9 @@ define(["jquery",
 
             /**
              * Remove the given timepudate listener
-             * @alias   annotationTool.removeTimeupdateListener
+             * @alias annotationTool.removeTimeupdateListener
              * @param {Object} callback the listener callback
-             * @param {Number} (interval) the interval between each timeupdate event
+             * @param {Number} interval the interval between each timeupdate event
              */
             removeTimeupdateListener: function (callback, interval) {
                 var timeupdateEvent = this.EVENTS.TIMEUPDATE;
@@ -261,12 +261,14 @@ define(["jquery",
              * Set the given annotation(s) as current selection
              * @alias annotationTool.setSelection
              * @param {Array} selection The new selection
+             * @param {Boolean} noToggle don't toggle already selected annotations
              */
-            setSelection: function (selection) {
+            setSelection: function (selection, noToggle) {
                 if (this.selection) {
                     this.stopListening(this.selection, "destroy", this.onDestroyRemoveSelection);
 
                     if (selection && this.selection.id === selection.id) {
+                        if (noToggle) return;
                         selection = null;
                     }
                 } else if (!selection) return;  // Both selections are `null`, nothing to do
@@ -287,7 +289,7 @@ define(["jquery",
 
             /**
              * Returns the current selection of the tool
-             * @alias   annotationTool.getSelection
+             * @alias annotationTool.getSelection
              * @return {Annotation} The current selection or undefined if no selection.
              */
             getSelection: function () {
@@ -296,7 +298,7 @@ define(["jquery",
 
             /**
              * Informs if there is or not some items selected
-             * @alias   annotationTool.hasSelection
+             * @alias annotationTool.hasSelection
              * @return {Boolean} true if an annotation is selected or false.
              */
             hasSelection: function () {
@@ -305,7 +307,7 @@ define(["jquery",
 
             /**
              * Update the ordering of the tracks and alert everyone who is interested.
-             * @alias  annotationTool.orderTracks
+             * @alias annotationTool.orderTracks
              * @param {Array} order The new track order
              */
             orderTracks: function (order) {
@@ -334,11 +336,10 @@ define(["jquery",
 
             /**
              * Get all annotations that cover a given point in time.
-             * @alias   annotationTool.getCurrentAnnotations
+             * @alias annotationTool.getCurrentAnnotations
              */
             getCurrentAnnotations: function () {
-                return this.video.get("tracks")
-                    .chain()
+                return _.chain(this.video.get("tracks").getVisibleTracks())
                     .map(function (track) { return track.annotations.models; })
                     .flatten()
                     .filter(function (annotation) { return annotation.covers(
@@ -350,7 +351,7 @@ define(["jquery",
 
             /**
              * Listener for player "timeupdate" event to highlight the current annotations
-             * @alias   annotationTool.updateSelectionOnTimeUpdate
+             * @alias annotationTool.updateSelectionOnTimeUpdate
              */
             updateSelectionOnTimeUpdate: function () {
                 var previousAnnotations = this.currentAnnotations || [];
@@ -367,6 +368,18 @@ define(["jquery",
                     this.currentAnnotations,
                     previousAnnotations
                 );
+            },
+
+            /**
+             * Check whether an annotation should be visible in the current configuration
+             * @alias annotationTool.isVisible
+             */
+            isVisible: function (annotation) {
+                if (!annotation.collection.track.get("visible")) return false;
+                var category = annotation.category();
+                if (category && !category.get("visible")) return false;
+                if (!category && !annotationTool.freeTextVisible) return false;
+                return true;
             },
 
             //////////////
@@ -407,9 +420,9 @@ define(["jquery",
 
             /**
              * Get the track with the given Id
-             * @alias   annotationTool.getTrack
+             * @alias annotationTool.getTrack
              * @param  {String} id The track Id
-             * @return {Object}    The track object or undefined if not found
+             * @return {Object} The track object or undefined if not found
              */
             getTrack: function (id) {
                 if (_.isUndefined(this.video)) {
@@ -422,8 +435,8 @@ define(["jquery",
 
             /**
              * Get all the tracks
-             * @alias   annotationTool.getTracks
-             * @return {Object}    The list of the tracks
+             * @alias annotationTool.getTracks
+             * @return {Object} The list of the tracks
              */
             getTracks: function () {
                 if (_.isUndefined(this.video)) {
@@ -436,9 +449,9 @@ define(["jquery",
 
             /**
              * Get the track with the given Id
-             * @alias   annotationTool.getTrack
-             * @param  {String} id The track Id
-             * @return {Object}    The track object or undefined if not found
+             * @alias annotationTool.getTrack
+             * @param {String} id The track Id
+             * @return {Object} The track object or undefined if not found
              */
             getSelectedTrack: function () {
                 return this.selectedTrack;
@@ -446,8 +459,8 @@ define(["jquery",
 
             /**
              * Select the given track
-             * @alias   annotationTool.selectTrack
-             * @param  {Object} track the track to select
+             * @alias annotationTool.selectTrack
+             * @param {Object} track the track to select
              */
             selectTrack: function (track) {
                 if (track === this.selectedTrack) return;
@@ -459,10 +472,10 @@ define(["jquery",
 
             /**
              * Get the annotation with the given Id
-             * @alias   annotationTool.getAnnotation
-             * @param  {String} annotationId The annotation
-             * @param  {String} (trackId)      The track Id (Optional)
-             * @return {Object}   The annotation object or undefined if not found
+             * @alias annotationTool.getAnnotation
+             * @param {String} annotationId The annotation
+             * @param {String} trackId The track Id (Optional)
+             * @return {Object} The annotation object or undefined if not found
              */
             getAnnotation: function (annotationId, trackId) {
                 var track,
@@ -499,9 +512,9 @@ define(["jquery",
 
             /**
              * Get an array containning all the annotations or only the ones from the given track
-             * @alias   annotationTool.getAnnotations
-             * @param  {String} (trackId)      The track Id (Optional)
-             * @return {Array}   The annotations
+             * @alias annotationTool.getAnnotations
+             * @param {String} trackId The track Id (Optional)
+             * @return {Array} The annotations
              */
             getAnnotations: function (trackId) {
                 var track,
