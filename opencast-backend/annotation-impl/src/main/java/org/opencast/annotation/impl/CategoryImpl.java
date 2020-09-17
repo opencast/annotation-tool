@@ -98,7 +98,8 @@ public class CategoryImpl extends ResourceImpl implements Category {
     Category category = (Category) o;
     return id == category.getId() && videoId.equals(category.getVideoId()) && scaleId.equals(category.getScaleId())
             && name.equals(category.getName()) && description.equals(category.getDescription())
-            && settings.equals(category.getSettings()) && getTags().equals(category.getTags());
+            && settings.equals(category.getSettings()) && getTags().equals(category.getTags())
+            && seriesExtId.equals((category.getSeriesExtId()));
   }
 
   @Override

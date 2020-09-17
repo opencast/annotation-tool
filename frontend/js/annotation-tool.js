@@ -631,6 +631,10 @@ define(["jquery",
                             );
                             concludeInitialization();
                         }
+                    }, this),
+                    
+                    willThisWork = _.bind(function () {
+                        console.log("HellO!")
                     }, this);
 
                 $.when(this.getVideoExtId(), this.getVideoParameters()).then(
@@ -643,7 +647,6 @@ define(["jquery",
                                         video = videos.create(videoParameters, { wait: true });
                                     } else {
                                         video = videos.at(0);
-                                        var test = this.getSeriesExtId();
                                         video.set(videoParameters);
                                     }
 
@@ -657,7 +660,6 @@ define(["jquery",
                             video = videos.at(0);
                             this.video = video;
                             video.set(videoParameters);
-                            var test = this.getSeriesExtId();
                             video.save(null, {
                                 error: _.bind(function (model, response, options) {
                                     if (response.status === 403) {
@@ -668,8 +670,10 @@ define(["jquery",
                             });
                             if (video.get("ready")) {
                                 createDefaultTrack();
+                                willThisWork();
                             } else {
                                 video.once("ready", createDefaultTrack);
+                                video.once("ready", willThisWork);
                             }
                         }
                     }, this)

@@ -73,18 +73,15 @@ define(["underscore",
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                var allCategories = new Categories([], { video: null, seriesExtId: "65e0f334-2fdc-466a-a459-f39a1119a0ab" });
-                var allCategoriesURL = allCategories.url();
-                //allCategories.urlRoot = allCategories.url();
-                allCategories.fetch({
-                    success: function(collection, response, options) {
-                        console.info('~ Response::SUCCESS', collection, response, options);
-                    },
+                // allCategories.fetch({
+                //     success: function(collection, response, options) {
+                //         console.info('~ Response::SUCCESS', collection, response, options);
+                //     },
                     
-                    error: function(collection, response, options) {
-                        console.info('~ Response::ERROR', collection, response, options);
-                    }
-                });
+                //     error: function(collection, response, options) {
+                //         console.info('~ Response::ERROR', collection, response, options);
+                //     }
+                // });
 
                 // Check if tracks are given
                 if (attr.tracks && _.isArray(attr.tracks)) {
@@ -112,6 +109,40 @@ define(["underscore",
                     this.get("tracks").fetch({ async: false });
                     this.get("scales").fetch({ async: false });
                 }
+
+                // Synchronize video categories with series categories
+                let videoSeriesId = "";
+                $.when(annotationTool.getSeriesExtId()).then(function(seriesId){
+                    videoSeriesId = seriesId;
+                });
+                
+                // // Grab all categories belonging to our series
+                // var seriesCategories = new Categories([], { video: null, seriesExtId: videoSeriesId });
+                // seriesCategories.fetch({ async: false });
+                // // var categoriesBelongingToSeries = _.filter(allCategories.models, function(model) {
+                // //     return model.attributes.seriesExtId == videoSeriesId;
+                // // });
+                // let videoCategories = this.get("categories");
+                // //let videoCategories = _.clone(this.get("categories"));
+
+                // // Uniquely add series categories (based on id)
+                // _.each(seriesCategories.models, function (model) {
+                //     if(videoCategories.indexOf(model) === -1) {
+                //         videoCategories.push(model);
+                //         console.log(videoCategories);
+                //     }
+                // });
+
+                // // Series categories should decay to event categories
+                // // if the video series became different or nothing
+                // _.each(videoCategories.models, function (model) {
+                //     if (model.attributes.seriesExtId && model.attributes.seriesExtId != videoSeriesId) {
+                //         model.attributes.seriesExtId = null;
+                //     }
+                // });
+
+                //this.set("categories", videoCategories);
+                //this.set({ categories: videoCategories });
             },
 
             /**
@@ -140,7 +171,44 @@ define(["underscore",
                                     if (categories && (categories.length) === 0) {
                                         categories.fetch({
                                             async: false,
-                                            success: function () {
+                                            success: function (collection) {
+                                                
+                // Synchronize video categories with series categories
+                let videoSeriesId = "";
+                $.when(annotationTool.getSeriesExtId()).then(function(seriesId){
+                    videoSeriesId = seriesId;
+                });
+                
+                // Grab all categories belonging to our series
+                let seriesCategories = new Categories([], { video: null, seriesExtId: videoSeriesId });
+                seriesCategories.fetch({ async: false });
+
+                // // Uniquely add series categories (based on id)
+                // _.each(seriesCategories.models, function (model) {
+                //     if(collection.indexOf(model) === -1) {
+                //         collection.push(model);
+                //         console.log(collection);
+                //     }
+                // });
+
+                let models = []
+                // Move models from one collection to other
+                _.each(seriesCategories.models, function (model) {
+                    models.push(model);
+                });
+                _.each(models, function (model) {
+                    seriesCategories.remove(model);
+                    collection.add(model);
+                });
+
+                // Series categories should decay to event categories
+                // if the video series became different or nothing
+                _.each(collection.models, function (model) {
+                    if (model.attributes.seriesExtId && model.attributes.seriesExtId != videoSeriesId) {
+                        model.attributes.seriesExtId = null;
+                    }
+                });
+
                                                 self.categoriesReady = true;
                                                 if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                                     self.trigger("ready");

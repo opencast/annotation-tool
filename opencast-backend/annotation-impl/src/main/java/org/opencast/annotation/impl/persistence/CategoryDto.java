@@ -98,7 +98,7 @@ public class CategoryDto extends AbstractResourceDto {
 
   public static CategoryDto create(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
           Option<String> settings, Resource resource, Option<String> seriesExtId) {
-    CategoryDto dto = new CategoryDto().update(name, description, scaleId, settings, resource);
+    CategoryDto dto = new CategoryDto().update(name, description, scaleId, settings, resource, seriesExtId);
     dto.videoId = videoId.getOrElse((Long) null);
     dto.scaleId = scaleId.getOrElse((Long) null);
     dto.seriesExtId = seriesExtId.getOrElse((String) null);
@@ -106,7 +106,7 @@ public class CategoryDto extends AbstractResourceDto {
   }
 
   public CategoryDto update(String name, Option<String> description, Option<Long> scaleId, Option<String> settings,
-          Resource resource) {
+          Resource resource, Option<String> seriesExtId) {
     super.update(resource);
     this.name = name;
     this.description = description.getOrElse((String) null);
@@ -114,6 +114,7 @@ public class CategoryDto extends AbstractResourceDto {
     this.settings = settings.getOrElse((String) null);
     if (resource.getTags() != null)
       this.tags = resource.getTags();
+    this.seriesExtId = seriesExtId.getOrElse((String) null);
     return this;
   }
 
@@ -138,7 +139,7 @@ public class CategoryDto extends AbstractResourceDto {
               AbstractResourceDto.toJson.apply(eas, s),
               jO(p("id", s.getId()), p("name", s.getName()), p("description", s.getDescription()),
                       p("settings", s.getSettings()), p("scale_id", s.getScaleId()),
-                      p("series_ext_id", s.getSeriesExtId())));
+                      p("seriesExtId", s.getSeriesExtId())));
     }
   };
 

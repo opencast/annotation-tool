@@ -155,8 +155,6 @@ define(["jquery",
             },
 
             series: function() {
-                var lol = annotationTool.video.get("categories");
-
                 this.model.toggleSeries();
                 this.model.save(null, { wait: true });
             },

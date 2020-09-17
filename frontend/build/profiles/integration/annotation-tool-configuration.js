@@ -53,6 +53,14 @@ define(["jquery",
 
             options.beforeSend = function () {
                 this.url = "../../extended-annotations" + this.url;
+
+                // Sanitize query strings, so that they're actually at the end
+                // TODO: Clean this up OR find a better way to do this
+                var queryString = this.url.match(/\?(.*?)\//);
+                if(queryString && queryString[0]) {
+                    this.url = this.url.replace(queryString[0], "");
+                    this.url = this.url + queryString[0];
+                }
             };
 
             return backboneSync.call(this, method, model, options);
