@@ -1108,9 +1108,6 @@ define(["jquery",
                 }
             }
         };
-
-        
-
         return annotationTool;
     }
 );
