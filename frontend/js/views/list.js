@@ -188,8 +188,9 @@ define(["underscore",
              * @alias module:views-list.List#renderSelection
              * @param {Annotation?} selection the currently selected annotation
              * @param {Annotation?} previousSelection the previously selected annotation
+             * @param {any} hint a hint about where the event came from
              */
-            renderSelection: function (selection, previousSelection) {
+            renderSelection: function (selection, previousSelection, hint) {
                 if (previousSelection) {
                     var oldView = this.getViewFromAnnotation(previousSelection.id);
                     // If the annotation got deleted, we probably already removed the view
@@ -201,7 +202,9 @@ define(["underscore",
                     var newView = this.getViewFromAnnotation(selection.id).$el;
                     newView.addClass("selected");
 
-                    this.scrollIntoView(newView, newView);
+                    if (hint !== "list") {
+                        this.scrollIntoView(newView, newView);
+                    }
                 }
             },
 

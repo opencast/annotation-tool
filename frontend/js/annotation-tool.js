@@ -266,8 +266,9 @@ define(["jquery",
              * @alias annotationTool.setSelection
              * @param {Array} selection The new selection
              * @param {Boolean} noToggle don't toggle already selected annotations
+             * @param {any} hint Arbitrary data to pass along the selection event
              */
-            setSelection: function (selection, noToggle) {
+            setSelection: function (selection, noToggle, hint) {
                 if (this.selection) {
                     this.stopListening(this.selection, "destroy", this.onDestroyRemoveSelection);
 
@@ -287,7 +288,8 @@ define(["jquery",
                 this.trigger(
                     this.EVENTS.ANNOTATION_SELECTION,
                     selection,
-                    previousSelection
+                    previousSelection,
+                    hint
                 );
             },
 
