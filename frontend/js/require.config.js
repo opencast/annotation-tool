@@ -11,6 +11,7 @@ require.config({
         "handlebars": "libs/handlebars",
         "handlebarsHelpers": "handlebarsHelpers",
         "jquery.colorPicker": "libs/jquery.colorPicker.min",
+        "jquery.FileReader": "libs/jquery.FileReader",
         "jquery.appear": "libs/jquery.appear",
         "localstorage": "libs/backbone/backbone.localStorage-1.1.16",
         "jquery": "libs/jquery-1.8.0",
@@ -32,7 +33,8 @@ require.config({
         "goldenlayout": "libs/goldenlayout",
         "xlsx": "libs/xlsx.full.min",
         "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min",
-        "filesaver": "libs/FileSaver.min"
+        "papaparse": "libs/papaparse.min",
+        "filesaver": "libs/FileSaver.min",
     },
     waitSeconds: 10,
 
