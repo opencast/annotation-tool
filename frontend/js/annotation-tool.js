@@ -813,7 +813,11 @@ define(["jquery",
                         }
                         
                         if(annotation.attributes.scalevalue) {
-                            line.push(annotation.attributes.scalevalue.scale.name);
+                            if (annotationTool.localStorage) {
+                                line.push(getScaleNameByScaleValueId(annotation.attributes.scalevalue.id));
+                            } else {
+                                line.push(annotation.attributes.scalevalue.scale.name);
+                            }
                             line.push(annotation.attributes.scalevalue.name);
                             line.push(annotation.attributes.scalevalue.value);
                         } else {
@@ -886,6 +890,16 @@ define(["jquery",
 
                         commentReplies(line, comment.attributes.replies)
                     });
+                }
+
+                function getScaleNameByScaleValueId(scaleValueId) {
+                    for (let i = 0; i < annotationTool.video.attributes.scales.models.length; i++) {
+                        for(let j = 0; j < annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models.length; j++) {
+                            if (annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models[j].attributes.id == scaleValueId) {
+                                return annotationTool.video.attributes.scales.models[i].attributes.name;
+                            }
+                        }
+                    }
                 }
             },
         });
