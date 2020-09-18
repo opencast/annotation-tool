@@ -54,6 +54,9 @@ var Resource = Backbone.Model.extend({
             if (!attr.created_at) {
                 this.set("created_at", new Date());
             }
+            if (!attr.updated_at) {
+                this.set("updated_at", new Date());
+            }
         }
 
         function updateIsPublic(access) {
