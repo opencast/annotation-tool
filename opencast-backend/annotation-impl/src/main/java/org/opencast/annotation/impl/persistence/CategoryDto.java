@@ -90,6 +90,9 @@ public class CategoryDto extends AbstractResourceDto {
   @Column(name = "series_ext_id")
   private String seriesExtId;
 
+  @Column(name = "series_category_id")
+  private Long seriesCategoryId;
+
   @ElementCollection
   @MapKeyColumn(name = "name")
   @Column(name = "value")
@@ -97,16 +100,18 @@ public class CategoryDto extends AbstractResourceDto {
   protected Map<String, String> tags = new HashMap<String, String>();
 
   public static CategoryDto create(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource, Option<String> seriesExtId) {
-    CategoryDto dto = new CategoryDto().update(name, description, scaleId, settings, resource, seriesExtId);
+          Option<String> settings, Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
+    CategoryDto dto = new CategoryDto().update(name, description, scaleId, settings, resource, seriesExtId,
+            seriesCategoryId);
     dto.videoId = videoId.getOrElse((Long) null);
     dto.scaleId = scaleId.getOrElse((Long) null);
     dto.seriesExtId = seriesExtId.getOrElse((String) null);
+    dto.seriesCategoryId = seriesCategoryId.getOrElse((Long) null);
     return dto;
   }
 
   public CategoryDto update(String name, Option<String> description, Option<Long> scaleId, Option<String> settings,
-          Resource resource, Option<String> seriesExtId) {
+          Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
     super.update(resource);
     this.name = name;
     this.description = description.getOrElse((String) null);
@@ -115,6 +120,7 @@ public class CategoryDto extends AbstractResourceDto {
     if (resource.getTags() != null)
       this.tags = resource.getTags();
     this.seriesExtId = seriesExtId.getOrElse((String) null);
+    this.seriesCategoryId = seriesCategoryId.getOrElse((Long) null);
     return this;
   }
 
@@ -122,7 +128,7 @@ public class CategoryDto extends AbstractResourceDto {
     return new CategoryImpl(id, option(videoId), option(scaleId), name, option(description), option(settings),
             new ResourceImpl(option(access), option(createdBy), option(updatedBy), option(deletedBy), option(createdAt),
                     option(updatedAt), option(deletedAt), tags),
-            option(seriesExtId));
+            option(seriesExtId), option(seriesCategoryId));
   }
 
   public static final Function<CategoryDto, Category> toCategory = new Function<CategoryDto, Category>() {
@@ -139,7 +145,7 @@ public class CategoryDto extends AbstractResourceDto {
               AbstractResourceDto.toJson.apply(eas, s),
               jO(p("id", s.getId()), p("name", s.getName()), p("description", s.getDescription()),
                       p("settings", s.getSettings()), p("scale_id", s.getScaleId()),
-                      p("seriesExtId", s.getSeriesExtId())));
+                      p("seriesExtId", s.getSeriesExtId()), p("seriesCategoryId", s.getSeriesCategoryId())));
     }
   };
 

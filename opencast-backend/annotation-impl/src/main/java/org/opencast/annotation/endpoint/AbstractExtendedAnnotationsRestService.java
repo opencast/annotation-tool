@@ -662,12 +662,16 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("access") final Integer access, @FormParam("tags") final String tags,
-          @FormParam("seriesExtId") final String seriesExtId) {
-    return postCategoryResponse(none(), name, description, scaleId, settings, access, tags, seriesExtId);
+          @FormParam("seriesExtId") final String seriesExtId,
+          @FormParam("seriesCategoryId") final Long seriesCategoryId) {
+    return postCategoryResponse(none(), name, description, scaleId, settings, access, tags, none(),
+            none());
   }
 
   Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
-          final Long scaleId, final String settings, final Integer access, final String tags, final String seriesExtId) {
+          final Long scaleId, final String settings, final Integer access, final String tags,
+          final Option<String> seriesExtId,
+          final Option<Long> seriesCategoryId) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -678,7 +682,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Category category = eas().createCategory(videoId, option(scaleId), name, trimToNone(description),
-                trimToNone(settings), resource, option(seriesExtId));
+                trimToNone(settings), resource, seriesExtId, seriesCategoryId);
 
         return Response.created(categoryLocationUri(category, videoId.isSome()))
                 .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();
@@ -692,13 +696,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags, @FormParam("seriesExtId") final String seriesExtId) {
-    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, tags, seriesExtId);
+          @FormParam("tags") final String tags, @FormParam("seriesExtId") final String seriesExtId,
+          @FormParam("seriesCategoryId") final Long seriesCategoryId) {
+    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, tags, option(seriesExtId),
+            option(seriesCategoryId));
   }
 
   Response putCategoryResponse(final Option<Long> videoId, final long id, final String name,
           final String description, final Option<Long> scaleId, final String settings, final String tags,
-          final String seriesExtId) {
+          final Option<String> seriesExtId, final Option<Long> seriesCategoryId) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -716,7 +722,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(c, tags);
             final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(description),
-                    trimToNone(settings), resource, trimToNone((seriesExtId)));
+                    trimToNone(settings), resource, seriesExtId, seriesCategoryId);
             if (!c.equals(updated)) {
               eas().updateCategory(updated);
               c = updated;
@@ -729,7 +735,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response none() {
             Resource resource = eas().createResource(tags);
             final Category category = eas().createCategory(videoId, scaleId, name, trimToNone(description),
-                    trimToNone(settings), resource, trimToNone(seriesExtId));
+                    trimToNone(settings), resource, seriesExtId, seriesCategoryId);
 
             return Response.created(categoryLocationUri(category, videoId.isSome()))
                     .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();

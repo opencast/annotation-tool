@@ -523,12 +523,17 @@ public interface ExtendedAnnotationService {
    *          the category settings
    * @param resource
    *          the resource
+   * @param seriesExtId
+   *          the external series the category belongs to
+   * @param seriesCategoryId
+   *          the series category the category belongs to
    * @return the created category
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
   Category createCategory(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource, Option<String> seriesExtId) throws ExtendedAnnotationException;
+          Option<String> settings, Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId)
+          throws ExtendedAnnotationException;
 
   /**
    * Creates a category
@@ -545,12 +550,16 @@ public interface ExtendedAnnotationService {
    *          the category settings
    * @param resource
    *          the resource
+   * @param seriesExtId
+   *          the external series the category belongs to
+   * @param seriesCategoryId
+   *          the series category the category belongs to
    * @return the created category
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
   Option<Category> createCategoryFromTemplate(long videoId, long templateCategoryId, Resource resource,
-          String seriesExtId)
+          String seriesExtId, Long seriesCategoryId)
           throws ExtendedAnnotationException;
 
   /**
@@ -581,12 +590,15 @@ public interface ExtendedAnnotationService {
    *          the tags logical AND Map
    * @param tagsOr
    *          the tags logical OR Map
+   * @param seriesExtId
+   *          the external series the category belongs to
    * @return the category list or an empty list if no categories has been found
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
   List<Category> getCategories(Option<Long> videoId, Option<Integer> offset, Option<Integer> limit, Option<Date> since,
-          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr, Option<String> seriesExtId) throws ExtendedAnnotationException;
+          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr, Option<String> seriesExtId)
+          throws ExtendedAnnotationException;
 
   /**
    * Update a category.
