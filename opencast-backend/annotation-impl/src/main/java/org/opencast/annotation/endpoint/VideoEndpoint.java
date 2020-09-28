@@ -642,11 +642,9 @@ public class VideoEndpoint {
           @FormParam("category_id") final Long id, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags, @FormParam("seriesExtId") final String seriesExtId,
           @FormParam("seriesCategoryId") final Long seriesCategoryId) {
-    System.out.println("HELLO");
     if (id == null)
       return host.postCategoryResponse(some(videoId), name, description, scaleId, settings, access,
-              tags, some(seriesExtId), some(seriesCategoryId));
-
+              tags, trimToNone(seriesExtId), option(seriesCategoryId));
     return run(array(id), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -684,7 +682,7 @@ public class VideoEndpoint {
           @FormParam("tags") final String tags, @FormParam("seriesExtId") final String seriesExtId,
           @FormParam("seriesCategoryId") final Long seriesCategoryId) {
     return host.putCategoryResponse(some(videoId), id, name, description, option(scaleId), settings, tags,
-            some(seriesExtId), some(seriesCategoryId));
+            trimToNone(seriesExtId), option(seriesCategoryId));
   }
 
   @GET

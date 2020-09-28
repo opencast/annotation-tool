@@ -354,7 +354,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
             resource, some("seriesId"), none());
     assertEquals(tags.get(), c.getTags());
     Option<Category> cCopy = eas.createCategoryFromTemplate(20, categoryTemplate.getId(), resource,
-            "SeriesId", (Long) null);
+            "SeriesId", 1337L);
     assertTrue(eas.getCategory(categoryTemplate.getId(), false).isSome());
     assertTrue(eas.getCategory(c.getId(), false).isSome());
     assertTrue(cCopy.isSome());

@@ -47,7 +47,7 @@ define(["underscore",
              */
             initialize: function (models, options) {
                 this.video = options.video;
-                this.seriesExtIdODerSo = options.seriesExtId;
+                this.mySeriesExtId = options.seriesExtId;
             },
 
             /**
@@ -56,11 +56,9 @@ define(["underscore",
              * @return {String} The url of this collection
              */
             url: function () {
-                var garbage = (this.video ? _.result(this.video, "url") : "") + "/categories/" + this._id + (this.seriesExtIdODerSo ? "?seriesExtId=" + this.seriesExtIdODerSo : "");
                 return (this.video ? _.result(this.video, "url") : "") 
                 + "/categories/" 
-                //+ (!_.isEmpty(this._byId) ? this._byId : "")
-                + (this.seriesExtIdODerSo ? "?seriesExtId=" + this.seriesExtIdODerSo : "");
+                + (this.mySeriesExtId ? "?seriesExtId=" + this.mySeriesExtId : "");
             },
 
             /**

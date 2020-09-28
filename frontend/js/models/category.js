@@ -181,21 +181,6 @@ define(["underscore",
                 this.set("visible", !this.get("visible"));
             },
 
-            toggleSeries: function () {
-                let videoSeriesId = "";
-                let categorySeriesId = this.get("seriesExtId");
-                $.when(annotationTool.getSeriesExtId()).then(function(seriesId){
-                    videoSeriesId = seriesId;
-
-                });
-
-                if (categorySeriesId) {
-                    this.set("seriesExtId", "");
-                } else {
-                    this.set("seriesExtId", videoSeriesId);
-                }
-            },
-
             /**
              * Change category color
              * @alias module:models-category.Category#setColor

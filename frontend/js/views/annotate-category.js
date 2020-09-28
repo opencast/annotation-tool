@@ -89,7 +89,7 @@ define(["jquery",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
                 "click .catItem-add": "onCreateLabel",
-                "click .catItem-header i.series": "series"
+                "click .catItem-header i.toggleSeries": "toggleSeries"
             },
 
             /**
@@ -154,8 +154,30 @@ define(["jquery",
                 return this;
             },
 
-            series: function() {
-                this.model.toggleSeries();
+            /**
+             * Toggle the category between belonging to an event and belonging
+             * to a series
+             * TODO: What exactly should happen when a series category turns into
+             * an event category?
+             */
+            toggleSeries: function() {
+                let categorySeriesId = this.model.get("seriesExtId");
+                let videoSeriesId = "";
+                $.when(annotationTool.getSeriesExtId()).then(function(seriesId){
+                    videoSeriesId = seriesId;
+
+                });
+
+                if (categorySeriesId) {
+                    // Remove from series
+                    this.model.set("seriesExtId", "");
+                    this.model.set("seriesCategoryId", "");
+                } else if (!categorySeriesId && videoSeriesId) {
+                    // Add to series
+                    this.model.set("seriesExtId", videoSeriesId);
+                    this.model.set("seriesCategoryId", "");
+                }
+
                 this.model.save(null, { wait: true });
             },
 

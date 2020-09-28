@@ -553,7 +553,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       @Override
       public Category apply(Category c) {
         Long scaleId = null;
-
         // Copy scale
         if (c.getScaleId().isSome()) {
           Option<Scale> scale = getScale(c.getScaleId().get(), false);
@@ -567,7 +566,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             createScaleValue(scaleId, sv.getName(), sv.getValue(), sv.getOrder(), resource);
           }
         }
-
         // Copy category
         final CategoryDto copyDto = CategoryDto.create(Option.some(videoId), option(scaleId), c.getName(),
                 c.getDescription(), c.getSettings(), resource, option(seriesExtId), option(seriesCategoryId));
@@ -597,6 +595,17 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
                 c.getSeriesCategoryId());
       }
     });
+
+    // If it belongs to a series, also update the series category
+    if (c.getSeriesCategoryId().isSome()) {
+      update("Category.findById", c.getSeriesCategoryId().get(), new Effect<CategoryDto>() {
+        @Override
+        public void run(CategoryDto dto) {
+          dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c, c.getSeriesExtId(),
+                  none());
+        }
+      });
+    }
   }
 
   @Override
@@ -639,9 +648,53 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
 
     if (seriesExtId.isSome()) {
-      List<Category> list = new ArrayList<>(categories);
-      list.addAll(findAllById(toCategory, offset, limit, "Category.findAllOfExtSeries", seriesExtId.get()));
-      categories = list;
+      // Make categories editable
+      List<Category> allCategories = new ArrayList<>(categories);
+      // Grab the categories with seriesExtId.
+      List<Category> seriesExtIdCategories = findAllById(toCategory, offset, limit, "Category.findAllOfExtSeries",
+              seriesExtId.get());
+
+      // Remove all categories with categorySeriesId, this should leave the true series categories
+      List<Category> seriesCategories = new ArrayList<>(seriesExtIdCategories);
+      seriesCategories.removeIf(n -> n.getSeriesCategoryId().isSome());
+
+      for (Category seriesCategory : seriesCategories) {
+        int alreadyExists = 0;    // 0: Create new category; 1: Update existing category; 2: Do neither
+        Category existingCategory = null;
+        // Check if we already have video category corresponding to the series category
+        for (Category videoCategory : categories) {
+          if (videoCategory.getId() == seriesCategory.getId()) {  // One of our video categories is a true series category
+            alreadyExists = 2;
+            break;
+          }
+
+          // If we have, update the existing video category
+          if (videoCategory.getSeriesCategoryId().isSome() && videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()) {
+            alreadyExists = 1;
+            existingCategory = videoCategory;
+            break;  // Don't need to continue the loop
+          }
+        }
+        // If we have, update the existing video category
+        if (alreadyExists == 1) {
+          Category update = new CategoryImpl(existingCategory.getId(), videoId, seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
+                  seriesCategory.getSettings(), new ResourceImpl(option(seriesCategory.getAccess()),
+                  seriesCategory.getCreatedBy(), seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(),
+                  seriesCategory.getCreatedAt(), seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(),
+                  seriesCategory.getTags()), seriesCategory.getSeriesExtId(), option(seriesCategory.getId()));
+          updateCategory(update);
+          // If we don't have, create a new video category
+        } else if (alreadyExists == 0)  {
+          Category newCategory;
+          newCategory = createCategory(videoId, seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
+                  seriesCategory.getSettings(), new ResourceImpl(option(seriesCategory.getAccess()),
+                          seriesCategory.getCreatedBy(), seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(),
+                          seriesCategory.getCreatedAt(), seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(),
+                          seriesCategory.getTags()), seriesCategory.getSeriesExtId(), option(seriesCategory.getId()));
+          allCategories.add(newCategory);
+        }
+      }
+      categories = allCategories;
     }
 
     if (tagsAnd.isSome())
@@ -655,6 +708,22 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public boolean deleteCategory(Category category) throws ExtendedAnnotationException {
+    boolean result = true;
+    if (category.getSeriesExtId().isSome()) {
+      List<Category> seriesExtIdCategories = findAllById(toCategory, none(), none(), "Category.findAllOfExtSeries",
+              category.getSeriesExtId().get());
+      for (Category categoryfromSeries: seriesExtIdCategories) {
+        result = deleteCategoryImpl(categoryfromSeries);
+        if (!result) { break; }
+      }
+    } else {
+      result = deleteCategoryImpl(category);
+    }
+
+    return result;
+  }
+
+  public boolean deleteCategoryImpl(Category category) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(category);
     final Category updated = new CategoryImpl(category.getId(), category.getVideoId(), category.getScaleId(),
             category.getName(), category.getDescription(), category.getSettings(), deleteResource,
@@ -664,6 +733,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     for (Label l : getLabelsByCategoryId(category.getId())) {
       deleteLabel(l);
     }
+
     return true;
   }
 
