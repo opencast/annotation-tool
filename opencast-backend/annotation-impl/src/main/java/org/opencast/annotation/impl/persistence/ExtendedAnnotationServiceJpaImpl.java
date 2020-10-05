@@ -81,6 +81,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.RollbackException;
@@ -649,7 +650,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
     if (seriesExtId.isSome()) {
       // Make categories editable
-      List<Category> allCategories = new ArrayList<>(categories);
+      List<Category> createdOrUpdatedCategories = new ArrayList<>();
       // Grab the categories with seriesExtId.
       List<Category> seriesExtIdCategories = findAllById(toCategory, offset, limit, "Category.findAllOfExtSeries",
               seriesExtId.get());
@@ -663,7 +664,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         Category existingCategory = null;
         // Check if we already have video category corresponding to the series category
         for (Category videoCategory : categories) {
-          if (videoCategory.getId() == seriesCategory.getId()) {  // One of our video categories is a true series category
+          // If the category is a series master category, no creating or updating is necessary
+          if (videoCategory.getId() == seriesCategory.getId()) {
             alreadyExists = 2;
             break;
           }
@@ -691,9 +693,31 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
                           seriesCategory.getCreatedBy(), seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(),
                           seriesCategory.getCreatedAt(), seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(),
                           seriesCategory.getTags()), seriesCategory.getSeriesExtId(), option(seriesCategory.getId()));
-          allCategories.add(newCategory);
+          createdOrUpdatedCategories.add(newCategory);
         }
       }
+      // Make categories editable
+      List<Category> allCategories = new ArrayList<>(categories);
+
+
+//      // Remove video categories if they are referencing a series category that no longer exists
+//      List<Category> toDelete = new ArrayList<Category>();
+//      for (Category videoCategory: allCategories) {
+//        if (videoCategory.getSeriesCategoryId().isSome()) {
+//          boolean hasAMaster = false;
+//          for (Category seriesCategory: seriesCategories) {
+//            if (videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()) {
+//              hasAMaster = true;
+//            }
+//          }
+//          if (hasAMaster) {
+//            toDelete.add(videoCategory);
+//          }
+//        }
+//      }
+//      allCategories.removeAll(toDelete);
+
+      allCategories.addAll(createdOrUpdatedCategories);
       categories = allCategories;
     }
 
