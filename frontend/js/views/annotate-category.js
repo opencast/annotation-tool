@@ -175,7 +175,7 @@ define(["jquery",
                 } else if (!categorySeriesId && videoSeriesId) {
                     // Add to series
                     this.model.set("seriesExtId", videoSeriesId);
-                    this.model.set("seriesCategoryId", "");
+                    this.model.set("seriesCategoryId", this.model.id);
                 }
 
                 this.model.save(null, { wait: true });

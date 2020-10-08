@@ -58,22 +58,15 @@ define(["underscore",
              */
             administratorCanEditPublicInstances: true,
 
-            // idAttribute: function () {
-            //     if(this.seriesCategoryId) {
-            //         return "seriesCategoryId";
-            //     } else {
-            //         "id";
-            //     }
-            // },
+            sync: function(method, model, options) { 
 
-            get idAttribute () {
-                if(this.seriesCategoryId) {
-                    return "seriesCategoryId";
-                } else {
-                    "id";
+                // If the model is referencing another model, sync to the other model
+                if(model.get("seriesCategoryId")) {
+                    model.id = model.get("seriesCategoryId");
                 }
-            },
 
+                return Backbone.Model.prototype.sync.call(this, method, model, options);
+            },
 
             /**
              * Constructor
@@ -105,18 +98,6 @@ define(["underscore",
                 if (attr.id) {
                     this.attributes.labels.fetch({ async: false });
                 }
-
-                // Object.defineProperty(this,"idAttribute",{
-                //     get: function() {
-                //         if(this.get("seriesCategoryId")) {
-                //             return "seriesCategoryId";
-                //         } else {
-                //             return "id";
-                //         }
-                //     },
-                //                     //   return (m.get("monthly_amount") * 12);
-                //                     // },
-                //   });
 
                 this.attributes.visible = true;
             },

@@ -644,10 +644,6 @@ define(["jquery",
                             );
                             concludeInitialization();
                         }
-                    }, this),
-                    
-                    willThisWork = _.bind(function () {
-                        console.log("HellO!")
                     }, this);
 
                 $.when(this.getVideoExtId(), this.getVideoParameters()).then(

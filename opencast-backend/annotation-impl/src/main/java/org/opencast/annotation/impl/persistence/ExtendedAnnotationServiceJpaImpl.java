@@ -595,17 +595,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
                 c.getSeriesCategoryId());
       }
     });
-
-//    // If it belongs to a series, also update the series category
-//    if (c.getSeriesCategoryId().isSome()) {
-//      update("Category.findById", c.getSeriesCategoryId().get(), new Effect<CategoryDto>() {
-//        @Override
-//        public void run(CategoryDto dto) {
-//          dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c, c.getSeriesExtId(),
-//                  none());
-//        }
-//      });
-//    }
   }
 
   @Override
@@ -647,36 +636,31 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
 
     if (seriesExtId.isSome()) {
-      // Make categories editable
       List<Category> createdOrUpdatedCategories = new ArrayList<>();
       // Grab the categories with seriesExtId.
       List<Category> seriesExtIdCategories = findAllById(toCategory, offset, limit, "Category.findAllOfExtSeries",
               seriesExtId.get());
 
-      // Remove all categories with categorySeriesId, this should leave the true series categories
+      // Grab all master series categories by removing every category that is not referencing itself
       List<Category> seriesCategories = new ArrayList<>(seriesExtIdCategories);
-      seriesCategories.removeIf(n -> n.getSeriesCategoryId().isSome());
+      seriesCategories.removeIf(n -> n.getId() != n.getSeriesCategoryId().getOrElseNull());
 
+      // Check for every master series category if a local cpoy needs to be created or updated
       for (Category seriesCategory : seriesCategories) {
-        int alreadyExists = 0;    // 0: Create new category; 1: Update existing category; 2: Do neither
+        boolean alreadyExists = false;
         Category existingCategory = null;
+
         // Check if we already have video category corresponding to the series category
         for (Category videoCategory : categories) {
-          // If the category is a series master category, no creating or updating is necessary
-          if (videoCategory.getId() == seriesCategory.getId()) {
-            alreadyExists = 2;
-            break;
-          }
-
           // If we have, update the existing video category
           if (videoCategory.getSeriesCategoryId().isSome() && videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()) {
-            alreadyExists = 1;
+            alreadyExists = true;
             existingCategory = videoCategory;
             break;  // Don't need to continue the loop
           }
         }
         // If we have, update the existing video category
-        if (alreadyExists == 1) {
+        if (alreadyExists) {
           Category update = new CategoryImpl(existingCategory.getId(), videoId, seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
                   seriesCategory.getSettings(), new ResourceImpl(option(seriesCategory.getAccess()),
                   seriesCategory.getCreatedBy(), seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(),
@@ -684,7 +668,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
                   seriesCategory.getTags()), seriesCategory.getSeriesExtId(), option(seriesCategory.getId()));
           updateCategory(update);
           // If we don't have, create a new video category
-        } else if (alreadyExists == 0)  {
+        } else if (alreadyExists)  {
           Category newCategory;
           newCategory = createCategory(videoId, seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
                   seriesCategory.getSettings(), new ResourceImpl(option(seriesCategory.getAccess()),
@@ -697,19 +681,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       // Make categories editable
       List<Category> allCategories = new ArrayList<>(categories);
 
-//      for (Category videoCategory: allCategories) {
-//        if (videoCategory.getSeriesCategoryId().isSome()) {
-//          Option<CategoryDto> dto;
-//          dto = findById("Category.findById", videoCategory.getSeriesCategoryId().get());
-//          Option<Category> cat = dto.map(toCategory);
-//          if(cat.isNone() || cat.isSome() && cat.get().getSeriesExtId().isNone() ||
-//                  cat.isSome() && cat.get().getSeriesExtId().isSome() && cat.get().getSeriesExtId().get() != videoCategory.getSeriesExtId().get() ) {
-//            // Become the ultimate lifeform
-//
-//          }
-//        }
-//      }
-//
       // Remove video categories if they are referencing a series category that no longer exists
       List<Category> toDelete = new ArrayList<Category>();
       for (Category videoCategory: allCategories) {
@@ -743,13 +714,15 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public boolean deleteCategory(Category category) throws ExtendedAnnotationException {
     boolean result = true;
-    if (category.getSeriesExtId().isSome()) {
-      List<Category> seriesExtIdCategories = findAllById(toCategory, none(), none(), "Category.findAllOfExtSeries",
-              category.getSeriesExtId().get());
-      for (Category categoryfromSeries: seriesExtIdCategories) {
-        result = deleteCategoryImpl(categoryfromSeries);
+    // If the category is a series category, delete all corresponding series category
+    if (category.getSeriesCategoryId().isSome()) {
+      List<Category> withSeriesCategoryId = findAllById(toCategory, none(), none(), "Category.findAllOfSeriesCategory",
+              category.getSeriesCategoryId().get());
+      for (Category categoryBelongingToMaster: withSeriesCategoryId) {
+        result = deleteCategoryImpl(categoryBelongingToMaster);
         if (!result) { break; }
       }
+    // Delete the category
     } else {
       result = deleteCategoryImpl(category);
     }

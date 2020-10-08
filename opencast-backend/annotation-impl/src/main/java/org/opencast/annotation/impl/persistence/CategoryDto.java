@@ -60,7 +60,7 @@ import javax.persistence.Table;
         @NamedQuery(name = "Category.findAllOfTemplate", query = "select a from Category a where a.videoId IS NULL and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfVideo", query = "select a from Category a where a.videoId = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfExtSeries", query = "select a from Category a where a.seriesExtId = :id and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Category.findAllSeriesCategories", query = "select a from Category a where a.seriesExtId = :id and a.seriesCategoryId IS NULL"),
+        @NamedQuery(name = "Category.findAllOfSeriesCategory", query = "select a from Category a where a.seriesCategoryId = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfVideoSince", query = "select a from Category a where a.videoId = :id and a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
         @NamedQuery(name = "Category.deleteById", query = "delete from Category a where a.id = :id"),
         @NamedQuery(name = "Category.count", query = "select count(a) from Category a where a.deletedAt IS NULL"),
