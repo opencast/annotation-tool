@@ -72,7 +72,7 @@ define(["underscore",
              */
             url: function () {
                 // If the category belongs to a series, access the labels from the respective series category
-                if(this.category.get("seriesCategoryId")) {                    
+                if (this.category.get("seriesCategoryId")) {                    
                     return "/categories/" + this.category.get("seriesCategoryId")  + "/labels";
                 } else {
                     return _.result(this.category, "url") + "/labels";

@@ -81,7 +81,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.RollbackException;
@@ -597,16 +596,16 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       }
     });
 
-    // If it belongs to a series, also update the series category
-    if (c.getSeriesCategoryId().isSome()) {
-      update("Category.findById", c.getSeriesCategoryId().get(), new Effect<CategoryDto>() {
-        @Override
-        public void run(CategoryDto dto) {
-          dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c, c.getSeriesExtId(),
-                  none());
-        }
-      });
-    }
+//    // If it belongs to a series, also update the series category
+//    if (c.getSeriesCategoryId().isSome()) {
+//      update("Category.findById", c.getSeriesCategoryId().get(), new Effect<CategoryDto>() {
+//        @Override
+//        public void run(CategoryDto dto) {
+//          dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c, c.getSeriesExtId(),
+//                  none());
+//        }
+//      });
+//    }
   }
 
   @Override
@@ -628,7 +627,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     List<Category> categories = videoId.fold(new Option.Match<Long, List<Category>>() {
       @Override
       public List<Category> some(Long id) {
-        List<Category> cat = findAllById(toCategory, offset, limit, "Category.findAllOfVideo", id);
         return findAllById(toCategory, offset, limit, "Category.findAllOfVideo", id);
       }
 
@@ -699,23 +697,35 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       // Make categories editable
       List<Category> allCategories = new ArrayList<>(categories);
 
-
-//      // Remove video categories if they are referencing a series category that no longer exists
-//      List<Category> toDelete = new ArrayList<Category>();
 //      for (Category videoCategory: allCategories) {
 //        if (videoCategory.getSeriesCategoryId().isSome()) {
-//          boolean hasAMaster = false;
-//          for (Category seriesCategory: seriesCategories) {
-//            if (videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()) {
-//              hasAMaster = true;
-//            }
-//          }
-//          if (hasAMaster) {
-//            toDelete.add(videoCategory);
+//          Option<CategoryDto> dto;
+//          dto = findById("Category.findById", videoCategory.getSeriesCategoryId().get());
+//          Option<Category> cat = dto.map(toCategory);
+//          if(cat.isNone() || cat.isSome() && cat.get().getSeriesExtId().isNone() ||
+//                  cat.isSome() && cat.get().getSeriesExtId().isSome() && cat.get().getSeriesExtId().get() != videoCategory.getSeriesExtId().get() ) {
+//            // Become the ultimate lifeform
+//
 //          }
 //        }
 //      }
-//      allCategories.removeAll(toDelete);
+//
+      // Remove video categories if they are referencing a series category that no longer exists
+      List<Category> toDelete = new ArrayList<Category>();
+      for (Category videoCategory: allCategories) {
+        if (videoCategory.getSeriesCategoryId().isSome()) {
+          boolean hasAMaster = false;
+          for (Category seriesCategory: seriesCategories) {
+            if (videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()) {
+              hasAMaster = true;
+            }
+          }
+          if (!hasAMaster) {
+            toDelete.add(videoCategory);
+          }
+        }
+      }
+      allCategories.removeAll(toDelete);
 
       allCategories.addAll(createdOrUpdatedCategories);
       categories = allCategories;

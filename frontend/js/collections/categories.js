@@ -56,9 +56,13 @@ define(["underscore",
              * @return {String} The url of this collection
              */
             url: function () {
-                return (this.video ? _.result(this.video, "url") : "") 
-                + "/categories/" 
-                + (this.mySeriesExtId ? "?seriesExtId=" + this.mySeriesExtId : "");
+                // if (this.models.length > 0) { 
+                //     return "/categories/" + this.model.get("seriesCategoryId");
+                // } else {
+                    return (this.video ? _.result(this.video, "url") : "") 
+                    + "/categories/" 
+                    + (this.mySeriesExtId ? "?seriesExtId=" + this.mySeriesExtId : "");
+                // }
             },
 
             /**
