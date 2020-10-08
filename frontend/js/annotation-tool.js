@@ -679,10 +679,8 @@ define(["jquery",
                             });
                             if (video.get("ready")) {
                                 createDefaultTrack();
-                                willThisWork();
                             } else {
                                 video.once("ready", createDefaultTrack);
-                                video.once("ready", willThisWork);
                             }
                         }
                     }, this)
