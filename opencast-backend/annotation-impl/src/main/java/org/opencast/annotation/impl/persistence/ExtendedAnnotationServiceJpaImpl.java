@@ -636,7 +636,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
 
     if (seriesExtId.isSome()) {
-      List<Category> createdOrUpdatedCategories = new ArrayList<>();
+      // Make categories editable
+      List<Category> allCategories = new ArrayList<>(categories);
+
+      List<Category> createdCategories = new ArrayList<>();
       // Grab the categories with seriesExtId.
       List<Category> seriesExtIdCategories = findAllById(toCategory, offset, limit, "Category.findAllOfExtSeries",
               seriesExtId.get());
@@ -645,7 +648,23 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       List<Category> seriesCategories = new ArrayList<>(seriesExtIdCategories);
       seriesCategories.removeIf(n -> n.getId() != n.getSeriesCategoryId().getOrElseNull());
 
-      // Check for every master series category if a local cpoy needs to be created or updated
+      // Link a category to a master series category if they are "sufficiently" equal
+      for (Category videoCategory : allCategories) {
+        for (Category seriesCategory: seriesCategories) {
+          if (categoriesSufficientlyEqual(videoCategory, seriesCategory)) {
+            Category update = new CategoryImpl(videoCategory.getId(), videoCategory.getVideoId(),
+                    seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
+                    seriesCategory.getSettings(), new ResourceImpl(option(seriesCategory.getAccess()),
+                    seriesCategory.getCreatedBy(), seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(),
+                    seriesCategory.getCreatedAt(), seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(),
+                    seriesCategory.getTags()), seriesCategory.getSeriesExtId(), option(seriesCategory.getId()));
+            updateCategory(update);
+            allCategories.set(allCategories.indexOf(videoCategory), update);
+          }
+        }
+      }
+
+      // Check for every master series category if a local copy needs to be created or updated
       for (Category seriesCategory : seriesCategories) {
         boolean alreadyExists = false;
         Category existingCategory = null;
@@ -661,44 +680,76 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         }
         // If we have, update the existing video category
         if (alreadyExists) {
-          Category update = new CategoryImpl(existingCategory.getId(), videoId, seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
+          Category update = new CategoryImpl(existingCategory.getId(), videoId,
+                  seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
                   seriesCategory.getSettings(), new ResourceImpl(option(seriesCategory.getAccess()),
                   seriesCategory.getCreatedBy(), seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(),
                   seriesCategory.getCreatedAt(), seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(),
                   seriesCategory.getTags()), seriesCategory.getSeriesExtId(), option(seriesCategory.getId()));
           updateCategory(update);
+          allCategories.set(allCategories.indexOf(existingCategory), update);
           // If we don't have, create a new video category
-        } else if (alreadyExists)  {
+        } else {
           Category newCategory;
           newCategory = createCategory(videoId, seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
                   seriesCategory.getSettings(), new ResourceImpl(option(seriesCategory.getAccess()),
                           seriesCategory.getCreatedBy(), seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(),
                           seriesCategory.getCreatedAt(), seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(),
                           seriesCategory.getTags()), seriesCategory.getSeriesExtId(), option(seriesCategory.getId()));
-          createdOrUpdatedCategories.add(newCategory);
+          createdCategories.add(newCategory);
         }
       }
-      // Make categories editable
-      List<Category> allCategories = new ArrayList<>(categories);
 
-      // Remove video categories if they are referencing a series category that no longer exists
-      List<Category> toDelete = new ArrayList<Category>();
-      for (Category videoCategory: allCategories) {
-        if (videoCategory.getSeriesCategoryId().isSome()) {
+//      // Remove connection to a series category if that series category no longer exists or is not a series category anymore
+//      List<Category> toRemoveConnection = new ArrayList<Category>();
+//      for (Category videoCategory: allCategories) {
+//        if (videoCategory.getSeriesCategoryId().isSome()) {
+//          boolean hasAMaster = false;
+//          for (Category seriesCategory: seriesCategories) {
+//            if (videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()
+//                && seriesCategory.getSeriesCategoryId().isSome()) {
+//              hasAMaster = true;
+//            }
+//          }
+//          if (!hasAMaster) {
+//            toRemoveConnection.add(videoCategory);
+//          }
+//        }
+//      }
+//
+//      for (Category category: toRemoveConnection) {
+//        Category update = new CategoryImpl(category.getId(), videoId, category.getScaleId(), category.getName(), category.getDescription(),
+//                category.getSettings(), new ResourceImpl(option(category.getAccess()),
+//                category.getCreatedBy(), category.getUpdatedBy(), category.getDeletedBy(),
+//                category.getCreatedAt(), category.getUpdatedAt(), category.getDeletedAt(),
+//                category.getTags()), none(), none());
+//        updateCategory(update);
+//      }
+
+      // Remove connection to a series category if that series category no longer exists or is not a series category anymore
+      List<Category> toRemoveConnection = new ArrayList<Category>();
+      for (int i = 0; i < allCategories.size(); i++) {
+        if (allCategories.get(i).getSeriesCategoryId().isSome()) {
           boolean hasAMaster = false;
           for (Category seriesCategory: seriesCategories) {
-            if (videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()) {
+            if (allCategories.get(i).getSeriesCategoryId().get() == seriesCategory.getId()
+                && seriesCategory.getSeriesCategoryId().isSome()) {
               hasAMaster = true;
             }
           }
           if (!hasAMaster) {
-            toDelete.add(videoCategory);
+            Category update = new CategoryImpl(allCategories.get(i).getId(), videoId, allCategories.get(i).getScaleId(), allCategories.get(i).getName(), allCategories.get(i).getDescription(),
+                    allCategories.get(i).getSettings(), new ResourceImpl(option(allCategories.get(i).getAccess()),
+                    allCategories.get(i).getCreatedBy(), allCategories.get(i).getUpdatedBy(), allCategories.get(i).getDeletedBy(),
+                    allCategories.get(i).getCreatedAt(), allCategories.get(i).getUpdatedAt(), allCategories.get(i).getDeletedAt(),
+                    allCategories.get(i).getTags()), none(), none());
+            updateCategory(update);
+            allCategories.set(i, update);
           }
         }
       }
-      allCategories.removeAll(toDelete);
 
-      allCategories.addAll(createdOrUpdatedCategories);
+      allCategories.addAll(createdCategories);
       categories = allCategories;
     }
 
@@ -709,6 +760,15 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       categories = filterOrTags(categories, tagsOr.get());
 
     return categories;
+  }
+
+  private boolean categoriesSufficientlyEqual(Category a, Category b) {
+    if (a.getName().equals(b.getName()) && a.getDescription().equals(b.getDescription())
+    && a.getSettings().equals(b.getSettings()) && a.getTags().equals(b.getTags())) {
+      return true;
+    }
+
+    return false;
   }
 
   @Override

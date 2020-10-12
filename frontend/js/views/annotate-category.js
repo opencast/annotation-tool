@@ -170,6 +170,7 @@ define(["jquery",
 
                 if (categorySeriesId) {
                     // Remove from series
+                    this.model.tmpSeriesCategoryId = this.model.get("seriesCategoryId");
                     this.model.set("seriesExtId", "");
                     this.model.set("seriesCategoryId", "");
                 } else if (!categorySeriesId && videoSeriesId) {
