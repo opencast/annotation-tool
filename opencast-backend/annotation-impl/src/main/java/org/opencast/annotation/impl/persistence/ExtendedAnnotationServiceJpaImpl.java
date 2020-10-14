@@ -670,7 +670,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         Category existingCategory = null;
 
         // Check if we already have video category corresponding to the series category
-        for (Category videoCategory : categories) {
+        for (Category videoCategory : allCategories) {
           // If we have, update the existing video category
           if (videoCategory.getSeriesCategoryId().isSome() && videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()) {
             alreadyExists = true;
