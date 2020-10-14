@@ -40,11 +40,14 @@ define(["jquery",
          */
         Backbone.sync = function (method, model, options) {
 
-            // The backend expects `application/x-www-form-urlencoded data
-            // with anything nested deeper than one level transformed to a JSON string
+            // The backend expects `application/x-www-form-urlencoded data,
+            // which luckily jQuery can make for us from a JSON with this option.
             options.processData = true;
-
-            options.data = options.attrs || model.toJSON(options);
+            // We also need to specify `options.data` directly already,
+            // lest Backbone will do its own processing to JSON.
+            // This is also the perfect opportunity to make sure
+            // that the JSON we pass is nested no deeper than one level.
+            options.data = model.toJSON(_.defaults(options, { stringifySub: true }));
 
             // Some models (marked with `mPOST`) need to always be `PUT`, i.e. never be `POST`ed
             if (model.noPOST && method === "create") {
