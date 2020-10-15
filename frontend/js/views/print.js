@@ -71,11 +71,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 .invoke('get', 'annotations')
                 .pluck("models")
                 .flatten()
-                .filter(function (annotation) {
-                    var category = annotation.category();
-                    if (!category) return annotationTool.freeTextVisible;
-                    return category.get("visible");
-                });
+                .filter(annotationTool.isVisible);
 
             // Get all used categories and and their scales
             var labels = annotations
