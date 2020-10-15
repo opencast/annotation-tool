@@ -34,8 +34,7 @@ define(["jquery",
         "filesaver",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, util, i18next, Videos, MainView, alerts, DeleteModalTmpl, PlayerAdapter, ColorsManager,
-         XLSX, PapaParse) {
+    function ($, _, Backbone, util, i18next, Videos, MainView, alerts, DeleteModalTmpl, PlayerAdapter, ColorsManager, XLSX, PapaParse) {
 
         "use strict";
 
@@ -700,28 +699,23 @@ define(["jquery",
 
             /**
              * Offer the user a spreadsheet version of the annotations for download.
-             * @alias module:annotation-tool-configuration.Configuration.export
              * @param {Track[]} tracks The tracks to include in the export
              * @param {Category[]} categories The tracks to include in the export
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
-            exportCsv: function (tracks, categories, freeText) {
+            exportCSV: function (tracks, categories, freeText) {
                 let bookData = this.gatherExportData(tracks, categories, freeText);
-
-                //var json = JSON.stringify(bookData);
                 var csv = PapaParse.unparse(JSON.stringify(bookData));
-
                 saveAs(new Blob([csv], {type:"text/csv;charset=utf-8;"}), 'export.csv');
             },
 
             /**
              * Offer the user an excel version of the annotations for download.
-             * @alias module:annotation-tool-configuration.Configuration.export
              * @param {Track[]} tracks The tracks to include in the export
              * @param {Category[]} categories The tracks to include in the export
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
-            exportXlsx: function (tracks, categories, freeText) {
+            exportXLSX: function (tracks, categories, freeText) {
                 let bookData = this.gatherExportData(tracks, categories, freeText);
 
                 // Generate workbook
@@ -729,43 +723,44 @@ define(["jquery",
                 wb.SheetNames.push("Sheet 1");
 
                 // Generate worksheet
-                var ws = XLSX.utils.aoa_to_sheet(bookData)
+                var ws = XLSX.utils.aoa_to_sheet(bookData);
 
                 // Scale column width to content (which is apparently non built-in in SheetJS)
-                let objectMaxLength = []
+                var objectMaxLength = [];
 
-                bookData.map(arr => {
-                  Object.keys(arr).map(key => {
-                    let value = arr[key] === null ? '' : arr[key]
-                
-                    objectMaxLength[key] = objectMaxLength[key] >= value.length ? objectMaxLength[key]  : value.length
-                  })
-                })
-                
-                let worksheetCols = objectMaxLength.map(width => {
-                  return {
-                    width
-                  }
-                })
-                
+                bookData.forEach(function (arr) {
+                    Object.keys(arr).forEach(function (key) {
+                        var value = arr[key] === null ? '' : arr[key];
+
+                        objectMaxLength[key] = Math.max(objectMaxLength[key], value.length);
+                    });
+                });
+
+                var worksheetCols = objectMaxLength.map(function (width) {
+                    return { width: width };
+                });
+
                 ws["!cols"] = worksheetCols;
 
                 // Put worksheet
                 wb.Sheets["Sheet 1"] = ws;
 
                 // Export workbook
-                var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
-                function s2ab(s) { 
-                    var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
-                    var view = new Uint8Array(buf);  //create uint8array as viewer
-                    for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
-                    return buf;    
+                var wbout = XLSX.write(wb, { bookType:'xlsx',  type: 'binary' });
+
+                function s2ab(s) {
+                    var buf = new ArrayBuffer(s.length); // convert s to arrayBuffer
+                    var view = new Uint8Array(buf);  // create uint8array as viewer
+                    for (var i = 0; i < s.length; i++) {
+                        view[i] = s.charCodeAt(i) & 0xFF; // convert to octet
+                    }
+                    return buf;
                 }
 
-                saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'export.xlsx');
+                saveAs(new Blob([s2ab(wbout)], { type:"application/octet-stream" }), 'export.xlsx');
             },
 
-            gatherExportData: function(tracks, categories, freeText) {
+            gatherExportData: function (tracks, categories, freeText) {
                 var bookData = [];
                 var header = [];
                 addResourceHeaders(header);
@@ -789,15 +784,15 @@ define(["jquery",
                     _.each(annotationTool.getAnnotations(track.id), function (annotation) {
                         var line = [];
 
-                        let label = annotation.attributes.label;
+                        var label = annotation.attributes.label;
                         // Exclude annotations that are currently not visible
                         if (label) {
                             if (categories && !categories.map(category => category.id).includes(label.category.id)) return;
                         } else {
                             if (!freeText) return;
                         }
-                        
-                        addResource(line, annotation)
+
+                        addResource(line, annotation);
                         line.push(track.attributes.name);
 
                         line.push(util.formatTime(annotation.attributes.start));
@@ -806,16 +801,16 @@ define(["jquery",
                         line.push(annotation.attributes.text);
 
                         if (label) {
-                            line.push(label.category.name)
-                            line.push(label.value)
-                            line.push(label.abbreviation)
+                            line.push(label.category.name);
+                            line.push(label.value);
+                            line.push(label.abbreviation);
                         } else {
-                            line.push("")
-                            line.push("")
-                            line.push("")
+                            line.push("");
+                            line.push("");
+                            line.push("");
                         }
-                        
-                        if(annotation.attributes.scalevalue) {
+
+                        if (annotation.attributes.scalevalue) {
                             if (annotationTool.localStorage) {
                                 line.push(getScaleNameByScaleValueId(annotation.attributes.scalevalue.id));
                             } else {
@@ -824,9 +819,9 @@ define(["jquery",
                             line.push(annotation.attributes.scalevalue.name);
                             line.push(annotation.attributes.scalevalue.value);
                         } else {
-                            line.push("")
-                            line.push("")
-                            line.push("")
+                            line.push("");
+                            line.push("");
+                            line.push("");
                         }
 
                         bookData.push(line);
@@ -838,23 +833,24 @@ define(["jquery",
 
                         _.each(annotation.attributes.comments.models, function (comment) {
                             addCommentLine(line, comment);
-                            
+
                             if(comment.replies.length > 0) {
-                                commentReplies(line, comment.replies.models)
+                                commentReplies(line, comment.replies.models);
                             }
                         });
 
-                    });  
+                    });
                 });
 
                 return bookData;
 
-                function addResourceHeaders(header, presuffix = "") {
-                    let prefix = ""
-                    let suffix = ""
+                function addResourceHeaders(header, presuffix) {
+                    if (presuffix == null) presuffix = "";
+                    let prefix = "";
+                    let suffix = "";
                     if(presuffix) {
-                        prefix = presuffix + " "
-                        suffix = " of " + presuffix
+                        prefix = presuffix + " ";
+                        suffix = " of " + presuffix;
                     }
                     header.push(util.capitalize(prefix + "ID"));
                     header.push(util.capitalize(prefix + "Creation date"));
@@ -872,9 +868,9 @@ define(["jquery",
                 }
 
                 function addCommentLine(line, comment) {
-                    let commentLine = []
-                    Array.prototype.push.apply(commentLine, line)
-                    
+                    let commentLine = [];
+                    Array.prototype.push.apply(commentLine, line);
+
                     addResource(commentLine, comment);
 
                     commentLine.push(comment.attributes.text);
@@ -891,7 +887,7 @@ define(["jquery",
                     _.each(replies, function (comment) {
                         addCommentLine(line, comment);
 
-                        commentReplies(line, comment.attributes.replies)
+                        commentReplies(line, comment.attributes.replies);
                     });
                 }
 
@@ -1123,6 +1119,7 @@ define(["jquery",
                 }
             }
         };
+
         return annotationTool;
     }
 );

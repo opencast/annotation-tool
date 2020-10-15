@@ -89,8 +89,8 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #export-csv": "exportCsv",
-                "click #export-xlsx": "exportXlsx",
+                "click #export-csv": "exportCSV",
+                "click #export-xlsx": "exportXLSX",
                 "click #about": "about",
                 "click #logout": "onLogout",
                 "click #print": "print",
@@ -684,17 +684,15 @@ define(["jquery",
 
             /**
              * Offer the user a spreadsheet version of the annotations for download.
-             * @alias module:views-main.Main#export
              */
-            exportCsv: function () {
+            exportCSV: function () {
                 this.exportAs("csv");
             },
 
             /**
              * Offer the user an excel version of the annotations for download.
-             * @alias module:views-main.Main#export_xlsx
              */
-            exportXlsx: function () {
+            exportXLSX: function () {
                 this.exportAs("xlsx");
             },
 
@@ -707,18 +705,18 @@ define(["jquery",
                     });
                 switch (format) {
                     case "csv":
-                        annotationTool.exportCsv(
+                        annotationTool.exportCSV(
                             tracksToExport,
                             categoriesToExport,
                             annotationTool.freeTextVisible
                         );
                         break;
                     case "xlsx":
-                        annotationTool.exportXlsx(
+                        annotationTool.exportXLSX(
                             tracksToExport,
                             categoriesToExport,
                             annotationTool.freeTextVisible
-                        );                   
+                        );
                         break;
                 }
             },

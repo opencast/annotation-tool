@@ -25,12 +25,9 @@ import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
 import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Label;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
-import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
-import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
 import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CommentImpl;
@@ -46,17 +43,13 @@ import org.opencast.annotation.impl.persistence.VideoDto;
 import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
 import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -944,67 +937,6 @@ public class VideoEndpoint {
     return getCommentsResponse(trackId, annotationId, some(commentId), limit, offset, date, tagsAnd,
             tagsOr);
   }
-
-  private static String toVideoTimeString(double seconds) {
-    long millis = new Double(seconds * 1000).longValue();
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-    return sdf.format(new Date(millis - TimeZone.getDefault().getRawOffset()));
-  }
-
-  private static final Function2<ExtendedAnnotationService, Long, Option<String>> getUserEmail = new Function2<ExtendedAnnotationService, Long, Option<String>>() {
-    @Override
-    public Option apply(ExtendedAnnotationService s, Long userId) {
-      return s.getUser(userId).flatMap(new Function<User, Option<String>>() {
-        @Override
-        public Option<String> apply(User user) {
-          return user.getEmail();
-        }
-      });
-    }
-  };
-
-  private static final Function<Label, String> getLabelName = new Function<Label, String>() {
-    @Override
-    public String apply(Label label) {
-      return label.getValue();
-    }
-  };
-
-  private static final Function2<ExtendedAnnotationService, Label, String> getCategoryName = new Function2<ExtendedAnnotationService, Label, String>() {
-    @Override
-    public String apply(ExtendedAnnotationService e, Label label) {
-      return e.getCategory(label.getCategoryId(), true).get().getName();
-    }
-  };
-
-  private static final Function<Label, String> getLabelAbbreviation = new Function<Label, String>() {
-    @Override
-    public String apply(Label label) {
-      return label.getAbbreviation();
-    }
-  };
-
-  private static final Function<ScaleValue, String> getScaleValueName = new Function<ScaleValue, String>() {
-    @Override
-    public String apply(ScaleValue scaleValue) {
-      return scaleValue.getName();
-    }
-  };
-
-  private static final Function<ScaleValue, String> getScaleValue = new Function<ScaleValue, String>() {
-    @Override
-    public String apply(ScaleValue scaleValue) {
-      return Double.toString(scaleValue.getValue());
-    }
-  };
-
-  private static final Function2<ExtendedAnnotationService, ScaleValue, String> getScaleName = new Function2<ExtendedAnnotationService, ScaleValue, String>() {
-    @Override
-    public String apply(ExtendedAnnotationService e, ScaleValue scaleValue) {
-      return e.getScale(scaleValue.getScaleId(), true).get().getName();
-    }
-  };
-
 
   private URI trackLocationUri(Track t) {
     return uri(host.getEndpointBaseUrl(), "videos", t.getVideoId(), "tracks", t.getId());
