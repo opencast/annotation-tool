@@ -89,10 +89,9 @@ define([
             item.className = "category-" + labels[0].get("category").id;
             item.label = labels[0].toJSON();
         }
-
-        if (item.duration) {
-            item.type = "range";
-        }
+        item.type = item.duration
+            ? "range"
+            : "box";
         item.model = annotation;
 
         return item;
@@ -173,9 +172,9 @@ define([
             var options = {
                 height: "100%",
                 margin: {
-                    axis: 20,
+                    axis: 12.5,
                     item: {
-                        vertical: 10,
+                        vertical: 5,
                         horizontal: 0
                     }
                 },
@@ -194,7 +193,7 @@ define([
                 //groupEditable: {
                 //    order: true
                 //},
-                zoomMin: 5000,
+                zoomMin: Math.min(5000, this.endDate - this.startDate),
                 start: this.startDate,
                 end: this.endDate,
                 min: this.startDate,
@@ -433,6 +432,10 @@ define([
                     var myTrack = clickedOnOneOfMyTracks.call(this, properties);
                     if (!myTrack) return;
                     this.initTrackModal(properties.event, myTrack);
+                } else if (properties.what === "item") {
+                    this.playerAdapter.setCurrentTime(util.secondsFromDate(
+                        this.items.get(properties.item).start
+                    ));
                 }
             }, this));
 
@@ -481,11 +484,38 @@ define([
                 annotationTool,
                 annotationTool.EVENTS.ANNOTATION_SELECTION,
                 function (selection) {
-                    this.timeline.setSelection(
-                        _.map(selection, "id")
-                    );
+                    this.timeline.setSelection(selection && selection.id);
                 }
             );
+            this.listenTo(
+                annotationTool,
+                annotationTool.EVENTS.ACTIVE_ANNOTATIONS,
+                function (currentAnnotations, previousAnnotations) {
+                    // TDOO We could probably speed this up;
+                    //   maybe we could even receive the diff somehow?
+                    this.items.update(_.map(previousAnnotations, function (annotation) {
+                        return {
+                            id: annotation.id,
+                            className: _.without(
+                                getClassName.call(this, annotation).split(" "),
+                                "active"
+                            ).join(' ')
+                        };
+                    }, this));
+                    this.items.update(_.map(currentAnnotations, function (annotation) {
+                        return {
+                            id: annotation.id,
+                            className: _.uniq(
+                                getClassName.call(this, annotation).split(" ")
+                                    .concat(["active"])
+                            ).join(' ')
+                        };
+                    }, this));
+                }
+            );
+            function getClassName(annotation) {
+                return this.items.get(annotation.id).className || "";
+            }
             // Long-pressing is normally only used for multiple selections,
             // which we don't support.
             // Additionally this is a problem when you select an item
@@ -495,16 +525,11 @@ define([
             // the item would just be deselected in that scenario.
             this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
-                annotationTool.setSelectionById(
-                    _.map(properties.items, function (itemId) {
-                        var item = this.items.get(itemId);
-                        return {
-                            id: item.id,
-                            trackId: item.group,
-                        };
-                    }, this),
-                    true, // move playhead
-                    true // manually selected
+                annotationTool.setSelection(
+                    this.items.get(properties.items[0]).model,
+                    // Toggle selection on single click,
+                    // unconditionally select on double click
+                    properties.event.tapCount > 1
                 );
             }, this));
 
@@ -573,7 +598,7 @@ define([
                                     : "black"
                             ) +
                             ";}";
-                            }).join("");
+                    }).join("");
                 return $("<style>" + stylesheet + "</style>")
                     .appendTo('html > head');
             }
@@ -588,9 +613,7 @@ define([
             );
         },
 
-        /**
-         * @override
-         */
+        /** @override */
         remove: function () {
             _.each(this.groupHeaders, function (groupHeader) {
                 groupHeader.remove();

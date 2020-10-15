@@ -20,7 +20,6 @@
 define(
     [
         "underscore",
-        "util",
         "collections/comments",
         "collections/annotation_content",
         "models/content_item",
@@ -28,7 +27,7 @@ define(
         "localstorage"
     ],
 
-    function (_, util, Comments, AnnotationContent, ContentItem, Resource) {
+    function (_, Comments, AnnotationContent, ContentItem, Resource) {
 
         "use strict";
 

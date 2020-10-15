@@ -191,3 +191,33 @@ input, textarea, select, .uneditable-input {
         }
     }
 }
+
+@annotationSelectionColor: rgba(0, 0, 0, 0.15);
+@annotationSelectableColor: fadeout(@annotationSelectionColor, 7.5%);
+
+.selection(@color) {
+    background-image: repeating-linear-gradient(
+        315deg,
+        transparent,
+        transparent 10px,
+        @color 10px,
+        @color 20px
+    );
+}
+
+.selectable-annotation {
+    cursor: pointer;
+    color: black;
+    &:hover {
+        .selection(@annotationSelectableColor);
+    }
+}
+
+.active-annotation {
+    box-shadow: inset 0px 0px 2px 1px red;
+}
+
+.selected-annotation {
+    .selection(@annotationSelectionColor);
+    .selectable-annotation();
+}

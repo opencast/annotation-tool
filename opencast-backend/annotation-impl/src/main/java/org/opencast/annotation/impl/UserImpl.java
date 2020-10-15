@@ -15,11 +15,11 @@
  */
 package org.opencast.annotation.impl;
 
-import org.opencastproject.util.EqualsUtil;
-import org.opencastproject.util.data.Option;
-
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.User;
+
+import org.opencastproject.util.EqualsUtil;
+import org.opencastproject.util.data.Option;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.User}.

@@ -169,9 +169,8 @@ define(["jquery",
                 event.stopImmediatePropagation();
 
                 var id = event.target.getAttribute("value");
-                var annotation = annotationTool.createAnnotation({});
-                annotation.addContent({ type: "scaling", title: null, value: { label: this.model.id, scaling: id } });
-                annotationTool.setSelection([annotation], true);
+                var annotation = annotationTool.createAnnotation();
+                annotation.addContent({ type: "scaling", value: { label: this.model.id, scaling: id } });
             },
 
             /**
@@ -186,9 +185,8 @@ define(["jquery",
                     return;
                 }
 
-                var annotation = annotationTool.createAnnotation({ });
-                annotationTool.setSelection([annotation], true);
-                annotation.addContent({ type: "label", title: null, value: this.model.id });
+                var annotation = annotationTool.createAnnotation();
+                annotation.addContent({ type: "label", value: this.model.id });
             },
 
             /**

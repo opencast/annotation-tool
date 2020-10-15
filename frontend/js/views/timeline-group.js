@@ -40,9 +40,7 @@ define([
      * @alias module:views-timeline.TimelineView
      */
     var TimelineGroup = Backbone.View.extend({
-        /**
-         * @override
-         */
+        /** @override */
         initialize: function (options) {
             this.parent = options.parent;
 
@@ -73,9 +71,7 @@ define([
             );
         },
 
-        /**
-         * @override
-         */
+        /** @override */
         remove: function () {
             $(document).off("click.visibilityTooltip");
             $("body").off("click", this.tooltipSelector);
@@ -85,9 +81,7 @@ define([
             return Backbone.View.prototype.remove.apply(this, arguments);
         },
 
-        /**
-         * @override
-         */
+        /** @override */
         render: function () {
             if (this.visibilityButton) {
                 this.visibilityButton.tooltip("destroy");
@@ -104,9 +98,7 @@ define([
             return this;
         },
 
-        /**
-         * @override
-         */
+        /** @override */
         events: {
             "click .delete": function (event) {
                 annotationTool.deleteOperation.start(

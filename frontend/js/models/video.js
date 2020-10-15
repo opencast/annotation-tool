@@ -25,11 +25,10 @@ define(
         "collections/categories",
         "collections/scales",
         "access",
-        "models/resource",
-        "backbone"
+        "models/resource"
     ],
 
-    function (_, Tracks, Categories, Scales, ACCESS, Resource, Backbone) {
+    function (_, Tracks, Categories, Scales, ACCESS, Resource) {
 
         "use strict";
 

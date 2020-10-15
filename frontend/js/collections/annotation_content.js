@@ -18,8 +18,7 @@
  * A module representing a comments collection
  * @module collections-annotation-content
  */
-define(["underscore", "models/content_item", "backbone"], function(
-    _,
+define(["models/content_item", "backbone"], function(
     ContentItem,
     Backbone
 ) {
