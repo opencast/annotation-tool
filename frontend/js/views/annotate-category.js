@@ -157,23 +157,22 @@ define(["jquery",
             /**
              * Toggle the category between belonging to an event and belonging
              * to a series
-             * TODO: What exactly should happen when a series category turns into
-             * an event category?
              */
             toggleSeries: function() {
                 let categorySeriesId = this.model.get("seriesExtId");
+                let categorySeriesCategoryId = this.model.get("seriesCategoryId");
                 let videoSeriesId = "";
                 $.when(annotationTool.getSeriesExtId()).then(function(seriesId){
                     videoSeriesId = seriesId;
 
                 });
 
-                if (categorySeriesId) {
+                if (categorySeriesCategoryId) {
                     // Remove from series
-                    this.model.tmpSeriesCategoryId = this.model.get("seriesCategoryId");
+                    this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
                     this.model.set("seriesExtId", "");
                     this.model.set("seriesCategoryId", "");
-                } else if (!categorySeriesId && videoSeriesId) {
+                } else if (!categorySeriesCategoryId && videoSeriesId) {
                     // Add to series
                     this.model.set("seriesExtId", videoSeriesId);
                     this.model.set("seriesCategoryId", this.model.id);

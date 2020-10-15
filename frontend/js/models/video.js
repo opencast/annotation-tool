@@ -129,7 +129,8 @@ define(["underscore",
                                             async: false,
                                             success: function (collection) {
                                                 
-                // Synchronize video categories with series categories
+                // Fetch categories again, but with series categories this time
+                // Get the series id of the video
                 let videoSeriesId = "";
                 $.when(annotationTool.getSeriesExtId()).then(function(seriesId){
                     videoSeriesId = seriesId;
@@ -139,24 +140,8 @@ define(["underscore",
                 let seriesCategories = new Categories([], { video: annotationTool.video, seriesExtId: videoSeriesId });
                 seriesCategories.fetch({ async: false });
 
-                let models = []
                 // Move models from one collection to other
-                _.each(seriesCategories.models, function (model) {
-                    models.push(model);
-                });
-                _.each(models, function (model) {
-                    seriesCategories.remove(model);
-                    collection.add(model);
-                });
-
-                // Series categories should decay to event categories
-                // if the video series became different or nothing
-                _.each(collection.models, function (model) {
-                    if (model.attributes.seriesExtId && model.attributes.seriesExtId != videoSeriesId) {
-                        model.attributes.seriesExtId = null;
-                        model.attributes.seriesCategoryId = null;
-                    }
-                });
+                collection.reset(seriesCategories.models);
 
                                                 self.categoriesReady = true;
                                                 if (self.tracksReady && self.categoriesReady && self.scalesReady) {

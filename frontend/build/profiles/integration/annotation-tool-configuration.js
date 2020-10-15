@@ -59,6 +59,7 @@ define(["jquery",
                 var queryString = this.url.match(/\?(.*?)\//);
                 if(queryString && queryString[0]) {
                     this.url = this.url.replace(queryString[0], "");
+                    if (queryString[0].slice(-1) === "/") {queryString[0] = queryString[0].slice(0, -1)}
                     this.url = this.url + queryString[0];
                 }
             };

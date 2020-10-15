@@ -646,7 +646,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
       // Grab all master series categories by removing every category that is not referencing itself
       List<Category> seriesCategories = new ArrayList<>(seriesExtIdCategories);
-      seriesCategories.removeIf(n -> n.getId() != n.getSeriesCategoryId().getOrElseNull());
+      seriesCategories.removeIf(n -> n.getId() != n.getSeriesCategoryId().getOrElse(-1L));
 
       // Link a category to a master series category if they are "sufficiently" equal
       for (Category videoCategory : allCategories) {
@@ -699,32 +699,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           createdCategories.add(newCategory);
         }
       }
-
-//      // Remove connection to a series category if that series category no longer exists or is not a series category anymore
-//      List<Category> toRemoveConnection = new ArrayList<Category>();
-//      for (Category videoCategory: allCategories) {
-//        if (videoCategory.getSeriesCategoryId().isSome()) {
-//          boolean hasAMaster = false;
-//          for (Category seriesCategory: seriesCategories) {
-//            if (videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()
-//                && seriesCategory.getSeriesCategoryId().isSome()) {
-//              hasAMaster = true;
-//            }
-//          }
-//          if (!hasAMaster) {
-//            toRemoveConnection.add(videoCategory);
-//          }
-//        }
-//      }
-//
-//      for (Category category: toRemoveConnection) {
-//        Category update = new CategoryImpl(category.getId(), videoId, category.getScaleId(), category.getName(), category.getDescription(),
-//                category.getSettings(), new ResourceImpl(option(category.getAccess()),
-//                category.getCreatedBy(), category.getUpdatedBy(), category.getDeletedBy(),
-//                category.getCreatedAt(), category.getUpdatedAt(), category.getDeletedAt(),
-//                category.getTags()), none(), none());
-//        updateCategory(update);
-//      }
 
       // Remove connection to a series category if that series category no longer exists or is not a series category anymore
       List<Category> toRemoveConnection = new ArrayList<Category>();
