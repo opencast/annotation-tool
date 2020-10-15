@@ -73,13 +73,6 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 .flatten()
                 .filter(annotationTool.isVisible);
 
-            var users = annotations
-                .invoke("get", "created_by_nickname")
-                .uniq()
-                .map(function (name) {
-                    return { name: name };
-                }).value();
-
             // Get all used categories and and their scales
             var labels = annotations.invoke("getLabels").flatten();
 

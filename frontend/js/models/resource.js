@@ -47,9 +47,15 @@ var Resource = Backbone.Model.extend({
                 if (!attr.created_by_nickname) {
                     this.set("created_by_nickname", annotationTool.user.get("nickname"));
                 }
+                if (!attr.created_by_email) {
+                    this.set("created_by_email", annotationTool.user.get("email"));
+                }
             }
             if (!attr.created_at) {
                 this.set("created_at", new Date());
+            }
+            if (!attr.updated_at) {
+                this.set("updated_at", new Date());
             }
         }
 

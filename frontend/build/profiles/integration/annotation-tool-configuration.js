@@ -147,30 +147,6 @@ define(["jquery",
             localStorage: false,
 
             /**
-             * Offer the user a spreadsheet version of the annotations for download.
-             * @alias module:annotation-tool-configuration.Configuration.export
-             * @param {Video} video The video to export
-             * @param {Track[]} tracks The tracks to include in the export
-             * @param {Category[]} categories The tracks to include in the export
-             * @param {Boolean} freeText Should free-text annotations be exported?
-             */
-            export: function (video, tracks, categories, freeText) {
-                var parameters = new URLSearchParams();
-                _.each(tracks, function (track) {
-                    parameters.append("track", track.id);
-                });
-                _.each(categories, function (category) {
-                    parameters.append("category", category.id);
-                });
-                parameters.append("freetext", freeText);
-                window.location.href =
-                    "../extended-annotations/videos/" +
-                    video.id +
-                    "/export.csv?" +
-                    parameters;
-            },
-
-            /**
              * Define if the structured annotations are or not enabled
              * @alias module:annotation-tool-configuration.Configuration.isStructuredAnnotationEnabled
              * @return {boolean} True if this feature is enabled
