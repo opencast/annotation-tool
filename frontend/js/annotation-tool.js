@@ -900,11 +900,8 @@ define(["jquery",
                         }
                     }
                 }
-            },
+            }
         });
-
- 
-
 
         /**
          * Type of target that can be deleted using the delete warning modal
