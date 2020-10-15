@@ -74,8 +74,7 @@ define([
         item.group = annotation.collection.track.id;
         item.start = util.dateFromSeconds(item.start);
         item.end = util.dateFromSeconds(item.end);
-        delete item.content
-        delete item.text
+        delete item.content;
 
         item.text = annotation.get("content")
             .chain()

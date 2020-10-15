@@ -207,11 +207,8 @@ define(["jquery",
             },
 
             insertMCA: function (event) {
-                event && event.stopImmediatePropagation();
-                annotationTool.createAnnotation({});
-                if (this.continueVideo) {
-                    this.playerAdapter.play();
-                }
+                event.stopImmediatePropagation();
+                annotationTool.createAnnotation();
             },
 
             /**
@@ -230,8 +227,8 @@ define(["jquery",
                     return;
                 }
 
-                var annotation = annotationTool.createAnnotation({ text: value });
-                annotation.addContent({ type: "text", title: null, value: value });
+                var annotation = annotationTool.createAnnotation();
+                annotation.addContent({ type: "text", value: value });
 
                 if (this.continueVideo) {
                     this.playerAdapter.play();

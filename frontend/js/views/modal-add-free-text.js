@@ -17,14 +17,26 @@ define(["templates/modal-add-free-text", "backbone", "bootstrap"], function(temp
     "use strict";
 
     return Backbone.View.extend({
+        /**
+         * Constructor
+         * @alias module:views-modal-add-free-text.ModalAddFreeText#initialize
+         */
         initialize: function() {
             this.error = false;
             this.listenTo(this, "modal:click", this.addContent);
         },
+        /**
+         * Render this view
+         * @alias module:views-modal-add-free-text.ModalAddFreeText#render
+         */
         render: function() {
             this.$el.html(template({ cid: this.cid, error: this.error }));
             return this;
         },
+        /**
+         * Listener for click on this modal's submit button
+         * @alias module:views-modal-add-free-text.ModalAddFreeText#addContent
+         */
         addContent: function(event) {
             this.error = false;
             var value = this.$("textarea").val();

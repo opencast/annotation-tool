@@ -23,15 +23,28 @@ define([
     "use strict";
 
     return Backbone.View.extend({
+        /**
+         * Events to handle
+         * @alias module:views-modal-add-labelled.ModalAddLabelled#events
+         * @type {object}
+         */
         events: {
             "click .btn.label": "onLabelledContent",
             "click .btn.label-and-scale": "onScalingContent"
         },
 
+        /**
+         * Constructor
+         * @alias module:views-modal-add-labelled.ModalAddLabelled#initialize
+         */
         initialize: function(options) {
             this.category = options.category;
         },
 
+        /**
+         * Render this view
+         * @alias module:views-modal-add-labelled.ModalAddLabelled#render
+         */
         render: function() {
             this.$el.html(
                 template(
@@ -52,6 +65,10 @@ define([
             return this;
         },
 
+        /**
+         * Listener for click on a button to add a `label` content item
+         * @alias module:views-modal-add-labelled.ModalAddLabelled#onLabelledContent
+         */
         onLabelledContent: function(event) {
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
@@ -64,6 +81,10 @@ define([
             this.trigger("modal:request-close");
         },
 
+        /**
+         * Listener for click on a button to add a `scaling` content item
+         * @alias module:views-modal-add-labelled.ModalAddLabelled#onScalingContent
+         */
         onScalingContent: function(event) {
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");

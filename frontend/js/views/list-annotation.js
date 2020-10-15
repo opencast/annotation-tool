@@ -533,7 +533,7 @@ define(
              * @param {Event} event Event object
              */
             addFreeTextContent(event) {
-                event && event.stopPropagation();
+                event.stopPropagation();
 
                 annotationTool.addModal(
                     i18next.t("annotation.add content.add free text"),
@@ -548,7 +548,7 @@ define(
              * @param {Event} event Event object
              */
             addLabelledContent(event) {
-                event && event.stopPropagation();
+                event.stopPropagation();
 
                 var categoryID = $(event.target).data("category");
                 var category = annotationTool.video.get("categories").get(categoryID);

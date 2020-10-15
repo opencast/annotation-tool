@@ -17,11 +17,19 @@ define(["templates/modal-edit-free-text", "backbone", "bootstrap"], function(tem
     "use strict";
 
     return Backbone.View.extend({
+        /**
+         * Constructor
+         * @alias module:views-modal-edit-free-text.ModalEditFreeText#initialize
+         */
         initialize: function(options) {
             this.contentItem = options.contentItem;
             this.error = false;
             this.listenTo(this, "modal:click", this.updateContent);
         },
+        /**
+         * Render this view
+         * @alias module:views-modal-edit-free-text.ModalEditFreeText#render
+         */
         render: function() {
             this.$el.html(
                 template({
@@ -32,6 +40,10 @@ define(["templates/modal-edit-free-text", "backbone", "bootstrap"], function(tem
             );
             return this;
         },
+        /**
+         * Listener for click on this modal's submit button
+         * @alias module:views-modal-edit-free-text.ModalEditFreeText#updateContent
+         */
         updateContent: function(event) {
             this.error = false;
             var value = this.$("textarea").val();

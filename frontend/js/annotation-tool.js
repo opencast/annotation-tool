@@ -381,9 +381,9 @@ define(["jquery",
                 if (!annotation.collection.track.get("visible")) return false;
                 var categories = annotation.getCategories();
                 if (categories.length) {
-                    return _.every(categories, function (category) {
-                        return category.get("visible");
-                    });
+                    return _.chain(categories)
+                        .invoke("get", "visible")
+                        .every().value();
                 } else {
                     // Free text annotation
                     return annotationTool.freeTextVisible;

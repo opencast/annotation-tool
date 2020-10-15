@@ -30,6 +30,7 @@
     "edit category scaling": "Edit scaling for this category",
     "edit mode": "Edit mode",
     "insert": "$t(common actions.insert)",
+    "insert mca": "Create multi content annotation",
     "items visibility": {
       "collapse all": "Collapse all",
       "expand all": "Expand all",
@@ -54,6 +55,12 @@
     "author": "Created by",
     "created": "on",
     "track": "on",
+    "empty text": "no content",
+    "types": {
+      "free text": "free text",
+      "label": "label",
+      "scaling": "label with scale value"
+    },
     "comments": {
       "author": "Comment by",
       "cancel": "$t(common actions.cancel)",
@@ -70,6 +77,13 @@
       "modified": "modified on {{date}}",
       "placeholder": "Write a comment for this annotation.",
       "title": "Comments"
+    },
+    "add content": {
+      "add free text": "Add free text",
+      "category": "Category:",
+      "free text": "Free Text",
+      "list prompt": "Add content:",
+      "please choose": "Please choose a label"
     },
     "edit": {
       "delete": "Delete annotation.",
@@ -328,6 +342,9 @@
     "player": "Player"
   },
   "version": "Version: {{version}}",
+  "validation errors": {
+    "empty": "This field must not be empty"
+  },
   "common actions": {
     "cancel": "Cancel",
     "close": "Close",

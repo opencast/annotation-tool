@@ -21,8 +21,8 @@ define(
     [
         "underscore",
         "collections/comments",
-        "collections/annotation_content",
-        "models/content_item",
+        "collections/annotation-content",
+        "models/content-item",
         "models/resource",
         "localstorage"
     ],
@@ -198,7 +198,7 @@ define(
             addContent: function (content) {
                 var contentItem = new ContentItem(content);
                 this.attributes.content.add(contentItem);
-                this.save()
+                this.save();
                 this.trigger("change", this, {});
             },
 

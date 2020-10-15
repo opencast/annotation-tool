@@ -68,19 +68,10 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 return tracks.get(trackId);
             });
             var annotations = _.chain(tracks)
-                .map(function (track) { return track.annotations; })
+                .map("annotations")
                 .pluck("models")
                 .flatten()
-                .filter(function (annotation) {
-                    if (!annotation) {
-                        return false;
-                    }
-                    var categories = annotation.getCategories();
-                    if (!categories.length) {
-                        return annotationTool.freeTextVisible;
-                    }
-                    return _.every(_.invoke(categories, "get", "visible"));
-                });
+                .filter(annotationTool.isVisible);
 
             var users = annotations
                 .invoke("get", "created_by_nickname")
@@ -90,9 +81,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 }).value();
 
             // Get all used categories and and their scales
-            var labels = annotations
-                .map(function (annotation) { return annotation.getLabels(); })
-                .flatten()
+            var labels = annotations.invoke("getLabels").flatten();
 
             var categories = labels.pluck("category")
                 .sortBy("name")
@@ -143,19 +132,8 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                     }
 
                     // Build the display code
-                    var scaleValues = annotationTool.video.getScaleValues();
                     if (labels.length) {
-                        result.codes = labels.map(function (label) { return label.get("abbreviation"); }).join(", ");
-                        var scaleValue = annotation.get("content").reduce(function (memo, item) {
-                            if (item.get("type") === "scaling") {
-                                var scaleValue = _.findWhere(scaleValues, { id: item.get("value").scaling });
-                                if (scaleValue) {
-                                    memo.push(scaleValue.get("name"));
-                                }
-                            }
-
-                            return memo
-                        }, []).join(" ");
+                        result.codes = labels.invoke("get", "abbreviation").join(", ");
                     } else {
                         result.codes = "Free";
                     }

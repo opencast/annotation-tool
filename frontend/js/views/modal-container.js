@@ -17,7 +17,16 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
     "use strict";
 
     return Backbone.View.extend({
+        /**
+         * Events to handle
+         * @alias module:views-modal-container.ModalContainer#events
+         * @type {object}
+         */
         events: { "click .btn-primary": "onClick" },
+        /**
+         * Constructor
+         * @alias module:views-modal-container.ModalContainer#initialize
+         */
         initialize: function(options) {
             this.buttonText = options.buttonText;
             this.contentView = options.contentView;
@@ -29,20 +38,39 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
             Backbone.$("#dialogs").append(this.render().$el);
             this.$(".modal").modal({ show: true, backdrop: true, keyboard: true });
         },
+        /**
+         * Destructor
+         * @alias module:views-modal-container.ModalContainer#remove
+         */
         remove: function() {
             this.contentView.remove();
             Backbone.View.prototype.remove.apply(this, arguments);
         },
+
+        /**
+         * Render this view
+         * @alias module:views-modal-container.ModalContainer#render
+         */
         render: function() {
             this.$el.html(template({ cid: this.cid, buttonText: this.buttonText, header: this.header }));
             this.$(".modal-body").append(this.contentView.render().$el);
 
             return this;
         },
+
+        /**
+         * Listener for a close event out of this container
+         * @alias module:views-modal-container.ModalContainer#close
+         */
         close: function() {
             this.$(".modal").modal("hide");
             this.remove();
         },
+
+        /**
+         * Listener for a click on the submit button of this modal.
+         * @alias module:views-modal-container.ModalContainer#onClick
+         */
         onClick: function(event) {
             this.contentView.trigger("modal:click", event);
         }
