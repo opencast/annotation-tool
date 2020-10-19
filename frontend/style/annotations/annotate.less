@@ -191,6 +191,12 @@ div.sharedVisibility button {
 			overflow: auto;
 			margin-bottom: 0;
 
+			.read-only {
+				pointer-events: none;
+				opacity: 0.4;
+			}
+
+
 			.category-item {
 
 				height: 100%;
@@ -267,7 +273,7 @@ div.sharedVisibility button {
 						margin-right: 4px;
 					}
 
-					.read-only {
+					.label-style {
 
 						color: @black;
 						display: block;
@@ -546,7 +552,7 @@ div.sharedVisibility button {
 						.edit {
 							display: inline-block;
 						}
-						.read-only {
+						.label-style {
 							display: none;
 						}
 						textarea, input {
