@@ -819,6 +819,36 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     else
       labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategory", tuple("id", categoryId));
 
+    // Handle series categories
+    // Series categories initially do not have any labels of themselves, so we need to generate them in case they
+    // ever turn into back into normal categories
+    Option<Category> category = getCategory(categoryId, false);
+    Option<Category> seriesCategory;
+    // If the category belongs to a series
+    if (category.isSome() && category.get().getSeriesCategoryId().isSome()) {
+      Long categorySeriesCategoryId = category.get().getSeriesCategoryId().get();
+      seriesCategory = getCategory(categorySeriesCategoryId, false);
+      // And the category is not itself (aka the master series category)
+      if (seriesCategory.isSome() && categoryId != (seriesCategory.get().getId())) {
+        // Get labels from the master series category
+        List<Label> seriesCategoryLabels = getLabels(seriesCategory.get().getId(), none(), none(), none(), none(), none());
+
+        // Update our labels with the labels from the master series category
+        for (Label label: labels) {
+          deleteLabel(label);
+        }
+        List<Label> newLabels = new ArrayList<>();
+        for (Label seriesLabel : seriesCategoryLabels) {
+          newLabels.add(createLabel(categoryId, seriesLabel.getValue(), seriesLabel.getAbbreviation(), seriesLabel.getDescription(),
+                  seriesLabel.getSettings(), new ResourceImpl(option(seriesLabel.getAccess()),
+                  seriesLabel.getCreatedBy(), seriesLabel.getUpdatedBy(), seriesLabel.getDeletedBy(),
+                  seriesLabel.getCreatedAt(), seriesLabel.getUpdatedAt(), seriesLabel.getDeletedAt(),
+                  seriesLabel.getTags())));
+        }
+        labels = newLabels;
+      }
+    }
+
     if (tagsAnd.isSome())
       labels = filterAndTags(labels, tagsAnd.get());
 
