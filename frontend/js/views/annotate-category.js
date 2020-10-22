@@ -172,10 +172,22 @@ define(["jquery",
                     this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
                     this.model.set("seriesExtId", "");
                     this.model.set("seriesCategoryId", "");
+
+                    // Workaround for scales not working
+                    if(this.model.get("scale_id")) {
+                      let settings = _.clone(this.model.get("settings"));
+                      settings.hasScale = true;
+                      this.model.set("settings", settings);
+                    }
                 } else if (!categorySeriesCategoryId && videoSeriesId) {
                     // Add to series
                     this.model.set("seriesExtId", videoSeriesId);
                     this.model.set("seriesCategoryId", this.model.id);
+
+                    // Workaround for scales not working
+                    let settings = _.clone(this.model.get("settings"));
+                    settings.hasScale = false;
+                    this.model.set("settings", settings);
                 }
 
                 this.model.save(null, { wait: true });
