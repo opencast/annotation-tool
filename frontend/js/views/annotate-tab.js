@@ -316,13 +316,14 @@ define(["jquery",
              * Listener for category creation request from UI
              * @alias module:views-annotate-tab.AnnotateTab#onAddCategory
              */
-            onAddCategory: function () {
+            onAddCategory: function (event) {
                 var attributes = {
                     name    : i18next.t("annotate.new category name"),
                     settings: {
                         color   : "#" + annotationTool.colorsManager.getNextColor(),
-                        hasScale: false
-                    }
+                        hasScale: false,
+                        createdAsMine: $(event.currentTarget).data("tabid") === "mine" ? true : false
+                    },                 
                 };
                 this.categories.create(
                     _.extend(attributes, this.defaultCategoryAttributes),

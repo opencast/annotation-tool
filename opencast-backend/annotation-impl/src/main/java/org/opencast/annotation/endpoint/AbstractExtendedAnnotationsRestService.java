@@ -670,13 +670,14 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
-    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, tags, request);
+          @FormParam("access") final Integer access, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, option(access), tags, request);
   }
 
   Response putCategoryResponse(final Option<Long> videoId, final long id, final String name,
-          final String description, final Option<Long> scaleId, final String settings, final String tags,
-          final HttpServletRequest request) {
+          final String description, final Option<Long> scaleId, final String settings, final Option<Integer> access,
+          final String tags, final HttpServletRequest request) {
     return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
       public Response apply(VideoInterface videoInterface) {
@@ -693,8 +694,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(c, tags);
-            final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(description),
-                    trimToNone(settings), resource);
+            final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(access.toString()),
+                    trimToNone(settings), new ResourceImpl(access, resource.getCreatedBy(), resource.getUpdatedBy(), resource
+                    .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource
+                    .getDeletedAt(), resource.getTags()));
             if (!c.equals(updated)) {
               eas().updateCategory(updated);
               c = updated;
@@ -706,8 +709,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @Override
           public Response none() {
             Resource resource = eas().createResource(tags);
-            final Category category = eas().createCategory(videoId, scaleId, name, trimToNone(description),
-                    trimToNone(settings), resource);
+            final Category category = eas().createCategory(videoId, scaleId, name, trimToNone(access.toString()),
+                    trimToNone(settings), new ResourceImpl(access, resource.getCreatedBy(), resource.getUpdatedBy(), resource
+                            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource
+                            .getDeletedAt(), resource.getTags()));
 
             return Response.created(categoryLocationUri(category, videoId.isSome()))
                     .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();

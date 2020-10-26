@@ -637,8 +637,10 @@ public class VideoEndpoint {
   public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
-    return host.putCategoryResponse(some(videoId), id, name, description, option(scaleId), settings, tags, request);
+          @FormParam("access") final Integer access, @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
+    return host.putCategoryResponse(some(videoId), id, name, description, option(scaleId), settings, option(access),
+            tags, request);
   }
 
   @GET
