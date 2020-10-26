@@ -346,13 +346,14 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Scale s = eas.createScale(Option.none(), "test scale", some("test description"), resource);
 
     final Category categoryTemplate = eas.createCategory(none(), some(s.getId()), "Sozialform",
-            some("description Sozialform"), some("sozial form settings"), resource);
+            some("description Sozialform"), some("sozial form settings"), resource, none(), none());
     eas.createLabel(categoryTemplate.getId(), "Bla", "Test", none(), none(), resource);
 
     final Category c = eas.createCategory(some(3L), some(32L), "Verhalten", some("verhalten "), some("settings"),
-            resource);
+            resource, some("seriesId"), none());
     assertEquals(tags.get(), c.getTags());
-    Option<Category> cCopy = eas.createCategoryFromTemplate(20, categoryTemplate.getId(), resource);
+    Option<Category> cCopy = eas.createCategoryFromTemplate(20, categoryTemplate.getId(), resource,
+            "SeriesId", 1337L);
     assertTrue(eas.getCategory(categoryTemplate.getId(), false).isSome());
     assertTrue(eas.getCategory(c.getId(), false).isSome());
     assertTrue(cCopy.isSome());
@@ -382,16 +383,18 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateCategory(new CategoryImpl(1212, some(323L), some(32L), "bla", none(), none(), resource));
+        eas.updateCategory(new CategoryImpl(1212, some(323L), some(32L), "bla", none(), none(), resource,
+                some("seriesId"), none()));
       }
     });
     // create
     final Category c = eas.createCategory(none(), none(), name, some("description Sozialform"),
-            some("sozial form settings"), resource);
+            some("sozial form settings"), resource, some("seriesId"), none());
     assertEquals(name, eas.getCategory(c.getId(), false).get().getName());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateCategory(new CategoryImpl(c.getId(), some(323L), some(32L), "name2", none(), none(), updatedResource));
+    eas.updateCategory(new CategoryImpl(c.getId(), some(323L), some(32L), "name2", none(), none(), updatedResource,
+            some("seriesId"), none()));
     assertEquals("name2", eas.getCategory(c.getId(), false).get().getName());
     assertEquals(tags.get(), eas.getCategory(c.getId(), false).get().getTags());
   }
@@ -402,7 +405,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Resource resource = eas.createResource();
     // create
     final Category c = eas.createCategory(none(), none(), "Sozialform", some("description Sozialform"),
-            some("sozial form settings"), resource);
+            some("sozial form settings"), resource, some("seriesId"), none());
     assertTrue(eas.getCategory(c.getId(), false).isSome());
     // delete
     eas.deleteCategory(c);

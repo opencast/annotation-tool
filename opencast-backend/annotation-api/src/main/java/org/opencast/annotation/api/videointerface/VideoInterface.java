@@ -24,4 +24,9 @@ public interface VideoInterface {
    * @return the list of video URLs belonging to the relevant event
    */
   Iterable<VideoTrack> getTracks() throws VideoInterfaceException;
+
+  /**
+   * @return the series ID of the event
+   */
+  String getSeries();
 }

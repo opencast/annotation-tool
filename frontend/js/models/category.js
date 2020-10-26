@@ -58,6 +58,18 @@ define(["underscore",
              */
             administratorCanEditPublicInstances: true,
 
+            sync: function(method, model, options) { 
+
+                // If the model is referencing another model, sync to the other model
+                if(model.get("seriesCategoryId")) {
+                    model.id = model.get("seriesCategoryId");
+                } else if (model.tmpSeriesCategoryId) {
+                    model.id = model.tmpSeriesCategoryId;
+                }
+
+                return Backbone.Model.prototype.sync.call(this, method, model, options);
+            },
+
             /**
              * Constructor
              * @alias module:models-category.Category#initialize

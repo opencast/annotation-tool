@@ -90,6 +90,11 @@ public class UrlSigningAuthorizationVideoInterfaceProvider implements VideoInter
       public Iterable<VideoTrack> getTracks() throws VideoInterfaceException {
         return base.getTracks();
       }
+
+      @Override
+      public String getSeries() {
+        return base.getSeries();
+      }
     };
   }
 }

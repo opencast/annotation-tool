@@ -47,6 +47,11 @@ public class AdminVideoInterfaceProvider implements VideoInterfaceProvider {
       public Iterable<VideoTrack> getTracks() throws VideoInterfaceException {
         return baseInterface.getTracks();
       }
+
+      @Override
+      public String getSeries() {
+        return baseInterface.getSeries();
+      }
     };
   }
 }

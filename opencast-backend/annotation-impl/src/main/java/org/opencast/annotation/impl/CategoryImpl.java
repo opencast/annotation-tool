@@ -32,9 +32,11 @@ public class CategoryImpl extends ResourceImpl implements Category {
   private final String name;
   private final Option<String> description;
   private final Option<String> settings;
+  private final Option<String> seriesExtId;
+  private final Option<Long> seriesCategoryId;
 
   public CategoryImpl(long id, Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource) {
+          Option<String> settings, Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
             .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
             .getTags());
@@ -44,6 +46,8 @@ public class CategoryImpl extends ResourceImpl implements Category {
     this.name = name;
     this.description = description;
     this.settings = settings;
+    this.seriesExtId = seriesExtId;
+    this.seriesCategoryId = seriesCategoryId;
   }
 
   @Override
@@ -77,6 +81,16 @@ public class CategoryImpl extends ResourceImpl implements Category {
   }
 
   @Override
+  public Option<String> getSeriesExtId() {
+    return seriesExtId;
+  }
+
+  @Override
+  public Option<Long> getSeriesCategoryId() {
+    return seriesCategoryId;
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o)
       return true;
@@ -85,12 +99,13 @@ public class CategoryImpl extends ResourceImpl implements Category {
     Category category = (Category) o;
     return id == category.getId() && videoId.equals(category.getVideoId()) && scaleId.equals(category.getScaleId())
             && name.equals(category.getName()) && description.equals(category.getDescription())
-            && settings.equals(category.getSettings()) && getTags().equals(category.getTags());
+            && settings.equals(category.getSettings()) && getTags().equals(category.getTags())
+            && seriesExtId.equals(category.getSeriesExtId()) && seriesCategoryId.equals(category.getSeriesCategoryId());
   }
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, getTags());
+    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, seriesExtId, seriesCategoryId, getTags());
   }
 
 }
