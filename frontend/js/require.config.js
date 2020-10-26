@@ -12,7 +12,6 @@ require.config({
         "handlebars": "libs/handlebars",
         "handlebarsHelpers": "handlebarsHelpers",
         "jquery.colorPicker": "libs/jquery.colorPicker.min",
-        "jquery.FileReader": "libs/jquery.FileReader",
         "jquery.appear": "libs/jquery.appear",
         "localstorage": "libs/backbone/backbone.localStorage-1.1.16",
         "jquery": "libs/jquery-1.8.0",
@@ -20,7 +19,6 @@ require.config({
         "templates": "../templates",
         "text": "libs/require/text",
         "underscore": "libs/underscore-min",
-        "raf": "libs/rAF",
         "email-addresses": "libs/email-addresses.min",
         "mousetrap": "libs/mousetrap.min",
         "i18next": "libs/i18next.min",
@@ -33,7 +31,10 @@ require.config({
         "mediaelement/lang": "libs/mediaelement/lang",
         "sortable": "libs/Sortable.min",
         "goldenlayout": "libs/goldenlayout",
-        "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min"
+        "xlsx": "libs/xlsx.full.min",
+        "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min",
+        "papaparse": "libs/papaparse.min",
+        "filesaver": "libs/FileSaver.min",
     },
     waitSeconds: 10,
 
@@ -43,7 +44,6 @@ require.config({
             exports: "Backbone"
         },
 
-        "jquery.FileReader": ["jquery"],
         "jquery.colorPicker": ["jquery"],
         "jquery.appear": ["jquery"],
 

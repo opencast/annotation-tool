@@ -111,32 +111,6 @@ define([
      */
     var Configuration = {
         /**
-         * Offer the user a spreadsheet version of the annotations for download.
-         * @param {Video} video The video to export
-         * @param {Track[]} tracks The tracks to include in the export
-         * @param {Category[]} categories The tracks to include in the export
-         * @param {Boolean} freeText Should free text annotations be exportet?
-         */
-        export: function (video, tracks, categories, freeText) {
-            var parameters = new URLSearchParams();
-            _.each(tracks, function (track) {
-                parameters.append("track", track.id);
-            });
-            _.each(categories, function (category) {
-                parameters.append("category", category.id);
-            });
-            parameters.append("freetext", freeText);
-            parameters.append("mediaPackage", util.queryParameters.id);
-            parameters.append("signedUrl", window.location);
-            window.location.href =
-                apiBase +
-                "/videos/" +
-                video.id +
-                "/export.csv?" +
-                parameters;
-        },
-
-        /**
          * Get the current video id (video_extid)
          * @return {Promise.<string>} video external id
          */

@@ -126,7 +126,8 @@
     },
     "processing": {
       "head": "Verarbeiten",
-      "export": "Für Statistik exportieren",
+      "export csv": "Für Statistik exportieren",
+      "export xlsx": "Für Statistik exportieren (Excel)",
       "print": "Drucken"
     },
     "logout": "Abmelden",

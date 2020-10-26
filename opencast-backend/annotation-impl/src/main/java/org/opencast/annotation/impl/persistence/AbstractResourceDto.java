@@ -90,10 +90,13 @@ public abstract class AbstractResourceDto {
       String createdByNickname = resource.getCreatedBy().map(getUserNickname.curry(s)).getOrElse((String) null);
       String updatedByNickname = resource.getUpdatedBy().map(getUserNickname.curry(s)).getOrElse((String) null);
       String deletedByNickname = resource.getDeletedBy().map(getUserNickname.curry(s)).getOrElse((String) null);
+
+      String createdByEmail = resource.getCreatedBy().flatMap(getUserEmail.curry(s)).getOrElse("");
       return conc(
               jO(p("access", resource.getAccess()), p("created_by", createdBy), p("updated_by", updatedBy),
                       p("deleted_by", deletedBy), p("created_at", createdAt), p("updated_at", updatedAt),
                       p("deleted_at", deletedAt), p("created_by_nickname", createdByNickname),
+                      p("created_by_email", createdByEmail),
                       p("updated_by_nickname", updatedByNickname), p("deleted_by_nickname", deletedByNickname)),
               jOTags(resource.getTags()));
     }
@@ -114,6 +117,18 @@ public abstract class AbstractResourceDto {
         return null;
 
       return user.get().getNickname();
+    }
+  };
+
+  private static final Function2<ExtendedAnnotationService, Long, Option<String>> getUserEmail = new Function2<ExtendedAnnotationService, Long, Option<String>>() {
+    @Override
+    public Option apply(ExtendedAnnotationService s, Long userId) {
+      return s.getUser(userId).flatMap(new Function<User, Option<String>>() {
+        @Override
+        public Option<String> apply(User user) {
+          return user.getEmail();
+        }
+      });
     }
   };
 

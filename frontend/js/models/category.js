@@ -153,27 +153,6 @@ define(["underscore",
             },
 
             /**
-             * Save this category to the backend with the given attributes.
-             * We override this to control the serialization of the tags,
-             * Which need to be stringified for the communication with the server.
-             * @alias module:models-category.Category#save
-             */
-            save: function (key, value, options) {
-                var attributes;
-                // Imitate Backbones calling convention negotiation dance
-                if (key == null || _.isObject(key)) {
-                    attributes = key;
-                    options = value;
-                } else if (key != null) {
-                    (attributes = {})[key] = value;
-                }
-
-                options = _.defaults({ stringifySub: true }, options);
-
-                return Resource.prototype.save.call(this, attributes, options);
-            },
-
-            /**
              * Show/hide the category in the UI
              * @alias module:models-category.Category#toggleVisibility
              */
@@ -197,7 +176,6 @@ define(["underscore",
              * Override the default toJSON function to ensure complete JSONing.
              * @alias module:models-category.Category#toJSON
              * @param {Object} options The options to control the "JSONification" of this collection
-             * @param {Boolean} stringifySub defines if the sub-object should be stringify
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function (options) {
