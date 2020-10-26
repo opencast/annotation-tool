@@ -89,7 +89,8 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #export": "export",
+                "click #export-csv": "exportCSV",
+                "click #export-xlsx": "exportXLSX",
                 "click #about": "about",
                 "click #logout": "onLogout",
                 "click #print": "print",
@@ -122,11 +123,6 @@ define(["jquery",
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
 
                 this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
-
-                if (annotationTool.localStorage) {
-                    // Remove link for statistics exports, work only with backend implementation
-                    this.$el.find("#export").parent().remove();
-                }
 
                 annotationTool.scaleEditor = new ScaleEditorView();
 
@@ -389,9 +385,11 @@ define(["jquery",
                     // in order to prevent the play-pause shortcut (space)
                     // to be handled twice.
                     self.playerContainer = container.getElement()[0];
+                    var view = $("<div class='window'></div>")
+                        .appendTo(self.playerContainer);
 
                     container.on("open", function () {
-                        annotationTool.loadVideo(container.getElement()[0]);
+                        annotationTool.loadVideo(view[0]);
                     });
 
                     function videoLoaded() {
@@ -524,19 +522,22 @@ define(["jquery",
             setupKeyboardShortcuts: function () {
 
                 var setActiveAnnotationDuration = function () {
-                    if (!annotationTool.activeAnnotation) return;
+                    var selection = annotationTool.getSelection();
+                    if (!selection) return;
 
                     var currentTime = annotationTool.playerAdapter.getCurrentTime();
-                    var start = annotationTool.activeAnnotation.get("start");
-                    annotationTool.activeAnnotation.set("duration", currentTime - start);
-                    annotationTool.activeAnnotation.save();
+                    var start = selection.get("start");
+                    selection.set("duration", currentTime - start);
+                    selection.save();
                 };
 
                 var addComment = _.bind(function () {
-                    if (!annotationTool.activeAnnotation) return;
                     if (!this.views.list) return;
+                    var selection = annotationTool.getSelection();
+                    if (!selection) return;
+
                     var annotationView = this.views.list.getViewFromAnnotation(
-                        annotationTool.activeAnnotation.get("id")
+                        selection.id
                     );
                     annotationView.toggleCommentsState();
                     var wasPlaying = annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
@@ -629,7 +630,6 @@ define(["jquery",
 
                 if (scaleValue || annotationShortcutState.label && !annotationShortcutState.scale) {
                     var annotation = annotationTool.createAnnotation(annotationShortcutState.params);
-                    annotationTool.setSelection([annotation], true);
                     this.interruptAnnotationShortcut();
                 } else {
                     clearTimeout(annotationShortcutTimer);
@@ -684,21 +684,41 @@ define(["jquery",
 
             /**
              * Offer the user a spreadsheet version of the annotations for download.
-             * @alias module:views-main.Main#export
              */
-            export: function () {
+            exportCSV: function () {
+                this.exportAs("csv");
+            },
+
+            /**
+             * Offer the user an excel version of the annotations for download.
+             */
+            exportXLSX: function () {
+                this.exportAs("xlsx");
+            },
+
+            exportAs: function (format) {
                 var tracksToExport = annotationTool.video
                     .get("tracks").getVisibleTracks();
                 var categoriesToExport = annotationTool.video
                     .get("categories").filter(function (category) {
                         return category.get("visible");
                     });
-                annotationTool.export(
-                    annotationTool.video,
-                    tracksToExport,
-                    categoriesToExport,
-                    annotationTool.freeTextVisible
-                );
+                switch (format) {
+                    case "csv":
+                        annotationTool.exportCSV(
+                            tracksToExport,
+                            categoriesToExport,
+                            annotationTool.freeTextVisible
+                        );
+                        break;
+                    case "xlsx":
+                        annotationTool.exportXLSX(
+                            tracksToExport,
+                            categoriesToExport,
+                            annotationTool.freeTextVisible
+                        );
+                        break;
+                }
             },
 
             /**
@@ -780,24 +800,17 @@ define(["jquery",
              * @param  {Event} event Event object
              */
             onDeletePressed: function (event) {
-                var annotation;
-
                 if (event.keyCode !== 8 ||
-                    document.activeElement.tagName.toUpperCase() === "TEXTAREA" ||
-                    document.activeElement.tagName.toUpperCase() === "INPUT" ||
-                    !annotationTool.hasSelection()) {
-                    return;
-                } else {
-                    event.preventDefault();
+                    document.activeElement.tagName === "TEXTAREA" ||
+                    document.activeElement.tagName === "INPUT" ||
+                    !annotationTool.hasSelection()) return;
 
-                    annotation = annotationTool.getSelection()[0];
-                    if (annotation) {
-                        annotationTool.deleteOperation.start(
-                            annotation,
-                            annotationTool.deleteOperation.targetTypes.ANNOTATION
-                        );
-                    }
-                }
+                event.preventDefault();
+
+                annotationTool.deleteOperation.start(
+                    annotationTool.getSelection(),
+                    annotationTool.deleteOperation.targetTypes.ANNOTATION
+                );
             },
 
             /**
@@ -805,6 +818,8 @@ define(["jquery",
              * @alias module:views-main.MainView#onWindowResize
              */
             onWindowResize: function () {
+                var mainContainer = this.$el.find("#main-container");
+                mainContainer.height($(window).height() - mainContainer.position().top);
                 goldenLayout.updateSize();
             },
 

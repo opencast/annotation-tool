@@ -21,9 +21,6 @@ import org.opencastproject.util.data.Option;
 /** A class representing a label of the annotation tool. */
 public interface Label extends Resource {
 
-  /** The label id */
-  long getId();
-
   /** The category that is used for this label. */
   long getCategoryId();
 

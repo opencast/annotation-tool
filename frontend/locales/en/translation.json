@@ -96,7 +96,7 @@
   "delete modal": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
-    "title": "Delete",
+    "title": "Delete {{context}}",
     "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
   },
   "description": "Video annotation tool",
@@ -126,7 +126,8 @@
     },
     "processing": {
       "head": "Process",
-      "export": "Export for statistics",
+      "export csv": "Export for statistics",
+      "export xlsx": "Export for statistics (Excel)",
       "print": "Print"
     },
     "logout": "Log out",
@@ -280,9 +281,6 @@
     "navigation": "Navigation",
     "hidden items": "One hidden item",
     "hidden items_plural": "{{count}} hidden items",
-    "private only": {
-      "no public tracks allowed": "Public tracks have been disallowed for this video."
-    },
     "reset zoom": "Reset zoom",
     "scripts not allowed": "Scripts are not allowed!",
     "track": {

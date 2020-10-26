@@ -53,8 +53,8 @@ body {
 .icon-likert-plusplus    { background-position: -336px -168px !important; }
 .icon-color-palette      { background-position: -360px -168px !important; }
 .icon-color-corner       { background-position: -384px -168px !important; }
-.icon-public             { background-position: -96px  -120px !important; height: 15px !important; width: 23px !important; }
-.icon-private            { background-position: -120px -120px !important; height: 15px !important; width: 23px !important; }
+.icon-public             { background-position: -336px -144px !important; }
+.icon-private            { background-position: -288px  -24px !important; }
 .icon-shared-with-admin  { .icon-share-alt;                               }
 .icon-empty-slot         { background-position: -408px -168px !important; }
 .icon-empty-slot         { background-position: -432px -168px !important; }
@@ -190,4 +190,34 @@ input, textarea, select, .uneditable-input {
             display: none;
         }
     }
+}
+
+@annotationSelectionColor: rgba(0, 0, 0, 0.15);
+@annotationSelectableColor: fadeout(@annotationSelectionColor, 7.5%);
+
+.selection(@color) {
+    background-image: repeating-linear-gradient(
+        315deg,
+        transparent,
+        transparent 10px,
+        @color 10px,
+        @color 20px
+    );
+}
+
+.selectable-annotation {
+    cursor: pointer;
+    color: black;
+    &:hover {
+        .selection(@annotationSelectableColor);
+    }
+}
+
+.active-annotation {
+    box-shadow: inset 0px 0px 2px 1px red;
+}
+
+.selected-annotation {
+    .selection(@annotationSelectionColor);
+    .selectable-annotation();
 }

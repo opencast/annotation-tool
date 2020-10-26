@@ -1,38 +1,38 @@
 package org.opencast.annotation.endpoint;
 
-import org.opencast.annotation.api.Annotation;
-import org.opencast.annotation.api.Category;
-import org.opencast.annotation.api.Comment;
-import org.opencast.annotation.api.ExtendedAnnotationException;
-import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Label;
-import org.opencast.annotation.api.Resource;
-import org.opencast.annotation.api.Scale;
-import org.opencast.annotation.api.ScaleValue;
-import org.opencast.annotation.api.Track;
-import org.opencast.annotation.api.User;
-import org.opencast.annotation.api.Video;
-
-import org.opencast.annotation.impl.AnnotationImpl;
-import org.opencast.annotation.impl.CommentImpl;
-import org.opencast.annotation.impl.ResourceImpl;
-import org.opencast.annotation.impl.TrackImpl;
-
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.BAD_REQUEST;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.FORBIDDEN;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.LOCATION;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NOT_FOUND;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
+import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
+import static org.opencast.annotation.endpoint.util.Responses.buildOk;
+import static org.opencastproject.util.UrlSupport.uri;
+import static org.opencastproject.util.data.Arrays.array;
+import static org.opencastproject.util.data.Option.none;
+import static org.opencastproject.util.data.Option.option;
+import static org.opencastproject.util.data.Option.some;
+import static org.opencastproject.util.data.functions.Strings.trimToNone;
 
-import org.opencast.annotation.impl.persistence.AbstractResourceDto;
+import org.opencast.annotation.api.Annotation;
+import org.opencast.annotation.api.Category;
+import org.opencast.annotation.api.Comment;
+import org.opencast.annotation.api.ExtendedAnnotationException;
+import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.api.Resource;
+import org.opencast.annotation.api.Scale;
+import org.opencast.annotation.api.Track;
+import org.opencast.annotation.api.Video;
+import org.opencast.annotation.impl.AnnotationImpl;
+import org.opencast.annotation.impl.CommentImpl;
+import org.opencast.annotation.impl.ResourceImpl;
+import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
 import org.opencast.annotation.impl.persistence.CommentDto;
@@ -41,25 +41,15 @@ import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
-
-import org.opencastproject.util.IoSupport;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
-import static org.opencastproject.util.UrlSupport.uri;
-import static org.opencastproject.util.data.Arrays.array;
-import static org.opencastproject.util.data.Option.none;
-import static org.opencastproject.util.data.Option.option;
-import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.data.functions.Strings.trimToNone;
-
-import au.com.bytecode.opencsv.CSVWriter;
-
-import org.apache.commons.io.IOUtils;
+import java.net.URI;
+import java.util.Date;
+import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -74,19 +64,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
 
 public class VideoEndpoint {
 
@@ -103,12 +80,20 @@ public class VideoEndpoint {
         ANNOTATE_ADMIN
     }
 
-    final Video video;
-    final Access access;
+    private final Video video;
+    private final Access access;
 
     VideoData(final Video video, final Access access) {
       this.video = video;
       this.access = access;
+    }
+
+    public Video getVideo() {
+      return video;
+    }
+
+    public Access getAccess() {
+      return access;
     }
   }
 
@@ -120,7 +105,7 @@ public class VideoEndpoint {
     return VideoData.Access.NONE;
   }
 
-  public VideoEndpoint(final long videoId, final AbstractExtendedAnnotationsRestService host,
+  VideoEndpoint(final long videoId, final AbstractExtendedAnnotationsRestService host,
           final ExtendedAnnotationService eas) {
     this.videoId = videoId;
     this.host = host;
@@ -136,7 +121,7 @@ public class VideoEndpoint {
     });
 
     for (VideoData videoData: this.videoData) {
-      if (videoData.access == VideoData.Access.NONE) {
+      if (videoData.getAccess() == VideoData.Access.NONE) {
         throw new WebApplicationException(FORBIDDEN);
       }
     }
@@ -151,9 +136,9 @@ public class VideoEndpoint {
         return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
           public Response some(VideoData v) {
-            if (!eas.hasResourceAccess(v.video))
+            if (!eas.hasResourceAccess(v.getVideo()))
               return UNAUTHORIZED;
-            return buildOk(VideoDto.toJson.apply(eas, v.video));
+            return buildOk(VideoDto.toJson.apply(eas, v.getVideo()));
           }
 
           @Override
@@ -173,9 +158,9 @@ public class VideoEndpoint {
         return videoData.fold(new Option.Match<VideoData, Response>() {
           @Override
           public Response some(VideoData v) {
-            if (!eas.hasResourceAccess(v.video))
+            if (!eas.hasResourceAccess(v.getVideo()))
               return UNAUTHORIZED;
-            return eas.deleteVideo(v.video) ? NO_CONTENT : NOT_FOUND;
+            return eas.deleteVideo(v.getVideo()) ? NO_CONTENT : NOT_FOUND;
           }
 
           @Override
@@ -203,8 +188,7 @@ public class VideoEndpoint {
 
         try {
 
-          Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                  option(access));
+          Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
           final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
           return Response.created(trackLocationUri(t))
@@ -240,7 +224,7 @@ public class VideoEndpoint {
                 return BAD_REQUEST;
 
               Resource resource = eas.updateResource(track,
-                      tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+                      tagsMap.bind(Functions.identity()));
 
               final Track updated = new TrackImpl(id, videoId, name, trimToNone(description), trimToNone(settings),
                       new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource
@@ -331,8 +315,8 @@ public class VideoEndpoint {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -345,9 +329,9 @@ public class VideoEndpoint {
           return buildOk(TrackDto.toJson(
                   eas,
                   offset,
-                  eas.getTracks(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                          tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                          tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                  eas.getTracks(videoId, offsetm, limitm, datem.bind(Functions.identity()),
+                          tagsAndArray.bind(Functions.identity()),
+                          tagsOrArray.bind(Functions.identity()))));
         }
       }
     });
@@ -369,7 +353,7 @@ public class VideoEndpoint {
             return BAD_REQUEST;
 
           Resource resource = eas.createResource(
-                  tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+                  tagsMap.bind(Functions.identity()));
           final Annotation a = eas.createAnnotation(trackId, trimToNone(text), start, option(duration),
                   trimToNone(settings), option(labelId), option(scaleValueId), resource);
           return Response.created(annotationLocationUri(videoId, a))
@@ -396,7 +380,7 @@ public class VideoEndpoint {
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         // check if video and track exist
         if (videoData.isSome() && eas.getTrack(trackId).isSome()) {
@@ -505,10 +489,10 @@ public class VideoEndpoint {
       @Override
       public Response apply() {
         if (videoData.isSome()) {
-          final Option<Double> startm = start > 0 ? some(start) : Option.<Double> none();
-          final Option<Double> endm = end > 0 ? some(end) : Option.<Double> none();
-          final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-          final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+          final Option<Double> startm = start > 0 ? some(start) : none();
+          final Option<Double> endm = end > 0 ? some(end) : none();
+          final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+          final Option<Integer> limitm = limit > 0 ? some(limit) : none();
           final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
           final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
           final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -521,9 +505,9 @@ public class VideoEndpoint {
                     eas,
                     offset,
                     eas.getAnnotations(trackId, startm, endm, offsetm, limitm,
-                            datem.bind(Functions.<Option<Date>> identity()),
-                            tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                            tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                            datem.bind(Functions.identity()),
+                            tagsAndArray.bind(Functions.identity()),
+                            tagsOrArray.bind(Functions.identity()))));
           }
         } else {
           return NOT_FOUND;
@@ -550,8 +534,7 @@ public class VideoEndpoint {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                option(access));
+        Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();
@@ -649,7 +632,7 @@ public class VideoEndpoint {
         if (videoData.isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas.createResource(tagsMap.bind(Functions.identity()));
         Option<Category> categoryFromTemplate = eas.createCategoryFromTemplate(videoId, id, resource);
         return categoryFromTemplate.fold(new Option.Match<Category, Response>() {
 
@@ -750,10 +733,10 @@ public class VideoEndpoint {
   public Response postComment(@PathParam("trackId") final long trackId,
           @PathParam("annotationId") final long annotationId, @FormParam("text") final String text,
           @FormParam("tags") final String tags) {
-    return postCommentResponse(trackId, annotationId, Option.<Long> none(), text, tags);
+    return postCommentResponse(trackId, annotationId, none(), text, tags);
   }
 
-  public Response postCommentResponse(final long trackId, final long annotationId, final Option<Long> replyToId,
+  private Response postCommentResponse(final long trackId, final long annotationId, final Option<Long> replyToId,
           final String text, final String tags) {
     if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
@@ -764,7 +747,7 @@ public class VideoEndpoint {
           if (tagsMap.isSome() && tagsMap.get().isNone())
             return BAD_REQUEST;
 
-          Resource resource = eas.createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+          Resource resource = eas.createResource(tagsMap.bind(Functions.identity()));
           final Comment comment = eas.createComment(annotationId, replyToId, text, resource);
 
           return Response.created(commentLocationUri(comment, videoId, trackId))
@@ -792,7 +775,7 @@ public class VideoEndpoint {
           if (tagsMap.isSome() && tagsMap.get().isNone())
             return BAD_REQUEST;
 
-          final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+          final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
           return eas.getComment(commentId).fold(new Option.Match<Comment, Response>() {
             @Override
@@ -800,7 +783,7 @@ public class VideoEndpoint {
               if (!eas.hasResourceAccess(c))
                 return UNAUTHORIZED;
               Resource resource = eas.updateResource(c, tags);
-              final Comment updated = new CommentImpl(commentId, annotationId, text, Option.<Long> none(), resource);
+              final Comment updated = new CommentImpl(commentId, annotationId, text, Option.none(), resource);
               if (!c.equals(updated)) {
                 eas.updateComment(updated);
                 c = updated;
@@ -812,7 +795,7 @@ public class VideoEndpoint {
             @Override
             public Response none() {
               Resource resource = eas.createResource(tags);
-              final Comment comment = eas.createComment(annotationId, Option.<Long> none(), text, resource);
+              final Comment comment = eas.createComment(annotationId, Option.none(), text, resource);
 
               return Response.created(commentLocationUri(comment, videoId, trackId))
                       .entity(Strings.asStringNull().apply(CommentDto.toJson.apply(eas, comment))).build();
@@ -895,18 +878,18 @@ public class VideoEndpoint {
           @PathParam("annotationId") final long annotationId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
           @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return getCommentsResponse(trackId, annotationId, Option.<Long> none(), limit, offset, date, tagsAnd, tagsOr);
+    return getCommentsResponse(trackId, annotationId, none(), limit, offset, date, tagsAnd, tagsOr);
   }
 
-  public Response getCommentsResponse(final long trackId, final long annotationId, final Option<Long> replyToId,
+  private Response getCommentsResponse(final long trackId, final long annotationId, final Option<Long> replyToId,
           final int limit, final int offset, final String date, final String tagsAnd, final String tagsOr) {
     if (videoData.isSome() && eas.getTrack(trackId).isSome()
             && eas.getAnnotation(annotationId).isSome()) {
       return run(nil, new Function0<Response>() {
         @Override
         public Response apply() {
-          final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-          final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+          final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+          final Option<Integer> limitm = limit > 0 ? some(limit) : none();
           final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
           Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
           Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -919,9 +902,9 @@ public class VideoEndpoint {
                   eas,
                   offset,
                   eas.getComments(annotationId, replyToId, offsetm, limitm,
-                          datem.bind(Functions.<Option<Date>> identity()),
-                          tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                          tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                          datem.bind(Functions.identity()),
+                          tagsAndArray.bind(Functions.identity()),
+                          tagsOrArray.bind(Functions.identity()))));
         }
       });
     } else {
@@ -955,179 +938,6 @@ public class VideoEndpoint {
             tagsOr);
   }
 
-  @GET
-  @Path("/export.csv")
-  public Response getExportStatistics(@QueryParam("track") final List<Long> tracks,
-          @QueryParam("category") final List<Long> categories,
-          @QueryParam("freetext") final Boolean freeText) {
-    Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
-
-      public void write(OutputStream os) throws IOException, WebApplicationException {
-        CSVWriter writer = null;
-        try {
-          writer = new CSVWriter(new OutputStreamWriter(os));
-          writeExport(writer, tracks, categories, freeText);
-          writer.close();
-        } finally {
-          IOUtils.closeQuietly(os);
-          IoSupport.closeQuietly(writer);
-        }
-      }
-    });
-    response.header("Content-Type", "text/csv");
-    response.header("Content-Disposition", "attachment; filename=export.csv");
-    return response.build();
-  }
-
-  private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport,
-          Boolean freeText) {
-    // Write headers
-    List<String> header = new ArrayList<>();
-    header.add("ID");
-    header.add("Creation date");
-    header.add("Last update");
-    header.add("Author nickname");
-    header.add("Author mail");
-    header.add("Track name");
-    header.add("Leadin");
-    header.add("Leadout");
-    header.add("Duration");
-    header.add("Text");
-    header.add("Category name");
-    header.add("Label name");
-    header.add("Label abbreviation");
-    header.add("Scale name");
-    header.add("Scale value name");
-    header.add("Scale value value");
-    writer.writeNext(header.toArray(new String[header.size()]));
-
-    for (VideoData videoData : this.videoData) {
-      Video video = videoData.video;
-      List<Track> tracks = eas.getTracks(video.getId(), Option.<Integer> none(), Option.<Integer> none(),
-              Option.<Date> none(), Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
-      for (Track track : tracks) {
-        if (tracksToExport != null && !tracksToExport.contains(track.getId())) continue;
-        List<Annotation> annotations = eas.getAnnotations(track.getId(), none(Double.class), none(Double.class),
-                none(Integer.class), none(Integer.class), none(Date.class), Option.<Map<String, String>> none(),
-                Option.<Map<String, String>> none());
-        for (Annotation annotation : annotations) {
-          Option<Label> label = annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
-            @Override
-            public Option<Label> apply(Long labelId) {
-              final boolean includeDeleted = true;
-              return eas.getLabel(labelId, includeDeleted);
-            }
-          });
-          if (label.isSome()) {
-            if (categoriesToExport != null && !categoriesToExport.contains(label.get().getCategoryId())) continue;
-          } else {
-            if (freeText != null && !freeText) continue;
-          }
-
-          List<String> line = new ArrayList<>();
-
-          line.add(Long.toString(annotation.getId()));
-          line.add(annotation.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-          line.add(annotation.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-          line.add(annotation.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
-          line.add(track.getName());
-
-          double start = annotation.getStart(); // start, stop, duration
-          line.add(toVideoTimeString(start));
-          double end = start;
-          if (annotation.getDuration().isSome()) {
-            end += annotation.getDuration().get();
-            line.add(toVideoTimeString(end));
-            line.add(toVideoTimeString(annotation.getDuration().get()));
-          } else {
-            line.add(toVideoTimeString(end));
-            line.add("");
-          }
-          line.add(annotation.getText().getOrElse(""));
-
-          line.add(label.map(getCategoryName.curry(eas)).getOrElse(""));
-          line.add(label.map(getLabelName).getOrElse(""));
-          line.add(label.map(getLabelAbbreviation).getOrElse(""));
-
-          if (annotation.getScaleValueId().isSome()) {
-            Option<ScaleValue> scaleValue = eas.getScaleValue(annotation.getScaleValueId().get());
-            line.add(scaleValue.map(getScaleName.curry(eas)).getOrElse(""));
-            line.add(scaleValue.map(getScaleValueName).getOrElse(""));
-            line.add(scaleValue.map(getScaleValue).getOrElse(""));
-          } else {
-            line.add("");
-            line.add("");
-            line.add("");
-          }
-
-          writer.writeNext(line.toArray(new String[line.size()]));
-        }
-      }
-    }
-  }
-
-  private static String toVideoTimeString(double seconds) {
-    long millis = new Double(seconds * 1000).longValue();
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-    return sdf.format(new Date(millis - TimeZone.getDefault().getRawOffset()));
-  }
-
-  private static final Function2<ExtendedAnnotationService, Long, Option<String>> getUserEmail = new Function2<ExtendedAnnotationService, Long, Option<String>>() {
-    @Override
-    public Option apply(ExtendedAnnotationService s, Long userId) {
-      return s.getUser(userId).flatMap(new Function<User, Option<String>>() {
-        @Override
-        public Option<String> apply(User user) {
-          return user.getEmail();
-        }
-      });
-    }
-  };
-
-  private static final Function<Label, String> getLabelName = new Function<Label, String>() {
-    @Override
-    public String apply(Label label) {
-      return label.getValue();
-    }
-  };
-
-  private static final Function2<ExtendedAnnotationService, Label, String> getCategoryName = new Function2<ExtendedAnnotationService, Label, String>() {
-    @Override
-    public String apply(ExtendedAnnotationService e, Label label) {
-      return e.getCategory(label.getCategoryId(), true).get().getName();
-    }
-  };
-
-  private static final Function<Label, String> getLabelAbbreviation = new Function<Label, String>() {
-    @Override
-    public String apply(Label label) {
-      return label.getAbbreviation();
-    }
-  };
-
-  private static final Function<ScaleValue, String> getScaleValueName = new Function<ScaleValue, String>() {
-    @Override
-    public String apply(ScaleValue scaleValue) {
-      return scaleValue.getName();
-    }
-  };
-
-  private static final Function<ScaleValue, String> getScaleValue = new Function<ScaleValue, String>() {
-    @Override
-    public String apply(ScaleValue scaleValue) {
-      return Double.toString(scaleValue.getValue());
-    }
-  };
-
-  private static final Function2<ExtendedAnnotationService, ScaleValue, String> getScaleName = new Function2<ExtendedAnnotationService, ScaleValue, String>() {
-    @Override
-    public String apply(ExtendedAnnotationService e, ScaleValue scaleValue) {
-      return e.getScale(scaleValue.getScaleId(), true).get().getName();
-    }
-  };
-
-
   private URI trackLocationUri(Track t) {
     return uri(host.getEndpointBaseUrl(), "videos", t.getVideoId(), "tracks", t.getId());
   }
@@ -1141,7 +951,7 @@ public class VideoEndpoint {
             "comments", c.getId());
   }
 
-  static private Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
+  private static Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
     if (e.getCauseCode() == ExtendedAnnotationException.Cause.NOT_FOUND) {
       return BAD_REQUEST;
     } else {

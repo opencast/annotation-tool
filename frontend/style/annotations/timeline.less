@@ -1,5 +1,30 @@
 #timeline {
     background-color: white;
+    display: flex;
+    flex-basis: 0;
+
+
+    .vis-foreground .vis-group, .vis-label {
+        &:last-child {
+            border-bottom: 1px solid #bfbfbf;
+        }
+    }
+
+    // Make the "border" of the annotation anchors
+    // (which consist of nothing but (rounded) borders)
+    // transparent, for the background to shine through.
+    // The background is potentially the color of the category
+    // of the annotation.
+    // Do this here, globally, but also with higher specificity
+    // than the default styles provided by vis.js,
+    // so that it works for all combinations of the selected and active states.
+    .vis-item.vis-dot {
+        border-color: rgba(0, 0, 0, 0.25);
+    }
+}
+
+.vis-timeline {
+    flex-grow: 1;
 }
 
 .vis-custom-time {
@@ -37,27 +62,48 @@
 }
 
 .vis-item {
+    .selectable-annotation();
+
     border-color: rgba(0, 0, 0, 0.25);
-    background-color: @grayLight;
-    height: 24px;
+    background-color: @grayLighter;
+
+    &.vis-box, &.vis-range {
+        height: 20px;
+        box-sizing: content-box;
+    }
 
     &.selection {
         z-index: 0;
         background-color: @grayLight;
     }
 
-    &.vis-selected {
+    &.active {
         border-color: @gray;
-        background-color: @grayLight;
-        box-shadow: inset 0px 0px 2px 1px red;
+        background-color: @grayLighter;
+        .active-annotation();
     }
 
-    &.vis-range .vis-item-content {
+    &.vis-selected {
+        border-color: @gray;
+        background-color: @grayLighter;
+        .selected-annotation();
+    }
+
+    .vis-item-content {
         overflow: hidden;
         text-overflow: ellipsis;
-        position: absolute;
-        right: 0;
+        width: 100%;
+        /* The vertical align can't be `baseline` (the default) */
+        /* because the content of ranged annotations are set */
+        /* as `inline-block`-s. `baseline` alignment would add */
+        /* space for descending characters below the content block. */
+        vertical-align: middle;
+        padding: 2px 5px;
     }
+}
+
+.vis-box {
+    width: 2.6ex;
 }
 
 .vis-custom-time .vis-custom-time-marker {
@@ -69,6 +115,9 @@
     border-top: 10px solid red;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
+    /* Put the marker behind the line so we can drag it, */
+    /* or rather the line now over it, as well. */
+    z-index: -1;
 }
 
 .vis-label {
@@ -89,4 +138,22 @@ div.visibility button {
     .link-button();
     width: 23px;
     text-align: center;
+
+    i {
+        margin-top: 0;
+    }
+}
+
+.vis-line, .vis-dot {
+    opacity: 0.3;
+}
+.selected {
+    .vis-line, .vis-dot {
+        opacity: 1;
+    }
+}
+.vis-selected {
+    &.vis-line, &.vis-dot {
+        opacity: 1;
+    }
 }

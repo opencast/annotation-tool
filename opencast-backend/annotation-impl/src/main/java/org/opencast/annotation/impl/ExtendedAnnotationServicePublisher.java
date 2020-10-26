@@ -17,6 +17,9 @@ package org.opencast.annotation.impl;
 
 import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 
+import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
+
 import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityService;
@@ -30,10 +33,6 @@ import java.util.Dictionary;
 
 import javax.persistence.EntityManagerFactory;
 
-import org.opencast.annotation.api.ExtendedAnnotationService;
-
-import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
-
 /**
  * Create and register an implementation of {@link org.opencast.annotation.api.ExtendedAnnotationService} .
  */
@@ -45,6 +44,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
   private SearchService searchService;
 
   /** OSGi DI */
+  @SuppressWarnings("unused")
   void setEntityManagerFactory(EntityManagerFactory emf) {
     this.emf = emf;
   }
@@ -55,6 +55,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param securityService
    *          the security service
    */
+  @SuppressWarnings("unused")
   public void setSecurityService(SecurityService securityService) {
     this.securityService = securityService;
   }
@@ -65,6 +66,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param authorizationService
    *          the authorization service
    */
+  @SuppressWarnings("unused")
   public void setAuthorizationService(AuthorizationService authorizationService) {
     this.authorizationService = authorizationService;
   }
@@ -75,6 +77,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
    * @param searchService
    *          the search service
    */
+  @SuppressWarnings("unused")
   public void setSearchService(SearchService searchService) {
     this.searchService = searchService;
   }

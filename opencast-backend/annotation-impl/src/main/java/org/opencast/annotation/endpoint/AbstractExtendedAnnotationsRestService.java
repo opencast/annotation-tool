@@ -15,24 +15,14 @@
  */
 package org.opencast.annotation.endpoint;
 
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
+import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 import static org.opencastproject.util.UrlSupport.uri;
 import static org.opencastproject.util.data.Arrays.array;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.data.functions.Strings.trimToNone;
-
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
-import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
-
-import org.opencastproject.mediapackage.MediaPackage;
-
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Option;
-import org.opencastproject.util.data.functions.Functions;
-import org.opencastproject.util.data.functions.Strings;
 
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationException;
@@ -43,7 +33,6 @@ import org.opencast.annotation.api.Scale;
 import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.impl.CategoryImpl;
 import org.opencast.annotation.impl.LabelImpl;
 import org.opencast.annotation.impl.ResourceImpl;
@@ -57,6 +46,13 @@ import org.opencast.annotation.impl.persistence.ScaleDto;
 import org.opencast.annotation.impl.persistence.ScaleValueDto;
 import org.opencast.annotation.impl.persistence.UserDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
+
+import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.util.data.Function;
+import org.opencastproject.util.data.Function0;
+import org.opencastproject.util.data.Option;
+import org.opencastproject.util.data.functions.Functions;
+import org.opencastproject.util.data.functions.Strings;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
@@ -115,9 +111,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
+        Resource resource = eas().createResource(tags);
         User u = eas().createUser(userExtId, nickname, emailo, resource);
-        resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        // This might have been the first user, which would mean
+        // that the resource above has no owner.
+        // To fix this, we just recreate it and update the user to persist it.
+        resource = eas().createResource(tags);
         u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
         eas().updateUser(u);
 
@@ -141,7 +141,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getUserByExtId(userExtId).fold(new Option.Match<User, Response>() {
           @Override
@@ -164,9 +164,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response none() {
             Resource resource = eas().createResource();
             User u = eas().createUser(userExtId, nickname, emailo, resource);
+            // This might have been the first user, which would mean
+            // that the resource above has no owner.
+            // To fix this, we just recreate it and update the user to persist it.
             resource = eas().createResource(tags);
             u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
-            eas().updateUser(new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource));
+            eas().updateUser(u);
             return Response.created(userLocationUri(u))
                     .entity(Strings.asStringNull().apply(UserDto.toJson.apply(eas(), u))).build();
           }
@@ -242,7 +245,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()));
+        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()));
         final Video v = eas().createVideo(videoExtId, resource);
         return Response.created(videoLocationUri(v))
                 .entity(Strings.asStringNull().apply(VideoDto.toJson.apply(eas(), v))).build();
@@ -267,7 +270,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         if (tagsMap.isSome() && tagsMap.get().isNone())
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getVideoByExtId(videoExtId).fold(new Option.Match<Video, Response>() {
           @Override
@@ -312,7 +315,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response postScaleTemplate(@FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
-    return createScale(Option.<Long> none(), name, description, access, tags);
+    return createScale(none(), name, description, access, tags);
   }
 
   Response createScale(final Option<Long> videoId, final String name, final String description,
@@ -325,8 +328,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                option(access));
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas().createScale(videoId, name, trimToNone(description), resource);
         return Response.created(scaleLocationUri(scale, videoId.isSome()))
                 .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), scale))).build();
@@ -339,7 +341,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/scales/{scaleId}")
   public Response putScale(@PathParam("scaleId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return updateScale(Option.<Long> none(), id, name, description, tags);
+    return updateScale(none(), id, name, description, tags);
   }
 
   Response updateScale(final Option<Long> videoId, final long id, final String name, final String description,
@@ -352,7 +354,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
           @Override
@@ -386,7 +388,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/scales/{scaleId}")
   public Response getScale(@PathParam("scaleId") final long id) {
-    return getScaleResponse(Option.<Long> none(), id);
+    return getScaleResponse(none(), id);
   }
 
   Response getScaleResponse(final Option<Long> videoId, final long id) {
@@ -419,7 +421,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response getScales(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
           @QueryParam("tags-or") final String tagsOr) {
-    return getScalesResponse(Option.<Long> none(), limit, offset, date, tagsAnd, tagsOr);
+    return getScalesResponse(none(), limit, offset, date, tagsAnd, tagsOr);
   }
 
   Response getScalesResponse(final Option<Long> videoId, final int limit, final int offset, final String date,
@@ -427,8 +429,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -441,9 +443,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return buildOk(ScaleDto.toJson(
                   eas(),
                   offset,
-                  eas().getScales(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                          tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                          tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                  eas().getScales(videoId, offsetm, limitm, datem.bind(Functions.identity()),
+                          tagsAndArray.bind(Functions.identity()),
+                          tagsOrArray.bind(Functions.identity()))));
         }
       }
     });
@@ -452,7 +454,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @DELETE
   @Path("/scales/{scaleId}")
   public Response deleteScale(@PathParam("scaleId") final long id) {
-    return deleteScaleResponse(Option.<Long> none(), id);
+    return deleteScaleResponse(none(), id);
   }
 
   Response deleteScaleResponse(final Option<Long> videoId, final long id) {
@@ -485,7 +487,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @DefaultValue("0") @FormParam("value") final double value,
           @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
-    return postScaleValueResponse(Option.<Long> none(), scaleId, name, value, order, access, tags);
+    return postScaleValueResponse(none(), scaleId, name, value, order, access, tags);
   }
 
   Response postScaleValueResponse(final Option<Long> videoId, final long scaleId, final String name,
@@ -498,8 +500,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                option(access));
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
         return Response.created(scaleValueLocationUri(scaleValue, videoId))
@@ -515,7 +516,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("name") final String name, @DefaultValue("0") @FormParam("value") final double value,
           @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
-    return putScaleValueResponse(Option.<Long> none(), scaleId, id, name, value, order, access, tags);
+    return putScaleValueResponse(none(), scaleId, id, name, value, order, access, tags);
   }
 
   Response putScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id,
@@ -528,7 +529,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
           @Override
@@ -547,7 +548,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
           @Override
           public Response none() {
-            Resource resource = eas().createResource(tags, option(access));
+            Resource resource = eas().createResource(option(access), tags);
             final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
             return Response.created(scaleValueLocationUri(scaleValue, videoId))
@@ -562,7 +563,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response getScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return getScaleValueResponse(Option.<Long> none(), scaleId, id);
+    return getScaleValueResponse(none(), scaleId, id);
   }
 
   Response getScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id) {
@@ -595,7 +596,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response getScaleValues(@PathParam("scaleId") final long scaleId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
           @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return getScaleValuesResponse(Option.<Long> none(), scaleId, limit, offset, date, tagsAnd, tagsOr);
+    return getScaleValuesResponse(none(), scaleId, limit, offset, date, tagsAnd, tagsOr);
   }
 
   Response getScaleValuesResponse(final Option<Long> videoId, final long scaleId, final int limit,
@@ -603,8 +604,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -617,9 +618,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return buildOk(ScaleValueDto.toJson(
                 eas(),
                 offset,
-                eas().getScaleValues(scaleId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                        tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                        tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                eas().getScaleValues(scaleId, offsetm, limitm, datem.bind(Functions.identity()),
+                        tagsAndArray.bind(Functions.identity()),
+                        tagsOrArray.bind(Functions.identity()))));
       }
     });
   }
@@ -627,7 +628,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @DELETE
   @Path("/scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response deleteScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return deleteScaleValueResponse(Option.<Long> none(), scaleId, id);
+    return deleteScaleValueResponse(none(), scaleId, id);
   }
 
   Response deleteScaleValueResponse(final Option<Long> videoId, final long scaleId, final long id) {
@@ -661,7 +662,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
-    return postCategoryResponse(Option.<Long> none(), name, description, scaleId, settings, access, tags);
+    return postCategoryResponse(none(), name, description, scaleId, settings, access, tags);
   }
 
   Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
@@ -674,8 +675,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                option(access));
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Category category = eas().createCategory(videoId, option(scaleId), name, trimToNone(description),
                 trimToNone(settings), resource);
 
@@ -692,8 +692,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("tags") final String tags) {
-    return putCategoryResponse(Option.<Long> none(), id, name, description, option(scaleId), settings,
-            tags);
+    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, tags);
   }
 
   Response putCategoryResponse(final Option<Long> videoId, final long id, final String name,
@@ -706,7 +705,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getCategory(id, false).fold(new Option.Match<Category, Response>() {
           @Override
@@ -742,7 +741,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/categories/{categoryId}")
   public Response getCategory(@PathParam("categoryId") final long id) {
-    return getCategoryResponse(Option.<Long> none(), id);
+    return getCategoryResponse(none(), id);
   }
 
   Response getCategoryResponse(final Option<Long> videoId, final long id) {
@@ -775,7 +774,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response getCategories(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
           @QueryParam("tags-or") final String tagsOr) {
-    return getCategoriesResponse(Option.<Long> none(), limit, offset, date, tagsAnd, tagsOr);
+    return getCategoriesResponse(none(), limit, offset, date, tagsAnd, tagsOr);
   }
 
   Response getCategoriesResponse(final Option<Long> videoId, final int limit, final int offset,
@@ -783,8 +782,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -797,9 +796,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return buildOk(CategoryDto.toJson(
                   eas(),
                   offset,
-                  eas().getCategories(videoId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                          tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                          tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                  eas().getCategories(videoId, offsetm, limitm, datem.bind(Functions.identity()),
+                          tagsAndArray.bind(Functions.identity()),
+                          tagsOrArray.bind(Functions.identity()))));
         }
       }
     });
@@ -808,7 +807,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @DELETE
   @Path("/categories/{categoryId}")
   public Response deleteCategory(@PathParam("categoryId") final long categoryId) {
-    return deleteCategoryResponse(Option.<Long> none(), categoryId);
+    return deleteCategoryResponse(none(), categoryId);
   }
 
   Response deleteCategoryResponse(final Option<Long> videoId, final long categoryId) {
@@ -842,7 +841,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("abbreviation") final String abbreviation, @FormParam("description") final String description,
           @FormParam("access") final Integer access, @FormParam("settings") final String settings,
           @FormParam("tags") final String tags) {
-    return postLabelResponse(Option.<Long> none(), categoryId, value, abbreviation, description, access, settings,
+    return postLabelResponse(none(), categoryId, value, abbreviation, description, access, settings,
             tags);
   }
 
@@ -857,8 +856,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || eas().getCategory(categoryId, false).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.<Option<Map<String, String>>> identity()),
-                option(access));
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Label label = eas().createLabel(categoryId, value, abbreviation, trimToNone(description),
                 trimToNone(settings), resource);
 
@@ -875,7 +873,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("value") final String value, @FormParam("abbreviation") final String abbreviation,
           @FormParam("description") final String description, @FormParam("access") final Integer access,
           @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
-    return putLabelResponse(Option.<Long> none(), categoryId, id, value, abbreviation, description, access, settings,
+    return putLabelResponse(none(), categoryId, id, value, abbreviation, description, access, settings,
             tags);
   }
 
@@ -890,7 +888,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || eas().getCategory(categoryId, false).isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
           return BAD_REQUEST;
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.<Option<Map<String, String>>> identity());
+        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
         return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
           @Override
@@ -910,7 +908,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
           @Override
           public Response none() {
-            Resource resource = eas().createResource(tags, option(access));
+            Resource resource = eas().createResource(option(access), tags);
             final Label label = eas().createLabel(categoryId, value, abbreviation, trimToNone(description),
                     trimToNone(settings), resource);
 
@@ -926,7 +924,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/categories/{categoryId}/labels/{labelId}")
   public Response getLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id) {
-    return getLabelResponse(Option.<Long> none(), categoryId, id);
+    return getLabelResponse(none(), categoryId, id);
   }
 
   Response getLabelResponse(final Option<Long> videoId, final long categoryId, final long id) {
@@ -959,7 +957,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response getLabels(@PathParam("categoryId") final long categoryId, @QueryParam("limit") final int limit,
           @QueryParam("offset") final int offset, @QueryParam("since") final String date,
           @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return getLabelsResponse(Option.<Long> none(), categoryId, limit, offset, date, tagsAnd, tagsOr);
+    return getLabelsResponse(none(), categoryId, limit, offset, date, tagsAnd, tagsOr);
   }
 
   Response getLabelsResponse(final Option<Long> videoId, final long categoryId, final int limit,
@@ -967,8 +965,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : Option.<Integer> none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : Option.<Integer> none();
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
@@ -982,9 +980,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return buildOk(LabelDto.toJson(
                 eas(),
                 offset,
-                eas().getLabels(categoryId, offsetm, limitm, datem.bind(Functions.<Option<Date>> identity()),
-                        tagsAndArray.bind(Functions.<Option<Map<String, String>>> identity()),
-                        tagsOrArray.bind(Functions.<Option<Map<String, String>>> identity()))));
+                eas().getLabels(categoryId, offsetm, limitm, datem.bind(Functions.identity()),
+                        tagsAndArray.bind(Functions.identity()),
+                        tagsOrArray.bind(Functions.identity()))));
       }
     });
   }
@@ -992,7 +990,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @DELETE
   @Path("/categories/{categoryId}/labels/{labelId}")
   public Response deleteLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id) {
-    return deleteLabelResponse(Option.<Long> none(), categoryId, id);
+    return deleteLabelResponse(none(), categoryId, id);
   }
 
   Response deleteLabelResponse(final Option<Long> videoId, final long categoryId, final long id) {
@@ -1021,18 +1019,18 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   // --
 
-  public static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
-  public static final Response UNAUTHORIZED = Response.status(Response.Status.UNAUTHORIZED).build();
-  public static final Response FORBIDDEN = Response.status(Response.Status.FORBIDDEN).build();
-  public static final Response BAD_REQUEST = Response.status(Response.Status.BAD_REQUEST).build();
-  public static final Response CONFLICT = Response.status(Response.Status.CONFLICT).build();
-  public static final Response SERVER_ERROR = Response.serverError().build();
-  public static final Response NO_CONTENT = Response.noContent().build();
+  static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
+  static final Response UNAUTHORIZED = Response.status(Response.Status.UNAUTHORIZED).build();
+  static final Response FORBIDDEN = Response.status(Response.Status.FORBIDDEN).build();
+  static final Response BAD_REQUEST = Response.status(Response.Status.BAD_REQUEST).build();
+  static final Response CONFLICT = Response.status(Response.Status.CONFLICT).build();
+  static final Response SERVER_ERROR = Response.serverError().build();
+  static final Response NO_CONTENT = Response.noContent().build();
 
-  public static final Object[] nil = new Object[0];
+  static final Object[] nil = new Object[0];
 
   /** Run <code>f</code> doing common exception transformation. */
-  public static Response run(Object[] mandatoryParams, Function0<Response> f) {
+  static Response run(Object[] mandatoryParams, Function0<Response> f) {
     for (Object a : mandatoryParams) {
       if (a == null || StringUtils.isEmpty(a.toString()))
         return BAD_REQUEST;
@@ -1104,12 +1102,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
     }
   };
 
-  @SuppressWarnings("unchecked")
   static final Function<String, Option<Map<String, String>>> parseToJsonMap = new Function<String, Option<Map<String, String>>>() {
     @Override
     public Option<Map<String, String>> apply(String s) {
       try {
-        return some((Map<String, String>) new JSONParser().parse(s));
+        @SuppressWarnings("unchecked")
+        Map<String, String> result = (Map<String, String>) new JSONParser().parse(s);
+        return some(result);
       } catch (Exception e) {
         return none();
       }

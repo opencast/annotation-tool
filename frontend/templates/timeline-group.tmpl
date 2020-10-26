@@ -66,21 +66,8 @@
                             data-placement="top"
                         >
                             <i
-                                title="
-                                    {{#if (annotationTool "isPrivateOnly")}}
-                                        {{t "timeline.private only.no public tracks allowed"}}
-                                    {{else}}
-                                        {{t "timeline.change visibility.tooltip"}}
-                                    {{/if}}
-                                "
-                                class="
-                                    icon-dark-grey
-                                    {{#if (annotationTool "isPrivateOnly")}}
-                                        icon-private
-                                    {{else}}
-                                        icon-{{access}}
-                                    {{/if}}
-                                "
+                                title="{{t "timeline.change visibility.tooltip"}}"
+                                class="icon-dark-grey icon-{{access}}"
                             ></i>
                         </button>
                     {{/if}}

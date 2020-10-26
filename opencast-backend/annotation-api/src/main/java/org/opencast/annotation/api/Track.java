@@ -21,9 +21,6 @@ import org.opencastproject.util.data.Option;
 /** Class representing a track. */
 public interface Track extends Resource {
 
-  /** The track id */
-  long getId();
-
   /** The video id where the track is */
   long getVideoId();
 

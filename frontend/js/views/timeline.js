@@ -76,17 +76,11 @@ define([
         item.end = util.dateFromSeconds(item.end);
         var label = item.label;
         if (label) {
-            var color = label.category.settings.color;
-            item.style = [
-                "background-color:" + color,
-                "color:" + (
-                    chroma(color).luminance() < 0.5
-                        ? "white"
-                        : "black"
-                )
-            ].join(";");
+            item.className = "category-" + label.category.id;
         }
-        item.type = "range";
+        item.type = item.duration
+            ? "range"
+            : "box";
         item.model = annotation;
         return item;
     }
@@ -165,6 +159,13 @@ define([
             // Options for the vis timeline
             var options = {
                 height: "100%",
+                margin: {
+                    axis: 12.5,
+                    item: {
+                        vertical: 5,
+                        horizontal: 0
+                    }
+                },
                 verticalScroll: true,
                 preferZoom: true,
                 //zoomKey: 'shiftKey',
@@ -180,14 +181,13 @@ define([
                 //groupEditable: {
                 //    order: true
                 //},
-                zoomMin: 5000,
+                zoomMin: Math.min(5000, this.endDate - this.startDate),
                 start: this.startDate,
                 end: this.endDate,
                 min: this.startDate,
                 max: this.endDate,
                 snap: null,
                 orientation: 'top',
-                margin: 0,
                 showMajorLabels: false,
                 format: { minorLabels: function (moment) {
                     return util.formatTime(moment.unix());
@@ -211,7 +211,56 @@ define([
                 template: function (item) {
                     if (item.content != null) return item.content;
                     return itemTemplate(item);
-                }
+                },
+                onMoving: _.bind(function (item, move) {
+                    if (!item.isMine) return;
+
+                    var originalItem = this.items.get(item.id);
+
+                    var start = util.secondsFromDate(item.start);
+                    var end = util.secondsFromDate(item.end);
+                    var originalStart = util.secondsFromDate(originalItem.start);
+                    var originalEnd = util.secondsFromDate(originalItem.end);
+
+                    var startChanged = start !== originalStart;
+                    var endChanged = end !== originalEnd;
+                    if (!(startChanged || endChanged)) {
+                        // Nothing changed, and we assume the item was okay before,
+                        // so we just pass it through here.
+                        // This way we can always assume that at least one bound changed
+                        // in the following code!
+                        return move(item);
+                    }
+
+                    // don't allow resizing past the beginning and end
+                    if (item.end - item.start < 0) {
+                        if (item.start > originalItem.start) {
+                            // moving the start time to the right
+                            item.start = item.end;
+                        } else if (item.end < originalItem.end) {
+                            // moving the end time to the left
+                            item.end = item.start;
+                        }
+                    }
+
+                    // don't allow moving/resizing outsie of the video
+                    var moving = startChanged && endChanged;
+
+                    var videoDuration = this.playerAdapter.getDuration();
+                    if (start < 0) {
+                        item.start = util.dateFromSeconds(0);
+                        if (moving) {
+                            item.end = util.dateFromSeconds(item.duration);
+                        }
+                    } else if (end > videoDuration) {
+                        item.end = util.dateFromSeconds(videoDuration);
+                        if (moving) {
+                            item.start = util.dateFromSeconds(videoDuration - item.duration);
+                        }
+                    }
+
+                    return move(item);
+                }, this)
                 //stack: false,
                 //cluster: {
                 //    maxItems: 1,
@@ -344,20 +393,22 @@ define([
             annotationTool.addTimeupdateListener(_.bind(this.onPlayerTimeUpdate, this), 1);
             this.onPlayerTimeUpdate();
 
-            function trackButtonClicked(properties) {
-                return !!this.groupHeaders[properties.group].$el
-                    .find("button")
-                    .has(properties.event.target).length;
+            function clickedOnOneOfMyTracks(properties) {
+                var track = this.tracks.get(properties.group);
+                if (!track) return false;
+                if (!track.get("isMine")) return false;
+                if (
+                    this.groupHeaders[properties.group].$el
+                        .find("button")
+                        .has(properties.event.target).length
+                ) return false;
+                return track;
             }
             this.timeline.on("click", _.bind(function (properties) {
                 if (properties.what === "group-label") {
-                    if (!this.tracks.get(properties.group)) return;
-                    if (
-                        trackButtonClicked.call(this, properties)
-                    ) return;
-                    annotationTool.selectTrack(
-                        this.tracks.get(properties.group)
-                    );
+                    var myTrack = clickedOnOneOfMyTracks.call(this, properties);
+                    if (!myTrack) return;
+                    annotationTool.selectTrack(myTrack);
                 } else if (properties.what === "axis") {
                     this.playerAdapter.setCurrentTime(
                         util.secondsFromDate(properties.time)
@@ -366,14 +417,13 @@ define([
             }, this));
             this.timeline.on("doubleClick", _.bind(function (properties) {
                 if (properties.what === "group-label") {
-                    if (!this.tracks.get(properties.group)) return;
-                    if (
-                        trackButtonClicked.call(this, properties)
-                    ) return;
-                    this.initTrackModal(
-                        properties.event,
-                        this.tracks.get(properties.group)
-                    );
+                    var myTrack = clickedOnOneOfMyTracks.call(this, properties);
+                    if (!myTrack) return;
+                    this.initTrackModal(properties.event, myTrack);
+                } else if (properties.what === "item") {
+                    this.playerAdapter.setCurrentTime(util.secondsFromDate(
+                        this.items.get(properties.item).start
+                    ));
                 }
             }, this));
 
@@ -422,22 +472,52 @@ define([
                 annotationTool,
                 annotationTool.EVENTS.ANNOTATION_SELECTION,
                 function (selection) {
-                    this.timeline.setSelection(
-                        _.map(selection, "id")
-                    );
+                    this.timeline.setSelection(selection && selection.id);
                 }
             );
-            this.timeline.on("select", _.bind(function (properties) {
-                annotationTool.setSelectionById(
-                    _.map(properties.items, function (itemId) {
-                        var item = this.items.get(itemId);
+            this.listenTo(
+                annotationTool,
+                annotationTool.EVENTS.ACTIVE_ANNOTATIONS,
+                function (currentAnnotations, previousAnnotations) {
+                    // TDOO We could probably speed this up;
+                    //   maybe we could even receive the diff somehow?
+                    this.items.update(_.map(previousAnnotations, function (annotation) {
                         return {
-                            id: item.id,
-                            trackId: item.group,
+                            id: annotation.id,
+                            className: _.without(
+                                getClassName.call(this, annotation).split(" "),
+                                "active"
+                            ).join(' ')
                         };
-                    }, this),
-                    true, // move playhead
-                    true // manually selected
+                    }, this));
+                    this.items.update(_.map(currentAnnotations, function (annotation) {
+                        return {
+                            id: annotation.id,
+                            className: _.uniq(
+                                getClassName.call(this, annotation).split(" ")
+                                    .concat(["active"])
+                            ).join(' ')
+                        };
+                    }, this));
+                }
+            );
+            function getClassName(annotation) {
+                return this.items.get(annotation.id).className || "";
+            }
+            // Long-pressing is normally only used for multiple selections,
+            // which we don't support.
+            // Additionally this is a problem when you select an item
+            // and then start holding the mouse button to move it,
+            // but take to long to actually start moving.
+            // If we let this event through,
+            // the item would just be deselected in that scenario.
+            this.timeline.itemSet.hammer.off("press");
+            this.timeline.on("select", _.bind(function (properties) {
+                annotationTool.setSelection(
+                    this.items.get(properties.items[0]).model,
+                    // Toggle selection on single click,
+                    // unconditionally select on double click
+                    properties.event.tapCount > 1
                 );
             }, this));
 
@@ -491,17 +571,44 @@ define([
                 html: true,
                 container: "body"
             });
+
+            // Maintain a stylesheet for structured annotations
+            function createCategoryStylesheet() {
+                var stylesheet = annotationTool.video.get("categories")
+                    .map(function (category) {
+                        var color = category.get("settings").color;
+                        return ".vis-item.category-" + category.id + "," +
+                            ".vis-item.vis-selected.category-" + category.id + "{" +
+                            "background-color:" + color + ";" +
+                            "color:" + (
+                                chroma(color).luminance() < 0.5
+                                    ? "white"
+                                    : "black"
+                            ) +
+                            ";}";
+                    }).join("");
+                return $("<style>" + stylesheet + "</style>")
+                    .appendTo('html > head');
+            }
+            this.categoryStylesheet = createCategoryStylesheet();
+            this.listenTo(
+                annotationTool.video.get("categories"),
+                "change add remove",
+                function () {
+                    this.categoryStylesheet.remove();
+                    this.categoryStylesheet = createCategoryStylesheet();
+                }
+            );
         },
 
-        /**
-         * @override
-         */
+        /** @override */
         remove: function () {
             _.each(this.groupHeaders, function (groupHeader) {
                 groupHeader.remove();
             });
             this.timeline.destroy();
             this.$el.popover("destroy");
+            this.categoryStylesheet.remove();
             return Backbone.View.prototype.remove.apply(this, arguments);
         },
 

@@ -51,15 +51,6 @@ It must have the following URI with the delete operation:
 
 **DELETE** `ROOT/VERSION/reset` 
 
-## Statistics export (CSV)
-
-All the annotations can be exported as a CSV file, including all relevant data of the annotation.
-
-**GET** `ROOT/VERSION/export.csv` 
-
-Sample response:
-[export.csv](https://gist.github.com/4619611)
-
 ## Tags<a name="tags"></a>
 
 | Name | Type | Description | Default |

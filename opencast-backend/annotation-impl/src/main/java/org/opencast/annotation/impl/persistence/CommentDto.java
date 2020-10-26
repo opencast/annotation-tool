@@ -19,21 +19,19 @@ import static org.opencast.annotation.impl.Jsons.conc;
 import static org.opencast.annotation.impl.Jsons.jA;
 import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.p;
-
 import static org.opencastproject.util.data.Monadics.mlist;
-import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
+
+import org.opencast.annotation.api.Comment;
+import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.api.Resource;
+import org.opencast.annotation.impl.CommentImpl;
+import org.opencast.annotation.impl.ResourceImpl;
 
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
 
-import org.opencast.annotation.api.Comment;
-import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Resource;
-
-import org.opencast.annotation.impl.CommentImpl;
-import org.opencast.annotation.impl.ResourceImpl;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
@@ -104,8 +102,9 @@ public class CommentDto extends AbstractResourceDto {
   }
 
   public Comment toComment() {
-    return new CommentImpl(id, annotationId, text, none(Long.class), new ResourceImpl(option(access), option(createdBy),
-            option(updatedBy), option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), tags));
+    return new CommentImpl(id, annotationId, text, option(replyToId), new ResourceImpl(option(access),
+            option(createdBy), option(updatedBy), option(deletedBy), option(createdAt), option(updatedAt),
+            option(deletedAt), tags));
   }
 
   public static final Function<CommentDto, Comment> toComment = new Function<CommentDto, Comment>() {

@@ -15,33 +15,14 @@
  */
 package org.opencast.annotation.impl;
 
-import org.opencast.annotation.impl.ScaleValueImpl;
-import org.opencast.annotation.impl.AnnotationImpl;
-import org.opencast.annotation.impl.CategoryImpl;
-import org.opencast.annotation.impl.UserImpl;
-import org.opencast.annotation.impl.TrackImpl;
-import org.opencast.annotation.impl.LabelImpl;
-import org.opencast.annotation.impl.VideoImpl;
-import org.opencast.annotation.impl.ScaleImpl;
-import org.opencast.annotation.impl.CommentImpl;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
 import static org.opencastproject.util.persistence.PersistenceUtil.newPersistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
-
-import org.opencastproject.search.api.SearchService;
-import org.opencastproject.security.api.AuthorizationService;
-import org.opencastproject.security.api.DefaultOrganization;
-import org.opencastproject.security.api.SecurityService;
-import org.opencastproject.security.util.SecurityUtil;
-import org.opencastproject.util.data.Effect0;
-import org.opencastproject.util.data.Option;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
@@ -56,8 +37,16 @@ import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
-
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
+
+import org.opencastproject.search.api.SearchService;
+import org.opencastproject.security.api.AuthorizationService;
+import org.opencastproject.security.api.DefaultOrganization;
+import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.util.SecurityUtil;
+import org.opencastproject.util.data.Effect0;
+import org.opencastproject.util.data.Option;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,39 +73,39 @@ public class ExtendedAnnotationServiceJpaImplTest {
   public void testCreateAndFindUser() throws Exception {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource(tags);
-    final User u = eas.createUser("k_dall", "Karl Dall", none(""), resource);
-    eas.createUser("k_dall2", "Karl Dall2", none(""), resource);
-    eas.createUser("k_dall3", "Karl Dall3", none(""), resource);
+    final User u = eas.createUser("k_dall", "Karl Dall", none(), resource);
+    eas.createUser("k_dall2", "Karl Dall2", none(), resource);
+    eas.createUser("k_dall3", "Karl Dall3", none(), resource);
     assertEquals("k_dall", u.getExtId());
     assertEquals("Karl Dall", u.getNickname());
-    assertEquals(none(""), u.getEmail());
+    assertEquals(none(), u.getEmail());
     assertTrue(eas.getUser(u.getId()).isSome());
     assertEquals("k_dall", eas.getUser(u.getId()).get().getExtId());
     assertTrue(eas.getUserByExtId(u.getExtId()).isSome());
     assertEquals("Karl Dall", eas.getUserByExtId(u.getExtId()).get().getNickname());
     assertEquals(tags.get(), u.getTags());
 
-    assertEquals(3, eas.getUsers(none(0), none(0), none(Date.class)).size());
-    assertEquals(2, eas.getUsers(some(1), none(0), none(Date.class)).size());
-    assertEquals(1, eas.getUsers(some(1), some(1), none(Date.class)).size());
+    assertEquals(3, eas.getUsers(none(), none(), none()).size());
+    assertEquals(2, eas.getUsers(some(1), none(), none()).size());
+    assertEquals(1, eas.getUsers(some(1), some(1), none()).size());
 
     // get all since
     Thread.sleep(10);
-    assertEquals(0, eas.getUsers(none(0), none(0), some(new Date())).size());
+    assertEquals(0, eas.getUsers(none(), none(), some(new Date())).size());
     Calendar c = Calendar.getInstance();
     c.add(Calendar.MINUTE, -1);
-    assertEquals(3, eas.getUsers(none(0), none(0), some(c.getTime())).size());
+    assertEquals(3, eas.getUsers(none(), none(), some(c.getTime())).size());
   }
 
   @Test
   public void testCreateDuplicateUser() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
-    eas.createUser("jsbach", "J.S. Bach", none(""), resource);
+    eas.createUser("jsbach", "J.S. Bach", none(), resource);
     expectCause(Cause.DUPLICATE, new Effect0() {
       @Override
       protected void run() {
-        eas.createUser("jsbach", "J.S. Bach", none(""), resource);
+        eas.createUser("jsbach", "J.S. Bach", none(), resource);
       }
     });
   }
@@ -130,7 +119,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertEquals(some("js@bach.de"), eas.getUser(u.getId()).get().getEmail());
 
     resource = eas.updateResource(resource, tags);
-    eas.updateUser(new UserImpl(u.getId(), u.getExtId(), "Bach", none(""), resource));
+    eas.updateUser(new UserImpl(u.getId(), u.getExtId(), "Bach", none(), resource));
     assertEquals("Bach", eas.getUser(u.getId()).get().getNickname());
     assertEquals(none(), eas.getUser(u.getId()).get().getEmail());
     assertEquals(tags.get(), eas.getUser(u.getId()).get().getTags());
@@ -143,7 +132,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateUser(new UserImpl(999, "klaus", "Klaus", none(""), resource));
+        eas.updateUser(new UserImpl(999, "klaus", "Klaus", none(), resource));
       }
     });
   }
@@ -214,19 +203,19 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testTrack() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture1", resource);
-    final Track t = eas.createTrack(v.getId(), "track1", none(""), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // try adding a track to a non existing video
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.createTrack(999, "track1", none(""), none(""), resource);
+        eas.createTrack(999, "track1", none(), none(), resource);
       }
     });
     // add another video
-    eas.createTrack(v.getId(), "track2", none(""), none(""), resource);
-    eas.createTrack(v.getId(), "track3", none(""), none(""), resource);
+    eas.createTrack(v.getId(), "track2", none(), none(), resource);
+    eas.createTrack(v.getId(), "track3", none(), none(), resource);
 
     assertTrue(eas.getTrack(3478813).isNone());
     assertTrue(eas.getTrack(t.getId()).isSome());
@@ -238,21 +227,17 @@ public class ExtendedAnnotationServiceJpaImplTest {
             resource));
     assertEquals(updatedSettings, eas.getTrack(t.getId()).get().getSettings().get());
     // get all/non existing track
-    assertTrue(eas.getTracks(12345, none(0), none(0), none(Date.class), Option.<Map<String, String>> none(),
-            Option.<Map<String, String>> none()).isEmpty());
+    assertTrue(eas.getTracks(12345, none(), none(), none(), Option.none(), Option.none()).isEmpty());
     // get all
     assertEquals(
             3,
-            eas.getTracks(v.getId(), none(0), none(0), none(Date.class), Option.<Map<String, String>> none(),
-                    Option.<Map<String, String>> none()).size());
+            eas.getTracks(v.getId(), none(), none(), none(), Option.none(), Option.none()).size());
     assertEquals(
             2,
-            eas.getTracks(v.getId(), some(1), none(0), none(Date.class), Option.<Map<String, String>> none(),
-                    Option.<Map<String, String>> none()).size());
+            eas.getTracks(v.getId(), some(1), none(), none(), Option.none(), Option.none()).size());
     assertEquals(
             1,
-            eas.getTracks(v.getId(), some(1), some(1), none(Date.class), Option.<Map<String, String>> none(),
-                    Option.<Map<String, String>> none()).size());
+            eas.getTracks(v.getId(), some(1), some(1), none(), Option.none(), Option.none()).size());
   }
 
   @Test
@@ -260,8 +245,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track1", none(""), some("{color:blue, url:http://localhost}"),
-            resource);
+    final Track t = eas.createTrack(v.getId(), "track1", none(), some("{color:blue, url:http://localhost}"), resource);
     assertTrue(eas.getTrack(t.getId()).isSome());
     assertEquals("{color:blue, url:http://localhost}", eas.getTrack(t.getId()).get().getSettings().get());
   }
@@ -271,8 +255,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track99", none(""), some("{color:blue, url:http://localhost}"),
-            resource);
+    final Track t = eas.createTrack(v.getId(), "track99", none(), some("{color:blue, url:http://localhost}"), resource);
     assertTrue(eas.getTrack(t.getId()).isSome());
     eas.deleteTrack(t);
     assertTrue(eas.getTrack(t.getId()).isNone());
@@ -281,40 +264,38 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateAndFindAnnotation() throws Exception {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags, some(Resource.PUBLIC));
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track1", none(""), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // create
-    final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(""), none(-1L),
-            none(-1L), resource);
-    eas.createAnnotation(t.getId(), some("nice!"), 30.0D, some(3.0D), none(""), none(-1L), none(-1L), resource);
-    eas.createAnnotation(t.getId(), some("look at this"), 40.0D, some(5.0D), none(""), none(-1L), none(-1L), resource);
+    final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(), none(), none(),
+            resource);
+    eas.createAnnotation(t.getId(), some("nice!"), 30.0D, some(3.0D), none(), none(), none(), resource);
+    eas.createAnnotation(t.getId(), some("look at this"), 40.0D, some(5.0D), none(), none(), none(), resource);
     // get
     assertTrue(eas.getAnnotation(a.getId()).isSome());
     assertEquals(some("cool video"), eas.getAnnotation(a.getId()).get().getText());
     assertEquals(tags.get(), a.getTags());
     // get all/non existing track
-    assertTrue(eas.getAnnotations(12345, none(0D), none(0D), none(0), none(0), none(Date.class),
-            Option.<Map<String, String>> none(), Option.<Map<String, String>> none()).isEmpty());
+    assertTrue(eas.getAnnotations(12345, none(), none(), none(), none(), none(), Option.none(), Option.none())
+            .isEmpty());
     // get all
     assertEquals(
             3,
-            eas.getAnnotations(t.getId(), none(0D), none(0D), none(0), none(0), none(Date.class),
-                    Option.<Map<String, String>> none(), Option.<Map<String, String>> none()).size());
+            eas.getAnnotations(t.getId(), none(), none(), none(), none(), none(), Option.none(), Option.none()).size());
     assertEquals(
             2,
-            eas.getAnnotations(t.getId(), none(0D), none(0D), some(1), none(0), none(Date.class),
-                    Option.<Map<String, String>> none(), Option.<Map<String, String>> none()).size());
+            eas.getAnnotations(t.getId(), none(), none(), some(1), none(), none(), Option.none(), Option.none()).size());
     assertEquals(
             1,
-            eas.getAnnotations(t.getId(), none(0D), none(0D), some(1), some(1), none(Date.class),
-                    Option.<Map<String, String>> none(), Option.<Map<String, String>> none()).size());
+            eas.getAnnotations(t.getId(), none(), none(), some(1), some(1), none(), Option.none(), Option.none())
+                    .size());
     // get all since
     // Thread.sleep(10);
-    // assertEquals(0, eas.getAnnotations(t.getId(), none(0D), none(0D), none(0), none(0), some(new Date())).size());
+    // assertEquals(0, eas.getAnnotations(t.getId(), none(), none(), none(), none(), some(new Date())).size());
     // Calendar c = Calendar.getInstance();
     // c.add(Calendar.MINUTE, -1);
-    // assertEquals(3, eas.getAnnotations(t.getId(), none(0D), none(0D), none(0), none(0), some(c.getTime())).size());
+    // assertEquals(3, eas.getAnnotations(t.getId(), none(), none(), none(), none(), some(c.getTime())).size());
   }
 
   @Test
@@ -322,23 +303,23 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track", none(""), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track", none(), none(), resource);
     // update/non existing
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateAnnotation(new AnnotationImpl(12345, 12345, some("not cool"), 21.0D, some(10.0D), none(""),
-                none(-1L), none(-1L), resource));
+        eas.updateAnnotation(new AnnotationImpl(12345, 12345, some("not cool"), 21.0D, some(10.0D), none(), none(),
+                none(), resource));
       }
     });
     // create
-    final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(""), none(-1L),
-            none(-1L), resource);
+    final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(), none(), none(),
+            resource);
     assertEquals(some("cool video"), eas.getAnnotation(a.getId()).get().getText());
 
     Resource updatedResource = eas.updateResource(a, tags);
-    eas.updateAnnotation(new AnnotationImpl(a.getId(), t.getId(), some("not cool"), 22.0D, some(5.0D), none(""),
-            none(-1L), none(-1L), updatedResource));
+    eas.updateAnnotation(new AnnotationImpl(a.getId(), t.getId(), some("not cool"), 22.0D, some(5.0D), none(), none(),
+            none(), updatedResource));
     assertEquals(some("not cool"), eas.getAnnotation(a.getId()).get().getText());
     assertEquals(tags.get(), eas.getAnnotation(a.getId()).get().getTags());
   }
@@ -348,10 +329,10 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track", none(""), none(""), resource);
+    final Track t = eas.createTrack(v.getId(), "track", none(), none(), resource);
     // create
-    final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(""), none(-1L),
-            none(-1L), resource);
+    final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(), none(), none(),
+            resource);
     assertTrue(eas.getAnnotation(a.getId()).isSome());
     // delete
     eas.deleteAnnotation(a);
@@ -363,11 +344,11 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource(tags);
 
-    final Scale s = eas.createScale(Option.<Long> none(), "test scale", some("test description"), resource);
+    final Scale s = eas.createScale(Option.none(), "test scale", some("test description"), resource);
 
-    final Category categoryTemplate = eas.createCategory(none(0L), some(s.getId()), "Sozialform",
+    final Category categoryTemplate = eas.createCategory(none(), some(s.getId()), "Sozialform",
             some("description Sozialform"), some("sozial form settings"), resource);
-    eas.createLabel(categoryTemplate.getId(), "Bla", "Test", none(""), none(""), resource);
+    eas.createLabel(categoryTemplate.getId(), "Bla", "Test", none(), none(), resource);
 
     final Category c = eas.createCategory(some(3L), some(32L), "Verhalten", some("verhalten "), some("settings"),
             resource);
@@ -387,8 +368,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     Option<Scale> copyScale = eas.getScale(cCopy.get().getScaleId().get(), false);
     assertTrue(copyScale.isSome());
     assertEquals(cCopy.get().getVideoId(), copyScale.get().getVideoId());
-    List<Label> labels = eas.getLabels(cCopy.get().getId(), some(0), some(0), none(Date.class),
-            Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
+    List<Label> labels = eas.getLabels(cCopy.get().getId(), some(0), some(0), none(), Option.none(), Option.none());
     assertEquals(1, labels.size());
     assertEquals(cCopy.get().getId(), labels.get(0).getCategoryId());
   }
@@ -403,16 +383,16 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateCategory(new CategoryImpl(1212, some(323L), some(32L), "bla", none(""), none(""), resource));
+        eas.updateCategory(new CategoryImpl(1212, some(323L), some(32L), "bla", none(), none(), resource));
       }
     });
     // create
-    final Category c = eas.createCategory(none(0L), none(0L), name, some("description Sozialform"),
+    final Category c = eas.createCategory(none(), none(), name, some("description Sozialform"),
             some("sozial form settings"), resource);
     assertEquals(name, eas.getCategory(c.getId(), false).get().getName());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateCategory(new CategoryImpl(c.getId(), some(323L), some(32L), "name2", none(""), none(""), updatedResource));
+    eas.updateCategory(new CategoryImpl(c.getId(), some(323L), some(32L), "name2", none(), none(), updatedResource));
     assertEquals("name2", eas.getCategory(c.getId(), false).get().getName());
     assertEquals(tags.get(), eas.getCategory(c.getId(), false).get().getTags());
   }
@@ -422,7 +402,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     // create
-    final Category c = eas.createCategory(none(0L), none(0L), "Sozialform", some("description Sozialform"),
+    final Category c = eas.createCategory(none(), none(), "Sozialform", some("description Sozialform"),
             some("sozial form settings"), resource);
     assertTrue(eas.getCategory(c.getId(), false).isSome());
     // delete
@@ -435,7 +415,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource(tags);
 
-    final Scale scaleTemplate = eas.createScale(none(0L), "test template scale", some("hallo"), resource);
+    final Scale scaleTemplate = eas.createScale(none(), "test template scale", some("hallo"), resource);
     eas.createScaleValue(scaleTemplate.getId(), "test", 1.5D, 2, resource);
 
     final Scale s = eas.createScale(some(23L), "test scale", some("test description"), resource);
@@ -445,8 +425,8 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertEquals(tags.get(), sCopy.getTags());
     assertEquals("test template scale", sCopy.getName());
 
-    List<ScaleValue> scaleValues = eas.getScaleValues(sCopy.getId(), some(0), some(0), none(Date.class),
-            Option.<Map<String, String>> none(), Option.<Map<String, String>> none());
+    List<ScaleValue> scaleValues = eas.getScaleValues(sCopy.getId(), some(0), some(0), none(),
+            Option.none(), Option.none());
     assertEquals(1, scaleValues.size());
     assertEquals(sCopy.getId(), scaleValues.get(0).getScaleId());
     assertEquals(1.5D, scaleValues.get(0).getValue(), 0D);
@@ -475,7 +455,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertEquals("test scale", eas.getScale(s.getId(), false).get().getName());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateScale(new ScaleImpl(s.getId(), some(222L), "new", none(""), updatedResource));
+    eas.updateScale(new ScaleImpl(s.getId(), some(222L), "new", none(), updatedResource));
     assertEquals("new", eas.getScale(s.getId(), false).get().getName());
     assertEquals(tags.get(), eas.getScale(s.getId(), false).get().getTags());
   }
@@ -570,15 +550,15 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateLabel(new LabelImpl(323, 29, "test", "i dont know", none(""), none(""), resource));
+        eas.updateLabel(new LabelImpl(323, 29, "test", "i dont know", none(), none(), resource));
       }
     });
     // create
-    final Label l = eas.createLabel(32, "Good", "abbreviation3", none(""), none(""), resource);
+    final Label l = eas.createLabel(32, "Good", "abbreviation3", none(), none(), resource);
     assertEquals("Good", eas.getLabel(l.getId(), false).get().getValue());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateLabel(new LabelImpl(l.getId(), 11, "test", "i dont know", none(""), none(""), updatedResource));
+    eas.updateLabel(new LabelImpl(l.getId(), 11, "test", "i dont know", none(), none(), updatedResource));
     assertEquals("test", eas.getLabel(l.getId(), false).get().getValue());
     assertEquals(tags.get(), eas.getLabel(l.getId(), false).get().getTags());
   }
@@ -588,7 +568,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     // create
-    final Label l = eas.createLabel(32, "Good", "abbreviation3", none(""), none(""), resource);
+    final Label l = eas.createLabel(32, "Good", "abbreviation3", none(), none(), resource);
     assertTrue(eas.getLabel(l.getId(), false).isSome());
     // delete
     eas.deleteLabel(l);
@@ -600,7 +580,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource(tags);
 
-    final Comment c = eas.createComment(32, none(Long.class), "New comment", resource);
+    final Comment c = eas.createComment(32, none(), "New comment", resource);
     Option<Comment> comment = eas.getComment(c.getId());
 
     assertTrue(comment.isSome());
@@ -618,15 +598,15 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateComment(new CommentImpl(323, 29, "comment", none(Long.class), resource));
+        eas.updateComment(new CommentImpl(323, 29, "comment", none(), resource));
       }
     });
     // create
-    final Comment c = eas.createComment(32, none(Long.class), "New comment", resource);
+    final Comment c = eas.createComment(32, none(), "New comment", resource);
     assertEquals("New comment", eas.getComment(c.getId()).get().getText());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateComment(new CommentImpl(c.getId(), 11, "new text", none(Long.class), updatedResource));
+    eas.updateComment(new CommentImpl(c.getId(), 11, "new text", none(), updatedResource));
     assertEquals(32, eas.getComment(c.getId()).get().getAnnotationId());
     assertEquals("new text", eas.getComment(c.getId()).get().getText());
     assertEquals(tags.get(), eas.getComment(c.getId()).get().getTags());
@@ -637,7 +617,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     // create
-    final Comment c = eas.createComment(32, none(Long.class), "New comment", resource);
+    final Comment c = eas.createComment(32, none(), "New comment", resource);
     assertTrue(eas.getComment(c.getId()).isSome());
     // delete
     eas.deleteComment(c);
@@ -651,9 +631,9 @@ public class ExtendedAnnotationServiceJpaImplTest {
     // create resources
     final User u = eas.createUser("jsbach", "J.S. Bach", some("js@bach.de"), resource);
     final Video v = eas.createVideo("lecture", resource);
-    final Track t = eas.createTrack(v.getId(), "track", none(""), none(""), resource);
-    final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(""), none(-1L),
-            none(-1L), resource);
+    final Track t = eas.createTrack(v.getId(), "track", none(), none(), resource);
+    final Annotation a = eas.createAnnotation(t.getId(), some("cool video"), 20.0D, some(10.0D), none(), none(), none(),
+            resource);
     assertTrue(eas.getUser(u.getId()).isSome());
     assertTrue(eas.getVideo(v.getId()).isSome());
     assertTrue(eas.getTrack(t.getId()).isSome());

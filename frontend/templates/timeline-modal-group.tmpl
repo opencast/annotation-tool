@@ -22,25 +22,21 @@
 			</div>
 
 			<div class="control-group">
-				{{#if (annotationTool "isPrivateOnly")}}
-					<span class="alert alert-warning">{{t "timeline.private only.no public tracks allowed"}}</span>
-				{{else}}
-					<label class="control-label" for="access">{{t "timeline.track modals.access.label" context=action}}</label>
-					<div class="controls">
-						<label class="radio">
-							<input type="radio" name="access-radio" value="public">
-							{{t "timeline.track modals.access.public" context=action}}
-						</label>
-						<label class="radio">
-							<input type="radio" name="access-radio" value="private">
-							{{t "timeline.track modals.access.private" context=action}}
-						</label>
-						<label class="radio">
-							<input type="radio" name="access-radio" value="shared-with-admin">
-							{{t "timeline.track modals.access.shared with admin" context=action}}
-						</label>
-					</div>
-				{{/if}}
+				<label class="control-label" for="access">{{t "timeline.track modals.access.label" context=action}}</label>
+				<div class="controls">
+					<label class="radio">
+						<input type="radio" name="access-radio" value="public">
+						{{t "timeline.track modals.access.public" context=action}}
+					</label>
+					<label class="radio">
+						<input type="radio" name="access-radio" value="private">
+						{{t "timeline.track modals.access.private" context=action}}
+					</label>
+					<label class="radio">
+						<input type="radio" name="access-radio" value="shared-with-admin">
+						{{t "timeline.track modals.access.shared with admin" context=action}}
+					</label>
+				</div>
 			</div>
 			<div style="float:right"><b>* {{t "required fields"}}</b></div>
 		</fieldset>

@@ -1,7 +1,7 @@
 <project
     xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 >
   <modelVersion>4.0.0</modelVersion>
 
@@ -16,9 +16,6 @@
 
   <name>Opencast Annotation Tool :: Backend :: Implementation</name>
 
-  <properties>
-    <checkstyle.skip>true</checkstyle.skip>
-  </properties>
   <dependencies>
     <!-- Matterhorn -->
     <dependency>
@@ -70,12 +67,6 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
-    <!-- CSV -->
-    <dependency>
-      <groupId>net.sf.opencsv</groupId>
-      <artifactId>opencsv</artifactId>
-      <version>2.3</version>
-    </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-library</artifactId>
@@ -103,16 +94,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.4</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>18.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.entwinemedia.common</groupId>
-      <artifactId>functional</artifactId>
-      <version>1.1.1</version>
     </dependency>
     <!-- Testing -->
     <dependency>
@@ -153,11 +134,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -209,9 +185,6 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Embed-Dependency>
-              opencsv;inline=true
-            </Embed-Dependency>
             <Service-Component>
               OSGI-INF/extended-annotation-service-publisher.xml,
               OSGI-INF/extended-annotation-service-rest.xml

@@ -27,7 +27,7 @@ define(function () {
          * The minmal duration used for annotation representation on timeline
          * @type {Object}
          */
-        MINIMAL_DURATION: 5,
+        MINIMAL_DURATION: 1,
 
         /**
          * Define the number of categories pro tab in the annotate box. Bigger is number, thinner will be the columns for the categories.
@@ -42,12 +42,6 @@ define(function () {
         isStructuredAnnotationEnabled: function () {
             return true;
         },
-
-        /**
-         * Define if the private-only mode is enabled
-         * @return {boolean} True if this mode is enabled
-         */
-        isPrivateOnly: false,
 
         /**
          * Define if the free text annotations are or not enabled
