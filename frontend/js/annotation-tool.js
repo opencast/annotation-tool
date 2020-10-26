@@ -834,7 +834,7 @@ define(["jquery",
                         _.each(annotation.attributes.comments.models, function (comment) {
                             addCommentLine(line, comment);
 
-                            if(comment.replies.length > 0) {
+                            if (comment.replies.length > 0) {
                                 commentReplies(line, comment.replies.models);
                             }
                         });
@@ -848,7 +848,7 @@ define(["jquery",
                     if (presuffix == null) presuffix = "";
                     let prefix = "";
                     let suffix = "";
-                    if(presuffix) {
+                    if (presuffix) {
                         prefix = presuffix + " ";
                         suffix = " of " + presuffix;
                     }
@@ -893,7 +893,7 @@ define(["jquery",
 
                 function getScaleNameByScaleValueId(scaleValueId) {
                     for (let i = 0; i < annotationTool.video.attributes.scales.models.length; i++) {
-                        for(let j = 0; j < annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models.length; j++) {
+                        for (let j = 0; j < annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models.length; j++) {
                             if (annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models[j].attributes.id == scaleValueId) {
                                 return annotationTool.video.attributes.scales.models[i].attributes.name;
                             }
