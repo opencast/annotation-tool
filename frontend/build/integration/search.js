@@ -44,8 +44,11 @@ define([
         // The backend expects `application/x-www-form-urlencoded data
         // with anything nested deeper than one level transformed to a JSON string
         options.processData = true;
-
-        options.data = options.attrs || model.toJSON(options);
+        // We also need to specify `options.data` directly already,
+        // lest Backbone will do its own processing to JSON.
+        // This is also the perfect opportunity to make sure
+        // that the JSON we pass is nested no deeper than one level.
+        options.data = model.toJSON(_.defaults(options, { stringifySub: true }));
 
         // Some models (marked with `mPOST`) need to always be `PUT`, i.e. never be `POST`ed
         if (model.noPOST && method === "create") {
@@ -105,7 +108,7 @@ define([
         });
     }).then(function (xacmlData) {
         // Then we need to extract the appropriate rules
-        return $(xacmlData).find("rules").filter(function (index, rule) {
+        return $(xacmlData).find("Rule").filter(function (index, rule) {
             return $(rule).find("Action AttributeValue").text() === "annotate-admin";
         }).map(function (index, rule) {
             return $(rule).find("Condition AttributeValue").text();
@@ -122,7 +125,7 @@ define([
          * @return {Promise.<string>} video external id
          */
         getVideoExtId: function () {
-            return mediaPackageId;
+            return $.when(mediaPackageId);
         },
 
         /**

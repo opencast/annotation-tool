@@ -280,7 +280,7 @@ module.exports = function (grunt) {
             // ... the configuration
             'config': {
                 src: 'build/config/annotation-tool-configuration.js',
-                dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
+                dest: '<%= currentProfile.target %>/js/'
             },
             // ... the configuration for the build step
             'config-build': {
