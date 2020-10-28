@@ -18,12 +18,12 @@ module.exports = function (grunt) {
 
         /** Paths for the different types of ressource */
         srcPath: {
-            js      : 'js/**/*.js',
-            less    : 'style/**/*.less',
-            html    : '**/*.html',
-            tmpl    : 'templates/*.tmpl',
-            www     : '<%= webServerDir %>/**/*',
-            locales : 'locales/**/*.json'
+            js: 'js/**/*.js',
+            less: 'style/**/*.less',
+            html: '**/*.html',
+            tmpl: 'templates/*.tmpl',
+            www: '<%= webServerDir %>/**/*',
+            locales: 'locales/**/*.json'
         },
 
         profiles: {
@@ -57,8 +57,8 @@ module.exports = function (grunt) {
             options: {
                 jshintrc: '.jshintrc'
             },
-            all    : ['Gruntfile.js', '<%= srcPath.js %>'],
-            watch  : '<%= currentWatchFile %>'
+            all: ['Gruntfile.js', '<%= srcPath.js %>'],
+            watch: '<%= currentWatchFile %>'
         },
 
         /** Task to watch src files and process them */
@@ -141,8 +141,8 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     ext: '.js',
-                    flatten : false,
-                    expand  : true,
+                    flatten: false,
+                    expand: true,
                     src: '<%= currentWatchFile %>',
                     dest: '<%= currentProfile.target %>',
                     filter: 'isFile'
@@ -156,8 +156,8 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     ext: '.js',
-                    flatten : false,
-                    expand  : true,
+                    flatten: false,
+                    expand: true,
                     src: 'templates/*.tmpl',
                     dest: '<%= currentProfile.target %>'
                 }]
@@ -170,8 +170,8 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     ext: '.js',
-                    flatten : false,
-                    expand  : true,
+                    flatten: false,
+                    expand: true,
                     src: 'templates/*.tmpl',
                     dest: '<%= tempDir %>'
                 }]
@@ -192,20 +192,20 @@ module.exports = function (grunt) {
             // ... a single file locally
             'target': {
                 files: [{
-                    flatten : false,
-                    expand  : true,
-                    src     : '<%= currentWatchFile %>',
-                    dest    : '<%= currentProfile.target %>',
-                    filter  : 'isFile'
+                    flatten: false,
+                    expand: true,
+                    src: '<%= currentWatchFile %>',
+                    dest: '<%= currentProfile.target %>',
+                    filter: 'isFile'
                 }]
             },
             // ... all the tool files locally
             'local-all': {
                 files: [{
-                    flatten : false,
-                    expand  : true,
-                    src     : ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css'],
-                    dest    : '<%= currentProfile.target %>'
+                    flatten: false,
+                    expand: true,
+                    src: ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css'],
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             // ... the index locally
@@ -280,12 +280,12 @@ module.exports = function (grunt) {
             // ... the configuration
             'config': {
                 src: 'build/config/annotation-tool-configuration.js',
-                dest: '<%= currentProfile.target %>/js/'
+                dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
             },
             // ... the configuration for the build step
             'config-build': {
                 src: 'build/config/annotation-tool-configuration.js',
-                dest: '<%= tempDir %>/js/'
+                dest: '<%= tempDir %>/js/annotation-tool-configuration.js'
             },
             // ... code for further processing
             'temp': {
@@ -303,8 +303,8 @@ module.exports = function (grunt) {
             }
         },
 
-        jsdoc : {
-            dist : {
+        jsdoc: {
+            dist: {
                 src: ['<%= srcPath.js %>', '!js/libs/**'],
                 options: {
                     destination: 'doc',
@@ -369,15 +369,15 @@ module.exports = function (grunt) {
         requirejs: {
             compile: {
                 options: {
-                    baseUrl                    : '<%= tempDir %>/js',
-                    mainConfigFile             : './js/require.config.js',
-                    name                       : 'main',
-                    optimizeAllPluginResources : false,
-                    preserveLicenseComments    : false,
-                    optimize                   : 'none',
-                    useStrict                  : true,
-                    findNestedDependencies     : true,
-                    out                        : '<%= currentProfile.target %>/bundle.js'
+                    baseUrl: '<%= tempDir %>/js',
+                    mainConfigFile: './js/require.config.js',
+                    name: 'main',
+                    optimizeAllPluginResources: false,
+                    preserveLicenseComments: false,
+                    optimize: 'none',
+                    useStrict: true,
+                    findNestedDependencies: true,
+                    out: '<%= currentProfile.target %>/bundle.js'
                 }
             }
         },
