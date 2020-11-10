@@ -9,9 +9,10 @@ require(["domReady",
          "i18next-browser-language-detector",
          "moment",
          "mediaelementplayer",
-         "annotation-tool-configuration"],
+         "annotation-tool-configuration",
+         "annotation-tool-integration"],
 
-    function (domReady, $, i18next, i18nextXHRBackend, $i18next, LngDetector, moment, mejs, config) {
+    function (domReady, $, i18next, i18nextXHRBackend, $i18next, LngDetector, moment, mejs, config, integration) {
         i18next
             .use(i18nextXHRBackend)
             .use(LngDetector)
@@ -36,7 +37,7 @@ require(["domReady",
                     domReady(function () {
                         $('[data-i18n]').localize();
                         require(["annotation-tool"], function (app) {
-                            app.start(config);
+                            app.start(config, integration);
                         });
                     });
                 }

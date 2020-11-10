@@ -112,7 +112,7 @@ define(["jquery",
              * @alias annotationTool.start
              * @param {module:annotation-tool-configuration.Configuration} config The tool configuration
              */
-            start: function (config) {
+            start: function (config, integration) {
                 _.bindAll(this,
                           "updateSelectionOnTimeUpdate",
                           "createAnnotation",
@@ -132,7 +132,7 @@ define(["jquery",
                           "removeTimeupdateListener",
                           "updateSelectionOnTimeUpdate");
 
-                _.extend(this, config);
+                _.extend(this, config, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
 
@@ -854,7 +854,7 @@ define(["jquery",
                         _.each(annotation.attributes.comments.models, function (comment) {
                             addCommentLine(line, comment);
 
-                            if(comment.replies.length > 0) {
+                            if (comment.replies.length > 0) {
                                 commentReplies(line, comment.replies.models);
                             }
                         });
@@ -868,7 +868,7 @@ define(["jquery",
                     if (presuffix == null) presuffix = "";
                     let prefix = "";
                     let suffix = "";
-                    if(presuffix) {
+                    if (presuffix) {
                         prefix = presuffix + " ";
                         suffix = " of " + presuffix;
                     }
@@ -913,7 +913,7 @@ define(["jquery",
 
                 function getScaleNameByScaleValueId(scaleValueId) {
                     for (let i = 0; i < annotationTool.video.attributes.scales.models.length; i++) {
-                        for(let j = 0; j < annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models.length; j++) {
+                        for (let j = 0; j < annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models.length; j++) {
                             if (annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models[j].attributes.id == scaleValueId) {
                                 return annotationTool.video.attributes.scales.models[i].attributes.name;
                             }

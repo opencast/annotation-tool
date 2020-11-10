@@ -18,12 +18,12 @@ module.exports = function (grunt) {
 
         /** Paths for the different types of ressource */
         srcPath: {
-            js      : 'js/**/*.js',
-            less    : 'style/**/*.less',
-            html    : '**/*.html',
-            tmpl    : 'templates/*.tmpl',
-            www     : '<%= webServerDir %>/**/*',
-            locales : 'locales/**/*.json'
+            js: 'js/**/*.js',
+            less: 'style/**/*.less',
+            html: '**/*.html',
+            tmpl: 'templates/*.tmpl',
+            www: '<%= webServerDir %>/**/*',
+            locales: 'locales/**/*.json'
         },
 
         profiles: {
@@ -31,23 +31,23 @@ module.exports = function (grunt) {
             default: 'local',
 
             integration: {
-                target  : '../opencast-backend/annotation-tool/src/main/resources/ui/',
-                config  : 'build/profiles/integration/annotation-tool-configuration.js'
+                target: '../opencast-backend/annotation-tool/src/main/resources/ui/',
+                integration: `build/integration/${grunt.option('integration') || 'search'}.js`
             },
 
             local: {
-                target : '<%= webServerDir %>',
-                config : 'build/profiles/local/annotation-tool-configuration.js'
+                target: '<%= webServerDir %>',
+                integration: 'build/integration/local.js'
             },
 
             build: {
-                target : '<%= buildDir %>',
-                config : 'build/profiles/local/annotation-tool-configuration.js'
+                target: '<%= buildDir %>',
+                integration: 'build/integration/local.js'
             },
 
             demo: {
-                target : '/var/www/html/annotation/',
-                config : 'build/profiles/local/annotation-tool-configuration.js'
+                target: '/var/www/html/annotation/',
+                integration: 'build/integration/local.js'
             }
         },
 
@@ -57,8 +57,8 @@ module.exports = function (grunt) {
             options: {
                 jshintrc: '.jshintrc'
             },
-            all    : ['Gruntfile.js', '<%= srcPath.js %>'],
-            watch  : '<%= currentWatchFile %>'
+            all: ['Gruntfile.js', '<%= srcPath.js %>'],
+            watch: '<%= currentWatchFile %>'
         },
 
         /** Task to watch src files and process them */
@@ -73,8 +73,13 @@ module.exports = function (grunt) {
             },
             // Watch configuration files
             config: {
-                files: ['<%= currentProfile.config %>'],
+                files: ['build/config/annotation-tool-configuration.js'],
                 tasks: ['copy:config']
+            },
+            // Watch integration files
+            integration: {
+                files: ['<%= currentProfile.integration %>'],
+                tasks: ['copy:integration']
             },
             // Watch Templates files
             templates: {
@@ -136,8 +141,8 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     ext: '.js',
-                    flatten : false,
-                    expand  : true,
+                    flatten: false,
+                    expand: true,
                     src: '<%= currentWatchFile %>',
                     dest: '<%= currentProfile.target %>',
                     filter: 'isFile'
@@ -151,8 +156,8 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     ext: '.js',
-                    flatten : false,
-                    expand  : true,
+                    flatten: false,
+                    expand: true,
                     src: 'templates/*.tmpl',
                     dest: '<%= currentProfile.target %>'
                 }]
@@ -165,8 +170,8 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     ext: '.js',
-                    flatten : false,
-                    expand  : true,
+                    flatten: false,
+                    expand: true,
                     src: 'templates/*.tmpl',
                     dest: '<%= tempDir %>'
                 }]
@@ -187,20 +192,20 @@ module.exports = function (grunt) {
             // ... a single file locally
             'target': {
                 files: [{
-                    flatten : false,
-                    expand  : true,
-                    src     : '<%= currentWatchFile %>',
-                    dest    : '<%= currentProfile.target %>',
-                    filter  : 'isFile'
+                    flatten: false,
+                    expand: true,
+                    src: '<%= currentWatchFile %>',
+                    dest: '<%= currentProfile.target %>',
+                    filter: 'isFile'
                 }]
             },
             // ... all the tool files locally
             'local-all': {
                 files: [{
-                    flatten : false,
-                    expand  : true,
-                    src     : ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css'],
-                    dest    : '<%= currentProfile.target %>'
+                    flatten: false,
+                    expand: true,
+                    src: ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css'],
+                    dest: '<%= currentProfile.target %>'
                 }]
             },
             // ... the index locally
@@ -236,7 +241,7 @@ module.exports = function (grunt) {
                     dest: '<%= currentProfile.target %>'
                 }]
             },
-            'integration': {
+            'backend': {
                 files: [{
                     flatten: false,
                     expand: true,
@@ -262,14 +267,24 @@ module.exports = function (grunt) {
                     expand: true
                 }]
             },
+            // ... the integration
+            'integration': {
+                src: '<%= currentProfile.integration %>',
+                dest: '<%= currentProfile.target %>/js/annotation-tool-integration.js'
+            },
+            // ... the integration for the build step
+            'integration-build': {
+                src: '<%= currentProfile.integration %>',
+                dest: '<%= tempDir %>/js/annotation-tool-integration.js'
+            },
             // ... the configuration
             'config': {
-                src: '<%= currentProfile.config %>',
+                src: 'build/config/annotation-tool-configuration.js',
                 dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
             },
-            // ... build the configuration
+            // ... the configuration for the build step
             'config-build': {
-                src: '<%= currentProfile.config %>',
+                src: 'build/config/annotation-tool-configuration.js',
                 dest: '<%= tempDir %>/js/annotation-tool-configuration.js'
             },
             // ... code for further processing
@@ -288,8 +303,8 @@ module.exports = function (grunt) {
             }
         },
 
-        jsdoc : {
-            dist : {
+        jsdoc: {
+            dist: {
                 src: ['<%= srcPath.js %>', '!js/libs/**'],
                 options: {
                     destination: 'doc',
@@ -301,22 +316,26 @@ module.exports = function (grunt) {
 
         /** Task to run tasks in parrallel */
         concurrent: {
-            dev: {
-                tasks: [
+            dev: (function () {
+                var tasks = [
                     'watch:js',
                     'watch:config',
+                    'watch:integration',
                     'watch:html',
                     'watch:less',
                     'watch:templates',
                     'watch:locales',
                     'watch:www',
                     'connect:dev'
-                ],
-                options: {
-                    logConcurrentOutput: true,
-                    limit: 8
-                }
-            }
+                ];
+                return {
+                    tasks: tasks,
+                    options: {
+                        logConcurrentOutput: true,
+                        limit: tasks.length
+                    }
+                };
+            })()
         },
 
         /** Web server */
@@ -350,15 +369,15 @@ module.exports = function (grunt) {
         requirejs: {
             compile: {
                 options: {
-                    baseUrl                    : '<%= tempDir %>/js',
-                    mainConfigFile             : './js/require.config.js',
-                    name                       : 'main',
-                    optimizeAllPluginResources : false,
-                    preserveLicenseComments    : false,
-                    optimize                   : 'none',
-                    useStrict                  : true,
-                    findNestedDependencies     : true,
-                    out                        : '<%= currentProfile.target %>/bundle.js'
+                    baseUrl: '<%= tempDir %>/js',
+                    mainConfigFile: './js/require.config.js',
+                    name: 'main',
+                    optimizeAllPluginResources: false,
+                    preserveLicenseComments: false,
+                    optimize: 'none',
+                    useStrict: true,
+                    findNestedDependencies: true,
+                    out: '<%= currentProfile.target %>/bundle.js'
                 }
             }
         },
@@ -425,11 +444,11 @@ module.exports = function (grunt) {
 
     // Default task
     grunt.registerTask('default', ['amdcheck', 'jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:index', 'copy:less', 'copy:config', 'copy:locales', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['amdcheck', 'mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:index', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:index', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
-    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:integration', 'processhtml:index', 'copy:config', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['amdcheck', 'handlebars:temp', 'less', 'copy:integration', 'processhtml:index', 'copy:config-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:index', 'copy:less', 'copy:config', 'copy:integration', 'copy:locales', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['amdcheck', 'mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:index', 'copy:config', 'copy:integration', 'copy:locales']);
+    grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:index', 'copy:config-build', 'copy:integration-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
+    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:backend', 'processhtml:index', 'copy:config', 'copy:integration', 'copy:locales']);
+    grunt.registerTask('baseINTEGRATIONMINIFIED', ['amdcheck', 'handlebars:temp', 'less', 'copy:backend', 'processhtml:index', 'copy:config-build', 'copy:integration-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
