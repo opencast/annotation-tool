@@ -74,13 +74,11 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
     });
 
     /**
-     * Useful for debugging templates.
-     * @alias module:Handlebars#json
+     * Encode some data to JSON to store it in `data`-attributes
+     * @alias module:Handlebars#data
      */
-    Handlebars.registerHelper("json", function (value) {
-        return new Handlebars.SafeString(
-            JSON.stringify(value)
-        );
+    Handlebars.registerHelper("data", function (value) {
+        return JSON.stringify(value);
     });
 
     Handlebars.registerHelper('ifeq', function (a, b, options) {

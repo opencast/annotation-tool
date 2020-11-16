@@ -265,21 +265,20 @@ public interface ExtendedAnnotationService {
    * 
    * @param trackId
    *          the track id
-   * @param text
-   *          the annotation text
    * @param start
    *          the annotation entry timepoint in seconds
    * @param duration
    *          the duration of the annotation in seconds
+   * @param content
+   *          the content of the annotation
    * @param resource
    *          the base {@link Resource}
    * @return the created annotation
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Annotation createAnnotation(long trackId, Option<String> text, double start, Option<Double> duration,
-          Option<String> settings, Option<Long> labelId, Option<Long> scaleValueId, Resource resource)
-          throws ExtendedAnnotationException;
+  Annotation createAnnotation(long trackId, double start, Option<Double> duration, String content,
+          Option<String> settings, Resource resource) throws ExtendedAnnotationException;
 
   /**
    * Create an annotation with a certain annotation.

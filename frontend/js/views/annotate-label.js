@@ -168,9 +168,14 @@ define(["jquery",
             annnotateWithScaling: function (event) {
                 event.stopImmediatePropagation();
 
-                var id = event.target.getAttribute("value");
-                var annotation = annotationTool.createAnnotation();
-                annotation.addContent({ type: "scaling", value: { label: this.model.id, scaling: id } });
+                var id = JSON.parse(event.target.dataset["id"]);
+                annotationTool.createAnnotation({ content: [{
+                    type: "scaling",
+                    value: {
+                        label: this.model.id,
+                        scaling: id
+                    }
+                }] });
             },
 
             /**
@@ -185,8 +190,10 @@ define(["jquery",
                     return;
                 }
 
-                var annotation = annotationTool.createAnnotation();
-                annotation.addContent({ type: "label", value: this.model.id });
+                annotationTool.createAnnotation({ content: [{
+                    type: "label",
+                    value: this.model.id
+                }] });
             },
 
             /**

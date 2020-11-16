@@ -24,21 +24,15 @@ public interface Annotation extends Resource {
   /** The track id where the annotation is */
   long getTrackId();
 
-  /** The annotation text */
-  Option<String> getText();
-
   /** The annotation entry timepoint in seconds. */
   double getStart();
 
   /** The duration of the annotation in seconds. */
   Option<Double> getDuration();
 
+  /** The content of the annotation */
+  String getContent();
+
   /** The annotation settings */
   Option<String> getSettings();
-
-  /** The label that is used for this annotation */
-  Option<Long> getLabelId();
-
-  /** The scale value that is used for this annotation */
-  Option<Long> getScaleValueId();
 }

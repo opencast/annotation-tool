@@ -75,6 +75,9 @@ import org.opencastproject.util.data.functions.Tuples;
 import org.opencastproject.util.persistence.PersistenceEnv;
 import org.opencastproject.util.persistence.Queries;
 
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -316,12 +319,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public Annotation createAnnotation(final long trackId, final Option<String> text, final double start,
-          final Option<Double> duration, final Option<String> settings, final Option<Long> labelId,
-          final Option<Long> scaleValueId, final Resource resource) throws ExtendedAnnotationException {
+  public Annotation createAnnotation(final long trackId, final double start, final Option<Double> duration,
+          final String content, final Option<String> settings, final Resource resource)
+          throws ExtendedAnnotationException {
     if (getTrack(trackId).isSome()) {
-      final AnnotationDto dto = AnnotationDto.create(trackId, text, start, duration, settings, labelId, scaleValueId,
-              resource);
+      final AnnotationDto dto = AnnotationDto.create(trackId, start, duration, content, settings, resource);
       return tx(Queries.persist(dto)).toAnnotation();
     } else {
       throw notFound;
@@ -342,7 +344,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     update("Annotation.findById", a.getId(), new Effect<AnnotationDto>() {
       @Override
       protected void run(AnnotationDto dto) {
-        dto.update(a.getText(), a.getStart(), a.getDuration(), a.getSettings(), a);
+        dto.update(a.getStart(), a.getDuration(), a.getContent(), a.getSettings(), a);
       }
     });
   }
@@ -355,8 +357,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public boolean deleteAnnotation(Annotation a) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(a);
-    final Annotation updated = new AnnotationImpl(a.getId(), a.getTrackId(), a.getText(), a.getStart(),
-            a.getDuration(), a.getSettings(), a.getLabelId(), a.getScaleValueId(), deleteResource);
+    final Annotation updated = new AnnotationImpl(a.getId(), a.getTrackId(), a.getStart(), a.getDuration(),
+            a.getContent(), a.getSettings(), deleteResource);
     updateAnnotation(updated);
     return true;
   }
@@ -992,32 +994,35 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     }
   };
 
+  private static final boolean INCLUDE_DELETED = true;
+
   private boolean hasCategoryAccess(Annotation annotation) {
-    return annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
-      @Override
-      public Option<Label> apply(Long labelId) {
-        boolean includeDeletedLabels = true;
-        return getLabel(labelId, includeDeletedLabels);
+    try {
+      @SuppressWarnings("unchecked")
+      List<Map<String, Object>> content = (List<Map<String, Object>>) new JSONParser().parse(annotation.getContent());
+      for (Map<String, Object> contentItem : content) {
+        Object type = contentItem.get("type");
+        long labelId;
+        if ("label".equals(type)) {
+          labelId = (long) contentItem.get("value");
+        } else if ("scaling".equals(type)) {
+          @SuppressWarnings("unchecked")
+          Map<String, Long> value = (Map<String, Long>) contentItem.get("value");
+          labelId = value.get("label");
+        } else {
+          continue;
+        }
+
+        Label label = getLabel(labelId, INCLUDE_DELETED).get();
+        Category category = getCategory(label.getCategoryId(), INCLUDE_DELETED).get();
+        if (!hasResourceAccess(category)) {
+          return false;
+        }
       }
-    }).bind(new Function<Label, Option<Category>>() {
-      @Override
-      public Option<Category> apply(Label label) {
-        boolean includeDeletedCategories = true;
-        return getCategory(label.getCategoryId(), includeDeletedCategories);
-      }
-    // TODO It would be nice if we could use the second overload of `fold` here
-    // TODO Create a helper function to create `Match` objects that enables type inference ...
-    }).fold(new Match<Category, Boolean>() {
-      // annotations without category are always accessible
-      @Override
-      public Boolean none() {
-        return true;
-      }
-      @Override
-      public Boolean some(Category category) {
-        return hasResourceAccess(category);
-      }
-    });
+    } catch (ParseException e) {
+      throw new RuntimeException(e);
+    }
+    return true;
   }
 
   private final Function<Annotation, Boolean> hasCategoryAccess = new Function<Annotation, Boolean>() {
