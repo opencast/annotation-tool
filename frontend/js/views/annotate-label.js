@@ -101,7 +101,7 @@ define(["jquery",
                 "keydown .item-value"           : "onKeyDown",
                 "focusout .item-abbreviation"   : "onFocusOut",
                 "keydown .item-abbreviation"    : "onKeyDown",
-                "click .scaling li"             : "annnotateWithScaling"
+                "click .scaling li"             : "annotateWithScaling"
             },
 
             /**
@@ -122,7 +122,7 @@ define(["jquery",
                                 "onFocusOut",
                                 "onKeyDown",
                                 "onDeleteLabel",
-                                "annnotateWithScaling",
+                                "annotateWithScaling",
                                 "updateAbbreviation",
                                 "updateInputWidth");
 
@@ -165,7 +165,7 @@ define(["jquery",
              * @alias module:views-annotate-label.LabelView#annotateWithScaling
              * @param {event} event Event related to this action
              */
-            annnotateWithScaling: function (event) {
+            annotateWithScaling: function (event) {
                 event.stopImmediatePropagation();
 
                 var id = JSON.parse(event.target.dataset["id"]);
