@@ -37,12 +37,6 @@ define(["models/content_item", "backbone"], function(
          * @alias module:collections-annotation-content.AnnotationContent#initialize
          */
         model: ContentItem,
-
-        /**
-         * constructor
-         * @alias module:collections-annotation-content.AnnotationContent#initialize
-         */
-        initialize: function(models, options) {}
     });
     return AnnotationContent;
 });
