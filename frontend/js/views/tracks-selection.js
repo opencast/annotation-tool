@@ -201,6 +201,8 @@ define(["jquery",
 
                 this.updateCategories();
 
+                this.updateCategoriesForTheAllTab();
+
                 this.hide();
             },
 
@@ -240,6 +242,45 @@ define(["jquery",
                 _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function(notVisibleTrack) {
                     annotationTool.views.main.views.annotate.removeTab(notVisibleTrack.get("created_by"));
                 }, this);
+            },
+
+            /**
+             * Add/Remove views for createdAsMine categories in the all tab
+             */
+            updateCategoriesForTheAllTab: function() {
+              let allTab = annotationTool.views.main.views.annotate.categoriesTabs["all"];
+
+              let categories = annotationTool.video.get("categories");
+              let t = this.tracks.getVisibleTracks();
+              _.each(this.tracks.getVisibleTracks(), function(visibleTrack) {
+                  let trackUserId = visibleTrack.get("created_by");
+                  
+                  // Create new category tab for user ids that or not ours or already present
+                  if(trackUserId !== annotationTool.user.get("id")) {
+                      // Need to pass all categories here, else code ceases to work
+                      annotationTool.views.main.views.annotate.categoriesTabs["all"].addCategories(categories, function(category) {
+                        return ((annotationTool.user.get("role") === ROLES.ADMINISTRATOR && (category.get("access") === ACCESS.PUBLIC 
+                        || category.get("access") === ACCESS.SHARED_WITH_ADMIN))
+                        || (annotationTool.user.get("role") === ROLES.USER && (category.get("access")) === ACCESS.PUBLIC))
+                        // Is it from the mine category?
+                        && category.get("settings").createdAsMine
+                        // Was the category created by the user of the tab? 
+                        && category.get("created_by") === trackUserId
+                        // Is the category already present?
+                        && !annotationTool.views.main.views.annotate.categoriesTabs["all"].categoryViews.some(e => e.model.id === category.id);
+                      });
+                  }
+              }, this);
+
+              _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function(notVisibleTrack) {
+                _.each(annotationTool.views.main.views.annotate.categoriesTabs["all"].categories.models, function(category) {
+                  if (category.get("created_by") === notVisibleTrack.get("created_by")
+                      && category.get("settings").createdAsMine
+                      && category.get("createy_by") !== annotationTool.user.get("id")) {
+                    annotationTool.views.main.views.annotate.categoriesTabs["all"].removeOne(category);
+                  }
+                }, this);
+              }, this);
             },
 
             /**

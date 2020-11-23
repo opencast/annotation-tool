@@ -44,7 +44,7 @@ define(["jquery",
                 id    : "all",
                 name  : i18next.t("annotate.categories.all"),
                 filter: function (category) {
-                    return category.get("isPublic") || category.get("isMine");
+                    return !category.get("settings").createdAsMine || (category.get("settings").createdAsMine && category.get("created_by") === annotationTool.user.get("id"));
                 },
                 roles : []
             },
@@ -347,10 +347,9 @@ define(["jquery",
             removeTab: function (id) {
                 delete this.categoriesTabs[id];
 
-                let wot = this.tabsButtonsElement.find('a[data-tabid="'+id+'"]').parent().remove();
-                
+                this.tabsButtonsElement.find('a[data-tabid="'+id+'"]').parent().remove();
                 this.tabsContainerElement = this.$el.find("div#label-tabs-contents");
-                let lol = this.tabsContainerElement.children("#labelTab-"+id).remove();
+                this.tabsContainerElement.children("#labelTab-"+id).remove();
             },
 
             /**
