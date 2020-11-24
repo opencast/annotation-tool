@@ -1,2 +1,2 @@
 build:
-  script: echo "Hello from GitLab CI"
+  script: mvn -version
