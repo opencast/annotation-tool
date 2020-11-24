@@ -1,2 +1,4 @@
+image: maven:3-openjdk-8
+
 build:
   script: mvn -version
