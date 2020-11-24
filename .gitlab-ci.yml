@@ -1,4 +1,5 @@
 image: maven:3-openjdk-8
 
 build:
+  stage: deploy
   script: mvn clean install -Dmaven.test.skip
