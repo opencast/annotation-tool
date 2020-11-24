@@ -2,9 +2,13 @@ image: maven:3-openjdk-8
 
 deploy:
   stage: deploy
-  script: mvn clean install
-    -Dmaven.test.skip
-    -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+  script:
+    - mkdir m2
+    - mvn clean deploy
+        -Dmaven.test.skip
+        -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+        -DaltDeploymentRepository=m2::default::file:m2
+    - ls -lR m2
 
 cache:
   paths:
