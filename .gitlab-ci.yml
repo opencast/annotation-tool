@@ -1,0 +1,35 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH != "m2"
+
+image: maven:3-openjdk-8
+
+pages:
+  stage: deploy
+  script:
+    - git clone
+        --single-branch --branch m2
+        https://gitlab-ci:$DEPLOY_TOKEN@gitlab.switch.ch/cast/annotate.git
+        public
+    - git config --global user.email switch-support@elan-ev.de
+    - git config --global user.name "ELAN e.V."
+    - mvn clean deploy
+        --batch-mode
+        -Dmaven.test.skip
+        -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+        -DaltDeploymentRepository=m2::default::file:public/m2
+        -Drevision=$CI_PIPELINE_ID
+        -Dintegration=backend
+    - cd public
+    - git add .
+    - git commit -m 'Update m2'
+    - git push
+  artifacts:
+    paths:
+      - public
+
+cache:
+  paths:
+    - .m2
+    - frontend/node
+    - frontend/node_modules
