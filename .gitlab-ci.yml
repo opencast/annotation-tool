@@ -1,3 +1,7 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH != "m2"
+
 image: maven:3-openjdk-8
 
 deploy:
@@ -15,10 +19,6 @@ deploy:
     - git add .
     - git commit -m 'Update m2'
     - git push
-
-  except:
-    branches:
-      - m2
 
 cache:
   paths:
