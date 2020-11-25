@@ -14,6 +14,7 @@ deploy:
     - git config --global user.email switch-support@elan-ev.de
     - git config --global user.name "ELAN e.V."
     - mvn clean deploy
+        --batch-mode
         -Dmaven.test.skip
         -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
         -DaltDeploymentRepository=m2::default::file:m2
