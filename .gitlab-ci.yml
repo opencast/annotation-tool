@@ -17,7 +17,7 @@ pages:
         --batch-mode
         -Dmaven.test.skip
         -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
-        -DaltDeploymentRepository=m2::default::file:public
+        -DaltDeploymentRepository=m2::default::file:public/m2
         -Drevision=$CI_PIPELINE_ID
         -Dintegration=backend
     - cd public
