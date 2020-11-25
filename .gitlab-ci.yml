@@ -19,6 +19,7 @@ deploy:
         -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
         -DaltDeploymentRepository=m2::default::file:m2
         -Drevision=$CI_PIPELINE_ID
+        -Dintegration=backend
     - cd m2
     - git add .
     - git commit -m 'Update m2'
