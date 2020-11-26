@@ -198,6 +198,7 @@
   "scale editor": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
+    "close": "$t(common actions.close)",
     "description": {
       "label": "Description",
       "placeholder": "Insert the category description"
@@ -225,6 +226,11 @@
         "header": "Value",
         "placeholder": "Insert a decimal number."
       }
+    },
+    "warning": {
+      "name": "Attention!",
+      "message": "This category belongs to a series. Therefore, assigning a scale is not possible.",
+      "messageScaleOnSeriesCategory": "Category has a scale. Changing category affiliation is not possible."
     }
   },
   "startup": {

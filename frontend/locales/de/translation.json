@@ -195,6 +195,7 @@
   "scale editor": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
+    "close": "$t(common actions.close)",
     "description": {
       "label": "Beschreibung",
       "placeholder": "Beschreibung der Kategorie einfügen"
@@ -222,6 +223,11 @@
         "header": "Wert",
         "placeholder": "Dezimalzahl einfügen."
       }
+    },
+    "warning": {
+      "name": "Achtung!",
+      "message": "Diese Kategorie gehört zu einer Serie. Daher kann ihr keine Skala zugeordnet werden.",
+      "messageScaleOnSeriesCategory": "Kategorie verfügt über eine Skala. Wechsel der Zugehörigkeit der Kategorie nicht möglich."
     }
   },
   "startup": {

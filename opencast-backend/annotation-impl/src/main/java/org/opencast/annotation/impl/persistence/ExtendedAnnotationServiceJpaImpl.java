@@ -446,7 +446,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
       @Override
       public List<Scale> none() {
-        return tx(named.<ScaleDto> findAllM("Scale.findAll", offset, limit)).map(toScale).value();
+        return tx(named.<ScaleDto> findAllM("Scale.findAllOfTemplate", offset, limit)).map(toScale).value();
       }
     });
 

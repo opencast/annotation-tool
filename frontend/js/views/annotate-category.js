@@ -174,11 +174,18 @@ define(["jquery",
                     this.model.set("seriesCategoryId", "");
 
                 } else if (!categorySeriesCategoryId && videoSeriesId) {
+                  // If there's a scale, show an error message instead.
+                  // This doesn't really belong on scaleEditor, but I don't want to create
+                  // a whole new class for a simple error modal.
+                  if (this.model.get("settings").hasScale) {
+                    annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"), 
+                    message: i18next.t("scale editor.warning.messageScaleOnSeriesCategory")});
+                  } else {
                     // Add to series
                     this.model.set("seriesExtId", videoSeriesId);
                     this.model.set("seriesCategoryId", this.model.id);
+                  }
                 }
-
                 this.model.save(null, { wait: true });
             },
 
@@ -250,7 +257,13 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#editScale
              */
             editScale: function () {
-                annotationTool.scaleEditor.show(this.model, this.model.get("access"));
+                if (this.model.get("seriesCategoryId")) {
+                  // Workaround for scales and series categories
+                  annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"), 
+                                                          message: i18next.t("scale editor.warning.message")});                  
+                } else {
+                  annotationTool.scaleEditor.show(this.model, this.model.get("access"));
+                }
             },
 
             /**

@@ -89,9 +89,9 @@ define(["underscore",
 
                 // Check if the possible video scales are given
                 if (attr.scales && _.isArray(attr.scales)) {
-                    this.set({ scales: new Scales(attr.scales, null) });
+                    this.set({ scales: new Scales(attr.scales, { video: this }) });
                 } else {
-                    this.set({ scales: new Scales([], null) });
+                    this.set({ scales: new Scales([], { video: this }) });
                 }
 
                 if (attr.id) {
