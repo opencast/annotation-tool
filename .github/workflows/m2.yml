@@ -30,7 +30,7 @@ jobs:
           restore-keys: npm-
 
       - name: Build the artifacts
-        run: mvn clean install
+        run: mvn clean deploy
           -Dopencast.version="[8,9-SNAPSHOT)"
           --batch-mode
           -DaltDeploymentRepository=m2::default::file:m2
@@ -40,5 +40,6 @@ jobs:
         with:
           message: Update m2 repository
           cwd: m2
+          branch: m2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
