@@ -8,6 +8,12 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@v2
 
+      - name: Check out the m2 repository
+        uses: actions/checkout@v2
+        with:
+          ref: m2
+          path: m2
+
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
