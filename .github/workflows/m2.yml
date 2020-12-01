@@ -1,0 +1,8 @@
+name: Deploy Maven artifacts
+on: push
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
