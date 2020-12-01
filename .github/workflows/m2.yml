@@ -7,6 +7,7 @@ jobs:
     steps:
       - name: Check out the code
         uses: actions/checkout@v2
+
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
@@ -21,5 +22,6 @@ jobs:
           path: ~/.npm
           key: npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: npm-
+
       - name: Build and deploy
         run: mvn clean install -Dopencast.version="[8,9-SNAPSHOT)" --batch-mode
