@@ -6,4 +6,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: mvn clean install -Dopencast.version="[8,9-SNAPSHOT)"
+      - run: mvn clean install -Dopencast.version="[8,9-SNAPSHOT)" --batch-mode
