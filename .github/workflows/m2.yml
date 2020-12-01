@@ -5,5 +5,21 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: mvn clean install -Dopencast.version="[8,9-SNAPSHOT)" --batch-mode
+      - name: Check out the code
+        uses: actions/checkout@v2
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+            frontend/node
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-
+      - name: Build and deploy
+        run: mvn clean install -Dopencast.version="[8,9-SNAPSHOT)" --batch-mode
