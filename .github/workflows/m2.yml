@@ -29,5 +29,16 @@ jobs:
           key: npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: npm-
 
-      - name: Build and deploy
-        run: mvn clean install -Dopencast.version="[8,9-SNAPSHOT)" --batch-mode
+      - name: Build the artifacts
+        run: mvn clean install
+          -Dopencast.version="[8,9-SNAPSHOT)"
+          --batch-mode
+          -DaltDeploymentRepository=m2::default::file:m2
+
+      - name: Deploy the artifacts to GitHub
+        uses: EndBug/add-and-commit@v5
+        with:
+          message: Update m2 repository
+          cwd: m2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
