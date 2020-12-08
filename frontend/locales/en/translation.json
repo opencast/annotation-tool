@@ -48,7 +48,9 @@
     "hide category": "Hide category",
     "show category": "Show category",
     "show free text": "Show free text annotations",
-    "hide free text": "Hide free text annotations"
+    "hide free text": "Hide free text annotations",
+    "event category": "Category belongs to this video",
+    "series category": "Category belongs to the series & is shown in all videos"
   },
   "annotation": {
     "author": "Created by",
@@ -199,6 +201,7 @@
   "scale editor": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
+    "close": "$t(common actions.close)",
     "description": {
       "label": "Description",
       "placeholder": "Insert the category description"
@@ -226,6 +229,11 @@
         "header": "Value",
         "placeholder": "Insert a decimal number."
       }
+    },
+    "warning": {
+      "name": "Attention!",
+      "message": "This category belongs to a series. Therefore, assigning a scale is not possible.",
+      "messageScaleOnSeriesCategory": "Category has a scale. Changing category affiliation is not possible."
     }
   },
   "startup": {

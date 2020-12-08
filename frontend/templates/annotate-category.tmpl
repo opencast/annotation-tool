@@ -42,7 +42,7 @@
             ></i>
         </button>
     {{/if}}
-    <i class="{{#if seriesCategoryId}}icon-series{{else}}icon-event{{/if}} toggleSeries edit" title="{{#if seriesCategoryId}}This category belongs to a series{{else}}This category does not belong to a series{{/if}}"></i>
+    <i class="{{#if seriesCategoryId}}icon-series-category{{else}}icon-video-category{{/if}} toggleSeries edit" title="{{#if seriesCategoryId}}{{t "annotate.series category"}}{{else}}{{t "annotate.event category"}}{{/if}}"></i>
     <div class="colorpicker">
         <input id="color-{{name}}" type="text" class="colorpicker edit" value="{{#if settings}}{{settings.color}}{{/if}}" /></div>
     </div>
