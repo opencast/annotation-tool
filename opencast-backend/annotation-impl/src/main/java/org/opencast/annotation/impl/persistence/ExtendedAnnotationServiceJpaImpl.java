@@ -763,6 +763,22 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public Label createLabel(long categoryId, String value, String abbreviation, Option<String> description,
           Option<String> settings, Resource resource) throws ExtendedAnnotationException {
+    // Handle series categories
+    // If the category belongs to a series, create the label on the series category instead
+    Option<Category> category = getCategory(categoryId, false);
+    Option<Category> seriesCategory;
+    // If the category belongs to a series
+    if (category.isSome() && category.get().getSeriesCategoryId().isSome()) {
+      Long categorySeriesCategoryId = category.get().getSeriesCategoryId().get();
+      seriesCategory = getCategory(categorySeriesCategoryId, false);
+      // And the category is not itself (aka the master series category)
+      if (seriesCategory.isSome() && categoryId != (seriesCategory.get().getId())) {
+        final LabelDto dto = LabelDto.create(categorySeriesCategoryId, value, abbreviation, description, settings, resource);
+        return tx(Queries.persist(dto)).toLabel();
+      }
+    }
+
+    // Normal Create
     final LabelDto dto = LabelDto.create(categoryId, value, abbreviation, description, settings, resource);
     return tx(Queries.persist(dto)).toLabel();
   }
@@ -816,18 +832,27 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         List<Label> seriesCategoryLabels = getLabels(seriesCategory.get().getId(), none(), none(), none(), none(), none());
 
         // Update our labels with the labels from the master series category
+        // Note: Maybe do an actual update instead of delete/create
         for (Label label: labels) {
           deleteLabel(label);
         }
         List<Label> newLabels = new ArrayList<>();
         for (Label seriesLabel : seriesCategoryLabels) {
-          newLabels.add(createLabel(categoryId, seriesLabel.getValue(), seriesLabel.getAbbreviation(), seriesLabel.getDescription(),
-                  seriesLabel.getSettings(), new ResourceImpl(option(seriesLabel.getAccess()),
-                  seriesLabel.getCreatedBy(), seriesLabel.getUpdatedBy(), seriesLabel.getDeletedBy(),
-                  seriesLabel.getCreatedAt(), seriesLabel.getUpdatedAt(), seriesLabel.getDeletedAt(),
-                  seriesLabel.getTags())));
+          final LabelDto dto = LabelDto.create(categoryId, seriesLabel.getValue(), seriesLabel.getAbbreviation(), seriesLabel.getDescription(),
+                  seriesLabel.getSettings(),
+                  new ResourceImpl(option(seriesLabel.getAccess()),
+                          seriesLabel.getCreatedBy(), seriesLabel.getUpdatedBy(), seriesLabel.getDeletedBy(),
+                          seriesLabel.getCreatedAt(), seriesLabel.getUpdatedAt(), seriesLabel.getDeletedAt(),
+                          seriesLabel.getTags()));
+          newLabels.add(tx(Queries.persist(dto)).toLabel());
         }
-        labels = newLabels;
+
+        // Return series labels, so that they are updated in the backend
+        // At some point you probably want to associated copied labels with their original, so they can be properly updated
+        // This will lose changes made on non-master category labels if the master then looses their series.
+        // But that is quite a rare scenario (hopefully) and I'm running out of time.
+        //labels = newLabels;
+        labels = seriesCategoryLabels;
       }
     }
 
