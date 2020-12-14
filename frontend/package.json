@@ -8,7 +8,8 @@
   },
   "license": "ECL-2.0",
   "scripts": {
-    "start": "grunt dev"
+    "start": "grunt dev",
+    "preinstall": "npx npm-force-resolutions"
   },
   "devDependencies": {
     "grunt": "^1.1.0",
@@ -29,5 +30,8 @@
     "ink-docstrap": "^1.3.0",
     "jit-grunt": "^0.10.0",
     "mime": "^1.4.1"
+  },
+  "resolutions": {
+    "lodash": "4.17.19"
   }
 }
