@@ -94,6 +94,16 @@ define(["event-target"], function (EventTarget) {
         };
     });
 
+    PlayerAdapter.prototype.failed = function () {
+        switch (this.getStatus()) {
+        case PlayerAdapter.ERROR_NETWORK:
+        case PlayerAdapter.ERROR_UNSUPPORTED_MEDIA:
+            return true;
+        default:
+            return false;
+        }
+    };
+
     /**
      * Possible player status
      * @readonly
