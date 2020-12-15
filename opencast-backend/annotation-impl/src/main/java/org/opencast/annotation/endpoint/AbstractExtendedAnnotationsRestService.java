@@ -724,7 +724,11 @@ public abstract class AbstractExtendedAnnotationsRestService {
             final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(description),
                     trimToNone(settings), resource, seriesExtId, seriesCategoryId);
             if (!c.equals(updated)) {
-              eas().updateCategory(updated);
+              if (seriesCategoryId.isNone()) {
+                eas().updateCategoryAndDeleteOtherSeriesCategories(updated, videoId.get());
+              } else {
+                eas().updateCategory(updated);
+              }
               c = updated;
             }
             return Response.ok(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), c)))

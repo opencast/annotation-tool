@@ -77,6 +77,13 @@ define(["jquery",
              */
             template: Template,
 
+            // /**
+            //  * Main container of the editor modal
+            //  * @alias module:views-login.Login#el
+            //  * @type {DOMElement}
+            //  */
+            // el: $("#series-categories-warning"),
+
             /**
              * Events to handle by the annotate-category view
              * @alias module:views-annotate-category.CategoryView#events
@@ -117,8 +124,8 @@ define(["jquery",
                   "removeOne",
                   "onCreateLabel",
                   "editScale",
-                  "updateInputWidth");
-
+                  "updateInputWidth",
+                  "toVideoCategory");
 
                 // Define the colors (global setting for all color pickers)
                 $.fn.colorPicker.defaults.colors = annotationTool.colorsManager.getColors();
@@ -154,6 +161,12 @@ define(["jquery",
                 return this;
             },
 
+            toVideoCategory: function (categorySeriesCategoryId) {
+              this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
+              this.model.set("seriesExtId", "");
+              this.model.set("seriesCategoryId", "");
+            },
+
             /**
              * Toggle the category between belonging to an event and belonging
              * to a series
@@ -169,16 +182,14 @@ define(["jquery",
 
                 if (categorySeriesCategoryId) {
                     // Remove from series
-                    this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
-                    this.model.set("seriesExtId", "");
-                    this.model.set("seriesCategoryId", "");
+                    annotationTool.seriesCategoryOperation.start(this, categorySeriesCategoryId);
 
                 } else if (!categorySeriesCategoryId && videoSeriesId) {
                   // If there's a scale, show an error message instead.
                   // This doesn't really belong on scaleEditor, but I don't want to create
                   // a whole new class for a simple error modal.
                   if (this.model.get("settings").hasScale) {
-                    annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"), 
+                    annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"),
                     message: i18next.t("scale editor.warning.messageScaleOnSeriesCategory")});
                   } else {
                     // Add to series
@@ -188,6 +199,7 @@ define(["jquery",
                 }
                 this.model.save(null, { wait: true });
             },
+
 
             /**
              * Update the size of all the input for the label value
@@ -259,8 +271,8 @@ define(["jquery",
             editScale: function () {
                 if (this.model.get("seriesCategoryId")) {
                   // Workaround for scales and series categories
-                  annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"), 
-                                                          message: i18next.t("scale editor.warning.message")});                  
+                  annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"),
+                                                          message: i18next.t("scale editor.warning.message")});
                 } else {
                   annotationTool.scaleEditor.show(this.model, this.model.get("access"));
                 }

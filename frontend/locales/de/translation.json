@@ -101,6 +101,12 @@
     "title": "$t(models.nominative, {'context': {{context}} }) löschen",
     "warning": "Wollen Sie $t(models.accusative, {'context': {{context}} }) „{{content}}“ wirklich löschen?"
   },
+  "series-category modal": {
+    "cancel": "$t(common actions.cancel)",
+    "toVideo": "Zu Videokategorie",
+    "title": "Achtung!",
+    "warning": "Die Zugehörigkeit der Kategorie von einer Serie zu einem Video löscht die Kategorie von allen anderen Videos dieser Serie! Wollen sie fortfahren?"
+  },
   "description": "Werkzeug zur Videoannotation",
   "list annotation": {
     "double click to edit": "$t(common actions.double click to edit)"
