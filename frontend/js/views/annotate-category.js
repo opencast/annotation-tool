@@ -161,10 +161,16 @@ define(["jquery",
                 return this;
             },
 
+            /**
+             * Callback for modal spawned by toggleSeries.
+             * Turns a series category back to a video category
+             * @param {Id of the series} categorySeriesCategoryId
+             */
             toVideoCategory: function (categorySeriesCategoryId) {
               this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
               this.model.set("seriesExtId", "");
               this.model.set("seriesCategoryId", "");
+              this.model.save(null, { wait: true });
             },
 
             /**
@@ -182,6 +188,7 @@ define(["jquery",
 
                 if (categorySeriesCategoryId) {
                     // Remove from series
+                    // Display modal. If user accepts, execute toVideoCategory callback
                     annotationTool.seriesCategoryOperation.start(this, categorySeriesCategoryId);
 
                 } else if (!categorySeriesCategoryId && videoSeriesId) {
@@ -196,8 +203,8 @@ define(["jquery",
                     this.model.set("seriesExtId", videoSeriesId);
                     this.model.set("seriesCategoryId", this.model.id);
                   }
+                  this.model.save(null, { wait: true });
                 }
-                this.model.save(null, { wait: true });
             },
 
 
