@@ -105,7 +105,8 @@
     "cancel": "$t(common actions.cancel)",
     "toVideo": "Zu Videokategorie",
     "title": "Achtung!",
-    "warning": "Die Zugehörigkeit der Kategorie von einer Serie zu einem Video löscht die Kategorie von allen anderen Videos dieser Serie! Wollen sie fortfahren?"
+    "warning": "Die Zugehörigkeit der Kategorie von einer Serie zu einem Video löscht die Kategorie von allen anderen Videos dieser Serie! Wollen sie fortfahren?",
+    "customMessage": "Diese Kategorie gehört zur Serie und erscheint bei allen Videos. Wenn Sie diese Kategorie löschen, wird sie auch für alle anderen Videos gelöscht. "
   },
   "description": "Werkzeug zur Videoannotation",
   "list annotation": {

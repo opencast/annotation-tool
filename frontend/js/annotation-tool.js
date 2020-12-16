@@ -73,7 +73,8 @@ define(["jquery",
 
                     var deleteModal = $(DeleteModalTmpl({
                         context: type.name,
-                        content: type.getContent(target)
+                        content: type.getContent(target),
+                        customMessage: type.customMessage ? type.customMessage(target) : ""
                     }));
 
                     function confirm() {
@@ -885,6 +886,13 @@ define(["jquery",
                             console.warn("Cannot delete category: " + error);
                         }
                     });
+                },
+                customMessage: function (target) {
+                  if (target.get("seriesCategoryId")) {
+                    return i18next.t("series-category modal.customMessage")
+                  } else {
+                    return ""
+                  }
                 }
             },
 
