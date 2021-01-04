@@ -21,6 +21,7 @@
 define(["jquery",
         "underscore",
         "backbone",
+        "util",
         "i18next",
         "collections/videos",
         "views/main",
@@ -29,9 +30,12 @@ define(["jquery",
         "templates/series-category",
         "player-adapter",
         "colors",
+        "xlsx",
+        "papaparse",
+        "filesaver",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, i18next, Videos, MainView, alerts, DeleteModalTmpl, SeriesCategoryTmpl, PlayerAdapter, ColorsManager) {
+    function ($, _, Backbone, util, i18next, Videos, MainView, alerts, DeleteModalTmpl, SeriesCategoryTmpl, PlayerAdapter, ColorsManager, XLSX, PapaParse) {
 
         "use strict";
 
@@ -150,7 +154,7 @@ define(["jquery",
              * @alias annotationTool.start
              * @param {module:annotation-tool-configuration.Configuration} config The tool configuration
              */
-            start: function (config) {
+            start: function (config, integration) {
                 _.bindAll(this,
                           "updateSelectionOnTimeUpdate",
                           "createAnnotation",
@@ -170,7 +174,7 @@ define(["jquery",
                           "removeTimeupdateListener",
                           "updateSelectionOnTimeUpdate");
 
-                _.extend(this, config);
+                _.extend(this, config, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                 this.seriesCategoryOperation.start = _.bind(this.seriesCategoryOperation.start, this);
@@ -306,8 +310,9 @@ define(["jquery",
              * @alias annotationTool.setSelection
              * @param {Array} selection The new selection
              * @param {Boolean} noToggle don't toggle already selected annotations
+             * @param {any} hint Arbitrary data to pass along the selection event
              */
-            setSelection: function (selection, noToggle) {
+            setSelection: function (selection, noToggle, hint) {
                 if (this.selection) {
                     this.stopListening(this.selection, "destroy", this.onDestroyRemoveSelection);
 
@@ -327,7 +332,8 @@ define(["jquery",
                 this.trigger(
                     this.EVENTS.ANNOTATION_SELECTION,
                     selection,
-                    previousSelection
+                    previousSelection,
+                    hint
                 );
             },
 
@@ -729,6 +735,215 @@ define(["jquery",
                         }
                     }, this)
                 );
+            },
+
+            ////////////////
+            // Exporters  //
+            ////////////////
+
+            /**
+             * Offer the user a spreadsheet version of the annotations for download.
+             * @param {Track[]} tracks The tracks to include in the export
+             * @param {Category[]} categories The tracks to include in the export
+             * @param {Boolean} freeText Should free-text annotations be exported?
+             */
+            exportCSV: function (tracks, categories, freeText) {
+                let bookData = this.gatherExportData(tracks, categories, freeText);
+                var csv = PapaParse.unparse(JSON.stringify(bookData));
+                saveAs(new Blob([csv], {type:"text/csv;charset=utf-8;"}), 'export.csv');
+            },
+
+            /**
+             * Offer the user an excel version of the annotations for download.
+             * @param {Track[]} tracks The tracks to include in the export
+             * @param {Category[]} categories The tracks to include in the export
+             * @param {Boolean} freeText Should free-text annotations be exported?
+             */
+            exportXLSX: function (tracks, categories, freeText) {
+                let bookData = this.gatherExportData(tracks, categories, freeText);
+
+                // Generate workbook
+                var wb = XLSX.utils.book_new();
+                wb.SheetNames.push("Sheet 1");
+
+                // Generate worksheet
+                var ws = XLSX.utils.aoa_to_sheet(bookData);
+
+                // Scale column width to content (which is apparently non built-in in SheetJS)
+                var objectMaxLength = [];
+
+                bookData.forEach(function (arr) {
+                    Object.keys(arr).forEach(function (key) {
+                        var value = arr[key] === null ? '' : arr[key];
+
+                        objectMaxLength[key] = Math.max(objectMaxLength[key], value.length);
+                    });
+                });
+
+                var worksheetCols = objectMaxLength.map(function (width) {
+                    return { width: width };
+                });
+
+                ws["!cols"] = worksheetCols;
+
+                // Put worksheet
+                wb.Sheets["Sheet 1"] = ws;
+
+                // Export workbook
+                var wbout = XLSX.write(wb, { bookType:'xlsx',  type: 'binary' });
+
+                function s2ab(s) {
+                    var buf = new ArrayBuffer(s.length); // convert s to arrayBuffer
+                    var view = new Uint8Array(buf);  // create uint8array as viewer
+                    for (var i = 0; i < s.length; i++) {
+                        view[i] = s.charCodeAt(i) & 0xFF; // convert to octet
+                    }
+                    return buf;
+                }
+
+                saveAs(new Blob([s2ab(wbout)], { type:"application/octet-stream" }), 'export.xlsx');
+            },
+
+            gatherExportData: function (tracks, categories, freeText) {
+                var bookData = [];
+                var header = [];
+                addResourceHeaders(header);
+                header.push("Track name");
+                header.push("Leadin");
+                header.push("Leadout");
+                header.push("Duration");
+                header.push("Text");
+                header.push("Category name");
+                header.push("Label name");
+                header.push("Label abbreviation");
+                header.push("Scale name");
+                header.push("Scale value name");
+                header.push("Scale value value");
+                addResourceHeaders(header, "comment");
+                header.push("Comment text");
+                header.push("Comment replies to");
+                bookData.push(header);
+
+                _.each(tracks, function (track) {
+                    _.each(annotationTool.getAnnotations(track.id), function (annotation) {
+                        var line = [];
+
+                        var label = annotation.attributes.label;
+                        // Exclude annotations that are currently not visible
+                        if (label) {
+                            if (categories && !categories.map(category => category.id).includes(label.category.id)) return;
+                        } else {
+                            if (!freeText) return;
+                        }
+
+                        addResource(line, annotation);
+                        line.push(track.attributes.name);
+
+                        line.push(util.formatTime(annotation.attributes.start));
+                        line.push(util.formatTime(annotation.attributes.start + annotation.attributes.duration));
+                        line.push(util.formatTime(annotation.attributes.duration));
+                        line.push(annotation.attributes.text);
+
+                        if (label) {
+                            line.push(label.category.name);
+                            line.push(label.value);
+                            line.push(label.abbreviation);
+                        } else {
+                            line.push("");
+                            line.push("");
+                            line.push("");
+                        }
+
+                        if (annotation.attributes.scalevalue) {
+                            if (annotationTool.localStorage) {
+                                line.push(getScaleNameByScaleValueId(annotation.attributes.scalevalue.id));
+                            } else {
+                                line.push(annotation.attributes.scalevalue.scale.name);
+                            }
+                            line.push(annotation.attributes.scalevalue.name);
+                            line.push(annotation.attributes.scalevalue.value);
+                        } else {
+                            line.push("");
+                            line.push("");
+                            line.push("");
+                        }
+
+                        bookData.push(line);
+
+                        // Get comments by user
+                        if (!annotation.areCommentsLoaded()) {
+                            annotation.fetchComments();
+                        }
+
+                        _.each(annotation.attributes.comments.models, function (comment) {
+                            addCommentLine(line, comment);
+
+                            if (comment.replies.length > 0) {
+                                commentReplies(line, comment.replies.models);
+                            }
+                        });
+
+                    });
+                });
+
+                return bookData;
+
+                function addResourceHeaders(header, presuffix) {
+                    if (presuffix == null) presuffix = "";
+                    let prefix = "";
+                    let suffix = "";
+                    if (presuffix) {
+                        prefix = presuffix + " ";
+                        suffix = " of " + presuffix;
+                    }
+                    header.push(util.capitalize(prefix + "ID"));
+                    header.push(util.capitalize(prefix + "Creation date"));
+                    header.push(util.capitalize("Last update" + suffix));
+                    header.push(util.capitalize(prefix + "Author nickname"));
+                    header.push(util.capitalize(prefix + "Author mail"));
+                }
+
+                function addResource(line, resource) {
+                    line.push(resource.id);
+                    line.push(resource.attributes.created_at.toISOString());
+                    line.push(resource.attributes.updated_at.toISOString());
+                    line.push(resource.attributes.created_by_nickname);
+                    line.push(resource.attributes.created_by_email);
+                }
+
+                function addCommentLine(line, comment) {
+                    let commentLine = [];
+                    Array.prototype.push.apply(commentLine, line);
+
+                    addResource(commentLine, comment);
+
+                    commentLine.push(comment.attributes.text);
+                    if (comment.collection.replyTo) {
+                        commentLine.push(comment.collection.replyTo.id);
+                    } else {
+                        commentLine.push("");
+                    }
+
+                    bookData.push(commentLine);
+                }
+
+                function commentReplies(line, replies) {
+                    _.each(replies, function (comment) {
+                        addCommentLine(line, comment);
+
+                        commentReplies(line, comment.attributes.replies);
+                    });
+                }
+
+                function getScaleNameByScaleValueId(scaleValueId) {
+                    for (let i = 0; i < annotationTool.video.attributes.scales.models.length; i++) {
+                        for (let j = 0; j < annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models.length; j++) {
+                            if (annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models[j].attributes.id == scaleValueId) {
+                                return annotationTool.video.attributes.scales.models[i].attributes.name;
+                            }
+                        }
+                    }
+                }
             }
         });
 

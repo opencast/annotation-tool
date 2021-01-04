@@ -89,20 +89,4 @@ NO CONTENT
 #### _Response content_
 NO CONTENT
 
-
-## Export video information for statistics usage<a name="video_export"/>
-Get CSV data from the video for statistics usage (Excel, ...).
-
-| Method | Path | Parameters | HTTP Response |
-| ------ | ------ | ----- | -----: |
-|  GET  |  /videos/#{id}/export.csv | access | `200 Ok`: Resource modified, `201 created`: Resource created. |
-
-### Example request
-#### _Url_
-**GET** `http://api.annotationstool.com/v1/videos/#{id}/export.csv `
-#### _Content_
-`access=public`
-#### _Response content_
-`text/csv`
-
 [< Rest API documentation](Rest-API.md)

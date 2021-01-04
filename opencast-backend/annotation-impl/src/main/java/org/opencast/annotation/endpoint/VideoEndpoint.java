@@ -25,18 +25,14 @@ import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
 import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Label;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
-import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
-import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
 import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.TrackImpl;
-import org.opencast.annotation.impl.persistence.AbstractResourceDto;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
 import org.opencast.annotation.impl.persistence.CommentDto;
@@ -45,28 +41,15 @@ import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.util.IoSupport;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.data.functions.Strings;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -81,9 +64,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class VideoEndpoint {
 
@@ -960,217 +940,6 @@ public class VideoEndpoint {
     return getCommentsResponse(trackId, annotationId, some(commentId), limit, offset, date, tagsAnd,
             tagsOr);
   }
-
-  @GET
-  @Path("/export.csv")
-  public Response getExportStatistics(@QueryParam("track") final List<Long> tracks,
-          @QueryParam("category") final List<Long> categories,
-          @QueryParam("freetext") final Boolean freeText) {
-    Response.ResponseBuilder response = Response.ok(new StreamingOutput() {
-
-      public void write(OutputStream os) throws IOException, WebApplicationException {
-        CSVWriter writer = null;
-        try {
-          writer = new CSVWriter(new OutputStreamWriter(os), ',', '"', "\r\n");
-          writeExport(writer, tracks, categories, freeText);
-          writer.close();
-        } finally {
-          IOUtils.closeQuietly(os);
-          IoSupport.closeQuietly(writer);
-        }
-      }
-    });
-    response.header("Content-Type", "text/csv");
-    response.header("Content-Disposition", "attachment; filename=export.csv");
-    return response.build();
-  }
-
-  private void writeExport(CSVWriter writer, List<Long> tracksToExport, List<Long> categoriesToExport,
-          Boolean freeText) {
-    // Write headers
-    List<String> header = new ArrayList<>();
-    addResourceHeaders(header, none());
-    header.add("Track name");
-    header.add("Leadin");
-    header.add("Leadout");
-    header.add("Duration");
-    header.add("Text");
-    header.add("Category name");
-    header.add("Label name");
-    header.add("Label abbreviation");
-    header.add("Scale name");
-    header.add("Scale value name");
-    header.add("Scale value value");
-    addResourceHeaders(header, some("comment"));
-    header.add("Comment text");
-    header.add("Comment replies to");
-    writer.writeNext(header.toArray(new String[0]));
-
-    for (VideoData videoData : this.videoData) {
-      Video video = videoData.getVideo();
-      List<Track> tracks = eas.getTracks(video.getId(), none(), none(), none(), none(), none());
-      for (Track track : tracks) {
-        if (tracksToExport != null && !tracksToExport.contains(track.getId())) continue;
-        List<Annotation> annotations = eas.getAnnotations(track.getId(), none(), none(), none(), none(), none(), none(),
-                none());
-        for (Annotation annotation : annotations) {
-          Option<Label> label = annotation.getLabelId().bind(new Function<Long, Option<Label>>() {
-            @Override
-            public Option<Label> apply(Long labelId) {
-              final boolean includeDeleted = true;
-              return eas.getLabel(labelId, includeDeleted);
-            }
-          });
-          if (label.isSome()) {
-            if (categoriesToExport != null && !categoriesToExport.contains(label.get().getCategoryId())) continue;
-          } else {
-            if (freeText != null && !freeText) continue;
-          }
-
-          List<String> line = new ArrayList<>();
-
-          addResource(annotation, line);
-          line.add(track.getName());
-
-          double start = annotation.getStart(); // start, stop, duration
-          line.add(toVideoTimeString(start));
-          double end = start;
-          if (annotation.getDuration().isSome()) {
-            end += annotation.getDuration().get();
-            line.add(toVideoTimeString(end));
-            line.add(toVideoTimeString(annotation.getDuration().get()));
-          } else {
-            line.add(toVideoTimeString(end));
-            line.add("");
-          }
-          line.add(annotation.getText().getOrElse(""));
-
-          line.add(label.map(getCategoryName.curry(eas)).getOrElse(""));
-          line.add(label.map(getLabelName).getOrElse(""));
-          line.add(label.map(getLabelAbbreviation).getOrElse(""));
-
-          if (annotation.getScaleValueId().isSome()) {
-            Option<ScaleValue> scaleValue = eas.getScaleValue(annotation.getScaleValueId().get());
-            line.add(scaleValue.map(getScaleName.curry(eas)).getOrElse(""));
-            line.add(scaleValue.map(getScaleValueName).getOrElse(""));
-            line.add(scaleValue.map(getScaleValue).getOrElse(""));
-          } else {
-            line.add("");
-            line.add("");
-            line.add("");
-          }
-
-          writer.writeNext(line.toArray(new String[0]));
-
-          List<Comment> comments = eas.getComments(annotation.getId(), none(), none(), none(), none(), none(), none());
-          for (Comment comment : comments) {
-            writeComment(writer, annotation, line, comment);
-          }
-        }
-      }
-    }
-  }
-
-  private void addResourceHeaders(List<String> header, Option<String> optionalResource) {
-    String prefix = "";
-    String suffix = "";
-    for (String resource : optionalResource) {
-      prefix = resource + " ";
-      suffix = " of " + resource;
-    }
-    header.add(StringUtils.capitalize(prefix + "ID"));
-    header.add(StringUtils.capitalize(prefix + "creation date"));
-    header.add("Last update" + suffix);
-    header.add(StringUtils.capitalize(prefix + "author nickname"));
-    header.add(StringUtils.capitalize(prefix + "author mail"));
-  }
-
-  private void addResource(Resource resource, List<String> line) {
-    line.add(Long.toString(resource.getId()));
-    line.add(resource.getCreatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-    line.add(resource.getUpdatedAt().map(AbstractResourceDto.getDateAsUtc).getOrElse(""));
-    line.add(resource.getCreatedBy().map(AbstractResourceDto.getUserNickname.curry(eas)).getOrElse(""));
-    line.add(resource.getCreatedBy().flatMap(getUserEmail.curry(eas)).getOrElse(""));
-  }
-
-  private void writeComment(CSVWriter writer, Annotation annotation, List<String> line, Comment comment) {
-    List<String> commentLine = new ArrayList<>(line);
-    addResource(comment, commentLine);
-    commentLine.add(comment.getText());
-    commentLine.add(comment.getReplyToId().map(new Function<Long, String>() {
-      @Override
-      public String apply(Long replyToId) {
-        return replyToId.toString();
-      }
-    }).getOrElse(""));
-    writer.writeNext(commentLine.toArray(new String[0]));
-    List<Comment> replies = eas.getComments(annotation.getId(), some(comment.getId()), none(), none(), none(), none(),
-            none());
-    for (Comment reply : replies) {
-      writeComment(writer, annotation, line, reply);
-    }
-  }
-
-  private static String toVideoTimeString(double seconds) {
-    long millis = new Double(seconds * 1000).longValue();
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-    return sdf.format(new Date(millis - TimeZone.getDefault().getRawOffset()));
-  }
-
-  private static final Function2<ExtendedAnnotationService, Long, Option<String>> getUserEmail = new Function2<ExtendedAnnotationService, Long, Option<String>>() {
-    @Override
-    public Option apply(ExtendedAnnotationService s, Long userId) {
-      return s.getUser(userId).flatMap(new Function<User, Option<String>>() {
-        @Override
-        public Option<String> apply(User user) {
-          return user.getEmail();
-        }
-      });
-    }
-  };
-
-  private static final Function<Label, String> getLabelName = new Function<Label, String>() {
-    @Override
-    public String apply(Label label) {
-      return label.getValue();
-    }
-  };
-
-  private static final Function2<ExtendedAnnotationService, Label, String> getCategoryName = new Function2<ExtendedAnnotationService, Label, String>() {
-    @Override
-    public String apply(ExtendedAnnotationService e, Label label) {
-      return e.getCategory(label.getCategoryId(), true).get().getName();
-    }
-  };
-
-  private static final Function<Label, String> getLabelAbbreviation = new Function<Label, String>() {
-    @Override
-    public String apply(Label label) {
-      return label.getAbbreviation();
-    }
-  };
-
-  private static final Function<ScaleValue, String> getScaleValueName = new Function<ScaleValue, String>() {
-    @Override
-    public String apply(ScaleValue scaleValue) {
-      return scaleValue.getName();
-    }
-  };
-
-  private static final Function<ScaleValue, String> getScaleValue = new Function<ScaleValue, String>() {
-    @Override
-    public String apply(ScaleValue scaleValue) {
-      return Double.toString(scaleValue.getValue());
-    }
-  };
-
-  private static final Function2<ExtendedAnnotationService, ScaleValue, String> getScaleName = new Function2<ExtendedAnnotationService, ScaleValue, String>() {
-    @Override
-    public String apply(ExtendedAnnotationService e, ScaleValue scaleValue) {
-      return e.getScale(scaleValue.getScaleId(), true).get().getName();
-    }
-  };
-
 
   private URI trackLocationUri(Track t) {
     return uri(host.getEndpointBaseUrl(), "videos", t.getVideoId(), "tracks", t.getId());

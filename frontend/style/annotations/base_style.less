@@ -207,12 +207,23 @@ input, textarea, select, .uneditable-input {
 }
 
 @annotationSelectionColor: rgba(0, 0, 0, 0.15);
+@annotationSelectableColor: fadeout(@annotationSelectionColor, 7.5%);
+
+.selection(@color) {
+    background-image: repeating-linear-gradient(
+        315deg,
+        transparent,
+        transparent 10px,
+        @color 10px,
+        @color 20px
+    );
+}
 
 .selectable-annotation {
     cursor: pointer;
     color: black;
     &:hover {
-        background-image: linear-gradient(@annotationSelectionColor, @annotationSelectionColor);
+        .selection(@annotationSelectableColor);
     }
 }
 
@@ -221,12 +232,6 @@ input, textarea, select, .uneditable-input {
 }
 
 .selected-annotation {
-    background-image: repeating-linear-gradient(
-        315deg,
-        transparent,
-        transparent 10px,
-        @annotationSelectionColor 10px,
-        @annotationSelectionColor 20px
-    );
+    .selection(@annotationSelectionColor);
     .selectable-annotation();
 }
