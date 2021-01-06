@@ -55,7 +55,6 @@
     "author": "Created by",
     "created": "on",
     "track": "on",
-    "empty text": "no content",
     "types": {
       "free text": "free text",
       "label": "label",
@@ -101,7 +100,9 @@
       },
       "start time": "Start time"
     },
-    "you own": "You own this annotation"
+    "you own": "You own this annotation",
+    "various contents": "(various contents)",
+    "no content": "(no content)"
   },
   "default track": {
     "description": "Default track for user {{nickname}}",

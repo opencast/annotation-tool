@@ -24,10 +24,11 @@ define(
         "collections/annotation-content",
         "models/content-item",
         "models/resource",
+        "i18next",
         "localstorage"
     ],
 
-    function (_, Comments, AnnotationContent, ContentItem, Resource) {
+    function (_, Comments, AnnotationContent, ContentItem, Resource, i18next) {
 
         "use strict";
 
@@ -273,20 +274,21 @@ define(
              * @return {string} A string containing the value for the `title` attribute.
              */
             getTitleAttribute: function () {
-                var title;
+                var firstContent = this.get("content").first();
                 switch (getAnnotationType(this)) {
                 case "label":
                 case "scaling":
-                    var label = this.get("content").first().getLabel();
-                    title = getTitleFromLabel(label);
-                    break;
-
+                    var label = firstContent.getLabel();
+                    return getTitleFromLabel(label);
                 case "text":
-                    title = this.get("content").first().get("value");
-                    break;
+                    return firstContent.get("value");
+                default:
+                    return i18next.t("annotation." + (
+                        firstContent
+                            ? "various contents"
+                            : "no content"
+                    ));
                 }
-
-                return title;
             }
         });
 

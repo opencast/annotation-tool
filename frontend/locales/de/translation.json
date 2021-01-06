@@ -55,7 +55,6 @@
     "author": "Erstellt von",
     "created": "am",
     "track": "auf",
-    "empty text": "ohne Inhalt",
     "types": {
       "free text": "Freitextannotation",
       "label": "Kennzeichen",
@@ -101,7 +100,9 @@
       },
       "start time": "Start"
     },
-    "you own": "Diese Annotation gehört Ihnen"
+    "you own": "Diese Annotation gehört Ihnen",
+    "various contents": "(Mehrere Inhalte)",
+    "no content": "(Kein Inhalt)"
   },
   "default track": {
     "description": "Standardspur für Benutzer {{nickname}}",
