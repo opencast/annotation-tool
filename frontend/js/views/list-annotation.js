@@ -104,6 +104,8 @@ define(
                     this.render();
                 });
 
+                this.listenTo(annotationTool.video.get("categories"), "change add remove", this.render);
+
                 this.model.fetchComments();
                 this.listenTo(this.model.get("comments"), "add remove reset reply", this.render);
                 this.listenTo(this.model, "change", this.render);
