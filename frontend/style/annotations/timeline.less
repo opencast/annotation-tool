@@ -74,12 +74,10 @@
 
     &.selection {
         z-index: 0;
-        background-color: @grayLight;
     }
 
     &.active {
         border-color: @gray;
-        background-color: @grayLighter;
         .active-annotation();
     }
 
@@ -87,6 +85,10 @@
         border-color: @gray;
         background-color: @grayLighter;
         .selected-annotation();
+    }
+
+    &.multi {
+        background-color: white;
     }
 
     .vis-item-content {

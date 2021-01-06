@@ -197,6 +197,18 @@ define(
             },
 
             /**
+             * @return {string} The type of the annotation.
+             *                  If there is exactly one content item, it's that item's type.
+             *                  Otherwise it is <code>multi</code>.
+             * @see module:models-content-item.ContentItem#getType
+             * @alias module:models-annotation.Annotation#getType
+             */
+            getType: function () {
+                var content = this.get("content");
+                return content.models.length !== 1 ? "multi" : content.first().get("type");
+            },
+
+            /**
              * Add a content item to this annotation.
              * @alias module:models-annotation.Annotation#addContent
              * @param {object} JSON representation of the content item
@@ -230,13 +242,10 @@ define(
              * @return {array} The array of categories this annotation' labels belongs to, if it has any labels
              */
             getCategories: function () {
-                return this.get("content").reduce(function(memo, item) {
-                    var category = item.getCategory();
-                    if (category) {
-                        memo.push(category);
-                    }
-                    return memo;
-                }, []);
+                return this.get("content").chain()
+                    .invoke("getCategory")
+                    .compact()
+                    .value();
             },
 
             /**
@@ -245,17 +254,14 @@ define(
              * @return {string} The string containing a CSS color value.
              */
             getColor: function () {
-                var color;
-                var content = this.get("content");
-
-                if (getAnnotationType(this) === "multi") {
-                    color = "white";
+                var categories = this.getCategories();
+                if (categories.length === 1) {
+                    return categories[0].get("settings").color;
+                } else if (this.getType() === "multi") {
+                    return "white";
                 } else {
-                    var label = content.first().getLabel();
-                    color = getColorFromLabel(label);
+                    return undefined;
                 }
-
-                return color;
             },
 
             /**
@@ -264,13 +270,10 @@ define(
              * @return {Label[]} An array of labels.
              */
             getLabels: function () {
-                return this.get("content").reduce(function(memo, item) {
-                    var label = item.getLabel();
-                    if (label) {
-                        memo.push(label);
-                    }
-                    return memo;
-                }, []);
+                return this.get("content").chain()
+                    .invoke("getLabel")
+                    .compact()
+                    .value();
             },
 
             /**
@@ -280,7 +283,7 @@ define(
              */
             getTitleAttribute: function () {
                 var firstContent = this.get("content").first();
-                switch (getAnnotationType(this)) {
+                switch (this.getType()) {
                 case "label":
                 case "scaling":
                     var label = firstContent.getLabel();
@@ -298,23 +301,6 @@ define(
         });
 
         return Annotation;
-
-        // return the type of an annotation's single content item and `multi` otherwise
-        function getAnnotationType(annotation) {
-            var content = annotation.get("content") || [];
-            return content.models.length !== 1 ? "multi" : content.first().get("type");
-        }
-
-        function getColorFromLabel(label) {
-            var color;
-            if (label) {
-                var category = label.get("category");
-                if (category && category.settings && category.settings.color) {
-                    color = category.settings.color;
-                }
-            }
-            return color;
-        }
 
         function getTitleFromLabel(label) {
             var title;

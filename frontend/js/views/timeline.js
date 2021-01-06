@@ -83,6 +83,16 @@ define([
             .value()
             .join(", ");
 
+        if (annotation.getType() === "text") {
+            item.className = "";
+        } else {
+            var categories = annotation.getCategories();
+            if (categories.length === 1) {
+                item.className = "category-" + categories[0].id;
+            } else {
+                item.className = "multi";
+            }
+        }
         var labels = annotation.getLabels();
         if (labels.length === 1) {
             var color = annotation.getColor();
@@ -94,6 +104,8 @@ define([
                 ) +
                 ";";
             item.label = labels[0].toJSON();
+        } else {
+            item.label = undefined;
         }
         item.type = item.duration
             ? "range"
