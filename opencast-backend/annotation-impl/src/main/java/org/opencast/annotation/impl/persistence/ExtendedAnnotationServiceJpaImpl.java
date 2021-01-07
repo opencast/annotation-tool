@@ -573,10 +573,44 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     update("Category.findById", c.getId(), new Effect<CategoryDto>() {
       @Override
       public void run(CategoryDto dto) {
-        dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c, c.getSeriesExtId(),
+        dto.update(c.getVideoId(), c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c, c.getSeriesExtId(),
                 c.getSeriesCategoryId());
       }
     });
+  }
+
+  @Override
+  public void updateCategoryAndDeleteOtherSeriesCategories(final Category c, long newVideoId) throws ExtendedAnnotationException {
+    // Get the pre-update version of the category, to figure out its seriesCategoryId
+    Option<CategoryDto> dto;
+    Option<Category> pastC = none();
+    dto = findById("Category.findById", c.getId());
+    if (dto.isSome()) {
+      pastC = dto.map(toCategory);
+    }
+
+    // Get all categories on all videos belonging to the seriesCategoryId (including the master)
+    if (pastC.isSome() && pastC.get().getSeriesCategoryId().isSome()) {
+      List<Category> categoryAndClones = findAllById(toCategory, none(), none(), "Category.findAllOfSeriesCategory",
+              pastC.get().getSeriesCategoryId().get());
+
+      // Delete all but the master category (which is the "c" passed to this function)
+      // Update the master category with the videoId to move it to this video
+      for (int j = 0; j < categoryAndClones.size(); j++) {
+        long a = categoryAndClones.get(j).getId();
+        long b = c.getId();
+        if (a != b) {
+          deleteCategoryImpl(categoryAndClones.get(j));
+        } else {
+          Category update = new CategoryImpl(categoryAndClones.get(j).getId(), Option.option(newVideoId), categoryAndClones.get(j).getScaleId(), categoryAndClones.get(j).getName(), categoryAndClones.get(j).getDescription(),
+                  categoryAndClones.get(j).getSettings(), new ResourceImpl(option(categoryAndClones.get(j).getAccess()),
+                  categoryAndClones.get(j).getCreatedBy(), categoryAndClones.get(j).getUpdatedBy(), categoryAndClones.get(j).getDeletedBy(),
+                  categoryAndClones.get(j).getCreatedAt(), categoryAndClones.get(j).getUpdatedAt(), categoryAndClones.get(j).getDeletedAt(),
+                  categoryAndClones.get(j).getTags()), none(), none());
+          updateCategory(update);
+        }
+      }
+    }
   }
 
   @Override
@@ -679,29 +713,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
                           seriesCategory.getCreatedAt(), seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(),
                           seriesCategory.getTags()), seriesCategory.getSeriesExtId(), option(seriesCategory.getId()));
           createdCategories.add(newCategory);
-        }
-      }
-
-      // Remove connection to a series category if that series category no longer exists or is not a series category anymore
-      List<Category> toRemoveConnection = new ArrayList<Category>();
-      for (int i = 0; i < allCategories.size(); i++) {
-        if (allCategories.get(i).getSeriesCategoryId().isSome()) {
-          boolean hasAMaster = false;
-          for (Category seriesCategory: seriesCategories) {
-            if (allCategories.get(i).getSeriesCategoryId().get() == seriesCategory.getId()
-                && seriesCategory.getSeriesCategoryId().isSome()) {
-              hasAMaster = true;
-            }
-          }
-          if (!hasAMaster) {
-            Category update = new CategoryImpl(allCategories.get(i).getId(), videoId, allCategories.get(i).getScaleId(), allCategories.get(i).getName(), allCategories.get(i).getDescription(),
-                    allCategories.get(i).getSettings(), new ResourceImpl(option(allCategories.get(i).getAccess()),
-                    allCategories.get(i).getCreatedBy(), allCategories.get(i).getUpdatedBy(), allCategories.get(i).getDeletedBy(),
-                    allCategories.get(i).getCreatedAt(), allCategories.get(i).getUpdatedAt(), allCategories.get(i).getDeletedAt(),
-                    allCategories.get(i).getTags()), none(), none());
-            updateCategory(update);
-            allCategories.set(i, update);
-          }
         }
       }
 

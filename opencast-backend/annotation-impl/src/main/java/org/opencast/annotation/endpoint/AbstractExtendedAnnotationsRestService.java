@@ -706,7 +706,11 @@ public abstract class AbstractExtendedAnnotationsRestService {
                     .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource
                     .getDeletedAt(), resource.getTags()), seriesExtId, seriesCategoryId);
             if (!c.equals(updated)) {
-              eas().updateCategory(updated);
+              if (seriesCategoryId.isNone()) {
+                eas().updateCategoryAndDeleteOtherSeriesCategories(updated, videoId.get());
+              } else {
+                eas().updateCategory(updated);
+              }
               c = updated;
             }
             return Response.ok(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), c)))

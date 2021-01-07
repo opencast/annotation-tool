@@ -102,7 +102,7 @@ public class CategoryDto extends AbstractResourceDto {
 
   public static CategoryDto create(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
           Option<String> settings, Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
-    CategoryDto dto = new CategoryDto().update(name, description, scaleId, settings, resource, seriesExtId,
+    CategoryDto dto = new CategoryDto().update(videoId, name, description, scaleId, settings, resource, seriesExtId,
             seriesCategoryId);
     dto.videoId = videoId.getOrElse((Long) null);
     dto.scaleId = scaleId.getOrElse((Long) null);
@@ -111,9 +111,10 @@ public class CategoryDto extends AbstractResourceDto {
     return dto;
   }
 
-  public CategoryDto update(String name, Option<String> description, Option<Long> scaleId, Option<String> settings,
+  public CategoryDto update(Option<Long> videoId, String name, Option<String> description, Option<Long> scaleId, Option<String> settings,
           Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
     super.update(resource);
+    this.videoId = videoId.getOrElse((Long) null);
     this.name = name;
     this.description = description.getOrElse((String) null);
     this.scaleId = scaleId.getOrElse((Long) null);

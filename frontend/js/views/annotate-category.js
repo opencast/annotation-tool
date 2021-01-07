@@ -78,6 +78,13 @@ define(["jquery",
              */
             template: Template,
 
+            // /**
+            //  * Main container of the editor modal
+            //  * @alias module:views-login.Login#el
+            //  * @type {DOMElement}
+            //  */
+            // el: $("#series-categories-warning"),
+
             /**
              * Events to handle by the annotate-category view
              * @alias module:views-annotate-category.CategoryView#events
@@ -121,7 +128,8 @@ define(["jquery",
                   "onCreateLabel",
                   "editScale",
                   "onChangeSharedVis",
-                  "updateInputWidth");
+                  "updateInputWidth",
+                  "toVideoCategory");
 
 
                 // Define the colors (global setting for all color pickers)
@@ -186,6 +194,18 @@ define(["jquery",
             },
 
             /**
+             * Callback for modal spawned by toggleSeries.
+             * Turns a series category back to a video category
+             * @param {Id of the series} categorySeriesCategoryId
+             */
+            toVideoCategory: function (categorySeriesCategoryId) {
+              this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
+              this.model.set("seriesExtId", "");
+              this.model.set("seriesCategoryId", "");
+              this.model.save(null, { wait: true });
+            },
+
+            /**
              * Toggle the category between belonging to an event and belonging
              * to a series
              */
@@ -200,25 +220,25 @@ define(["jquery",
 
                 if (categorySeriesCategoryId) {
                     // Remove from series
-                    this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
-                    this.model.set("seriesExtId", "");
-                    this.model.set("seriesCategoryId", "");
+                    // Display modal. If user accepts, execute toVideoCategory callback
+                    annotationTool.seriesCategoryOperation.start(this, categorySeriesCategoryId);
 
                 } else if (!categorySeriesCategoryId && videoSeriesId) {
                   // If there's a scale, show an error message instead.
                   // This doesn't really belong on scaleEditor, but I don't want to create
                   // a whole new class for a simple error modal.
                   if (this.model.get("settings").hasScale) {
-                    annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"), 
+                    annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"),
                     message: i18next.t("scale editor.warning.messageScaleOnSeriesCategory")});
                   } else {
                     // Add to series
                     this.model.set("seriesExtId", videoSeriesId);
                     this.model.set("seriesCategoryId", this.model.id);
                   }
+                  this.model.save(null, { wait: true });
                 }
-                this.model.save(null, { wait: true });
             },
+
 
             /**
              * Update the size of all the input for the label value
@@ -295,8 +315,8 @@ define(["jquery",
             editScale: function () {
                 if (this.model.get("seriesCategoryId")) {
                   // Workaround for scales and series categories
-                  annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"), 
-                                                          message: i18next.t("scale editor.warning.message")});                  
+                  annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"),
+                                                          message: i18next.t("scale editor.warning.message")});
                 } else {
                   annotationTool.scaleEditor.show(this.model, this.model.get("access"));
                 }

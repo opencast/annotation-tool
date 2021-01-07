@@ -610,6 +610,19 @@ public interface ExtendedAnnotationService {
   void updateCategory(Category category) throws ExtendedAnnotationException;
 
   /**
+   * Update a series category
+   * Moves the master series category to the newVideoId and deletes all other series categories
+   *
+   * @param category
+   *          the category to update
+   * @param newVideoId
+   *          id of the video the category is moved to
+   * @throws ExtendedAnnotationException
+   *          if an error occurs while storing/retrieving from persistence storage
+   */
+  void updateCategoryAndDeleteOtherSeriesCategories(Category category, long newVideoId) throws ExtendedAnnotationException;
+
+  /**
    * Delete a category.
    * 
    * @param category
