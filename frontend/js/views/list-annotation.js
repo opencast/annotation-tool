@@ -366,7 +366,10 @@ define(["jquery",
                     category = annotationTool.video.get("categories").get(this.model.get("label").category.id);
 
                     title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
-                    this.$el.css("background-color", category.get("settings").color);
+                    var color = category
+                        ? category.get("settings").color
+                        : modelJSON.label.category.settings.color;
+                    this.$el.css("background-color", color);
                 } else {
                     title = modelJSON.text;
                 }
