@@ -363,13 +363,10 @@ define(["jquery",
                 modelJSON.textHeight   = this.$el.find("span.freetext").height();
 
                 if (modelJSON.label) {
-                    category = annotationTool.video.get("categories").get(this.model.get("label").category.id);
+                    category = this.model.category();
 
                     title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
-                    var color = category
-                        ? category.get("settings").color
-                        : modelJSON.label.category.settings.color;
-                    this.$el.css("background-color", color);
+                    this.$el.css("background-color", this.model.color());
                 } else {
                     title = modelJSON.text;
                 }
