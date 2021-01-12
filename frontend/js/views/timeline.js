@@ -76,7 +76,7 @@ define([
         item.end = util.dateFromSeconds(item.end);
         var label = item.label;
         if (label) {
-            var color = label.category.settings.color;
+            var color = annotation.color();
             item.style = "background-color:" + color + ";" +
                 "color:" + (
                     chroma(color).luminance() < 0.5
