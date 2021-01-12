@@ -548,8 +548,6 @@ define([
                 }
             );
 
-            //this.listenTo(annotationTool, "order", this.update);
-
             this.$el.popover({
                 selector: ".track-details",
                 trigger: "hover",
