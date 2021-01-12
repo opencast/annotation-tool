@@ -529,9 +529,10 @@ define([
             }, this));
 
 
-            function toggleAnnotations(category, visible) {
+            function updateCategoryAnnotations(category, visible) {
                 var relevantAnnotations = annotationTool.video
                     .getAnnotations(category);
+                if (visible == null) visible = category.get("visible");
                 if (visible) {
                     this.items.update(
                         _.map(relevantAnnotations, itemFromAnnotation)
@@ -542,16 +543,25 @@ define([
                     );
                 }
             }
+
             this.listenTo(
                 annotationTool.video.get("categories"),
                 "change:visible",
-                toggleAnnotations
+                updateCategoryAnnotations
             );
             this.listenTo(
                 annotationTool,
                 "togglefreetext",
                 function (visible) {
-                    toggleAnnotations.call(this, null, visible);
+                    updateCategoryAnnotations.call(this, null, visible);
+                }
+            );
+
+            this.listenTo(
+                annotationTool.video.get("categories"),
+                "change",
+                function (category) {
+                    updateCategoryAnnotations.call(this, category);
                 }
             );
 
