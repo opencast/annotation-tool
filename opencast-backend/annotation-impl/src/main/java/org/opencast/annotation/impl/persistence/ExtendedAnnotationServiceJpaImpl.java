@@ -601,16 +601,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         long b = c.getId();
         if (a != b) {
           deleteCategoryImpl(categoryAndClones.get(j));
-        } else {
-          Category update = new CategoryImpl(categoryAndClones.get(j).getId(), Option.option(newVideoId), categoryAndClones.get(j).getScaleId(), categoryAndClones.get(j).getName(), categoryAndClones.get(j).getDescription(),
-                  categoryAndClones.get(j).getSettings(), new ResourceImpl(option(categoryAndClones.get(j).getAccess()),
-                  categoryAndClones.get(j).getCreatedBy(), categoryAndClones.get(j).getUpdatedBy(), categoryAndClones.get(j).getDeletedBy(),
-                  categoryAndClones.get(j).getCreatedAt(), categoryAndClones.get(j).getUpdatedAt(), categoryAndClones.get(j).getDeletedAt(),
-                  categoryAndClones.get(j).getTags()), none(), none());
-          updateCategory(update);
         }
       }
     }
+    updateCategory(c);
   }
 
   @Override

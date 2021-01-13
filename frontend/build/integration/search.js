@@ -57,6 +57,15 @@ define([
 
         options.beforeSend = function () {
             this.url = "../../extended-annotations" + this.url;
+
+            // Sanitize query strings, so that they're actually at the end
+            // TODO: Clean this up OR find a better way to do this
+            var queryString = this.url.match(/\?(.*?)\//);
+            if(queryString && queryString[0]) {
+                this.url = this.url.replace(queryString[0], "");
+                if (queryString[0].slice(-1) === "/") {queryString[0] = queryString[0].slice(0, -1)}
+                this.url = this.url + queryString[0];
+            }
         };
 
         return backboneSync.call(this, method, model, options);
@@ -126,6 +135,17 @@ define([
          */
         getVideoExtId: function () {
             return $.when(mediaPackageId);
+        },
+
+        /**
+         * Get the current series id of the video (series_extid)
+         * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
+         * @return {Promise.<string>} video external id
+         */
+        getSeriesExtId: function () {
+          return mediaPackage.then(function (mediaPackage) {
+              return mediaPackage.series;
+          }.bind(this));
         },
 
         /**
