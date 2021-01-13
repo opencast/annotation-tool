@@ -250,12 +250,31 @@ define(["underscore",
 
             /**
              * Access an annotations category, if it has any.
+             * Note that this returns <code>undefined</code>
+             * if the category has been deleted!
              * @alias module:models-annotation.Annotation#category
              * @return {Category} The category this annotations label belongs to, if it has a label
              */
             category: function () {
                 var label = this.get("label");
                 return label && annotationTool.video.get("categories").get(label.category.id);
+            },
+
+            /**
+             * Get the display color of an annotation.
+             * This is determined by the color of the category of its label,
+             * if it has any.
+             * Free text annotations return <code>undefined</code>
+             * @alias module:models-annotation.Annotation#category
+             * @return {string} a CSS color value
+             */
+            color: function () {
+                var category = this.category();
+                var label = this.get("label");
+                return category && category.get("settings").color ||
+                    // If the category is a deleted one, we don't get it from `category`.
+                    // However, the label should still have it.
+                    label && label.category.settings.color;
             }
         });
 
