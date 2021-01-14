@@ -1,0 +1,49 @@
+name: Deploy Maven artifacts
+on: push
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Check out the m2 repository
+        uses: actions/checkout@v2
+        with:
+          ref: m2
+          path: m2
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+            frontend/node
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-
+
+      - name: Get the date
+        id: date
+        run: echo "::set-output name=date::$(date +%Y.%m%d.%H%M%S)"
+      - name: Build the artifacts
+        run: mvn clean deploy
+          -Dopencast.version="[8,9-SNAPSHOT)"
+          --batch-mode
+          -DaltDeploymentRepository=m2::default::file:m2
+          -Drevision=${{ steps.date.outputs.date }}-${{ github.sha }}
+
+      - name: Deploy the artifacts to GitHub
+        uses: EndBug/add-and-commit@v5
+        with:
+          message: Update m2 repository
+          cwd: m2
+          branch: m2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -117,6 +117,16 @@ define(
 
                 this.currentState = ListAnnotation.STATES.COLLAPSED;
 
+                // TODO This should actually be done in the list view,
+                //   instead of the individual list item views.
+                //   However, the list view is not designed to be rerendered, currently.
+                //   Alternatively we could listen to the `model`-s category,
+                //   but that's more complicated, because the entire category
+                //   as opposed to just a property of it could change,
+                //   even to something like "no category".
+                //   However, that would probably be better for performance.
+                this.listenTo(annotationTool.video.get("categories"), "change", this.render);
+
                 return this.render();
             },
 
