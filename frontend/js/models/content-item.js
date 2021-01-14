@@ -37,7 +37,8 @@ define(["underscore", "backbone"], function(_, Backbone) {
         getCategory: function() {
             var label = this.getLabel();
 
-            return label && annotationTool.video.get("categories").get(label.category.id);
+            return label && annotationTool.video.get("categories")
+                .get(label.get("category").id);
         },
 
         /**
