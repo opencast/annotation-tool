@@ -77,9 +77,7 @@ define(
                     delete attr.comments;
                 }
 
-                if (_.isObject(attr.content)) {
-                    this.attributes.content = attr.content;
-                } else {
+                if (!(this.get("content") instanceof AnnotationContent)) {
                     this.attributes.content = new AnnotationContent(attr.content || []);
                 }
             },
@@ -102,6 +100,9 @@ define(
                         attr.comments = new Comments(attr.comments, { annotation: this });
                     }
 
+                    if (_.isString(attr.content)) {
+                        attr.content = JSON.parse(attr.content);
+                    }
                     attr.content = new AnnotationContent(attr.content);
                 });
             },
@@ -120,16 +121,19 @@ define(
                 });
                 if (invalidResource) return invalidResource;
 
-                if (attr.start &&  !_.isNumber(attr.start)) {
+                if (attr.start && !_.isNumber(attr.start)) {
                     return "\"start\" attribute must be a number!";
                 }
 
-                if (attr.text &&  !_.isString(attr.text)) {
+                if (attr.text && !_.isString(attr.text)) {
                     return "\"text\" attribute must be a string!";
                 }
 
-                if (attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
+                if (attr.duration && (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
                     return "\"duration\" attribute must be a positive number";
+                }
+
+                if (!attr.content || !_.isArray(attr.content) || !attr.content instanceof AnnotationContent) {
                 }
 
                 return undefined;
@@ -177,15 +181,16 @@ define(
              * @alias module:models-annotation.Annotation#toJSON
              * @return {JSON} JSON representation of the instance
              */
-            toJSON: function () {
-                var json = Resource.prototype.toJSON.call(this);
+            toJSON: function (options) {
+                var json = Resource.prototype.toJSON.apply(this, arguments);
 
                 json.end = json.start + json.duration;
 
                 delete json.comments;
 
-                if (json.content && json.content.toJSON) {
-                    json.content = json.content.toJSON();
+                json.content = json.content.toJSON.apply(json.content, arguments);
+                if (options && options.stringifySub) {
+                    json.content = JSON.stringify(json.content);
                 }
 
                 return json;
