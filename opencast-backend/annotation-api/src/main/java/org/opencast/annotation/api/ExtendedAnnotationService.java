@@ -621,7 +621,7 @@ public interface ExtendedAnnotationService {
    * @throws ExtendedAnnotationException
    *          if an error occurs while storing/retrieving from persistence storage
    */
-  void updateCategoryAndDeleteOtherSeriesCategories(Category category, long newVideoId) throws ExtendedAnnotationException;
+  void updateCategoryAndDeleteOtherSeriesCategories(Category category) throws ExtendedAnnotationException;
 
   /**
    * Delete a category.

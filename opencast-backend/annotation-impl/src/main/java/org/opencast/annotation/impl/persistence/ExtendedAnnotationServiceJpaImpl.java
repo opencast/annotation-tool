@@ -598,7 +598,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public void updateCategoryAndDeleteOtherSeriesCategories(final Category c, long newVideoId) throws ExtendedAnnotationException {
+  public void updateCategoryAndDeleteOtherSeriesCategories(final Category c) throws ExtendedAnnotationException {
     // Get the pre-update version of the category, to figure out its seriesCategoryId
     Option<CategoryDto> dto;
     Option<Category> pastC = none();
