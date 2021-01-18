@@ -1096,7 +1096,7 @@ define(["jquery",
                 },
                 destroy: function (scale, callback) {
                     _.invoke(
-                        _.clone(scale.get("scalevalues").models),
+                        _.clone(scale.get("scaleValues").models),
                         "destroy",
                         { error: function () { throw "cannot delete scale value"; } }
                     );
