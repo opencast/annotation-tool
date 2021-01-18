@@ -206,9 +206,13 @@ define(["underscore",
             toExportJSON: function () {
                 var json = {
                     name: this.attributes.name,
-                    labels: this.attributes.labels.map(function (label) {
-                        return label.toExportJSON();
-                    })
+                    labels: this.attributes.labels
+                        .filter(function (label) {
+                            return !label.get("deleted_at");
+                        })
+                        .map(function (label) {
+                            return label.toExportJSON();
+                        })
                 };
 
                 if (this.attributes.tags) {
