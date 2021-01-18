@@ -135,9 +135,13 @@ define(["underscore",
                 var json = {
                     id: this.id,
                     name: this.attributes.name,
-                    scaleValues: this.attributes.scaleValues.map(function (scaleValue) {
-                        return scaleValue.toExportJSON();
-		    })
+                    scaleValues: this.attributes.scaleValues
+                        .filter(function (scaleValue) {
+                            return !scaleValue.get("deleted_at");
+                        })
+                        .map(function (scaleValue) {
+                            return scaleValue.toExportJSON();
+                        })
                 };
 
                 if (this.attributes.tags) {
