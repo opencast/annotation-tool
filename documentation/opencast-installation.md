@@ -1,5 +1,7 @@
 # Opencast Installation Instructions
 
+_Hint: For a quick local test you can use a [docker-based solution](docker-environment.md) (specific for `r/8.10`)._
+
 ## Installing the Annotation Tool
 
 __Note:__ These are the installation instructions for the Opencast `r/6.x` branch or higher.
