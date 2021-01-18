@@ -79,9 +79,8 @@ define(["underscore",
                               "getSortedCollection",
                               "deleteScaleValue");
 
-                    this.model    = attr.model;
-                    this.isNew    = attr.isNew;
-                    this.next     = attr.next;
+                    this.model = attr.model;
+                    this.next = attr.next;
                     this.previous = attr.previous;
                     this.onChange = attr.onChange;
 
@@ -210,9 +209,14 @@ define(["underscore",
                  */
                 getSortedCollection: function () {
                     // Sort the model in the right scale value order
-                    return this.model.collection.sortBy(function (scaleValue) {
-                        return scaleValue.get("order");
-                    });
+                    return this.model.collection.chain()
+                        .filter(function (scaleValue) {
+                            return !scaleValue.get("deleted_at");
+                        })
+                        .sortBy(function (scaleValue) {
+                            return scaleValue.get("order");
+                        })
+                        .value();
                 }
             });
 

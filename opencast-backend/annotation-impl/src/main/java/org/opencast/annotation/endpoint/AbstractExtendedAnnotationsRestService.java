@@ -610,7 +610,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
 
-        if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, false).isNone()
+        if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, true).isNone()
                 || (datem.isSome() && datem.get().isNone()) || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
           return BAD_REQUEST;
@@ -972,7 +972,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
 
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
-                || eas().getCategory(categoryId, false).isNone() || (datem.isSome() && datem.get().isNone())
+                || eas().getCategory(categoryId, true).isNone() || (datem.isSome() && datem.get().isNone())
                 || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
           return BAD_REQUEST;

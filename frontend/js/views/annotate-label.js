@@ -326,7 +326,11 @@ define(["jquery",
                         delete modelJSON.scale_id;
                     }
                 } else if (this.scaleValues) {
-                    modelJSON.scaleValues = this.scaleValues.sort().toJSON();
+                    this.scaleValues.sort();
+                    modelJSON.scaleValues = this.scaleValues.toJSON()
+                        .filter(function (scaleValue) {
+                            return !scaleValue.deleted_at;
+                        });
                 }
 
                 this.$el.html(this.template(modelJSON));

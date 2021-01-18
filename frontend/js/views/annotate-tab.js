@@ -189,10 +189,13 @@ define(["jquery",
                   "initCarousel",
                   "render");
 
-                this.categories                = attr.categories;
-                this.filter                    = attr.filter;
-                this.roles                     = attr.roles;
+                this.categories = attr.categories;
+                this.roles = attr.roles;
                 this.defaultCategoryAttributes = attr.attributes;
+
+                this.filter = function (category) {
+                    return !category.get("deleted_at") && attr.filter(category);
+                };
 
                 this.categoryViews = [];
 

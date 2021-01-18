@@ -168,7 +168,11 @@ define(["jquery",
                  * @alias module:views-scale-editor.ScaleEditor#generateScalesForTemplate
                  */
                 generateScalesForTemplate: function () {
-                    var scales = annotationTool.video.get("scales").toJSON(),
+                    var scales = annotationTool.video.get("scales")
+                        .toJSON()
+                        .filter(function (scale) {
+                            return !scale.deleted_at;
+                        }),
                         selectedScale;
 
                     // Filter by access values
@@ -354,10 +358,8 @@ define(["jquery",
                  * @alias module:views-scale-editor.ScaleEditor#deleteScale
                  */
                 deleteScale: function (event) {
-                    var self = this;
-
                     event.stopImmediatePropagation();
-                    annotationTool.deleteOperation.start(this.currentScale, this.scaleDeleteType, self.cancel);
+                    annotationTool.deleteOperation.start(this.currentScale, this.scaleDeleteType, this.cancel);
                 },
 
                 /**
@@ -414,7 +416,12 @@ define(["jquery",
                         };
 
                     scaleValues.on("add", addScaleValue, this);
-                    scaleValues = scaleValues.sortBy(sortModelByOrderValue, this);
+                    scaleValues = scaleValues.chain()
+                        .filter(function (scaleValue) {
+                            return !scaleValue.get("deleted_at");
+                        })
+                        .sortBy(sortModelByOrderValue, this)
+                        .value();
                     _.each(scaleValues, addScaleValue, this);
 
                     this.$el.find(".modal-body").empty().append(this.scaleEditorContentTemplate({scale: scale.toJSON()}));
