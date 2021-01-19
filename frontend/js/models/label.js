@@ -43,7 +43,7 @@ define(["underscore",
              * @static
              */
             defaults: {
-                access    : ACCESS.PUBLIC
+                access: ACCESS.PUBLIC
             },
 
             /**

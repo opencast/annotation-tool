@@ -46,9 +46,9 @@ define(["jquery",
                  * @type {map}
                  */
                 TITLES: {
-                    CATEGORY_EDIT  : i18next.t("scale editor.edit category scale"),
+                    CATEGORY_EDIT: i18next.t("scale editor.edit category scale"),
                     STANDALONE_EDIT: i18next.t("scale editor.edit scales"),
-                    SAVE_BUTTON    : i18next.t("scale editor.save")
+                    SAVE_BUTTON: i18next.t("scale editor.save")
                 },
 
                 /**
@@ -58,7 +58,7 @@ define(["jquery",
                  */
                 EMPTY_SCALE: {
                     name: i18next.t("scale editor.no scale"),
-                    id  : "NO"
+                    id: "NO"
                 },
 
                 /**
@@ -200,7 +200,7 @@ define(["jquery",
                  */
                 renderScaleSelect: function () {
                     this.$el.find("select#scale-id").empty()
-                                                    .append(this.scaleEditorSelectTemplate({scales: this.generateScalesForTemplate()}));
+                        .append(this.scaleEditorSelectTemplate({ scales: this.generateScalesForTemplate() }));
 
                     this.delegateEvents(this.events);
                 },
@@ -346,7 +346,7 @@ define(["jquery",
                 createScaleValue: function () {
                     this.currentScale.get("scaleValues").create({
                         order: this.$el.find(".scale-value").length,
-                        name : i18next.t("scale editor.new scale.value"),
+                        name: i18next.t("scale editor.new scale.value"),
                         value: 0,
                         access: this.currentCategory.get("access")
                     });
