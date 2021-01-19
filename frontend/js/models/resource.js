@@ -205,7 +205,34 @@ var Resource = Backbone.Model.extend({
      * @see module:roles
      * @type {boolean}
      */
-    administratorCanEditPublicInstances: false
+    administratorCanEditPublicInstances: false,
+
+    /**
+     * Whether or not deleted instances of this resource need to stick around because there might still
+     * be things depending on them.
+     * @type {boolean}
+     */
+    keepDeleted: false,
+
+    /**
+     * Override `destroy` to honor {@link module:models-resource.Resource#keepDeleted}
+     * @override
+     */
+    destroy: function (options) {
+        options = options || {};
+        if (this.keepDeleted) {
+            var beforeSend = options.beforeSend;
+            options.beforeSend = function () {
+                if (beforeSend) {
+                    beforeSend.apply(this, arguments);
+                }
+                this.type = 'delete';
+            };
+            return this.save(null, options);
+        } else {
+            return Backbone.Model.prototype.destroy.apply(this, arguments);
+        }
+    }
 });
 
 return Resource;

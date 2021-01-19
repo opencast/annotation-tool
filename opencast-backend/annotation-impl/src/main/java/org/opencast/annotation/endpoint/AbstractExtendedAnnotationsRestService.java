@@ -341,10 +341,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/scales/{scaleId}")
   public Response putScale(@PathParam("scaleId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return updateScale(none(), id, name, description, tags);
+    return putScaleResponse(none(), id, name, description, tags);
   }
 
-  Response updateScale(final Option<Long> videoId, final long id, final String name, final String description,
+  Response putScaleResponse(final Option<Long> videoId, final long id, final String name, final String description,
           final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
@@ -468,7 +468,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Scale s) {
             if (!eas().hasResourceAccess(s))
               return UNAUTHORIZED;
-            return eas().deleteScale(s) ? NO_CONTENT : NOT_FOUND;
+            s = eas().deleteScale(s);
+            return Response.ok(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), s)))
+                    .header(LOCATION, scaleLocationUri(s, videoId.isSome())).build();
           }
 
           @Override
@@ -643,7 +645,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
               return UNAUTHORIZED;
-            return eas().deleteScaleValue(s) ? NO_CONTENT : NOT_FOUND;
+            s = eas().deleteScaleValue(s);
+            return Response.ok(Strings.asStringNull().apply(ScaleValueDto.toJson.apply(eas(), s)))
+                    .header(LOCATION, scaleValueLocationUri(s, videoId)).build();
           }
 
           @Override
@@ -822,7 +826,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Category c) {
             if (!eas().hasResourceAccess(c))
               return UNAUTHORIZED;
-            return eas().deleteCategory(c) ? NO_CONTENT : NOT_FOUND;
+            c = eas().deleteCategory(c);
+            return Response.ok(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), c)))
+                    .header(LOCATION, categoryLocationUri(c, videoId.isSome())).build();
           }
 
           @Override
@@ -1005,7 +1011,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Label l) {
             if (!eas().hasResourceAccess(l))
               return UNAUTHORIZED;
-            return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+            l = eas().deleteLabel(l);
+            return Response.ok(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), l)))
+                    .header(LOCATION, labelLocationUri(l, videoId)).build();
           }
 
           @Override

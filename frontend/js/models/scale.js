@@ -57,6 +57,9 @@ define(["underscore",
              */
             administratorCanEditPublicInstances: true,
 
+            /** @override */
+            keepDeleted: true,
+
             /**
              * Constructor
              * @alias module:models-scale.Scale#initialize

@@ -225,7 +225,7 @@ define(["jquery",
                 this.titleLink.find(".file").on("change", this.onImport);
 
                 this.listenTo(this.categories, "add", this.addCategory);
-                this.listenTo(this.categories, "remove", this.removeOne);
+                this.listenTo(this.categories, "change:deleted_at", this.removeOne);
 
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
 

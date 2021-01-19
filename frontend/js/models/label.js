@@ -51,6 +51,9 @@ define(["underscore",
              */
             administratorCanEditPublicInstances: true,
 
+            /** @override */
+            keepDeleted: true,
+
              /**
              * Constructor
              * @alias module:models-label.Label#initialize

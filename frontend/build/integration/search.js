@@ -55,7 +55,9 @@ define([
             method = "update";
         }
 
+        var beforeSend = options.beforeSend;
         options.beforeSend = function () {
+            if (beforeSend) beforeSend.apply(this, arguments);
             this.url = "../../extended-annotations" + this.url;
         };
 

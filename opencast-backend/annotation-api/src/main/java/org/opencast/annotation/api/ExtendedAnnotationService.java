@@ -427,11 +427,11 @@ public interface ExtendedAnnotationService {
    * 
    * @param scale
    *          the scale to delete
-   * @return true if the scale existed and could be successfully deleted.
+   * @return a representation of the deleted scale
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  boolean deleteScale(Scale scale) throws ExtendedAnnotationException;
+  Scale deleteScale(Scale scale) throws ExtendedAnnotationException;
 
   /**
    * Create a scale value
@@ -501,11 +501,11 @@ public interface ExtendedAnnotationService {
    * 
    * @param scaleValue
    *          the scale value to delete
-   * @return true if the scale value existed and could be successfully deleted.
+   * @return a representation of the deleted scale value
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  boolean deleteScaleValue(ScaleValue scaleValue) throws ExtendedAnnotationException;
+  ScaleValue deleteScaleValue(ScaleValue scaleValue) throws ExtendedAnnotationException;
 
   /**
    * Creates a template category
@@ -601,11 +601,11 @@ public interface ExtendedAnnotationService {
    * 
    * @param category
    *          the category to delete
-   * @return true if the category existed and could be successfully deleted.
+   * @return a representation of the deleted category
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  boolean deleteCategory(Category category) throws ExtendedAnnotationException;
+  Category deleteCategory(Category category) throws ExtendedAnnotationException;
 
   /**
    * Creates a label
@@ -679,11 +679,11 @@ public interface ExtendedAnnotationService {
    * 
    * @param label
    *          the label to delete
-   * @return true if the label existed and could be successfully deleted.
+   * @return a representation of the deleted label
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  boolean deleteLabel(Label label) throws ExtendedAnnotationException;
+  Label deleteLabel(Label label) throws ExtendedAnnotationException;
 
   /**
    * Creates a comment

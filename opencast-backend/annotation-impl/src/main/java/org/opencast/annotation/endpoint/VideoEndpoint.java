@@ -545,7 +545,7 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}")
   public Response putScale(@PathParam("scaleId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return host.updateScale(some(videoId), id, name, description, tags);
+    return host.putScaleResponse(some(videoId), id, name, description, tags);
   }
 
   @GET

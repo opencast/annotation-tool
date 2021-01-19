@@ -139,7 +139,7 @@ define(["jquery",
 
                 labels = this.model.get("labels");
                 this.listenTo(labels, "add", this.addLabel);
-                this.listenTo(labels, "remove", this.removeOne);
+                this.listenTo(labels, "change:deleted_at", this.removeOne);
                 this.listenTo(this.model, "change", this.onChange);
 
                 if (_.contains(this.roles, annotationTool.user.get("role"))) {

@@ -495,7 +495,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public boolean deleteScale(Scale s) throws ExtendedAnnotationException {
+  public Scale deleteScale(Scale s) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(s);
     final Scale updated = new ScaleImpl(s.getId(), s.getVideoId(), s.getName(), s.getDescription(), deleteResource);
     updateScale(updated);
@@ -503,7 +503,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     for (ScaleValue sv : getScaleValuesByScaleId(s.getId())) {
       deleteScaleValue(sv);
     }
-    return true;
+    return updated;
   }
 
   @Override
@@ -530,12 +530,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public boolean deleteScaleValue(ScaleValue s) throws ExtendedAnnotationException {
+  public ScaleValue deleteScaleValue(ScaleValue s) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(s);
     final ScaleValue updated = new ScaleValueImpl(s.getId(), s.getScaleId(), s.getName(), s.getValue(), s.getAccess(),
             deleteResource);
     updateScaleValue(updated);
-    return true;
+    return updated;
   }
 
   @Override
@@ -645,7 +645,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public boolean deleteCategory(Category category) throws ExtendedAnnotationException {
+  public Category deleteCategory(Category category) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(category);
     final Category updated = new CategoryImpl(category.getId(), category.getVideoId(), category.getScaleId(),
             category.getName(), category.getDescription(), category.getSettings(), deleteResource);
@@ -654,7 +654,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     for (Label l : getLabelsByCategoryId(category.getId())) {
       deleteLabel(l);
     }
-    return true;
+    return updated;
   }
 
   @Override
@@ -712,12 +712,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public boolean deleteLabel(Label label) throws ExtendedAnnotationException {
+  public Label deleteLabel(Label label) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(label);
     final Label updated = new LabelImpl(label.getId(), label.getCategoryId(), label.getValue(),
             label.getAbbreviation(), label.getDescription(), label.getSettings(), deleteResource);
     updateLabel(updated);
-    return true;
+    return updated;
   }
 
   @Override
