@@ -67,7 +67,7 @@ define(["jquery",
                  * @param {Object} target Element to be delete
                  * @param {TargetsType} type Type of the target to be deleted
                  */
-                start: function (target, type, callback) {
+                start: function (target, type, confirmCallback, closeCallback) {
 
                     if (!target.isEditable()) {
                         alerts.warning("You are not authorized to deleted this " + type.name + "!");
@@ -80,8 +80,8 @@ define(["jquery",
                     }));
 
                     function confirm() {
-                        type.destroy(target, callback);
                         deleteModal.modal("toggle");
+                        type.destroy(target, confirmCallback);
                     }
                     function confirmWithEnter(event) {
                         if (event.keyCode === 13) {
@@ -99,6 +99,7 @@ define(["jquery",
                     deleteModal.one("hide", function () {
                         $(window).off("keypress", confirmWithEnter);
                         deleteModal.remove();
+                        if (closeCallback) closeCallback();
                     });
 
                     // Show the modal
