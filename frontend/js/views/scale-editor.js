@@ -46,9 +46,9 @@ define(["jquery",
                  * @type {map}
                  */
                 TITLES: {
-                    CATEGORY_EDIT  : i18next.t("scale editor.edit category scale"),
+                    CATEGORY_EDIT: i18next.t("scale editor.edit category scale"),
                     STANDALONE_EDIT: i18next.t("scale editor.edit scales"),
-                    SAVE_BUTTON    : i18next.t("scale editor.save")
+                    SAVE_BUTTON: i18next.t("scale editor.save")
                 },
 
                 /**
@@ -58,7 +58,7 @@ define(["jquery",
                  */
                 EMPTY_SCALE: {
                     name: i18next.t("scale editor.no scale"),
-                    id  : "NO"
+                    id: "NO"
                 },
 
                 /**
@@ -130,7 +130,7 @@ define(["jquery",
                     // Type use for delete operation
                     this.scaleDeleteType = annotationTool.deleteOperation.targetTypes.SCALE;
 
-                    this.$el.modal({show: true, backdrop: false, keyboard: false });
+                    this.$el.modal({ show: true, backdrop: false, keyboard: false });
                     this.$el.modal("hide");
                 },
 
@@ -141,8 +141,8 @@ define(["jquery",
                  */
                 show: function (category) {
                     var templateParams = {
-                            title: this.TITLES.STANDALONE_EDIT
-                        };
+                        title: this.TITLES.STANDALONE_EDIT
+                    };
 
                     this.EMPTY_SCALE.isSelected = false;
 
@@ -178,8 +178,8 @@ define(["jquery",
 
                     if (this.currentScaleId) {
                         selectedScale = _.find(scales, function (scale) {
-                                                return scale.id === this.currentScaleId;
-                                            }, this);
+                            return scale.id === this.currentScaleId;
+                        }, this);
 
                         if (selectedScale) {
                             selectedScale.isSelected = true;
@@ -322,7 +322,7 @@ define(["jquery",
                     this.isInEditMode = true;
 
                     this.currentScale = annotationTool.video.get("scales").create({
-                        name  : i18next.t("scale editor.new scale.name"),
+                        name: i18next.t("scale editor.new scale.name"),
                         access: this.currentCategory.get("access")
                     });
 
@@ -342,7 +342,7 @@ define(["jquery",
                 createScaleValue: function () {
                     this.currentScale.get("scaleValues").create({
                         order: this.$el.find(".scale-value").length,
-                        name : i18next.t("scale editor.new scale.value"),
+                        name: i18next.t("scale editor.new scale.value"),
                         value: 0,
                         access: this.currentCategory.get("access")
                     });
@@ -422,6 +422,7 @@ define(["jquery",
                     this.delegateEvents(this.events);
                 }
             });
-            return ScaleEditor;
-        }
+
+        return ScaleEditor;
+    }
 );
