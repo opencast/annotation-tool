@@ -130,7 +130,7 @@ define(["jquery",
                     // Type use for delete operation
                     this.scaleDeleteType = annotationTool.deleteOperation.targetTypes.SCALE;
 
-                    this.$el.modal({show: true, backdrop: false, keyboard: false });
+                    this.$el.modal({ show: true, backdrop: false, keyboard: false });
                     this.$el.modal("hide");
                 },
 
@@ -359,7 +359,18 @@ define(["jquery",
                  */
                 deleteScale: function (event) {
                     event.stopImmediatePropagation();
-                    annotationTool.deleteOperation.start(this.currentScale, this.scaleDeleteType, this.cancel);
+                    this.$el.modal("hide");
+                    annotationTool.deleteOperation.start(
+                        this.currentScale,
+                        this.scaleDeleteType,
+                        _.bind(function () {
+                            this.$el.modal("show");
+                            this.cancel();
+                        }, this),
+                        _.bind(function () {
+                            this.$el.modal("show");
+                        }, this)
+                    );
                 },
 
                 /**
@@ -402,6 +413,7 @@ define(["jquery",
                         addScaleValue = function (scaleValue, index) {
                             var self = this,
                                 params = {
+                                    scaleEditor: this,
                                     model: scaleValue,
                                     onChange: function () {
                                         renderScaleValues.call(self);

@@ -83,6 +83,7 @@ define(["underscore",
                     this.next = attr.next;
                     this.previous = attr.previous;
                     this.onChange = attr.onChange;
+                    this.scaleEditor = attr.scaleEditor;
 
                     this.scaleValueDeleteType = annotationTool.deleteOperation.targetTypes.SCALEVALUE;
                     this.setElement(this.scaleValueEditorTemplate(this.model.toJSON()));
@@ -181,26 +182,35 @@ define(["underscore",
                  * @param  {Event} event Event object
                  */
                 deleteScaleValue: function (event) {
-                    var self = this,
-                        sortedCollection = self.getSortedCollection();
+                    var sortedCollection = this.getSortedCollection();
 
                     event.stopImmediatePropagation();
-                    annotationTool.deleteOperation.start(this.model, this.scaleValueDeleteType, function () {
-                        var currentOrder = self.model.get("order"),
-                            i;
+                    this.scaleEditor.$el.modal("hide");
+                    annotationTool.deleteOperation.start(
+                        this.model,
+                        this.scaleValueDeleteType,
+                        _.bind(function () {
+                            this.scaleEditor.$el.modal("show");
 
-                        // Update order for following item
-                        if (currentOrder < (sortedCollection.length - 1)) {
-                            for (i = currentOrder + 1; i < sortedCollection.length; i++) {
-                                sortedCollection[i].set("order", i - 1);
-                                sortedCollection[i].save();
+                            var currentOrder = this.model.get("order"),
+                                i;
+
+                            // Update order for following item
+                            if (currentOrder < (sortedCollection.length - 1)) {
+                                for (i = currentOrder + 1; i < sortedCollection.length; i++) {
+                                    sortedCollection[i].set("order", i - 1);
+                                    sortedCollection[i].save();
+                                }
                             }
-                        }
 
-                        self.isDeleted = true;
-                        self.onChange();
-                        self.remove();
-                    });
+                            this.isDeleted = true;
+                            this.onChange();
+                            this.remove();
+                        }, this),
+                        _.bind(function () {
+                            this.scaleEditor.$el.modal("show");
+                        }, this)
+                    );
                 },
 
                 /**
