@@ -300,18 +300,9 @@ define(["jquery",
                     this.currentScaleId = this.$el.find("select#scale-id").val();
                     this.currentScale = annotationTool.video.get("scales").get(this.currentScaleId);
 
-                    if (this.currentScale && this.currentScale.isEditable()) {
-                        if (this.isInEditMode) {
-                            this.$el.find(".edit-scale").hide();
-                        } else {
-                            this.$el.find(".edit-scale").show();
-                        }
-                        this.renderEditContent(this.currentScale);
-                    } else {
-                        this.isInEditMode = false;
-                        this.$el.find(".edit-scale").hide();
-                        this.$el.find(".modal-body").hide();
-                    }
+                    this.isInEditMode = false;
+                    this.$el.find(".edit-scale").show();
+                    this.$el.find(".modal-body").hide();
                 },
 
                 /**
@@ -368,6 +359,7 @@ define(["jquery",
                     this.isInEditMode = true;
                     this.$el.find("#save-scale").text(this.TITLES.SAVE_BUTTON);
                     this.$el.find(".edit-scale").hide();
+                    this.renderEditContent(this.currentScale);
                     this.$el.find(".modal-body").show();
                 },
 
