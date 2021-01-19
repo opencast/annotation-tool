@@ -486,7 +486,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public void updateScale(final Scale s) throws ExtendedAnnotationException {
-    update("Scale.findById", s.getId(), new Effect<ScaleDto>() {
+    update("Scale.findByIdIncludeDeleted", s.getId(), new Effect<ScaleDto>() {
       @Override
       public void run(ScaleDto dto) {
         dto.update(s.getName(), s.getDescription(), s).toScale();
@@ -521,7 +521,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public void updateScaleValue(final ScaleValue s) throws ExtendedAnnotationException {
-    update("ScaleValue.findById", s.getId(), new Effect<ScaleValueDto>() {
+    update("ScaleValue.findByIdIncludeDeleted", s.getId(), new Effect<ScaleValueDto>() {
       @Override
       public void run(ScaleValueDto dto) {
         dto.update(s.getName(), s.getValue(), s.getOrder(), s);
@@ -590,7 +590,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public void updateCategory(final Category c) throws ExtendedAnnotationException {
-    update("Category.findById", c.getId(), new Effect<CategoryDto>() {
+    update("Category.findByIdIncludeDeleted", c.getId(), new Effect<CategoryDto>() {
       @Override
       public void run(CategoryDto dto) {
         dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c);
@@ -666,7 +666,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public void updateLabel(final Label l) throws ExtendedAnnotationException {
-    update("Label.findById", l.getId(), new Effect<LabelDto>() {
+    update("Label.findByIdIncludeDeleted", l.getId(), new Effect<LabelDto>() {
       @Override
       protected void run(LabelDto dto) {
         dto.update(l.getValue(), l.getAbbreviation(), l.getDescription(), l.getSettings(), l);

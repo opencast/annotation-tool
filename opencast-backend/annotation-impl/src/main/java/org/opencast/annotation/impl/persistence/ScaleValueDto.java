@@ -56,6 +56,7 @@ import javax.persistence.Table;
 @Table(name = "xannotations_scale_value")
 @NamedQueries({
         @NamedQuery(name = "ScaleValue.findById", query = "select a from ScaleValue a where a.id = :id and a.deletedAt IS NULL"),
+        @NamedQuery(name = "ScaleValue.findByIdIncludeDeleted", query = "select a from ScaleValue a where a.id = :id"),
         @NamedQuery(name = "ScaleValue.deleteById", query = "delete from ScaleValue a where a.id = :id"),
         @NamedQuery(name = "ScaleValue.findAllOfScale", query = "select a from ScaleValue a where a.scaleId = :id"),
         @NamedQuery(name = "ScaleValue.findAllOfScaleSince", query = "select a from ScaleValue a where a.scaleId = :id and a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
