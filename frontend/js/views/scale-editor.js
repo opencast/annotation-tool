@@ -141,8 +141,8 @@ define(["jquery",
                  */
                 show: function (category) {
                     var templateParams = {
-                            title: this.TITLES.STANDALONE_EDIT
-                        };
+                        title: this.TITLES.STANDALONE_EDIT
+                    };
 
                     this.EMPTY_SCALE.isSelected = false;
 
