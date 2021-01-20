@@ -14,13 +14,14 @@
  *
  */
 define([
+    "underscore",
     "models/content_item",
     "templates/questionnaire-block-label",
     "templates/questionnaire-block-layout",
     "templates/partial-label-chooser",
     "backbone",
     "bootstrap"
-], function(ContentItem, template, tmplLayout, tmplLabelChooser, Backbone) {
+], function (_, ContentItem, template, tmplLayout, tmplLabelChooser, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
@@ -29,12 +30,12 @@ define([
         events: {
             "click .btn": "onClick"
         },
-        initialize: function(options) {
+        initialize: function (options) {
             this.item = options.item;
             this.model = new ContentItem({ type: "label", title: this.item.title, value: null });
             this.validationErrors = [];
         },
-        render: function() {
+        render: function () {
             var category = getCategoryByName(this.item.category);
             this.$el.html(
                 template(
@@ -48,7 +49,7 @@ define([
             );
             return this;
         },
-        validate: function() {
+        validate: function () {
             if (!_.isString(this.model.get("value"))) {
                 this.validationErrors = ["validation errors.empty"];
                 return false;
@@ -57,10 +58,10 @@ define([
 
             return true;
         },
-        getContentItems: function() {
+        getContentItems: function () {
             return this.model;
         },
-        onClick: function(event) {
+        onClick: function (event) {
             event.preventDefault();
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
@@ -81,7 +82,7 @@ define([
         var labels = category
             .get("labels")
             .toJSON()
-            .map(function(label) {
+            .map(function (label) {
                 return _.extend(label, { selected: label.id === labelId });
             });
 
@@ -89,7 +90,7 @@ define([
     }
 
     function getCategoryByName(name) {
-        return annotationTool.video.get("categories").models.find(function(category) {
+        return annotationTool.video.get("categories").models.find(function (category) {
             return category.get("name") === name;
         });
     }
