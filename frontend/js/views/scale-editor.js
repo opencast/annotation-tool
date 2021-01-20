@@ -176,7 +176,7 @@ define(["jquery",
                         selectedScale;
 
                     // Filter by access values
-                    scales = _.where(scales, {access: this.currentCategory.get("access")});
+                    scales = _.where(scales, { access: this.currentCategory.get("access") });
 
                     scales.push(this.EMPTY_SCALE);
 
@@ -188,6 +188,7 @@ define(["jquery",
                         if (selectedScale) {
                             selectedScale.isSelected = true;
                         }
+                        this.EMPTY_SCALE.isSelected = false;
                     } else {
                         this.EMPTY_SCALE.isSelected = true;
                     }
@@ -199,8 +200,10 @@ define(["jquery",
                  * @alias module:views-scale-editor.ScaleEditor#renderScaleSelect
                  */
                 renderScaleSelect: function () {
-                    this.$el.find("select#scale-id").empty()
-                        .append(this.scaleEditorSelectTemplate({ scales: this.generateScalesForTemplate() }));
+                    this.$el.find("select#scale-id").html(
+                        this.scaleEditorSelectTemplate({
+                            scales: this.generateScalesForTemplate()
+                        }));
 
                     this.delegateEvents(this.events);
                 },
