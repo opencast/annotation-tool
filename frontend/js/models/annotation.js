@@ -291,12 +291,9 @@ define(
                     return getTitleFromLabel(label);
                 case "text":
                     return firstContent.get("value");
-                default:
-                    return i18next.t("annotation." + (
-                        firstContent
-                            ? "various contents"
-                            : "no content"
-                    ));
+                case "multi":
+                    var empty = !this.get("content").size();
+                    return "<" + i18next.t(empty ? "annotation.types.empty" : "annotation.types.multi") + ">";
                 }
             }
         });

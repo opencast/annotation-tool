@@ -74,19 +74,21 @@
     </div>
 
     {{#if isMine}}
-        <div>
-            <span>{{t "annotation.add content.list prompt"}}</span>
-            <button class="btn add-free-text-content" type="button">
-                {{t "annotation.add content.free text"}}
-            </button>
+        {{#unless hasQuestionnaire}}
+            <div>
+                <span>{{t "annotation.add content.list prompt"}}</span>
+                <button class="btn add-free-text-content" type="button">
+                    {{t "annotation.add content.free text"}}
+                </button>
 
-            {{#each categories}}
-            <button class="btn add-labelled-content" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
-                {{t "annotation.add content.category"}} {{name}}
-            </button>
-            {{/each}}
+                {{#each categories}}
+                <button class="btn add-labelled-content" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
+                    {{t "annotation.add content.category"}} {{name}}
+                </button>
+                {{/each}}
 
-        </div>
+            </div>
+        {{/unless}}
     {{/if}}
 </div>
 

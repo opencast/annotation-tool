@@ -1,0 +1,12 @@
+{{#> layout}}
+<div class="control-group{{#if validationErrors}} error{{/if}}">
+    <label class="control-label">{{item.title}}</label>
+    <div class="controls">
+        {{> scaleChooser}}
+        <span class="help-block">{{item.description}}</span>
+        {{#each validationErrors as |error|}}
+            <span class="help-block"> {{t error}} </span>
+        {{/each}}
+    </div>
+</div>
+{{/layout}}

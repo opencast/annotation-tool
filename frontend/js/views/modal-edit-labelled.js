@@ -110,7 +110,7 @@ define([
             .filter(function (label) {
                 return !label.deleted_at;
             })
-            .map(function(label) {
+            .map(function (label) {
                 return _.extend(label, { selected: label.id === selectedLabel.id });
             });
 
@@ -128,7 +128,7 @@ define([
                 .filter(function (scaleValue) {
                     return !scaleValue.deleted_at;
                 })
-                .map(function(scaleValue) {
+                .map(function (scaleValue) {
                     return _.extend(scaleValue, { selected: scaleValue.id === selectedScaleValueId });
                 });
             scale = _.extend(scale.toJSON(), { scaleValues: scaleValues });

@@ -56,6 +56,8 @@
     "created": "am",
     "track": "auf",
     "types": {
+      "empty": "ohne Inhalte",
+      "multi": "mehrere Inhalte",
       "free text": "Freitextannotation",
       "label": "Kennzeichen",
       "scaling": "Kennzeichen mit Skalenwert"
@@ -98,11 +100,11 @@
         "long": "Start auf aktuelle Abspielposition setzen",
         "short": "START"
       },
-      "start time": "Start"
+      "start time": "Start",
+      "duration": "Dauer",
+      "no duration": "keine Dauer"
     },
-    "you own": "Diese Annotation gehört Ihnen",
-    "various contents": "(Mehrere Inhalte)",
-    "no content": "(Kein Inhalt)"
+    "you own": "Diese Annotation gehört Ihnen"
   },
   "default track": {
     "description": "Standardspur für Benutzer {{nickname}}",
@@ -164,7 +166,8 @@
         "with loops": "Mit Schleifen",
         "alternative": "Alternativ",
         "reviewing": "Durchsehen",
-        "fullscreen timeline": "Vollbild-Zeitleiste"
+        "fullscreen timeline": "Vollbild-Zeitleiste",
+        "questionnaire": "Fragebogen"
       },
       "auto expand": "Aktive Annotationen automatisch aufklappen",
       "drag here": "Icon ziehen, um das Element zu platzieren"
@@ -206,6 +209,16 @@
       }
     },
     "title": "Name des Videos: {{title}}"
+  },
+  "questionnaire": {
+    "form prompt": "Fragebogengestütze Annotation erstellen",
+    "blank slate": {
+      "heading": "Fragebogengestütze Annotationen",
+      "start": "Video annotieren"
+    },
+    "help timestamp": "Format: 0:00:00",
+    "help min items singular": "Es muss mindestens ein Kennzeichen gewählt werden.",
+    "help min items plural": "Es müssen mindestens {{count}} Kennzeichen gewählt werden."
   },
   "required fields": "Pflichtfelder",
   "scale editor": {
@@ -355,10 +368,14 @@
     "list": "Liste von Annotationen",
     "loop": "Schleifensteuerung",
     "timeline": "Zeitleiste",
-    "player": "Player"
+    "player": "Player",
+    "questionnaire": "Fragebogen"
   },
   "validation errors": {
-    "empty": "Dieses Feld darf nicht leer sein"
+    "empty": "Dieses Feld darf nicht leer sein",
+    "min items": "Es wurde nicht eine genügende Menge an Einträgen gewählt.",
+    "start after end": "Die Startzeit liegt nach dem Schluss.",
+    "wrong format": "Falsches Format"
   },
   "common actions": {
     "cancel": "Abbrechen",
