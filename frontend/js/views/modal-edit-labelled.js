@@ -76,7 +76,7 @@ define([
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
 
-            this.contentItem.set("value", labelId);
+            this.contentItem.set({ type: "label", value: labelId });
             this.model.save();
             this.trigger("modal:request-close");
         },
@@ -90,7 +90,7 @@ define([
             var labelId = $button.data("label");
             var scaleValueId = $button.data("scalevalue");
 
-            this.contentItem.set("value", { label: labelId, scaling: scaleValueId });
+            this.contentItem.set({ type: "scaling", value: { label: labelId, scaling: scaleValueId } });
             this.model.save();
             this.trigger("modal:request-close");
         }
