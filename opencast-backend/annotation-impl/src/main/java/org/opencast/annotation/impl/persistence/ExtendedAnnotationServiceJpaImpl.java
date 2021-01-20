@@ -515,8 +515,14 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public Option<ScaleValue> getScaleValue(long id) throws ExtendedAnnotationException {
-    return this.<ScaleValueDto> findById("ScaleValue.findById", id).map(toScaleValue);
+  public Option<ScaleValue> getScaleValue(long id, boolean includeDeleted) throws ExtendedAnnotationException {
+    Option<ScaleValueDto> dto;
+    if (includeDeleted) {
+      dto = findById("ScaleValue.findByIdIncludeDeleted", id);
+    } else {
+      dto = findById("ScaleValue.findById", id);
+    }
+    return dto.map(toScaleValue);
   }
 
   @Override

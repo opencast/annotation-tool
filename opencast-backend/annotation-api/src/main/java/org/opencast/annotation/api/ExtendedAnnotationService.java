@@ -458,11 +458,13 @@ public interface ExtendedAnnotationService {
    * 
    * @param id
    *          the scale value id
+   * @param includeDeleted
+   *          if <code>true</code> it will find also deleted scale values
    * @return the scale value
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Option<ScaleValue> getScaleValue(long id) throws ExtendedAnnotationException;
+  Option<ScaleValue> getScaleValue(long id, boolean includeDeleted) throws ExtendedAnnotationException;
 
   /**
    * Get all scale values from a scale.

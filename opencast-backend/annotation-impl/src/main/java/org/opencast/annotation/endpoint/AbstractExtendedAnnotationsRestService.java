@@ -356,7 +356,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
-        return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
+        return eas().getScale(id, true).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale scale) {
             if (!eas().hasResourceAccess(scale))
@@ -463,7 +463,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
+        return eas().getScale(id, true).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale s) {
             if (!eas().hasResourceAccess(s))
@@ -533,7 +533,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
-        return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
+        return eas().getScaleValue(id, true).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
@@ -575,7 +575,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
+        return eas().getScaleValue(id, false).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
@@ -640,7 +640,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
+        return eas().getScaleValue(id, true).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
@@ -711,7 +711,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
-        return eas().getCategory(id, false).fold(new Option.Match<Category, Response>() {
+        return eas().getCategory(id, true).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
             if (!eas().hasResourceAccess(c))
@@ -821,7 +821,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getCategory(categoryId, false).fold(new Option.Match<Category, Response>() {
+        return eas().getCategory(categoryId, true).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
             if (!eas().hasResourceAccess(c))
@@ -896,7 +896,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
-        return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
+        return eas().getLabel(id, true).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
             if (!eas().hasResourceAccess(l))
@@ -1006,7 +1006,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
+        return eas().getLabel(id, true).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
             if (!eas().hasResourceAccess(l))
