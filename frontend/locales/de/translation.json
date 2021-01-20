@@ -104,7 +104,8 @@
       "duration": "Dauer",
       "no duration": "keine Dauer"
     },
-    "you own": "Diese Annotation gehört Ihnen"
+    "you own": "Diese Annotation gehört Ihnen",
+    "no content": "(Kein Inhalt)"
   },
   "default track": {
     "description": "Standardspur für Benutzer {{nickname}}",
