@@ -184,6 +184,7 @@ define(["jquery",
                         if (selectedScale) {
                             selectedScale.isSelected = true;
                         }
+                        this.EMPTY_SCALE.isSelected = false;
                     } else {
                         this.EMPTY_SCALE.isSelected = true;
                     }
