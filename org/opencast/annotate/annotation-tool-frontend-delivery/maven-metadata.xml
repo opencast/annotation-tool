@@ -3,7 +3,7 @@
   <groupId>org.opencast.annotate</groupId>
   <artifactId>annotation-tool-frontend-delivery</artifactId>
   <versioning>
-    <release>2021.0120.145255-a036cc0eb60079b8bb56569db1d22a5e7e008eec</release>
+    <release>2021.0120.150117-b030969fb8514ebf217105f1ffa42820267c0f6c</release>
     <versions>
       <version>2020.1015.145954-041d93419136f64dffa8123372fbb902fc02b470</version>
       <version>2020.1201.162152-242846e0d09c4ce12cd6e62b880c413c701f0b5f</version>
@@ -16,7 +16,8 @@
       <version>2021.0120.142515-87b8cecbfd3fe7f5f2c8e82fbd260b6b9d9faaa9</version>
       <version>2021.0120.143748-56b608ec2dc49c92714f75d0687953c33a88f004</version>
       <version>2021.0120.145255-a036cc0eb60079b8bb56569db1d22a5e7e008eec</version>
+      <version>2021.0120.150117-b030969fb8514ebf217105f1ffa42820267c0f6c</version>
     </versions>
-    <lastUpdated>20210120145337</lastUpdated>
+    <lastUpdated>20210120150156</lastUpdated>
   </versioning>
 </metadata>
