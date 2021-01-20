@@ -308,6 +308,15 @@ define(
                 var modelJSON,
                     title;
 
+                // See which content items are currently expanded;
+                // we want to preserve that state during a re-render
+                var itemExpanded = [];
+                this.$el.find(".content-item").each(_.bind(function (index, item) {
+                    if (this.$(item).hasClass("open")) {
+                        itemExpanded[index] = true;
+                    }
+                }, this));
+
                 modelJSON              = this.model.toJSON();
                 modelJSON.track        = this.track.get("name");
                 modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
@@ -389,6 +398,13 @@ define(
                         );
                     }
                 }
+
+                // Restore content item expansion state
+                this.$el.find(".content-item").each(_.bind(function (index, item) {
+                    if (itemExpanded[index]) {
+                        this.$(item).addClass("open");
+                    }
+                }, this));
 
                 this.delegateEvents(this.getState().events);
 
