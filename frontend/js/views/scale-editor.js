@@ -172,14 +172,14 @@ define(["jquery",
                         selectedScale;
 
                     // Filter by access values
-                    scales = _.where(scales, {access: this.currentCategory.get("access")});
+                    scales = _.where(scales, { access: this.currentCategory.get("access") });
 
                     scales.push(this.EMPTY_SCALE);
 
                     if (this.currentScaleId) {
                         selectedScale = _.find(scales, function (scale) {
-                                                return scale.id === this.currentScaleId;
-                                            }, this);
+                            return scale.id === this.currentScaleId;
+                        }, this);
 
                         if (selectedScale) {
                             selectedScale.isSelected = true;
@@ -195,8 +195,10 @@ define(["jquery",
                  * @alias module:views-scale-editor.ScaleEditor#renderScaleSelect
                  */
                 renderScaleSelect: function () {
-                    this.$el.find("select#scale-id").empty()
-                                                    .append(this.scaleEditorSelectTemplate({scales: this.generateScalesForTemplate()}));
+                    this.$el.find("select#scale-id").html(
+                        this.scaleEditorSelectTemplate({
+                            scales: this.generateScalesForTemplate()
+                        }));
 
                     this.delegateEvents(this.events);
                 },
@@ -322,7 +324,7 @@ define(["jquery",
                     this.isInEditMode = true;
 
                     this.currentScale = annotationTool.video.get("scales").create({
-                        name  : i18next.t("scale editor.new scale.name"),
+                        name: i18next.t("scale editor.new scale.name"),
                         access: this.currentCategory.get("access")
                     });
 
