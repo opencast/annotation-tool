@@ -14,15 +14,16 @@
  *
  */
 define([
+    "underscore",
+    "backbone",
+    "i18next",
+    "jquery",
     "collections/annotation_content",
     "templates/questionnaire-block-categories",
     "templates/questionnaire-block-layout",
     "views/modal-add-labelled",
-    "backbone",
-    "underscore",
-    "i18next",
     "bootstrap"
-], function(ContentItems, template, tmplLayout, AddLabelledModal, Backbone, _, i18next) {
+], function (_, Backbone, i18next, $, ContentItems, template, tmplLayout, AddLabelledModal) {
     "use strict";
 
     return Backbone.View.extend({
@@ -32,13 +33,13 @@ define([
             "click button.add-labelled-content": "addContentItem",
             "click button.questionnaire-content-item-remove": "removeContentItem"
         },
-        initialize: function(options) {
+        initialize: function (options) {
             this.item = options.item;
             this.contentItems = new ContentItems([]);
             this.listenTo(this.contentItems, "all", this.render);
             this.validationErrors = [];
         },
-        render: function() {
+        render: function () {
             var categories = _.invoke(_.filter(_.map(this.item.categories, getCategoryByName)), "toJSON");
             this.$el.html(
                 template(
@@ -54,7 +55,7 @@ define([
 
             return this;
         },
-        validate: function() {
+        validate: function () {
             if (this.item.minItems && this.contentItems.size() < this.item.minItems) {
                 this.validationErrors = ["validation errors.min items"];
 
@@ -64,10 +65,10 @@ define([
 
             return true;
         },
-        getContentItems: function() {
+        getContentItems: function () {
             return this.contentItems.models;
         },
-        addContentItem: function(event) {
+        addContentItem: function (event) {
             var self = this;
             var categoryID = $(event.target).data("category");
             var category = annotationTool.video.get("categories").get(categoryID);
@@ -80,7 +81,7 @@ define([
                 })
             );
         },
-        removeContentItem: function(event) {
+        removeContentItem: function (event) {
             var $button = Backbone.$(event.currentTarget);
             var position = $button.closest("li").prevAll().length;
             this.contentItems.remove(this.contentItems.at(position));
@@ -88,7 +89,7 @@ define([
     });
 
     function getCategoryByName(name) {
-        return annotationTool.video.get("categories").models.find(function(category) {
+        return annotationTool.video.get("categories").models.find(function (category) {
             return category.get("name") === name;
         });
     }
