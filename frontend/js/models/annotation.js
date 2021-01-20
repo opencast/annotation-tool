@@ -254,13 +254,14 @@ define(
              * @return {string} The string containing a CSS color value.
              */
             getColor: function () {
-                var categories = this.getCategories();
-                if (categories.length === 1) {
-                    return categories[0].get("settings").color;
-                } else if (this.getType() === "multi") {
-                    return "white";
-                } else {
+                switch (this.getType()) {
+                case "text":
                     return undefined;
+                case "multi":
+                    return "white";
+                default:
+                    // There should be exactly one category here ...
+                    return this.getCategories()[0].get("settings").color;
                 }
             },
 

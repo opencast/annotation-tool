@@ -83,26 +83,18 @@ define([
             .value()
             .join(", ");
 
-        if (annotation.getType() === "text") {
-            item.className = "";
-        } else {
-            var categories = annotation.getCategories();
-            if (categories.length === 1) {
-                item.className = "category-" + categories[0].id;
-            } else {
-                item.className = "multi";
-            }
-        }
-        var labels = annotation.getLabels();
-        if (labels.length === 1) {
-            var color = annotation.getColor();
-            item.style = "background-color:" + color + ";" +
+        var color = annotation.getColor();
+        item.style = color && (
+            "background-color:" + color + ";" +
                 "color:" + (
                     chroma(color).luminance() < 0.5
                         ? "white"
                         : "black"
-                ) +
-                ";";
+                ) + ";"
+        );
+
+        var labels = annotation.getLabels();
+        if (labels.length === 1) {
             item.label = labels[0].toJSON();
         } else {
             item.label = undefined;
@@ -618,7 +610,6 @@ define([
             });
             this.timeline.destroy();
             this.$el.popover("destroy");
-            this.categoryStylesheet.remove();
             return Backbone.View.prototype.remove.apply(this, arguments);
         },
 

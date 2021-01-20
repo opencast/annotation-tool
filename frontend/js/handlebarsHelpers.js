@@ -96,8 +96,12 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
 
     Handlebars.registerHelper("withLabel", function (id) {
         var label = _.findWhere(annotationTool.video.getLabels(), { id: id });
-
-        return label && label.toJSON();
+        if (!label) return undefined;
+        label = label.toJSON();
+        label.category = annotationTool.video.get("categories")
+            .get(label.category.id)
+            .toJSON();
+        return label;
     });
 
     return Handlebars;

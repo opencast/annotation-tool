@@ -320,17 +320,29 @@ define(
 
                 modelJSON.labels = annotationTool.video.getLabels();
 
-                modelJSON.categories = annotationTool.video.get("categories").map(
-                    function (category) {
-                        var labels = category.get("labels").toJSON();
-                        var scale = null;
-                        if (category.get("scale_id")) {
-                            scale = annotationTool.video.get("scales").get(category.get("scale_id"));
-                            scale = _.extend(scale.toJSON(), { scaleValues: scale.get("scaleValues").toJSON() });
+                modelJSON.categories = annotationTool.video.get("categories")
+                    .filter(function (category) {
+                        return !category.get("deleted_at");
+                    })
+                    .map(
+                        function (category) {
+                            var labels = category.get("labels").toJSON()
+                                .filter(function (label) {
+                                    return !label.deleted_at;
+                                });
+                            var scale = null;
+                            if (category.get("scale_id")) {
+                                scale = annotationTool.video.get("scales").get(category.get("scale_id"));
+                                scale = _.extend(scale.toJSON(), {
+                                    scaleValues: scale.get("scaleValues").toJSON()
+                                        .filter(function (scaleValue) {
+                                            return !scaleValue.deleted_at;
+                                        })
+                                });
+                            }
+                            return _.extend(category.toJSON(), { labels: labels, scale: scale });
                         }
-                        return _.extend(category.toJSON(), { labels: labels, scale: scale });
-                    }
-                );
+                    );
 
                 var partials = _.extend(
                     {
@@ -341,10 +353,7 @@ define(
                 );
                 this.$el.html(this.currentState.render(modelJSON, { partials: partials }));
 
-                var color = this.model.getColor();
-                if (color) {
-                    this.$el.css("background-color", color);
-                }
+                this.$el.css("background-color", this.model.getColor() || '');
 
                 title = this.model.getTitleAttribute();
 

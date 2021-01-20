@@ -14,12 +14,14 @@
  *
  */
 define([
+    "underscore",
+    "jquery",
     "templates/modal-add-labelled",
     "templates/partial-label-chooser",
     "templates/partial-scale-chooser",
     "backbone",
     "bootstrap"
-], function(template, tmplLabelChooser, tmplScaleChooser, Backbone) {
+], function (_, $, template, tmplLabelChooser, tmplScaleChooser, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
@@ -93,39 +95,45 @@ define([
             this.trigger("modal:request-close");
         }
     });
-});
 
-function getColor(category) {
-    var json = category.toJSON();
+    function getColor(category) {
+        var json = category.toJSON();
 
-    return json && json.settings && json.settings.color;
-}
-
-function getLabels(category, contentItem) {
-    var selectedLabel = contentItem.getLabel();
-    var labels = category
-        .get("labels")
-        .toJSON()
-        .map(function(label) {
-            return _.extend(label, { selected: label.id === selectedLabel.id });
-        });
-
-    return labels;
-}
-
-function getScale(category, contentItem) {
-    var scale;
-    if (category.get("scale_id")) {
-        var selectedScaleValueId = contentItem && contentItem.get("value").scaling;
-        scale = annotationTool.video.get("scales").get(category.get("scale_id"));
-        var scaleValues = scale
-            .get("scaleValues")
-            .toJSON()
-            .map(function(scaleValue) {
-                return _.extend(scaleValue, { selected: scaleValue.id === selectedScaleValueId });
-            });
-        scale = _.extend(scale.toJSON(), { scaleValues: scaleValues });
+        return json && json.settings && json.settings.color;
     }
 
-    return scale;
-}
+    function getLabels(category, contentItem) {
+        var selectedLabel = contentItem.getLabel();
+        var labels = category
+            .get("labels")
+            .toJSON()
+            .filter(function (label) {
+                return !label.deleted_at;
+            })
+            .map(function(label) {
+                return _.extend(label, { selected: label.id === selectedLabel.id });
+            });
+
+        return labels;
+    }
+
+    function getScale(category, contentItem) {
+        var scale;
+        if (category.get("scale_id")) {
+            var selectedScaleValueId = contentItem && contentItem.get("value").scaling;
+            scale = annotationTool.video.get("scales").get(category.get("scale_id"));
+            var scaleValues = scale
+                .get("scaleValues")
+                .toJSON()
+                .filter(function (scaleValue) {
+                    return !scaleValue.deleted_at;
+                })
+                .map(function(scaleValue) {
+                    return _.extend(scaleValue, { selected: scaleValue.id === selectedScaleValueId });
+                });
+            scale = _.extend(scale.toJSON(), { scaleValues: scaleValues });
+        }
+
+        return scale;
+    }
+});

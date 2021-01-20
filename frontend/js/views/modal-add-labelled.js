@@ -14,12 +14,14 @@
  *
  */
 define([
+    "underscore",
+    "jquery",
     "templates/modal-add-labelled",
     "templates/partial-label-chooser",
     "templates/partial-scale-chooser",
     "backbone",
     "bootstrap"
-], function(template, tmplLabelChooser, tmplScaleChooser, Backbone) {
+], function (_, $, template, tmplLabelChooser, tmplScaleChooser, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
@@ -50,7 +52,10 @@ define([
                 template(
                     {
                         color: getColor(this.category),
-                        labels: this.category.get("labels").toJSON(),
+                        labels: this.category.get("labels").toJSON()
+                            .filter(function (label) {
+                                return !label.deleted_at;
+                            }),
                         scale: getScale(this.category)
                     },
                     {
@@ -98,20 +103,25 @@ define([
             this.trigger("modal:request-close");
         }
     });
-});
 
-function getColor(category) {
-    var json = category.toJSON();
+    function getColor(category) {
+        var json = category.toJSON();
 
-    return json && json.settings && json.settings.color;
-}
-
-function getScale(category) {
-    var scale = null;
-    if (category.get("scale_id")) {
-        scale = annotationTool.video.get("scales").get(category.get("scale_id"));
-        scale = _.extend(scale.toJSON(), { scaleValues: scale.get("scaleValues").toJSON() });
+        return json && json.settings && json.settings.color;
     }
 
-    return scale;
-}
+    function getScale(category) {
+        var scale = null;
+        if (category.get("scale_id")) {
+            scale = annotationTool.video.get("scales").get(category.get("scale_id"));
+            scale = _.extend(scale.toJSON(), {
+                scaleValues: scale.get("scaleValues").toJSON()
+                    .filter(function (scaleValue) {
+                        return !scaleValue.deleted_at;
+                    })
+            });
+        }
+
+        return scale;
+    }
+});
