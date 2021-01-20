@@ -66,8 +66,8 @@ define([
         resetQuestionnaire: function() {
             this.annotation = null;
             if (this.timestampsView) {
-                this.timestampView.remove();
-                this.timestampView = null;
+                this.timestampsView.remove();
+                this.timestampsView = null;
             }
             if (this.items) {
                 _.invoke(this.items, "remove");

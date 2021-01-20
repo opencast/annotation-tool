@@ -14,13 +14,12 @@
  *
  */
 define([
-    "underscore",
     "jquery",
     "i18next",
     "backbone",
     "templates/annotation-timestamp",
     "handlebarsHelpers"
-], function(_, $, i18next, Backbone, template) {
+], function($, i18next, Backbone, template) {
     "use strict";
 
     return Backbone.View.extend({

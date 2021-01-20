@@ -98,7 +98,7 @@
         "long": "Set the video playhead as start point.",
         "short": "IN"
       },
-      "start time": "Start time"
+      "start time": "Start time",
       "duration": "Duration",
       "no duration": "no duration"
     },
