@@ -353,7 +353,8 @@ define(
                         }
                     );
 
-                modelJSON.hasQuestionnaire = !!annotationTool.video.getQuestionnaire();
+                // TODO
+                modelJSON.hasQuestionnaire = false; // !!annotationTool.video.getQuestionnaire();
 
                 var partials = _.extend(
                     {
