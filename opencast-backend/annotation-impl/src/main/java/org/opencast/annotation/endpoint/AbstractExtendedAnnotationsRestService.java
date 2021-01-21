@@ -701,13 +701,19 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(c, tags);
-            final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(access.toString()),
-                    trimToNone(settings), new ResourceImpl(access, resource.getCreatedBy(), resource.getUpdatedBy(), resource
-                    .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource
-                    .getDeletedAt(), resource.getTags()), seriesExtId, seriesCategoryId);
+
+            // If we are updating a master series category from a local copy, avoid changing the video
+            // the master series category belongs to
+            Option<Long> seriesCategoryVideoId = Option.none();
+            if (seriesCategoryId.isSome()) {
+              seriesCategoryVideoId = eas().getCategory(seriesCategoryId.get(), false).get().getVideoId();
+            }
+
+            final Category updated = new CategoryImpl(id, seriesCategoryVideoId.isSome() ? seriesCategoryVideoId : videoId , scaleId, name, trimToNone(description),
+                    trimToNone(settings), resource, seriesExtId, seriesCategoryId);
             if (!c.equals(updated)) {
               if (seriesCategoryId.isNone()) {
-                eas().updateCategoryAndDeleteOtherSeriesCategories(updated, videoId.get());
+                eas().updateCategoryAndDeleteOtherSeriesCategories(updated);
               } else {
                 eas().updateCategory(updated);
               }
