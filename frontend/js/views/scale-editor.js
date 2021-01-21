@@ -138,7 +138,7 @@ define(["jquery",
                     // Type use for delete operation
                     this.scaleDeleteType = annotationTool.deleteOperation.targetTypes.SCALE;
 
-                    this.$el.modal({show: true, backdrop: false, keyboard: false });
+                    this.$el.modal({ show: true, backdrop: false, keyboard: false });
                     this.$el.modal("hide");
                 },
 
@@ -190,18 +190,19 @@ define(["jquery",
                         selectedScale;
 
                     // Filter by access values
-                    scales = _.where(scales, {access: this.currentCategory.get("access")});
+                    scales = _.where(scales, { access: this.currentCategory.get("access") });
 
                     scales.push(this.EMPTY_SCALE);
 
                     if (this.currentScaleId) {
                         selectedScale = _.find(scales, function (scale) {
-                                                return scale.id === this.currentScaleId;
-                                            }, this);
+                            return scale.id === this.currentScaleId;
+                        }, this);
 
                         if (selectedScale) {
                             selectedScale.isSelected = true;
                         }
+                        this.EMPTY_SCALE.isSelected = false;
                     } else {
                         this.EMPTY_SCALE.isSelected = true;
                     }
@@ -213,8 +214,10 @@ define(["jquery",
                  * @alias module:views-scale-editor.ScaleEditor#renderScaleSelect
                  */
                 renderScaleSelect: function () {
-                    this.$el.find("select#scale-id").empty()
-                                                    .append(this.scaleEditorSelectTemplate({scales: this.generateScalesForTemplate()}));
+                    this.$el.find("select#scale-id").html(
+                        this.scaleEditorSelectTemplate({
+                            scales: this.generateScalesForTemplate()
+                        }));
 
                     this.delegateEvents(this.events);
                 },
@@ -340,7 +343,7 @@ define(["jquery",
                     this.isInEditMode = true;
 
                     this.currentScale = annotationTool.video.get("scales").create({
-                        name  : i18next.t("scale editor.new scale.name"),
+                        name: i18next.t("scale editor.new scale.name"),
                         access: this.currentCategory.get("access")
                     });
 
@@ -372,10 +375,19 @@ define(["jquery",
                  * @alias module:views-scale-editor.ScaleEditor#deleteScale
                  */
                 deleteScale: function (event) {
-                    var self = this;
-
                     event.stopImmediatePropagation();
-                    annotationTool.deleteOperation.start(this.currentScale, this.scaleDeleteType, self.cancel);
+                    this.$el.modal("hide");
+                    annotationTool.deleteOperation.start(
+                        this.currentScale,
+                        this.scaleDeleteType,
+                        _.bind(function () {
+                            this.$el.modal("show");
+                            this.cancel();
+                        }, this),
+                        _.bind(function () {
+                            this.$el.modal("show");
+                        }, this)
+                    );
                 },
 
                 /**
@@ -418,6 +430,7 @@ define(["jquery",
                         addScaleValue = function (scaleValue, index) {
                             var self = this,
                                 params = {
+                                    scaleEditor: this,
                                     model: scaleValue,
                                     onChange: function () {
                                         renderScaleValues.call(self);

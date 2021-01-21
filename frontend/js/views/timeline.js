@@ -595,7 +595,6 @@ define([
             });
             this.timeline.destroy();
             this.$el.popover("destroy");
-            this.categoryStylesheet.remove();
             return Backbone.View.prototype.remove.apply(this, arguments);
         },
 

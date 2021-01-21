@@ -98,8 +98,8 @@
   "delete modal": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
-    "title": "$t(models.nominative, {'context': {{context}} }) löschen",
-    "warning": "Wollen Sie $t(models.accusative, {'context': {{context}} }) „{{content}}“ wirklich löschen?"
+    "title": "$t(models.nominative, {\"context\": \"{{context}}\" }) löschen",
+    "warning": "Wollen Sie $t(models.accusative, {\"context\": \"{{context}}\" }) „{{content}}“ wirklich löschen?"
   },
   "series-category modal": {
     "cancel": "$t(common actions.cancel)",
