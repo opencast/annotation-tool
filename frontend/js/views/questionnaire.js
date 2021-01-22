@@ -311,13 +311,13 @@ function getMockupQuestionnaire() {
             "item-0": {
                 "type": "string",
                 "title": "1. Beschreibung",
-                "description": "Beschreibt alle relevanten Ereignisse, die ihr hinsichtlich Klassenführung entdecken könnt.",
+                "description": "Beschreiben Sie alle relevanten Ereignisse, die Sie hinsichtlich des Analysefokus entdecken können.",
                 "required": true
             },
             "item-1": {
                 "type": "categories",
                 "title": "2a. Interpretation",
-                "description": "Interpretiert und erklärt möglichst theoriegeleitet die (Re-)Aktion der Lehrperson (und ggf. der SuS) in dieser Situation. Nutzt die bekannten Kategorien der Klassenführung.",
+                "description": "Interpretieren und erklären Sie möglichst theoriegeleitet die (Re-)Aktion der Lehrperson (und ggf. der SuS) in dieser Unterrichtssequenz. Nutzen Sie die Kategorien des Analysefokus. (Wählen Sie mindestens eine Kategorie aus)",
                 "categories": [
                     "KF-MO: Monitoring",
                     "KF-ST: Strukturierung",
@@ -328,26 +328,26 @@ function getMockupQuestionnaire() {
             "item-2": {
                 "type": "string",
                 "title": "2b. Interpretation",
-                "description": "Interpretiert und erklärt möglichst theoriegeleitet die (Re-)Aktion der Lehrperson (und ggf. der SuS) in dieser Situation. Begründet eure Interpretation.",
+                "description": "Interpretieren und erklären Sie möglichst theoriegeleitet die (Re-)Aktion der Lehrperson (und ggf. der SuS) in dieser Unterrichtssequenz. Begründen Sie Ihre Interpretation.",
                 "required": true
             },
             "item-3": {
                 "type": "string",
                 "title": "3. Bewertung",
-                "description": "Bewertet, wie angemessen die (Re-)Aktion der Lehrperson im jeweiligen Kontext erscheint und begründet eure Einschätzung.",
+                "description": "Bewerten Sie, wie angemessen die (Re-)Aktion der Lehrperson im jeweiligen Kontext erscheint und begründen Sie Ihre Einschätzung.",
                 "required": true
             },
             "item-4": {
                 "type": "string",
                 "title": "4. Handlungsalternative",
-                "description": "Formuliert eine sinnvolle Handlungsalternative für die Lehrperson und diskutiert, ob und inwiefern diese im gegebenen Kontext angemessener als die realisierte Handlung der Lehrperson wäre.",
+                "description": "Formulieren Sie eine sinnvolle Handlungsalternative für die Lehrperson und diskutieren Sie, ob und inwiefern diese im gegebenen Kontext angemessener als die realisierte Handlung der Lehrperson wäre.",
                 "required": true
             }
         },
         "form": [
             {
                 "type": "help",
-                "helpvalue": "Kontextbeschreibung: Ihr seht eine Szene aus dem Mathematikunterricht einer ersten Klasse zum Thema \"Häufigkeiten und Wahrscheinlichkeiten\", welche am Ende des Schuljahres aufgezeichnet wurde. Die Klasse hat sich im Theaterkreis versammelt, um die Ergebnisse der vorangegangenen Arbeitsphase zu besprechen. Die Schülerinnen und Schüler sollten in Einzelarbeit mit einem Würfel würfeln und auf einem Arbeitsblatt in einer Tabelle anhand einer Strichliste notieren, welche Zahl jeweils gewürfelt wurde. Gemeinsam wird nun im Unterrichtsgespräch erarbeitet, welche Augenzahlen \"sicher\", \"möglich\" bzw. \"unmöglich\" sind. Diese Begrifflichkeiten wurden zu Beginn der Stunde mit einigen Beispielen erarbeitet (z.B. \"Es ist sicher, dass wir heute Sportunterricht haben\")."
+                "helpvalue": "Freie Annotation des Unterrichtsvideos: Wählen Sie zunächst oben die Start- und Endzeit der annotierten Unterrichtssequenz. Benutzen Sie dann das folgende Analyseschema mit den vier Facetten der professionellen Unterrichtswahrnehmung."
             },
             "item-0",
             "item-1",
