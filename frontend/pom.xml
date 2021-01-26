@@ -16,7 +16,7 @@
   <name>SWITCHcastAnnotate :: Frontend</name>
 
   <properties>
-    <integration>search</integration>
+    <integration>backend</integration>
   </properties>
 
   <build>
