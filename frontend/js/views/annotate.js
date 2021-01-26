@@ -44,7 +44,7 @@ define(["jquery",
                 id    : "all",
                 name  : i18next.t("annotate.categories.all"),
                 filter: function (category) {
-                    return category.get("isPublic") || category.get("isMine");
+                    return !category.get("settings").createdAsMine || (category.get("settings").createdAsMine && category.get("created_by") === annotationTool.user.get("id"));
                 },
                 roles : []
             },
@@ -52,7 +52,8 @@ define(["jquery",
                 id        : "public",
                 name      : i18next.t("annotate.categories.public"),
                 filter    : function (category) {
-                    return category.get("isPublic");
+                    return !category.get("settings").createdAsMine;
+                    //return category.get("isPublic");
                 },
                 roles     : [ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PUBLIC }
@@ -61,7 +62,8 @@ define(["jquery",
                 id        : "mine",
                 name      : i18next.t("annotate.categories.mine"),
                 filter    : function (category) {
-                    return category.get("isMine") && !category.get("isPublic");
+                    return category.get("settings").createdAsMine && category.get("created_by") === annotationTool.user.get("id");
+                    //return category.get("isMine") && !category.get("isPublic");
                 },
                 roles     : [ROLES.USER, ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PRIVATE }
@@ -336,6 +338,18 @@ define(["jquery",
 
                 this.categoriesTabs[attr.id] = annotateTab;
                 this.tabsContainerElement.append(annotateTab.$el);
+            },
+
+            /**
+             * Remove a categories tab from the annotate view based on the associated id
+             * @param {object} id the associated id
+             */
+            removeTab: function (id) {
+                delete this.categoriesTabs[id];
+
+                this.tabsButtonsElement.find('a[data-tabid="'+id+'"]').parent().remove();
+                this.tabsContainerElement = this.$el.find("div#label-tabs-contents");
+                this.tabsContainerElement.children("#labelTab-"+id).remove();
             },
 
             /**

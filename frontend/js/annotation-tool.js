@@ -27,6 +27,7 @@ define(["jquery",
         "views/main",
         "alerts",
         "templates/delete-modal",
+        "templates/series-category",
         "player-adapter",
         "colors",
         "xlsx",
@@ -34,7 +35,7 @@ define(["jquery",
         "filesaver",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, util, i18next, Videos, MainView, alerts, DeleteModalTmpl, PlayerAdapter, ColorsManager, XLSX, PapaParse) {
+    function ($, _, Backbone, util, i18next, Videos, MainView, alerts, DeleteModalTmpl, SeriesCategoryTmpl, PlayerAdapter, ColorsManager, XLSX, PapaParse) {
 
         "use strict";
 
@@ -76,7 +77,8 @@ define(["jquery",
 
                     var deleteModal = $(DeleteModalTmpl({
                         context: type.name,
-                        content: type.getContent(target)
+                        content: type.getContent(target),
+                        customMessage: type.customMessage ? type.customMessage(target) : ""
                     }));
 
                     function confirm() {
@@ -107,6 +109,47 @@ define(["jquery",
                 }
             },
 
+            seriesCategoryOperation: {
+              /**
+               * Function to delete element with warning
+               *
+               * @param {Object} target Element to be delete
+               * @param {TargetsType} type Type of the target to be deleted
+               */
+              start: function (target, categorySeriesCategoryId) {
+
+                  var seriesCategoryModal = $(SeriesCategoryTmpl({
+                      context: "HI",
+                      content: "BI"
+                  }));
+
+                  function confirm() {
+                      target.toVideoCategory(categorySeriesCategoryId);
+                      seriesCategoryModal.modal("toggle");
+                  }
+                  function confirmWithEnter(event) {
+                      if (event.keyCode === 13) {
+                          confirm();
+                      }
+                  };
+
+                  // Listener for delete confirmation
+                  seriesCategoryModal.find("#confirm-delete").one("click", confirm);
+
+                  // Add possiblity to confirm with return key
+                  $(window).on("keypress", confirmWithEnter);
+
+                  // Unbind the listeners when the modal is hidden
+                  seriesCategoryModal.one("hide", function () {
+                      $(window).off("keypress", confirmWithEnter);
+                      seriesCategoryModal.remove();
+                  });
+
+                  // Show the modal
+                  seriesCategoryModal.modal("show");
+              }
+          },
+
             /**
              * Initialize the tool
              * @alias annotationTool.start
@@ -135,6 +178,7 @@ define(["jquery",
                 _.extend(this, config, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
+                this.seriesCategoryOperation.start = _.bind(this.seriesCategoryOperation.start, this);
 
                 this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
 
@@ -1058,6 +1102,13 @@ define(["jquery",
                             console.warn("Cannot delete category: " + error);
                         }
                     });
+                },
+                customMessage: function (target) {
+                  if (target.get("seriesCategoryId")) {
+                    return i18next.t("series-category modal.customMessage")
+                  } else {
+                    return ""
+                  }
                 }
             },
 

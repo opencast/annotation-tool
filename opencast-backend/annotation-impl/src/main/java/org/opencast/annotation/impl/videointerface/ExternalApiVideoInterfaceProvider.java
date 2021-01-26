@@ -73,7 +73,7 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
               .addParameter("withpublications", Boolean.toString(true))
               .addParameter("sign", Boolean.toString(true))
               .build());
-      apiRequest.setHeader("Accept", "application/v1.0.0+json");
+      apiRequest.setHeader("Accept", "application/v1.1.0+json");
       response = client.execute(apiRequest);
 
       if (response.getStatusLine().getStatusCode() == 404) {
@@ -168,6 +168,11 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
                   .filter(Objects::nonNull)
                   ::iterator;
         }
+
+        @Override
+        public String getSeries() {
+          return (String) event.get("is_part_of");
+        }
       };
     } catch (URISyntaxException e) {
       // `URISyntaxException` is already caught by the configuration
@@ -209,6 +214,11 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
 
     @Override
     public Iterable<VideoTrack> getTracks() {
+      return null;
+    }
+
+    @Override
+    public String getSeries() {
       return null;
     }
   };

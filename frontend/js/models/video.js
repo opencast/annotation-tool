@@ -127,7 +127,22 @@ define(["underscore",
                                     if (categories && (categories.length) === 0) {
                                         categories.fetch({
                                             async: false,
-                                            success: function () {
+                                            success: function (collection) {
+                                                
+                // Fetch categories again, but with series categories this time
+                // Get the series id of the video
+                let videoSeriesId = "";
+                $.when(annotationTool.getSeriesExtId()).then(function(seriesId){
+                    videoSeriesId = seriesId;
+                });
+                
+                // Grab all categories belonging to our series
+                let seriesCategories = new Categories([], { video: annotationTool.video, seriesExtId: videoSeriesId });
+                seriesCategories.fetch({ async: false });
+
+                // Move models from one collection to other
+                collection.reset(seriesCategories.models);
+
                                                 self.categoriesReady = true;
                                                 if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                                     self.trigger("ready");

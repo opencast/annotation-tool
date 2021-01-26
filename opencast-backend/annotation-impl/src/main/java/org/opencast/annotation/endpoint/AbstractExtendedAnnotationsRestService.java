@@ -142,6 +142,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           responseObject.put("user", userJson);
           responseObject.put("videos", videos);
           responseObject.put("title", Objects.toString(videoInterface.getTitle(), ""));
+          responseObject.put("series", videoInterface.getSeries());
           return Response.ok(responseObject.toJSONString()).build();
 
         } catch (VideoInterfaceException e) {
@@ -639,12 +640,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("access") final Integer access, @FormParam("tags") final String tags,
+          @FormParam("seriesExtId") final String seriesExtId,
+          @FormParam("seriesCategoryId") final Long seriesCategoryId,
           @Context final HttpServletRequest request) {
-    return postCategoryResponse(none(), name, description, scaleId, settings, access, tags, request);
+    return postCategoryResponse(none(), name, description, scaleId, settings, access, tags, none(), none(), request);
   }
 
   Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
           final Long scaleId, final String settings, final Integer access, final String tags,
+          final Option<String> seriesExtId, final Option<Long> seriesCategoryId,
           final HttpServletRequest request) {
     return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
@@ -656,7 +660,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Category category = eas().createCategory(videoId, option(scaleId), name, trimToNone(description),
-                trimToNone(settings), resource);
+                trimToNone(settings), resource, seriesExtId, seriesCategoryId);
 
         return Response.created(categoryLocationUri(category, videoId.isSome()))
                 .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();
@@ -670,12 +674,16 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
-    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, tags, request);
+          @FormParam("access") final Integer access, @FormParam("tags") final String tags,
+          @FormParam("seriesExtId") final String seriesExtId, @FormParam("seriesCategoryId") final Long seriesCategoryId,
+          @Context final HttpServletRequest request) {
+    return putCategoryResponse(none(), id, name, description, option(scaleId), settings, option(access), tags,
+            option(seriesExtId), option(seriesCategoryId), request);
   }
 
   Response putCategoryResponse(final Option<Long> videoId, final long id, final String name,
-          final String description, final Option<Long> scaleId, final String settings, final String tags,
+          final String description, final Option<Long> scaleId, final String settings, final Option<Integer> access,
+          final String tags, final Option<String> seriesExtId, final Option<Long> seriesCategoryId,
           final HttpServletRequest request) {
     return run(array(name), request, new Function<VideoInterface, Response>() {
       @Override
@@ -693,10 +701,22 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!hasResourceAccess(c, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(c, tags);
-            final Category updated = new CategoryImpl(id, videoId, scaleId, name, trimToNone(description),
-                    trimToNone(settings), resource);
+
+            // If we are updating a master series category from a local copy, avoid changing the video
+            // the master series category belongs to
+            Option<Long> seriesCategoryVideoId = Option.none();
+            if (seriesCategoryId.isSome()) {
+              seriesCategoryVideoId = eas().getCategory(seriesCategoryId.get(), false).get().getVideoId();
+            }
+
+            final Category updated = new CategoryImpl(id, seriesCategoryVideoId.isSome() ? seriesCategoryVideoId : videoId , scaleId, name, trimToNone(description),
+                    trimToNone(settings), resource, seriesExtId, seriesCategoryId);
             if (!c.equals(updated)) {
-              eas().updateCategory(updated);
+              if (seriesCategoryId.isNone()) {
+                eas().updateCategoryAndDeleteOtherSeriesCategories(updated);
+              } else {
+                eas().updateCategory(updated);
+              }
               c = updated;
             }
             return Response.ok(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), c)))
@@ -706,8 +726,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @Override
           public Response none() {
             Resource resource = eas().createResource(tags);
-            final Category category = eas().createCategory(videoId, scaleId, name, trimToNone(description),
-                    trimToNone(settings), resource);
+            final Category category = eas().createCategory(videoId, scaleId, name, trimToNone(access.toString()),
+                    trimToNone(settings), new ResourceImpl(access, resource.getCreatedBy(), resource.getUpdatedBy(), resource
+                            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource
+                            .getDeletedAt(), resource.getTags()), seriesExtId, seriesCategoryId);
 
             return Response.created(categoryLocationUri(category, videoId.isSome()))
                     .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();
@@ -753,12 +775,14 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/categories")
   public Response getCategories(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {
-    return getCategoriesResponse(none(), limit, offset, date, tagsAnd, tagsOr, request);
+          @QueryParam("tags-or") final String tagsOr, @QueryParam("seriesExtId") final String seriesExtId,
+          @Context final HttpServletRequest request) {
+    return getCategoriesResponse(none(), limit, offset, date, tagsAnd, tagsOr, seriesExtId, request);
   }
 
   Response getCategoriesResponse(final Option<Long> videoId, final int limit, final int offset,
-          final String date, final String tagsAnd, final String tagsOr, HttpServletRequest request) {
+          final String date, final String tagsAnd, final String tagsOr, final String seriesExtId,
+          HttpServletRequest request) {
     return run(nil, request, new Function<VideoInterface, Response>() {
       @Override
       public Response apply(VideoInterface videoInterface) {
@@ -767,6 +791,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
+        final Option<String> seriesExtIdm = trimToNone(seriesExtId);
 
         if (datem.isSome() && datem.get().isNone() || (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
                 || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
@@ -778,7 +803,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
                   offset,
                   eas().getCategories(videoId, offsetm, limitm, datem.bind(Functions.identity()),
                           tagsAndArray.bind(Functions.identity()),
-                          tagsOrArray.bind(Functions.identity()))));
+                          tagsOrArray.bind(Functions.identity()),
+                          seriesExtIdm)));
         }
       }
     });

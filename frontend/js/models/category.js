@@ -58,6 +58,18 @@ define(["underscore",
              */
             administratorCanEditPublicInstances: true,
 
+            sync: function(method, model, options) { 
+
+                // If the model is referencing another model, sync to the other model
+                if(model.get("seriesCategoryId")) {
+                    model.id = model.get("seriesCategoryId");
+                } else if (model.tmpSeriesCategoryId) {
+                    model.id = model.tmpSeriesCategoryId;
+                }
+
+                return Backbone.Model.prototype.sync.call(this, method, model, options);
+            },
+
             /**
              * Constructor
              * @alias module:models-category.Category#initialize
@@ -88,6 +100,19 @@ define(["underscore",
                 if (attr.id) {
                     this.attributes.labels.fetch({ async: false });
                 }
+
+                var settings = _.clone(this.get("settings"));
+
+                if (!_.isUndefined(settings) && _.isUndefined(settings.createdAsMine)) {
+                    if(attr.isMine) {
+                        _.extend({ createdAsMine: true }, settings)
+                    } else {
+                        _.extend({ createdAsMine: false }, settings) 
+                    }
+
+                }
+
+                this.set("settings", settings);
 
                 this.attributes.visible = true;
             },

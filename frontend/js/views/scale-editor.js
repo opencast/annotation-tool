@@ -26,8 +26,9 @@ define(["jquery",
         "templates/scale-editor",
         "templates/scale-editor-select",
         "templates/scale-editor-content",
+        "templates/scale-editor-warning",
         "handlebarsHelpers"],
-    function ($, _, Backbone, i18next, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
+    function ($, _, Backbone, i18next, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate, ScaleEditorWarningTemplate) {
 
             "use strict";
 
@@ -88,6 +89,13 @@ define(["jquery",
                  * @type {HandlebarsTemplate}
                  */
                 scaleEditorContentTemplate: ScaleEditorContentTemplate,
+
+                /**
+                 * Template for a warning message
+                 * @alias module:views-login.Login#ScaleEditorWarningTemplate
+                 * @type {HandlebarsTemplate}
+                 */
+                scaleEditorWarningTemplate: ScaleEditorWarningTemplate,
 
                 /**
                  * Events to handle
@@ -161,6 +169,16 @@ define(["jquery",
                     this.changeScale();
                     this.$el.modal("show");
                     this.$el.css("z-index", 400);
+                },
+
+                /**
+                 * Workaround error message for when trying to select a scale on a series category
+                 */
+                showWarning: function(warningContents) {
+                  this.$el.empty();
+                  this.$el.append(this.scaleEditorWarningTemplate(warningContents));
+                  this.$el.modal("show");
+                  this.$el.css("z-index", 400);
                 },
 
                 /**

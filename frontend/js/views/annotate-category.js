@@ -23,13 +23,14 @@ define(["jquery",
         "backbone",
         "i18next",
         "util",
+        "access",
         "views/annotate-label",
         "templates/annotate-category",
         "handlebarsHelpers",
         "jquery.colorPicker"],
 
 
-    function ($, _, Backbone, i18next, util, LabelView, Template) {
+    function ($, _, Backbone, i18next, util, ACCESS, LabelView, Template) {
 
         "use strict";
 
@@ -77,6 +78,13 @@ define(["jquery",
              */
             template: Template,
 
+            // /**
+            //  * Main container of the editor modal
+            //  * @alias module:views-login.Login#el
+            //  * @type {DOMElement}
+            //  */
+            // el: $("#series-categories-warning"),
+
             /**
              * Events to handle by the annotate-category view
              * @alias module:views-annotate-category.CategoryView#events
@@ -86,10 +94,13 @@ define(["jquery",
                 "click .catItem-header i.visibility": "toggleVisibility",
                 "click .catItem-header i.delete": "onDeleteCategory",
                 "click .catItem-header i.scale": "editScale",
+                "click .catItem-header i.sharedVis": "onChangeSharedVis",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
-                "click .catItem-add": "onCreateLabel"
+                "click .catItem-add": "onCreateLabel",
+                "click .catItem-header i.toggleSeries": "toggleSeries"
             },
+
 
             /**
              * Constructor
@@ -116,7 +127,9 @@ define(["jquery",
                   "removeOne",
                   "onCreateLabel",
                   "editScale",
-                  "updateInputWidth");
+                  "onChangeSharedVis",
+                  "updateInputWidth",
+                  "toVideoCategory");
 
 
                 // Define the colors (global setting for all color pickers)
@@ -132,6 +145,10 @@ define(["jquery",
                 }
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
+                // Not our category but someone elses? Should not be clickable
+                if(attr.category.get("settings").createdAsMine && attr.category.get("created_by") !== annotationTool.user.get("id")) {
+                    this.$el.addClass("read-only");
+                }
                 this.model = attr.category;
 
                 this.render();
@@ -150,8 +167,78 @@ define(["jquery",
 
                 //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
+
+                this.tooltipSelector =
+                ".sharedVisibility[data-id=" + this.model.id + "] button";
+
+                $("body").on(
+                    "click",
+                    this.tooltipSelector,
+                    _.bind(function (event) {
+                        this.onChangeSharedVis(event);
+                    }, this)
+                );
+
+                $(document).on(
+                    "click.sharedVisibilityTooltip",
+                    _.bind(function (event) {
+                        if (this.visibilityButton && (
+                            !this.visibilityButton.has(event.target).length
+                        )) {
+                            this.visibilityButton.tooltip("hide");
+                        }
+                    }, this)
+                );
+
                 return this;
             },
+
+            /**
+             * Callback for modal spawned by toggleSeries.
+             * Turns a series category back to a video category
+             * @param {Id of the series} categorySeriesCategoryId
+             */
+            toVideoCategory: function (categorySeriesCategoryId) {
+              this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
+              this.model.set("seriesExtId", "");
+              this.model.set("seriesCategoryId", "");
+              this.model.save(null, { wait: true });
+            },
+
+            /**
+             * Toggle the category between belonging to an event and belonging
+             * to a series
+             */
+            toggleSeries: function() {
+                let categorySeriesId = this.model.get("seriesExtId");
+                let categorySeriesCategoryId = this.model.get("seriesCategoryId");
+                let videoSeriesId = "";
+                $.when(annotationTool.getSeriesExtId()).then(function(seriesId){
+                    videoSeriesId = seriesId;
+
+                });
+
+                if (categorySeriesCategoryId) {
+                    // Remove from series
+                    // Display modal. If user accepts, execute toVideoCategory callback
+                    annotationTool.seriesCategoryOperation.start(this, categorySeriesCategoryId);
+
+                } else if (!categorySeriesCategoryId && videoSeriesId) {
+                  // If there's a scale, show an error message instead.
+                  // This doesn't really belong on scaleEditor, but I don't want to create
+                  // a whole new class for a simple error modal.
+                  if (this.model.get("settings").hasScale) {
+                    annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"),
+                    message: i18next.t("scale editor.warning.messageScaleOnSeriesCategory")});
+                  } else {
+                    // Add to series
+                    this.model.set("seriesExtId", videoSeriesId);
+                    this.model.set("seriesCategoryId", this.model.id);
+                  }
+                  this.model.save(null, { wait: true });
+                }
+            },
+
 
             /**
              * Update the size of all the input for the label value
@@ -190,6 +277,11 @@ define(["jquery",
                 this.render();
             },
 
+            onChangeSharedVis: function (event) {
+                this.model.set("access", ACCESS.parse($(event.currentTarget).data("sharedvis")));
+                this.model.save();
+            },
+
             /**
              * Switch the edit modus to the given status.
              * @alias module:views-annotate-category.CategoryView#switchEditModus
@@ -221,7 +313,13 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#editScale
              */
             editScale: function () {
-                annotationTool.scaleEditor.show(this.model, this.model.get("access"));
+                if (this.model.get("seriesCategoryId")) {
+                  // Workaround for scales and series categories
+                  annotationTool.scaleEditor.showWarning({title: i18next.t("scale editor.warning.name"),
+                                                          message: i18next.t("scale editor.warning.message")});
+                } else {
+                  annotationTool.scaleEditor.show(this.model, this.model.get("access"));
+                }
             },
 
             /**
@@ -346,11 +444,16 @@ define(["jquery",
              * @return {CategoryView} this category view
              */
             render: function () {
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+                
                 var modelJSON = this.model.toJSON();
 
                 this.undelegateEvents();
 
                 modelJSON.notEdit = !this.editModus;
+                modelJSON.access = ACCESS.render(this.model.get("access"));
 
                 _.each(this.labelViews, function (view) {
                     view.$el.detach();
@@ -384,6 +487,13 @@ define(["jquery",
 
                 this.delegateEvents(this.events);
 
+
+                this.visibilityButton = this.$el.find(".sharedVisibility")
+                .tooltip({
+                    container: 'body',
+                    html: true
+                });
+
                 return this;
             },
 
@@ -396,6 +506,13 @@ define(["jquery",
                     labelView.remove();
                 });
                 $(window).off(".annotate-category");
+
+                $(document).off("click.myvisibilityTooltip");
+                $("body").off("click", this.tooltipSelector);
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+
                 Backbone.View.prototype.remove.apply(this, arguments);
             }
         });
