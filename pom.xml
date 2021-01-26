@@ -39,7 +39,7 @@
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
-    <opencast.version>[8,9)</opencast.version>
+    <opencast.version>[8,9-SNAPSHOT)</opencast.version>
   </properties>
 
   <modules>
@@ -642,7 +642,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.13.1</version>
         <scope>test</scope>
       </dependency>
 
