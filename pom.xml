@@ -39,7 +39,7 @@
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
-    <opencast.version>[7,9)</opencast.version>
+    <opencast.version>[7,9-SNAPSHOT)</opencast.version>
   </properties>
 
   <modules>
@@ -175,28 +175,6 @@
           <format>html</format>
           <aggregate>true</aggregate>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <version>0.10</version>
-        <configuration>
-          <server>github-pages-opencast-annotation-tool</server>
-          <repositoryOwner>opencast</repositoryOwner>
-          <repositoryName>annotation-tool</repositoryName>
-          <branch>refs/heads/m2</branch>
-          <outputDirectory>${project.build.directory}/m2</outputDirectory>
-          <message>Maven artifacts for ${project.version}</message>
-          <merge>true</merge>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>site</goal>
-            </goals>
-            <phase>deploy</phase>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -664,7 +642,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.13.1</version>
         <scope>test</scope>
       </dependency>
 
@@ -675,18 +653,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <!--
-    Configure a temporary maven repository to deploy to,
-    for the GitHub deployment to get it's artifacts from.
-  -->
-  <distributionManagement>
-    <repository>
-      <id>internal.repo</id>
-      <name>Temporary Staging Repository</name>
-      <url>file://${project.build.directory}/m2</url>
-    </repository>
-  </distributionManagement>
 
   <!-- All non-build related project data below here -->
 

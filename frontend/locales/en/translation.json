@@ -126,7 +126,8 @@
     },
     "processing": {
       "head": "Process",
-      "export": "Export for statistics",
+      "export csv": "Export for statistics",
+      "export xlsx": "Export for statistics (Excel)",
       "print": "Print"
     },
     "logout": "Log out",

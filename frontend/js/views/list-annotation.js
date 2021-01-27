@@ -120,6 +120,16 @@ define(["jquery",
 
                 this.currentState = ListAnnotation.STATES.COLLAPSED;
 
+                // TODO This should actually be done in the list view,
+                //   instead of the individual list item views.
+                //   However, the list view is not designed to be rerendered, currently.
+                //   Alternatively we could listen to the `model`-s category,
+                //   but that's more complicated, because the entire category
+                //   as opposed to just a property of it could change,
+                //   even to something like "no category".
+                //   However, that would probably be better for performance.
+                this.listenTo(annotationTool.video.get("categories"), "change", this.render);
+
                 return this.render();
             },
 
@@ -352,9 +362,16 @@ define(["jquery",
                 modelJSON.duration     = (modelJSON.duration || 0.0);
                 modelJSON.textHeight   = this.$el.find("span.freetext").height();
 
-                if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
-                    category = annotationTool.video.get("categories").get(this.model.get("label").category.id);
+                if (modelJSON.label) {
+                    category = this.model.category();
 
+                    title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
+                    this.$el.css("background-color", this.model.color());
+                } else {
+                    title = modelJSON.text;
+                }
+
+                if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                     // Check if the category is still linked to the video to get the current version
                     if (category) {
                         modelJSON.hasScale = category.get("settings").hasScale;
@@ -379,15 +396,6 @@ define(["jquery",
                 modelJSON.end = modelJSON.start + modelJSON.duration;
 
                 this.$el.html(this.currentState.render(modelJSON));
-
-                if (!_.isUndefined(modelJSON.label) && !_.isNull(modelJSON.label)) {
-                    title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
-                    if (!_.isUndefined(modelJSON.label.category)) {
-                        this.$el.css("background-color", modelJSON.label.category.settings.color);
-                    }
-                } else {
-                    title = modelJSON.text;
-                }
 
                 if (this.getState() == ListAnnotation.STATES.EDIT) {
                     title += " edit-on";
@@ -437,7 +445,8 @@ define(["jquery",
                     this.model,
                     // Toggle selection on single click,
                     // unconditionally select on double click
-                    event.originalEvent.detail > 1
+                    event.originalEvent.detail > 1,
+                    "list"
                 );
             },
 

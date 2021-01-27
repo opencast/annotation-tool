@@ -15,6 +15,10 @@
 
   <name>Opencast Annotation Tool :: Frontend</name>
 
+  <properties>
+    <integration>search</integration>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -47,7 +51,10 @@
             </goals>
 
             <configuration>
-              <arguments>integration</arguments>
+              <arguments>
+                integration
+                --integration=${integration}
+              </arguments>
             </configuration>
           </execution>
         </executions>
