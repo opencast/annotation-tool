@@ -918,7 +918,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!eas().hasResourceAccess(l))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(l, tags);
-            final Label updated = new LabelImpl(id, categoryId, value, abbreviation, trimToNone(description),
+            final Label updated = new LabelImpl(id, categoryId, value, abbreviation, trimToNone(description), l.getSeriesLabelId(),
                     trimToNone(settings), resource);
             if (!l.equals(updated)) {
               eas().updateLabel(updated);
@@ -984,7 +984,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   Response getLabelsResponse(final Option<Long> videoId, final long categoryId, final int limit,
           final int offset, final String date, final String tagsAnd, final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
         final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
@@ -1027,7 +1027,27 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Label l) {
             if (!eas().hasResourceAccess(l))
               return UNAUTHORIZED;
-            return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+
+            // If the label is a copy from a series category, delete it on the series category instead
+            if (l.getSeriesLabelId().isSome()) {
+              return eas().getLabel(l.getSeriesLabelId().get(), false).fold(new Option.Match<Label, Response>() {
+                @Override
+                public Response some(Label l) {
+                  if (!eas().hasResourceAccess(l))
+                    return UNAUTHORIZED;
+
+                  return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+                }
+
+                @Override
+                public Response none() {
+                  return NOT_FOUND;
+                }
+              });
+            // Otherwise, delete normally
+            } else {
+              return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+            }
           }
 
           @Override
