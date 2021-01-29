@@ -904,7 +904,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!hasResourceAccess(l, videoInterface))
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(l, tags);
-            final Label updated = new LabelImpl(id, categoryId, value, abbreviation, trimToNone(description),
+            final Label updated = new LabelImpl(id, categoryId, value, abbreviation, trimToNone(description), l.getSeriesLabelId(),
                     trimToNone(settings), resource);
             if (!l.equals(updated)) {
               eas().updateLabel(updated);
@@ -1018,7 +1018,27 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Label l) {
             if (!hasResourceAccess(l, videoInterface))
               return UNAUTHORIZED;
-            return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+
+            // If the label is a copy from a series category, delete it on the series category instead
+            if (l.getSeriesLabelId().isSome()) {
+              return eas().getLabel(l.getSeriesLabelId().get(), false).fold(new Option.Match<Label, Response>() {
+                @Override
+                public Response some(Label l) {
+                  if (!hasResourceAccess(l, videoInterface))
+                    return UNAUTHORIZED;
+
+                  return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+                }
+
+                @Override
+                public Response none() {
+                  return NOT_FOUND;
+                }
+              });
+            // Otherwise, delete normally
+            } else {
+              return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+            }
           }
 
           @Override

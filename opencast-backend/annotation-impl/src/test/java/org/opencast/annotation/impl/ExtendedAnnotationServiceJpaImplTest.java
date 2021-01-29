@@ -552,7 +552,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateLabel(new LabelImpl(323, 29, "test", "i dont know", none(), none(), resource));
+        eas.updateLabel(new LabelImpl(323, 29, "test", "i dont know", none(), none(), none(), resource));
       }
     });
     // create
@@ -560,7 +560,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertEquals("Good", eas.getLabel(l.getId(), false).get().getValue());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateLabel(new LabelImpl(l.getId(), 11, "test", "i dont know", none(), none(), updatedResource));
+    eas.updateLabel(new LabelImpl(l.getId(), 11, "test", "i dont know", none(), none(), none(), updatedResource));
     assertEquals("test", eas.getLabel(l.getId(), false).get().getValue());
     assertEquals(tags.get(), eas.getLabel(l.getId(), false).get().getTags());
   }

@@ -78,6 +78,9 @@ public class LabelDto extends AbstractResourceDto {
   @Column(name = "description")
   private String description;
 
+  @Column(name = "seriesLabelId")
+  private Long seriesLabelId;
+
   @Column(name = "settings")
   private String settings;
 
@@ -92,18 +95,19 @@ public class LabelDto extends AbstractResourceDto {
   protected Map<String, String> tags = new HashMap<String, String>();
 
   public static LabelDto create(long categoryId, String value, String abbreviation, Option<String> description,
-          Option<String> settings, Resource resource) {
-    LabelDto dto = new LabelDto().update(value, abbreviation, description, settings, resource);
+          Option<Long> seriesLabelId, Option<String> settings, Resource resource) {
+    LabelDto dto = new LabelDto().update(value, abbreviation, description, seriesLabelId, settings, resource);
     dto.categoryId = categoryId;
     return dto;
   }
 
-  public LabelDto update(String value, String abbreviation, Option<String> description, Option<String> settings,
+  public LabelDto update(String value, String abbreviation, Option<String> description, Option<Long> seriesLabelId, Option<String> settings,
           Resource resource) {
     super.update(resource);
     this.value = value;
     this.abbreviation = abbreviation;
     this.description = description.getOrElse((String) null);
+    this.seriesLabelId = seriesLabelId.getOrElse((Long) null);
     this.settings = settings.getOrElse((String) null);
     if (resource.getTags() != null)
       this.tags = resource.getTags();
@@ -111,7 +115,7 @@ public class LabelDto extends AbstractResourceDto {
   }
 
   public Label toLabel() {
-    return new LabelImpl(id, categoryId, value, abbreviation, option(description), option(settings), new ResourceImpl(
+    return new LabelImpl(id, categoryId, value, abbreviation, option(description), option(seriesLabelId), option(settings), new ResourceImpl(
             option(access), option(createdBy), option(updatedBy), option(deletedBy), option(createdAt),
             option(updatedAt), option(deletedAt), tags));
   }

@@ -33,6 +33,9 @@ public interface Label extends Resource {
   /** The label description */
   Option<String> getDescription();
 
+  /** The id of the original label this is a copy from */
+  Option<Long> getSeriesLabelId();
+
   /** The label settings */
   Option<String> getSettings();
 

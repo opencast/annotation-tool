@@ -778,22 +778,29 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       seriesCategory = getCategory(categorySeriesCategoryId, false);
       // And the category is not itself (aka the master series category)
       if (seriesCategory.isSome() && categoryId != (seriesCategory.get().getId())) {
-        final LabelDto dto = LabelDto.create(categorySeriesCategoryId, value, abbreviation, description, settings, resource);
+        final LabelDto dto = LabelDto.create(categorySeriesCategoryId, value, abbreviation, description, none(), settings, resource);
         return tx(Queries.persist(dto)).toLabel();
       }
     }
 
     // Normal Create
-    final LabelDto dto = LabelDto.create(categoryId, value, abbreviation, description, settings, resource);
+    final LabelDto dto = LabelDto.create(categoryId, value, abbreviation, description, none(), settings, resource);
     return tx(Queries.persist(dto)).toLabel();
   }
 
   @Override
   public void updateLabel(final Label l) throws ExtendedAnnotationException {
-    update("Label.findById", l.getId(), new Effect<LabelDto>() {
+    long updateLabelId = l.getId();
+
+    // If the label belongs to a category copy of a series category, update the label on the series category instead
+    if (l.getSeriesLabelId().isSome()) {
+      updateLabelId = l.getSeriesLabelId().get();
+    }
+
+    update("Label.findById", updateLabelId, new Effect<LabelDto>() {
       @Override
       protected void run(LabelDto dto) {
-        dto.update(l.getValue(), l.getAbbreviation(), l.getDescription(), l.getSettings(), l);
+        dto.update(l.getValue(), l.getAbbreviation(), l.getDescription(), l.getSeriesLabelId(), l.getSettings(), l);
       }
     });
   }
@@ -844,7 +851,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         List<Label> newLabels = new ArrayList<>();
         for (Label seriesLabel : seriesCategoryLabels) {
           final LabelDto dto = LabelDto.create(categoryId, seriesLabel.getValue(), seriesLabel.getAbbreviation(), seriesLabel.getDescription(),
-                  seriesLabel.getSettings(),
+                  some(seriesLabel.getId()), seriesLabel.getSettings(),
                   new ResourceImpl(option(seriesLabel.getAccess()),
                           seriesLabel.getCreatedBy(), seriesLabel.getUpdatedBy(), seriesLabel.getDeletedBy(),
                           seriesLabel.getCreatedAt(), seriesLabel.getUpdatedAt(), seriesLabel.getDeletedAt(),
@@ -857,7 +864,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         // This will lose changes made on non-master category labels if the master then looses their series.
         // But that is quite a rare scenario (hopefully) and I'm running out of time.
         //labels = newLabels;
-        labels = seriesCategoryLabels;
+        labels = newLabels;
       }
     }
 
@@ -878,7 +885,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public boolean deleteLabel(Label label) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(label);
     final Label updated = new LabelImpl(label.getId(), label.getCategoryId(), label.getValue(),
-            label.getAbbreviation(), label.getDescription(), label.getSettings(), deleteResource);
+            label.getAbbreviation(), label.getDescription(), none(), label.getSettings(), deleteResource);
     updateLabel(updated);
     return true;
   }

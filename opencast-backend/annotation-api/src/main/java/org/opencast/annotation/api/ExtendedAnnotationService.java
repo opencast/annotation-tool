@@ -442,7 +442,7 @@ public interface ExtendedAnnotationService {
    *          the scale value
    * @param order
    *          the scale order
-   * @param sclaeId
+   * @param scaleId
    *          the scaleId
    * @param resource
    *          the resource
