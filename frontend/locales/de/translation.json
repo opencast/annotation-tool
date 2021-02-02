@@ -231,9 +231,12 @@
     "get users saved locally": "Lokal gepseicherte Benutzer werden ermittelt",
     "initializing the player": "Player wird initialisiert?",
     "loading": "Wird geladen",
-    "loading video": "Video wird geladen",
     "ready": "Fertig.",
-    "starting": "Programm wird gestartet."
+    "starting": "Programm wird gestartet.",
+    "video": {
+      "loading": "Video wird geladen",
+      "failed": "Video konnte nicht geladen werden"
+    }
   },
   "timeline": {
     "change visibility": {
