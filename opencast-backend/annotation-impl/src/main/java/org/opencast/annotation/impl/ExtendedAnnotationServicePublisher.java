@@ -23,6 +23,7 @@ import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl
 import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.util.data.functions.Functions;
 import org.opencastproject.util.osgi.SimpleServicePublisher;
 import org.opencastproject.util.persistence.PersistenceEnv;
 
@@ -92,6 +93,7 @@ public class ExtendedAnnotationServicePublisher extends SimpleServicePublisher {
     final PersistenceEnv penv = persistenceEnvironment(emf);
     final ExtendedAnnotationServiceJpaImpl eas = new ExtendedAnnotationServiceJpaImpl(penv, securityService,
             authorizationService, searchService);
-    return ServiceReg.reg(registerService(cc, eas, ExtendedAnnotationService.class, "Extended Annotation Service"));
+    return ServiceReg.reg(registerService(cc, eas, ExtendedAnnotationService.class, "Extended Annotation Service"),
+            Functions.noop);
   }
 }
