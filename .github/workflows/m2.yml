@@ -34,8 +34,8 @@ jobs:
         run: echo "::set-output name=date::$(date +%Y.%m%d.%H%M%S)"
       - name: Build the artifacts
         run: mvn clean deploy
-          -Dopencast.version="[8,9-SNAPSHOT)"
           --batch-mode
+          -DskipTests
           -DaltDeploymentRepository=m2::default::file:m2
           -Drevision=${{ steps.date.outputs.date }}-${{ github.sha }}
 
