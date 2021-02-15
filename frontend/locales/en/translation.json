@@ -261,9 +261,12 @@
     "get users saved locally": "Get users saved locally.",
     "initializing the player": "Initializing the player.",
     "loading": "Loading",
-    "loading video": "Start loading video.",
     "ready": "Ready.",
-    "starting": "Starting the tool."
+    "starting": "Starting the tool.",
+    "video": {
+      "loading": "Starting to load the video",
+      "failed": "Failed to load the video"
+    }
   },
   "timeline": {
     "track modals": {

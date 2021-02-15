@@ -23,9 +23,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.opencast.annotation.Annotations.scalingAnnotation;
 import static org.opencast.annotation.Annotations.textAnnotation;
-import static org.opencastproject.test.rest.RestServiceTestEnv.RegexMatcher.regex;
+import static org.opencast.annotation.endpoint.ExtendedAnnotationsRestServiceTest.RegexMatcher.regex;
 import static org.opencastproject.test.rest.RestServiceTestEnv.testEnvForClasses;
-import static org.opencastproject.util.data.Collections.last;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
 
@@ -36,6 +35,7 @@ import org.opencast.annotation.impl.ResourceImpl;
 
 import org.opencastproject.test.rest.RestServiceTestEnv;
 
+import org.hamcrest.Description;
 import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,6 +44,7 @@ import org.junit.Test;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.Response;
 
@@ -861,7 +862,30 @@ public class ExtendedAnnotationsRestServiceTest {
     return rt.host(path);
   }
 
-  public static String extractLocationId(com.jayway.restassured.response.Response r) {
-    return last(r.header(LOCATION).split("/")).get();
+  private static String extractLocationId(com.jayway.restassured.response.Response r) {
+    String[] segments = r.header(LOCATION).split("/");
+    return segments[segments.length - 1];
+  }
+
+  static class RegexMatcher extends org.hamcrest.BaseMatcher<String> {
+    private final Pattern p;
+
+    RegexMatcher(String pattern) {
+      p = Pattern.compile(pattern);
+    }
+
+    static RegexMatcher regex(String pattern) {
+      return new RegexMatcher(pattern);
+    }
+
+    @Override
+    public boolean matches(Object item) {
+      return item != null && p.matcher(item.toString()).matches();
+    }
+
+    @Override
+    public void describeTo(Description description) {
+      description.appendText("regex [" + p.pattern() + "]");
+    }
   }
 }

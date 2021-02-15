@@ -479,7 +479,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Resource resource = eas.createResource(tags);
 
     final ScaleValue s = eas.createScaleValue(23, "test", 1.5D, 2, resource);
-    Option<ScaleValue> scaleValue = eas.getScaleValue(s.getId());
+    Option<ScaleValue> scaleValue = eas.getScaleValue(s.getId(), false);
 
     assertTrue(scaleValue.isSome());
     assertEquals(tags.get(), scaleValue.get().getTags());
@@ -503,14 +503,14 @@ public class ExtendedAnnotationServiceJpaImplTest {
     });
     // create
     final ScaleValue s = eas.createScaleValue(23, "test", 1.5D, 2, resource);
-    assertEquals("test", eas.getScaleValue(s.getId()).get().getName());
+    assertEquals("test", eas.getScaleValue(s.getId(), false).get().getName());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
     eas.updateScaleValue(new ScaleValueImpl(s.getId(), 33, "bad", 2D, 2, updatedResource));
-    assertEquals("bad", eas.getScaleValue(s.getId()).get().getName());
-    assertEquals(2D, eas.getScaleValue(s.getId()).get().getValue(), 0D);
-    assertEquals(2, eas.getScaleValue(s.getId()).get().getOrder());
-    assertEquals(tags.get(), eas.getScaleValue(s.getId()).get().getTags());
+    assertEquals("bad", eas.getScaleValue(s.getId(), false).get().getName());
+    assertEquals(2D, eas.getScaleValue(s.getId(), false).get().getValue(), 0D);
+    assertEquals(2, eas.getScaleValue(s.getId(), false).get().getOrder());
+    assertEquals(tags.get(), eas.getScaleValue(s.getId(), false).get().getTags());
   }
 
   @Test
@@ -519,10 +519,10 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Resource resource = eas.createResource();
     // create
     final ScaleValue s = eas.createScaleValue(23, "test", 1.5D, 2, resource);
-    assertTrue(eas.getScaleValue(s.getId()).isSome());
+    assertTrue(eas.getScaleValue(s.getId(), false).isSome());
     // delete
     eas.deleteScaleValue(s);
-    assertTrue(eas.getScaleValue(s.getId()).isNone());
+    assertTrue(eas.getScaleValue(s.getId(), false).isNone());
   }
 
   @Test
