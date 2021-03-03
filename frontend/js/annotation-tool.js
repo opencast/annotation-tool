@@ -731,9 +731,16 @@ define(["jquery",
 
                 bookData.forEach(function (arr) {
                     Object.keys(arr).forEach(function (key) {
-                        var value = arr[key] === null ? '' : arr[key];
+                        let value = arr[key] === null ? '' : arr[key];
 
-                        objectMaxLength[key] = Math.max(objectMaxLength[key], value.length);
+                        let len = 0;
+                        switch(typeof value) {
+                          case "number": len = 10; break;
+                          case "string": len = value.length; break;
+                          case "object": if(value instanceof Date) len = 10; break;
+                        }
+
+                        objectMaxLength[key] = Math.max(objectMaxLength[key] ? objectMaxLength[key] : 0, len);
                     });
                 });
 
