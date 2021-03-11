@@ -287,6 +287,11 @@ define(["jquery",
             removeOne: function (delLabel) {
                 _.find(this.labelViews, function (labelView, index) {
                     if (delLabel === labelView.model) {
+                        // this event fires when the "deleted_at" attribute of the label model changes
+                        // ignore this event when the attribute is just being initialized
+                        if(labelView.model.changed.deleted_at == null) {
+                            return false;
+                        }
                         labelView.remove();
                         this.labelViews.splice(index, 1);
                         return true;
