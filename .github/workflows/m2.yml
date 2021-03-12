@@ -5,6 +5,11 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
+      - name: Set up a compatible Java version
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
       - name: Check out the code
         uses: actions/checkout@v2
 
