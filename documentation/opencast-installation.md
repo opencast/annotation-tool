@@ -186,5 +186,3 @@ To use the Annotation Tool you need to open it with the event-ID:
 
 For a user to access a video using the annotation tool, they (or any role they inhabit) have to have at least one
 of these ACL actions `annotate` or `annotate-admin` enabled on the video in question.
-
-Also note that the annotation tool currently does not work with the fast testing workflow, that Opencast provides.
