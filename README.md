@@ -58,16 +58,16 @@ A general documentation including the REST endpoints, the architecture etc. [can
 ## Participants
 
 ### Initial Development
-* [Entwine](www.entwinemedia.com)
-* [SWITCH](switch.ch)
-* [Claudio Beffa](beffa.ch)
+* Entwine (jetzt [Extron](https://www.extron.com/))
+* [SWITCH](https://www.switch.ch/)
+* [Claudio Beffa](https://www.beffa.ch/)
 
 ### Current Development of this branch
-* [virtUOS, Universität Osnabrück](http://www.virtuos.uni-osnabrueck.de)
-* [ELAN e.V.](http://elan-ev.de)
+* [virtUOS, Universität Osnabrück](https://www.virtuos.uni-osnabrueck.de)
+* [ELAN e.V.](https://elan-ev.de)
 
 ### Contact
-* Rüdiger Rolf, [rrolf@uni-osnabrueck.de](mailto://rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
+* Rüdiger Rolf, [rrolf@uni-osnabrueck.de](mailto:rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
 
 ## License
-[ECL 2.0](http://www.osedu.org/licenses/ECL-2.0)
+[ECL 2.0](https://opensource.org/licenses/ECL-2.0)
