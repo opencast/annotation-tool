@@ -1,8 +1,5 @@
 # Documentation
 
-## [News](News.md)
-The latest news about the annotations tool.
-
 ## [Installation](opencast-installation.md)
 The instruction on how to install the Annotation tool in Opencast 2.3+ [can be found here](documentation/opencast-installation.md)
 

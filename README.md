@@ -55,9 +55,6 @@ _This is NOT needed to install the Annotation Tool in Opencast!_
 ## [Documentation](documentation/Home.md)
 A general documentation including the REST endpoints, the architecture etc. [can be found here](documentation/Home.md).
 
-## [News](documentation/News.md)
-You can find the latest news about the annotation tool on [this page](documentation/News.md).
-
 ## Participants
 
 ### Initial Development
