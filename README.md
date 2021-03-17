@@ -22,16 +22,13 @@ contain a working version of the software
 at any given point in time.
 Every push to `master` thus constitutes a release,
 versioned by an up-to-the-second timestamp
-and the current git commit hash.
+and the appropriate git commit hash.
 You can get to the source code of any particular such release
-by checking out the corresponding tag in git,
-or by downloading the corresponding tarball
-from GitHubs [releases section](https://github.com/opencast/annotation-tool/releases).
+by checking out the corresponding commit in git.
 
-In addition to the code,
-our TravisCI setup publishes the resulting Maven artifacts
-to our [GitHub hosted repository](https://github.com/opencast/annotation-tool/raw/m2)
-on every release.
+Our CI setup builds each such push
+and publishes the resulting Maven artifacts
+to our [GitHub hosted repository](https://github.com/opencast/annotation-tool/raw/m2).
 
 ### Supported Opencast Versions
 
