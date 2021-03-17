@@ -58,7 +58,7 @@ A general documentation including the REST endpoints, the architecture etc. [can
 ## Participants
 
 ### Initial Development
-* Entwine (jetzt [Extron](https://www.extron.com/))
+* Entwine (now [Extron](https://www.extron.com/))
 * [SWITCH](https://www.switch.ch/)
 * [Claudio Beffa](https://www.beffa.ch/)
 
