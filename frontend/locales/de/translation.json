@@ -42,7 +42,10 @@
       "title": "„Shift + Return“ drücken, um eine neue Zeile einzufügen."
     },
     "no selected track": "Keine Spur ausgewählt",
-    "pause while editing": "Video während des Schreibens anhalten",
+    "pause": {
+      "freetext": "Video während des Schreibens von Freitextannotationen anhalten",
+      "structured": "Video nach dem Setzen einer strukturierten Annotation anhalten"
+    },
     "select track prompt": "Wählen Sie eine Spur um mit dem annotieren zu beginnen",
     "upload categories": "Kategorien hochladen",
     "hide category": "Kategorie verstecken",

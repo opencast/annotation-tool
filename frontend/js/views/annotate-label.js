@@ -193,7 +193,7 @@ define(["jquery",
                     return;
                 }
 
-                annotationTool.createAnnotation({
+                createAnnotation({
                     text: this.model.get("value"),
                     label: this.model
                 });
@@ -348,6 +348,15 @@ define(["jquery",
             }
 
         });
+
+        function createAnnotation(params) {
+            if (annotationTool.views.main.views.annotate.$el.find("#pause-video-structured").prop("checked")) {
+                annotationTool.playerAdapter.pause();
+            }
+
+            return annotationTool.createAnnotation(params);
+        }
+
         return LabelView;
     }
 );

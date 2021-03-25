@@ -42,7 +42,10 @@
       "title": "Use “ shift + return” keys to create a new line."
     },
     "no selected track": "No tracak selected",
-    "pause while editing": "Pause video during writing",
+    "pause": {
+      "freetext": "Pause video while editing free text annotations",
+      "structured": "Pause video after making a structured annotation"
+    },
     "select track prompt": "Select a track to start annotating",
     "upload categories": "Upload categories",
     "hide category": "Hide category",
