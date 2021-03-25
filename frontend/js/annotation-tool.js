@@ -733,7 +733,11 @@ define(["jquery",
                     Object.keys(arr).forEach(function (key) {
                         var value = arr[key] === null ? '' : arr[key];
 
-                        objectMaxLength[key] = Math.max(objectMaxLength[key], value.length);
+                        // Arbitrarily increase len by one to avoid cases where just len would
+                        // lead to too small columns
+                        var len = value.toString().length + 1
+
+                        objectMaxLength[key] = Math.max(objectMaxLength[key] || 0, len);
                     });
                 });
 
