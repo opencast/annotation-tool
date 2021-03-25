@@ -262,7 +262,7 @@ define(["jquery",
              * @alias module:views-annotate.Annotate#onFocusIn
              */
             onFocusIn: function () {
-                if (!this.$el.find("#pause-video").attr("checked") || (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
+                if (!this.$el.find("#pause-video").attr("checked") || this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                     return;
                 }
 
@@ -318,11 +318,11 @@ define(["jquery",
              */
             addTab: function (categories, attr) {
                 var params = {
-                        id        : attr.id,
-                        name      : attr.name,
+                        id: attr.id,
+                        name: attr.name,
                         categories: categories,
-                        filter    : attr.filter,
-                        roles     : attr.roles,
+                        filter: attr.filter,
+                        roles: attr.roles,
                         attributes: attr.attributes
                     },
                     newButton = this.tabsButtonTemplate(params),
