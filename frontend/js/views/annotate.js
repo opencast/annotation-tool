@@ -262,7 +262,7 @@ define(["jquery",
              * @alias module:views-annotate.Annotate#onFocusIn
              */
             onFocusIn: function () {
-                if (!this.$el.find("#pause-video").attr("checked") || this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
+                if (!this.$el.find("#pause-video").prop("checked") || this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                     return;
                 }
 
