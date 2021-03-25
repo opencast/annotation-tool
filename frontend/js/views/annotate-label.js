@@ -172,14 +172,13 @@ define(["jquery",
 
                 var id = event.target.getAttribute("value"),
                     scalevalue = this.scaleValues.get(id),
-                    annotation,
                     params = {
                         text: this.model.get("value"),
                         label: this.model,
                         scalevalue: scalevalue.toJSON()
                     };
 
-                annotation = annotationTool.createAnnotation(params);
+                annotationTool.createAnnotation(params);
             },
 
             /**
@@ -194,7 +193,7 @@ define(["jquery",
                     return;
                 }
 
-                var annotation = annotationTool.createAnnotation({
+                annotationTool.createAnnotation({
                     text: this.model.get("value"),
                     label: this.model
                 });
