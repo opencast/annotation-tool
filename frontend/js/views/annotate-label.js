@@ -178,7 +178,7 @@ define(["jquery",
                         scalevalue: scalevalue.toJSON()
                     };
 
-                annotationTool.createAnnotation(params);
+                createAnnotation(params);
             },
 
             /**
