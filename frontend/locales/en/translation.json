@@ -272,7 +272,8 @@
       "tooltip": "Change visibility",
       "to public": "Make public",
       "to private": "Make private",
-      "to shared with admin": "Share with admins"
+      "to shared with admin": "Share with admins",
+      "to shared with everyone": "Show all users"
     },
     "delete track": "Delete track",
     "name required": "Name is required!",

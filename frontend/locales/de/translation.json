@@ -243,7 +243,8 @@
       "tooltip": "Sichtbarkeit ändern",
       "to public": "Öffentlich machen",
       "to private": "Privat machen",
-      "to shared with admin": "Mit Administratoren teilen"
+      "to shared with admin": "Mit Administratoren teilen",
+      "to shared with everyone": "Allen Benutzern anzeigen"
     },
     "track modals": {
       "header_add": "Neue Spur hinzufügen",

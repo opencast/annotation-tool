@@ -60,6 +60,14 @@
                                             title='{{t "timeline.change visibility.to shared with admin"}}'
                                         ></i>
                                     </button>
+                                    {{#if (isAdmin)}}
+                                        <button type='button' data-access='shared-with-everyone'>
+                                            <i
+                                                class='icon-white icon-shared-with-everyone'
+                                                title='{{t "timeline.change visibility.to shared with everyone"}}'
+                                            ></i>
+                                        </button>
+                                    {{/if}}
                                 </div>
                             "
                             class="button"
