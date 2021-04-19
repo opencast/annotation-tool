@@ -201,7 +201,7 @@ var Resource = Backbone.Model.extend({
      * @alias module:models-resource.Resource#isEditable
      */
     isEditable: function () {
-        return this.get("isMine") || (
+        return this.isMine() || (
             this.administratorCanEditPublicInstances
                 // TODO We should check this as well, but it does not work with labels so well ...
                 //   so for now we assume that this is only ever checked when the resource is public

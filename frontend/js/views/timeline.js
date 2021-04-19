@@ -402,7 +402,7 @@ define([
             function clickedOnOneOfMyTracks(properties) {
                 var track = this.tracks.get(properties.group);
                 if (!track) return false;
-                if (!track.get("isMine")) return false;
+                if (!track.isMine()) return false;
                 if (
                     this.groupHeaders[properties.group].$el
                         .find("button")

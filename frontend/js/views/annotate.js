@@ -44,7 +44,7 @@ define(["jquery",
                 id: "all",
                 name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
-                    return category.isPublic() || category.get("isMine");
+                    return category.isPublic() || category.isMine();
                 },
                 roles: []
             },
@@ -61,7 +61,7 @@ define(["jquery",
                 id: "mine",
                 name: i18next.t("annotate.categories.mine"),
                 filter: function (category) {
-                    return category.get("isMine") && !category.isPublic();
+                    return category.isMine() && !category.isPublic();
                 },
                 roles: [ROLES.USER, ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PRIVATE }
