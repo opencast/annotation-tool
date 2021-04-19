@@ -185,6 +185,14 @@ var Resource = Backbone.Model.extend({
     },
 
     /**
+     * Check whether this resource is public
+     * @alias module:models-resource.Resource#isPublic
+     */
+    isPublic: function () {
+        return this.get("access") === ACCESS.PUBLIC;
+    },
+
+    /**
      * Decide whether this resource can be deleted by the current user.
      * @see administratorCanEditPublicInstances
      * @alias module:models-resource.Resource#isEditable
