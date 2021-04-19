@@ -917,6 +917,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     Option<Long> currentUserId = getUserId(opencastUser);
 
     return resource.getAccess() == Resource.PUBLIC
+        || resource.getAccess() == Resource.SHARED_WITH_EVERYONE
         || resource.getCreatedBy().equals(currentUserId)
         || resource.getAccess() == Resource.SHARED_WITH_ADMIN && isAnnotateAdmin(opencastUser, getResourceVideo(resource));
   }
