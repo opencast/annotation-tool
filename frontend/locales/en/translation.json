@@ -259,7 +259,8 @@
         "label": "Access",
         "public": "Public",
         "private": "Private",
-        "shared with admin": "Shared with admin"
+        "shared with admin": "Shared with admin",
+        "shared with everyone": "Show all users"
       },
       "name": {
         "label": "Name",

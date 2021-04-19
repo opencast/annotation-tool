@@ -262,7 +262,8 @@
         "label": "Zugriff",
         "public": "Öffentlich",
         "private": "Privat",
-        "shared with admin": "Mit Administrator geteilt"
+        "shared with admin": "Mit Administrator geteilt",
+        "shared with everyone": "Allen Benutzern anzeigen"
       },
       "name": {
         "label": "Name",

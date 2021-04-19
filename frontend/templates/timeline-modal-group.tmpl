@@ -36,6 +36,12 @@
 						<input type="radio" name="access-radio" value="shared-with-admin">
 						{{t "timeline.track modals.access.shared with admin" context=action}}
 					</label>
+					{{#if (isAdmin)}}
+						<label class="radio">
+							<input type="radio" name="access-radio" value="shared-with-everyone">
+							{{t "timeline.track modals.access.shared with everyone" context=action}}
+						</label>
+					{{/if}}
 				</div>
 			</div>
 			<div style="float:right"><b>* {{t "required fields"}}</b></div>
