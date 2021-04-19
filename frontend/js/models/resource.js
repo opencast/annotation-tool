@@ -185,6 +185,15 @@ var Resource = Backbone.Model.extend({
     },
 
     /**
+     * Check whether this resource belongs to the current user
+     * @alias module:models-resource.Resource#isMine
+     */
+    isMine: function () {
+        var creator = this.get("created_by");
+        return !creator || (annotationTool.user && creator === annotationTool.user.id);
+    },
+
+    /**
      * Decide whether this resource can be deleted by the current user.
      * @see administratorCanEditPublicInstances
      * @alias module:models-resource.Resource#isEditable
