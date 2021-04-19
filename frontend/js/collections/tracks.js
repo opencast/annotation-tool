@@ -20,10 +20,9 @@
  */
 define(["underscore",
         "models/track",
-        "backbone",
-        "access"],
+        "backbone"],
 
-    function (_, Track, Backbone, ACCESS) {
+    function (_, Track, Backbone) {
 
         "use strict";
 
@@ -66,24 +65,12 @@ define(["underscore",
              */
             parse: function (data) {
                 if (data.tracks && _.isArray(data.tracks)) {
-                    data = data.tracks;
+                    return data.tracks;
+                } else if (_.isArray(data)) {
+                    return data;
+                } else {
+                    return null;
                 }
-                return _.filter(data, function (track) {
-                    if (track.access === ACCESS.PUBLIC) {
-                        return true;
-                    }
-                    if (track.created_by === annotationTool.user.id) {
-                        return true;
-                    }
-                    if ((
-                        track.access === ACCESS.SHARED_WITH_ADMIN
-                    ) && (
-                        annotationTool.user.isAdmin()
-                    )) {
-                        return true;
-                    }
-                    return false;
-                });
             },
 
             /**
