@@ -173,6 +173,8 @@ var Resource = Backbone.Model.extend({
             if (json.settings && _.isObject(json.settings)) json.settings = JSON.stringify(json.settings);
         }
 
+        json.isMine = this.isMine();
+
         return json;
     },
 
