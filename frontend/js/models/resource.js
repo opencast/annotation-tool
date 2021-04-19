@@ -18,7 +18,7 @@
  * A module representing a generic annotation tool resource.
  * @module models-resource
  */
-define(["underscore", "backbone", "util", "access", "roles"], function (_, Backbone, util, ACCESS, ROLES) {
+define(["underscore", "backbone", "util", "access"], function (_, Backbone, util, ACCESS) {
 "use strict";
 
 /**
@@ -196,7 +196,7 @@ var Resource = Backbone.Model.extend({
                 //   so for now we assume that this is only ever checked when the resource is public
                 //   in the right sense, i.e. it can be seen at all.
                 //&& this.isPublic()
-                && annotationTool.user.get("role") === ROLES.ADMINISTRATOR
+                && annotationTool.user.isAdmin()
         );
     },
 
