@@ -22,6 +22,7 @@ define(["jquery",
         "underscore",
         "backbone",
         "util",
+        "access",
         "i18next",
         "collections/videos",
         "views/main",
@@ -34,7 +35,7 @@ define(["jquery",
         "filesaver",
         "handlebarsHelpers"],
 
-    function ($, _, Backbone, util, i18next, Videos, MainView, alerts, DeleteModalTmpl, PlayerAdapter, ColorsManager, XLSX, PapaParse) {
+    function ($, _, Backbone, util, ACCESS, i18next, Videos, MainView, alerts, DeleteModalTmpl, PlayerAdapter, ColorsManager, XLSX, PapaParse) {
 
         "use strict";
 
@@ -647,7 +648,10 @@ define(["jquery",
                             });
                         } else {
                             tracks.showTracks(
-                                tracks.filter(util.caller("isMine"))
+                                tracks.filter(function (track) {
+                                    return track.isMine()
+                                        || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                                })
                             );
                             concludeInitialization();
                         }
