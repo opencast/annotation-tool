@@ -59,14 +59,6 @@ var Resource = Backbone.Model.extend({
             }
         }
 
-        function updateIsPublic(access) {
-            this.set("isPublic", access === ACCESS.PUBLIC);
-        }
-        if (attr.access) updateIsPublic.call(this, attr.access);
-        this.on("change:access", function (self, access) {
-            updateIsPublic.call(self, access);
-        });
-
         this.set("isMine", !attr.created_by || (annotationTool.user && attr.created_by === annotationTool.user.id));
 
         if (attr.tags) {

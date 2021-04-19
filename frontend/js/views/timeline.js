@@ -94,7 +94,6 @@ define([
 
     var PLACEHOLDER_TRACK = {
         isMine: true,
-        isPublic: true,
         id: "placeholder",
         name: i18next.t("timeline.no track available.short"),
         description: i18next.t("timeline.no track available.long"),
