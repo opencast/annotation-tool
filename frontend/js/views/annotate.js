@@ -44,7 +44,7 @@ define(["jquery",
                 id: "all",
                 name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
-                    return category.get("isPublic") || category.get("isMine");
+                    return category.isPublic() || category.get("isMine");
                 },
                 roles: []
             },
@@ -52,7 +52,7 @@ define(["jquery",
                 id: "public",
                 name: i18next.t("annotate.categories.public"),
                 filter: function (category) {
-                    return category.get("isPublic");
+                    return category.isPublic();
                 },
                 roles: [ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PUBLIC }
@@ -61,7 +61,7 @@ define(["jquery",
                 id: "mine",
                 name: i18next.t("annotate.categories.mine"),
                 filter: function (category) {
-                    return category.get("isMine") && !category.get("isPublic");
+                    return category.get("isMine") && !category.isPublic();
                 },
                 roles: [ROLES.USER, ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PRIVATE }

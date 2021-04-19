@@ -203,7 +203,7 @@ var Resource = Backbone.Model.extend({
                 // TODO We should check this as well, but it does not work with labels so well ...
                 //   so for now we assume that this is only ever checked when the resource is public
                 //   in the right sense, i.e. it can be seen at all.
-                //&& this.get("isPublic")
+                //&& this.isPublic()
                 && annotationTool.user.get("role") === ROLES.ADMINISTRATOR
         );
     },
