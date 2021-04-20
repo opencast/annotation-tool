@@ -220,6 +220,7 @@ define(["jquery",
                 annotationTool.createAnnotation({ text: value });
 
                 if (this.continueVideo) {
+                    this.continueVideo = false;
                     this.playerAdapter.play();
                 }
 
@@ -265,11 +266,6 @@ define(["jquery",
 
                 this.continueVideo = true;
                 this.playerAdapter.pause();
-
-                // If the video is moved, or played, we do no continue the video after insertion
-                $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
-                    this.continueVideo = false;
-                });
             },
 
             /**
