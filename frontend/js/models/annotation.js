@@ -91,12 +91,6 @@ define(["underscore",
                         delete attr.scaleValue;
                     }
 
-                    if (annotationTool.user.get("id") === attr.created_by) {
-                        attr.isMine = true;
-                    } else {
-                        attr.isMine = false;
-                    }
-
                     if (attr.label) {
                         if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
                             attr.label.category.settings = tempSettings;

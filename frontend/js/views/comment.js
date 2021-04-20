@@ -201,7 +201,7 @@ define(["underscore",
                     creator: this.model.get("created_by_nickname"),
                     creationdate: this.model.get("created_at"),
                     text: this.model.get("text"),
-                    canEdit: this.model.get("isMine"),
+                    canEdit: this.model.isMine(),
                     numberOfReplies: this.model.replies.countCommentsAndReplies(),
                     isEditEnable: this.isEditEnable
                 },

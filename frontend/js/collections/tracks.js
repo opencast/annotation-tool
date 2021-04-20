@@ -121,7 +121,7 @@ define(["underscore",
 
                 if (!selectedTrack || !selectedTrack.get("visible")) {
                     selectedTrack = _.find(visibleTracks, function (track) {
-                        return track.get("isMine");
+                        return track.isMine();
                     }, this);
                     annotationTool.selectTrack(selectedTrack);
                 }
