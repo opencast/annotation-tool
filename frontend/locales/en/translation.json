@@ -43,8 +43,9 @@
     },
     "no selected track": "No tracak selected",
     "pause": {
-      "freetext": "Pause video while editing free text annotations",
-      "structured": "Pause video after making a structured annotation"
+      "legend": "Pause video:",
+      "freetext": "When writing a free text annotation",
+      "structured": "When placing a structured annotation"
     },
     "select track prompt": "Select a track to start annotating",
     "upload categories": "Upload categories",

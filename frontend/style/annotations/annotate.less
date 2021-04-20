@@ -34,8 +34,20 @@ i.check {
 		flex-direction: column;
 	}
 
-	.insert-fields, .stop-fields {
+	.insert-fields {
 		display: inline-block;
+	}
+
+	.stop-fields {
+		padding: 8px;
+
+		legend {
+			border: none;
+			margin: 0;
+			margin-bottom: -16px;
+			font-size: 14px;
+			font-weight: bold;
+		}
 	}
 
 	#input-container {
@@ -86,7 +98,7 @@ i.check {
 		padding: 0;
 	}
 
-	label, span, p {
+	label, span, p, legend {
 		color: @white;
 		white-space: nowrap;
 	}

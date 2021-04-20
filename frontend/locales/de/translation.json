@@ -43,8 +43,9 @@
     },
     "no selected track": "Keine Spur ausgewählt",
     "pause": {
-      "freetext": "Video während des Schreibens von Freitextannotationen anhalten",
-      "structured": "Video nach dem Setzen einer strukturierten Annotation anhalten"
+      "legend": "Video anhalten:",
+      "freetext": "Während des Schreibens einer Freitextannotation",
+      "structured": "Beim Setzen einer strukturierten Annotation"
     },
     "select track prompt": "Wählen Sie eine Spur um mit dem annotieren zu beginnen",
     "upload categories": "Kategorien hochladen",
