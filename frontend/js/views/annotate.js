@@ -85,7 +85,6 @@ define(["jquery",
                 "keyup #new-annotation": "keydownOnAnnotate",
                 "click #insert": "insert",
                 "keydown #new-annotation": "onFocusIn",
-                "focusout #new-annotation": "onFocusOut",
                 "click #label-tabs-buttons a": "showTab",
                 "click #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations",
@@ -140,11 +139,9 @@ define(["jquery",
                 _.bindAll(this,
                             "insert",
                             "onFocusIn",
-                            "onFocusOut",
                             "changeTrack",
                             "addTab",
                             "onSwitchEditModus",
-                            "checkToContinueVideo",
                             "switchEditModus",
                             "keydownOnAnnotate",
                             "toggleFreeTextAnnotationPane",
@@ -273,25 +270,6 @@ define(["jquery",
                 $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
                     this.continueVideo = false;
                 });
-            },
-
-            /**
-             * Listener for when we leave the annotation input
-             * @alias module:views-annotate.Annotate#onFocusOut
-             */
-            onFocusOut: function () {
-                setTimeout(this.checkToContinueVideo, 200);
-            },
-
-            /**
-             * Check if the video must continue, and if yes, continue to play it
-             * @alias module:views-annotate.Annotate#checkToContinueVideo
-             */
-            checkToContinueVideo: function () {
-                if ((this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
-                    this.continueVideo = false;
-                    this.playerAdapter.play();
-                }
             },
 
             /**
