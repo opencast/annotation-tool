@@ -350,7 +350,12 @@ define(["jquery",
         });
 
         function createAnnotation(params) {
-            if (annotationTool.views.main.views.annotate.$el.find("#pause-video-structured").prop("checked")) {
+            var annotateView = annotationTool.views.main.views.annotate;
+            if (annotateView.$el.find("#pause-video-structured").prop("checked")) {
+                // We don't want the video to continue playing
+                // when we leave the textarea to make a structured annotation
+                // with both "stopping options" enabled.
+                annotateView.continueVideo = false;
                 annotationTool.playerAdapter.pause();
             }
 
