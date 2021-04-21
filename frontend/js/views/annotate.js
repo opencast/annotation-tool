@@ -225,9 +225,6 @@ define(["jquery",
                 }
 
                 this.input.val("");
-                setTimeout(function () {
-                    $("#new-annotation").focus();
-                }, 500);
             },
 
             /**
