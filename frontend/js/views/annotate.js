@@ -138,7 +138,6 @@ define(["jquery",
                 // Set the current context for all these functions
                 _.bindAll(this,
                             "insert",
-                            "onFocusIn",
                             "changeTrack",
                             "addTab",
                             "onSwitchEditModus",
