@@ -84,7 +84,8 @@ define(["jquery",
             events: {
                 "keyup #new-annotation": "keydownOnAnnotate",
                 "click #insert": "insert",
-                "focusin #new-annotation": "onFocusIn",
+                "focusin #new-annotation": "maybePause",
+                "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
                 "click #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations",
@@ -253,9 +254,9 @@ define(["jquery",
             /**
              * Listener for when a user start to write a new annotation,
              * manage if the video has to be or not paused.
-             * @alias module:views-annotate.Annotate#onFocusIn
+             * @alias module:views-annotate.Annotate#maybePause
              */
-            onFocusIn: function () {
+            maybePause: function () {
                 if (!this.$el.find("#pause-video-freetext").prop("checked") || this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                     return;
                 }
