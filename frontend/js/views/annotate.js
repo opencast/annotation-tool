@@ -41,29 +41,29 @@ define(["jquery",
          */
         var DEFAULT_TABS = {
             ALL: {
-                id    : "all",
-                name  : i18next.t("annotate.categories.all"),
+                id: "all",
+                name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
                     return category.get("isPublic") || category.get("isMine");
                 },
-                roles : []
+                roles: []
             },
             PUBLIC: {
-                id        : "public",
-                name      : i18next.t("annotate.categories.public"),
-                filter    : function (category) {
+                id: "public",
+                name: i18next.t("annotate.categories.public"),
+                filter: function (category) {
                     return category.get("isPublic");
                 },
-                roles     : [ROLES.ADMINISTRATOR],
+                roles: [ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PUBLIC }
             },
             MINE: {
-                id        : "mine",
-                name      : i18next.t("annotate.categories.mine"),
-                filter    : function (category) {
+                id: "mine",
+                name: i18next.t("annotate.categories.mine"),
+                filter: function (category) {
                     return category.get("isMine") && !category.get("isPublic");
                 },
-                roles     : [ROLES.USER, ROLES.ADMINISTRATOR],
+                roles: [ROLES.USER, ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PRIVATE }
             }
         },
