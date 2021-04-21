@@ -42,24 +42,6 @@
                             data-trigger="click"
                             title="
                                 <div class='visibility' data-id='{{id}}'>
-                                    <button type='button' data-access='public'>
-                                        <i
-                                            class='icon-white icon-public'
-                                            title='{{t "timeline.change visibility.to public"}}'
-                                        ></i>
-                                    </button>
-                                    <button type='button' data-access='private'>
-                                        <i
-                                            class='icon-white icon-private'
-                                            title='{{t "timeline.change visibility.to private"}}'
-                                        ></i>
-                                    </button>
-                                    <button type='button' data-access='shared-with-admin'>
-                                        <i
-                                            class='icon-white icon-shared-with-admin'
-                                            title='{{t "timeline.change visibility.to shared with admin"}}'
-                                        ></i>
-                                    </button>
                                     {{#if (isAdmin)}}
                                         <button type='button' data-access='shared-with-everyone'>
                                             <i
@@ -68,6 +50,24 @@
                                             ></i>
                                         </button>
                                     {{/if}}
+                                    <button type='button' data-access='public'>
+                                        <i
+                                            class='icon-white icon-public'
+                                            title='{{t "timeline.change visibility.to public"}}'
+                                        ></i>
+                                    </button>
+                                    <button type='button' data-access='shared-with-admin'>
+                                        <i
+                                            class='icon-white icon-shared-with-admin'
+                                            title='{{t "timeline.change visibility.to shared with admin"}}'
+                                        ></i>
+                                    </button>
+                                    <button type='button' data-access='private'>
+                                        <i
+                                            class='icon-white icon-private'
+                                            title='{{t "timeline.change visibility.to private"}}'
+                                        ></i>
+                                    </button>
                                 </div>
                             "
                             class="button"
