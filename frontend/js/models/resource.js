@@ -18,7 +18,7 @@
  * A module representing a generic annotation tool resource.
  * @module models-resource
  */
-define(["underscore", "backbone", "util", "access", "roles"], function (_, Backbone, util, ACCESS, ROLES) {
+define(["underscore", "backbone", "util", "access"], function (_, Backbone, util, ACCESS) {
 "use strict";
 
 /**
@@ -58,16 +58,6 @@ var Resource = Backbone.Model.extend({
                 this.set("updated_at", new Date());
             }
         }
-
-        function updateIsPublic(access) {
-            this.set("isPublic", access === ACCESS.PUBLIC);
-        }
-        if (attr.access) updateIsPublic.call(this, attr.access);
-        this.on("change:access", function (self, access) {
-            updateIsPublic.call(self, access);
-        });
-
-        this.set("isMine", !attr.created_by || (annotationTool.user && attr.created_by === annotationTool.user.id));
 
         if (attr.tags) {
             this.set("tags", util.parseJSONString(attr.tags));
@@ -158,10 +148,6 @@ var Resource = Backbone.Model.extend({
             attr.settings = util.parseJSONString(attr.settings);
         }
 
-        if (annotationTool.user) {
-            attr.isMine = annotationTool.user.id === attr.created_by;
-        }
-
         if (callback) callback.call(this, attr);
 
         return data;
@@ -181,7 +167,26 @@ var Resource = Backbone.Model.extend({
             if (json.settings && _.isObject(json.settings)) json.settings = JSON.stringify(json.settings);
         }
 
+        json.isMine = this.isMine();
+
         return json;
+    },
+
+    /**
+     * Check whether this resource is public
+     * @alias module:models-resource.Resource#isPublic
+     */
+    isPublic: function () {
+        return this.get("access") === ACCESS.PUBLIC;
+    },
+
+    /**
+     * Check whether this resource belongs to the current user
+     * @alias module:models-resource.Resource#isMine
+     */
+    isMine: function () {
+        var creator = this.get("created_by");
+        return !creator || (annotationTool.user && creator === annotationTool.user.id);
     },
 
     /**
@@ -190,13 +195,13 @@ var Resource = Backbone.Model.extend({
      * @alias module:models-resource.Resource#isEditable
      */
     isEditable: function () {
-        return this.get("isMine") || (
+        return this.isMine() || (
             this.administratorCanEditPublicInstances
                 // TODO We should check this as well, but it does not work with labels so well ...
                 //   so for now we assume that this is only ever checked when the resource is public
                 //   in the right sense, i.e. it can be seen at all.
-                //&& this.get("isPublic")
-                && annotationTool.user.get("role") === ROLES.ADMINISTRATOR
+                //&& this.isPublic()
+                && annotationTool.user.isAdmin()
         );
     },
 

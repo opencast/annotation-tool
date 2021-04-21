@@ -94,7 +94,6 @@ define([
 
     var PLACEHOLDER_TRACK = {
         isMine: true,
-        isPublic: true,
         id: "placeholder",
         name: i18next.t("timeline.no track available.short"),
         description: i18next.t("timeline.no track available.long"),
@@ -403,7 +402,7 @@ define([
             function clickedOnOneOfMyTracks(properties) {
                 var track = this.tracks.get(properties.group);
                 if (!track) return false;
-                if (!track.get("isMine")) return false;
+                if (!track.isMine()) return false;
                 if (
                     this.groupHeaders[properties.group].$el
                         .find("button")
