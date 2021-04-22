@@ -21,7 +21,6 @@ define([
     "util",
     "alerts",
     "models/user",
-    "roles",
     "player_adapter_HTML5",
 ], function (
     $,
@@ -30,7 +29,6 @@ define([
     util,
     alerts,
     User,
-    ROLES,
     HTML5PlayerAdapter
 ) {
     "use strict";
