@@ -25,7 +25,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <opencast.nexus.url>http://nexus.opencast.org</opencast.nexus.url>
-    <eclipselink.version>2.6.4</eclipselink.version>
+    <eclipselink.version>2.6.9</eclipselink.version>
     <commons-collection.version>3.2.2</commons-collection.version>
     <commons-compress.version>1.12</commons-compress.version>
     <httpcomponents-httpcore.version>4.4.1</httpcomponents-httpcore.version>
@@ -35,7 +35,7 @@
     <osgi.compendium.version>5.0.0</osgi.compendium.version>
     <osgi.core.version>5.0.0</osgi.core.version>
     <osgi.enterprise.version>5.0.0</osgi.enterprise.version>
-    <karaf.version>4.0.8</karaf.version>
+    <karaf.version>4.3.1</karaf.version>
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
