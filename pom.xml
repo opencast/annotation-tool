@@ -375,10 +375,6 @@
               <goals>
                 <goal>weave</goal>
               </goals>
-              <configuration>
-                <persistenceXMLLocation>META-INF/persistence.xml</persistenceXMLLocation>
-                <logLevel>FINE</logLevel>
-              </configuration>
             </execution>
           </executions>
           <dependencies>
