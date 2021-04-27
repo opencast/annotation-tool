@@ -33,7 +33,6 @@ define(["jquery",
         "views/print",
         "backbone",
         "goldenlayout",
-        "localstorage",
         "bootstrap"],
 
     function (

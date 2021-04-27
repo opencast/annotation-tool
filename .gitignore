@@ -36,7 +36,6 @@ opencast-backend/annotation-tool/src/main/resources/ui/
 # Ignore Makefiles
 # Sometimes they help, but they should never be tracked
 Makefile
-/frontend/www
 
 # Ignore translation file backups
 /frontend/locales/**/*_old.json

@@ -4,11 +4,7 @@ module.exports = function (grunt) {
      *  Project configuration
      ==================================================*/
     grunt.initConfig({
-        /** The current target file for the watch tasks */
-        currentWatchFile: '',
-
         /** Local directory for the tests */
-        webServerDir: 'www',
 
         /** Paths for the different types of ressource */
         srcPath: {
@@ -16,81 +12,20 @@ module.exports = function (grunt) {
             less: 'style/**/*.less',
             html: '**/*.html',
             tmpl: 'templates/*.tmpl',
-            www: '<%= webServerDir %>/**/*',
             locales: 'locales/**/*.json'
         },
 
         profiles: {
             // Default profile if no one is given
-            default: 'local',
+            default: 'integration',
 
             integration: {
                 target: '../opencast-backend/annotation-tool/src/main/resources/ui/',
                 integration: `build/integration/${grunt.option('integration') || 'search'}.js`
             },
-
-            local: {
-                target: '<%= webServerDir %>',
-                integration: 'build/integration/local.js'
-            },
         },
 
         currentProfile: {},
-
-        /** Task to watch src files and process them */
-        watch: {
-            options: {
-                nospawn: true
-            },
-            // Watch Javascript files
-            js: {
-                files: ['<%= srcPath.js %>'],
-                tasks: ['copy:target']
-            },
-            // Watch configuration files
-            config: {
-                files: ['build/config/annotation-tool-configuration.js'],
-                tasks: ['copy:config']
-            },
-            // Watch integration files
-            integration: {
-                files: ['<%= currentProfile.integration %>'],
-                tasks: ['copy:integration']
-            },
-            // Watch Templates files
-            templates: {
-                files: ['<%= srcPath.tmpl %>'],
-                tasks: ['handlebars:target']
-            },
-            // Watch HTML files
-            html: {
-                files: ['<%= srcPath.html %>'],
-                tasks: ['copy:index']
-            },
-            // Watch LESS files
-            less: {
-                files: ['<%= srcPath.less %>'],
-                tasks: ['less']
-            },
-            // Watch the LESS, Javascript, Templates and HTML at the same times
-            // Use it for single core processor. It could stop working with an important number of files
-            multiple: {
-                files: ['<%= srcPath.less %>', '<%= srcPath.js %>', '<%= srcPath.html %>', '<%= srcPath.tmpl %>'],
-                tasks: ['copy:target']
-            },
-            locales: {
-                files: ['<%= srcPath.locales %>'],
-                tasks: ['copy:locales']
-            },
-            // Watch file on web server for live reload
-            www: {
-                options: {
-                    livereload: true,
-                    nospawn: true
-                },
-                files: ['<%= srcPath.www %>']
-            }
-        },
 
         /** Compile the less files into a CSS file */
         less: {
@@ -110,26 +45,11 @@ module.exports = function (grunt) {
 
         /** Pre-compile the handlebars templates */
         handlebars: {
-            target: {
-                options: {
-                    namespace: false,
-                    amd: true
-                },
-                files: [{
-                    ext: '.js',
-                    flatten: false,
-                    expand: true,
-                    src: '<%= currentWatchFile %>',
-                    dest: '<%= currentProfile.target %>',
-                    filter: 'isFile'
-                }]
+            options: {
+                namespace: false,
+                amd: true
             },
-
-            all: {
-                options: {
-                    namespace: false,
-                    amd: true
-                },
+            compile: {
                 files: [{
                     ext: '.js',
                     flatten: false,
@@ -142,16 +62,6 @@ module.exports = function (grunt) {
 
         /** Copy .. */
         copy: {
-            // ... a single file locally
-            'target': {
-                files: [{
-                    flatten: false,
-                    expand: true,
-                    src: '<%= currentWatchFile %>',
-                    dest: '<%= currentProfile.target %>',
-                    filter: 'isFile'
-                }]
-            },
             // ... all the tool files for the current profile
             'all': {
                 files: [{
@@ -183,43 +93,6 @@ module.exports = function (grunt) {
                     dest: '<%= currentProfile.target %>',
                     expand: true
                 }]
-            }
-        },
-
-
-        /** Task to run tasks in parrallel */
-        concurrent: {
-            dev: (function () {
-                var tasks = [
-                    'watch:js',
-                    'watch:config',
-                    'watch:integration',
-                    'watch:html',
-                    'watch:less',
-                    'watch:templates',
-                    'watch:locales',
-                    'watch:www',
-                    'connect:dev'
-                ];
-                return {
-                    tasks: tasks,
-                    options: {
-                        logConcurrentOutput: true,
-                        limit: tasks.length
-                    }
-                };
-            })()
-        },
-
-        /** Web server */
-        connect: {
-            dev: {
-                options: {
-                    port: 9001,
-                    base: '<%= webServerDir %>',
-                    keepalive: true,
-                    livereload: true
-                }
             }
         },
 
@@ -267,8 +140,7 @@ module.exports = function (grunt) {
      *  Register custom tasks
      ==================================================*/
 
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index', 'concurrent:dev']);
-    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:all', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index']);
+    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars', 'less', 'copy:all', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
@@ -284,30 +156,4 @@ module.exports = function (grunt) {
     };
 
     grunt.registerTaskWithProfile('integration', 'Deploy webapp in Opencast backend', 'integration');
-    grunt.registerTaskWithProfile('dev', 'Development workflow');
-
-
-    /** ================================================
-     *  Listerers
-     ==================================================*/
-
-    // on watch events configure tasks to only run on changed file
-    grunt.event.on('watch', function (action, filepath, target) {
-
-        // Set the current file processed for the different tasks
-        grunt.config.set('currentWatchFile', [filepath]);
-
-        // Configure the tasks with given profiles
-        grunt.config.set('currentProfile', grunt.config.get('profiles.' + grunt.option('profile')));
-
-        if (target == 'multiple') {
-            // If the watch target is multiple,
-            // we manage the tasks to run following the touched file extension
-            var ext = filepath.split('.').pop();
-
-            if (ext === 'less') {
-                grunt.task.run('less');
-            }
-        }
-    });
 };
