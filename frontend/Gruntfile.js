@@ -10,8 +10,7 @@ module.exports = function (grunt) {
         /** Local directory for the tests */
         webServerDir: 'www',
 
-        buildDir: 'target',
-        tempDir: '<%= buildDir %>/temp',
+        tempDir: 'target/temp',
 
         /** Paths for the different types of ressource */
         srcPath: {
@@ -34,11 +33,6 @@ module.exports = function (grunt) {
 
             local: {
                 target: '<%= webServerDir %>',
-                integration: 'build/integration/local.js'
-            },
-
-            build: {
-                target: '<%= buildDir %>',
                 integration: 'build/integration/local.js'
             },
         },
@@ -145,20 +139,6 @@ module.exports = function (grunt) {
                     src: 'templates/*.tmpl',
                     dest: '<%= currentProfile.target %>'
                 }]
-            },
-
-            temp: {
-                options: {
-                    namespace: false,
-                    amd: true
-                },
-                files: [{
-                    ext: '.js',
-                    flatten: false,
-                    expand: true,
-                    src: 'templates/*.tmpl',
-                    dest: '<%= tempDir %>'
-                }]
             }
         },
 
@@ -180,16 +160,6 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css'],
-                    dest: '<%= currentProfile.target %>'
-                }]
-            },
-            // ... all the files for an optimized build
-            'build': {
-                files: [{
-                    flatten: false,
-                    expand: true,
-                    // TODO Do we need to copy libs here?
-                    src: ['img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css', 'js/libs/**/*'],
                     dest: '<%= currentProfile.target %>'
                 }]
             },
@@ -219,26 +189,10 @@ module.exports = function (grunt) {
                 src: '<%= currentProfile.integration %>',
                 dest: '<%= currentProfile.target %>/js/annotation-tool-integration.js'
             },
-            // ... the integration for the build step
-            'integration-build': {
-                src: '<%= currentProfile.integration %>',
-                dest: '<%= tempDir %>/js/annotation-tool-integration.js'
-            },
             // ... the configuration
             'config': {
                 src: 'build/config/annotation-tool-configuration.js',
                 dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
-            },
-            // ... the configuration for the build step
-            'config-build': {
-                src: 'build/config/annotation-tool-configuration.js',
-                dest: '<%= tempDir %>/js/annotation-tool-configuration.js'
-            },
-            // ... code for further processing
-            'temp': {
-                expand: true,
-                src: '<%= srcPath.js %>',
-                dest: '<%= tempDir %>'
             },
             // ... the translations
             'locales': {
@@ -376,9 +330,7 @@ module.exports = function (grunt) {
      ==================================================*/
 
     grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:index', 'copy:less', 'copy:config', 'copy:integration', 'copy:locales', 'concurrent:dev']);
-    grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:index', 'copy:config-build', 'copy:integration-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
     grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:backend', 'processhtml:index', 'copy:config', 'copy:integration', 'copy:locales']);
-    grunt.registerTask('baseINTEGRATIONMINIFIED', ['amdcheck', 'handlebars:temp', 'less', 'copy:backend', 'processhtml:index', 'copy:config-build', 'copy:integration-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
@@ -393,9 +345,7 @@ module.exports = function (grunt) {
         });
     };
 
-    grunt.registerTaskWithProfile('build', 'Build task', 'build');
     grunt.registerTaskWithProfile('integration', 'Deploy webapp in Opencast backend', 'integration');
-    grunt.registerTaskWithProfile('integrationminified', 'Deploy webapp in Opencast backend as minified version', 'integration');
     grunt.registerTaskWithProfile('dev', 'Development workflow');
 
 
