@@ -10,8 +10,6 @@ module.exports = function (grunt) {
         /** Local directory for the tests */
         webServerDir: 'www',
 
-        tempDir: 'target/temp',
-
         /** Paths for the different types of ressource */
         srcPath: {
             js: 'js/**/*.js',
@@ -247,31 +245,6 @@ module.exports = function (grunt) {
                 files: {
                     '<%= currentProfile.target %>/index.html': ['index.html']
                 }
-            }
-        },
-
-        /** Bundling through RequireJS */
-        requirejs: {
-            compile: {
-                options: {
-                    baseUrl: '<%= tempDir %>/js',
-                    mainConfigFile: './js/require.config.js',
-                    name: 'main',
-                    optimizeAllPluginResources: false,
-                    preserveLicenseComments: false,
-                    optimize: 'none',
-                    useStrict: true,
-                    findNestedDependencies: true,
-                    out: '<%= currentProfile.target %>/bundle.js'
-                }
-            }
-        },
-
-        /** Optimization through UglifyJS */
-        uglify: {
-            minify: {
-                src: '<%= currentProfile.target %>/bundle.js',
-                dest: '<%= currentProfile.target %>/bundle.min.js'
             }
         },
 
