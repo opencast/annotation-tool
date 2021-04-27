@@ -204,16 +204,6 @@ module.exports = function (grunt) {
             }
         },
 
-        jsdoc: {
-            dist: {
-                src: ['<%= srcPath.js %>', '!js/libs/**'],
-                options: {
-                    destination: 'doc',
-                    template: 'node_modules/ink-docstrap/template'
-                }
-            }
-        },
-
 
         /** Task to run tasks in parrallel */
         concurrent: {
