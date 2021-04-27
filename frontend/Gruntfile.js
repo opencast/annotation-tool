@@ -187,20 +187,6 @@ module.exports = function (grunt) {
                     filter: 'isFile'
                 }]
             },
-            // ... all the tool files locally
-            'local-all': {
-                files: [{
-                    flatten: false,
-                    expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/.svg', 'style/**/*.png', 'style/**/*.css'],
-                    dest: '<%= currentProfile.target %>'
-                }]
-            },
-            // ... the index locally
-            'local-index': {
-                src: 'index.html',
-                dest: '<%= webServerDir %>/index.html'
-            },
             // ... all the tool files for the current profile
             'all': {
                 files: [{
@@ -419,8 +405,6 @@ module.exports = function (grunt) {
      *  Register custom tasks
      ==================================================*/
 
-    // Default task
-    grunt.registerTask('default', ['amdcheck', 'jshint:all', 'less', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:index', 'copy:less', 'copy:config', 'copy:integration', 'copy:locales', 'concurrent:dev']);
     grunt.registerTask('baseDEMO', ['amdcheck', 'mkdir:demo', 'handlebars:all', 'less', 'copy:demo', 'processhtml:index', 'copy:config', 'copy:integration', 'copy:locales']);
     grunt.registerTask('baseBUILD', ['amdcheck', 'jsdoc', 'handlebars:temp', 'less', 'copy:build', 'processhtml:index', 'copy:config-build', 'copy:integration-build', 'copy:locales', 'copy:temp', 'requirejs', 'uglify']);
