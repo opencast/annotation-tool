@@ -14,8 +14,6 @@
  *
  */
 
-/*jshint multistr: true */
-
 /**
  * A module representing the view for the categories tab
  * @module views-annotate-tab

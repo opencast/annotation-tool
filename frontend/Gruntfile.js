@@ -50,14 +50,6 @@ module.exports = function (grunt) {
 
         currentProfile: {},
 
-        jshint: {
-            options: {
-                jshintrc: '.jshintrc'
-            },
-            all: ['Gruntfile.js', '<%= srcPath.js %>'],
-            watch: '<%= currentWatchFile %>'
-        },
-
         /** Task to watch src files and process them */
         watch: {
             options: {
@@ -435,7 +427,7 @@ module.exports = function (grunt) {
      *  Listerers
      ==================================================*/
 
-    // on watch events configure jshint:watch to only run on changed file
+    // on watch events configure tasks to only run on changed file
     grunt.event.on('watch', function (action, filepath, target) {
 
         // Set the current file processed for the different tasks
@@ -449,14 +441,9 @@ module.exports = function (grunt) {
             // we manage the tasks to run following the touched file extension
             var ext = filepath.split('.').pop();
 
-            switch (ext) {
-                case 'js':
-                    grunt.task.run('jshint:watch');
-                    break;
-                case 'less':
-                    grunt.task.run('less');
-                    grunt.task.run('copy:less');
-                    break;
+            if (ext === 'less') {
+                grunt.task.run('less');
+                grunt.task.run('copy:less');
             }
         }
     });
