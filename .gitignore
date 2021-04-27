@@ -3,7 +3,6 @@
 
 # ignore maven target directories
 target/
-target-grunt/
 node_modules/
 node/
 /build/
@@ -26,9 +25,6 @@ node/
 # Ignore Maven files and local repository
 /.m2/
 /settings.xml
-
-# Ignore mkdocs sites
-docs/guides/*/site
 
 # ignore directory with frontend copy
 opencast-backend/annotation-tool/src/main/resources/ui/
