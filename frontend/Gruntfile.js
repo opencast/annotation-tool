@@ -70,7 +70,7 @@ module.exports = function (grunt) {
             // Watch LESS files
             less: {
                 files: ['<%= srcPath.less %>'],
-                tasks: ['less', 'copy:less']
+                tasks: ['less']
             },
             // Watch the LESS, Javascript, Templates and HTML at the same times
             // Use it for single core processor. It could stop working with an important number of files
@@ -161,26 +161,10 @@ module.exports = function (grunt) {
                     dest: '<%= currentProfile.target %>'
                 }]
             },
-            'backend': {
-                files: [{
-                    flatten: false,
-                    expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css'],
-                    dest: '<%= currentProfile.target %>'
-                }]
-            },
             // ... the index locally
             'index': {
                 src: 'index.html',
                 dest: '<%= currentProfile.target %>/index.html'
-            },
-            // ... the less sources for the sourcemaps to reference during development
-            'less': {
-                files: [{
-                    src: '<%= srcPath.less %>',
-                    dest: '<%= currentProfile.target %>',
-                    expand: true
-                }]
             },
             // ... the integration
             'integration': {
@@ -283,8 +267,8 @@ module.exports = function (grunt) {
      *  Register custom tasks
      ==================================================*/
 
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'copy:less', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index', 'concurrent:dev']);
-    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:backend', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index', 'concurrent:dev']);
+    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:all', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
@@ -323,7 +307,6 @@ module.exports = function (grunt) {
 
             if (ext === 'less') {
                 grunt.task.run('less');
-                grunt.task.run('copy:less');
             }
         }
     });
