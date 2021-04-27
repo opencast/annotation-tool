@@ -65,7 +65,7 @@ module.exports = function (grunt) {
             // Watch HTML files
             html: {
                 files: ['<%= srcPath.html %>'],
-                tasks: ['processhtml:index']
+                tasks: ['copy:index']
             },
             // Watch LESS files
             less: {
@@ -239,15 +239,6 @@ module.exports = function (grunt) {
             }
         },
 
-        /** Preprocess file with right context */
-        processhtml: {
-            index: {
-                files: {
-                    '<%= currentProfile.target %>/index.html': ['index.html']
-                }
-            }
-        },
-
         amdcheck: {
             options: {
                 strict: true,
@@ -292,8 +283,8 @@ module.exports = function (grunt) {
      *  Register custom tasks
      ==================================================*/
 
-    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'processhtml:index', 'copy:less', 'copy:config', 'copy:integration', 'copy:locales', 'concurrent:dev']);
-    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:backend', 'processhtml:index', 'copy:config', 'copy:integration', 'copy:locales']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less', 'copy:all', 'copy:less', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index', 'concurrent:dev']);
+    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars:all', 'less', 'copy:backend', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
