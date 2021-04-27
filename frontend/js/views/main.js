@@ -24,7 +24,6 @@ define(["jquery",
         "i18next",
         "alerts",
         "player-adapter",
-        "views/about",
         "views/annotate",
         "views/list",
         "views/timeline",
@@ -44,7 +43,6 @@ define(["jquery",
         i18next,
         alerts,
         PlayerAdapter,
-        AboutDialog,
         AnnotateView,
         ListView,
         TimelineView,
@@ -93,7 +91,6 @@ define(["jquery",
             events: {
                 "click #export-csv": "exportCSV",
                 "click #export-xlsx": "exportXLSX",
-                "click #about": "about",
                 "click #logout": "onLogout",
                 "click #print": "print",
                 "click #opt-annotate-text": "toggleFreeTextAnnotations",
@@ -685,12 +682,6 @@ define(["jquery",
             },
 
             /**
-             * The about dialog
-             * @alias module:views-main.MainView#aboutDialog
-             */
-            aboutDialog: new AboutDialog(),
-
-            /**
              * Offer the user a spreadsheet version of the annotations for download.
              */
             exportCSV: function () {
@@ -727,14 +718,6 @@ define(["jquery",
                         );
                         break;
                 }
-            },
-
-            /**
-             * Show a dialog with information about the tool
-             * @alias module:views-main.MainView#about
-             */
-            about: function () {
-                this.aboutDialog.show();
             },
 
             /**

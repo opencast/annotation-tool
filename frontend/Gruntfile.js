@@ -4,9 +4,6 @@ module.exports = function (grunt) {
      *  Project configuration
      ==================================================*/
     grunt.initConfig({
-        /** Load informations from package.json */
-        pkg: grunt.file.readJSON('package.json'),
-
         /** The current target file for the watch tasks */
         currentWatchFile: '',
 
@@ -180,15 +177,6 @@ module.exports = function (grunt) {
 
         /** Copy .. */
         copy: {
-            options: {
-                processContent: function (content, srcPath) {
-                    if (srcPath === 'js/version.js') {
-                        return grunt.template.process(content, { data: { version: grunt.config.get('pkg').version } });
-                    }
-                    return content;
-                },
-                processContentExclude: ['img/**/*']
-            },
             // ... a single file locally
             'target': {
                 files: [{
@@ -251,11 +239,6 @@ module.exports = function (grunt) {
             },
             // ... the index locally
             'index': {
-                options: {
-                    processContent: function (content) {
-                        return grunt.template.process(content);
-                    }
-                },
                 src: 'index.html',
                 dest: '<%= currentProfile.target %>/index.html'
             },
@@ -352,12 +335,6 @@ module.exports = function (grunt) {
 
         /** Preprocess file with right context */
         processhtml: {
-            options: {
-                data: {
-                    version: '<%= pkg.version %>'
-                },
-                process: true
-            },
             index: {
                 files: {
                     '<%= currentProfile.target %>/index.html': ['index.html']
@@ -452,11 +429,6 @@ module.exports = function (grunt) {
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
-
-            if (grunt.option('cv')) {
-                console.log('With version ' + grunt.option('cv'));
-                grunt.config.set('pkg.version', grunt.option('cv'));
-            }
 
             // Configure the tasks with given profiles
             if (!profile) profile = grunt.config.get("profiles.default");

@@ -1,6 +1,5 @@
 {
   "name": "annotation-tool",
-  "version": "3.0.0-snapshot",
   "description": "Web application to annotate academic video.",
   "repository": {
     "type": "git",
