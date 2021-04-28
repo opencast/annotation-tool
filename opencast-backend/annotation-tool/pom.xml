@@ -59,6 +59,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Import-Package>*</Import-Package>
             <Bundle-Activator>org.opencast.annotation.tool.Activator</Bundle-Activator>
             <Private-Package>ui.*</Private-Package>
             <Http-Alias>/annotation-tool</Http-Alias>
