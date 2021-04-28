@@ -35,13 +35,10 @@ module.exports = function (grunt) {
                 syncImport: true,
                 compress: true,
                 sourceMap: true,
-                sourceMapURL: '/style/style.css.map',
+                sourceMapURL: 'style/style.css.map',
                 sourceMapBasepath: 'style'
             },
-            files: {
-                src: 'style/style.less',
-                dest: '<%= currentProfile.target %>/style/style.css'
-            }
+            '<%= currentProfile.target %>/style/style.css': 'style/style.less'
         },
 
         /** Pre-compile the handlebars templates */
@@ -71,7 +68,7 @@ module.exports = function (grunt) {
                         'img/**/*',
                         'style/**/*.svg',
                         'style/**/*.png',
-                        'style/**/*.css',
+                        'style/**/*',
                         'locales/**/*.json'
                     ],
                     dest: '<%= currentProfile.target %>'
