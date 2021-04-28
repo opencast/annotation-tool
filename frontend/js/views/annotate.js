@@ -28,8 +28,7 @@ define(["jquery",
         "templates/annotate-toggle-free-text-button",
         "roles",
         "access",
-        "backbone",
-        "handlebarsHelpers"],
+        "backbone"],
 
     function ($, _, i18next, PlayerAdapter, AnnotateTab, template, TabsButtonTemplate, toggleFreeTextButtonTemplate, ROLES, ACCESS, Backbone) {
 

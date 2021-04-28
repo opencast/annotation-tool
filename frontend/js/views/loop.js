@@ -26,8 +26,7 @@ define([
     "player-adapter",
     "backbone",
     "templates/loop-control",
-    "slider",
-    "handlebarsHelpers"
+    "slider"
 ], function (
     util,
     _,

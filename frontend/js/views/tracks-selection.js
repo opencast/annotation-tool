@@ -21,8 +21,7 @@ define(["jquery",
         "underscore",
         "backbone",
         "sortable",
-        "templates/tracks-selection-modal",
-        "handlebarsHelpers"],
+        "templates/tracks-selection-modal"],
 
     function ($, _, Backbone, Sortable, TracksSelectionTmpl) {
 

@@ -45,7 +45,7 @@ module.exports = function (grunt) {
         handlebars: {
             options: {
                 namespace: false,
-                amd: true
+                amd: ['handlebars', 'handlebarsHelpers']
             },
             compile: {
                 files: [{
@@ -88,7 +88,6 @@ module.exports = function (grunt) {
                 removeUnusedDependencies: false,
                 exceptsPaths: [
                     // Loaded for side-effects only
-                    'handlebarsHelpers',
                     'localstorage',
                     'jquery.colorPicker',
                     'slider',

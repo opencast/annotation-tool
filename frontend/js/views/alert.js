@@ -21,7 +21,6 @@ define(["jquery",
         "underscore",
         "backbone",
         "templates/alert-modal",
-        "handlebarsHelpers",
         "bootstrap"],
 
     function ($, _, Backbone, AlertTemplate) {

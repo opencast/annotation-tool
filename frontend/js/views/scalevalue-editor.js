@@ -20,8 +20,7 @@
  */
 define(["underscore",
         "backbone",
-        "templates/scale-value-editor",
-        "handlebarsHelpers"],
+        "templates/scale-value-editor"],
        function (_, Backbone, ScaleValueEditorTmpl) {
 
             "use strict";

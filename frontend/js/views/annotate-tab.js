@@ -25,7 +25,6 @@ define(["jquery",
         "templates/annotate-tab",
         "backbone",
         "handlebars",
-        "handlebarsHelpers",
         "filesaver"],
 
     function (

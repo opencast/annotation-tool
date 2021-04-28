@@ -21,8 +21,7 @@
 define(["jquery",
         "underscore",
         "backbone",
-        "templates/annotate-label",
-        "handlebarsHelpers"],
+        "templates/annotate-label"],
 
     function ($, _, Backbone, Template) {
 

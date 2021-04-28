@@ -27,8 +27,7 @@ define(["jquery",
         "templates/list-annotation",
         "templates/list-annotation-expanded",
         "templates/list-annotation-edit",
-        "backbone",
-        "handlebarsHelpers"],
+        "backbone"],
 
     function ($, _, util, i18next, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
 

@@ -25,8 +25,7 @@ define(["jquery",
         "views/scalevalue-editor",
         "templates/scale-editor",
         "templates/scale-editor-select",
-        "templates/scale-editor-content",
-        "handlebarsHelpers"],
+        "templates/scale-editor-content"],
     function ($, _, Backbone, i18next, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
 
             "use strict";
