@@ -27,6 +27,13 @@ module.exports = function (grunt) {
 
         currentProfile: {},
 
+        clean: {
+            options: {
+                force: true
+            },
+            target: '<%= currentProfile.target %>'
+        },
+
         /** Compile the less files into a CSS file */
         less: {
             options: {
@@ -140,7 +147,7 @@ module.exports = function (grunt) {
      *  Register custom tasks
      ==================================================*/
 
-    grunt.registerTask('baseINTEGRATION', ['amdcheck', 'handlebars', 'less', 'copy:all', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index']);
+    grunt.registerTask('baseINTEGRATION', ['clean', 'amdcheck', 'handlebars', 'less', 'copy:all', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
