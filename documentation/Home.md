@@ -1,7 +1,8 @@
 # Documentation
 
 ## [Installation](opencast-installation.md)
-The instruction on how to install the Annotation tool in Opencast 2.3+ [can be found here](documentation/opencast-installation.md)
+The instruction on how to install the Annotation tool in Opencast
+[can be found here](documentation/opencast-installation.md)
 
 ## [General Overview](overview.md)
 You can find a general overview over this software [here](overview.md).
@@ -15,8 +16,5 @@ Documentation of the player adapter interface, making the link between the annot
 ## [Supported Browsers](Supported-browsers.md)
 List of supported browsers.
 
-## [Demo](http://entwinemedia.github.com/annotations)
-Demo of the annotation library hosted on github. Note that the demo stores annotations in the browser's local storage and not on a server backend. Therefore you will currently not see annotations made by others.
-
 ## [Workflow for Publication](workflow.md)
-Workflow for Annotation Publication in Opencast 2.x
+Workflow for Annotation Publication in Opencast
