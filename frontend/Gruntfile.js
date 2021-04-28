@@ -7,13 +7,7 @@ module.exports = function (grunt) {
         /** Local directory for the tests */
 
         /** Paths for the different types of ressource */
-        srcPath: {
-            js: 'js/**/*.js',
-            less: 'style/**/*.less',
-            html: '**/*.html',
-            tmpl: 'templates/*.tmpl',
-            locales: 'locales/**/*.json'
-        },
+        srcPath: 'js/**/*.js',
 
         profiles: {
             // Default profile if no one is given
@@ -59,7 +53,6 @@ module.exports = function (grunt) {
             compile: {
                 files: [{
                     ext: '.js',
-                    flatten: false,
                     expand: true,
                     src: 'templates/*.tmpl',
                     dest: '<%= currentProfile.target %>'
@@ -69,36 +62,25 @@ module.exports = function (grunt) {
 
         /** Copy .. */
         copy: {
-            // ... all the tool files for the current profile
-            'all': {
+            target: {
                 files: [{
-                    flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.svg', 'style/**/*.png', 'style/**/*.css'],
+                    src: [
+                        'index.html',
+                        '<%= srcPath %>',
+                        'img/**/*',
+                        'style/**/*.svg',
+                        'style/**/*.png',
+                        'style/**/*.css',
+                        'locales/**/*.json'
+                    ],
                     dest: '<%= currentProfile.target %>'
-                }]
-            },
-            // ... the index locally
-            'index': {
-                src: 'index.html',
-                dest: '<%= currentProfile.target %>/index.html'
-            },
-            // ... the integration
-            'integration': {
-                src: '<%= currentProfile.integration %>',
-                dest: '<%= currentProfile.target %>/js/annotation-tool-integration.js'
-            },
-            // ... the configuration
-            'config': {
-                src: 'build/config/annotation-tool-configuration.js',
-                dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
-            },
-            // ... the translations
-            'locales': {
-                files: [{
-                    src: '<%= srcPath.locales %>',
-                    dest: '<%= currentProfile.target %>',
-                    expand: true
+                }, {
+                    src: '<%= currentProfile.integration %>',
+                    dest: '<%= currentProfile.target %>/js/annotation-tool-integration.js'
+                }, {
+                    src: 'build/config/annotation-tool-configuration.js',
+                    dest: '<%= currentProfile.target %>/js/annotation-tool-configuration.js'
                 }]
             }
         },
@@ -119,7 +101,7 @@ module.exports = function (grunt) {
             },
             all: {
                 expand: true,
-                src: ['<%= srcPath.js %>', '!js/libs/**'],
+                src: ['<%= srcPath %>', '!js/libs/**'],
                 dest: '.'
             }
         }
@@ -147,7 +129,7 @@ module.exports = function (grunt) {
      *  Register custom tasks
      ==================================================*/
 
-    grunt.registerTask('baseINTEGRATION', ['clean', 'amdcheck', 'handlebars', 'less', 'copy:all', 'copy:config', 'copy:integration', 'copy:locales', 'copy:index']);
+    grunt.registerTask('baseINTEGRATION', ['clean', 'amdcheck', 'handlebars', 'less', 'copy']);
 
     grunt.registerTaskWithProfile = function (name, description, profile) {
         grunt.registerTask(name, description, function () {
