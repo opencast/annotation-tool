@@ -1,12 +1,7 @@
 module.exports = function (grunt) {
 
-    /** ================================================
-     *  Project configuration
-     ==================================================*/
     grunt.initConfig({
-        /** Local directory for the tests */
 
-        /** Paths for the different types of ressource */
         srcPath: 'js/**/*.js',
         destPath: '../opencast-backend/annotation-tool/src/main/resources/ui/',
 
@@ -17,7 +12,6 @@ module.exports = function (grunt) {
             target: '<%= destPath %>'
         },
 
-        /** Compile the less files into a CSS file */
         less: {
             options: {
                 paths: 'style',
@@ -30,7 +24,6 @@ module.exports = function (grunt) {
             '<%= destPath %>/style/style.css': 'style/style.less'
         },
 
-        /** Pre-compile the handlebars templates */
         handlebars: {
             options: {
                 namespace: false,
@@ -46,7 +39,6 @@ module.exports = function (grunt) {
             }
         },
 
-        /** Copy .. */
         copy: {
             target: {
                 files: [{
@@ -93,10 +85,6 @@ module.exports = function (grunt) {
     });
 
     require('jit-grunt')(grunt);
-
-    /** ================================================
-     *  Register custom tasks
-     ==================================================*/
 
     grunt.registerTask('default', ['clean', 'amdcheck', 'handlebars', 'less', 'copy']);
 };
