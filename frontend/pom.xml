@@ -52,7 +52,6 @@
 
             <configuration>
               <arguments>
-                integration
                 --integration=${integration}
               </arguments>
             </configuration>
