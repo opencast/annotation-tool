@@ -102,7 +102,7 @@ define(
              * @type {map}
              */
             events: {
-                "keyup #new-annotation": "keydownOnAnnotate",
+                "keyup #new-annotation": "maybeInsert",
                 "click #insert": "insert",
                 "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
@@ -158,7 +158,6 @@ define(
                     "addTab",
                     "onSwitchEditModus",
                     "switchEditModus",
-                    "keydownOnAnnotate",
                     "toggleFreeTextAnnotationPane",
                     "toggleStructuredAnnotations"
                 );
@@ -210,7 +209,7 @@ define(
              * Proxy function for insert through 'enter' keypress
              * @param {event} event Event object
              */
-            keydownOnAnnotate: function (e) {
+            maybeInsert: function (e) {
                 // If enter is pressed and shit not, we insert a new annotation
                 if (e.keyCode === 13 && !e.shiftKey) {
                     this.insert();
