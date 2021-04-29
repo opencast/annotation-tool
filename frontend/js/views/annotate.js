@@ -106,7 +106,7 @@ define(
                 "click #insert": "insert",
                 "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
-                "click #editSwitch": "onSwitchEditModus",
+                "change #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations"
             },
 
