@@ -20,8 +20,7 @@
 define(["underscore",
         "util",
         "collections/comments",
-        "models/resource",
-        "localstorage"],
+        "models/resource"],
 
     function (_, util, Comments, Resource) {
 

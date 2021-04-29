@@ -11,7 +11,7 @@
   <packaging>pom</packaging>
 
   <name>Opencast Annotation Tool</name>
-  <description>The Opencast Annotation Tool is an additional module for Opencast to scientifialy annotate videos</description>
+  <description>The Opencast Annotation Tool is an additional module for Opencast to scientifically annotate videos</description>
   <url>https://github.com/opencast/annotation-tool</url>
   <inceptionYear>2017</inceptionYear>
 

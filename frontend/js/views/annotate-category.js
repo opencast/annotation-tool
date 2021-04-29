@@ -25,7 +25,6 @@ define(["jquery",
         "util",
         "views/annotate-label",
         "templates/annotate-category",
-        "handlebarsHelpers",
         "jquery.colorPicker"],
 
 

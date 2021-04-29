@@ -31,8 +31,7 @@ define(["jquery",
         "colors",
         "xlsx",
         "papaparse",
-        "filesaver",
-        "handlebarsHelpers"],
+        "filesaver"],
 
     function ($, _, Backbone, util, i18next, Videos, MainView, alerts, DeleteModalTmpl, PlayerAdapter, ColorsManager, XLSX, PapaParse) {
 

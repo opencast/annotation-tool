@@ -26,8 +26,7 @@ define([
     "models/user",
     "i18next",
     "templates/user-login",
-    "roles",
-    "handlebarsHelpers"
+    "roles"
 ], function (
     $,
     _,

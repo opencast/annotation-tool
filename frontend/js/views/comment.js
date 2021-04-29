@@ -22,8 +22,7 @@ define(["underscore",
         "util",
         "templates/comment",
         "backbone",
-        "views/comments-container",
-        "handlebarsHelpers"],
+        "views/comments-container"],
 
     function (_, util, template, Backbone, CommentsContainer) {
 

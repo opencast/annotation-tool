@@ -21,8 +21,7 @@
 define(["underscore",
         "collections/labels",
         "access",
-        "models/resource",
-        "localstorage"],
+        "models/resource"],
 
     function (_, Labels, ACCESS, Resource) {
 

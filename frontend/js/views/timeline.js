@@ -32,8 +32,7 @@ define([
     "backbone",
     "vis-timeline",
     "chroma",
-    "bootstrap",
-    "handlebarsHelpers"
+    "bootstrap"
 ], function (
     util,
     $,
