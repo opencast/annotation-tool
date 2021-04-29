@@ -251,14 +251,14 @@ define(
                     // TODO Until we update jQuery, we can't use `show` and `hide` here,
                     //   since our current jQuery version does not preserve
                     //   the `display` property correctly.
-                    this.$el.find(".annotate").css("display", "");
+                    this.$el.find("#annotate-form").css("display", "");
                     this.$el.find(".no-track").hide();
 
                     this.trackDIV.html(track.get("name"));
 
                 } else {
                     // Otherwise, we disable the input and inform the user that no track is set
-                    this.$el.find(".annotate").css("display", "none");
+                    this.$el.find("#annotate-form").css("display", "none");
                     this.$el.find(".no-track").show();
                     this.trackDIV.html("<span>" + i18next.t("annotate.no selected track") + "</span>");
                 }
