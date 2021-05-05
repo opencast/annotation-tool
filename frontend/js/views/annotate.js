@@ -84,7 +84,6 @@ define(["jquery",
             events: {
                 "keyup #new-annotation": "keydownOnAnnotate",
                 "click #insert": "insert",
-                "focusin #new-annotation": "maybePause",
                 "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
                 "click #editSwitch": "onSwitchEditModus",
