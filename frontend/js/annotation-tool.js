@@ -600,29 +600,28 @@ define(
              * Get all the annotations for the current user
              */
             fetchData: function () {
-                var tracks,
-                    // function to conclude the retrieve of annotations
-                    concludeInitialization = _.bind(function () {
+                // function to conclude the retrieve of annotations
+                var concludeInitialization = _.bind(function () {
 
-                        // At least one private track should exist, we select the first one
-                        var selectedTrack = tracks.filter(util.caller("isMine"))[0];
+                    // At least one private track should exist, we select the first one
+                    var selectedTrack = this.video.get("tracks").filter(util.caller("isMine"))[0];
 
-                        if (!selectedTrack.get("id")) {
-                            selectedTrack.on("ready", concludeInitialization, this);
-                        } else {
-                            this.selectedTrack = selectedTrack;
+                    if (!selectedTrack.get("id")) {
+                        selectedTrack.on("ready", concludeInitialization, this);
+                    } else {
+                        this.selectedTrack = selectedTrack;
 
-                            this.modelsInitialized = true;
-                            this.trigger(this.EVENTS.MODELS_INITIALIZED);
-                        }
-                    }, this),
+                        this.modelsInitialized = true;
+                        this.trigger(this.EVENTS.MODELS_INITIALIZED);
+                    }
+                }, this),
 
                     /**
                      * Create a default track for the current user if no private track is present
                      */
                     createDefaultTrack = _.bind(function () {
 
-                        tracks = this.video.get("tracks");
+                        var tracks = this.video.get("tracks");
 
                         if (!tracks.filter(util.caller("isMine")).length) {
                             tracks.create({
@@ -649,18 +648,16 @@ define(
 
                 $.when(this.getVideoExtId(), this.getVideoParameters()).then(
                     _.bind(function (videoExtId, videoParameters) {
-                        // If we are using the localstorage
-                        var video = new Videos().add({ video_extid: videoExtId }).at(0);
-                        this.video = video;
-                        video.set(videoParameters);
-                        video.save(null, {
+                        this.video = new Videos().add({ video_extid: videoExtId }).at(0);
+                        this.video.set(videoParameters);
+                        this.video.save(null, {
                             error: _.bind(function (model, response, options) {
                                 if (response.status === 403) {
                                     alerts.fatal(i18next.t("annotation not allowed"));
                                 }
                             }, this)
                         });
-                        this.listenToOnce(video, "ready", createDefaultTrack);
+                        this.listenToOnce(this.video, "ready", createDefaultTrack);
                     }, this)
                 );
             },
