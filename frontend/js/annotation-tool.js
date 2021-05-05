@@ -657,7 +657,6 @@ define(
                             error: _.bind(function (model, response, options) {
                                 if (response.status === 403) {
                                     alerts.fatal(i18next.t("annotation not allowed"));
-                                    this.views.main.loadingBox.hide();
                                 }
                             }, this)
                         });
