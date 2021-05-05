@@ -197,6 +197,72 @@ define(
             },
 
             /**
+             * Get all the annotations for the current user
+             */
+            fetchData: function () {
+                // function to conclude the retrieve of annotations
+                var concludeInitialization = _.bind(function () {
+
+                    // At least one private track should exist, we select the first one
+                    var selectedTrack = this.video.get("tracks").filter(util.caller("isMine"))[0];
+
+                    if (!selectedTrack.get("id")) {
+                        selectedTrack.on("ready", concludeInitialization, this);
+                    } else {
+                        this.selectedTrack = selectedTrack;
+
+                        this.modelsInitialized = true;
+                        this.trigger(this.EVENTS.MODELS_INITIALIZED);
+                    }
+                }, this),
+
+                    /**
+                     * Create a default track for the current user if no private track is present
+                     */
+                    createDefaultTrack = _.bind(function () {
+
+                        var tracks = this.video.get("tracks");
+
+                        if (!tracks.filter(util.caller("isMine")).length) {
+                            tracks.create({
+                                name: i18next.t("default track.name", {
+                                    nickname: this.user.get("nickname")
+                                }),
+                                description: i18next.t("default track.description", {
+                                    nickname: this.user.get("nickname")
+                                })
+                            }, {
+                                wait: true,
+                                success: concludeInitialization
+                            });
+                        } else {
+                            tracks.showTracks(
+                                tracks.filter(function (track) {
+                                    return track.isMine()
+                                        || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                                })
+                            );
+                            concludeInitialization();
+                        }
+                    }, this);
+
+                $.when(this.getVideoExtId(), this.getVideoParameters()).then(
+                    _.bind(function (videoExtId, videoParameters) {
+                        this.video = new Videos().add({ video_extid: videoExtId }).at(0);
+                        this.video.set(videoParameters);
+                        this.video.save(null, {
+                            error: _.bind(function (model, response, options) {
+                                if (response.status === 403) {
+                                    alerts.fatal(i18next.t("annotation not allowed"));
+                                }
+                            }, this)
+                        });
+                        this.listenToOnce(this.video, "ready", createDefaultTrack);
+                    }, this)
+                );
+            },
+
+            /**
              * Listen and retrigger timeupdate event from player adapter events with added intervals
              */
             onTimeUpdate: function () {
@@ -594,72 +660,6 @@ define(
                         });
                     }
                 });
-            },
-
-            /**
-             * Get all the annotations for the current user
-             */
-            fetchData: function () {
-                // function to conclude the retrieve of annotations
-                var concludeInitialization = _.bind(function () {
-
-                    // At least one private track should exist, we select the first one
-                    var selectedTrack = this.video.get("tracks").filter(util.caller("isMine"))[0];
-
-                    if (!selectedTrack.get("id")) {
-                        selectedTrack.on("ready", concludeInitialization, this);
-                    } else {
-                        this.selectedTrack = selectedTrack;
-
-                        this.modelsInitialized = true;
-                        this.trigger(this.EVENTS.MODELS_INITIALIZED);
-                    }
-                }, this),
-
-                    /**
-                     * Create a default track for the current user if no private track is present
-                     */
-                    createDefaultTrack = _.bind(function () {
-
-                        var tracks = this.video.get("tracks");
-
-                        if (!tracks.filter(util.caller("isMine")).length) {
-                            tracks.create({
-                                name: i18next.t("default track.name", {
-                                    nickname: this.user.get("nickname")
-                                }),
-                                description: i18next.t("default track.description", {
-                                    nickname: this.user.get("nickname")
-                                })
-                            }, {
-                                wait: true,
-                                success: concludeInitialization
-                            });
-                        } else {
-                            tracks.showTracks(
-                                tracks.filter(function (track) {
-                                    return track.isMine()
-                                        || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
-                                })
-                            );
-                            concludeInitialization();
-                        }
-                    }, this);
-
-                $.when(this.getVideoExtId(), this.getVideoParameters()).then(
-                    _.bind(function (videoExtId, videoParameters) {
-                        this.video = new Videos().add({ video_extid: videoExtId }).at(0);
-                        this.video.set(videoParameters);
-                        this.video.save(null, {
-                            error: _.bind(function (model, response, options) {
-                                if (response.status === 403) {
-                                    alerts.fatal(i18next.t("annotation not allowed"));
-                                }
-                            }, this)
-                        });
-                        this.listenToOnce(this.video, "ready", createDefaultTrack);
-                    }, this)
-                );
             },
 
             ////////////////
