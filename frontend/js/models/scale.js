@@ -66,10 +66,6 @@ define(
             initialize: function (attr) {
                 _.bindAll(this, "toExportJSON");
 
-                if (!attr  || _.isUndefined(attr.name)) {
-                    throw "'name' attribute is required";
-                }
-
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.scaleValues && _.isArray(attr.scaleValues)) {
