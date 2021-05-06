@@ -97,19 +97,6 @@ define(
             },
 
             /**
-             * Get the track with the given id
-             * @param {integer} trackId The id from the wanted track
-             * @return {Track} The track with the given id
-             */
-            getTrack: function (trackId) {
-                if (_.isUndefined(this.tracks)) {
-                    this.tracks = this.get("tracks");
-                }
-
-                return this.tracks.get(trackId);
-            },
-
-            /**
              * @return {Annotation[]} This video's annotations
              *     across all tracks, potentially filtered
              *     by a given category.
@@ -141,27 +128,6 @@ define(
                     track.annotations.each(handleAnnotation);
                 });
                 return result;
-            },
-
-            /**
-             * Get the annotation with the given id on the given track
-             * @param {integer} annotationId The id from the wanted annotation
-             * @param {integer} trackId The id from the track containing the annotation
-             * @return {Track} The annotation with the given id
-             */
-            getAnnotation: function (annotationId, trackId) {
-                var track = this.getTrack(trackId),
-                    tmpAnnotation;
-
-                if (track) {
-                    return track.getAnnotation(annotationId);
-                } else {
-                    this.get("tracks").find(function (trackItem) {
-                        tmpAnnotation = trackItem.getAnnotation(annotationId);
-                        return !_.isUndefined(tmpAnnotation);
-                    });
-                    return tmpAnnotation;
-                }
             },
 
             /**

@@ -99,7 +99,7 @@ define(
                     "search"
                 );
 
-                this.tracks = annotationTool.getTracks();
+                this.tracks = annotationTool.video.get("tracks");
             },
 
             /**
