@@ -132,10 +132,8 @@ define(
                     this,
                     "updateSelectionOnTimeUpdate",
                     "createAnnotation",
-                    "getSelection",
                     "fetchData",
                     "importCategories",
-                    "hasSelection",
                     "onDestroyRemoveSelection",
                     "onTimeUpdate",
                     "selectTrack",
@@ -374,22 +372,6 @@ define(
                 var previousTrack = this.selectedTrack;
                 this.selectedTrack = track;
                 this.video.get("tracks").trigger("select", track, previousTrack);
-            },
-
-            /**
-             * Returns the current selection of the tool
-             * @return {Annotation} The current selection or undefined if no selection.
-             */
-            getSelection: function () {
-                return this.selection;
-            },
-
-            /**
-             * Informs if there is or not some items selected
-             * @return {Boolean} true if an annotation is selected or false.
-             */
-            hasSelection: function () {
-                return !!this.selection;
             },
 
             /**

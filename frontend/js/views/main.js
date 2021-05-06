@@ -522,7 +522,7 @@ define(
             setupKeyboardShortcuts: function () {
 
                 var setActiveAnnotationDuration = function () {
-                    var selection = annotationTool.getSelection();
+                    var selection = annotationTool.selection;
                     if (!selection) return;
 
                     var currentTime = annotationTool.playerAdapter.getCurrentTime();
@@ -533,7 +533,7 @@ define(
 
                 var addComment = _.bind(function () {
                     if (!this.views.list) return;
-                    var selection = annotationTool.getSelection();
+                    var selection = annotationTool.selection;
                     if (!selection) return;
 
                     var annotationView = this.views.list.getViewFromAnnotation(
@@ -779,12 +779,12 @@ define(
                 if (event.keyCode !== 8 ||
                     document.activeElement.tagName === "TEXTAREA" ||
                     document.activeElement.tagName === "INPUT" ||
-                    !annotationTool.hasSelection()) return;
+                    !annotationTool.selection) return;
 
                 event.preventDefault();
 
                 annotationTool.deleteOperation.start(
-                    annotationTool.getSelection(),
+                    annotationTool.selection,
                     annotationTool.deleteOperation.targetTypes.ANNOTATION
                 );
             },
