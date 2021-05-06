@@ -100,35 +100,39 @@ define(
              * @return {Annotation[]} This video's annotations
              *     across all tracks, potentially filtered
              *     by a given category.
-             * @param {(Category | null)?} category
+             * @param {Category?} category
              *     A category to filter the returned annotations by.
-             *     <code>null</code> means free text annotations.
-             *     <code>undefined</code> means all annotations.
+             *     Falsy values mean free text annotations.
              */
-            getAnnotations: function (category) {
-                var result = [];
-                var handleAnnotation;
-                if (_.isUndefined(category)) {
-                    handleAnnotation = _.bind(Array.prototype.push, result);
-                } else if (category) {
-                    handleAnnotation = function (annotation) {
+            getAnnotations: (function () {
+                return function (category) {
+                    return this.get("tracks").chain()
+                    // TODO This needs Underscore 1.9
+                        .map(_.property(["annotations", "models"]))
+                        .flatten()
+                        .filter(filter(category))
+                        .value();
+                };
+
+                function filter(category) {
+                    if (category) {
+                        return withCategory(category);
+                    } else {
+                        return withoutCategory;
+                    }
+                }
+
+                function withoutCategory(annotation) {
+                    return annotation.get("label");
+                }
+
+                function withCategory(category) {
+                    return function (annotation) {
                         var label = annotation.get("label");
-                        if (label && label.category.id === category.id) {
-                            result.push(annotation);
-                        }
-                    };
-                } else {
-                    handleAnnotation = function (annotation) {
-                        if (!annotation.get("label")) {
-                            result.push(annotation);
-                        }
+                        return label && label.category.id === category.id;
                     };
                 }
-                this.get("tracks").each(function (track) {
-                    track.annotations.each(handleAnnotation);
-                });
-                return result;
-            },
+            })(),
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
