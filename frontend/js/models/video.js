@@ -18,15 +18,16 @@
  * A module representing the video model
  * @module models-video
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "collections/tracks",
         "collections/categories",
         "collections/scales",
         "access",
-        "models/resource"],
-
+        "models/resource"
+    ],
     function (_, Tracks, Categories, Scales, ACCESS, Resource) {
-
         "use strict";
 
         /**
@@ -66,10 +67,12 @@ define(["underscore",
              */
             initialize: function (attr) {
 
-                _.bindAll(this,
-                        "getTrack",
-                        "getAnnotation",
-                        "loadTracks");
+                _.bindAll(
+                    this,
+                    "getTrack",
+                    "getAnnotation",
+                    "loadTracks"
+                );
 
                 Resource.prototype.initialize.apply(this, arguments);
 
@@ -175,8 +178,8 @@ define(["underscore",
             /**
              * Get the track with the given id
              * @alias module:models-video.Video#getTrack
-             * @param  {integer} trackId The id from the wanted track
-             * @return {Track}           The track with the given id
+             * @param {integer} trackId The id from the wanted track
+             * @return {Track} The track with the given id
              */
             getTrack: function (trackId) {
                 if (_.isUndefined(this.tracks)) {

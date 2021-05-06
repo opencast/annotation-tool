@@ -137,7 +137,7 @@ define(["underscore",
                     name: this.attributes.name,
                     scaleValues: this.attributes.scaleValues.map(function (scaleValue) {
                         return scaleValue.toExportJSON();
-		    })
+                    })
                 };
 
                 if (this.attributes.tags) {

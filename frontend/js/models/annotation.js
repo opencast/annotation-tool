@@ -199,7 +199,7 @@ define(["underscore",
                 var start = this.get("start");
                 var duration = this.get("duration");
                 var end = start + (duration || minDuration);
- 
+
                 return start <= time && time <= end;
             },
 
