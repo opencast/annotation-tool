@@ -776,10 +776,15 @@ define(
              * @param  {Event} event Event object
              */
             onDeletePressed: function (event) {
-                if (event.keyCode !== 8 ||
-                    document.activeElement.tagName === "TEXTAREA" ||
-                    document.activeElement.tagName === "INPUT" ||
-                    !annotationTool.selection) return;
+                if ((
+                    event.keyCode !== 8
+                ) || (
+                    document.activeElement.tagName === "TEXTAREA"
+                ) || (
+                    document.activeElement.tagName === "INPUT"
+                ) || (
+                    !annotationTool.selection
+                )) return;
 
                 event.preventDefault();
 
