@@ -126,7 +126,7 @@ define(
 
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
-                this.listenToOnce(this, MainView.EVENTS.READY, function () {
+                this.listenToOnce(this, "ready", function () {
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
@@ -513,7 +513,7 @@ define(
 
                 this.setupKeyboardShortcuts();
 
-                this.trigger(MainView.EVENTS.READY);
+                this.trigger("ready");
             },
 
             /**
@@ -813,10 +813,6 @@ define(
 
                 this.loadingBox.find(".bar").width(this.loadingPercent + "%");
                 this.loadingBox.find(".info").text(message);
-            }
-        }, {
-            EVENTS: {
-                READY: "ready"
             }
         });
         return MainView;
