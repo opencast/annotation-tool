@@ -233,8 +233,8 @@ define(["jquery",
              * @param {object} category The updated category
              */
             setupScaling: function (category) {
-                var scaleId = category.scale_id || (category.scale && category.scale.id),
-                    scale = scaleId && annotationTool.video.get("scales").get(scaleId);
+                var scaleId = category.scale_id;
+                var scale = scaleId && annotationTool.video.get("scales").get(scaleId);
 
                 if (scale) {
                     this.scaleValues = scale.get("scaleValues");
