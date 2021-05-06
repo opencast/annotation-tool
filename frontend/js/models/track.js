@@ -119,12 +119,6 @@ define([
                     ["visible"]
                 );
             }
-        }, {
-            FIELDS: {
-                VISIBLE             : "visible",
-                CREATED_BY          : "created_by",
-                CREATED_BY_NICKNAME : "created_by_nickname"
-            }
         }
     );
 

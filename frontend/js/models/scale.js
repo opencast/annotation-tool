@@ -140,10 +140,6 @@ define(["underscore",
                     })
                 };
 
-                if (this.attributes.tags) {
-                    json.tags = JSON.stringify(this.attributes.tags);
-                }
-
                 if (this.attributes.description) {
                     json.description = this.attributes.description;
                 }

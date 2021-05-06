@@ -24,10 +24,9 @@ define(
         "collections/tracks",
         "collections/categories",
         "collections/scales",
-        "access",
         "models/resource"
     ],
-    function (_, Tracks, Categories, Scales, ACCESS, Resource) {
+    function (_, Tracks, Categories, Scales, Resource) {
         "use strict";
 
         /**
@@ -38,14 +37,6 @@ define(
          * @alias module:models-video.Video
          */
         var Video = Resource.extend({
-
-            /**
-             * Default models value
-             * @alias module:models-video.Video#defaults
-             */
-            defaults: {
-                access: ACCESS.PUBLIC
-            },
 
             /**
              * REST endpont for this model

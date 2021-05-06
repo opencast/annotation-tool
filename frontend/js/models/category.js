@@ -20,10 +20,9 @@
  */
 define(["underscore",
         "collections/labels",
-        "access",
         "models/resource"],
 
-    function (_, Labels, ACCESS, Resource) {
+    function (_, Labels, Resource) {
 
         "use strict";
 
@@ -35,23 +34,6 @@ define(["underscore",
          * @alias module:models-category.Category
          */
         var Category = Resource.extend({
-
-            /**
-             * Default models value
-             * @alias module:models-category.Category#defaults
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                access: ACCESS.PRIVATE,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null,
-            },
-
             /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
@@ -191,10 +173,6 @@ define(["underscore",
                     })
                 };
 
-                if (this.attributes.tags) {
-                    json.tags = JSON.stringify(this.attributes.tags);
-                }
-
                 if (this.attributes.description) {
                     json.description = this.attributes.description;
                 }
@@ -205,10 +183,6 @@ define(["underscore",
 
                 if (this.attributes.settings) {
                     json.settings = this.attributes.settings;
-                }
-
-                if (this.attributes.tags) {
-                    json.tags = this.attributes.tags;
                 }
 
                 if (!_.isUndefined(withScale) &&  withScale) {
