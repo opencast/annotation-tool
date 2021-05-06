@@ -366,6 +366,17 @@ define(
             },
 
             /**
+             * Select the given track
+             * @param {Object} track the track to select
+             */
+            selectTrack: function (track) {
+                if (track === this.selectedTrack) return;
+                var previousTrack = this.selectedTrack;
+                this.selectedTrack = track;
+                this.video.get("tracks").trigger("select", track, previousTrack);
+            },
+
+            /**
              * Returns the current selection of the tool
              * @return {Annotation} The current selection or undefined if no selection.
              */
@@ -482,22 +493,6 @@ define(
                         }, this)
                     });
                 return annotation;
-            },
-
-            /////////////
-            // GETTERs //
-            /////////////
-
-            /**
-             * Select the given track
-             * @param {Object} track the track to select
-             */
-            selectTrack: function (track) {
-                if (track === this.selectedTrack) return;
-                var previousTrack = this.selectedTrack;
-                this.selectedTrack = track;
-                this.video.get("tracks")
-                    .trigger("select", track, previousTrack);
             },
 
             ////////////////
