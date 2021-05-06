@@ -75,22 +75,22 @@ define(["underscore",
             /**
              * Parse the attribute list passed to the model
              * @alias module:models-annotation.Annotation#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
+             * @param {object} attr Object literal containing the model attribute to parse.
+             * @return {object} The object literal with the list of parsed model attribute.
              */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (attr.label) {
-                        var tempSettings;
-                        if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
-                            attr.label.category.settings = tempSettings;
-                        }
-
-                        if ((tempSettings = util.parseJSONString(attr.label.settings))) {
-                            attr.label.settings = tempSettings;
-                        }
+            parse: function (attr) {
+                attr = Resource.prototype.parse.call(this, attr);
+                if (attr.label) {
+                    var tempSettings;
+                    if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
+                        attr.label.category.settings = tempSettings;
                     }
-                });
+
+                    if ((tempSettings = util.parseJSONString(attr.label.settings))) {
+                        attr.label.settings = tempSettings;
+                    }
+                }
+                return attr;
             },
 
             /**
