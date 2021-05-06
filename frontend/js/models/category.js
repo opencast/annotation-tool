@@ -92,24 +92,6 @@ define(["underscore",
             },
 
             /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-category.Category#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
-             */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (annotationTool.localStorage && _.isArray(attr.labels)) {
-                        attr.labels = new Labels(attr.labels, { category: this });
-                    }
-
-                    if (!annotationTool.localStorage && attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
-                        attr.scale = annotationTool.video.get("scales").get(attr.scale_id);
-                    }
-                });
-            },
-
-            /**
              * Validate the attribute list passed to the model
              * @alias module:models-category.Category#validate
              * @param {object} attr Object literal containing the model attribute to validate.
@@ -189,9 +171,7 @@ define(["underscore",
                         json.scale_id = this.attributes.scale.id;
                     }
 
-                    if (!annotationTool.localStorage) {
-                        delete json.scale;
-                    }
+                    delete json.scale;
                 }
 
                 return json;

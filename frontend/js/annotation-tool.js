@@ -606,9 +606,7 @@ define(["jquery",
              * @alias annotationTool.fetchData
              */
             fetchData: function () {
-                var video,
-                    videos = new Videos(),
-                    tracks,
+                var tracks,
                     // function to conclude the retrieve of annotations
                     concludeInitialization = _.bind(function () {
 
@@ -655,39 +653,21 @@ define(["jquery",
                 $.when(this.getVideoExtId(), this.getVideoParameters()).then(
                     _.bind(function (videoExtId, videoParameters) {
                         // If we are using the localstorage
-                        if (this.localStorage) {
-                            videos.fetch({
-                                success: _.bind(function () {
-                                    if (videos.length === 0) {
-                                        video = videos.create(videoParameters, { wait: true });
-                                    } else {
-                                        video = videos.at(0);
-                                        video.set(videoParameters);
-                                    }
-
-                                    this.video = video;
-                                }, this)
-                            });
-
+                        var video = new Videos().add({ video_extid: videoExtId }).at(0);
+                        this.video = video;
+                        video.set(videoParameters);
+                        video.save(null, {
+                            error: _.bind(function (model, response, options) {
+                                if (response.status === 403) {
+                                    alerts.fatal(i18next.t("annotation not allowed"));
+                                    this.views.main.loadingBox.hide();
+                                }
+                            }, this)
+                        });
+                        if (video.get("ready")) {
                             createDefaultTrack();
-                        } else { // With REST storage
-                            videos.add({ video_extid: videoExtId });
-                            video = videos.at(0);
-                            this.video = video;
-                            video.set(videoParameters);
-                            video.save(null, {
-                                error: _.bind(function (model, response, options) {
-                                    if (response.status === 403) {
-                                        alerts.fatal(i18next.t("annotation not allowed"));
-                                        this.views.main.loadingBox.hide();
-                                    }
-                                }, this)
-                            });
-                            if (video.get("ready")) {
-                                createDefaultTrack();
-                            } else {
-                                video.once("ready", createDefaultTrack);
-                            }
+                        } else {
+                            video.once("ready", createDefaultTrack);
                         }
                     }, this)
                 );
@@ -815,11 +795,7 @@ define(["jquery",
                         }
 
                         if (annotation.attributes.scalevalue) {
-                            if (annotationTool.localStorage) {
-                                line.push(getScaleNameByScaleValueId(annotation.attributes.scalevalue.id));
-                            } else {
-                                line.push(annotation.attributes.scalevalue.scale.name);
-                            }
+                            line.push(annotation.attributes.scalevalue.scale.name);
                             line.push(annotation.attributes.scalevalue.name);
                             line.push(annotation.attributes.scalevalue.value);
                         } else {
@@ -894,16 +870,6 @@ define(["jquery",
                         commentReplies(line, comment.attributes.replies);
                     });
                 }
-
-                function getScaleNameByScaleValueId(scaleValueId) {
-                    for (let i = 0; i < annotationTool.video.attributes.scales.models.length; i++) {
-                        for (let j = 0; j < annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models.length; j++) {
-                            if (annotationTool.video.attributes.scales.models[i].attributes.scaleValues.models[j].attributes.id == scaleValueId) {
-                                return annotationTool.video.attributes.scales.models[i].attributes.name;
-                            }
-                        }
-                    }
-                }
             }
         });
 
@@ -934,17 +900,6 @@ define(["jquery",
                     target.destroy({
 
                         success: function () {
-                            if (annotationTool.localStorage) {
-                                annotationTool.video.get("tracks").each(function (value) {
-                                    if (value.annotations.get(target.id)) {
-                                        value.annotations.remove(target);
-                                        value.save(null, { wait: true });
-                                        return false;
-                                    }
-                                    return undefined;
-                                });
-                                annotationTool.video.save();
-                            }
                             if (callback) {
                                 callback();
                             }
@@ -967,9 +922,6 @@ define(["jquery",
                     target.destroy({
 
                         success: function () {
-                            if (annotationTool.localStorage) {
-                                annotationTool.video.save();
-                            }
                             if (callback) {
                                 callback();
                             }
@@ -990,12 +942,6 @@ define(["jquery",
                     target.destroy({
 
                         success: function () {
-                            if (annotationTool.localStorage) {
-                                if (target.collection) {
-                                    target.collection.remove(target);
-                                }
-                                annotationTool.video.save();
-                            }
                             if (callback) {
                                 callback();
                             }
@@ -1023,9 +969,6 @@ define(["jquery",
                     );
                     track.destroy({
                         success: function () {
-                            if (annotationTool.localStorage) {
-                                annotationTool.video.save();
-                            }
                             if (callback) {
                                 callback();
                             }
@@ -1050,9 +993,6 @@ define(["jquery",
                     );
                     category.destroy({
                         success: function () {
-                            if (annotationTool.localStorage) {
-                                annotationTool.video.save();
-                            }
                             if (callback) {
                                 callback();
                             }
@@ -1074,13 +1014,6 @@ define(["jquery",
                     target.destroy({
 
                         success: function () {
-                            if (window.annotationTool.localStorage) {
-                                if (target.collection) {
-                                    target.collection.remove(target);
-                                }
-
-                                annotationTool.video.save();
-                            }
                             if (callback) {
                                 callback();
                             }
@@ -1106,9 +1039,6 @@ define(["jquery",
                     );
                     scale.destroy({
                         success: function () {
-                            if (window.annotationTool.localStorage) {
-                                annotationTool.video.save();
-                            }
                             if (callback) {
                                 callback();
                             }
