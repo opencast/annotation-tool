@@ -101,19 +101,19 @@ define(["underscore",
                 var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
-                if (attr.value &&  !_.isString(attr.value)) {
+                if (attr.value && !_.isString(attr.value)) {
                     return "'value' attribute must be a string!";
                 }
 
-                if (attr.abbreviation &&  !_.isString(attr.abbreviation)) {
+                if (attr.abbreviation && !_.isString(attr.abbreviation)) {
                     return "'abbreviation' attribute must be a string!";
                 }
 
-                if (attr.description &&  !_.isString(attr.description)) {
+                if (attr.description && !_.isString(attr.description)) {
                     return "'description' attribute must be a string!";
                 }
 
-                if (attr.category &&  !_.isObject(attr.category)) {
+                if (attr.category && !_.isObject(attr.category)) {
                     return "'category' attribute must be a JSON Object!";
                 }
 

@@ -147,15 +147,15 @@ define(["underscore",
                     }
                 }
 
-                if (attr.start &&  !_.isNumber(attr.start)) {
+                if (attr.start && !_.isNumber(attr.start)) {
                     return "\"start\" attribute must be a number!";
                 }
 
-                if (attr.text &&  !_.isString(attr.text)) {
+                if (attr.text && !_.isString(attr.text)) {
                     return "\"text\" attribute must be a string!";
                 }
 
-                if (attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
+                if (attr.duration && (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
                     return "\"duration\" attribute must be a positive number";
                 }
 
@@ -191,8 +191,8 @@ define(["underscore",
                             this.once("ready", this.fetchComments);
                         } else {
                             this.attributes.comments.fetch({
-                                async   : true,
-                                success : fetchCallback
+                                async: true,
+                                success: fetchCallback
                             });
                         }
                     }
