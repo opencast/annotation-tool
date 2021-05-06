@@ -55,10 +55,6 @@ define(["underscore",
                 _.bindAll(this, "areCommentsLoaded",
                                 "fetchComments");
 
-                if (!attr || _.isUndefined(attr.start)) {
-                    throw "\"start\" attribute is required";
-                }
-
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.comments && _.isArray(attr.comments)) {
