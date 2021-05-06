@@ -18,13 +18,14 @@
  * A module representing the scale model
  * @module models-scale
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "access",
         "collections/scalevalues",
-        "models/resource"],
-
+        "models/resource"
+    ],
     function (_, ACCESS, ScaleValues, Resource) {
-
         "use strict";
 
         /**
@@ -96,7 +97,7 @@ define(["underscore",
                         scalevalues = this.attributes.scaleValues;
 
                         if (scalevalues && (scalevalues.length) === 0) {
-                            scalevalues.fetch({async: false});
+                            scalevalues.fetch({ async: false });
                         }
                     }
                 });
@@ -137,7 +138,7 @@ define(["underscore",
                     name: this.attributes.name,
                     scaleValues: this.attributes.scaleValues.map(function (scaleValue) {
                         return scaleValue.toExportJSON();
-		    })
+                    })
                 };
 
                 if (this.attributes.tags) {

@@ -250,8 +250,8 @@ define(["jquery",
              */
             onFocusOut: function () {
                 this.model.set({
-                    "value"        : _.escape(this.$el.find("input.item-value").val()),
-                    "abbreviation" : _.escape(this.$el.find("input.item-abbreviation").val())
+                    value: _.escape(this.$el.find("input.item-value").val()),
+                    abbreviation: _.escape(this.$el.find("input.item-abbreviation").val())
                 });
                 this.model.save();
             },

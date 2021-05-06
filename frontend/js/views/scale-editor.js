@@ -18,16 +18,18 @@
  * A module representing the scale editor
  * @module views-scale-editor
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
         "i18next",
         "views/scalevalue-editor",
         "templates/scale-editor",
         "templates/scale-editor-select",
-        "templates/scale-editor-content"],
+        "templates/scale-editor-content"
+    ],
     function ($, _, Backbone, i18next, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
-
             "use strict";
 
             /**
@@ -45,9 +47,9 @@ define(["jquery",
                  * @type {map}
                  */
                 TITLES: {
-                    CATEGORY_EDIT  : i18next.t("scale editor.edit category scale"),
+                    CATEGORY_EDIT: i18next.t("scale editor.edit category scale"),
                     STANDALONE_EDIT: i18next.t("scale editor.edit scales"),
-                    SAVE_BUTTON    : i18next.t("scale editor.save")
+                    SAVE_BUTTON: i18next.t("scale editor.save")
                 },
 
                 /**
@@ -57,7 +59,7 @@ define(["jquery",
                  */
                 EMPTY_SCALE: {
                     name: i18next.t("scale editor.no scale"),
-                    id  : "NO"
+                    id: "NO"
                 },
 
                 /**
@@ -110,21 +112,23 @@ define(["jquery",
                  */
                 initialize: function () {
 
-                    _.bindAll(this,
-                            "initialize",
-                            "saveOnInsert",
-                            "save",
-                            "startEditScale",
-                            "createScale",
-                            "createScaleValue",
-                            "deleteScale",
-                            "changeScale",
-                            "cancel",
-                            "renderEditContent",
-                            "renderScaleSelect",
-                            "generateScalesForTemplate",
-                            "show",
-                            "hide");
+                    _.bindAll(
+                        this,
+                        "initialize",
+                        "saveOnInsert",
+                        "save",
+                        "startEditScale",
+                        "createScale",
+                        "createScaleValue",
+                        "deleteScale",
+                        "changeScale",
+                        "cancel",
+                        "renderEditContent",
+                        "renderScaleSelect",
+                        "generateScalesForTemplate",
+                        "show",
+                        "hide"
+                    );
 
                     // Type use for delete operation
                     this.scaleDeleteType = annotationTool.deleteOperation.targetTypes.SCALE;
@@ -344,7 +348,7 @@ define(["jquery",
                 createScaleValue: function () {
                     this.currentScale.get("scaleValues").create({
                         order: this.$el.find(".scale-value").length,
-                        name : i18next.t("scale editor.new scale.value"),
+                        name: i18next.t("scale editor.new scale.value"),
                         value: 0,
                         access: this.currentCategory.get("access")
                     });

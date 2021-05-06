@@ -211,7 +211,7 @@ define(["underscore",
                     json.tags = this.attributes.tags;
                 }
 
-                if (!_.isUndefined(withScale) &&  withScale) {
+                if (!_.isUndefined(withScale) && withScale) {
                     if (this.attributes.scale_id) {
                         json.scale = annotationTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
                     } else if (this.attributes.scale) {
