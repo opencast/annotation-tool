@@ -324,11 +324,7 @@ define(["jquery",
                 var modelJSON = this.model.toJSON();
 
                 modelJSON.notEdit = !this.editModus;
-                if (!this.isScaleEnable) {
-                    if (modelJSON.scale_id) {
-                        delete modelJSON.scale_id;
-                    }
-                } else if (this.scaleValues) {
+                if (this.scaleValues) {
                     modelJSON.scaleValues = this.scaleValues.sort().toJSON();
                 }
 
