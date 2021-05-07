@@ -18,7 +18,9 @@
  * A module representing the main view
  * @module views-main
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "mousetrap",
         "i18next",
@@ -33,8 +35,8 @@ define(["jquery",
         "views/print",
         "backbone",
         "goldenlayout",
-        "bootstrap"],
-
+        "bootstrap"
+    ],
     function (
         $,
         _,
@@ -103,15 +105,18 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
-                _.bindAll(this, "createViews",
-                                "onDeletePressed",
-                                "onWindowResize",
-                                "print",
-                                "ready",
-                                "setupKeyboardShortcuts",
-                                "interruptAnnotationShortcut",
-                                "tracksSelection",
-                                "setLoadingProgress");
+                _.bindAll(
+                    this,
+                    "createViews",
+                    "onDeletePressed",
+                    "onWindowResize",
+                    "print",
+                    "ready",
+                    "setupKeyboardShortcuts",
+                    "interruptAnnotationShortcut",
+                    "tracksSelection",
+                    "setLoadingProgress"
+                );
 
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
 

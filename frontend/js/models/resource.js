@@ -18,7 +18,17 @@
  * A module representing a generic annotation tool resource.
  * @module models-resource
  */
-define(["underscore", "backbone", "util", "access"], function (_, Backbone, util, ACCESS) {
+define([
+    "underscore",
+    "backbone",
+    "util",
+    "access"
+], function (
+    _,
+    Backbone,
+    util,
+    ACCESS
+) {
 "use strict";
 
 /**

@@ -18,12 +18,17 @@
  * A module representing the scalevalue model
  * @module models-scalevalue
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "access",
-        "models/resource"],
-
-    function (_, ACCESS, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        ACCESS,
+        Resource
+    ) {
         "use strict";
 
         /**

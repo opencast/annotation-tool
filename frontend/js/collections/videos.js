@@ -18,11 +18,15 @@
  * A module representing a videos collection
  * @module collections-videos
  */
-define(["models/video",
-        "backbone"],
-
-    function (Video, Backbone) {
-
+define(
+    [
+        "models/video",
+        "backbone"
+    ],
+    function (
+        Video,
+        Backbone
+    ) {
         "use strict";
 
         /**

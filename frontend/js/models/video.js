@@ -18,15 +18,23 @@
  * A module representing the video model
  * @module models-video
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "collections/tracks",
         "collections/categories",
         "collections/scales",
         "access",
-        "models/resource"],
-
-    function (_, Tracks, Categories, Scales, ACCESS, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        Tracks,
+        Categories,
+        Scales,
+        ACCESS,
+        Resource
+    ) {
         "use strict";
 
         /**
@@ -62,10 +70,12 @@ define(["underscore",
              */
             initialize: function (attr) {
 
-                _.bindAll(this,
-                        "getTrack",
-                        "getAnnotation",
-                        "loadTracks");
+                _.bindAll(
+                    this,
+                    "getTrack",
+                    "getAnnotation",
+                    "loadTracks"
+                );
 
                 Resource.prototype.initialize.apply(this, arguments);
 
@@ -216,9 +226,9 @@ define(["underscore",
 
             /**
              * Get the annotation with the given id on the given track
-             * @param  {integer} annotationId The id from the wanted annotation
-             * @param  {integer} trackId      The id from the track containing the annotation
-             * @return {Track}                The annotation with the given id
+             * @param {integer} annotationId The id from the wanted annotation
+             * @param {integer} trackId The id from the track containing the annotation
+             * @return {Track} The annotation with the given id
              */
             getAnnotation: function (annotationId, trackId) {
                 var track = this.getTrack(trackId),

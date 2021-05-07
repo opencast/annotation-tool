@@ -18,11 +18,15 @@
  * A module representing a users collection
  * @module collections-users
  */
-define(["models/user",
-        "backbone"],
-
-    function (User, Backbone) {
-
+define(
+    [
+        "models/user",
+        "backbone"
+    ],
+    function (
+        User,
+        Backbone
+    ) {
         "use strict";
 
         /**

@@ -18,14 +18,21 @@
  * A module representing the view for a comments container
  * @module views-comment
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "util",
         "templates/comment",
         "backbone",
-        "views/comments-container"],
-
-    function (_, util, template, Backbone, CommentsContainer) {
-
+        "views/comments-container"
+    ],
+    function (
+        _,
+        util,
+        template,
+        Backbone,
+        CommentsContainer
+    ) {
         "use strict";
 
         /**
@@ -73,13 +80,15 @@ define(["underscore",
                 this.el.id          = this.id;
 
                 // Bind function to the good context
-                _.bindAll(this,
-                          "cancel",
-                          "onDeleteComment",
-                          "onEditComment",
-                          "onSubmit",
-                          "onCancel",
-                          "render");
+                _.bindAll(
+                    this,
+                    "cancel",
+                    "onDeleteComment",
+                    "onEditComment",
+                    "onSubmit",
+                    "onCancel",
+                    "render"
+                );
 
                 this.isEditEnable = !!attr.isEditEnable;
 

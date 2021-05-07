@@ -17,10 +17,16 @@
  * A module to print annotations to be able to compare them nicely.
  * @module views-print
  */
-define(["underscore", "backbone", "templates/print"], function (_, Backbone, printTemplate) {
-
+define([
+    "underscore",
+    "backbone",
+    "templates/print"
+], function (
+    _,
+    Backbone,
+    printTemplate
+) {
     "use strict";
-
 
     /**
      * @constructor

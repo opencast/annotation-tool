@@ -17,13 +17,19 @@
  * A module representing the view for a comments container
  * @module views-comments-container
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "views/comment",
         "templates/comments-container",
-        "backbone"],
-
-    function (_, CommentView, template, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        _,
+        CommentView,
+        template,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -72,12 +78,14 @@ define(["underscore",
                 this.commentViews = [];
 
                 // Bind function to the good context
-                _.bindAll(this,
-                          "render",
-                          "deleteView",
-                          "insert",
-                          "onCancelComment",
-                          "resetViews");
+                _.bindAll(
+                    this,
+                    "render",
+                    "deleteView",
+                    "insert",
+                    "onCancelComment",
+                    "resetViews"
+                );
 
                 this.listenTo(this.collection, "remove", this.deleteView);
                 this.listenTo(this.collection, "reset", this.resetViews);

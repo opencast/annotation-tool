@@ -1,4 +1,14 @@
-define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _, i18next, util) {
+define([
+    "handlebars",
+    "underscore",
+    "i18next",
+    "util"
+], function (
+    Handlebars,
+    _,
+    i18next,
+    util
+) {
 
     /**
      * Expose the global annotation tool to the templates to access configuration.

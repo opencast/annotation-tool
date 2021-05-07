@@ -18,7 +18,9 @@
  * A module representing the main view to create anotation
  * @module views-annotate
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "i18next",
         "player-adapter",
@@ -28,10 +30,21 @@ define(["jquery",
         "templates/annotate-toggle-free-text-button",
         "roles",
         "access",
-        "backbone"],
-
-    function ($, _, i18next, PlayerAdapter, AnnotateTab, template, TabsButtonTemplate, toggleFreeTextButtonTemplate, ROLES, ACCESS, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        $,
+        _,
+        i18next,
+        PlayerAdapter,
+        AnnotateTab,
+        template,
+        TabsButtonTemplate,
+        toggleFreeTextButtonTemplate,
+        ROLES,
+        ACCESS,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -129,18 +142,20 @@ define(["jquery",
                 var categories;
 
                 // Set the current context for all these functions
-                _.bindAll(this,
-                            "insert",
-                            "onFocusIn",
-                            "onFocusOut",
-                            "changeTrack",
-                            "addTab",
-                            "onSwitchEditModus",
-                            "checkToContinueVideo",
-                            "switchEditModus",
-                            "keydownOnAnnotate",
-                            "toggleFreeTextAnnotationPane",
-                            "toggleStructuredAnnotations");
+                _.bindAll(
+                    this,
+                    "insert",
+                    "onFocusIn",
+                    "onFocusOut",
+                    "changeTrack",
+                    "addTab",
+                    "onSwitchEditModus",
+                    "checkToContinueVideo",
+                    "switchEditModus",
+                    "keydownOnAnnotate",
+                    "toggleFreeTextAnnotationPane",
+                    "toggleStructuredAnnotations"
+                );
 
                 // Parameter for stop on write
                 this.continueVideo = false;
