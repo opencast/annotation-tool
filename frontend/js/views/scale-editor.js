@@ -176,9 +176,7 @@ define([
             scales.push(this.EMPTY_SCALE);
 
             if (this.currentScaleId) {
-                selectedScale = _.find(scales, function (scale) {
-                    return scale.id === this.currentScaleId;
-                }, this);
+                selectedScale = _.findWhere(scales, { id: this.currentScaleId });
 
                 if (selectedScale) {
                     selectedScale.isSelected = true;

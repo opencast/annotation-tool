@@ -235,10 +235,7 @@ define(
                     timeupdateEvent += ":" + interval;
 
                     // Check if the interval needs to be added to list
-                    // TODO Use `findWhere` once that is available
-                    if (!_.find(this.timeUpdateIntervals, function (value) {
-                        return value.interval === interval;
-                    }, this)) {
+                    if (!_.findWhere(this.timeUpdateIntervals, { interval: interval })) {
                         // Add interval to list
                         this.timeUpdateIntervals.push({
                             interval: interval,
