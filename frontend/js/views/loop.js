@@ -47,12 +47,10 @@ var MINIMAL_LOOP = 5;
  * @see {@link http://www.backbonejs.org/#View}
  * @augments module:Backbone.View
  * @memberOf module:views-loop
- * @alias Loop
  */
 var LoopView = Backbone.View.extend({
     /**
      * Constructor
-     * @alias module:views-loop.Loop#constructor
      */
     constructor: function (options) {
 
@@ -75,7 +73,6 @@ var LoopView = Backbone.View.extend({
 
         /**
          * Constructor
-         * @alias module:views-loop.Loop#initialize
          */
         this.initialize = function () {
 
@@ -275,7 +272,6 @@ var LoopView = Backbone.View.extend({
 
         /**
          * Remove the loop controller from the screen
-         * @alias module:views-loop.Loop#remove
          */
         this.remove = function () {
             $playerAdapter.off(".loop");

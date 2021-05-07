@@ -32,19 +32,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-tracks
-         * @alias module:collections-tracks.Tracks
          */
         var Tracks = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-tracks.Tracks#model
              */
             model: Track,
 
             /**
              * constructor
-             * @alias module:collections-tracks.Tracks#initialize
              */
             initialize: function (models, options) {
                 this.video = options.video;
@@ -60,7 +57,6 @@ define(["underscore",
 
             /**
              * Parse the given data
-             * @alias module:collections-tracks.Tracks#parse
              * @param {object} data object or array containing the data to parse.
              * @return {object} the part of the given data related to the tracks
              */
@@ -131,7 +127,6 @@ define(["underscore",
 
             /**
              * Get the url for this collection
-             * @alias module:collections-tracks.Tracks#url
              * @return {String} the url of this collection
              */
             url: function () {

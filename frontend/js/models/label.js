@@ -32,13 +32,11 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-label
-         * @alias module:models-label.Label
          */
         var Label = Resource.extend({
 
             /**
              * Default models value
-             * @alias module:models-label.Label#defaults
              * @type {map}
              * @static
              */
@@ -53,7 +51,6 @@ define(["underscore",
 
              /**
              * Constructor
-             * @alias module:models-label.Label#initialize
              * @param {object} attr Object literal containing the model initialion attribute.
              */
             initialize: function (attr) {
@@ -79,7 +76,6 @@ define(["underscore",
 
             /**
              * Parse the attribute list passed to the model
-             * @alias module:models-label.Label#parse
              * @param {object} data Object literal containing the model attribute to parse.
              * @return {object} The object literal with the list of parsed model attribute.
              */
@@ -93,7 +89,6 @@ define(["underscore",
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-label.Label#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
@@ -122,7 +117,6 @@ define(["underscore",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-label.Label#toJSON
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
@@ -135,7 +129,6 @@ define(["underscore",
 
             /**
              * Prepare the model as JSON to export and return it
-             * @alias module:models-label.Label#toExportJSON
              * @return {JSON} JSON representation of the model for export
              */
             toExportJSON: function () {

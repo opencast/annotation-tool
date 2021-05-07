@@ -31,19 +31,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-comments
-         * @alias module:collections-comments.Comments
          */
         var Comments = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-comments.Comments#initialize
              */
             model: Comment,
 
             /**
              * constructor
-             * @alias module:collections-comments.Comments#initialize
              */
             initialize: function (models, options) {
                 this.annotation = options.annotation;
@@ -52,7 +49,6 @@ define(["underscore",
 
             /**
              * Parse the given data
-             * @alias module:collections-comments.Comments#parse
              * @param  {object} data Object or array containing the data to parse.
              * @return {object}      the part of the given data related to the comments
              */
@@ -68,7 +64,6 @@ define(["underscore",
 
             /**
              * Get the url for this collection
-             * @alias module:collections-comments.Comments#url
              * @return {String} The url of this collection
              */
             url: function () {
@@ -83,7 +78,6 @@ define(["underscore",
              * See {@link module:models-Comment.Comment#urlRoot}.
              * Note: This is only named `urlRoot` to suggest a relation to Backbones URL generation mechanism;
              * on collections this name has no meaning normally.
-             * @alias module:collections-comments
              */
             urlRoot: function () {
                 return _.result(this.annotation, "url") + "/comments";
@@ -91,7 +85,6 @@ define(["underscore",
 
             /**
              * Count the number of comments in this collection together with all of their replies.
-             * @alias module:collections-comments.Comments#countCommentsAndReplies
              * @return {number} recursive sum of the number of comments and all their replies
              */
             countCommentsAndReplies: function () {

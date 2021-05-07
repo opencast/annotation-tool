@@ -34,13 +34,11 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-video
-         * @alias module:models-video.Video
          */
         var Video = Resource.extend({
 
             /**
              * Default models value
-             * @alias module:models-video.Video#defaults
              */
             defaults: {
                 access: ACCESS.PUBLIC
@@ -54,14 +52,12 @@ define(["underscore",
 
             /**
              * Define that all post operation have to been done through PUT method
-             * @alias module:models-user.User#noPOST
              * @type {boolean}
              */
             noPOST: true,
 
             /**
              * Constructor
-             * @alias module:models-video.Video#initialize
              * @param {object} attr Object literal containing the model initialion attribute.
              */
             initialize: function (attr) {
@@ -103,7 +99,6 @@ define(["underscore",
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-video.Video#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
@@ -174,7 +169,6 @@ define(["underscore",
 
             /**
              * Get the track with the given id
-             * @alias module:models-video.Video#getTrack
              * @param  {integer} trackId The id from the wanted track
              * @return {Track}           The track with the given id
              */
@@ -187,7 +181,6 @@ define(["underscore",
             },
 
             /**
-             * @alias module:models-video.Video#getAnnotations
              * @return {Annotation[]} This video's annotations
              *     across all tracks, potentially filtered
              *     by a given category.
@@ -223,7 +216,6 @@ define(["underscore",
 
             /**
              * Get the annotation with the given id on the given track
-             * @alias module:models-video.Video#getAnnotation
              * @param  {integer} annotationId The id from the wanted annotation
              * @param  {integer} trackId      The id from the track containing the annotation
              * @return {Track}                The annotation with the given id
@@ -245,7 +237,6 @@ define(["underscore",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-video.Video#toJSON
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function () {
