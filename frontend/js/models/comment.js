@@ -42,7 +42,6 @@ define(["underscore",
              */
             defaults: {
                 text: "",
-                access: ACCESS.PUBLIC
             },
 
             /**

@@ -36,21 +36,6 @@ define(["underscore",
         var Scale = Resource.extend({
 
             /**
-             * Default models value
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null,
-                access: ACCESS.PRIVATE
-            },
-
-            /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
             administratorCanEditPublicInstances: true,

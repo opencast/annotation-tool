@@ -34,16 +34,6 @@ define(["underscore",
          * @memberOf module:models-label
          */
         var Label = Resource.extend({
-
-            /**
-             * Default models value
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                access    : ACCESS.PUBLIC
-            },
-
             /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
