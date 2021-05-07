@@ -17,14 +17,20 @@
  * A module representing the alert modal
  * @module views-alert
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
         "templates/alert-modal",
-        "bootstrap"],
-
-    function ($, _, Backbone, AlertTemplate) {
-
+        "bootstrap"
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        AlertTemplate
+    ) {
         "use strict";
 
         /**

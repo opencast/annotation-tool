@@ -29,7 +29,6 @@ define([
     ACCESS,
     Resource
 ) {
-
     "use strict";
 
     /**

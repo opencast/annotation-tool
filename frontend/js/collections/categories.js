@@ -18,12 +18,17 @@
  * A module representing a categories collection
  * @module collections-categories
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "models/category",
-        "backbone"],
-
-    function (_, Category, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        _,
+        Category,
+        Backbone
+    ) {
         "use strict";
 
         /**

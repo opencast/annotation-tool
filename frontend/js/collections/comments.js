@@ -18,12 +18,17 @@
  * A module representing a comments collection
  * @module collections-comments
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "models/comment",
-        "backbone"],
-
-    function (_, Comment, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        _,
+        Comment,
+        Backbone
+    ) {
         "use strict";
 
         /**

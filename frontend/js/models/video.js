@@ -26,7 +26,13 @@ define(
         "collections/scales",
         "models/resource"
     ],
-    function (_, Tracks, Categories, Scales, Resource) {
+    function (
+        _,
+        Tracks,
+        Categories,
+        Scales,
+        Resource
+    ) {
         "use strict";
 
         /**
@@ -211,9 +217,9 @@ define(
 
             /**
              * Get the annotation with the given id on the given track
-             * @param  {integer} annotationId The id from the wanted annotation
-             * @param  {integer} trackId      The id from the track containing the annotation
-             * @return {Track}                The annotation with the given id
+             * @param {integer} annotationId The id from the wanted annotation
+             * @param {integer} trackId The id from the track containing the annotation
+             * @return {Track} The annotation with the given id
              */
             getAnnotation: function (annotationId, trackId) {
                 var track = this.getTrack(trackId),

@@ -24,7 +24,12 @@ define(
         "collections/comments",
         "models/resource"
     ],
-    function (_, util, Comments, Resource) {
+    function (
+        _,
+        util,
+        Comments,
+        Resource
+    ) {
         "use strict";
 
         /**

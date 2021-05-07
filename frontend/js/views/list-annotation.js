@@ -18,7 +18,9 @@
  * A module representing the view for an item of the annotations list
  * @module views-list-annotation
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "util",
         "i18next",
@@ -27,10 +29,20 @@ define(["jquery",
         "templates/list-annotation",
         "templates/list-annotation-expanded",
         "templates/list-annotation-edit",
-        "backbone"],
-
-    function ($, _, util, i18next, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        $,
+        _,
+        util,
+        i18next,
+        CommentsContainer,
+        commentsContainerHeader,
+        TmplCollapsed,
+        TmplExpanded,
+        TmplEdit,
+        Backbone
+    ) {
         "use strict";
 
         /**

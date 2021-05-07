@@ -18,8 +18,7 @@
  * A module containing the ROLES values enum.
  * @module ROLES
  */
-define([], function () {
-
+define(function () {
     "use strict";
 
     /**

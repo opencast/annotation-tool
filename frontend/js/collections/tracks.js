@@ -18,13 +18,19 @@
  * A module representing a tracks collection
  * @module collections-tracks
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "models/track",
         "backbone",
-        "access"],
-
-    function (_, Track, Backbone, ACCESS) {
-
+        "access"
+    ],
+    function (
+        _,
+        Track,
+        Backbone,
+        ACCESS
+    ) {
         "use strict";
 
         /**

@@ -18,15 +18,17 @@
  * A module representing the view for the categories tab
  * @module views-annotate-tab
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "i18next",
         "views/annotate-category",
         "templates/annotate-tab",
         "backbone",
         "handlebars",
-        "filesaver"],
-
+        "filesaver"
+    ],
     function (
         $,
         _,
@@ -36,7 +38,6 @@ define(["jquery",
         Backbone,
         Handlebars
     ) {
-
         "use strict";
 
         /**
@@ -150,29 +151,31 @@ define(["jquery",
                 }
 
                 // Set the current context for all these functions
-                _.bindAll(this,
-                  "select",
-                  "addCategories",
-                  "addCategory",
-                  "onAddCategory",
-                  "removeOne",
-                  "addCarouselItem",
-                  "moveCarouselToFrame",
-                  "moveCarouselPrevious",
-                  "moveCarouselNext",
-                  "onCarouselSlid",
-                  "onSwitchEditModus",
-                  "onExport",
-                  "onImport",
-                  "chooseFile",
-                  "switchEditModus",
-                  "insertCategoryView",
-                  "initCarousel",
-                  "render");
+                _.bindAll(
+                    this,
+                    "select",
+                    "addCategories",
+                    "addCategory",
+                    "onAddCategory",
+                    "removeOne",
+                    "addCarouselItem",
+                    "moveCarouselToFrame",
+                    "moveCarouselPrevious",
+                    "moveCarouselNext",
+                    "onCarouselSlid",
+                    "onSwitchEditModus",
+                    "onExport",
+                    "onImport",
+                    "chooseFile",
+                    "switchEditModus",
+                    "insertCategoryView",
+                    "initCarousel",
+                    "render"
+                );
 
-                this.categories                = attr.categories;
-                this.filter                    = attr.filter;
-                this.roles                     = attr.roles;
+                this.categories = attr.categories;
+                this.filter = attr.filter;
+                this.roles = attr.roles;
                 this.defaultCategoryAttributes = attr.attributes;
 
                 this.categoryViews = [];

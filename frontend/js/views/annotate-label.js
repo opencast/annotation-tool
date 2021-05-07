@@ -18,13 +18,19 @@
  * A module representing the label view for each item contained in annotate window
  * @module views-annotate-label
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
-        "templates/annotate-label"],
-
-    function ($, _, Backbone, Template) {
-
+        "templates/annotate-label"
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        Template
+    ) {
         "use strict";
 
         /**
@@ -265,8 +271,8 @@ define(["jquery",
 
             /**
              * Get the position of the caret in the given input element
-             * @param  {DOMElement} inputElement The given element with focus
-             * @return {integer}              The posisiton of the carret
+             * @param {DOMElement} inputElement The given element with focus
+             * @return {integer} The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
                 return inputElement.selectionStart;

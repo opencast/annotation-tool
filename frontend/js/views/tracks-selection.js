@@ -17,14 +17,21 @@
  * A module representing the tracks selection modal
  * @module views-tracks-selection
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
         "sortable",
-        "templates/tracks-selection-modal"],
-
-    function ($, _, Backbone, Sortable, TracksSelectionTmpl) {
-
+        "templates/tracks-selection-modal"
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        Sortable,
+        TracksSelectionTmpl
+    ) {
         "use strict";
 
         var selectAllCheckbox;
@@ -85,10 +92,12 @@ define(["jquery",
              * Constructor
              */
             initialize: function () {
-                _.bindAll(this,
-                          "show",
-                          "hide",
-                          "search");
+                _.bindAll(
+                    this,
+                    "show",
+                    "hide",
+                    "search"
+                );
 
                 this.tracks = annotationTool.getTracks();
             },

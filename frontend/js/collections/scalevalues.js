@@ -18,12 +18,17 @@
  * A module representing a scale values collection
  * @module collections-scalevalues
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "models/scalevalue",
-        "backbone"],
-
-    function (_, ScaleValue, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        _,
+        ScaleValue,
+        Backbone
+    ) {
         "use strict";
 
         /**

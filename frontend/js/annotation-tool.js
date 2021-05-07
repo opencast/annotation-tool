@@ -18,7 +18,9 @@
  * Module containing the tool main object
  * @module annotation-tool
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
         "util",
@@ -31,10 +33,23 @@ define(["jquery",
         "colors",
         "xlsx",
         "papaparse",
-        "filesaver"],
-
-    function ($, _, Backbone, util, i18next, Videos, MainView, alerts, DeleteModalTmpl, PlayerAdapter, ColorsManager, XLSX, PapaParse) {
-
+        "filesaver"
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        util,
+        i18next,
+        Videos,
+        MainView,
+        alerts,
+        DeleteModalTmpl,
+        PlayerAdapter,
+        ColorsManager,
+        XLSX,
+        PapaParse
+    ) {
         "use strict";
 
         /**
@@ -111,24 +126,26 @@ define(["jquery",
              * @param {module:annotation-tool-configuration.Configuration} config The tool configuration
              */
             start: function (config, integration) {
-                _.bindAll(this,
-                          "updateSelectionOnTimeUpdate",
-                          "createAnnotation",
-                          "getAnnotation",
-                          "getSelection",
-                          "getTrack",
-                          "getTracks",
-                          "getSelectedTrack",
-                          "fetchData",
-                          "importCategories",
-                          "hasSelection",
-                          "onDestroyRemoveSelection",
-                          "onTimeUpdate",
-                          "selectTrack",
-                          "setSelection",
-                          "addTimeupdateListener",
-                          "removeTimeupdateListener",
-                          "updateSelectionOnTimeUpdate");
+                _.bindAll(
+                    this,
+                    "updateSelectionOnTimeUpdate",
+                    "createAnnotation",
+                    "getAnnotation",
+                    "getSelection",
+                    "getTrack",
+                    "getTracks",
+                    "getSelectedTrack",
+                    "fetchData",
+                    "importCategories",
+                    "hasSelection",
+                    "onDestroyRemoveSelection",
+                    "onTimeUpdate",
+                    "selectTrack",
+                    "setSelection",
+                    "addTimeupdateListener",
+                    "removeTimeupdateListener",
+                    "updateSelectionOnTimeUpdate"
+                );
 
                 _.extend(this, config, integration);
 

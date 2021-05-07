@@ -18,12 +18,17 @@
  * A module representing the category model
  * @module models-category
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "collections/labels",
-        "models/resource"],
-
-    function (_, Labels, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        Labels,
+        Resource
+    ) {
         "use strict";
 
         /**
