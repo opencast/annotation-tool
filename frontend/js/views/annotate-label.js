@@ -188,7 +188,7 @@ define(
                 }
 
                 var annotation = annotationTool.createAnnotation({
-                    text : this.model.get("value"),
+                    text: this.model.get("value"),
                     label: this.model
                 });
             },

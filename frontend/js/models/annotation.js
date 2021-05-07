@@ -82,17 +82,8 @@ define(
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
-                    var tempSettings,
-                        categories,
-                        tempLabel,
-                        label;
-
-                    if (attr.scaleValue) {
-                        attr.scalevalue = attr.scaleValue;
-                        delete attr.scaleValue;
-                    }
-
                     if (attr.label) {
+                        var tempSettings;
                         if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
                             attr.label.category.settings = tempSettings;
                         }
@@ -100,29 +91,6 @@ define(
                         if ((tempSettings = util.parseJSONString(attr.label.settings))) {
                             attr.label.settings = tempSettings;
                         }
-                    }
-
-                    if (annotationTool.localStorage && _.isArray(attr.comments)) {
-                        attr.comments = new Comments(attr.comments, { annotation: this });
-                    }
-
-                    if (!annotationTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
-                        categories = annotationTool.video.get("categories");
-
-                        categories.each(function (cat) {
-
-                            if ((tempLabel = cat.attributes.labels.get(attr.label_id))) {
-                                label = tempLabel;
-                                return true;
-                            }
-
-                        }, this);
-
-                        attr.label = label;
-                    }
-
-                    if (!annotationTool.localStorage &&  attr.scalevalue) {
-                        attr.scaleValue = attr.scalevalue;
                     }
                 });
             },
@@ -140,23 +108,15 @@ define(
                 });
                 if (invalidResource) return invalidResource;
 
-                if (!annotationTool.localStorage && attr.label) {
-                    if (attr.label.id) {
-                        this.attributes.label_id = attr.label.id;
-                    } else if (attr.label.attributes) {
-                        this.attributes.label_id = attr.label.get("id");
-                    }
-                }
-
-                if (attr.start &&  !_.isNumber(attr.start)) {
+                if (attr.start && !_.isNumber(attr.start)) {
                     return "\"start\" attribute must be a number!";
                 }
 
-                if (attr.text &&  !_.isString(attr.text)) {
+                if (attr.text && !_.isString(attr.text)) {
                     return "\"text\" attribute must be a string!";
                 }
 
-                if (attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
+                if (attr.duration && (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
                     return "\"duration\" attribute must be a positive number";
                 }
 
@@ -190,8 +150,8 @@ define(
                             this.once("ready", this.fetchComments);
                         } else {
                             this.attributes.comments.fetch({
-                                async   : true,
-                                success : fetchCallback
+                                async: true,
+                                success: fetchCallback
                             });
                         }
                     }
@@ -207,19 +167,21 @@ define(
 
                 json.end = json.start + json.duration;
 
-                delete json.comments;
-
-                if (json.label && json.label.toJSON) {
-                    json.label = json.label.toJSON();
-                }
-
-                if (json.scalevalue) {
-                    if (json.scalevalue.attributes) {
-                        json.scale_value_id = json.scalevalue.attributes.id;
-                    } else if (json.scalevalue.id) {
-                        json.scale_value_id = json.scalevalue.id;
+                if (json.label) {
+                    if (json.label.id) {
+                        json.label_id = json.label.id;
+                    }
+                    if (json.label.toJSON) {
+                        json.label = json.label.toJSON();
                     }
                 }
+
+                if (json.scalevalue && json.scalevalue.id) {
+                    json.scale_value_id = json.scalevalue.id;
+                }
+
+                delete json.comments;
+
                 return json;
             },
 

@@ -44,28 +44,7 @@ var Resource = Backbone.Model.extend({
      * @param {object} attr Object literal containing the model initialion attributes.
      */
     initialize: function (attr) {
-        var annotationTool = window.annotationTool || {};
-
         if (!attr) attr = {};
-        if (annotationTool.localStorage) {
-            if (annotationTool.user) {
-                if (!attr.created_by) {
-                    this.set("created_by", annotationTool.user.id);
-                }
-                if (!attr.created_by_nickname) {
-                    this.set("created_by_nickname", annotationTool.user.get("nickname"));
-                }
-                if (!attr.created_by_email) {
-                    this.set("created_by_email", annotationTool.user.get("email"));
-                }
-            }
-            if (!attr.created_at) {
-                this.set("created_at", new Date());
-            }
-            if (!attr.updated_at) {
-                this.set("updated_at", new Date());
-            }
-        }
 
         if (attr.tags) {
             this.set("tags", util.parseJSONString(attr.tags));

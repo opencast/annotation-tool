@@ -120,7 +120,7 @@ define(
                 var invalidResource = Resource.prototype.validate.call(this, attr, {
                     onIdChange: function () {
                         categories = this.attributes.categories;
-                        scales     = this.attributes.scales;
+                        scales = this.attributes.scales;
 
                         this.loadTracks();
 
