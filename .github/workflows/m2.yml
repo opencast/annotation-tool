@@ -31,8 +31,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-
+          key: npm-2-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-2-
 
       - name: Get the date
         id: date
