@@ -18,8 +18,11 @@
  * A module containing the player adapter prototype
  * @module player-adapter
  */
-define(["event-target"], function (EventTarget) {
-
+define([
+    "event-target"
+], function (
+    EventTarget
+) {
     "use strict";
 
     /**

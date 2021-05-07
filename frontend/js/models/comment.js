@@ -18,13 +18,19 @@
  * A module representing the comment model
  * @module models-comment
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "access",
         "models/resource",
-        "collections/comments"],
-
-    function (_, ACCESS, Resource, Comments) {
-
+        "collections/comments"
+    ],
+    function (
+        _,
+        ACCESS,
+        Resource,
+        Comments
+    ) {
         "use strict";
 
         /**

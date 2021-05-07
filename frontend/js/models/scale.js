@@ -18,13 +18,19 @@
  * A module representing the scale model
  * @module models-scale
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "access",
         "collections/scalevalues",
-        "models/resource"],
-
-    function (_, ACCESS, ScaleValues, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        ACCESS,
+        ScaleValues,
+        Resource
+    ) {
         "use strict";
 
         /**

@@ -18,13 +18,19 @@
  * A module representing the user model
  * @module models-user
  */
-define(["roles",
+define(
+    [
+        "roles",
         "access",
         "models/resource",
-        "email-addresses"],
-
-    function (ROLES, ACCESS, Resource, emailAddresses) {
-
+        "email-addresses"
+    ],
+    function (
+        ROLES,
+        ACCESS,
+        Resource,
+        emailAddresses
+    ) {
         "use strict";
 
         /**

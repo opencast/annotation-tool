@@ -18,13 +18,19 @@
  * A module representing the label model
  * @module models-label
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "util",
         "access",
-        "models/resource"],
-
-    function (_, util, ACCESS, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        util,
+        ACCESS,
+        Resource
+    ) {
         "use strict";
 
         /**
@@ -41,7 +47,7 @@ define(["underscore",
              * @static
              */
             defaults: {
-                access    : ACCESS.PUBLIC
+                access: ACCESS.PUBLIC
             },
 
             /**

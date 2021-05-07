@@ -18,14 +18,20 @@
  * A module representing the annotations list view
  * @module views-list
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "views/list-annotation",
         "templates/list",
         "backbone",
-        "bootstrap"],
-
-    function (_, AnnotationView, template, Backbone) {
-
+        "bootstrap"
+    ],
+    function (
+        _,
+        AnnotationView,
+        template,
+        Backbone
+    ) {
         "use strict";
 
         var lastAddedAnnotationView;

@@ -18,12 +18,17 @@
  * A module representing a labels collection
  * @module collections-labels
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "backbone",
-        "models/label"],
-
-    function (_, Backbone, Label) {
-
+        "models/label"
+    ],
+    function (
+        _,
+        Backbone,
+        Label
+    ) {
         "use strict";
 
         /**

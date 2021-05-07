@@ -18,12 +18,17 @@
  * A module representing a scales collection
  * @module collections-scales
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "models/scale",
-        "backbone"],
-
-    function (_, Scale, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        _,
+        Scale,
+        Backbone
+    ) {
         "use strict";
 
         /**

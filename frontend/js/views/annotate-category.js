@@ -18,18 +18,26 @@
  * A module representing the category view in the annotate part
  * @module views-annotate-category
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
         "i18next",
         "util",
         "views/annotate-label",
         "templates/annotate-category",
-        "jquery.colorPicker"],
-
-
-    function ($, _, Backbone, i18next, util, LabelView, Template) {
-
+        "jquery.colorPicker"
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        i18next,
+        util,
+        LabelView,
+        Template
+    ) {
         "use strict";
 
         /**
@@ -95,19 +103,21 @@ define(["jquery",
                 }
 
                 // Set the current context for all these functions
-                _.bindAll(this,
-                  "onDeleteCategory",
-                  "addLabels",
-                  "addLabel",
-                  "render",
-                  "switchEditModus",
-                  "onFocusOut",
-                  "onKeyDown",
-                  "onColorChange",
-                  "removeOne",
-                  "onCreateLabel",
-                  "editScale",
-                  "updateInputWidth");
+                _.bindAll(
+                    this,
+                    "onDeleteCategory",
+                    "addLabels",
+                    "addLabel",
+                    "render",
+                    "switchEditModus",
+                    "onFocusOut",
+                    "onKeyDown",
+                    "onColorChange",
+                    "removeOne",
+                    "onCreateLabel",
+                    "editScale",
+                    "updateInputWidth"
+                );
 
 
                 // Define the colors (global setting for all color pickers)

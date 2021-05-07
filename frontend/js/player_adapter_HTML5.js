@@ -18,13 +18,19 @@
  * A module representing the player adapter implementation for the HTML5 native player
  * @module player-adapter-HTML5
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "player-adapter",
         "mediaelementplayer",
-        "hls"],
-
-    function ($, PlayerAdapter, mejs, Hls) {
-
+        "hls"
+    ],
+    function (
+        $,
+        PlayerAdapter,
+        mejs,
+        Hls
+    ) {
         "use strict";
 
         /**

@@ -1,3 +1,5 @@
+// TODO Somehow enable `strict`-mode here
+
 // RequireJS configuration for main app
 require.config({
     baseUrl: "js",

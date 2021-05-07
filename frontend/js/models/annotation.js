@@ -17,13 +17,19 @@
  * A module representing the annotation model
  * @module models-annotation
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "util",
         "collections/comments",
-        "models/resource"],
-
-    function (_, util, Comments, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        util,
+        Comments,
+        Resource
+    ) {
         "use strict";
 
         /**
@@ -71,8 +77,8 @@ define(["underscore",
 
             /**
              * Parse the attribute list passed to the model
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
+             * @param {object} data Object literal containing the model attribute to parse.
+             * @return {object} The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
                 return Resource.prototype.parse.call(this, data, function (attr) {
