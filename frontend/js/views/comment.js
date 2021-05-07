@@ -18,14 +18,21 @@
  * A module representing the view for a comments container
  * @module views-comment
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "util",
         "templates/comment",
         "backbone",
-        "views/comments-container"],
-
-    function (_, util, template, Backbone, CommentsContainer) {
-
+        "views/comments-container"
+    ],
+    function (
+        _,
+        util,
+        template,
+        Backbone,
+        CommentsContainer
+    ) {
         "use strict";
 
         /**
@@ -33,27 +40,23 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#View}
          * @augments module:Backbone.View
          * @memberOf module:views-comment
-         * @alias module:views-comment.Comment
          */
         var CommentView = Backbone.View.extend({
 
             /**
              * Tag name from the view element
-             * @alias module:views-comment.Comment#tagName
              * @type {string}
              */
             tagName: "div",
 
             /**
              * View template for read-only modus
-             * @alias module:views-comment.Comment#template
              * @type {HandlebarsTemplate}
              */
             template: template,
 
             /**
              * Events to handle
-             * @alias module:views-comment.Comment#events
              * @type {object}
              */
             events: {
@@ -69,7 +72,6 @@ define(["underscore",
 
             /**
              * constructor
-             * @alias module:views-comment.Comment#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
@@ -78,13 +80,15 @@ define(["underscore",
                 this.el.id          = this.id;
 
                 // Bind function to the good context
-                _.bindAll(this,
-                          "cancel",
-                          "onDeleteComment",
-                          "onEditComment",
-                          "onSubmit",
-                          "onCancel",
-                          "render");
+                _.bindAll(
+                    this,
+                    "cancel",
+                    "onDeleteComment",
+                    "onEditComment",
+                    "onSubmit",
+                    "onCancel",
+                    "render"
+                );
 
                 this.isEditEnable = !!attr.isEditEnable;
 
@@ -103,7 +107,6 @@ define(["underscore",
 
             /**
              * Delete the comment related to this view
-             * @alias module:views-comment.Comment#onDeleteComment
              */
             onDeleteComment: function (event) {
                 if (!_.isUndefined(event)) {
@@ -115,7 +118,6 @@ define(["underscore",
 
             /**
              * Switch in edit modus
-             * @alias module:views-comment.Comment#onEditComment
              */
             onEditComment: function (event) {
                 if (!_.isUndefined(event)) {
@@ -129,7 +131,6 @@ define(["underscore",
 
             /**
              * Allow the user to enter a new reply to this views comment
-             * @alias module:views-comment.Comment#onAddReply
              */
             onAddReply: function (event) {
                 event.stopImmediatePropagation();
@@ -139,7 +140,6 @@ define(["underscore",
 
             /**
              * Submit the modifications on the comment
-             * @alias module:views-comment.Comment#onSubmit
              */
             onSubmit: function (event) {
                 if (!_.isUndefined(event)) {
@@ -162,7 +162,6 @@ define(["underscore",
 
             /**
              * Proxy to insert comments by pressing the "return" key
-             * @alias module:views-comments-container.Comment#keyupInsertProxy
              * @param  {event} event Event object
              */
             keyupInsertProxy: function (event) {
@@ -174,7 +173,6 @@ define(["underscore",
 
             /**
              * Listener for the click on the cancel button
-             * @alias module:views-comment.Comment#onCancel
              */
             onCancel: function (event) {
                 event.stopImmediatePropagation();
@@ -183,7 +181,6 @@ define(["underscore",
 
             /**
              * Cancel the modifications
-             * @alias module:views-comment.Comment#cancel
              */
             cancel: function () {
                 this.isEditEnable = false;
@@ -193,7 +190,6 @@ define(["underscore",
 
             /**
              * Render this view
-             * @alias module:views-comment.Comment#render
              */
             render: function () {
                 var data = {
@@ -217,7 +213,6 @@ define(["underscore",
 
             /**
              * Remove this view from the DOM and clean up all of its data and event handlers
-             * @alias module:views-comment.Comment#remove
              */
             remove: function () {
                 this.replyContainer.remove();

@@ -18,13 +18,17 @@
  * A module representing the label model
  * @module models-label
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "util",
-        "access",
-        "models/resource"],
-
-    function (_, util, ACCESS, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        util,
+        Resource
+    ) {
         "use strict";
 
         /**
@@ -32,20 +36,8 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-label
-         * @alias module:models-label.Label
          */
         var Label = Resource.extend({
-
-            /**
-             * Default models value
-             * @alias module:models-label.Label#defaults
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                access    : ACCESS.PUBLIC
-            },
-
             /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
@@ -53,33 +45,17 @@ define(["underscore",
 
              /**
              * Constructor
-             * @alias module:models-label.Label#initialize
-             * @param {object} attr Object literal containing the model initialion attribute.
              */
-            initialize: function (attr) {
-
-                if (!attr || _.isUndefined(attr.value)) {
-                    throw "'value' attribute is required";
-                }
-
-                if (!attr || _.isUndefined(attr.abbreviation)) {
-                    throw "'abbreviation' attribute is required";
-                }
-
-                if (!attr || _.isUndefined(attr.category)) {
-                    throw "'category' attribute is required";
-                }
-
+            initialize: function () {
                 Resource.prototype.initialize.apply(this, arguments);
 
-                if (attr.category && attr.category.attributes) {
-                    this.set("category", attr.category.toJSON());
+                if (this.attributes.category && this.attributes.category.attributes) {
+                    this.set("category", this.attributes.category.toJSON());
                 }
             },
 
             /**
              * Parse the attribute list passed to the model
-             * @alias module:models-label.Label#parse
              * @param {object} data Object literal containing the model attribute to parse.
              * @return {object} The object literal with the list of parsed model attribute.
              */
@@ -93,7 +69,6 @@ define(["underscore",
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-label.Label#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
@@ -122,7 +97,6 @@ define(["underscore",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-label.Label#toJSON
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
@@ -135,7 +109,6 @@ define(["underscore",
 
             /**
              * Prepare the model as JSON to export and return it
-             * @alias module:models-label.Label#toExportJSON
              * @return {JSON} JSON representation of the model for export
              */
             toExportJSON: function () {
@@ -144,20 +117,12 @@ define(["underscore",
                     abbreviation: this.attributes.abbreviation
                 };
 
-                if (this.attributes.tags) {
-                    json.tags = JSON.stringify(this.attributes.tags);
-                }
-
                 if (this.attributes.description) {
                     json.description = this.attributes.description;
                 }
 
                 if (this.attributes.settings) {
                     json.settings = this.attributes.settings;
-                }
-
-                if (this.attributes.tags) {
-                    json.tags = this.attributes.tags;
                 }
 
                 return json;
