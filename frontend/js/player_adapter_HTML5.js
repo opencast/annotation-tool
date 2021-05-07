@@ -30,7 +30,6 @@ define(["jquery",
         /**
          * Implementation of the player adapter for the HTML5 native player
          * @constructor
-         * @alias module:player-adapter-HTML5.PlayerAdapterHTML5
          * @augments {module:player-adapter.PlayerAdapter}
          * @param {HTMLElement} targetElement DOM Element representing the player
          */

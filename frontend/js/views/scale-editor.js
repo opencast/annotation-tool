@@ -35,13 +35,11 @@ define(["jquery",
              * @see {@link http://www.backbonejs.org/#View}
              * @memberOf module:views-scale-editor
              * @augments module:Backbone.View
-             * @alias module:views-scale-editor.ScaleEditor
              */
             var ScaleEditor = Backbone.View.extend({
 
                 /**
                  * The titles of the different element from the editor
-                 * @alias module:views-scale-editor.ScaleEditor#TITLES
                  * @type {map}
                  */
                 TITLES: {
@@ -52,7 +50,6 @@ define(["jquery",
 
                 /**
                  * Object representing an empty scale
-                 * @alias module:views-scale-editor.ScaleEditor#EMPTY_SCALES
                  * @type {Object}
                  */
                 EMPTY_SCALE: {
@@ -62,35 +59,30 @@ define(["jquery",
 
                 /**
                  * Main container of the editor modal
-                 * @alias module:views-login.Login#el
                  * @type {DOMElement}
                  */
                 el: $("#scale-editor"),
 
                 /**
                  * Main template for the scale editor
-                 * @alias module:views-login.Login#scaleEditorTemplate
                  * @type {HandlebarsTemplate}
                  */
                 scaleEditorTemplate: ScaleEditorTemplate,
 
                 /**
                  * Template for the select element of the editor
-                 * @alias module:views-login.Login#scaleEditorSelectTemplate
                  * @type {HandlebarsTemplate}
                  */
                 scaleEditorSelectTemplate: ScaleEditorSelectTemplate,
 
                 /**
                  * Template for the editor content
-                 * @alias module:views-login.Login#scaleEditorContentTemplate
                  * @type {HandlebarsTemplate}
                  */
                 scaleEditorContentTemplate: ScaleEditorContentTemplate,
 
                 /**
                  * Events to handle
-                 * @alias module:views-scale-editor.ScaleEditor#events
                  * @type {object}
                  */
                 events: {
@@ -106,7 +98,6 @@ define(["jquery",
 
                 /**
                  * Constructor
-                 * @alias module:views-scale-editor.ScaleEditor#initialize
                  */
                 initialize: function () {
 
@@ -135,7 +126,6 @@ define(["jquery",
 
                 /**
                  * Display the editor with the given category
-                 * @alias module:views-scale-editor.ScaleEditor#show
                  * @param {Category} category The category currently selected
                  */
                 show: function (category) {
@@ -164,7 +154,6 @@ define(["jquery",
 
                 /**
                  * Generate the list of scales to be drawn
-                 * @alias module:views-scale-editor.ScaleEditor#generateScalesForTemplate
                  */
                 generateScalesForTemplate: function () {
                     var scales = annotationTool.video.get("scales").toJSON(),
@@ -192,7 +181,6 @@ define(["jquery",
 
                 /**
                  * Draw the select element
-                 * @alias module:views-scale-editor.ScaleEditor#renderScaleSelect
                  */
                 renderScaleSelect: function () {
                     this.$el.find("select#scale-id").html(
@@ -205,7 +193,6 @@ define(["jquery",
 
                 /**
                  * Hide the editor
-                 * @alias module:views-scale-editor.ScaleEditor#hide
                  */
                 hide: function () {
                     this.$el.modal("hide");
@@ -217,7 +204,6 @@ define(["jquery",
 
                 /**
                  * Proxy to save the current scale by pressing the return key
-                 * @alias module:views-scale-editor.ScaleEditor#saveOnInsert
                  * @param  {event} e Event object
                  */
                 saveOnInsert: function (e) {
@@ -228,7 +214,6 @@ define(["jquery",
 
                 /**
                  * Save the current scale or category with the modification done in the editor and quit it
-                 * @alias module:views-scale-editor.ScaleEditor#save
                  */
                 save: function () {
                     var name,
@@ -279,7 +264,6 @@ define(["jquery",
 
                 /**
                  * Cancel the modification done and quit
-                 * @alias module:views-scale-editor.ScaleEditor#cancel
                  */
                 cancel: function () {
                     if (this.isInEditMode) {
@@ -296,7 +280,6 @@ define(["jquery",
 
                 /**
                  * Change the current scale with the one selected with select input element
-                 * @alias module:views-scale-editor.ScaleEditor#changeScale
                  */
                 changeScale: function () {
                     this.currentScaleId = this.$el.find("select#scale-id").val();
@@ -318,7 +301,6 @@ define(["jquery",
 
                 /**
                  * Create a new scale
-                 * @alias module:views-scale-editor.ScaleEditor#createScale
                  */
                 createScale: function () {
                     this.isInEditMode = true;
@@ -339,7 +321,6 @@ define(["jquery",
 
                 /**
                  * Create a new scale value
-                 * @alias module:views-scale-editor.ScaleEditor#createScaleValue
                  */
                 createScaleValue: function () {
                     this.currentScale.get("scaleValues").create({
@@ -353,7 +334,6 @@ define(["jquery",
                 /**
                  * Delete the current scale
                  * @param  {event} event Event object
-                 * @alias module:views-scale-editor.ScaleEditor#deleteScale
                  */
                 deleteScale: function (event) {
                     event.stopImmediatePropagation();
@@ -373,7 +353,6 @@ define(["jquery",
 
                 /**
                  * Switch in edit mode for the current scale
-                 * @alias module:views-scale-editor.ScaleEditor#startEditScale
                  */
                 startEditScale: function () {
                     this.isInEditMode = true;
@@ -384,7 +363,6 @@ define(["jquery",
 
                 /**
                  * Render the edit content of the editor for the given scale
-                 * @alias module:views-scale-editor.ScaleEditor#renderEditContent
                  * @param  {Scale} scale The scale to edit
                  */
                 renderEditContent: function (scale) {

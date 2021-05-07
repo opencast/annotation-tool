@@ -35,19 +35,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#View}
          * @augments module:Backbone.View
          * @memberOf module:views-list
-         * @alias module:views-list.List
          */
         var List = Backbone.View.extend({
             /**
              * Annotation views list
-             * @alias module:views-list.List#annotationViews
              * @type {Array}
              */
             annotationViews: [],
 
             /**
              * Events to handle
-             * @alias module:views-list.List#events
              * @type {object}
              */
             events: {
@@ -57,7 +54,6 @@ define(["underscore",
 
             /**
              * Constructor
-             * @alias module:views-list.List#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (options) {
@@ -89,7 +85,6 @@ define(["underscore",
 
             /**
              * Tracks bulk insertion
-             * @alias module:views-list.List#setTrackList
              * @param {array} tracks Tracks to insert
              */
             setTrackList: function (tracks) {
@@ -104,7 +99,6 @@ define(["underscore",
 
             /**
              * Add one track
-             * @alias module:views-list.List#addTrack
              * @param {Track} track to add
              */
             addTrack: function (track) {
@@ -135,7 +129,6 @@ define(["underscore",
 
             /**
              * Add an annotation as view to the list
-             * @alias module:views-list.List#addAnnotation
              * @param {Annotation} the annotation to add as view
              * @param {Boolean} isPartofList Define if the annotation is added with a whole list
              */
@@ -160,7 +153,6 @@ define(["underscore",
 
             /**
              * Inserts the given views at the right index in the list
-             * @alias module:views-list.List#insertView
              * @param  {Object} view The view to add
              */
             insertView: function (view) {
@@ -185,7 +177,6 @@ define(["underscore",
 
             /**
              * Update the annotation views to reflect the current selection
-             * @alias module:views-list.List#renderSelection
              * @param {Annotation?} selection the currently selected annotation
              * @param {Annotation?} previousSelection the previously selected annotation
              * @param {any} hint a hint about where the event came from
@@ -210,7 +201,6 @@ define(["underscore",
 
             /**
              * Update the annotation views to reflect the currently active annotations
-             * @alias module:views-list.List#renderActive
              * @param {Array<Annotation>} selection the currently active annotations
              * @param {Array<Annotation>} previousSelection the previously active annotations
              */
@@ -271,7 +261,6 @@ define(["underscore",
              * is roughly centered within the view.
              * However, don't scroll past the top of <code>firstView</code>
              * while doing so
-             * @alias module:views-list.List#scrollIntoView
              * @param {$} firstView the top-most view you want to see
              * @param {$} lastView the bottom-most view that should be visible
              */
@@ -289,7 +278,6 @@ define(["underscore",
             },
 
             /**
-             * @alias module:views-list.List#getOffset
              * @param {$} view an element inside the scrollable area
              * @return {Number} the offset of the given view within the scrollable area
              */
@@ -301,7 +289,6 @@ define(["underscore",
 
             /**
              * Get the view representing the given annotation
-             * @alias module:views-list.List#getViewFromAnnotation
              * @param {String} id The target annotation id
              * @return {ListAnnotation} The view representing the annotation
              */
@@ -314,7 +301,6 @@ define(["underscore",
             /**
              * Get the index of the view representing the given annotation
              * in the {@link annotationViews} list.
-             * @alias module:views-list.List#getViewFromAnnotation
              * @param {String} id The target annotation id
              * @return {ListAnnotation} The view representing the annotation
              */
@@ -326,7 +312,6 @@ define(["underscore",
 
             /**
              * Expand all annotations in the list
-             * @alias module:views-list.List#expandAll
              */
             expandAll: function (event) {
                 _.invoke(this.annotationViews, "expand");
@@ -334,7 +319,6 @@ define(["underscore",
 
             /**
              * Collapse all annotations in the list
-             * @alias module:views-list.List#collapseAll
              */
             collapseAll: function (event) {
                 _.invoke(this.annotationViews, "collapse");
@@ -342,7 +326,6 @@ define(["underscore",
 
             /**
              * Display the list
-             * @alias module:views-list.List#updateVisibility
              */
             updateVisibility: function () {
                 _.each(this.annotationViews, function (annView) {
@@ -362,7 +345,6 @@ define(["underscore",
 
             /**
              * Remove all the child annotation views
-             * @alias module:views-list.List#removeAnnotationViews
              */
             removeAnnotationViews: function () {
                 _.invoke(this.annotationViews, "remove");

@@ -31,19 +31,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-scales
-         * @alias module:collections-scales.Scales
          */
         var Scales = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-scales.Scales#initialize
              */
             model: Scale,
 
             /**
              * constructor
-             * @alias module:collections-scales.Scales#initialize
              */
             initialize: function (models, options) {
                 this.video = options.video;
@@ -51,7 +48,6 @@ define(["underscore",
 
             /**
              * Parse the given data
-             * @alias module:collections-scales.Scales#parse
              * @param  {object} data Object or array containing the data to parse.
              * @return {object}      the part of the given data related to the scales
              */
@@ -67,7 +63,6 @@ define(["underscore",
 
             /**
              * Get the url for this collection
-             * @alias module:collections-scales.Scales#url
              * @return {String} The url of this collection
              */
             url: function () {

@@ -30,12 +30,10 @@ define(["models/user",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-users
-         * @alias module:collections-users.User
          */
         var Users = Backbone.Collection.extend({
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-users.User#initialize
              */
             model: User,
 

@@ -26,13 +26,11 @@ define(["underscore", "backbone", "util", "access"], function (_, Backbone, util
  * @see {@link http://www.backbonejs.org/#Model}
  * @augments module:Backbone.Model
  * @memberOf module:models-resource
- * @alias module:models-resource.Resource
  */
 var Resource = Backbone.Model.extend({
 
     /**
      * Constructor
-     * @alias module:models-resource.Resource#initialize
      * @param {object} attr Object literal containing the model initialion attributes.
      */
     initialize: function (attr) {
@@ -49,7 +47,6 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Validate the attribute list passed to the model
-     * @alias module:models-resource.Resource#validate
      * @param {object} attr Object literal containing the model attribute to validate.
      * @return {string} If the validation failed, an error message will be returned.
      */
@@ -97,7 +94,6 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Parse the attribute list passed to the model
-     * @alias module:models-resource.Resource#parse
      * @param {object} data Object literal containing the model attribute to parse.
      * @param {function} callback Callback function that parses and potentially modifies <tt>data</tt>
      *   It does not need to worry about whether a POJO or a Backbone model was passed
@@ -134,7 +130,6 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Override the default toJSON function to ensure complete JSONing.
-     * @alias module:models-resource.Resource#toJSON
      * @param {options} options Potential options influencing the JSONing process
      * @return {JSON} JSON representation of the instance
      */
@@ -153,7 +148,6 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Check whether this resource is public
-     * @alias module:models-resource.Resource#isPublic
      */
     isPublic: function () {
         return this.get("access") === ACCESS.PUBLIC;
@@ -161,7 +155,6 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Check whether this resource belongs to the current user
-     * @alias module:models-resource.Resource#isMine
      */
     isMine: function () {
         var creator = this.get("created_by");
@@ -171,7 +164,6 @@ var Resource = Backbone.Model.extend({
     /**
      * Decide whether this resource can be deleted by the current user.
      * @see administratorCanEditPublicInstances
-     * @alias module:models-resource.Resource#isEditable
      */
     isEditable: function () {
         return this.isMine() || (

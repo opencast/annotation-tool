@@ -26,7 +26,6 @@ define(["event-target"], function (EventTarget) {
      * Interface for the element making the proxy between the player and the annotations tool
      * @constructor
      * @see {@link https://github.com/entwinemedia/annotations/wiki/Player-adapter-API}
-     * @alias module:player-adapter.PlayerAdapter
      */
     var PlayerAdapter = function () {
         EventTarget.apply(this, arguments);
