@@ -46,10 +46,6 @@ define(["underscore",
 
                 _.bindAll(this, "toggleVisibility", "validate", "toExportJSON");
 
-                if (!attr || _.isUndefined(attr.name)) {
-                    throw "\"name\" attribute is required";
-                }
-
                 Resource.prototype.initialize.apply(this, arguments);
 
                 this.set("settings", _.extend({ hasScale: true }, this.get("settings")));

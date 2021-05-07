@@ -54,19 +54,6 @@ define(["underscore",
              * @param {object} attr Object literal containing the model initialion attribute.
              */
             initialize: function (attr) {
-
-                if (!attr || _.isUndefined(attr.value)) {
-                    throw "'value' attribute is required";
-                }
-
-                if (!attr || _.isUndefined(attr.abbreviation)) {
-                    throw "'abbreviation' attribute is required";
-                }
-
-                if (!attr || _.isUndefined(attr.category)) {
-                    throw "'category' attribute is required";
-                }
-
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (attr.category && attr.category.attributes) {
