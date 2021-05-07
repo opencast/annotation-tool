@@ -31,19 +31,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-scalevalues
-         * @alias module:collections-scalevalues.ScaleValues
          */
         var ScaleValues = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-scalevalues.ScaleValues#initialize
              */
             model: ScaleValue,
 
             /**
              * constructor
-             * @alias module:collections-scalevalues.ScaleValues#initialize
              */
             initialize: function (models, options) {
                 this.scale = options.scale;
@@ -51,7 +48,6 @@ define(["underscore",
 
             /**
              * Parse the given data
-             * @alias module:collections-scalevalues.ScaleValues#parse
              * @param  {object} data Object or array containing the data to parse.
              * @return {object}      the part of the given data related to the scalevalues
              */
@@ -71,7 +67,6 @@ define(["underscore",
 
             /**
              * Get the url for this collection
-             * @alias module:collections-scalevalues.ScaleValues#url
              * @return {String} The url of this collection
              */
             url: function () {

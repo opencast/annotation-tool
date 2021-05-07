@@ -52,7 +52,6 @@ define(["jquery",
          * @see {@link http://www.backbonejs.org/#View}
          * @augments module:Backbone.View
          * @memberOf module:views-tracks-selection
-         * @alias Alert
          */
         var TracksSelectionView = Backbone.View.extend({
 
@@ -60,14 +59,12 @@ define(["jquery",
 
             /**
              * Template
-             * @alias module:views-tracks-selection.Alert#alertTemplate
              * @type {HandlebarsTemplate}
              */
             template: TracksSelectionTmpl,
 
             /**
              * Events to handle
-             * @alias module:views-tracks-selection.Alert#events
              * @type {object}
              */
             events: {
@@ -86,7 +83,6 @@ define(["jquery",
 
             /**
              * Constructor
-             * @alias module:views-tracks-selection.Alert#initialize
              */
             initialize: function () {
                 _.bindAll(this,
@@ -99,7 +95,6 @@ define(["jquery",
 
             /**
              * Display the modal with the given message as the given alert type
-             * @alias module:views-tracks-selection.Alert#show
              * @param  {String} message The message to display
              * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-tracks-selection.Alert#TYPES}
              */
@@ -160,7 +155,6 @@ define(["jquery",
 
             /**
              * Hide the modal
-             * @alias module:views-tracks-selection.Alert#hide
              */
             hide: function () {
                 this.$el.modal("hide");
@@ -168,7 +162,6 @@ define(["jquery",
 
             /**
              * Clear the search field
-             * @alias module:views-tracks-selection.Alert#clear
              */
             clear: function () {
                 this.$("#search-track").val("");
@@ -177,7 +170,6 @@ define(["jquery",
 
             /**
              * Cancel the track selection
-             * @alias module:views-tracks-selection.Alert#cancel
              */
             cancel: function () {
                 this.hide();
@@ -185,7 +177,6 @@ define(["jquery",
 
             /**
              * Confirm the track selection
-             * @alias module:views-tracks-selection.Alert#confirm
              */
             confirm: function () {
                 this.tracks.showTracks(
@@ -201,7 +192,6 @@ define(["jquery",
 
             /**
              * Mark the target track as selected
-             * @alias module:views-tracks-selection.Alert#selectTrack
              */
             selectTrack: function (event) {
                 var trackID = event.target.value;
@@ -212,7 +202,6 @@ define(["jquery",
 
             /**
              * Mark the target user as selected
-             * @alias module:views-tracks-selection.Alert#selectUser
              */
             selectUser: function (event) {
                 var userID = event.target.value;
@@ -222,7 +211,6 @@ define(["jquery",
 
             /**
              * Mark all the users selected or unselected
-             * @alias module:views-tracks-selection.Alert#selectAll
              */
             selectAll: function (event) {
                 _.each(checkboxGroupForUser, function (checkboxGroup) {
@@ -251,7 +239,6 @@ define(["jquery",
 
             /**
              * Update the list of selected tracks based on the current values of the track checkboxes.
-             * @alias module:views-tracks-selection.Alert#updateSelection
              */
             updateSelection: function () {
                 this.order = _.sortBy(
@@ -279,7 +266,6 @@ define(["jquery",
             /**
              * Mark one of the order items as selected.
              * The selected item is the one manipulated by other ordering related functions.
-             * @alias module:views-tracks-selection.Alert#selectOrderItem
              */
             selectOrderItem: function (event) {
                 $("#track-selection .selected").toggleClass("selected");
@@ -290,7 +276,6 @@ define(["jquery",
 
             /**
              * Move the currently selected track up in the ordering.
-             * @alias module:views-tracks-selection.Alert#moveUp
              */
             moveUp: function () {
                 if (!this.selected) return;
@@ -306,7 +291,6 @@ define(["jquery",
 
             /**
              * Move the currently selected track up in the ordering.
-             * @alias module:views-tracks-selection.Alert#moveUp
              */
             moveDown: function () {
                 if (!this.selected) return;
@@ -322,7 +306,6 @@ define(["jquery",
 
             /**
              * Search for users with the given chars in the search input
-             * @alias module:views-tracks-selection.Alert#search
              */
             search: function (event) {
                 var text = "";

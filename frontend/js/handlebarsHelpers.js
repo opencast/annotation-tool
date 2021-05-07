@@ -2,7 +2,6 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
 
     /**
      * Expose the global annotation tool to the templates to access configuration.
-     * @alias module:Handlebars#annotationTool
      * @param {String} key The property to access from the global anntoation tool
      * @return The value of the given property
      */
@@ -24,7 +23,6 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
 
     /**
      * Handlebars helper to display a point in time on the timeline
-     * @alias module:Handlebars#time
      * @param {number} start The time to format in seconds
      * @return {string} The formated time
      */
@@ -32,7 +30,6 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
 
     /**
      * Handlebars helper to get user nickname
-     * @alias module:Handlebars#nickname
      * @param {User | number} user The user object or its id
      * @return {string} The user nickname
      */
@@ -46,7 +43,6 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
 
     /**
      * Handlebars helper to format a date to the configured format
-     * @alias module:Handlebars#formatDate
      * @param  {date} date The date to format
      * @return {string} The formated date
      */
@@ -55,7 +51,6 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
     /**
      * Translate a string using `i18next`
      * @see module:i18next
-     * @alias module:Handlebars#t
      */
     Handlebars.registerHelper("t", function (translationKey, options) {
         return new Handlebars.SafeString(
@@ -65,7 +60,6 @@ define(["handlebars", "underscore", "i18next", "util"], function (Handlebars, _,
 
     /**
      * Trnasform newlines into HTML break tags for display and escape.
-     * @alias module:Handlebars#displayRaw
      */
     Handlebars.registerHelper("displayRaw", function (text) {
         return new Handlebars.SafeString(

@@ -31,13 +31,11 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-scalevalue
-         * @alias module:models-scalevalue.Scalevalue
          */
         var ScaleValue = Resource.extend({
 
             /**
              * Default models value
-             * @alias module:models-scalevalue.Scalevalue#defaults
              * @type {map}
              * @static
              */
@@ -58,7 +56,6 @@ define(["underscore",
 
             /**
              * Constructor
-             * @alias module:models-scalevalue.Scalevalue#initialize
              * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
@@ -73,7 +70,6 @@ define(["underscore",
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-scalevalue.Scalevalue#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
@@ -98,7 +94,6 @@ define(["underscore",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-scalevalue.Scalevalue#toJSON
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
@@ -112,7 +107,6 @@ define(["underscore",
 
             /**
              * Prepare the model as JSON to export and return it
-             * @alias module:models-scalevalue.Scalevalue#toExportJSON
              * @return {JSON} JSON representation of the model for export
              */
             toExportJSON: function () {

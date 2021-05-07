@@ -34,18 +34,15 @@ define([
      * @see {@link http://www.backbonejs.org/#Collection}
      * @augments module:Backbone.Collection
      * @memberOf module:collections-annotations
-     * @alias module:collections-annotations.Annotations
      */
     var Annotations = Backbone.Collection.extend({
         /**
          * Model of the instances contained in this collection
-         * @alias module:collections-annotations.Annotations#initialize
          */
         model: Annotation,
 
         /**
          * constructor
-         * @alias module:collections-annotations.Annotations#initialize
          */
         initialize: function (models, options) {
             this.track = options.track;
@@ -53,7 +50,6 @@ define([
 
         /**
          * Get the url for this collection
-         * @alias module:collections-annotations.Annotations#url
          * @return {String} The url of this collection
          */
         url: function () {
@@ -62,7 +58,6 @@ define([
 
         /**
          * Parse the given data
-         * @alias module:collections-annotations.Annotations#parse
          * @param  {object} data Object or array containing the data to parse.
          * @return {object}      the part of the given data related to the annotations
          */

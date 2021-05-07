@@ -32,13 +32,11 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-comment
-         * @alias module:models-comment.Comment
          */
         var Comment = Resource.extend({
 
             /**
              * Default models value
-             * @alias module:models-comment.Comment#defaults
              * @type {map}
              * @static
              */
@@ -49,7 +47,6 @@ define(["underscore",
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-comment.Comment#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
@@ -84,7 +81,6 @@ define(["underscore",
 
             /**
              * The URL root of this model
-             * @alias module:models-comment.Comment#urlRoot
              * @return {string} The URL root of this model
              */
             urlRoot: function () {

@@ -72,12 +72,10 @@ define(["jquery",
          * @see {@link http://www.backbonejs.org/#View}
          * @memberOf module:views-annotate
          * @augments module:Backbone.View
-         * @alias module:views-annotate.Annotate
          */
         Annotate = Backbone.View.extend({
             /**
              * Events to handle by the annotate view
-             * @alias module:views-annotate.Annotate#events
              * @type {map}
              */
             events: {
@@ -92,28 +90,24 @@ define(["jquery",
 
             /**
              * Template for tabs button
-             * @alias module:views-annotate.Category#tabsButtonTemplate
              * @type {HandlebarsTemplate}
              */
             tabsButtonTemplate: TabsButtonTemplate,
 
             /**
              * Define if the view is or not in edit modus.
-             * @alias module:views-annotate.Category#editModus
              * @type {boolean}
              */
             editModus: false,
 
             /**
              * Map with all the category tabs
-             * @alias module:views-annotate.Category#categoriesTabs
              * @type {map}
              */
             categoriesTabs: {},
 
             /**
              * The default tabs when switching in edit modus
-             * @alias module:views-annotate.Category#DEFAULT_TAB_ON_EDIT
              * @type {map}
              */
             DEFAULT_TAB_ON_EDIT: DEFAULT_TABS.MINE.id,
@@ -129,7 +123,6 @@ define(["jquery",
 
             /**
              * constructor
-             * @alias module:views-annotate.Category#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
@@ -193,7 +186,6 @@ define(["jquery",
 
             /**
              * Proxy function for insert through 'enter' keypress
-             * @alias module:views-annotate.Annotate#keydownOnAnnotate
              * @param {event} event Event object
              */
             keydownOnAnnotate: function (e) {
@@ -205,7 +197,6 @@ define(["jquery",
 
             /**
              * Insert a new annotation
-             * @alias module:views-annotate.Annotate#insert
              * @param {event} event Event object
              */
             insert: function (event) {
@@ -233,7 +224,6 @@ define(["jquery",
 
             /**
              * Change the current selected track by the given one
-             * @alias module:views-annotate.Annotate#changeTrack
              * @param {Track} track The new track
              */
             changeTrack: function (track) {
@@ -258,7 +248,6 @@ define(["jquery",
             /**
              * Listener for when a user start to write a new annotation,
              * manage if the video has to be or not paused.
-             * @alias module:views-annotate.Annotate#onFocusIn
              */
             onFocusIn: function () {
                 if (!this.$el.find("#pause-video").attr("checked") || (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
@@ -276,7 +265,6 @@ define(["jquery",
 
             /**
              * Listener for when we leave the annotation input
-             * @alias module:views-annotate.Annotate#onFocusOut
              */
             onFocusOut: function () {
                 setTimeout(this.checkToContinueVideo, 200);
@@ -284,7 +272,6 @@ define(["jquery",
 
             /**
              * Check if the video must continue, and if yes, continue to play it
-             * @alias module:views-annotate.Annotate#checkToContinueVideo
              */
             checkToContinueVideo: function () {
                 if ((this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
@@ -295,7 +282,6 @@ define(["jquery",
 
             /**
              * Show the tab related to the source from the event
-             * @alias module:views-annotate.Annotate#showTab
              * @param {Event} event Event object
              */
             showTab: function (event) {
@@ -311,7 +297,6 @@ define(["jquery",
 
             /**
              * Add a new categories tab in the annotate view
-             * @alias module:views-annotate.Annotate#addTab
              * @param {Categories} categories Categories to add to the new tab
              * @param {object} attr Infos about the new tab like id, name, filter for categories and roles.
              */
@@ -339,7 +324,6 @@ define(["jquery",
 
             /**
              * Listener for edit modus switch.
-             * @alias module:views-annotate.Annotate#onSwitchEditModus
              * @param {Event} event Event related to this action
              */
             onSwitchEditModus: function (event) {
@@ -356,7 +340,6 @@ define(["jquery",
 
             /**
              * Switch the edit modus to the given status.
-             * @alias module:views-annotate.Annotate#switchEditModus
              * @param  {boolean} status The current status
              */
             switchEditModus: function (status) {
@@ -370,7 +353,6 @@ define(["jquery",
 
             /**
              * Toggle layout for free text annotation only
-             * @alias module:views-annotate.Annotate#toggleFreeTextAnnotationPane
              */
             toggleFreeTextAnnotationPane: function () {
                 this.layout.freeText = !this.layout.freeText;
@@ -380,7 +362,6 @@ define(["jquery",
 
             /**
              * Toggle layout for labels annotation
-             * @alias module:views-annotate.Annotate#toggleStructuredAnnotations
              */
             toggleStructuredAnnotations: function () {
                 this.layout.categories = !this.layout.categories;
@@ -389,7 +370,6 @@ define(["jquery",
 
             /**
              * Shows or hides the free text annotations
-             * @alias module:views-annotate.Annotate#toggleFreeTextAnnotations
              */
             toggleFreeTextAnnotations: function () {
                 annotationTool.toggleFreeTextAnnotations();
@@ -403,7 +383,6 @@ define(["jquery",
 
             /**
              * Remove this view from the DOM and clean up all of its data and event handlers
-             * @alias module:views-annotate.Annotate#remove
              */
             remove: function () {
                 _.each(this.categoriesTabs, function (categoriesTab) {

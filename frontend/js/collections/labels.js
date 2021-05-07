@@ -31,19 +31,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-labels
-         * @alias module:collections-labels.Labels
          */
         var Labels = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-labels.Labels#initialize
              */
             model: Label,
 
             /**
              * constructor
-             * @alias module:collections-labels.Labels#initialize
              */
             initialize: function (models, options) {
                 this.category = options.category;
@@ -51,7 +48,6 @@ define(["underscore",
 
             /**
              * Parse the given data
-             * @alias module:collections-labels.Labels#parse
              * @param  {object} data Object or array containing the data to parse.
              * @return {object}      the part of the given data related to the labels
              */
@@ -67,7 +63,6 @@ define(["underscore",
 
             /**
              * Get the url for this collection
-             * @alias module:collections-labels.Labels#url
              * @return {String} The url of this collection
              */
             url: function () {

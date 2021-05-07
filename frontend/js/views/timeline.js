@@ -121,12 +121,10 @@ define([
      * @see {@link http://www.backbonejs.org/#View}
      * @augments module:Backbone.View
      * @memberOf module:views-timeline
-     * @alias module:views-timeline.TimelineView
      */
     var Timeline = Backbone.View.extend({
         /**
          * Events to handle by the timeline view
-         * @alias module:views-timeline.TimelineView#event
          * @type {map}
          */
         events: {
@@ -140,7 +138,6 @@ define([
 
         /**
          * Constructor
-         * @alias module:views-timeline.TimelineView#initialize
          * @param {PlainObject} attr Object literal containing the view initialization attributes.
          */
         initialize: function (attr) {
@@ -598,7 +595,6 @@ define([
 
         /**
          * Move the timeline relative to the current window
-         * @alias module:views-timeline.TimelineView#move
          * @param {number} factor Percentage of the current window's size
          *     to move by
          */
@@ -612,7 +608,6 @@ define([
 
         /**
          * Move the current range to the left
-         * @alias module:views-timeline.TimelineView#moveLeft
          * @param  {Event} event Event object
          */
         moveLeft: function (event) {
@@ -621,7 +616,6 @@ define([
 
         /**
          * [moveRight description]
-         * @alias module:views-timeline.TimelineView#Right
          * @param  {Event} event Event object
          */
         moveRight: function (event) {
@@ -630,7 +624,6 @@ define([
 
         /**
          * Center the timeline around the playhead
-         * @alias module:views-timeline.TimelineView#center
          */
         center: function () {
             this.timeline.moveTo(this.timeline.getCustomTime());
@@ -638,7 +631,6 @@ define([
 
         /**
          * Zoom in
-         * @alias module:views-timeline.TimelineView#zoomIn
          * @param  {Event} event Event object
          */
         zoomIn: function (event) {
@@ -647,7 +639,6 @@ define([
 
         /**
          * Zoom out
-         * @alias module:views-timeline.TimelineView#zoomOut
          * @param  {Event} event Event object
          */
         zoomOut: function (event) {
@@ -656,7 +647,6 @@ define([
 
         /**
          * Initialize the creation or update of a track, and load a corresponding modal
-         * @alias module:views-timeline.TimelineView#initTrackModal
          * @param {Event} event The event triggering this modal
          * @param {Track} track The track to edit or <tt>undefined</tt> to create a new one
          */
@@ -739,7 +729,6 @@ define([
 
         /**
          * Listener for the player timeupdate
-         * @alias module:views-timeline.TimelineView#onPlayerTimeUpdate
          */
         onPlayerTimeUpdate: function () {
             var currentTime = this.playerAdapter.getCurrentTime();
@@ -755,7 +744,6 @@ define([
 
         /**
          * Reset the timeline zoom to see the whole timeline
-         * @alias module:views-timeline.TimelineView#onTimelineResetZoom
          */
         onTimelineResetZoom: function () {
             this.timeline.setWindow(this.startDate, this.endDate);

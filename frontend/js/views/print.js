@@ -27,24 +27,20 @@ define(["underscore", "backbone", "templates/print"], function (_, Backbone, pri
      * @see {@link http://www.backbonejs.org/#View}
      * @augments module:Backbone.View
      * @memberOf module:views-print
-     * @alias PrintView
      */
     var PrintView = Backbone.View.extend({
         /**
          * The element in which the print view is displayed.
-         * @alias module:views-print.PrintView#el
          */
         el: '#print-view',
         /**
          * The template to render the print view with.
-         * @alias module:views-print.PrintView#template
          */
         template: printTemplate,
 
 
         /**
          * Constructor
-         * @alias module:views-print.PrintView#initialize
          * @param {Object} model The model managing all the annotations and related data. See {@link annotation-tool}.
          */
         initialize: function (model) {

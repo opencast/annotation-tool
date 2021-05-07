@@ -37,14 +37,12 @@ define([
      * @see {@link http://www.backbonejs.org/#Model}
      * @augments module:Backbone.Model
      * @memberOf module:models-track
-     * @alias module:models-track.Track
      */
     var Track = Resource.extend(
         /** @lends module:models-track~Track.prototype */
         {
             /**
              * Default models value
-             * @alias module:models-scalevalue.Scalevalue#defaults
              * @type {map}
              * @static
              */
@@ -55,7 +53,6 @@ define([
 
             /**
              * Constructor
-             * @alias module:models-track.Track#initialize
              * @param {Object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
@@ -68,7 +65,6 @@ define([
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-track.Track#validate
              * @param {Object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
@@ -90,7 +86,6 @@ define([
 
             /**
              * Method to fetch the annotations
-             * @alias module:models-track.Track#fetchAnnotations
              */
             fetchAnnotations: function () {
 
@@ -110,7 +105,6 @@ define([
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-track.Track#toJSON
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function () {
