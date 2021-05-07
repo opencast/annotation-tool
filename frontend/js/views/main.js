@@ -64,27 +64,23 @@ define(["jquery",
          * @see {@link http://www.backbonejs.org/#View}
          * @augments module:Backbone.View
          * @memberOf module:views-main
-         * @alias module:views-main.MainView
          */
         var MainView = Backbone.View.extend({
 
             /**
              * Main container of the appplication
-             * @alias module:views-main.MainView#el
              * @type {DOMElement}
              */
             el: $("body"),
 
             /**
              * jQuery element for the loading box
-             * @alias module:views-main.MainView#loadingBox
              * @type {DOMElement}
              */
             loadingBox: $("#loading"),
 
             /**
              * Events to handle by the main view
-             * @alias module:views-main.MainView#event
              * @type {Map}
              */
             events: {
@@ -104,7 +100,6 @@ define(["jquery",
 
             /**
              * Constructor
-             * @alias module:views-main.MainView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
@@ -145,7 +140,6 @@ define(["jquery",
             /**
              * Updates the title of the page to reflect the video title
              * @param  {object} video The video model
-             * @alias module:views-main.MainView#updateTitle
              */
             updateTitle: function (video) {
                 this.$el.find("#video-title").text(video.get("title") || i18next.t("untitled video"));
@@ -153,7 +147,6 @@ define(["jquery",
 
             /**
              * Creates the views for the annotations
-             * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
                 var views = [
@@ -506,7 +499,6 @@ define(["jquery",
 
             /**
              * Function to signal that the tool is ready
-             * @alias module:views-main.MainView#ready
              */
             ready: function () {
                 this.setLoadingProgress(100, i18next.t("startup.ready"));
@@ -521,7 +513,6 @@ define(["jquery",
 
             /**
              * Initialize global keyboard shortcuts
-             * @alias module:views-main.MainView#setupKeyboardShortcuts
              */
             setupKeyboardShortcuts: function () {
 
@@ -582,7 +573,6 @@ define(["jquery",
              * then the label, and then -- if necessary -- a scale value.
              * The sequence is interrupted by pressing any other key,
              * or changing the input focus in any way.
-             * @alias module:views-main.MainView#handleAnnotationShortcut
              */
             handleAnnotationShortcut: function (event) {
                 if ((
@@ -643,7 +633,6 @@ define(["jquery",
 
             /**
              * Interrupt an in-process annotation key combination
-             * @alias module:views-main.MainView#interruptAnnotationShortcut
              */
             interruptAnnotationShortcut: function () {
                 annotationShortcutState = { params: {} };
@@ -721,7 +710,6 @@ define(["jquery",
 
             /**
              * Logout from the tool
-             * @alias module:views-main.MainView#onLogout
              */
             onLogout: function () {
                 annotationTool.logout();
@@ -729,7 +717,6 @@ define(["jquery",
 
             /**
              * Print the annotations
-             * @alias module:views-main.MainView#print
              */
             print: function () {
                 window.focus();
@@ -751,7 +738,6 @@ define(["jquery",
 
             /**
              * Show the track management dialog
-             * @alias module:views-main.MainView#tracksSelection
              */
             tracksSelection: function (event) {
                 this.tracksSelectionModal.show();
@@ -759,7 +745,6 @@ define(["jquery",
 
             /**
              * Enable/disable the free text annotations pane in the annotate view
-             * @alias module:views-main.MainView#toggleFreeTextAnnotations
              */
             toggleFreeTextAnnotations: function () {
                 $("#opt-annotate-text").toggleClass("checked");
@@ -768,7 +753,6 @@ define(["jquery",
 
             /**
              * Enable/disable the structured annotations pane in the annotate view
-             * @alias module:views-main.MainView#toggleStructuredAnnotations
              */
             toggleStructuredAnnotations: function () {
                 $("#opt-annotate-categories").toggleClass("checked");
@@ -777,7 +761,6 @@ define(["jquery",
 
             /**
              * Toggle the automatic expanding/collapsing of the annotations relevant to the current player time
-             * @alias module:views-main.MainView#toggleAutoExpand
              */
             toggleAutoExpand: function (event) {
                 $(event.currentTarget).toggleClass("checked");
@@ -786,7 +769,6 @@ define(["jquery",
 
             /**
              * Annotation through the "<-" key
-             * @alias module:views-main.MainView#onDeletePressed
              * @param  {Event} event Event object
              */
             onDeletePressed: function (event) {
@@ -805,7 +787,6 @@ define(["jquery",
 
             /**
              * Listener for window resizing
-             * @alias module:views-main.MainView#onWindowResize
              */
             onWindowResize: function () {
                 var mainContainer = this.$el.find("#main-container");
@@ -815,7 +796,6 @@ define(["jquery",
 
             /**
              * Update loading box with given percent & message
-             * @alias module:views-main.MainView#setLoadingProgress
              * @param {integer} percent loaded of the tool
              * @param {string} current loading operation message
              */

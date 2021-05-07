@@ -32,13 +32,11 @@ define(["roles",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-user
-         * @alias module:models-user.User
          */
         var User = Resource.extend({
 
             /**
              * Default models value
-             * @alias module:models-user.User#defaults
              * @type {map}
              * @static
              */
@@ -55,14 +53,12 @@ define(["roles",
 
             /**
              * Define that all post operation have to been done through PUT method
-             * @alias module:models-user.User#noPOST
              * @type {boolean}
              */
             noPOST: true,
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-user.User#validate
              * @param {Object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */

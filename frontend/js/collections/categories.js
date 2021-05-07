@@ -31,19 +31,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-categories
-         * @alias module:collections-categories.Categories
          */
         var Categories = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-categories.Categories#initialize
              */
             model: Category,
 
             /**
              * constructor
-             * @alias module:collections-categories.Categories#initialize
              */
             initialize: function (models, options) {
                 this.video = options.video;
@@ -51,7 +48,6 @@ define(["underscore",
 
             /**
              * Get the url for this collection
-             * @alias module:collections-categories.Categories#url
              * @return {String} The url of this collection
              */
             url: function () {
@@ -60,7 +56,6 @@ define(["underscore",
 
             /**
              * Parse the given data
-             * @alias module:collections-categories.Categories#parse
              * @param  {object} data Object or array containing the data to parse.
              * @return {object}      the part of the given data related to the categories
              */

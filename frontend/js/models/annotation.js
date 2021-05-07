@@ -31,13 +31,11 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-annotation
-         * @alias module:models-annotation.Annotation
          */
         var Annotation = Resource.extend({
 
             /**
              * Default models value
-             * @alias module:models-annotation.Annotation#defaults
              * @type {map}
              * @static
              */
@@ -48,7 +46,6 @@ define(["underscore",
 
             /**
              * Constructor
-             * @alias module:models-annotation.Annotation#initialize
              * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
@@ -74,7 +71,6 @@ define(["underscore",
 
             /**
              * Parse the attribute list passed to the model
-             * @alias module:models-annotation.Annotation#parse
              * @param  {object} data Object literal containing the model attribute to parse.
              * @return {object}  The object literal with the list of parsed model attribute.
              */
@@ -127,7 +123,6 @@ define(["underscore",
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-annotation.Annotation#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
@@ -164,7 +159,6 @@ define(["underscore",
 
             /**
              * Returns if comments are or not loaded
-             * @alias module:models-annotation.Annotation#areCommentsLoaded
              */
             areCommentsLoaded: function () {
                 return this.commentsFetched;
@@ -173,7 +167,6 @@ define(["underscore",
             /**
              * Load the list of comments from the server
              * @param  {Function} [callback] Optional callback to call when comments are loaded 
-             * @alias module:models-annotation.Annotation#fetchComments
              */
             fetchComments: function (callback) {
                 var fetchCallback = _.bind(function () {
@@ -201,7 +194,6 @@ define(["underscore",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-annotation.Annotation#toJSON
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
@@ -227,7 +219,6 @@ define(["underscore",
 
             /**
              * Check whether the annotation covers a given point in time
-             * @alias module:models-annotation.Annotation#covers
              * @param {Number} time The point in time you are interested in
              * @param {Number} minDuration Minimal duration to base this answer on
              * @return {Boolean} true if this annotation covers the given timestamp, potentially
@@ -245,7 +236,6 @@ define(["underscore",
              * Access an annotations category, if it has any.
              * Note that this returns <code>undefined</code>
              * if the category has been deleted!
-             * @alias module:models-annotation.Annotation#category
              * @return {Category} The category this annotations label belongs to, if it has a label
              */
             category: function () {
@@ -258,7 +248,6 @@ define(["underscore",
              * This is determined by the color of the category of its label,
              * if it has any.
              * Free text annotations return <code>undefined</code>
-             * @alias module:models-annotation.Annotation#category
              * @return {string} a CSS color value
              */
             color: function () {

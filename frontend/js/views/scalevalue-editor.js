@@ -30,27 +30,23 @@ define(["underscore",
              * @see {@link http://www.backbonejs.org/#View}
              * @augments module:Backbone.View
              * @memberOf module:views-scalevalue-editor
-             * @alias module:views-scalevalue-editor.ScaleValueEditor
              */
             var ScaleValueEditor = Backbone.View.extend({
 
                 /**
                  * Scale value editor template
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#ScaleValueEditorTemplate
                  * @type {HandlebarsTemplate}
                  */
                 scaleValueEditorTemplate: ScaleValueEditorTmpl,
 
                 /**
                  * Define if the scale value is or not deleted
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#isDeleted
                  * @type {Boolean}
                  */
                 isDeleted: false,
 
                 /**
                  * Events to handle by the view
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#events
                  * @type {Map}
                  */
                 events: {
@@ -65,7 +61,6 @@ define(["underscore",
 
                 /**
                  * Constructor
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#initialize
                  * @param {PlainObject} attr Object literal containing the view initialization attributes.
                  */
                 initialize: function (attr) {
@@ -91,7 +86,6 @@ define(["underscore",
 
                 /**
                  * Render all elements of the view and draw them.
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#render
                  */
                 render: function () {
                     var modelJSON = this.model.toJSON();
@@ -104,7 +98,6 @@ define(["underscore",
 
                 /**
                  * Move the scale value up in the list (change the order)
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#up
                  */
                 up: function () {
                     var currentOrder = this.model.get("order"),
@@ -124,7 +117,6 @@ define(["underscore",
 
                 /**
                  * Move the scale value down in the list (change the order)
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#down
                  */
                 down: function () {
                     var currentOrder = this.model.get("order"),
@@ -144,7 +136,6 @@ define(["underscore",
 
                 /**
                  * Proxy to save a value on insert
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#saveOnInsert
                  * @param  {Event} event Event object
                  */
                 saveOnInsert: function (event) {
@@ -155,7 +146,6 @@ define(["underscore",
 
                 /**
                  * Save the scale value
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#save
                  */
                 save: function () {
                     var name = this.$el.find(".scale-value-name").val(),
@@ -178,7 +168,6 @@ define(["underscore",
 
                 /**
                  * Delete the scale value
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#deleteScaleValue
                  * @param  {Event} event Event object
                  */
                 deleteScaleValue: function (event) {
@@ -215,7 +204,6 @@ define(["underscore",
 
                 /**
                  * Sort the scale values collection by order value, TODO use collection comparator
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#getSortedCollection
                  */
                 getSortedCollection: function () {
                     // Sort the model in the right scale value order

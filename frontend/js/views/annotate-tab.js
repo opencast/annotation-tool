@@ -44,55 +44,47 @@ define(["jquery",
          * @see {@link http://www.backbonejs.org/#View}
          * @memberOf module:views-annotate-tab
          * @augments module:Backbone.View
-         * @alias module:views-annotate-tab.AnnotateTab
          */
         var AnnotateTab = Backbone.View.extend({
 
             /**
              * Tag name from the view element
-             * @alias module:views-annotate-tab.AnnotateTab#tagName
              * @type {string}
              */
             tagName: "div",
 
             /**
              * Class name from the view element
-             * @alias module:views-annotate-tab.AnnotateTab#className
              * @type {string}
              */
             className: "tab-pane",
 
             /**
              * Define if the view is or not in edit modus.
-             * @alias module:views-annotate-tab.AnnotateTab#editModus
              * @type {boolean}
              */
             editModus: false,
 
             /**
              * List of categories in this tab
-             * @alias module:views-annotate-tab.AnnotateTab#categories
              * @type {Categories}
              */
             categories: undefined,
 
             /**
              * List of category views in this tab
-             * @alias module:views-annotate-tab.AnnotateTab#categoryViews
              * @type {array}
              */
             categoryViews: undefined,
 
             /**
              * Tab template
-             * @alias module:views-annotate-tab.AnnotateTab#template
              * @type {HandlebarsTemplate}
              */
             template: Template,
 
             /**
              * Template for the carousel items
-             * @alias module:views-annotate-tab.AnnotateTab#itemContainerTemplate
              * @type {HandlebarsTemplate}
              */
             itemContainerTemplate: Handlebars.compile("<div class=\"item row-fluid\">\
@@ -104,49 +96,42 @@ define(["jquery",
 
             /**
              * Template for pagination link
-             * @alias module:views-annotate-tab.AnnotateTab#paginationBulletTemplate
              * @type {HandlebarsTemplate}
              */
             paginationBulletTemplate: Handlebars.compile("<li><button type=\"button\" class=\"page-link\" data-page=\"{{number}}\">{{number}}</button></li>"),
 
             /**
              * Element containing the "carousel"
-             * @alias module:views-annotate-tab.AnnotateTab#carouselElement
              * @type {DOMElement}
              */
             carouselElement: undefined,
 
             /**
              * Element containing the pagination
-             * @alias module:views-annotate-tab.AnnotateTab#carouselPagination
              * @type {DOMElement}
              */
             carouselPagination: undefined,
 
             /**
              * Element containing the all the categories
-             * @alias module:views-annotate-tab.AnnotateTab#categoriesContainer
              * @type {DOMElement}
              */
             categoriesContainer: undefined,
 
             /**
              * Current container for categories group in the carousel
-             * @alias module:views-annotate-tab.AnnotateTab#itemsCurrentContainer
              * @type {DOMElement}
              */
             itemsCurrentContainer: undefined,
 
             /**
              * Element represeting the tab top link
-             * @alias module:views-annotate-tab.AnnotateTab#titleLink
              * @type {DOMElement}
              */
             titleLink: undefined,
 
             /**
              * Events to handle by the annotate-tab view
-             * @alias module:views-annotate-tab.AnnotateTabView#events
              * @type {map}
              */
             events: {
@@ -157,7 +142,6 @@ define(["jquery",
 
             /**
              * Constructor
-             * @alias module:views-annotate-tab.AnnotateTabView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
@@ -230,7 +214,6 @@ define(["jquery",
 
             /**
              * Display the list
-             * @alias module:views-annotate-tab.AnnotateTab#render
              */
             render: function () {
 
@@ -265,7 +248,6 @@ define(["jquery",
 
             /**
              * Make the tab ready to be displayed after it having been selected.
-             * @alias module:views-annotate-tab.AnnotateTab#select
              */
             select: function () {
                 _.each(this.categoryViews, function (view) {
@@ -275,7 +257,6 @@ define(["jquery",
 
             /**
              * Add a list of category
-             * @alias module:views-annotate-tab.AnnotateTab#addCategories
              * @param {Categories} categories list of categories
              */
             addCategories: function (categories, filter) {
@@ -288,7 +269,6 @@ define(["jquery",
 
             /**
              * Add a category to the category view
-             * @alias module:views-annotate-tab.AnnotateTab#addCategory
              * @param {Category}  category The category to add
              * @param {Categories} [collection]    The collection, if the category is already part of one
              * @param {object} [options] Options to define if the category should be filtered or not (skipTests)
@@ -311,7 +291,6 @@ define(["jquery",
 
             /**
              * Listener for category creation request from UI
-             * @alias module:views-annotate-tab.AnnotateTab#onAddCategory
              */
             onAddCategory: function () {
                 var attributes = {
@@ -337,7 +316,6 @@ define(["jquery",
 
             /**
              * Remove the given category from the views list
-             * @alias module:views-annotate-tab.AnnotateTab#removeOne
              * @param {Category} Category from which the view has to be deleted
              */
             removeOne: function (delCategory) {
@@ -362,7 +340,6 @@ define(["jquery",
 
             /**
              * Insert the given category in the carousel
-             * @alias module:views-annotate-tab.AnnotateTab#insertCategoryView
              * @param  {CategoryView} categoryView the view to insert
              */
             insertCategoryView: function (categoryView) {
@@ -377,7 +354,6 @@ define(["jquery",
 
             /**
              * Add a new carousel item to this tabe
-             * @alias module:views-annotate-tab.AnnotateTab#addCarouselItem
              */
             addCarouselItem: function () {
                 var length = this.categoryViews.length,
@@ -396,7 +372,6 @@ define(["jquery",
 
             /**
              * Initialize the categories carousel
-             * @alias module:views-annotate-tab.AnnotateTab#initCarousel
              */
             initCarousel: function () {
                 this.carouselElement
@@ -406,7 +381,6 @@ define(["jquery",
 
             /**
              * Move the carousel to item related to the event target
-             * @alias module:views-annotate-tab.AnnotateTab#moveCarouselToFrame
              * @param  {Event} event Event object
              */
             moveCarouselToFrame: function (event) {
@@ -416,7 +390,6 @@ define(["jquery",
 
             /**
              * Move carousel to next element
-             * @alias module:views-annotate-tab.AnnotateTab#moveCarouselNext
              */
             moveCarouselNext: function () {
                 this.carouselElement.carousel("next");
@@ -424,7 +397,6 @@ define(["jquery",
 
             /**
              * Move carousel to previous element
-             * @alias module:views-annotate-tab.AnnotateTab#moveCarouselPrevious
              */
             moveCarouselPrevious: function () {
                 this.carouselElement.carousel("prev");
@@ -432,7 +404,6 @@ define(["jquery",
 
             /**
              * Listener for carousel slid event.
-             * @alias module:views-annotate-tab.AnnotateTab#onCarouselSlid
              * @param {Event} event the event to handle
              */
             onCarouselSlid: function (event) {
@@ -446,7 +417,6 @@ define(["jquery",
 
             /**
              * Sync the pagination items with the state of the carousel
-             * @alias module:views-annotate-tab.AnnotateTab#updateNavigation
              */
             updateNavigation: function() {
                 var pageLinks = this.carouselPagination.find(".page-link").parent();
@@ -456,7 +426,6 @@ define(["jquery",
 
             /**
              * Export the categories from this tab
-             * @alias module:views-annotate-tab.AnnotateTab#onExport
              */
             onExport: function () {
                 var json = {
@@ -487,7 +456,6 @@ define(["jquery",
 
             /**
              * Import new categories
-             * @alias module:views-annotate-tab.AnnotateTab#onImport
              * @param  {event} evt Event object
              */
             onImport: function (evt) {
@@ -518,7 +486,6 @@ define(["jquery",
 
             /**
              * Listener for edit modus switch.
-             * @alias module:views-annotate-tab.AnnotateTab#onSwitchEditModus
              * @param {boolean} status The new status
              */
             onSwitchEditModus: function (status) {
@@ -533,7 +500,6 @@ define(["jquery",
 
             /**
              * Simulate the a click on file input box to choose a file to import
-             * @alias module:views-annotate-tab.AnnotateTab#chooseFile
              */
             chooseFile: function (event) {
                 event.preventDefault();
@@ -554,7 +520,6 @@ define(["jquery",
 
             /**
              * Remove this view from the DOM and clean up all of its data and event handlers
-             * @alias module:views-annotate-tab.AnnotateTab#remove
              */
             remove: function () {
                 _.each(this.categoryViews, function (categoryView) {

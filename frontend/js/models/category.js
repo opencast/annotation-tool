@@ -32,13 +32,11 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-category
-         * @alias module:models-category.Category
          */
         var Category = Resource.extend({
 
             /**
              * Default models value
-             * @alias module:models-category.Category#defaults
              * @type {map}
              * @static
              */
@@ -59,7 +57,6 @@ define(["underscore",
 
             /**
              * Constructor
-             * @alias module:models-category.Category#initialize
              * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
@@ -93,7 +90,6 @@ define(["underscore",
 
             /**
              * Parse the attribute list passed to the model
-             * @alias module:models-category.Category#parse
              * @param  {object} data Object literal containing the model attribute to parse.
              * @return {object}  The object literal with the list of parsed model attribute.
              */
@@ -111,7 +107,6 @@ define(["underscore",
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-category.Category#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
@@ -153,7 +148,6 @@ define(["underscore",
 
             /**
              * Show/hide the category in the UI
-             * @alias module:models-category.Category#toggleVisibility
              */
             toggleVisibility: function () {
                 this.set("visible", !this.get("visible"));
@@ -161,7 +155,6 @@ define(["underscore",
 
             /**
              * Change category color
-             * @alias module:models-category.Category#setColor
              * @param  {string} color the new color
              */
             setColor: function (color) {
@@ -173,7 +166,6 @@ define(["underscore",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-category.Category#toJSON
              * @param {Object} options The options to control the "JSONification" of this collection
              * @return {JSON} JSON representation of the instance
              */
@@ -199,7 +191,6 @@ define(["underscore",
 
             /**
              * Prepare the model as JSON to export and return it
-             * @alias module:models-category.Category#toExportJSON
              * @param {boolean} withScales Define if the scale has to be included
              * @return {JSON} JSON representation of the model for export
              */
