@@ -45,23 +45,19 @@ define(
             administratorCanEditPublicInstances: true,
 
             /**
-             * Constructor
-             * @param {object} attr Object literal containing the model initialion attributes.
+             * Default model values
              */
-            initialize: function (attr) {
-                _.bindAll(this, "toExportJSON");
+            defaults: function () {
+                return {
+                    scaleValues: new ScaleValues([], { scale: this })
+                };
+            },
 
-                Resource.prototype.initialize.apply(this, arguments);
-
-                if (attr.scaleValues && _.isArray(attr.scaleValues)) {
-                    this.set({ scaleValues: new ScaleValues(attr.scaleValues, { scale: this }) });
-                } else {
-                    this.set({ scaleValues: new ScaleValues([], { scale: this }) });
-                }
-
-                if (attr.id) {
-                    this.attributes.scaleValues.fetch({async: false});
-                }
+            /**
+             * (Re-)Fetch the comments once our ID changes.
+             */
+            fetchChildren: function () {
+                this.attributes.scaleValues.fetch({ async: false });
             },
 
             /**
@@ -72,15 +68,7 @@ define(
             validate: function (attr) {
                 var scalevalues;
 
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        scalevalues = this.attributes.scaleValues;
-
-                        if (scalevalues && (scalevalues.length) === 0) {
-                            scalevalues.fetch({async: false});
-                        }
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
                 if (attr.name && !_.isString(attr.name)) {

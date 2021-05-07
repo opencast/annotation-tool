@@ -45,13 +45,12 @@ define(
 
              /**
              * Constructor
-             * @param {object} attr Object literal containing the model initialion attribute.
              */
-            initialize: function (attr) {
+            initialize: function () {
                 Resource.prototype.initialize.apply(this, arguments);
 
-                if (attr.category && attr.category.attributes) {
-                    this.set("category", attr.category.toJSON());
+                if (this.attributes.category && this.attributes.category.attributes) {
+                    this.set("category", this.attributes.category.toJSON());
                 }
             },
 

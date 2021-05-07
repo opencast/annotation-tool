@@ -44,32 +44,32 @@ define(
             administratorCanEditPublicInstances: true,
 
             /**
-             * Constructor
-             * @param {object} attr Object literal containing the model initialion attributes.
+             * Default model values
              */
-            initialize: function (attr) {
+            defaults: function () {
+                return {
+                    visible: true,
+                    labels: new Labels([], { category: this })
+                };
+            },
 
-                _.bindAll(this, "toggleVisibility", "validate", "toExportJSON");
+            /**
+             * Constructor
+             */
+            initialize: function () {
+
+                _.bindAll(this, "toggleVisibility", "toExportJSON");
 
                 Resource.prototype.initialize.apply(this, arguments);
 
                 this.set("settings", _.extend({ hasScale: true }, this.get("settings")));
+            },
 
-                if (attr.labels && _.isArray(attr.labels)) {
-                    this.attributes.labels  = new Labels(attr.labels, { category: this });
-                    delete attr.labels;
-                } else if (!attr.labels) {
-                    this.attributes.labels  = new Labels([], { category: this });
-                } else if (_.isObject(attr.labels) && attr.labels.model) {
-                    this.attributes.labels = new Labels(attr.labels.models, { category: this });
-                    delete attr.labels;
-                }
-
-                if (attr.id) {
-                    this.attributes.labels.fetch({ async: false });
-                }
-
-                this.attributes.visible = true;
+            /**
+             * (Re-)Fetch the labels once our ID changes.
+             */
+            fetchChildren: function () {
+                this.attributes.labels.fetch({ async: false });
             },
 
             /**
@@ -78,36 +78,11 @@ define(
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var self = this;
-
                 var invalidResource = Resource.prototype.validate.apply(this, arguments);
                 if (invalidResource) return invalidResource;
 
-                if (attr.id) {
-                    if (!this.ready && attr.labels && attr.labels.url && (attr.labels.length) === 0) {
-                        attr.labels.fetch({
-                            async: false,
-                            success: function () {
-                                self.ready = true;
-                            }
-                        });
-                    }
-                }
-
                 if (attr.description && !_.isString(attr.description)) {
                     return "\"description\" attribute must be a string";
-                }
-
-                if (attr.labels) {
-                    attr.labels.each(function (value) {
-                        var parseValue = value.parse({ category: this.toJSON() });
-
-                        if (parseValue.category) {
-                            parseValue = parseValue.category;
-                        }
-
-                        value.category = parseValue;
-                    }, this);
                 }
 
                 return undefined;

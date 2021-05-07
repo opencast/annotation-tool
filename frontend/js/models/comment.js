@@ -49,30 +49,38 @@ define(
             },
 
             /**
+             * Constructor
+             */
+            initialize: function () {
+                // Fix up circular dependency
+                if (!Comments) Comments = require("collections/comments");
+
+                this.replies = new Comments(null, {
+                    annotation: this.collection.annotation,
+                    replyTo: this
+                });
+
+                Resource.prototype.initialize.apply(this, arguments);
+
+                this.listenTo(this.replies, "add remove reset reply", function () {
+                    this.trigger("reply");
+                });
+            },
+
+            /**
+             * (Re-)Fetch the replies once our ID changes.
+             */
+            fetchChildren: function () {
+                this.replies.fetch();
+            },
+
+            /**
              * Validate the attribute list passed to the model
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                // Fix up circular dependency
-                if (!Comments) Comments = require("collections/comments");
-
-                if (!this.replies) {
-                    this.replies = new Comments(null, {
-                        annotation: this.collection.annotation,
-                        replyTo: this
-                    });
-
-                    this.listenTo(this.replies, "add remove reset reply", function () {
-                        this.trigger("reply");
-                    });
-                }
-
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        this.replies.fetch();
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
                 if (attr.text && !_.isString(attr.text)) {

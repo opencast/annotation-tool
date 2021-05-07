@@ -41,19 +41,33 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Constructor
-     * @param {object} attr Object literal containing the model initialion attributes.
      */
-    initialize: function (attr) {
-        if (!attr) attr = {};
-
-        if (attr.tags) {
-            this.set("tags", util.parseJSONString(attr.tags));
+    initialize: function () {
+        if (this.attributes.tags) {
+            this.set("tags", util.parseJSONString(this.attributes.tags));
         }
 
-        if (attr.settings) {
-            this.set("settings", util.parseJSONString(attr.settings));
+        if (this.attributes.settings) {
+            this.set("settings", util.parseJSONString(this.attributes.settings));
         }
+
+        function fetchChildren() {
+            if (this.id) {
+                this.fetchChildren();
+            }
+        }
+        fetchChildren.call(this);
+        this.listenTo(this, "change:id", function (id) {
+            fetchChildren.call(this);
+        });
     },
+
+    /**
+     * A convenient function for resources to override to fetch subresources.
+     * It will (hopefully) be called at all the right times.
+     * (Namely when the <code>id</code> of the resource changes.
+     */
+    fetchChildren: function () {},
 
     /**
      * Validate the attribute list passed to the model
@@ -62,14 +76,6 @@ var Resource = Backbone.Model.extend({
      */
     validate: function (attr, callbacks) {
         var created = this.get("created_at");
-
-        if (attr.id) {
-            if (this.get("id") !== attr.id) {
-                this.id = attr.id;
-                this.attributes.id = attr.id;
-                if (callbacks && callbacks.onIdChange) callbacks.onIdChange.call(this);
-            }
-        }
 
         if (attr.tags && _.isUndefined(util.parseJSONString(attr.tags))) {
             return "\"tags\" attribute must be a string or a JSON object";

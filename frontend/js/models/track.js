@@ -52,14 +52,17 @@ define([
 
             /**
              * Constructor
-             * @param {Object} attr Object literal containing the model initialion attributes.
              */
-            initialize: function (attr) {
-                _.bindAll(this, "fetchAnnotations");
-
-                Resource.prototype.initialize.apply(this, arguments);
-
+            constructor: function () {
                 this.annotations = new Annotations(null, { track: this });
+                Resource.apply(this, arguments);
+            },
+
+            /**
+             * (Re-)Fetch the scale values once our ID changes.
+             */
+            fetchChildren: function () {
+                this.annotations.fetch({ async: false });
             },
 
             /**
@@ -68,12 +71,7 @@ define([
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        this.attributes.ready = true;
-                        this.trigger("ready", this);
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
                 if (attr.description && !_.isString(attr.description)) {
@@ -81,25 +79,6 @@ define([
                 }
 
                 return undefined;
-            },
-
-            /**
-             * Method to fetch the annotations
-             */
-            fetchAnnotations: function () {
-
-                if (this.annotationsLoaded) return;
-
-                if (!this.get("ready")) {
-                    this.once("ready", this.fetchAnnotations);
-                }
-
-                this.annotations.fetch({
-                    async: false,
-                    success: _.bind(function () {
-                        this.annotationsLoaded = true;
-                    }, this)
-                });
             },
 
             /**

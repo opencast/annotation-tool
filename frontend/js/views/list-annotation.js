@@ -97,7 +97,6 @@ define(
                     this.render();
                 });
 
-                this.model.fetchComments();
                 this.listenTo(this.model.get("comments"), "add remove reset reply", this.render);
 
                 if (this.model.get("label")) {
@@ -413,10 +412,6 @@ define(
 
 
                 if (this.getState().withComments) {
-                    if (!this.model.areCommentsLoaded()) {
-                        this.model.fetchComments();
-                    }
-
                     if (this.getState() === ListAnnotation.STATES.COMMENTS || this.model.get("comments").length > 0) {
                         this.$el.find(".comments").append(
                             commentsContainerHeader(),
