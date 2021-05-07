@@ -82,15 +82,15 @@ define(
 
             /**
              * Parse the attribute list passed to the model
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
+             * @param {object} data Object literal containing the model attribute to parse.
+             * @return {object} The object literal with the list of parsed model attribute.
              */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (attr.category && attr.category.settings) {
-                        attr.category.settings = util.parseJSONString(attr.category.settings);
-                    }
-                });
+            parse: function (attr) {
+                attr = Resource.prototype.parse.call(this, attr);
+                if (attr.category && attr.category.settings) {
+                    attr.category.settings = util.parseJSONString(attr.category.settings);
+                }
+                return attr;
             },
 
             /**
