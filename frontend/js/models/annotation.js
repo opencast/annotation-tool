@@ -17,13 +17,14 @@
  * A module representing the annotation model
  * @module models-annotation
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "util",
         "collections/comments",
-        "models/resource"],
-
+        "models/resource"
+    ],
     function (_, util, Comments, Resource) {
-
         "use strict";
 
         /**
