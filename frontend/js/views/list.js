@@ -147,7 +147,7 @@ define(
                         lastAddedAnnotationView.toggleCollapsedState(undefined, true);
                     }
                     view.toggleCollapsedState();
-                    view.once("change:state", function () {
+                    this.listenToOnce(view, "change:state", function () {
                         if (view === lastAddedAnnotationView) {
                             lastAddedAnnotationView = undefined;
                         }

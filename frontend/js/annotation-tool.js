@@ -159,15 +159,15 @@ define(
 
                 this.colorsManager = new ColorsManager();
 
-                this.once(this.EVENTS.USER_LOGGED, function () {
+                this.listenToOnce(this, this.EVENTS.USER_LOGGED, function () {
 
                     $("#user-menu-label").html(this.user.get("nickname"));
                     $("#user-menu").show();
 
                     this.fetchData();
-                }, this);
+                });
 
-                this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                this.listenToOnce(this, this.EVENTS.MODELS_INITIALIZED, function () {
                     this.listenTo(
                         this.video.get("tracks"),
                         "add remove reset visibility",
@@ -178,9 +178,9 @@ define(
                     this.orderTracks(this.tracksOrder);
 
                     this.views.main = new MainView();
-                }, this);
+                });
 
-                this.once(this.EVENTS.VIDEO_LOADED, function () {
+                this.listenToOnce(this, this.EVENTS.VIDEO_LOADED, function () {
 
                     if (!(this.playerAdapter instanceof PlayerAdapter)) {
                         throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
@@ -189,7 +189,7 @@ define(
                     $(this.playerAdapter).on("pa_timeupdate", this.onTimeUpdate);
 
                     this.playerAdapter.load();
-                }, this);
+                });
 
                 this.authenticate();
             },
@@ -656,7 +656,7 @@ define(
                                 }
                             }, this)
                         });
-                        video.once("ready", createDefaultTrack);
+                        this.listenToOnce(video, "ready", createDefaultTrack);
                     }, this)
                 );
             },
