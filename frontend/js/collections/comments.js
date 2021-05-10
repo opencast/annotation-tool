@@ -54,8 +54,8 @@ define(
 
             /**
              * Parse the given data
-             * @param  {object} data Object or array containing the data to parse.
-             * @return {object}      the part of the given data related to the comments
+             * @param {object} data Object or array containing the data to parse.
+             * @return {object} the part of the given data related to the comments
              */
             parse: function (resp) {
                 if (resp.comments && _.isArray(resp.comments)) {

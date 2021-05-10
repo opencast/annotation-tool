@@ -148,10 +148,6 @@ define([
                     }
                     result.timecode = formatTime(startTime) + "–" + formatTime(endTime);
 
-                    // Get comments by user
-                    if (!annotation.areCommentsLoaded()) {
-                        annotation.fetchComments();
-                    }
                     function commentWithReplies(comment) {
                         return {
                             author: comment.get("created_by_nickname"),

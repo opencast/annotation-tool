@@ -41,43 +41,26 @@ define(
         var Annotation = Resource.extend({
 
             /**
-             * Default models value
-             * @type {map}
-             * @static
+             * Default model values
              */
-            defaults: {
-                start: 0,
-                duration: 0
+            defaults: function () {
+                return {
+                    start: 0,
+                    duration: 0,
+                    comments: new Comments([], { annotation: this })
+                };
             },
 
             /**
-             * Constructor
-             * @param {object} attr Object literal containing the model initialion attributes.
+             * (Re-)Fetch the scale values once our ID changes.
              */
-            initialize: function (attr) {
-                _.bindAll(this, "areCommentsLoaded",
-                                "fetchComments");
-
-                if (!attr || _.isUndefined(attr.start)) {
-                    throw "\"start\" attribute is required";
-                }
-
-                Resource.prototype.initialize.apply(this, arguments);
-
-                if (attr.comments && _.isArray(attr.comments)) {
-                    this.attributes.comments = new Comments(attr.comments, { annotation: this });
-                    delete attr.comments;
-                } else if (!attr.comments) {
-                    this.attributes.comments = new Comments([], { annotation: this });
-                } else {
-                    this.attributes.comments = attr.comments;
-                    delete attr.comments;
-                }
+            fetchChildren: function () {
+                this.attributes.comments.fetch();
             },
 
             /**
              * Parse the attribute list passed to the model
-             * @param {object} data Object literal containing the model attribute to parse.
+             * @param {object} attr Object literal containing the model attribute to parse.
              * @return {object} The object literal with the list of parsed model attribute.
              */
             parse: function (attr) {
@@ -101,11 +84,7 @@ define(
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        this.trigger("ready", this);
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
                 if (attr.start && !_.isNumber(attr.start)) {
@@ -121,41 +100,6 @@ define(
                 }
 
                 return undefined;
-            },
-
-            /**
-             * Returns if comments are or not loaded
-             */
-            areCommentsLoaded: function () {
-                return this.commentsFetched;
-            },
-
-            /**
-             * Load the list of comments from the server
-             * @param  {Function} [callback] Optional callback to call when comments are loaded 
-             */
-            fetchComments: function (callback) {
-                var fetchCallback = _.bind(function () {
-                    this.commentsFetched = true;
-                    if (_.isFunction(callback)) {
-                        callback.apply(this);
-                    }
-                }, this);
-
-                if (this.areCommentsLoaded()) {
-                    fetchCallback();
-                } else {
-                    if (this.commentsFetched !== true) {
-                        if (_.isUndefined(this.attributes.id)) {
-                            this.once("ready", this.fetchComments);
-                        } else {
-                            this.attributes.comments.fetch({
-                                async: true,
-                                success: fetchCallback
-                            });
-                        }
-                    }
-                }
             },
 
             /**
@@ -196,7 +140,7 @@ define(
                 var start = this.get("start");
                 var duration = this.get("duration");
                 var end = start + (duration || minDuration);
- 
+
                 return start <= time && time <= end;
             },
 

@@ -60,20 +60,6 @@ define(
             administratorCanEditPublicInstances: true,
 
             /**
-             * Constructor
-             * @param {object} attr Object literal containing the model initialion attributes.
-             */
-            initialize: function (attr) {
-                if (!attr  || _.isUndefined(attr.name) ||
-                   _.isUndefined(attr.value) || !_.isNumber(attr.value) ||
-                   _.isUndefined(attr.order) || !_.isNumber(attr.order)) {
-                    throw "'name, value, order' attributes are required";
-                }
-
-                Resource.prototype.initialize.apply(this, arguments);
-            },
-
-            /**
              * Validate the attribute list passed to the model
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.

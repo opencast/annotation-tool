@@ -24,7 +24,6 @@ define(
         "collections/tracks",
         "collections/categories",
         "collections/scales",
-        "access",
         "models/resource"
     ],
     function (
@@ -32,7 +31,6 @@ define(
         Tracks,
         Categories,
         Scales,
-        ACCESS,
         Resource
     ) {
         "use strict";
@@ -44,13 +42,6 @@ define(
          * @memberOf module:models-video
          */
         var Video = Resource.extend({
-
-            /**
-             * Default models value
-             */
-            defaults: {
-                access: ACCESS.PUBLIC
-            },
 
             /**
              * REST endpont for this model
@@ -65,46 +56,24 @@ define(
             noPOST: true,
 
             /**
-             * Constructor
-             * @param {object} attr Object literal containing the model initialion attribute.
+             * Default model values
              */
-            initialize: function (attr) {
+            defaults: function () {
+                return {
+                    tracks: new Tracks([], { video: this }),
+                    categories: new Categories([], { video: this }),
+                    scales: new Scales([], { video: this })
+                };
+            },
 
-                _.bindAll(
-                    this,
-                    "getTrack",
-                    "getAnnotation",
-                    "loadTracks"
-                );
-
-                Resource.prototype.initialize.apply(this, arguments);
-
-                // Check if tracks are given
-                if (attr.tracks && _.isArray(attr.tracks)) {
-                    this.set({ tracks: new Tracks(attr.tracks, { video: this }) });
-                }  else {
-                    this.set({ tracks: new Tracks([], { video: this }) });
-                }
-
-                // Check if supported categories are given
-                if (attr.categories && _.isArray(attr.categories)) {
-                    this.set({ categories: new Categories(attr.categories, { video: this }) });
-                } else {
-                    this.set({ categories: new Categories([], { video: this }) });
-                }
-
-                // Check if the possible video scales are given
-                if (attr.scales && _.isArray(attr.scales)) {
-                    this.set({ scales: new Scales(attr.scales, { video: this }) });
-                } else {
-                    this.set({ scales: new Scales([], { video: this }) });
-                }
-
-                if (attr.id) {
-                    this.get("categories").fetch({ async: false });
-                    this.get("tracks").fetch({ async: false });
-                    this.get("scales").fetch({ async: false });
-                }
+            /**
+             * (Re-)Fetch the scale values once our ID changes.
+             */
+            fetchChildren: function () {
+                this.get("categories").fetch({ async: false });
+                this.get("tracks").fetch({ async: false });
+                this.get("scales").fetch({ async: false });
+                this.trigger("ready");
             },
 
             /**
@@ -113,42 +82,7 @@ define(
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var categories,
-                    scales,
-                    self = this;
-
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        categories = this.attributes.categories;
-                        scales = this.attributes.scales;
-
-                        this.loadTracks();
-
-                        if (scales && (scales.length) === 0) {
-                            scales.fetch({
-                                async: false,
-                                success: function () {
-                                    self.scalesReady = true;
-                                    if (categories && (categories.length) === 0) {
-                                        categories.fetch({
-                                            async: false,
-                                            success: function () {
-                                                self.categoriesReady = true;
-                                                if (self.tracksReady && self.categoriesReady && self.scalesReady) {
-                                                    self.trigger("ready");
-                                                    self.attributes.ready = true;
-                                                }
-                                            }
-                                        });
-                                    } else if (self.tracksReady && self.categoriesReady && self.scalesReady) {
-                                        self.trigger("ready");
-                                        self.attributes.ready = true;
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
                 if (attr.tracks && !(attr.tracks instanceof Tracks)) {
@@ -158,29 +92,10 @@ define(
                 return undefined;
             },
 
-            loadTracks: function () {
-                var tracks = this.attributes.tracks,
-                    self = this;
-
-                if (tracks && (tracks.length) === 0) {
-                    tracks.fetch({
-                        async  : false,
-                        success: function () {
-                            self.tracksReady = true;
-
-                            if (self.tracksReady && self.categoriesReady && self.scalesReady) {
-                                self.trigger("ready");
-                                self.attributes.ready = true;
-                            }
-                        }
-                    });
-                }
-            },
-
             /**
              * Get the track with the given id
-             * @param  {integer} trackId The id from the wanted track
-             * @return {Track}           The track with the given id
+             * @param {integer} trackId The id from the wanted track
+             * @return {Track} The track with the given id
              */
             getTrack: function (trackId) {
                 if (_.isUndefined(this.tracks)) {

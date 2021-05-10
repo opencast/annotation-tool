@@ -22,13 +22,11 @@ define(
     [
         "underscore",
         "util",
-        "access",
         "models/resource"
     ],
     function (
         _,
         util,
-        ACCESS,
         Resource
     ) {
         "use strict";
@@ -40,16 +38,6 @@ define(
          * @memberOf module:models-label
          */
         var Label = Resource.extend({
-
-            /**
-             * Default models value
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                access: ACCESS.PUBLIC
-            },
-
             /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
@@ -57,26 +45,12 @@ define(
 
              /**
              * Constructor
-             * @param {object} attr Object literal containing the model initialion attribute.
              */
-            initialize: function (attr) {
-
-                if (!attr || _.isUndefined(attr.value)) {
-                    throw "'value' attribute is required";
-                }
-
-                if (!attr || _.isUndefined(attr.abbreviation)) {
-                    throw "'abbreviation' attribute is required";
-                }
-
-                if (!attr || _.isUndefined(attr.category)) {
-                    throw "'category' attribute is required";
-                }
-
+            initialize: function () {
                 Resource.prototype.initialize.apply(this, arguments);
 
-                if (attr.category && attr.category.attributes) {
-                    this.set("category", attr.category.toJSON());
+                if (this.attributes.category && this.attributes.category.attributes) {
+                    this.set("category", this.attributes.category.toJSON());
                 }
             },
 
@@ -143,20 +117,12 @@ define(
                     abbreviation: this.attributes.abbreviation
                 };
 
-                if (this.attributes.tags) {
-                    json.tags = JSON.stringify(this.attributes.tags);
-                }
-
                 if (this.attributes.description) {
                     json.description = this.attributes.description;
                 }
 
                 if (this.attributes.settings) {
                     json.settings = this.attributes.settings;
-                }
-
-                if (this.attributes.tags) {
-                    json.tags = this.attributes.tags;
                 }
 
                 return json;

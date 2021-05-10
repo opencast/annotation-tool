@@ -659,11 +659,7 @@ define(
                                 }
                             }, this)
                         });
-                        if (video.get("ready")) {
-                            createDefaultTrack();
-                        } else {
-                            video.once("ready", createDefaultTrack);
-                        }
+                        video.once("ready", createDefaultTrack);
                     }, this)
                 );
             },
@@ -800,11 +796,6 @@ define(
                         }
 
                         bookData.push(line);
-
-                        // Get comments by user
-                        if (!annotation.areCommentsLoaded()) {
-                            annotation.fetchComments();
-                        }
 
                         _.each(annotation.attributes.comments.models, function (comment) {
                             addCommentLine(line, comment);

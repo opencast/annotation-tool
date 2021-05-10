@@ -94,7 +94,7 @@ define(
              */
             getVisibleTracks: function () {
                 return this.filter(function (track) {
-                    return track.get(Track.FIELDS.VISIBLE);
+                    return track.get("visible");
                 });
             },
 
@@ -110,14 +110,13 @@ define(
                 if (!keepPrevious) {
                     _.each(visibleTracks, function (track) {
                         // TODO Is this field even used?
-                        track.set(Track.FIELDS.VISIBLE, false);
+                        track.set("visible", false);
                     });
                     visibleTracks = [];
                 }
 
                 _.each(tracks, function (track) {
-                    track.fetchAnnotations();
-                    track.set(Track.FIELDS.VISIBLE, true);
+                    track.set("visible", true);
                     visibleTracks.push(track);
                 }, this);
 

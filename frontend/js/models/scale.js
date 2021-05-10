@@ -21,13 +21,11 @@
 define(
     [
         "underscore",
-        "access",
         "collections/scalevalues",
         "models/resource"
     ],
     function (
         _,
-        ACCESS,
         ScaleValues,
         Resource
     ) {
@@ -42,47 +40,24 @@ define(
         var Scale = Resource.extend({
 
             /**
-             * Default models value
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null,
-                access: ACCESS.PRIVATE
-            },
-
-            /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
             administratorCanEditPublicInstances: true,
 
             /**
-             * Constructor
-             * @param {object} attr Object literal containing the model initialion attributes.
+             * Default model values
              */
-            initialize: function (attr) {
-                _.bindAll(this, "toExportJSON");
+            defaults: function () {
+                return {
+                    scaleValues: new ScaleValues([], { scale: this })
+                };
+            },
 
-                if (!attr  || _.isUndefined(attr.name)) {
-                    throw "'name' attribute is required";
-                }
-
-                Resource.prototype.initialize.apply(this, arguments);
-
-                if (attr.scaleValues && _.isArray(attr.scaleValues)) {
-                    this.set({ scaleValues: new ScaleValues(attr.scaleValues, { scale: this }) });
-                } else {
-                    this.set({ scaleValues: new ScaleValues([], { scale: this }) });
-                }
-
-                if (attr.id) {
-                    this.attributes.scaleValues.fetch({async: false});
-                }
+            /**
+             * (Re-)Fetch the comments once our ID changes.
+             */
+            fetchChildren: function () {
+                this.attributes.scaleValues.fetch({ async: false });
             },
 
             /**
@@ -93,15 +68,7 @@ define(
             validate: function (attr) {
                 var scalevalues;
 
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        scalevalues = this.attributes.scaleValues;
-
-                        if (scalevalues && (scalevalues.length) === 0) {
-                            scalevalues.fetch({async: false});
-                        }
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
                 if (attr.name && !_.isString(attr.name)) {
@@ -137,12 +104,8 @@ define(
                     name: this.attributes.name,
                     scaleValues: this.attributes.scaleValues.map(function (scaleValue) {
                         return scaleValue.toExportJSON();
-		    })
+                    })
                 };
-
-                if (this.attributes.tags) {
-                    json.tags = JSON.stringify(this.attributes.tags);
-                }
 
                 if (this.attributes.description) {
                     json.description = this.attributes.description;
