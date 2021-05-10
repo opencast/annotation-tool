@@ -424,5 +424,4 @@ define([
         }
     });
     return ScaleEditor;
-}
-);
+});
