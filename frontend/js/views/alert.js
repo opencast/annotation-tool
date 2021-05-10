@@ -17,15 +17,20 @@
  * A module representing the alert modal
  * @module views-alert
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
         "templates/alert-modal",
-        "handlebarsHelpers",
-        "bootstrap"],
-
-    function ($, _, Backbone, AlertTemplate) {
-
+        "bootstrap"
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        AlertTemplate
+    ) {
         "use strict";
 
         /**
@@ -33,7 +38,6 @@ define(["jquery",
          * @see {@link http://www.backbonejs.org/#View}
          * @augments module:Backbone.View
          * @memberOf module:views-alert
-         * @alias Alert
          */
         var Alert = Backbone.View.extend({
 
@@ -41,14 +45,12 @@ define(["jquery",
 
             /**
              * Alert template
-             * @alias module:views-alert.Alert#template
              * @type {HandlebarsTemplate}
              */
             template: AlertTemplate,
 
             /**
              * Events to handle
-             * @alias module:views-alert.Alert#events
              * @type {object}
              */
             events: {
@@ -57,7 +59,6 @@ define(["jquery",
 
             /**
              * Constructor
-             * @alias module:views-alert.Alert#initialize
              */
             initialize: function () {
                 _.bindAll(this, "show", "hide");
@@ -65,7 +66,6 @@ define(["jquery",
 
             /**
              * Display the modal with the given message as the given alert type
-             * @alias module:views-alert.Alert#show
              * @param  {String} message The message to display
              * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-alert.Alert#TYPES}
              */
@@ -92,7 +92,6 @@ define(["jquery",
 
             /**
              * Hide the modal
-             * @alias module:views-alert.Alert#hide
              */
             hide: function () {
                 this.$el.modal("hide");
@@ -100,7 +99,6 @@ define(["jquery",
         }, {
             /**
              * Supported type of alert. Each of the type is represented as object and must have a title and a class property.
-             * @alias module:views-alert.Alert.TYPES
              * @type {PlainObject}
              * @constant
              */

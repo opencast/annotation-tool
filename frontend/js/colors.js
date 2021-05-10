@@ -18,35 +18,40 @@
  * A module containing the COLORS values.
  * @module COLORS
  */
-define(["underscore"], function (_) {
-
+define([
+    "underscore"
+], function (
+    _
+) {
     "use strict";
 
-    var COLORS = [ "ffff99",
-                   "ffd800",
-                   "ffcc99",
-                   "ffa800",
-                   "ff7800",
-                   "c36e00",
-                   "d5d602",
-                   "d9be6c",
-                   "ff99cc",
-                   "ff5d7c",
-                   "da0000",
-                   "d15c49",
-                   "969601",
-                   "adfded",
-                   "8fc7c7",
-                   "a4d2ff",
-                   "00ccff",
-                   "64b0e8",
-                   "61ae24",
-                   "9ded0a",
-                   "92ffaa",
-                   "c0adfd",
-                   "ac5bff",
-                   "6569ff"];
-    
+    var COLORS = [
+        "ffff99",
+        "ffd800",
+        "ffcc99",
+        "ffa800",
+        "ff7800",
+        "c36e00",
+        "d5d602",
+        "d9be6c",
+        "ff99cc",
+        "ff5d7c",
+        "da0000",
+        "d15c49",
+        "969601",
+        "adfded",
+        "8fc7c7",
+        "a4d2ff",
+        "00ccff",
+        "64b0e8",
+        "61ae24",
+        "9ded0a",
+        "92ffaa",
+        "c0adfd",
+        "ac5bff",
+        "6569ff"
+    ];
+
     return function () {
 
         var self = this,
@@ -65,13 +70,13 @@ define(["underscore"], function (_) {
          */
         this.getNextColor = function () {
             var maxValue = -1,
-                lookForColor =  function (value, color) {
-                                    if (value <= maxValue) {
-                                        nextColor = color;
-                                        colors[color]++;
-                                        return true;
-                                    }
-                                },
+                lookForColor = function (value, color) {
+                    if (value <= maxValue) {
+                        nextColor = color;
+                        colors[color]++;
+                        return true;
+                    }
+                },
                 nextColor;
 
 

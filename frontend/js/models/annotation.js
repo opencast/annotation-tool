@@ -17,14 +17,19 @@
  * A module representing the annotation model
  * @module models-annotation
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "util",
         "collections/comments",
-        "models/resource",
-        "localstorage"],
-
-    function (_, util, Comments, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        util,
+        Comments,
+        Resource
+    ) {
         "use strict";
 
         /**
@@ -32,131 +37,65 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-annotation
-         * @alias module:models-annotation.Annotation
          */
         var Annotation = Resource.extend({
 
             /**
-             * Default models value
-             * @alias module:models-annotation.Annotation#defaults
-             * @type {map}
-             * @static
+             * Default model values
              */
-            defaults: {
-                start: 0,
-                duration: 0
+            defaults: function () {
+                return {
+                    start: 0,
+                    duration: 0,
+                    comments: new Comments([], { annotation: this })
+                };
             },
 
             /**
-             * Constructor
-             * @alias module:models-annotation.Annotation#initialize
-             * @param {object} attr Object literal containing the model initialion attributes.
+             * (Re-)Fetch the scale values once our ID changes.
              */
-            initialize: function (attr) {
-                _.bindAll(this, "areCommentsLoaded",
-                                "fetchComments");
-
-                if (!attr || _.isUndefined(attr.start)) {
-                    throw "\"start\" attribute is required";
-                }
-
-                Resource.prototype.initialize.apply(this, arguments);
-
-                if (attr.comments && _.isArray(attr.comments)) {
-                    this.attributes.comments = new Comments(attr.comments, { annotation: this });
-                    delete attr.comments;
-                } else if (!attr.comments) {
-                    this.attributes.comments = new Comments([], { annotation: this });
-                } else {
-                    this.attributes.comments = attr.comments;
-                    delete attr.comments;
-                }
+            fetchChildren: function () {
+                this.attributes.comments.fetch();
             },
 
             /**
              * Parse the attribute list passed to the model
-             * @alias module:models-annotation.Annotation#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
+             * @param {object} attr Object literal containing the model attribute to parse.
+             * @return {object} The object literal with the list of parsed model attribute.
              */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    var tempSettings,
-                        categories,
-                        tempLabel,
-                        label;
-
-                    if (attr.scaleValue) {
-                        attr.scalevalue = attr.scaleValue;
-                        delete attr.scaleValue;
+            parse: function (attr) {
+                attr = Resource.prototype.parse.call(this, attr);
+                if (attr.label) {
+                    var tempSettings;
+                    if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
+                        attr.label.category.settings = tempSettings;
                     }
 
-                    if (attr.label) {
-                        if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
-                            attr.label.category.settings = tempSettings;
-                        }
-
-                        if ((tempSettings = util.parseJSONString(attr.label.settings))) {
-                            attr.label.settings = tempSettings;
-                        }
+                    if ((tempSettings = util.parseJSONString(attr.label.settings))) {
+                        attr.label.settings = tempSettings;
                     }
-
-                    if (annotationTool.localStorage && _.isArray(attr.comments)) {
-                        attr.comments = new Comments(attr.comments, { annotation: this });
-                    }
-
-                    if (!annotationTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
-                        categories = annotationTool.video.get("categories");
-
-                        categories.each(function (cat) {
-
-                            if ((tempLabel = cat.attributes.labels.get(attr.label_id))) {
-                                label = tempLabel;
-                                return true;
-                            }
-
-                        }, this);
-
-                        attr.label = label;
-                    }
-
-                    if (!annotationTool.localStorage &&  attr.scalevalue) {
-                        attr.scaleValue = attr.scalevalue;
-                    }
-                });
+                }
+                return attr;
             },
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-annotation.Annotation#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        this.trigger("ready", this);
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
-                if (!annotationTool.localStorage && attr.label) {
-                    if (attr.label.id) {
-                        this.attributes.label_id = attr.label.id;
-                    } else if (attr.label.attributes) {
-                        this.attributes.label_id = attr.label.get("id");
-                    }
-                }
-
-                if (attr.start &&  !_.isNumber(attr.start)) {
+                if (attr.start && !_.isNumber(attr.start)) {
                     return "\"start\" attribute must be a number!";
                 }
 
-                if (attr.text &&  !_.isString(attr.text)) {
+                if (attr.text && !_.isString(attr.text)) {
                     return "\"text\" attribute must be a string!";
                 }
 
-                if (attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
+                if (attr.duration && (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
                     return "\"duration\" attribute must be a positive number";
                 }
 
@@ -164,45 +103,7 @@ define(["underscore",
             },
 
             /**
-             * Returns if comments are or not loaded
-             * @alias module:models-annotation.Annotation#areCommentsLoaded
-             */
-            areCommentsLoaded: function () {
-                return this.commentsFetched;
-            },
-
-            /**
-             * Load the list of comments from the server
-             * @param  {Function} [callback] Optional callback to call when comments are loaded 
-             * @alias module:models-annotation.Annotation#fetchComments
-             */
-            fetchComments: function (callback) {
-                var fetchCallback = _.bind(function () {
-                    this.commentsFetched = true;
-                    if (_.isFunction(callback)) {
-                        callback.apply(this);
-                    }
-                }, this);
-
-                if (this.areCommentsLoaded()) {
-                    fetchCallback();
-                } else {
-                    if (this.commentsFetched !== true) {
-                        if (_.isUndefined(this.attributes.id)) {
-                            this.once("ready", this.fetchComments);
-                        } else {
-                            this.attributes.comments.fetch({
-                                async   : true,
-                                success : fetchCallback
-                            });
-                        }
-                    }
-                }
-            },
-
-            /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-annotation.Annotation#toJSON
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
@@ -210,25 +111,26 @@ define(["underscore",
 
                 json.end = json.start + json.duration;
 
-                delete json.comments;
-
-                if (json.label && json.label.toJSON) {
-                    json.label = json.label.toJSON();
-                }
-
-                if (json.scalevalue) {
-                    if (json.scalevalue.attributes) {
-                        json.scale_value_id = json.scalevalue.attributes.id;
-                    } else if (json.scalevalue.id) {
-                        json.scale_value_id = json.scalevalue.id;
+                if (json.label) {
+                    if (json.label.id) {
+                        json.label_id = json.label.id;
+                    }
+                    if (json.label.toJSON) {
+                        json.label = json.label.toJSON();
                     }
                 }
+
+                if (json.scalevalue && json.scalevalue.id) {
+                    json.scale_value_id = json.scalevalue.id;
+                }
+
+                delete json.comments;
+
                 return json;
             },
 
             /**
              * Check whether the annotation covers a given point in time
-             * @alias module:models-annotation.Annotation#covers
              * @param {Number} time The point in time you are interested in
              * @param {Number} minDuration Minimal duration to base this answer on
              * @return {Boolean} true if this annotation covers the given timestamp, potentially
@@ -238,7 +140,7 @@ define(["underscore",
                 var start = this.get("start");
                 var duration = this.get("duration");
                 var end = start + (duration || minDuration);
- 
+
                 return start <= time && time <= end;
             },
 
@@ -246,7 +148,6 @@ define(["underscore",
              * Access an annotations category, if it has any.
              * Note that this returns <code>undefined</code>
              * if the category has been deleted!
-             * @alias module:models-annotation.Annotation#category
              * @return {Category} The category this annotations label belongs to, if it has a label
              */
             category: function () {
@@ -259,7 +160,6 @@ define(["underscore",
              * This is determined by the color of the category of its label,
              * if it has any.
              * Free text annotations return <code>undefined</code>
-             * @alias module:models-annotation.Annotation#category
              * @return {string} a CSS color value
              */
             color: function () {

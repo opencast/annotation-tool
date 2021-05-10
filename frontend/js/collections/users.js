@@ -18,11 +18,15 @@
  * A module representing a users collection
  * @module collections-users
  */
-define(["models/user",
-        "backbone"],
-
-    function (User, Backbone) {
-
+define(
+    [
+        "models/user",
+        "backbone"
+    ],
+    function (
+        User,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -30,12 +34,10 @@ define(["models/user",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-users
-         * @alias module:collections-users.User
          */
         var Users = Backbone.Collection.extend({
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-users.User#initialize
              */
             model: User,
 

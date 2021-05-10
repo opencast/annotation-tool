@@ -18,14 +18,19 @@
  * A module representing the label view for each item contained in annotate window
  * @module views-annotate-label
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
-        "templates/annotate-label",
-        "handlebarsHelpers"],
-
-    function ($, _, Backbone, Template) {
-
+        "templates/annotate-label"
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        Template
+    ) {
         "use strict";
 
         /**
@@ -33,13 +38,11 @@ define(["jquery",
          * @see {@link http://www.backbonejs.org/#View}
          * @memberOf module:views-annotate-label
          * @augments module:Backbone.View
-         * @alias module:views-annotate-label.LabelView
          */
         var LabelView = Backbone.View.extend({
 
             /**
              * CSS className for the scale container
-             * @alias module:views-annotate-label.Category#CLASS_SCALE
              * @type {object}
              */
             CLASS_SCALE: {
@@ -49,49 +52,42 @@ define(["jquery",
 
             /**
              * Tag name from the view element
-             * @alias module:views-annotate-label.Category#tagName
              * @type {string}
              */
             tagName: "div",
 
             /**
              * Class name from the view element
-             * @alias module:views-annotate-label.Category#className
              * @type {string}
              */
             className: "label-item",
 
             /**
              * Prefix for the item id
-             * @alias module:views-annotate-label.Category#ID_PREFIX
              * @type {string}
              */
             ID_PREFIX: "labelItem-",
 
             /**
              * Define if the view is or not in edit modus.
-             * @alias module:views-annotate-label.Category#editModus
              * @type {boolean}
              */
             editModus: false,
 
             /**
              * List of categories view in this tab
-             * @alias module:views-annotate-label.Category#labels
              * @type {array}
              */
             labels: [],
 
             /**
              * View template
-             * @alias module:views-annotate-label.Category#template
              * @type {HandlebarsTemplate}
              */
             template: Template,
 
             /**
              * Events to handle by the annotate-label view
-             * @alias module:views-annotate-label.LabelView#events
              * @type {map}
              */
             events: {
@@ -106,7 +102,6 @@ define(["jquery",
 
             /**
              * Constructor
-             * @alias module:views-annotate-label.LabelView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
@@ -117,16 +112,19 @@ define(["jquery",
                 }
 
                 // Set the current context for all these functions
-                _.bindAll(this, "render",
-                                "annotate",
-                                "switchEditModus",
-                                "onSwitchEditModus",
-                                "onFocusOut",
-                                "onKeyDown",
-                                "onDeleteLabel",
-                                "annnotateWithScaling",
-                                "updateAbbreviation",
-                                "updateInputWidth");
+                _.bindAll(
+                    this,
+                    "render",
+                    "annotate",
+                    "switchEditModus",
+                    "onSwitchEditModus",
+                    "onFocusOut",
+                    "onKeyDown",
+                    "onDeleteLabel",
+                    "annnotateWithScaling",
+                    "updateAbbreviation",
+                    "updateInputWidth"
+                );
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.LABEL;
@@ -164,7 +162,6 @@ define(["jquery",
 
             /**
              * Create a new annotation at the current playedhead time with a scaling value
-             * @alias module:views-annotate-label.LabelView#annotateWithScaling
              * @param {event} event Event related to this action
              */
             annnotateWithScaling: function (event) {
@@ -183,7 +180,6 @@ define(["jquery",
 
             /**
              * Annotate the video with this label but without scale value
-             * @alias module:views-annotate-label.LabelView#annotate
              * @param {event} event Event related to this action
              */
             annotate: function (event) {
@@ -201,7 +197,6 @@ define(["jquery",
 
             /**
              * Listener for edit modus switch.
-             * @alias module:views-annotate-label.LabelView#onSwitchEditModus
              * @param {event} event Event related to this action
              */
             onSwitchEditModus: function (status) {
@@ -210,7 +205,6 @@ define(["jquery",
 
             /**
              * Switch the edit modus to the given status.
-             * @alias module:views-annotate-label.LabelView#switchEditModus
              * @param  {boolean} status The current status
              */
             switchEditModus: function (status) {
@@ -219,7 +213,6 @@ define(["jquery",
 
             /**
              * Listener for "change" event on the label category
-             * @alias module:views-annotate-label.LabelView#changeCategory
              * @param {object} category The updated category
              */
             changeCategory: function (category) {
@@ -229,7 +222,6 @@ define(["jquery",
 
             /**
              * Set up scale values according to category
-             * @alias module:views-annotate-label.LabelView#setupScaling
              * @param {object} category The updated category
              */
             setupScaling: function (category) {
@@ -245,7 +237,6 @@ define(["jquery",
 
             /**
              * Listener for focus out event on name field
-             * @alias module:views-annotate-label.LabelView#onFocusOut
              * @param {event} e Event related to this action
              */
             onFocusOut: function () {
@@ -258,7 +249,6 @@ define(["jquery",
 
             /**
              * Listener for key down event on name field
-             * @alias module:views-annotate-label.LabelView#onKeyDown
              * @param {event} e Event related to this action
              */
             onKeyDown: function (e) {
@@ -283,9 +273,8 @@ define(["jquery",
 
             /**
              * Get the position of the caret in the given input element
-             * @alias module:views-annotate-label.LabelView#getCaretPosition
-             * @param  {DOMElement} inputElement The given element with focus
-             * @return {integer}              The posisiton of the carret
+             * @param {DOMElement} inputElement The given element with focus
+             * @return {integer} The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
                 return inputElement.selectionStart;
@@ -293,7 +282,6 @@ define(["jquery",
 
             /**
              * Listener for label deletion request from UI
-             * @alias module:views-annotate-label.LabelView#onDeleteLabel
              */
             onDeleteLabel: function () {
                 annotationTool.deleteOperation.start(this.model, this.typeForDelete);
@@ -317,7 +305,6 @@ define(["jquery",
 
             /**
              * Draw the view
-             * @alias module:views-annotate-label.LabelView#render
              * @return {LabelView} this label view
              */
             render: function () {

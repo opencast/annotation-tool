@@ -42,12 +42,7 @@ seeing as how this is going to be our next "premium support" version
 in at most six months time. 😉
 
 ## [Installation](documentation/opencast-installation.md)
-The instruction on how to install the Annotation tool in Opencast [can be found here](documentation/opencast-installation.md)
-
-## [Building the Frontend](documentation/build-frontend.md)
-Instructions on how to build the frontend webapp [can be found here](documentation/build-frontend.md).
-
-_This is NOT needed to install the Annotation Tool in Opencast!_
+The instruction on how to install the Annotation Tool in Opencast [can be found here](documentation/opencast-installation.md)
 
 ## [Documentation](documentation/Home.md)
 A general documentation including the REST endpoints, the architecture etc. [can be found here](documentation/Home.md).

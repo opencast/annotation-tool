@@ -18,14 +18,17 @@
  * A module representing the category model
  * @module models-category
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "collections/labels",
-        "access",
-        "models/resource",
-        "localstorage"],
-
-    function (_, Labels, ACCESS, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        Labels,
+        Resource
+    ) {
         "use strict";
 
         /**
@@ -33,120 +36,53 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-category
-         * @alias module:models-category.Category
          */
         var Category = Resource.extend({
-
-            /**
-             * Default models value
-             * @alias module:models-category.Category#defaults
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                access: ACCESS.PRIVATE,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null,
-            },
-
             /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
             administratorCanEditPublicInstances: true,
 
             /**
-             * Constructor
-             * @alias module:models-category.Category#initialize
-             * @param {object} attr Object literal containing the model initialion attributes.
+             * Default model values
              */
-            initialize: function (attr) {
+            defaults: function () {
+                return {
+                    visible: true,
+                    labels: new Labels([], { category: this })
+                };
+            },
 
-                _.bindAll(this, "toggleVisibility", "validate", "toExportJSON");
+            /**
+             * Constructor
+             */
+            initialize: function () {
 
-                if (!attr || _.isUndefined(attr.name)) {
-                    throw "\"name\" attribute is required";
-                }
+                _.bindAll(this, "toggleVisibility", "toExportJSON");
 
                 Resource.prototype.initialize.apply(this, arguments);
 
                 this.set("settings", _.extend({ hasScale: true }, this.get("settings")));
-
-                if (attr.labels && _.isArray(attr.labels)) {
-                    this.attributes.labels  = new Labels(attr.labels, { category: this });
-                    delete attr.labels;
-                } else if (!attr.labels) {
-                    this.attributes.labels  = new Labels([], { category: this });
-                } else if (_.isObject(attr.labels) && attr.labels.model) {
-                    this.attributes.labels = new Labels(attr.labels.models, { category: this });
-                    delete attr.labels;
-                }
-
-                if (attr.id) {
-                    this.attributes.labels.fetch({ async: false });
-                }
-
-                this.attributes.visible = true;
             },
 
             /**
-             * Parse the attribute list passed to the model
-             * @alias module:models-category.Category#parse
-             * @param  {object} data Object literal containing the model attribute to parse.
-             * @return {object}  The object literal with the list of parsed model attribute.
+             * (Re-)Fetch the labels once our ID changes.
              */
-            parse: function (data) {
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (annotationTool.localStorage && _.isArray(attr.labels)) {
-                        attr.labels = new Labels(attr.labels, { category: this });
-                    }
-
-                    if (!annotationTool.localStorage && attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
-                        attr.scale = annotationTool.video.get("scales").get(attr.scale_id);
-                    }
-                });
+            fetchChildren: function () {
+                this.attributes.labels.fetch({ async: false });
             },
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-category.Category#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var self = this;
-
                 var invalidResource = Resource.prototype.validate.apply(this, arguments);
                 if (invalidResource) return invalidResource;
 
-                if (attr.id) {
-                    if (!this.ready && attr.labels && attr.labels.url && (attr.labels.length) === 0) {
-                        attr.labels.fetch({
-                            async: false,
-                            success: function () {
-                                self.ready = true;
-                            }
-                        });
-                    }
-                }
-
                 if (attr.description && !_.isString(attr.description)) {
                     return "\"description\" attribute must be a string";
-                }
-
-                if (attr.labels) {
-                    attr.labels.each(function (value) {
-                        var parseValue = value.parse({ category: this.toJSON() });
-
-                        if (parseValue.category) {
-                            parseValue = parseValue.category;
-                        }
-
-                        value.category = parseValue;
-                    }, this);
                 }
 
                 return undefined;
@@ -154,7 +90,6 @@ define(["underscore",
 
             /**
              * Show/hide the category in the UI
-             * @alias module:models-category.Category#toggleVisibility
              */
             toggleVisibility: function () {
                 this.set("visible", !this.get("visible"));
@@ -162,7 +97,6 @@ define(["underscore",
 
             /**
              * Change category color
-             * @alias module:models-category.Category#setColor
              * @param  {string} color the new color
              */
             setColor: function (color) {
@@ -174,7 +108,6 @@ define(["underscore",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-category.Category#toJSON
              * @param {Object} options The options to control the "JSONification" of this collection
              * @return {JSON} JSON representation of the instance
              */
@@ -190,9 +123,7 @@ define(["underscore",
                         json.scale_id = this.attributes.scale.id;
                     }
 
-                    if (!annotationTool.localStorage) {
-                        delete json.scale;
-                    }
+                    delete json.scale;
                 }
 
                 return json;
@@ -200,7 +131,6 @@ define(["underscore",
 
             /**
              * Prepare the model as JSON to export and return it
-             * @alias module:models-category.Category#toExportJSON
              * @param {boolean} withScales Define if the scale has to be included
              * @return {JSON} JSON representation of the model for export
              */
@@ -212,10 +142,6 @@ define(["underscore",
                     })
                 };
 
-                if (this.attributes.tags) {
-                    json.tags = JSON.stringify(this.attributes.tags);
-                }
-
                 if (this.attributes.description) {
                     json.description = this.attributes.description;
                 }
@@ -226,10 +152,6 @@ define(["underscore",
 
                 if (this.attributes.settings) {
                     json.settings = this.attributes.settings;
-                }
-
-                if (this.attributes.tags) {
-                    json.tags = this.attributes.tags;
                 }
 
                 if (!_.isUndefined(withScale) &&  withScale) {

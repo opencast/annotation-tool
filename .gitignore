@@ -3,10 +3,8 @@
 
 # ignore maven target directories
 target/
-target-grunt/
 node_modules/
 node/
-/build/
 
 # ignore Eclipse project data
 .project
@@ -23,25 +21,8 @@ node/
 *.iml
 .idea
 
-# Ignore Maven files and local repository
-/.m2/
-/settings.xml
+# Ignore directory with frontend copy
+/opencast-backend/annotation-tool/src/main/resources/ui
 
-# Ignore mkdocs sites
-docs/guides/*/site
-
-# ignore directory with frontend copy
-opencast-backend/annotation-tool/src/main/resources/ui/
-
-# Ignore Makefiles
-# Sometimes they help, but they should never be tracked
-Makefile
-/frontend/www
-
-# Ignore translation file backups
-/frontend/locales/**/*_old.json
-
-# Ignore generated frontend documentation
-/frontend/doc
-
+# Ignore flattened POMs
 .flattened-pom.xml

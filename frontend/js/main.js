@@ -1,18 +1,33 @@
 /**
  * Bootstrap file for require.js
  */
-require(["domReady",
-         "jquery",
-         "i18next",
-         "i18next-xhr-backend",
-         "jquery-i18next",
-         "i18next-browser-language-detector",
-         "moment",
-         "mediaelementplayer",
-         "annotation-tool-configuration",
-         "annotation-tool-integration"],
+require(
+    [
+        "domReady",
+        "jquery",
+        "i18next",
+        "i18next-xhr-backend",
+        "jquery-i18next",
+        "i18next-browser-language-detector",
+        "moment",
+        "mediaelementplayer",
+        "annotation-tool-configuration",
+        "annotation-tool-integration"
+    ],
+    function (
+        domReady,
+        $,
+        i18next,
+        i18nextXHRBackend,
+        $i18next,
+        LngDetector,
+        moment,
+        mejs,
+        config,
+        integration
+    ) {
+        "use strict";
 
-    function (domReady, $, i18next, i18nextXHRBackend, $i18next, LngDetector, moment, mejs, config, integration) {
         i18next
             .use(i18nextXHRBackend)
             .use(LngDetector)
