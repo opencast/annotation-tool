@@ -4,7 +4,7 @@
 require.config({
     baseUrl: "js",
     paths: {
-        "backbone": "libs/backbone-0.9.9",
+        "backbone": "libs/backbone-min",
         "bootstrap": "libs/bootstrap/bootstrap.min",
         "chroma": "libs/chroma.min",
         "domReady": "libs/require/domReady",

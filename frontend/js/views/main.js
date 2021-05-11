@@ -126,7 +126,7 @@ define(
 
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
-                this.once(MainView.EVENTS.READY, function () {
+                this.listenToOnce(this, MainView.EVENTS.READY, function () {
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
@@ -138,7 +138,7 @@ define(
                         $("#opt-annotate-categories").parent().hide();
                     }
 
-                }, this);
+                });
                 this.createViews();
             },
 
@@ -368,7 +368,7 @@ define(
                             callback.apply(null, resolvedDependencies);
                         });
                         _.each(missingDependencies, function (dependency) {
-                            self.once("view:" + dependency, doTheThing);
+                            self.listenToOnce(self, "view:" + dependency, doTheThing);
                         });
                     }
                 }
@@ -395,7 +395,7 @@ define(
                     function failed() {
                         alerts.fatal(i18next.t("startup.video.failed"));
                     }
-                    annotationTool.once(annotationTool.EVENTS.VIDEO_LOADED, function () {
+                    self.listenToOnce(annotationTool, annotationTool.EVENTS.VIDEO_LOADED, function () {
                         if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                             videoLoaded();
                         } else if (annotationTool.playerAdapter.failed()) {
@@ -542,7 +542,7 @@ define(
                     annotationView.toggleCommentsState();
                     var wasPlaying = annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
                     annotationTool.playerAdapter.pause();
-                    annotationView.once("cancel", function () {
+                    this.listenToOnce(annotationView, "cancel", function () {
                         if (wasPlaying) {
                             annotationTool.playerAdapter.play();
                         }
