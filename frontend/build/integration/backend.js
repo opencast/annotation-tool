@@ -141,18 +141,7 @@ define([
         },
 
         /**
-         * Get the external parameters related to video. The supported parameters are now the following:
-         *     - title: The title of the video
-         *     - src_owner: The owner of the video in the system
-         *     - src_creation_date: The date of the course, when the video itself was created.
-         * @example
-         * {
-         *     video_extid: 123, // Same as the value returned by getVideoExtId
-         *     title: "Math lesson 4", // The title of the video
-         *     src_owner: "Professor X", // The owner of the video in the system
-         *     src_creation_date: "12-12-1023" // The date of the course, when the video itself was created.
-         * }
-         * @return {Object} The literal object containing all the parameters described in the example.
+         * @return {Object} Metadata about the video
          */
         getVideoParameters: function () {
             return annotationInfo.then(function (info) {
