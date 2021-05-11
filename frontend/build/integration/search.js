@@ -149,7 +149,7 @@ define([
         },
 
         /**
-         * @return {Object} Metadata about the video
+         * @return {Promise.<object>} Metadata about the video
          */
         getVideoParameters: function () {
             return searchResult.then(function (result) {
