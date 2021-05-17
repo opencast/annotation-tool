@@ -123,9 +123,9 @@ define(
 
             /**
              * Initialize the tool
-             * @param {module:annotation-tool-configuration.Configuration} config The tool configuration
+             * @param {module:configuration.Configuration} configuration The tool configuration
              */
-            start: function (config, integration) {
+            start: function (configuration, integration) {
                 _.bindAll(
                     this,
                     "updateSelectionOnTimeUpdate",
@@ -147,7 +147,7 @@ define(
                     "updateSelectionOnTimeUpdate"
                 );
 
-                _.extend(this, config, integration);
+                _.extend(this, configuration, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
 

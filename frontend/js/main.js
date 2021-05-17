@@ -11,8 +11,8 @@ require(
         "i18next-browser-language-detector",
         "moment",
         "mediaelementplayer",
-        "annotation-tool-configuration",
-        "annotation-tool-integration"
+        "configuration",
+        "integration"
     ],
     function (
         domReady,
@@ -23,7 +23,7 @@ require(
         LngDetector,
         moment,
         mejs,
-        config,
+        configuration,
         integration
     ) {
         "use strict";
@@ -52,7 +52,7 @@ require(
                     domReady(function () {
                         $('[data-i18n]').localize();
                         require(["annotation-tool"], function (app) {
-                            app.start(config, integration);
+                            app.start(configuration, integration);
                         });
                     });
                 }

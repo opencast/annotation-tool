@@ -112,13 +112,13 @@ define([
      * @enum {number}
      */
     PlayerAdapter.STATUS = {
-        INITIALIZING           : 0,
-        LOADING                : 1,
-        SEEKING                : 2,
-        PAUSED                 : 3,
-        PLAYING                : 4,
-        ENDED                  : 5,
-        ERROR_NETWORK          : 6,
+        INITIALIZING: 0,
+        LOADING: 1,
+        SEEKING: 2,
+        PAUSED: 3,
+        PLAYING: 4,
+        ENDED: 5,
+        ERROR_NETWORK: 6,
         ERROR_UNSUPPORTED_MEDIA: 7
     };
 
@@ -128,13 +128,13 @@ define([
      * @enum {string}
      */
     PlayerAdapter.EVENTS = {
-        PLAY      : "pa_play",
-        PAUSE     : "pa_pause",
-        SEEKING   : "pa_seeking",
-        READY     : "pa_ready",
+        PLAY: "pa_play",
+        PAUSE: "pa_pause",
+        SEEKING: "pa_seeking",
+        READY: "pa_ready",
         TIMEUPDATE: "pa_timeupdate",
-        ERROR     : "pa_error",
-        ENDED     : "pa_ended"
+        ERROR: "pa_error",
+        ENDED: "pa_ended"
     };
 
     // Return the complete interface

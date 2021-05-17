@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         handlebars: {
             options: {
                 namespace: false,
-                amd: ['handlebars', 'handlebarsHelpers']
+                amd: ['handlebars', 'handlebars-helpers']
             },
             compile: {
                 files: [{
@@ -55,11 +55,8 @@ module.exports = function (grunt) {
                     ],
                     dest: '<%= destPath %>'
                 }, {
-                    src: `build/integration/${grunt.option('integration') || 'search'}.js`,
-                    dest: '<%= destPath %>/js/annotation-tool-integration.js'
-                }, {
-                    src: 'build/config/annotation-tool-configuration.js',
-                    dest: '<%= destPath %>/js/annotation-tool-configuration.js'
+                    src: `js/integrations/${grunt.option('integration') || 'search'}.js`,
+                    dest: '<%= destPath %>/js/integration.js'
                 }]
             }
         },

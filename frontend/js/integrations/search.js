@@ -22,7 +22,7 @@ define([
     "util",
     "models/user",
     "roles",
-    "player_adapter_HTML5",
+    "player-adapter-html5",
 ], function (
     $,
     _,
@@ -117,9 +117,9 @@ define([
 
     /**
      * Module containing the tool integration
-     * @exports annotation-tool-integration
+     * @exports integration
      */
-    var Configuration = {
+    var Integration = {
         /**
          * Get the current video id (video_extid)
          * @return {Promise.<string>} video external id
@@ -220,5 +220,5 @@ define([
         }
     };
 
-    return Configuration;
+    return Integration;
 });
