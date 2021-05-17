@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         handlebars: {
             options: {
                 namespace: false,
-                amd: ['handlebars', 'handlebarsHelpers']
+                amd: ['handlebars', 'handlebars-helpers']
             },
             compile: {
                 files: [{

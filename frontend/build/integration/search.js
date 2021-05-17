@@ -22,7 +22,7 @@ define([
     "util",
     "models/user",
     "roles",
-    "player_adapter_HTML5",
+    "player-adapter-html5",
 ], function (
     $,
     _,
