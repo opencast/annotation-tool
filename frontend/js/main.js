@@ -11,7 +11,7 @@ require(
         "i18next-browser-language-detector",
         "moment",
         "mediaelementplayer",
-        "annotation-tool-configuration",
+        "configuration",
         "annotation-tool-integration"
     ],
     function (

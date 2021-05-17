@@ -123,7 +123,7 @@ define(
 
             /**
              * Initialize the tool
-             * @param {module:annotation-tool-configuration.Configuration} configuration The tool configuration
+             * @param {module:configuration.Configuration} configuration The tool configuration
              */
             start: function (configuration, integration) {
                 _.bindAll(

@@ -57,9 +57,6 @@ module.exports = function (grunt) {
                 }, {
                     src: `build/integration/${grunt.option('integration') || 'search'}.js`,
                     dest: '<%= destPath %>/js/annotation-tool-integration.js'
-                }, {
-                    src: 'build/config/annotation-tool-configuration.js',
-                    dest: '<%= destPath %>/js/annotation-tool-configuration.js'
                 }]
             }
         },
