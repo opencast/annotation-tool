@@ -12,7 +12,7 @@ require(
         "moment",
         "mediaelementplayer",
         "configuration",
-        "annotation-tool-integration"
+        "integration"
     ],
     function (
         domReady,
