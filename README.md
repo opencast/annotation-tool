@@ -36,7 +36,7 @@ With the same motivation of a smaller community and fewer resources,
 we decided to only support the currently supported Opencast versions, by default,
 with a strong preference towards the newer versions.
 This commitment might be further restricted at any point,
-should the maintenance burde prove too high.
+should the maintenance burden prove too high.
 We also try our best to be compatible with Opencast `develop`,
 seeing as how this is going to be our next "premium support" version
 in at most six months time. 😉

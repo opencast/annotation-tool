@@ -21,6 +21,7 @@
 define(
     [
         "underscore",
+        "access",
         "collections/tracks",
         "collections/categories",
         "collections/scales",
@@ -28,6 +29,7 @@ define(
     ],
     function (
         _,
+        ACCESS,
         Tracks,
         Categories,
         Scales,
@@ -60,6 +62,8 @@ define(
              */
             defaults: function () {
                 return {
+                    access: ACCESS.PUBLIC,
+
                     tracks: new Tracks([], { video: this }),
                     categories: new Categories([], { video: this }),
                     scales: new Scales([], { video: this })
