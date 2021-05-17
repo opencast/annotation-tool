@@ -2,7 +2,6 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-        srcPath: 'js/**/*.js',
         destPath: '../opencast-backend/annotation-tool/src/main/resources/ui/',
 
         clean: {
@@ -45,7 +44,7 @@ module.exports = function (grunt) {
                     expand: true,
                     src: [
                         'index.html',
-                        '<%= srcPath %>',
+                        'js/**/*.js',
                         'img/**/*',
                         'style/**/*.svg',
                         'style/**/*.png',
@@ -76,13 +75,28 @@ module.exports = function (grunt) {
             },
             all: {
                 expand: true,
-                src: ['<%= srcPath %>', '!js/libs/**'],
+                src: ['js/**/*.js', '!js/lib/**/*'],
                 dest: '.'
             }
+        },
+
+        eslint: {
+            options: {
+                maxWarnings: 0,
+                failOnError: true
+            },
+            files: ['**/{.,}*.js', '!**/node_modules/**/{.,}*', '!js/libs/**/{.,}*']
         }
     });
 
     require('jit-grunt')(grunt);
 
-    grunt.registerTask('default', ['clean', 'amdcheck', 'handlebars', 'less', 'copy']);
+    grunt.registerTask('default', [
+        'clean',
+        'amdcheck',
+        'eslint',
+        'handlebars',
+        'less',
+        'copy'
+    ]);
 };

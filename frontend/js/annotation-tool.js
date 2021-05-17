@@ -672,7 +672,7 @@ define(
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
             exportCSV: function (tracks, categories, freeText) {
-                let bookData = this.gatherExportData(tracks, categories, freeText);
+                var bookData = this.gatherExportData(tracks, categories, freeText);
                 var csv = PapaParse.unparse(JSON.stringify(bookData));
                 saveAs(new Blob([csv], {type:"text/csv;charset=utf-8;"}), 'export.csv');
             },
@@ -684,7 +684,7 @@ define(
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
             exportXLSX: function (tracks, categories, freeText) {
-                let bookData = this.gatherExportData(tracks, categories, freeText);
+                var bookData = this.gatherExportData(tracks, categories, freeText);
 
                 // Generate workbook
                 var wb = XLSX.utils.book_new();
@@ -759,7 +759,9 @@ define(
                         var label = annotation.attributes.label;
                         // Exclude annotations that are currently not visible
                         if (label) {
-                            if (categories && !categories.map(category => category.id).includes(label.category.id)) return;
+                            if (categories && !categories.map(function (category) {
+                                return category.id;
+                            }).includes(label.category.id)) return;
                         } else {
                             if (!freeText) return;
                         }
@@ -809,8 +811,8 @@ define(
 
                 function addResourceHeaders(header, presuffix) {
                     if (presuffix == null) presuffix = "";
-                    let prefix = "";
-                    let suffix = "";
+                    var prefix = "";
+                    var suffix = "";
                     if (presuffix) {
                         prefix = presuffix + " ";
                         suffix = " of " + presuffix;
@@ -831,7 +833,7 @@ define(
                 }
 
                 function addCommentLine(line, comment) {
-                    let commentLine = [];
+                    var commentLine = [];
                     Array.prototype.push.apply(commentLine, line);
 
                     addResource(commentLine, comment);
