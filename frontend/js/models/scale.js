@@ -18,13 +18,17 @@
  * A module representing the scale model
  * @module models-scale
  */
-define(["underscore",
-        "access",
+define(
+    [
+        "underscore",
         "collections/scalevalues",
-        "models/resource"],
-
-    function (_, ACCESS, ScaleValues, Resource) {
-
+        "models/resource"
+    ],
+    function (
+        _,
+        ScaleValues,
+        Resource
+    ) {
         "use strict";
 
         /**
@@ -32,25 +36,8 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-scale
-         * @alias module:models-scale.Scale
          */
         var Scale = Resource.extend({
-
-            /**
-             * Default models value
-             * @alias module:models-scale.Scale#defaults
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null,
-                access: ACCESS.PRIVATE
-            },
 
             /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
@@ -58,48 +45,30 @@ define(["underscore",
             administratorCanEditPublicInstances: true,
 
             /**
-             * Constructor
-             * @alias module:models-scale.Scale#initialize
-             * @param {object} attr Object literal containing the model initialion attributes.
+             * Default model values
              */
-            initialize: function (attr) {
-                _.bindAll(this, "toExportJSON");
+            defaults: function () {
+                return {
+                    scaleValues: new ScaleValues([], { scale: this })
+                };
+            },
 
-                if (!attr  || _.isUndefined(attr.name)) {
-                    throw "'name' attribute is required";
-                }
-
-                Resource.prototype.initialize.apply(this, arguments);
-
-                if (attr.scaleValues && _.isArray(attr.scaleValues)) {
-                    this.set({ scaleValues: new ScaleValues(attr.scaleValues, { scale: this }) });
-                } else {
-                    this.set({ scaleValues: new ScaleValues([], { scale: this }) });
-                }
-
-                if (attr.id) {
-                    this.attributes.scaleValues.fetch({async: false});
-                }
+            /**
+             * (Re-)Fetch the comments once our ID changes.
+             */
+            fetchChildren: function () {
+                this.attributes.scaleValues.fetch({ async: false });
             },
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-scale.Scale#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var scalevalues;
 
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        scalevalues = this.attributes.scaleValues;
-
-                        if (scalevalues && (scalevalues.length) === 0) {
-                            scalevalues.fetch({async: false});
-                        }
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
                 if (attr.name && !_.isString(attr.name)) {
@@ -115,7 +84,6 @@ define(["underscore",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-scale.Scale#toJSON
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
@@ -128,7 +96,6 @@ define(["underscore",
 
             /**
              * Prepare the model as JSON to export and return it
-             * @alias module:models-scale.Scale#toExportJSON
              * @return {JSON} JSON representation of the model for export
              */
             toExportJSON: function () {
@@ -137,12 +104,8 @@ define(["underscore",
                     name: this.attributes.name,
                     scaleValues: this.attributes.scaleValues.map(function (scaleValue) {
                         return scaleValue.toExportJSON();
-		    })
+                    })
                 };
-
-                if (this.attributes.tags) {
-                    json.tags = JSON.stringify(this.attributes.tags);
-                }
 
                 if (this.attributes.description) {
                     json.description = this.attributes.description;

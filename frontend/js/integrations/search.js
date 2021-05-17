@@ -22,7 +22,7 @@ define([
     "util",
     "models/user",
     "roles",
-    "player_adapter_HTML5",
+    "player-adapter-html5",
 ], function (
     $,
     _,
@@ -117,9 +117,9 @@ define([
 
     /**
      * Module containing the tool integration
-     * @exports annotation-tool-integration
+     * @exports integration
      */
-    var Configuration = {
+    var Integration = {
         /**
          * Get the current video id (video_extid)
          * @return {Promise.<string>} video external id
@@ -129,26 +129,11 @@ define([
         },
 
         /**
-         * Get the external parameters related to video. The supported parameters are now the following:
-         *     - title: The title of the video
-         *     - src_owner: The owner of the video in the system
-         *     - src_creation_date: The date of the course, when the video itself was created.
-         * @example
-         * {
-         *     video_extid: 123, // Same as the value returned by getVideoExtId
-         *     title: "Math lesson 4", // The title of the video
-         *     src_owner: "Professor X", // The owner of the video in the system
-         *     src_creation_date: "12-12-1023" // The date of the course, when the video itself was created.
-         * }
-         * @return {Object} The literal object containing all the parameters described in the example.
+         * @return {Promise.<object>} Metadata about the video
          */
         getVideoParameters: function () {
             return searchResult.then(function (result) {
-                return {
-                    title: result.dcTitle,
-                    src_owner: result.dcCreator,
-                    src_creaton_date: result.dcCreated
-                };
+                return { title: result.dcTitle };
             });
         },
 
@@ -235,5 +220,5 @@ define([
         }
     };
 
-    return Configuration;
+    return Integration;
 });
