@@ -119,7 +119,6 @@ define(
                     "updateInputWidth"
                 );
 
-
                 // Define the colors (global setting for all color pickers)
                 $.fn.colorPicker.defaults.colors = annotationTool.colorsManager.getColors();
 
@@ -246,9 +245,9 @@ define(
              */
             addLabel: function (label) {
                 var labelView = new LabelView({
-                    label        : label,
-                    editModus    : this.editModus,
-                    roles        : this.roles
+                    label: label,
+                    editModus: this.editModus,
+                    roles: this.roles
                 });
 
                 this.labelViews.push(labelView);
@@ -263,10 +262,10 @@ define(
              */
             onCreateLabel: function () {
                 this.model.get("labels").create({
-                    value       : i18next.t("new label defaults.description"),
+                    value: i18next.t("new label defaults.description"),
                     abbreviation: i18next.t("new label defaults.abbreviation"),
-                    category    : this.model,
-                    access      : this.model.get("access")
+                    category: this.model,
+                    access: this.model.get("access")
                 }, { wait: true });
             },
 

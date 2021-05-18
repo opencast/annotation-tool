@@ -416,7 +416,7 @@ define([
             scaleValues = scaleValues.sortBy(sortModelByOrderValue, this);
             _.each(scaleValues, addScaleValue, this);
 
-            this.$el.find(".modal-body").empty().append(this.scaleEditorContentTemplate({scale: scale.toJSON()}));
+            this.$el.find(".modal-body").empty().append(this.scaleEditorContentTemplate({ scale: scale.toJSON() }));
             renderScaleValues.call(this);
             this.delegateEvents(this.events);
         }

@@ -70,7 +70,7 @@ module.exports = function (grunt) {
                     'jquery.colorPicker',
                     'slider',
                     'bootstrap',
-                    "filesaver"
+                    'filesaver'
                 ]
             },
             all: {

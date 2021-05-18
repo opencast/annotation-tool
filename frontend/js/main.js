@@ -50,7 +50,7 @@ require(
                 function start() {
                     mejs.i18n.language(mediaelementLanguage);
                     domReady(function () {
-                        $('[data-i18n]').localize();
+                        $("[data-i18n]").localize();
                         require(["annotation-tool"], function (app) {
                             app.start(configuration, integration);
                         });

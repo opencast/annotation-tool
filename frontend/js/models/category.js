@@ -158,7 +158,7 @@ define(
                 }
 
                 return json;
-            },
+            }
         });
         return Category;
     }

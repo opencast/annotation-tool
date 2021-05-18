@@ -674,7 +674,7 @@ define(
             exportCSV: function (tracks, categories, freeText) {
                 var bookData = this.gatherExportData(tracks, categories, freeText);
                 var csv = PapaParse.unparse(JSON.stringify(bookData));
-                saveAs(new Blob([csv], {type:"text/csv;charset=utf-8;"}), 'export.csv');
+                saveAs(new Blob([csv], { type: "text/csv;charset=utf-8;" }), "export.csv");
             },
 
             /**
@@ -698,7 +698,7 @@ define(
 
                 bookData.forEach(function (arr) {
                     Object.keys(arr).forEach(function (key) {
-                        var value = arr[key] === null ? '' : arr[key];
+                        var value = arr[key] === null ? "" : arr[key];
 
                         // Arbitrarily increase len by one to avoid cases where just len would
                         // lead to too small columns
@@ -718,7 +718,7 @@ define(
                 wb.Sheets["Sheet 1"] = ws;
 
                 // Export workbook
-                var wbout = XLSX.write(wb, { bookType:'xlsx',  type: 'binary' });
+                var wbout = XLSX.write(wb, { bookType: "xlsx",  type: "binary" });
 
                 function s2ab(s) {
                     var buf = new ArrayBuffer(s.length); // convert s to arrayBuffer
@@ -729,7 +729,7 @@ define(
                     return buf;
                 }
 
-                saveAs(new Blob([s2ab(wbout)], { type:"application/octet-stream" }), 'export.xlsx');
+                saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "export.xlsx");
             },
 
             gatherExportData: function (tracks, categories, freeText) {
@@ -895,7 +895,6 @@ define(
                     });
                 }
             },
-
 
             COMMENT: {
                 name: "comment",

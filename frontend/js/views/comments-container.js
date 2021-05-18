@@ -62,9 +62,9 @@ define(
              * @type {object}
              */
             events: {
-                "keyup textarea.create"                    : "handleInsertCancelButtonShortcuts",
-                "click button[type=submit].add-comment"    : "insert",
-                "click button[type=button].cancel-comment" : "onCancelComment"
+                "keyup textarea.create": "handleInsertCancelButtonShortcuts",
+                "click button[type=submit].add-comment": "insert",
+                "click button[type=button].cancel-comment": "onCancelComment"
             },
 
             currentState: false,
@@ -127,8 +127,8 @@ define(
              */
             render: function () {
                 this.$el.html(this.template({
-                    comments  : this.collection.models,
-                    addState  : this.currentState === CommentsContainer.STATES.ADD
+                    comments: this.collection.models,
+                    addState: this.currentState === CommentsContainer.STATES.ADD
                 }));
 
                 this.commentList = this.$("div.comment-list");
@@ -245,9 +245,9 @@ define(
              * Possible states for this view
              */
             STATES: {
-                READ : "read",
-                ADD  : "add",
-                EDIT : "edit"
+                READ: "read",
+                ADD: "add",
+                EDIT: "edit"
             }
         });
         return CommentsContainer;

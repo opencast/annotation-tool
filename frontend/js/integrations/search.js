@@ -22,7 +22,7 @@ define([
     "util",
     "models/user",
     "roles",
-    "player-adapter-html5",
+    "player-adapter-html5"
 ], function (
     $,
     _,
@@ -144,7 +144,7 @@ define([
          */
         getUserRoleFromExt: function (roles) {
             return adminRoles.then(function (adminRoles) {
-                if (_.some(adminRoles.concat(['ROLE_ADMIN']), function (adminRole) {
+                if (_.some(adminRoles.concat(["ROLE_ADMIN"]), function (adminRole) {
                     return _.contains(roles, adminRole);
                 })) {
                     return ROLES.ADMINISTRATOR;

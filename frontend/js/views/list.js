@@ -357,7 +357,6 @@ define(
                 this.annotationViews = [];
             },
 
-
             /** @override */
             remove: function () {
                 this.removeAnnotationViews();

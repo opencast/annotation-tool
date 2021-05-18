@@ -91,13 +91,13 @@ define(
              * @type {map}
              */
             events: {
-                "click"                         : "annotate",
-                "click i.delete"                : "onDeleteLabel",
-                "focusout .item-value"          : "onFocusOut",
-                "keydown .item-value"           : "onKeyDown",
-                "focusout .item-abbreviation"   : "onFocusOut",
-                "keydown .item-abbreviation"    : "onKeyDown",
-                "click .scaling li"             : "annnotateWithScaling"
+                "click": "annotate",
+                "click i.delete": "onDeleteLabel",
+                "focusout .item-value": "onFocusOut",
+                "keydown .item-value": "onKeyDown",
+                "focusout .item-abbreviation": "onFocusOut",
+                "keydown .item-abbreviation": "onKeyDown",
+                "click .scaling li": "annnotateWithScaling"
             },
 
             /**
@@ -112,16 +112,19 @@ define(
                 }
 
                 // Set the current context for all these functions
-                _.bindAll(this, "render",
-                                "annotate",
-                                "switchEditModus",
-                                "onSwitchEditModus",
-                                "onFocusOut",
-                                "onKeyDown",
-                                "onDeleteLabel",
-                                "annnotateWithScaling",
-                                "updateAbbreviation",
-                                "updateInputWidth");
+                _.bindAll(
+                    this,
+                    "render",
+                    "annotate",
+                    "switchEditModus",
+                    "onSwitchEditModus",
+                    "onFocusOut",
+                    "onKeyDown",
+                    "onDeleteLabel",
+                    "annnotateWithScaling",
+                    "updateAbbreviation",
+                    "updateInputWidth"
+                );
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.LABEL;
@@ -258,8 +261,8 @@ define(
 
                 if (e.keyCode === 13) { // If "return" key
                     this.model.set({
-                        "value"        : _.escape(this.$el.find("input.item-value").val()),
-                        "abbreviation" : _.escape(this.$el.find("input.item-abbreviation").val())
+                        "value": _.escape(this.$el.find("input.item-value").val()),
+                        "abbreviation": _.escape(this.$el.find("input.item-abbreviation").val())
                     });
                     this.model.save();
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||

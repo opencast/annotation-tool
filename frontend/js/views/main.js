@@ -263,9 +263,9 @@ define(
                         "reviewing",
                         "fullscreen timeline"
                     ], function (template) {
-                        return '<li><button class="opt-template" type="button" data-template="' + template + '">' +
+                        return "<li><button class=\"opt-template\" type=\"button\" data-template=\"" + template + "\">" +
                             i18next.t("menu.view.templates." + template) +
-                            '</button></li>';
+                            "</button></li>";
                     }).join("")
                 );
 
@@ -549,15 +549,15 @@ define(
                     });
                 }, this);
 
-                Mousetrap.bind('.', setActiveAnnotationDuration);
-                Mousetrap.bind('r', function (event) {
+                Mousetrap.bind(".", setActiveAnnotationDuration);
+                Mousetrap.bind("r", function (event) {
                     // We prevent the default behavior, i.e. inserting the letter "r", here,
                     // because otherwise the newly created comment would be prepopulated with,
                     // well, an "r".
                     event.preventDefault();
                     addComment();
                 });
-                Mousetrap.bind('space', _.bind(function () {
+                Mousetrap.bind("space", _.bind(function () {
                     // See whether the player has the focus; it manages this function itself.
                     if ($.contains(this.playerContainer, document.activeElement)) return;
 
@@ -594,7 +594,6 @@ define(
                 var selectedEntity = Number(event.key) - 1;
 
                 // Note that this might fail horribly when the entities change in between keys of the sequence
-
 
                 if (!annotationShortcutState.category) {
                     annotationShortcutState.category = annotationTool.video.get("categories").at(selectedEntity);
