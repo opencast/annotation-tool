@@ -301,7 +301,7 @@ define(
                     settings: {
                         color: "#" + annotationTool.colorsManager.getNextColor(),
                         hasScale: false,
-                        createdAsMine: $(event.currentTarget).data("tabid") === "mine" ? true : false
+                        createdAsMine: $(event.currentTarget).data("tabid") === "mine"
                     }
                 };
                 this.categories.create(

@@ -347,9 +347,9 @@ define(
             removeTab: function (id) {
                 delete this.categoriesTabs[id];
 
-                this.tabsButtonsElement.find("a[data-tabid=\""+id+"\"]").parent().remove();
+                this.tabsButtonsElement.find("a[data-tabid=\"" + id + "\"]").parent().remove();
                 this.tabsContainerElement = this.$el.find("div#label-tabs-contents");
-                this.tabsContainerElement.children("#labelTab-"+id).remove();
+                this.tabsContainerElement.children("#labelTab-" + id).remove();
             },
 
             /**
