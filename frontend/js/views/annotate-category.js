@@ -88,7 +88,7 @@ define(
                 "click .catItem-header i.visibility": "toggleVisibility",
                 "click .catItem-header i.delete": "onDeleteCategory",
                 "click .catItem-header i.scale": "editScale",
-                "click .catItem-header i.sharedVis": "onChangeAccess",
+                "click .catItem-header button[data-access]": "onChangeAccess",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
                 "click .catItem-add": "onCreateLabel"
@@ -222,7 +222,7 @@ define(
              * @param {Event} event The event causing the change
              */
             onChangeAccess: function (event) {
-                this.model.set("access", ACCESS.parse($(event.currentTarget).data("sharedvis")));
+                this.model.set("access", ACCESS.parse($(event.currentTarget).data("access")));
                 this.model.save();
             },
 
