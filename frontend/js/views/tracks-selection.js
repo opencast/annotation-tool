@@ -217,27 +217,41 @@ define(
                 _.each(this.tracks.getVisibleTracks(), function (visibleTrack) {
                     var trackUserId = visibleTrack.get("created_by");
 
-                    // Create new category tab for user ids that or not ours or already present
-                    if (trackUserId !== annotationTool.user.id &&
-                        !annotateView.categoriesTabs.hasOwnProperty(trackUserId)) {
-                        // Need to pass all categories here, else code ceases to work
-                        annotateView.addTab(categories, {
-                            id: trackUserId,
-                            name: visibleTrack.get("created_by_nickname"),
-                            filter: function (category) {
-                                // Does the current user have permission to see the category?
-                                return ((annotationTool.user.get("role") === ROLES.ADMINISTRATOR && (category.get("access") === ACCESS.PUBLIC
-                                        || category.get("access") === ACCESS.SHARED_WITH_ADMIN))
-                                || (annotationTool.user.get("role") === ROLES.USER && (category.get("access")) === ACCESS.PUBLIC))
-                                // Is it from the mine category?
-                                && category.get("settings").createdAsMine
-                                // Was the category created by the user of the tab?
-                                && category.get("created_by") === trackUserId;
-                            },
-                            roles: [],
-                            attributes: { access: ACCESS.PRIVATE }
-                        });
+                    // Create new category tab only for user ids that are not ours or already present
+                    if (visibleTrack.isMine() || annotateView.categoriesTabs.hasOwnProperty(trackUserId)) {
+                        return;
                     }
+
+                    // Need to pass all categories here, else code ceases to work
+                    annotateView.addTab(categories, {
+                        id: trackUserId,
+                        name: visibleTrack.get("created_by_nickname"),
+                        filter: function (category) {
+                            // Does the current user have permission to see the category?
+                            if (category.get("access") === ACCESS.PRIVATE) {
+                                return false;
+                            }
+                            if (
+                                category.get("access") === ACCESS.SHARED_WITH_ADMIN
+                                    && annotationTool.user.get("role") !== ROLES.ADMINISTRATOR
+                            ) {
+                                return false;
+                            }
+
+                            // Is it from the mine category?
+                            if (!category.get("settings").createdAsMine) {
+                                return false;
+                            }
+                            // Was the category created by the user of the tab?
+                            if (category.get("created_by") !== trackUserId) {
+                                return false;
+                            }
+
+                            return true;
+                        },
+                        roles: [],
+                        attributes: { access: ACCESS.PRIVATE }
+                    });
                 }, this);
 
                 // Try to remove respective category tab of every non-visible track
@@ -256,25 +270,42 @@ define(
               _.each(this.tracks.getVisibleTracks(), function (visibleTrack) {
                   var trackUserId = visibleTrack.get("created_by");
 
-                  // Create new category tab for user ids that or not ours or already present
-                  if (trackUserId !== annotationTool.user.id) {
-                      // Need to pass all categories here, else code ceases to work
-                      allTab.addCategories(categories, function (category) {
-                        return ((annotationTool.user.get("role") === ROLES.ADMINISTRATOR && (category.get("access") === ACCESS.PUBLIC
-                        || category.get("access") === ACCESS.SHARED_WITH_ADMIN))
-                        || (annotationTool.user.get("role") === ROLES.USER && (category.get("access")) === ACCESS.PUBLIC))
-                        // Is it from the mine category?
-                        && category.get("settings").createdAsMine
-                        // Was the category created by the user of the tab?
-                        && category.get("created_by") === trackUserId
-                        // Is the category already present?
-                        && !allTab.categoryViews.some(
-                            function (e) {
-                                return e.model.id === category.id;
-                            }
-                        );
-                      });
+                  // Create new category tab only for user ids that are not ours
+                  if (visibleTrack.isMine()) {
+                      return;
                   }
+
+                  // Need to pass all categories here, else code ceases to work
+                  allTab.addCategories(categories, function (category) {
+                      // Does the current user have permission to see the category?
+                      if (category.get("access") === ACCESS.PRIVATE) {
+                          return false;
+                      }
+                      if (
+                          category.get("access") === ACCESS.SHARED_WITH_ADMIN
+                              && annotationTool.user.get("role") !== ROLES.ADMINISTRATOR
+                      ) {
+                          return false;
+                      }
+
+                      // Is it from the mine category?
+                      if (!category.get("settings").createdAsMine) {
+                          return false;
+                      }
+                      // Was the category created by the user of the tab?
+                      if (category.get("created_by") !== trackUserId) {
+                          return false;
+                      }
+
+                      // Is the category already present?
+                      if (_.some(allTab.categoryViews, function (e) {
+                          return e.model.id === category.id;
+                      })) {
+                          return false;
+                      }
+
+                      return true;
+                  });
               }, this);
 
               _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function (notVisibleTrack) {
