@@ -137,7 +137,7 @@ define(
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
                 // Not our category but someone elses? Should not be clickable
-                if (attr.category.get("settings").createdAsMine && attr.category.get("created_by") !== annotationTool.user.get("id")) {
+                if (attr.category.get("settings").createdAsMine && !attr.category.isMine()) {
                     this.$el.addClass("read-only");
                 }
                 this.model = attr.category;
