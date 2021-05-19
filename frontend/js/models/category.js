@@ -62,15 +62,10 @@ define(
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                this.set("settings", _.extend({ hasScale: true }, this.get("settings")));
-
-                var settings = _.clone(this.get("settings"));
-
-                if (!_.isUndefined(settings) && _.isUndefined(settings.createdAsMine)) {
-                    _.extend({ createdAsMine: this.isMine() }, settings);
-                }
-
-                this.set("settings", settings);
+                this.set("settings", _.extend({
+                    hasScale: true,
+                    createdAsMine: this.isMine()
+                }, this.get("settings")));
             },
 
             /**
