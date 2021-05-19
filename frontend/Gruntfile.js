@@ -85,6 +85,7 @@ module.exports = function (grunt) {
                 maxWarnings: 0,
                 failOnError: true,
                 maxWarnings: grunt.option('maxWarnings'),
+                fix: grunt.option('fix')
             },
             files: ['**/{.,}*.js', '!**/node_modules/**/{.,}*', '!js/libs/**/{.,}*']
         }
