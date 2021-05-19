@@ -155,7 +155,6 @@ define(
 
                 $(window).on("resize.annotate-category", this.updateInputWidth);
 
-                //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
 
                 this.tooltipSelector = ".sharedVisibility[data-id=" + this.model.id + "] button";
