@@ -217,7 +217,7 @@ define(
                     var trackUserId = visibleTrack.get("created_by");
 
                     // Create new category tab for user ids that or not ours or already present
-                    if (trackUserId !== annotationTool.user.get("id") &&
+                    if (trackUserId !== annotationTool.user.id &&
                         !annotationTool.views.main.views.annotate.categoriesTabs.hasOwnProperty(trackUserId)) {
                         // Need to pass all categories here, else code ceases to work
                         annotationTool.views.main.views.annotate.addTab(categories, {
@@ -257,7 +257,7 @@ define(
                   var trackUserId = visibleTrack.get("created_by");
 
                   // Create new category tab for user ids that or not ours or already present
-                  if (trackUserId !== annotationTool.user.get("id")) {
+                  if (trackUserId !== annotationTool.user.id) {
                       // Need to pass all categories here, else code ceases to work
                       annotationTool.views.main.views.annotate.categoriesTabs["all"].addCategories(categories, function (category) {
                         return ((annotationTool.user.get("role") === ROLES.ADMINISTRATOR && (category.get("access") === ACCESS.PUBLIC
@@ -281,7 +281,7 @@ define(
                 _.each(annotationTool.views.main.views.annotate.categoriesTabs["all"].categories.models, function (category) {
                   if (category.get("created_by") === notVisibleTrack.get("created_by")
                       && category.get("settings").createdAsMine
-                      && category.get("createy_by") !== annotationTool.user.get("id")) {
+                      && category.get("createy_by") !== annotationTool.user.id) {
                     annotationTool.views.main.views.annotate.categoriesTabs["all"].removeOne(category);
                   }
                 }, this);
