@@ -222,8 +222,7 @@ define(
              * @param {Event} event The event causing the change
              */
             onChangeAccess: function (event) {
-                this.model.set("access", ACCESS.parse($(event.currentTarget).data("access")));
-                this.model.save();
+                this.model.save({ access: ACCESS.parse($(event.currentTarget).data("access")) });
             },
 
             /**
