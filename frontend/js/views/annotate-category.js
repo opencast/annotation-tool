@@ -219,6 +219,10 @@ define(
                 this.render();
             },
 
+            /**
+             * Change the access level of a category
+             * @param {Event} event The event causing the change
+             */
             onChangeSharedVis: function (event) {
                 this.model.set("access", ACCESS.parse($(event.currentTarget).data("sharedvis")));
                 this.model.save();
