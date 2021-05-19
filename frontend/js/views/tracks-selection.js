@@ -264,59 +264,59 @@ define(
              * Add/Remove views for createdAsMine categories in the all tab
              */
             updateCategoriesForTheAllTab: function () {
-              var allTab = annotationTool.views.main.views.annotate.categoriesTabs["all"];
-              var categories = annotationTool.video.get("categories");
+                var allTab = annotationTool.views.main.views.annotate.categoriesTabs["all"];
+                var categories = annotationTool.video.get("categories");
 
-              _.each(this.tracks.getVisibleTracks(), function (visibleTrack) {
-                  var trackUserId = visibleTrack.get("created_by");
+                _.each(this.tracks.getVisibleTracks(), function (visibleTrack) {
+                    var trackUserId = visibleTrack.get("created_by");
 
-                  // Create new category tab only for user ids that are not ours
-                  if (visibleTrack.isMine()) {
-                      return;
-                  }
+                    // Create new category tab only for user ids that are not ours
+                    if (visibleTrack.isMine()) {
+                        return;
+                    }
 
-                  // Need to pass all categories here, else code ceases to work
-                  allTab.addCategories(categories, function (category) {
-                      // Does the current user have permission to see the category?
-                      if (category.get("access") === ACCESS.PRIVATE) {
-                          return false;
-                      }
-                      if (
-                          category.get("access") === ACCESS.SHARED_WITH_ADMIN
-                              && annotationTool.user.get("role") !== ROLES.ADMINISTRATOR
-                      ) {
-                          return false;
-                      }
+                    // Need to pass all categories here, else code ceases to work
+                    allTab.addCategories(categories, function (category) {
+                        // Does the current user have permission to see the category?
+                        if (category.get("access") === ACCESS.PRIVATE) {
+                            return false;
+                        }
+                        if (
+                            category.get("access") === ACCESS.SHARED_WITH_ADMIN
+                                && annotationTool.user.get("role") !== ROLES.ADMINISTRATOR
+                        ) {
+                            return false;
+                        }
 
-                      // Is it from the mine category?
-                      if (!category.get("settings").createdAsMine) {
-                          return false;
-                      }
-                      // Was the category created by the user of the tab?
-                      if (category.get("created_by") !== trackUserId) {
-                          return false;
-                      }
+                        // Is it from the mine category?
+                        if (!category.get("settings").createdAsMine) {
+                            return false;
+                        }
+                        // Was the category created by the user of the tab?
+                        if (category.get("created_by") !== trackUserId) {
+                            return false;
+                        }
 
-                      // Is the category already present?
-                      if (_.some(allTab.categoryViews, function (e) {
-                          return e.model.id === category.id;
-                      })) {
-                          return false;
-                      }
+                        // Is the category already present?
+                        if (_.some(allTab.categoryViews, function (e) {
+                            return e.model.id === category.id;
+                        })) {
+                            return false;
+                        }
 
-                      return true;
-                  });
-              }, this);
-
-              _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function (notVisibleTrack) {
-                _.each(allTab.categories.models, function (category) {
-                  if (category.get("created_by") === notVisibleTrack.get("created_by")
-                      && category.get("settings").createdAsMine
-                      && category.get("createy_by") !== annotationTool.user.id) {
-                    allTab.removeOne(category);
-                  }
+                        return true;
+                    });
                 }, this);
-              }, this);
+
+                _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function (notVisibleTrack) {
+                    _.each(allTab.categories.models, function (category) {
+                        if (category.get("created_by") === notVisibleTrack.get("created_by")
+                            && category.get("settings").createdAsMine
+                            && category.get("createy_by") !== annotationTool.user.id) {
+                            allTab.removeOne(category);
+                        }
+                    }, this);
+                }, this);
             },
 
             /**
