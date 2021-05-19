@@ -83,7 +83,8 @@ module.exports = function (grunt) {
         eslint: {
             options: {
                 maxWarnings: 0,
-                failOnError: true
+                failOnError: true,
+                maxWarnings: grunt.option('maxWarnings'),
             },
             files: ['**/{.,}*.js', '!**/node_modules/**/{.,}*', '!js/libs/**/{.,}*']
         }
