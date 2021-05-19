@@ -168,7 +168,7 @@ define(
                 );
 
                 $(document).on(
-                    "click.sharedVisibilityTooltip",
+                    "click.accessTooltip",
                     _.bind(function (event) {
                         if (this.visibilityButton && (
                             !this.visibilityButton.has(event.target).length
@@ -429,7 +429,7 @@ define(
                 });
                 $(window).off(".annotate-category");
 
-                $(document).off("click.myvisibilityTooltip");
+                $(document).off("click.accessTooltip");
                 $("body").off("click", this.tooltipSelector);
                 if (this.visibilityButton) {
                     this.visibilityButton.tooltip("destroy");
