@@ -252,7 +252,6 @@ define(
             updateCategoriesForTheAllTab: function () {
               var allTab = annotationTool.views.main.views.annotate.categoriesTabs["all"];
               var categories = annotationTool.video.get("categories");
-              var t = this.tracks.getVisibleTracks();
 
               _.each(this.tracks.getVisibleTracks(), function (visibleTrack) {
                   var trackUserId = visibleTrack.get("created_by");
