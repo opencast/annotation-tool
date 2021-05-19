@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opencast.annotate</groupId>
+    <artifactId>annotation-tool</artifactId>
+    <version>2021.0519.075541-eab265df6e63ebad2418440d5c6c785c2d889c7e</version>
+  </parent>
+  <groupId>org.opencast.annotate</groupId>
+  <artifactId>annotation-tool-backend</artifactId>
+  <version>2021.0519.075541-eab265df6e63ebad2418440d5c6c785c2d889c7e</version>
+  <packaging>pom</packaging>
+  <name>Opencast Annotation Tool :: Backend</name>
+  <licenses>
+    <license>
+      <name>Educational Community License, Version 2.0</name>
+      <url>http://www.osedu.org/licenses/ECL-2.0/ecl2.txt</url>
+    </license>
+  </licenses>
+  <modules>
+    <module>annotation-api</module>
+    <module>annotation-impl</module>
+    <module>annotation-tool</module>
+    <module>karaf-feature</module>
+  </modules>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-common</artifactId>
+        <version>${opencast.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <configuration>
+            <instructions>
+              <Import-Package>javax.ws.rs;version=2.0.1,
+                javax.ws.rs.core;version=2.0.1,
+                org.opencastproject.*;version="${opencast.version}",
+                *</Import-Package>
+            </instructions>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
