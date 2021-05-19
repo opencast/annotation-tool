@@ -91,9 +91,8 @@ define(
                 "click .catItem-header i.sharedVis": "onChangeSharedVis",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
-                "click .catItem-add": "onCreateLabel",
+                "click .catItem-add": "onCreateLabel"
             },
-
 
             /**
              * Constructor
@@ -138,7 +137,7 @@ define(
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
                 // Not our category but someone elses? Should not be clickable
-                if(attr.category.get("settings").createdAsMine && attr.category.get("created_by") !== annotationTool.user.get("id")) {
+                if (attr.category.get("settings").createdAsMine && attr.category.get("created_by") !== annotationTool.user.get("id")) {
                     this.$el.addClass("read-only");
                 }
                 this.model = attr.category;
@@ -282,9 +281,9 @@ define(
              */
             addLabel: function (label) {
                 var labelView = new LabelView({
-                    label        : label,
-                    editModus    : this.editModus,
-                    roles        : this.roles
+                    label: label,
+                    editModus: this.editModus,
+                    roles: this.roles
                 });
 
                 this.labelViews.push(labelView);
@@ -299,10 +298,10 @@ define(
              */
             onCreateLabel: function () {
                 this.model.get("labels").create({
-                    value       : i18next.t("new label defaults.description"),
+                    value: i18next.t("new label defaults.description"),
                     abbreviation: i18next.t("new label defaults.abbreviation"),
-                    category    : this.model,
-                    access      : this.model.get("access")
+                    category: this.model,
+                    access: this.model.get("access")
                 }, { wait: true });
             },
 
@@ -372,7 +371,7 @@ define(
                 if (this.visibilityButton) {
                     this.visibilityButton.tooltip("destroy");
                 }
-                
+
                 var modelJSON = this.model.toJSON();
 
                 this.undelegateEvents();
@@ -412,10 +411,9 @@ define(
 
                 this.delegateEvents(this.events);
 
-
                 this.visibilityButton = this.$el.find(".sharedVisibility")
                 .tooltip({
-                    container: 'body',
+                    container: "body",
                     html: true
                 });
 

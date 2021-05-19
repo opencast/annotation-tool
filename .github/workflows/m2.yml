@@ -41,6 +41,7 @@ jobs:
         run: mvn clean deploy
           --batch-mode
           -DskipTests
+          -Deslint.maxWarnings=0
           -DaltDeploymentRepository=m2::default::file:m2
           -Drevision=${{ steps.date.outputs.date }}-${{ github.sha }}
 

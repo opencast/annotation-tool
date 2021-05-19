@@ -91,7 +91,7 @@ define([
             this.$el.html(template(modelJSON));
             this.visibilityButton = this.$el.find(".visibility")
                 .tooltip({
-                    container: 'body',
+                    container: "body",
                     html: true
                 });
             return this;

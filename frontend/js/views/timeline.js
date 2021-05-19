@@ -189,7 +189,7 @@ define([
                 min: this.startDate,
                 max: this.endDate,
                 snap: null,
-                orientation: 'top',
+                orientation: "top",
                 showMajorLabels: false,
                 format: { minorLabels: function (moment) {
                     return util.formatTime(moment.unix());
@@ -489,7 +489,7 @@ define([
                             className: _.without(
                                 getClassName.call(this, annotation).split(" "),
                                 "active"
-                            ).join(' ')
+                            ).join(" ")
                         };
                     }, this));
                     this.items.update(_.map(currentAnnotations, function (annotation) {
@@ -498,7 +498,7 @@ define([
                             className: _.uniq(
                                 getClassName.call(this, annotation).split(" ")
                                     .concat(["active"])
-                            ).join(' ')
+                            ).join(" ")
                         };
                     }, this));
                 }
@@ -522,7 +522,6 @@ define([
                     properties.event.tapCount > 1
                 );
             }, this));
-
 
             function updateCategoryAnnotations(category, visible) {
                 var relevantAnnotations = annotationTool.video
@@ -562,7 +561,7 @@ define([
 
             this.$el.popover({
                 selector: ".track-details",
-                trigger: "hover",
+                trigger: "hover"
                 // Note this does not work at the moment, see below
                 //html: true,
                 //container: "body"

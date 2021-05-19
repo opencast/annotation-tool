@@ -101,7 +101,7 @@ define(
                 "focusout #new-annotation": "onFocusOut",
                 "click #label-tabs-buttons a": "showTab",
                 "click #editSwitch": "onSwitchEditModus",
-                "click #toggle-free-text button": "toggleFreeTextAnnotations",
+                "click #toggle-free-text button": "toggleFreeTextAnnotations"
             },
 
             /**
@@ -133,8 +133,8 @@ define(
              * @type {Object}
              */
             layout: {
-                freeText   : true,
-                categories : true
+                freeText: true,
+                categories: true
             },
 
             /**
@@ -320,11 +320,11 @@ define(
              */
             addTab: function (categories, attr) {
                 var params = {
-                        id        : attr.id,
-                        name      : attr.name,
+                        id: attr.id,
+                        name: attr.name,
                         categories: categories,
-                        filter    : attr.filter,
-                        roles     : attr.roles,
+                        filter: attr.filter,
+                        roles: attr.roles,
                         attributes: attr.attributes
                     },
                     newButton = this.tabsButtonTemplate(params),
@@ -347,7 +347,7 @@ define(
             removeTab: function (id) {
                 delete this.categoriesTabs[id];
 
-                this.tabsButtonsElement.find('a[data-tabid="'+id+'"]').parent().remove();
+                this.tabsButtonsElement.find("a[data-tabid=\""+id+"\"]").parent().remove();
                 this.tabsContainerElement = this.$el.find("div#label-tabs-contents");
                 this.tabsContainerElement.children("#labelTab-"+id).remove();
             },

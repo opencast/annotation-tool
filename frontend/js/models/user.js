@@ -72,7 +72,6 @@ define(
                 var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
-
                 if (!attr.nickname) {
                     return {
                         attribute: "nickname",
