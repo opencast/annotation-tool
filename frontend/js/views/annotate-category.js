@@ -157,7 +157,7 @@ define(
 
                 this.nameInput = this.$el.find(".catItem-header input");
 
-                this.tooltipSelector = ".sharedVisibility[data-id=" + this.model.id + "] button";
+                this.tooltipSelector = ".category-access[data-id=" + this.model.id + "] button";
 
                 $("body").on(
                     "click",
@@ -411,7 +411,7 @@ define(
 
                 this.delegateEvents(this.events);
 
-                this.visibilityButton = this.$el.find(".sharedVisibility")
+                this.visibilityButton = this.$el.find(".category-access")
                     .tooltip({
                         container: "body",
                         html: true
