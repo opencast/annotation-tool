@@ -88,7 +88,7 @@ define(
                 "click .catItem-header i.visibility": "toggleVisibility",
                 "click .catItem-header i.delete": "onDeleteCategory",
                 "click .catItem-header i.scale": "editScale",
-                "click .catItem-header i.sharedVis": "onChangeSharedVis",
+                "click .catItem-header i.sharedVis": "onChangeAccess",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
                 "click .catItem-add": "onCreateLabel"
@@ -164,7 +164,7 @@ define(
                     "click",
                     this.tooltipSelector,
                     _.bind(function (event) {
-                        this.onChangeSharedVis(event);
+                        this.onChangeAccess(event);
                     }, this)
                 );
 
@@ -222,7 +222,7 @@ define(
              * Change the access level of a category
              * @param {Event} event The event causing the change
              */
-            onChangeSharedVis: function (event) {
+            onChangeAccess: function (event) {
                 this.model.set("access", ACCESS.parse($(event.currentTarget).data("sharedvis")));
                 this.model.save();
             },
