@@ -20,7 +20,7 @@ define(function () {
 
     /**
      * Module containing the tool configuration
-     * @exports annotation-tool-configuration
+     * @exports configuration
      */
     var Configuration = {
         /**

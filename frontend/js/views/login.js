@@ -26,8 +26,7 @@ define([
     "models/user",
     "i18next",
     "templates/user-login",
-    "roles",
-    "handlebarsHelpers"
+    "roles"
 ], function (
     $,
     _,
@@ -43,27 +42,23 @@ define([
  * @see {@link http://www.backbonejs.org/#View}
  * @augments module:Backbone.View
  * @memberOf module:views-login
- * @alias module:views-login.Login
  */
 var LoginView = Backbone.View.extend({
 
     /**
      * Main container of the login modal
-     * @alias module:views-login.Login#el
      * @type {DOMElement}
      */
     el: $("#user-login"),
 
     /**
      * Login modal template
-     * @alias module:views-login.Login#groupTemplate
      * @type {HandlebarsTemplate}
      */
     loginTemplate: LoginTemplate,
 
     /**
      * Events to handle
-     * @alias module:views-login.Login#events
      * @type {object}
      */
     events: {
@@ -73,7 +68,6 @@ var LoginView = Backbone.View.extend({
 
     /**
      * Constructor
-     * @alias module:views-login.Login#initialize
      */
     initialize: function () {
         this.$el.append(this.loginTemplate());
@@ -82,7 +76,6 @@ var LoginView = Backbone.View.extend({
 
     /**
      * Show the login modal
-     * @alias module:views-login.Login#show
      */
     show: function (options) {
         this.$el.modal("show");
@@ -90,7 +83,6 @@ var LoginView = Backbone.View.extend({
 
     /**
      * Hide the login modal
-     * @alias module:views-login.Login#hide
      */
     hide: function () {
         this.$el.modal("hide");
@@ -98,7 +90,6 @@ var LoginView = Backbone.View.extend({
 
     /**
      * Login by pressing "Enter" key
-     * @alias module:views-login.Login#loginOnInsert
      */
     loginOnInsert: function (e) {
         if (e.keyCode === 13) {
@@ -108,7 +99,6 @@ var LoginView = Backbone.View.extend({
 
     /**
      * Validate the given credentials and potentially signal the corresponding user's login
-     * @alias module:views-login.Login#login
      */
     login: function () {
 

@@ -24,7 +24,6 @@ import static org.opencast.annotation.impl.persistence.ScaleValueDto.toScaleValu
 import static org.opencast.annotation.impl.persistence.TrackDto.toTrack;
 import static org.opencast.annotation.impl.persistence.UserDto.toUser;
 import static org.opencast.annotation.impl.persistence.VideoDto.toVideo;
-import static org.opencastproject.util.data.Arrays.head;
 import static org.opencastproject.util.data.Monadics.mlist;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.option;
@@ -71,7 +70,6 @@ import org.opencastproject.util.data.Option.Match;
 import org.opencastproject.util.data.Predicate;
 import org.opencastproject.util.data.Tuple;
 import org.opencastproject.util.data.functions.Options;
-import org.opencastproject.util.data.functions.Tuples;
 import org.opencastproject.util.persistence.PersistenceEnv;
 import org.opencastproject.util.persistence.Queries;
 
@@ -83,8 +81,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 import javax.persistence.RollbackException;
-import javax.persistence.TypedQuery;
 
 /**
  * JPA-based implementation of the {@link ExtendedAnnotationService}.
@@ -170,7 +170,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public List<User> getUsers(final Option<Integer> offset, final Option<Integer> limit, final Option<Date> since)
           throws ExtendedAnnotationException {
-    final Tuple<String, Object>[] qparams = qparams(since.map(Tuples.tupleB("since")));
+    final Tuple<String, Object>[] qparams = qparams(since.map(tupleB("since")));
     final String q = since.isSome() ? "User.findAllSince" : "User.findAll";
     return tx(named.<UserDto> findAllM(q, offset, limit, qparams)).map(toUser).value();
   }
@@ -279,7 +279,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return Arrays.stream(p)
             .filter(Option::isSome)
             .map(Option::get)
-            .toArray(Tuple[]::new);
+            .<Tuple<String, Object>>toArray(Tuple[]::new);
   }
 
   @Override
@@ -288,7 +288,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           throws ExtendedAnnotationException {
 
     final Tuple<String, Object>[] qparams = qparams(some(id(videoId)),
-            since.map(Tuples.tupleB("since")));
+            since.map(tupleB("since")));
 
     final String q = since.isSome() ? "Track.findAllOfVideoSince" : "Track.findAllOfVideo";
 
@@ -349,7 +349,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   /** Generic update method. */
   private <A> void update(String q, long id, Effect<A> update) {
-    tx(Options.foreach(named.findSingle(q, id(id)), update)).orError(throwNotFound);
+    tx(Options.foreach(named.findSingle(q, id(id)), update)).orError(notFound);
   }
 
   @Override
@@ -468,7 +468,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           Option<Date> since, final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
           throws ExtendedAnnotationException {
     final Tuple<String, Object>[] qparams = qparams(some(id(scaleId)),
-            since.map(Tuples.tupleB("since")));
+            since.map(tupleB("since")));
     final String q = since.isSome() ? "Scale.findAllOfScaleSince" : "ScaleValue.findAllOfScale";
     List<ScaleValue> scaleValues = tx(named.<ScaleValueDto> findAllM(q, offset, limit, qparams)).map(toScaleValue)
             .value();
@@ -619,17 +619,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
       @Override
       public List<Category> none() {
-        return tx(new Function<EntityManager, List<Category>>() {
-          @Override
-          public List<Category> apply(EntityManager em) {
-            TypedQuery<CategoryDto> query = named.query(em, "Category.findAllOfTemplate", CategoryDto.class);
-            for (Integer l : limit)
-              query.setMaxResults(l);
-            for (Integer o : offset)
-              query.setFirstResult(o);
-            return mlist(query.getResultList()).map(toCategory).value();
-          }
-        });
+        return tx(named.<CategoryDto> findAllM("Category.findAllOfTemplate", offset, limit)).map(toCategory).value();
       }
     });
 
@@ -799,13 +789,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   };
 
   private static final ExtendedAnnotationException notFound = new ExtendedAnnotationException(Cause.NOT_FOUND);
-
-  private static final Function0<ExtendedAnnotationException> throwNotFound = new Function0<ExtendedAnnotationException>() {
-    @Override
-    public ExtendedAnnotationException apply() {
-      return notFound;
-    }
-  };
 
   /**
    * Do not nest inside a tx!
@@ -1078,33 +1061,69 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    * Wrapper for {@link org.opencastproject.util.persistence.Queries#named}
    * to support safe varargs without warnings
    */
+  // TODO Why this wrapper ...
   private static class NamedWrapper {
     @SafeVarargs
     public final boolean update(EntityManager em, String q, Tuple<String, ?>... params) {
       return Queries.named.update(em, q, params);
     }
 
+    @SuppressWarnings("SameParameterValue")
     @SafeVarargs
-    final <A> Function<EntityManager, Monadics.ListMonadic<A>> findAllM(
-            @SuppressWarnings("SameParameterValue") String q, Tuple<String, ?>... params) {
-      return Queries.named.findAllM(q, params);
+    final <A> Function<EntityManager, Monadics.ListMonadic<A>> findAllM(String q, Tuple<String, ?>... params) {
+      return findAllM(q, none(), none(), params);
     }
 
     @SafeVarargs
-    final <A> Function<EntityManager, Monadics.ListMonadic<A>> findAllM(String q, Option<Integer> offset,
-            Option<Integer> limit, Tuple<String, ?>... params) {
-      return Queries.named.findAllM(q, offset, limit, params);
+    final <A> Function<EntityManager, Monadics.ListMonadic<A>> findAllM(String q, Option<Integer> maybeOffset,
+            Option<Integer> maybeLimit, Tuple<String, ?>... params) {
+      return new Function<EntityManager, Monadics.ListMonadic<A>>() {
+        @Override
+        public Monadics.ListMonadic<A> apply(EntityManager entityManager) {
+          Query query = Queries.named.query(entityManager, q, params);
+          for (Integer offset: maybeOffset) query.setFirstResult(offset);
+          for (Integer limit: maybeLimit) query.setMaxResults(limit);
+          @SuppressWarnings("unchecked")
+          List<A> results = query.getResultList();
+          return mlist(results);
+        }
+      };
     }
 
     @SafeVarargs
     final <A> Function<EntityManager, Option<A>> findSingle(String q, Tuple<String, ?>... params) {
-      return Queries.named.findSingle(q, params);
-    }
-
-    @SafeVarargs
-    final <A> TypedQuery<A> query(EntityManager em, String q, Class<A> type, Tuple<String, Object>... params) {
-      return Queries.named.query(em, q, type, params);
+      return new Function<EntityManager, Option<A>>() {
+        @Override
+        public Option<A> apply(EntityManager entityManager) {
+          try {
+            Query query = Queries.named.query(entityManager, q, params);
+            @SuppressWarnings("unchecked")
+            A result = (A) query.getSingleResult();
+            return some(result);
+          } catch (NoResultException | NonUniqueResultException e) {
+            return none();
+          }
+        }
+      };
     }
   }
   private static final NamedWrapper named = new NamedWrapper();
+
+  @SuppressWarnings("SameParameterValue")
+  private static <A, B> Function<B, Tuple<A, B>> tupleB(final A a) {
+    return new Function<B, Tuple<A, B>>() {
+      @Override
+      public Tuple<A, B> apply(final B b) {
+        return tuple(a, b);
+      }
+    };
+  }
+
+  private static <A> Option<A> head(final A[] as) {
+    if (as.length > 0) {
+      return some(as[0]);
+    } else {
+      return none();
+    }
+  }
 }

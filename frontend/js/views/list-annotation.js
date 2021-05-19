@@ -18,7 +18,9 @@
  * A module representing the view for an item of the annotations list
  * @module views-list-annotation
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "util",
         "i18next",
@@ -27,11 +29,20 @@ define(["jquery",
         "templates/list-annotation",
         "templates/list-annotation-expanded",
         "templates/list-annotation-edit",
-        "backbone",
-        "handlebarsHelpers"],
-
-    function ($, _, util, i18next, CommentsContainer, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        $,
+        _,
+        util,
+        i18next,
+        CommentsContainer,
+        commentsContainerHeader,
+        TmplCollapsed,
+        TmplExpanded,
+        TmplEdit,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -39,13 +50,11 @@ define(["jquery",
         * @see {@link http://www.backbonejs.org/#View}
         * @augments module:Backbone.View
         * @memberOf module:views-list-annotation
-        * @alias module:views-list-annotation.ListAnnotation
         */
         var ListAnnotation = Backbone.View.extend({
 
             /**
              * Tag name from the view element
-             * @alias module:views-list-annotation.ListAnnotation#tagName
              * @type {string}
              */
             tagName: "div",
@@ -54,27 +63,23 @@ define(["jquery",
 
             /**
              * Define if the comments container is currently visible
-             * @alias module:views-list-annotation.ListAnnotation#commentsVisible
              * @type {Boolean}
              */
             commentsVisible: false,
 
             /** Events to handle
-             * @alias module:views-list-annotation.ListAnnotation#events
              * @type {object}
              */
             events: undefined,
 
             /**
              * The current view {@link ListAnnotation.STATES} of the annotation view
-             * @alias module:views-list-annotation.ListAnnotation#currentStates
              * @type {ListAnnotation.STATES}
              */
             currentState: undefined,
 
             /**
              * constructor
-             * @alias module:views-list-annotation.ListAnnotation#initialize
              */
             initialize: function (attr) {
                 var category;
@@ -92,7 +97,6 @@ define(["jquery",
                     this.render();
                 });
 
-                this.model.fetchComments();
                 this.listenTo(this.model.get("comments"), "add remove reset reply", this.render);
 
                 if (this.model.get("label")) {
@@ -135,7 +139,6 @@ define(["jquery",
 
             /**
              * Set the state to the given newState or the fallbackState if newState is already set
-             * @alias module:views-list-annotation.ListAnnotation#setState
              * @param {State} newState The new state to set if not already activated
              * @param {State} fallbackState The fallback state if the new state is already set
              */
@@ -154,7 +157,6 @@ define(["jquery",
 
             /**
              * Returns the state of the list annotation view
-             * @alias module:views-list-annotation.ListAnnotation#getState
              * @return {State} The current state of the list annotation view
              */
             getState: function () {
@@ -163,7 +165,6 @@ define(["jquery",
 
             /**
              * Delete completely the annotation
-             * @alias module:views-list-annotation.ListAnnotation#deleteFull
              * @param {event} event Event object
              */
             deleteFull: function (event) {
@@ -175,7 +176,6 @@ define(["jquery",
 
             /**
              * Save the modification done in the free text field
-             * @alias module:views-list-annotation.ListAnnotation#saveFreeText
              * @param  {event} event Event object
              */
             saveFreeText: function (event) {
@@ -196,7 +196,6 @@ define(["jquery",
 
             /**
              * Save the scaling value
-             * @alias module:views-list-annotation.ListAnnotation#saveScaling
              * @param  {event} event Event object
              */
             saveScaling: function (event) {
@@ -219,7 +218,6 @@ define(["jquery",
 
             /**
              * Save the end time
-             * @alias module:views-list-annotation.ListAnnotation#saveEnd
              * @param  {event} event Event object
              */
             saveEnd: function (event) {
@@ -263,7 +261,6 @@ define(["jquery",
 
             /**
              * Save the start time
-             * @alias module:views-list-annotation.ListAnnotation#saveStart
              * @param  {event} event Event object
              */
             saveStart: function (event) {
@@ -313,7 +310,6 @@ define(["jquery",
 
             /**
              * Save the current playhead time as start time
-             * @alias module:views-list-annotation.ListAnnotation#setCurrentTimeAsStart
              * @param  {event} event Event object
              */
             setCurrentTimeAsStart: function (event) {
@@ -333,7 +329,6 @@ define(["jquery",
 
             /**
              * Save the current playhead time as end time
-             * @alias module:views-list-annotation.ListAnnotation#setCurrentTimeAsEd
              * @param  {event} event Event object
              */
             setCurrentTimeAsEnd: function (event) {
@@ -347,7 +342,6 @@ define(["jquery",
 
             /**
              * Render this view
-             * @alias module:views-list-annotation.ListAnnotation#render
              */
             render: function () {
                 var modelJSON,
@@ -418,10 +412,6 @@ define(["jquery",
 
 
                 if (this.getState().withComments) {
-                    if (!this.model.areCommentsLoaded()) {
-                        this.model.fetchComments();
-                    }
-
                     if (this.getState() === ListAnnotation.STATES.COMMENTS || this.model.get("comments").length > 0) {
                         this.$el.find(".comments").append(
                             commentsContainerHeader(),
@@ -437,7 +427,6 @@ define(["jquery",
 
             /**
              * Listener for click on this annotation
-             * @alias module:views-list-annotation.ListAnnotation#onSelect
              * @param {Event} event the click event
              */
             onSelect: function (event) {
@@ -452,7 +441,6 @@ define(["jquery",
 
             /**
              * Navigate to this view's annotation
-             * @alias module:views-list-annotation.ListAnnotation#moveTo
              */
             moveTo: function () {
                 annotationTool.playerAdapter.setCurrentTime(
@@ -462,7 +450,6 @@ define(["jquery",
 
             /**
              * Switch in/out edit modus
-             * @alias module:views-list-annotation.ListAnnotation#toggleEditState
              * @param {Event} event Event object
              */
             toggleEditState: function (event) {
@@ -482,7 +469,6 @@ define(["jquery",
 
             /**
              * Toggle the visibility of the text container
-             * @alias module:views-list-annotation.ListAnnotation#toggleCollapsedState
              * @param  {event} event Event object
              * @param  {boolean} force Force to collapse state
              */
@@ -502,7 +488,6 @@ define(["jquery",
 
             /**
              * Toggle the visibility of the text container
-             * @alias module:views-list-annotation.ListAnnotation#toggleExpandedState
              * @param {Event} event Event object
              * @param {boolean} force Force to expand state
              */
@@ -522,7 +507,6 @@ define(["jquery",
 
             /**
              * Expand the text container
-             * @alias module:views-list-annotation.ListAnnotation#expand
              * @param  {Boolean} auto Is this an automatic expansion as opposed to one initiated by the user?
              */
             expand: function (auto) {
@@ -533,7 +517,6 @@ define(["jquery",
 
             /**
              * Collapse the text container
-             * @alias module:views-list-annotation.ListAnnotation#collapse
              * @param  {Boolean} autoOnly Only really collapse the view when it was opened automatically.
              *                            See {@link expand}.
              */
@@ -544,7 +527,6 @@ define(["jquery",
 
             /**
              * Toggle the comments state
-             * @alias module:views-list-annotation.ListAnnotation#toggleCommentsState
              * @param  {event} event Event object
              */
             toggleCommentsState: function (event) {
@@ -566,7 +548,6 @@ define(["jquery",
 
             /**
              * Proxy function for leaving edit mode through 'esc' keypress
-             * @alias module:views-list-annotation.ListAnnotation#handleEsc
              * @param {event} event Event object
              */
             handleEsc: function (event) {
@@ -578,7 +559,6 @@ define(["jquery",
 
             /**
              * Remove this view from the DOM and clean up all of its data and event handlers
-             * @alias module:views-list-annotation.ListAnnotation#remove
              */
             remove: function () {
                 this.commentContainer.remove();

@@ -5,6 +5,11 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
+      - name: Set up a compatible Java version
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
       - name: Check out the code
         uses: actions/checkout@v2
 
@@ -20,22 +25,22 @@ jobs:
           path: |
             ~/.m2
             frontend/node
-          key: maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: maven-
+          key: maven-2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-2-
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-
+          key: npm-2-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-2-
 
       - name: Get the date
         id: date
         run: echo "::set-output name=date::$(date +%Y.%m%d.%H%M%S)"
       - name: Build the artifacts
         run: mvn clean deploy
-          -Dopencast.version="[8,9-SNAPSHOT)"
           --batch-mode
+          -DskipTests
           -DaltDeploymentRepository=m2::default::file:m2
           -Drevision=${{ steps.date.outputs.date }}-${{ github.sha }}
 

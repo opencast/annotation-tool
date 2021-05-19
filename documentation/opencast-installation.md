@@ -2,7 +2,7 @@
 
 ## Installing the Annotation Tool
 
-__Note:__ These are the installation instructions for the Opencast `r/6.x` branch or higher.
+__Note:__ These are the installation instructions for the current stable branch of Opencast.
 
 You should make sure that you intended Opencast version was build at least once on the machine you use to build the
 Annotation tool, as this will create the needed dependency for Opencast modules in your local Maven repository. This may change
@@ -186,5 +186,3 @@ To use the Annotation Tool you need to open it with the event-ID:
 
 For a user to access a video using the annotation tool, they (or any role they inhabit) have to have at least one
 of these ACL actions `annotate` or `annotate-admin` enabled on the video in question.
-
-Also note that the annotation tool currently does not work with the fast testing workflow, that Opencast provides.
