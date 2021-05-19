@@ -119,7 +119,6 @@ define(
                     "removeOne",
                     "onCreateLabel",
                     "editScale",
-                    "onChangeSharedVis",
                     "updateInputWidth"
                 );
 
