@@ -113,18 +113,18 @@ define(
                 // Get all users owning public tracks together with those tracks themselves.
                 // Note that `this.tracks` already only contains public tracks!
                 var usersWithPublicTracks = this.tracks.chain()
-                        .groupBy(function (track) { return track.get("created_by"); })
-                        .map(function (tracks, created_by) {
-                            return {
-                                id: created_by,
-                                nickname: tracks[0].get("created_by_nickname"),
-                                tracks: _.map(tracks, _.compose(
-                                    _.clone,
-                                    _.property("attributes")
-                                )),
-                                visible: _.every(tracks, function (track) { return track.get("visible"); })
-                            };
-                        }).value();
+                    .groupBy(function (track) { return track.get("created_by"); })
+                    .map(function (tracks, created_by) {
+                        return {
+                            id: created_by,
+                            nickname: tracks[0].get("created_by_nickname"),
+                            tracks: _.map(tracks, _.compose(
+                                _.clone,
+                                _.property("attributes")
+                            )),
+                            visible: _.every(tracks, function (track) { return track.get("visible"); })
+                        };
+                    }).value();
 
                 this.$el.append(this.template({
                     users: usersWithPublicTracks
