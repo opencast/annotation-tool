@@ -205,7 +205,10 @@ define(
                 });
                 this.titleLink.find(".file").on("change", this.onImport);
 
-                this.listenTo(this.categories, "add", this.addCategory);
+                this.listenTo(this.categories, "add", function (category) {
+                    if (!this.filter(category)) return;
+                    this.addCategory(category);
+                });
                 this.listenTo(this.categories, "remove", this.removeOne);
 
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
@@ -263,33 +266,22 @@ define(
              * @param {Categories} categories list of categories
              */
             addCategories: function (filter) {
-                this.categories.each(function (category) {
-                    if (filter(category)) {
-                        this.addCategory(category, this.categories, { skipTests: true });
-                    }
-                }, this);
+                this.categories.chain()
+                    .filter(filter)
+                    .each(this.addCategory);
             },
 
             /**
              * Add a category to the category view
              * @param {Category} category The category to add
-             * @param {Categories} collection The collection, if the category is already part of one
-             * @param {object} options Options to define if the category should be filtered or not (skipTests)
              */
             addCategory: function (category, collection, options) {
-                var categoryView;
 
-                if (!options.skipTests && !this.filter(category)) {
-                    return;
-                }
-
-                categoryView = new CategoryView({
+                this.insertCategoryView(new CategoryView({
                     category: category,
                     editModus: this.editModus,
                     roles: this.roles
-                });
-
-                this.insertCategoryView(categoryView);
+                }));
             },
 
             /**
