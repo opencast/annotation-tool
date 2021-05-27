@@ -425,14 +425,13 @@ define(
              */
             onExport: function () {
                 var json = {
-                        categories: [],
-                        scales: []
-                    },
-                    tmpScales = {},
-                    tmpScaleId;
+                    categories: [],
+                    scales: []
+                };
+                var tmpScales = {};
 
-                _.each(this.categories.filter(this.filter), function (category) {
-                    tmpScaleId = category.attributes.scale_id;
+                this.categories.chain().filter(this.filter).each(function (category) {
+                    var tmpScaleId = category.attributes.scale_id;
 
                     if (tmpScaleId && !tmpScales[tmpScaleId]) {
                         tmpScales[tmpScaleId] = annotationTool.video.get("scales").get(tmpScaleId);
