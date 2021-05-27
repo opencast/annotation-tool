@@ -322,7 +322,6 @@ define(
                 var params = {
                     id: attr.id,
                     name: attr.name,
-                    categories: annotationTool.video.get("categories"),
                     filter: attr.filter,
                     roles: attr.roles,
                     attributes: attr.attributes

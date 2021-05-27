@@ -146,8 +146,8 @@ define(
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                if (!attr.id || !attr.name || !attr.categories) {
-                    throw "Tab id,name and categories must be given as constuctor attributes!";
+                if (!attr.id || !attr.name) {
+                    throw "Tab id and name must be given as constuctor attributes!";
                 }
 
                 // Set the current context for all these functions
@@ -173,7 +173,7 @@ define(
                     "render"
                 );
 
-                this.categories = attr.categories;
+                this.categories = annotationTool.video.get("categories");
                 this.filter = attr.filter;
                 this.roles = attr.roles;
                 this.defaultCategoryAttributes = attr.attributes;
