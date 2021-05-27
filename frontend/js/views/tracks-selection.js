@@ -255,9 +255,9 @@ define(
                 }, this);
 
                 // Try to remove respective category tab of every non-visible track
-                _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function (notVisibleTrack) {
+                this.tracks.chain().difference(this.tracks.getVisibleTracks()).each(function (notVisibleTrack) {
                     annotateView.removeTab(notVisibleTrack.get("created_by"));
-                }, this);
+                });
             },
 
             /**
@@ -308,15 +308,15 @@ define(
                     });
                 }, this);
 
-                _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function (notVisibleTrack) {
-                    _.each(allTab.categories.models, function (category) {
-                        if (category.get("created_by") === notVisibleTrack.get("created_by")
-                            && category.get("settings").createdAsMine
-                            && category.get("createy_by") !== annotationTool.user.id) {
-                            allTab.removeOne(category);
-                        }
-                    }, this);
-                }, this);
+                this.tracks.chain().difference(this.tracks.getVisibleTracks()).each(function (notVisibleTrack) {
+                    allTab.categories.chain()
+                        .filter(function (category) {
+                            return category.get("created_by") === notVisibleTrack.get("created_by")
+                                && category.get("settings").createdAsMine
+                                && !category.isMine();
+                        })
+                        .each(allTab.removeOne);
+                });
             },
 
             /**
