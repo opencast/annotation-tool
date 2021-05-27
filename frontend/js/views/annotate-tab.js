@@ -187,7 +187,7 @@ define(
                 this.currentPage = 0;
                 this.render();
 
-                this.addCategories(this.categories, this.filter);
+                this.addCategories(this.filter);
 
                 this.titleLink = attr.button;
                 this.titleLink.find("i.add").on("click", this.onAddCategory);
@@ -262,10 +262,10 @@ define(
              * Add a list of category
              * @param {Categories} categories list of categories
              */
-            addCategories: function (categories, filter) {
-                categories.each(function (category) {
+            addCategories: function (filter) {
+                this.categories.each(function (category) {
                     if (filter(category)) {
-                        this.addCategory(category, categories, { skipTests: true });
+                        this.addCategory(category, this.categories, { skipTests: true });
                     }
                 }, this);
             },

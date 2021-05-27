@@ -224,7 +224,7 @@ define(
                         }
 
                         // Otherwise, add a new category to the "All" tab
-                        allTab.addCategories(categories, function (category) {
+                        allTab.addCategories(function (category) {
 
                             if (!categoryFilter(trackUserId, category)) {
                                 return false;
