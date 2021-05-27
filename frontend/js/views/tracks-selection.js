@@ -209,7 +209,6 @@ define(
              * Displays Categories Tabs for currently visible tracks
              */
             updateCategories: function () {
-                var categories = annotationTool.video.get("categories");
                 var annotateView = annotationTool.views.main.views.annotate;
                 var allTab = annotateView.categoriesTabs["all"];
 
