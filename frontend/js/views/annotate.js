@@ -320,21 +320,19 @@ define(
              */
             addTab: function (categories, attr) {
                 var params = {
-                        id: attr.id,
-                        name: attr.name,
-                        categories: categories,
-                        filter: attr.filter,
-                        roles: attr.roles,
-                        attributes: attr.attributes
-                    },
-                    newButton = this.tabsButtonTemplate(params),
-                    annotateTab;
+                    id: attr.id,
+                    name: attr.name,
+                    categories: categories,
+                    filter: attr.filter,
+                    roles: attr.roles,
+                    attributes: attr.attributes
+                };
 
-                newButton = $(newButton).appendTo(this.tabsButtonsElement);
+                var newButton = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
                 params.button = newButton;
 
                 params.id = "labelTab-" + params.id;
-                annotateTab = new AnnotateTab(params);
+                var annotateTab = new AnnotateTab(params);
 
                 this.categoriesTabs[attr.id] = annotateTab;
                 this.tabsContainerElement.append(annotateTab.$el);
