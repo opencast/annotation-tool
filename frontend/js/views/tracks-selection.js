@@ -223,23 +223,8 @@ define(
 
                     // Otherwise, add a new category to the "All" tab
                     allTab.addCategories(categories, function (category) {
-                        // Does the current user have permission to see the category?
-                        if (category.get("access") === ACCESS.PRIVATE) {
-                            return false;
-                        }
-                        if (
-                            category.get("access") === ACCESS.SHARED_WITH_ADMIN
-                                && annotationTool.user.get("role") !== ROLES.ADMINISTRATOR
-                        ) {
-                            return false;
-                        }
 
-                        // Is it from the mine category?
-                        if (!category.get("settings").createdAsMine) {
-                            return false;
-                        }
-                        // Was the category created by the user of the tab?
-                        if (category.get("created_by") !== trackUserId) {
+                        if (!categoryFilter(trackUserId, category)) {
                             return false;
                         }
 
@@ -261,29 +246,7 @@ define(
                     annotateView.addTab(categories, {
                         id: trackUserId,
                         name: visibleTrack.get("created_by_nickname"),
-                        filter: function (category) {
-                            // Does the current user have permission to see the category?
-                            if (category.get("access") === ACCESS.PRIVATE) {
-                                return false;
-                            }
-                            if (
-                                category.get("access") === ACCESS.SHARED_WITH_ADMIN
-                                    && annotationTool.user.get("role") !== ROLES.ADMINISTRATOR
-                            ) {
-                                return false;
-                            }
-
-                            // Is it from the mine category?
-                            if (!category.get("settings").createdAsMine) {
-                                return false;
-                            }
-                            // Was the category created by the user of the tab?
-                            if (category.get("created_by") !== trackUserId) {
-                                return false;
-                            }
-
-                            return true;
-                        },
+                        filter: _.partial(categoryFilter, trackUserId),
                         roles: [],
                         attributes: { access: ACCESS.PRIVATE }
                     });
@@ -300,6 +263,30 @@ define(
                         })
                         .each(allTab.removeOne);
                 });
+
+                function categoryFilter(trackUserId, category) {
+                    // Does the current user have permission to see the category?
+                    if (category.get("access") === ACCESS.PRIVATE) {
+                        return false;
+                    }
+                    if (
+                        category.get("access") === ACCESS.SHARED_WITH_ADMIN
+                            && annotationTool.user.get("role") !== ROLES.ADMINISTRATOR
+                    ) {
+                        return false;
+                    }
+
+                    // Is it from the mine category?
+                    if (!category.get("settings").createdAsMine) {
+                        return false;
+                    }
+                    // Was the category created by the user of the tab?
+                    if (category.get("created_by") !== trackUserId) {
+                        return false;
+                    }
+
+                    return true;
+                }
             },
 
             /**
