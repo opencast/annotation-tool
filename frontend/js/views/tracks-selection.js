@@ -245,7 +245,7 @@ define(
                             return;
                         }
 
-                        annotateView.addTab(categories, {
+                        annotateView.addTab({
                             id: trackUserId,
                             name: track.get("created_by_nickname"),
                             filter: _.partial(categoryFilter, trackUserId),

@@ -195,7 +195,7 @@ define(
                 annotationTool.colorsManager.updateColors(categories.models);
 
                 _.each(DEFAULT_TABS, function (params) {
-                    this.addTab(categories, params);
+                    this.addTab(params);
                 }, this);
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
@@ -318,11 +318,11 @@ define(
              * @param {Categories} categories Categories to add to the new tab
              * @param {object} attr Infos about the new tab like id, name, filter for categories and roles.
              */
-            addTab: function (categories, attr) {
+            addTab: function (attr) {
                 var params = {
                     id: attr.id,
                     name: attr.name,
-                    categories: categories,
+                    categories: annotationTool.video.get("categories"),
                     filter: attr.filter,
                     roles: attr.roles,
                     attributes: attr.attributes
