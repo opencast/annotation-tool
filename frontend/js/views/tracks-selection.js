@@ -213,56 +213,57 @@ define(
                 var annotateView = annotationTool.views.main.views.annotate;
                 var allTab = annotateView.categoriesTabs["all"];
 
-                _.each(this.tracks.getVisibleTracks(), function (visibleTrack) {
-                    var trackUserId = visibleTrack.get("created_by");
+                this.tracks.each(function (track) {
+                    var trackUserId = track.get("created_by");
 
-                    // Our own category; should already be visible everywhere
-                    if (visibleTrack.isMine()) {
-                        return;
-                    }
+                    if (track.get("visible")) {
 
-                    // Otherwise, add a new category to the "All" tab
-                    allTab.addCategories(categories, function (category) {
-
-                        if (!categoryFilter(trackUserId, category)) {
-                            return false;
+                        // Our own category; should already be visible everywhere
+                        if (track.isMine()) {
+                            return;
                         }
 
-                        // Is the category already present?
-                        if (_.some(allTab.categoryViews, function (e) {
-                            return e.model.id === category.id;
-                        })) {
-                            return false;
+                        // Otherwise, add a new category to the "All" tab
+                        allTab.addCategories(categories, function (category) {
+
+                            if (!categoryFilter(trackUserId, category)) {
+                                return false;
+                            }
+
+                            // Is the category already present?
+                            if (_.some(allTab.categoryViews, function (e) {
+                                return e.model.id === category.id;
+                            })) {
+                                return false;
+                            }
+
+                            return true;
+                        });
+
+                        // If there is already a tab for this track owner, we don't need to add one
+                        if (annotateView.categoriesTabs.hasOwnProperty(trackUserId)) {
+                            return;
                         }
 
-                        return true;
-                    });
-
-                    // If there is already a tab for this track owner, we don't need to add one
-                    if (annotateView.categoriesTabs.hasOwnProperty(trackUserId)) {
-                        return;
+                        annotateView.addTab(categories, {
+                            id: trackUserId,
+                            name: track.get("created_by_nickname"),
+                            filter: _.partial(categoryFilter, trackUserId),
+                            roles: [],
+                            attributes: { access: ACCESS.PRIVATE }
+                        });
+                    } else {
+                        // Remove categories/tabs that are no longer supposed to be visible
+                        annotateView.removeTab(track.get("created_by"));
+                        allTab.categories.chain()
+                            .filter(function (category) {
+                                return category.get("created_by") === trackUserId
+                                    && category.get("settings").createdAsMine
+                                    && !category.isMine();
+                            })
+                            .each(allTab.removeOne);
                     }
-
-                    annotateView.addTab(categories, {
-                        id: trackUserId,
-                        name: visibleTrack.get("created_by_nickname"),
-                        filter: _.partial(categoryFilter, trackUserId),
-                        roles: [],
-                        attributes: { access: ACCESS.PRIVATE }
-                    });
                 }, this);
-
-                // Remove categories/tabs that are no longer supposed to be visible
-                this.tracks.chain().difference(this.tracks.getVisibleTracks()).each(function (notVisibleTrack) {
-                    annotateView.removeTab(notVisibleTrack.get("created_by"));
-                    allTab.categories.chain()
-                        .filter(function (category) {
-                            return category.get("created_by") === notVisibleTrack.get("created_by")
-                                && category.get("settings").createdAsMine
-                                && !category.isMine();
-                        })
-                        .each(allTab.removeOne);
-                });
 
                 function categoryFilter(trackUserId, category) {
                     // Does the current user have permission to see the category?
