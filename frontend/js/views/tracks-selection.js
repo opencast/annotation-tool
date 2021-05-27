@@ -254,7 +254,7 @@ define(
                     } else {
                         // Remove categories/tabs that are no longer supposed to be visible
                         annotateView.removeTab(track.get("created_by"));
-                        allTab.categories.chain()
+                        annotationTool.video.get("categories").categories.chain()
                             .filter(function (category) {
                                 return category.get("created_by") === trackUserId
                                     && category.get("settings").createdAsMine
