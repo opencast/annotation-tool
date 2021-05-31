@@ -23,7 +23,6 @@ define(
         "underscore",
         "backbone",
         "sortable",
-        "roles",
         "access",
         "templates/tracks-selection-modal"
     ],
@@ -32,7 +31,6 @@ define(
         _,
         Backbone,
         Sortable,
-        ROLES,
         ACCESS,
         TracksSelectionTmpl
     ) {
@@ -265,17 +263,6 @@ define(
                 }, this);
 
                 function categoryFilter(trackUserId, category) {
-                    // Does the current user have permission to see the category?
-                    if (category.get("access") === ACCESS.PRIVATE) {
-                        return false;
-                    }
-                    if (
-                        category.get("access") === ACCESS.SHARED_WITH_ADMIN
-                            && annotationTool.user.get("role") !== ROLES.ADMINISTRATOR
-                    ) {
-                        return false;
-                    }
-
                     // Is it from the mine category?
                     if (!category.get("settings").createdAsMine) {
                         return false;
