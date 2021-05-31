@@ -342,7 +342,7 @@ define(
                 delete this.categoriesTabs[id];
 
                 this.tabsButtonsElement.find("a[data-tabid=\"" + id + "\"]").parent().remove();
-                this.tabsContainerElement.children("#labelTab-" + id).remove();
+                this.tabsContainerElement.find("#labelTab-" + id).remove();
             },
 
             /**
