@@ -57,7 +57,6 @@ define(
                 name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
                     return !category.get("settings").createdAsMine || category.isMine();
-                    //return category.isPublic() || category.isMine();
                 },
                 roles: []
             },
@@ -66,7 +65,6 @@ define(
                 name: i18next.t("annotate.categories.public"),
                 filter: function (category) {
                     return !category.get("settings").createdAsMine;
-                    //return category.isPublic();
                 },
                 roles: [ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PUBLIC }
@@ -76,7 +74,6 @@ define(
                 name: i18next.t("annotate.categories.mine"),
                 filter: function (category) {
                     return category.get("settings").createdAsMine && category.isMine();
-                    //return category.isMine() && !category.isPublic();
                 },
                 roles: [ROLES.USER, ROLES.ADMINISTRATOR],
                 attributes: { access: ACCESS.PRIVATE }
