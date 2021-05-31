@@ -67,7 +67,12 @@ define(
                     return !category.get("settings").createdAsMine;
                 },
                 roles: [ROLES.ADMINISTRATOR],
-                attributes: { access: ACCESS.PUBLIC }
+                attributes: {
+                    access: ACCESS.PUBLIC,
+                    settings: {
+                        createdAsMine: false
+                    }
+                }
             },
             MINE: {
                 id: "mine",
@@ -76,7 +81,12 @@ define(
                     return category.get("settings").createdAsMine && category.isMine();
                 },
                 roles: [ROLES.USER, ROLES.ADMINISTRATOR],
-                attributes: { access: ACCESS.PRIVATE }
+                attributes: {
+                    access: ACCESS.PRIVATE,
+                    settings: {
+                        createdAsMine: true
+                    }
+                }
             }
         },
 

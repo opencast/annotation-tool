@@ -290,11 +290,10 @@ define(
             onAddCategory: function (event) {
                 var attributes = {
                     name: i18next.t("annotate.new category name"),
-                    settings: {
+                    settings: _.extend(this.defaultCategoryAttributes.settings || {}, {
                         color: "#" + annotationTool.colorsManager.getNextColor(),
-                        hasScale: false,
-                        createdAsMine: $(event.currentTarget).closest("[data-tabid]").data("tabid") === "mine"
-                    }
+                        hasScale: false
+                    })
                 };
                 this.categories.create(
                     _.extend(attributes, this.defaultCategoryAttributes),
