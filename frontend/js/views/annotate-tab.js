@@ -22,21 +22,21 @@ define(
     [
         "jquery",
         "underscore",
+        "backbone",
+        "handlebars",
         "i18next",
         "views/annotate-category",
         "templates/annotate-tab",
-        "backbone",
-        "handlebars",
         "filesaver"
     ],
     function (
         $,
         _,
+        Backbone,
+        Handlebars,
         i18next,
         CategoryView,
-        Template,
-        Backbone,
-        Handlebars
+        Template
     ) {
         "use strict";
 
