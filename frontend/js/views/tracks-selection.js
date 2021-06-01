@@ -23,7 +23,6 @@ define(
         "underscore",
         "backbone",
         "sortable",
-        "access",
         "templates/tracks-selection-modal"
     ],
     function (
@@ -31,7 +30,6 @@ define(
         _,
         Backbone,
         Sortable,
-        ACCESS,
         TracksSelectionTmpl
     ) {
         "use strict";
@@ -198,82 +196,7 @@ define(
 
                 annotationTool.orderTracks(this.sortableTrackSelection.toArray());
 
-                this.updateCategories();
-
                 this.hide();
-            },
-
-            /**
-             * Displays Categories Tabs for currently visible tracks
-             */
-            updateCategories: function () {
-                var annotateView = annotationTool.views.main.views.annotate;
-                var allTab = annotateView.categoriesTabs["all"];
-
-                this.tracks.each(function (track) {
-                    var trackUserId = track.get("created_by");
-
-                    if (track.get("visible")) {
-
-                        // Our own category; should already be visible everywhere
-                        if (track.isMine()) {
-                            return;
-                        }
-
-                        // Otherwise, add a new category to the "All" tab
-                        allTab.addCategories(function (category) {
-
-                            if (!categoryFilter(trackUserId, category)) {
-                                return false;
-                            }
-
-                            // Is the category already present?
-                            if (_.some(allTab.categoryViews, function (e) {
-                                return e.model.id === category.id;
-                            })) {
-                                return false;
-                            }
-
-                            return true;
-                        });
-
-                        // If there is already a tab for this track owner, we don't need to add one
-                        if (annotateView.categoriesTabs.hasOwnProperty(trackUserId)) {
-                            return;
-                        }
-
-                        annotateView.addTab({
-                            id: trackUserId,
-                            name: track.get("created_by_nickname"),
-                            filter: _.partial(categoryFilter, trackUserId),
-                            roles: [],
-                            attributes: { access: ACCESS.PRIVATE }
-                        });
-                    } else {
-                        // Remove categories/tabs that are no longer supposed to be visible
-                        annotateView.removeTab(track.get("created_by"));
-                        annotationTool.video.get("categories").categories.chain()
-                            .filter(function (category) {
-                                return category.get("created_by") === trackUserId
-                                    && category.get("settings").createdAsMine
-                                    && !category.isMine();
-                            })
-                            .each(allTab.removeOne);
-                    }
-                }, this);
-
-                function categoryFilter(trackUserId, category) {
-                    // Is it from the mine category?
-                    if (!category.get("settings").createdAsMine) {
-                        return false;
-                    }
-                    // Was the category created by the user of the tab?
-                    if (category.get("created_by") !== trackUserId) {
-                        return false;
-                    }
-
-                    return true;
-                }
             },
 
             /**
