@@ -56,7 +56,6 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
         <configuration>
           <instructions>
             <Bundle-Activator>org.opencast.annotation.tool.Activator</Bundle-Activator>
