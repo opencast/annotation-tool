@@ -12,6 +12,7 @@
   </parent>
 
   <artifactId>annotation-tool-frontend</artifactId>
+  <packaging>bundle</packaging>
 
   <name>Opencast Annotation Tool :: Frontend</name>
 
@@ -72,6 +73,17 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Http-Alias>/annotation-tool</Http-Alias>
+            <Http-Classpath>/ui</Http-Classpath>
+            <Http-Welcome>index.html</Http-Welcome>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

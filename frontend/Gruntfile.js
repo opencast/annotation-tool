@@ -2,7 +2,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-        destPath: '../opencast-backend/annotation-tool/src/main/resources/ui/',
+        destPath: './src/main/resources/ui',
 
         clean: {
             options: {
