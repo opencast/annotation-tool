@@ -103,9 +103,7 @@ define(
             },
 
             /**
-             * Display the modal with the given message as the given alert type
-             * @param  {String} message The message to display
-             * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-tracks-selection.Alert#TYPES}
+             * Display the modal
              */
             show: function () {
                 this.$el.empty();
