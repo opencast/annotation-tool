@@ -58,6 +58,19 @@
               </arguments>
             </configuration>
           </execution>
+          <execution>
+            <id>grunt clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>grunt</goal>
+            </goals>
+
+            <configuration>
+              <arguments>
+                clean
+              </arguments>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
