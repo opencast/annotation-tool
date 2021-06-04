@@ -24,6 +24,16 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>src/main/resources/ui</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <executions>
@@ -56,19 +66,6 @@
               <arguments>
                 --integration=${integration}
                 --maxWarnings=${eslint.maxWarnings}
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>grunt clean</id>
-            <phase>clean</phase>
-            <goals>
-              <goal>grunt</goal>
-            </goals>
-
-            <configuration>
-              <arguments>
-                clean
               </arguments>
             </configuration>
           </execution>
