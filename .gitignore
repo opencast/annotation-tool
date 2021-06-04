@@ -21,8 +21,8 @@ node/
 *.iml
 .idea
 
-# Ignore directory with frontend copy
-/opencast-backend/annotation-tool/src/main/resources/ui
+# Ignore directory with frontend build
+/frontend/src/main/resources/ui
 
 # Ignore flattened POMs
 .flattened-pom.xml

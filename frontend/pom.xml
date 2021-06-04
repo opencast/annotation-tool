@@ -12,6 +12,7 @@
   </parent>
 
   <artifactId>annotation-tool-frontend</artifactId>
+  <packaging>bundle</packaging>
 
   <name>Opencast Annotation Tool :: Frontend</name>
 
@@ -22,6 +23,16 @@
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>src/main/resources/ui</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
@@ -59,6 +70,17 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Http-Alias>/annotation-tool</Http-Alias>
+            <Http-Classpath>/ui</Http-Classpath>
+            <Http-Welcome>index.html</Http-Welcome>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -2,7 +2,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-        destPath: '../opencast-backend/annotation-tool/src/main/resources/ui/',
+        destPath: './src/main/resources/ui',
 
         clean: {
             options: {
@@ -50,7 +50,7 @@ module.exports = function (grunt) {
                         'style/**/*.png',
                         'style/**/*',
                         'locales/**/*.json',
-                        '**/*.map'
+                        '{js,style}/**/*.map'
                     ],
                     dest: '<%= destPath %>'
                 }, {
@@ -87,7 +87,7 @@ module.exports = function (grunt) {
                 maxWarnings: grunt.option('maxWarnings'),
                 fix: grunt.option('fix')
             },
-            files: ['**/{.,}*.js', '!**/node_modules/**/{.,}*', '!js/libs/**/{.,}*']
+            files: ['js/**/*.js', './{,.}*.js', '!js/libs/**/{,.}*']
         }
     });
 
