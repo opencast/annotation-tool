@@ -50,7 +50,7 @@ module.exports = function (grunt) {
                         'style/**/*.png',
                         'style/**/*',
                         'locales/**/*.json',
-                        '{js,style}/**/*.map',
+                        '{js,style}/**/*.map'
                     ],
                     dest: '<%= destPath %>'
                 }, {
