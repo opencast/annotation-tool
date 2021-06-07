@@ -18,19 +18,24 @@
  * A module representing the player adapter implementation for the HTML5 native player
  * @module player-adapter-HTML5
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "player-adapter",
         "mediaelementplayer",
-        "hls"],
-
-    function ($, PlayerAdapter, mejs, Hls) {
-
+        "hls"
+    ],
+    function (
+        $,
+        PlayerAdapter,
+        mejs,
+        Hls
+    ) {
         "use strict";
 
         /**
          * Implementation of the player adapter for the HTML5 native player
          * @constructor
-         * @alias module:player-adapter-HTML5.PlayerAdapterHTML5
          * @augments {module:player-adapter.PlayerAdapter}
          * @param {HTMLElement} targetElement DOM Element representing the player
          */
@@ -80,7 +85,7 @@ define(["jquery",
 
                 window.Hls = Hls;
                 mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
-                    renderers: ['html5', 'native_hls'],
+                    renderers: ["html5", "native_hls"],
                     alwaysShowControls: true,
                     autoRewind: false,
                     stretching: "fill",

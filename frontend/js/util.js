@@ -137,7 +137,6 @@ var util = {
 
     /**
      * Parse the given parameter to JSON if given as String
-     * @alias module:models-resource.Resource.parseJSONString
      * @param  parameter the parameter as String
      * @return {Object} parameter as JSON object
      */

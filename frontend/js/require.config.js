@@ -1,19 +1,16 @@
+// TODO Somehow enable `strict`-mode here
+
 // RequireJS configuration for main app
 require.config({
     baseUrl: "js",
     paths: {
-        "annotation-tool": "annotation-tool",
-        "annotation-tool-configuration": "annotation-tool-configuration",
-        "annotation-tool-integration": "annotation-tool-integration",
-        "backbone": "libs/backbone/backbone-0.9.9",
+        "backbone": "libs/backbone-min",
         "bootstrap": "libs/bootstrap/bootstrap.min",
         "chroma": "libs/chroma.min",
         "domReady": "libs/require/domReady",
         "handlebars": "libs/handlebars",
-        "handlebarsHelpers": "handlebarsHelpers",
         "jquery.colorPicker": "libs/jquery.colorPicker.min",
         "jquery.appear": "libs/jquery.appear",
-        "localstorage": "libs/backbone/backbone.localStorage-1.1.16",
         "jquery": "libs/jquery-1.8.0",
         "slider": "libs/bootstrap/bootstrap-slider",
         "templates": "../templates",
@@ -34,7 +31,7 @@ require.config({
         "xlsx": "libs/xlsx.full.min",
         "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min",
         "papaparse": "libs/papaparse.min",
-        "filesaver": "libs/FileSaver.min",
+        "filesaver": "libs/FileSaver.min"
     },
     waitSeconds: 10,
 

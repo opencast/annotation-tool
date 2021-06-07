@@ -18,11 +18,15 @@
  * A module representing a videos collection
  * @module collections-videos
  */
-define(["models/video",
-        "backbone"],
-
-    function (Video, Backbone) {
-
+define(
+    [
+        "models/video",
+        "backbone"
+    ],
+    function (
+        Video,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -30,13 +34,11 @@ define(["models/video",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-videos
-         * @alias module:collections-videos.Videos
          */
         var Videos = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-videos.Videos#initialize
              */
             model: Video,
 

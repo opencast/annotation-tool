@@ -18,205 +18,204 @@
  * A module representing the scale value editor
  * @module views-scalevalue-editor
  */
-define(["underscore",
-        "backbone",
-        "templates/scale-value-editor",
-        "handlebarsHelpers"],
-       function (_, Backbone, ScaleValueEditorTmpl) {
+define([
+    "underscore",
+    "backbone",
+    "templates/scale-value-editor"
+], function (
+    _,
+    Backbone,
+    ScaleValueEditorTmpl
+) {
+    "use strict";
 
-            "use strict";
+    /**
+     * @constructor
+     * @see {@link http://www.backbonejs.org/#View}
+     * @augments module:Backbone.View
+     * @memberOf module:views-scalevalue-editor
+     */
+    var ScaleValueEditor = Backbone.View.extend({
+        /**
+         * Scale value editor template
+         * @type {HandlebarsTemplate}
+         */
+        scaleValueEditorTemplate: ScaleValueEditorTmpl,
 
-            /**
-             * @constructor
-             * @see {@link http://www.backbonejs.org/#View}
-             * @augments module:Backbone.View
-             * @memberOf module:views-scalevalue-editor
-             * @alias module:views-scalevalue-editor.ScaleValueEditor
-             */
-            var ScaleValueEditor = Backbone.View.extend({
+        /**
+         * Define if the scale value is or not deleted
+         * @type {Boolean}
+         */
+        isDeleted: false,
 
-                /**
-                 * Scale value editor template
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#ScaleValueEditorTemplate
-                 * @type {HandlebarsTemplate}
-                 */
-                scaleValueEditorTemplate: ScaleValueEditorTmpl,
+        /**
+         * Events to handle by the view
+         * @type {Map}
+         */
+        events: {
+            "click .order-up": "up",
+            "click .order-down": "down",
+            "click .delete-scale-value": "deleteScaleValue",
+            "keydown .scale-value-name": "saveOnInsert",
+            "keydown .scale-value-value": "saveOnInsert",
+            "focusout .scale-value-value": "save",
+            "focusout .scale-value-name": "save"
+        },
 
-                /**
-                 * Define if the scale value is or not deleted
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#isDeleted
-                 * @type {Boolean}
-                 */
-                isDeleted: false,
+        /**
+         * Constructor
+         * @param {PlainObject} attr Object literal containing the view initialization attributes.
+         */
+        initialize: function (attr) {
 
-                /**
-                 * Events to handle by the view
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#events
-                 * @type {Map}
-                 */
-                events: {
-                    "click .order-up": "up",
-                    "click .order-down": "down",
-                    "click .delete-scale-value": "deleteScaleValue",
-                    "keydown .scale-value-name": "saveOnInsert",
-                    "keydown .scale-value-value": "saveOnInsert",
-                    "focusout .scale-value-value": "save",
-                    "focusout .scale-value-name": "save"
-                },
+            _.bindAll(
+                this,
+                "render",
+                "up",
+                "down",
+                "saveOnInsert",
+                "getSortedCollection",
+                "deleteScaleValue"
+            );
 
-                /**
-                 * Constructor
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#initialize
-                 * @param {PlainObject} attr Object literal containing the view initialization attributes.
-                 */
-                initialize: function (attr) {
+            this.model = attr.model;
+            this.isNew = attr.isNew;
+            this.next = attr.next;
+            this.previous = attr.previous;
+            this.onChange = attr.onChange;
+            this.scaleEditor = attr.scaleEditor;
 
-                    _.bindAll(this,
-                              "render",
-                              "up",
-                              "down",
-                              "saveOnInsert",
-                              "getSortedCollection",
-                              "deleteScaleValue");
+            this.scaleValueDeleteType = annotationTool.deleteOperation.targetTypes.SCALEVALUE;
+            this.setElement(this.scaleValueEditorTemplate(this.model.toJSON()));
+        },
 
-                    this.model    = attr.model;
-                    this.isNew    = attr.isNew;
-                    this.next     = attr.next;
-                    this.previous = attr.previous;
-                    this.onChange = attr.onChange;
+        /**
+         * Render all elements of the view and draw them.
+         */
+        render: function () {
+            var modelJSON = this.model.toJSON();
 
-                    this.scaleValueDeleteType = annotationTool.deleteOperation.targetTypes.SCALEVALUE;
-                    this.setElement(this.scaleValueEditorTemplate(this.model.toJSON()));
-                },
+            this.setElement(this.scaleValueEditorTemplate(modelJSON));
+            this.delegateEvents(this.events);
 
-                /**
-                 * Render all elements of the view and draw them.
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#render
-                 */
-                render: function () {
-                    var modelJSON = this.model.toJSON();
+            return this;
+        },
 
-                    this.setElement(this.scaleValueEditorTemplate(modelJSON));
-                    this.delegateEvents(this.events);
+        /**
+         * Move the scale value up in the list (change the order)
+         */
+        up: function () {
+            var currentOrder = this.model.get("order"),
+                sortedCollection = this.getSortedCollection(),
+                previous;
 
-                    return this;
-                },
+            if (currentOrder > 0) {
+                previous = sortedCollection[currentOrder - 1];
+                previous.set("order", currentOrder);
+                this.model.set("order", currentOrder - 1);
+                previous.save();
+                this.model.save();
+            }
 
-                /**
-                 * Move the scale value up in the list (change the order)
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#up
-                 */
-                up: function () {
+            this.onChange();
+        },
+
+        /**
+         * Move the scale value down in the list (change the order)
+         */
+        down: function () {
+            var currentOrder = this.model.get("order"),
+                sortedCollection = this.getSortedCollection(),
+                next;
+
+            if (currentOrder < (sortedCollection.length - 1)) {
+                next = sortedCollection[currentOrder + 1];
+                next.set("order", currentOrder);
+                this.model.set("order", currentOrder + 1);
+                next.save();
+                this.model.save();
+            }
+
+            this.onChange();
+        },
+
+        /**
+         * Proxy to save a value on insert
+         * @param  {Event} event Event object
+         */
+        saveOnInsert: function (event) {
+            if (event.keyCode === 13) {
+                this.save();
+            }
+        },
+
+        /**
+         * Save the scale value
+         */
+        save: function () {
+            var name = this.$el.find(".scale-value-name").val(),
+                $value = this.$el.find(".scale-value-value"),
+                value = parseFloat($value.val());
+
+            if (!isNaN(value)) {
+                $value.removeClass("error");
+                this.model.set({
+                    name: name,
+                    value: value
+                });
+
+                this.model.save();
+            } else {
+                $value.val("");
+                $value.addClass("error");
+            }
+        },
+
+        /**
+         * Delete the scale value
+         * @param  {Event} event Event object
+         */
+        deleteScaleValue: function (event) {
+            var sortedCollection = this.getSortedCollection();
+
+            event.stopImmediatePropagation();
+            this.scaleEditor.$el.modal("hide");
+            annotationTool.deleteOperation.start(
+                this.model,
+                this.scaleValueDeleteType,
+                _.bind(function () {
+                    this.scaleEditor.$el.modal("show");
+
                     var currentOrder = this.model.get("order"),
-                        sortedCollection = this.getSortedCollection(),
-                        previous;
+                        i;
 
-                    if (currentOrder > 0) {
-                        previous = sortedCollection[currentOrder - 1];
-                        previous.set("order", currentOrder);
-                        this.model.set("order", currentOrder - 1);
-                        previous.save();
-                        this.model.save();
-                    }
-
-                    this.onChange();
-                },
-
-                /**
-                 * Move the scale value down in the list (change the order)
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#down
-                 */
-                down: function () {
-                    var currentOrder = this.model.get("order"),
-                        sortedCollection = this.getSortedCollection(),
-                        next;
-
+                    // Update order for following item
                     if (currentOrder < (sortedCollection.length - 1)) {
-                        next = sortedCollection[currentOrder + 1];
-                        next.set("order", currentOrder);
-                        this.model.set("order", currentOrder + 1);
-                        next.save();
-                        this.model.save();
-                    }
-
-                    this.onChange();
-                },
-
-                /**
-                 * Proxy to save a value on insert
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#saveOnInsert
-                 * @param  {Event} event Event object
-                 */
-                saveOnInsert: function (event) {
-                    if (event.keyCode === 13) {
-                        this.save();
-                    }
-                },
-
-                /**
-                 * Save the scale value
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#save
-                 */
-                save: function () {
-                    var name = this.$el.find(".scale-value-name").val(),
-                        $value = this.$el.find(".scale-value-value"),
-                        value = parseFloat($value.val());
-
-                    if (!isNaN(value)) {
-                        $value.removeClass("error");
-                        this.model.set({
-                            name: name,
-                            value: value
-                        });
-
-                        this.model.save();
-                    } else {
-                        $value.val("");
-                        $value.addClass("error");
-                    }
-                },
-
-                /**
-                 * Delete the scale value
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#deleteScaleValue
-                 * @param  {Event} event Event object
-                 */
-                deleteScaleValue: function (event) {
-                    var self = this,
-                        sortedCollection = self.getSortedCollection();
-
-                    event.stopImmediatePropagation();
-                    annotationTool.deleteOperation.start(this.model, this.scaleValueDeleteType, function () {
-                        var currentOrder = self.model.get("order"),
-                            i;
-
-                        // Update order for following item
-                        if (currentOrder < (sortedCollection.length - 1)) {
-                            for (i = currentOrder + 1; i < sortedCollection.length; i++) {
-                                sortedCollection[i].set("order", i - 1);
-                                sortedCollection[i].save();
-                            }
+                        for (i = currentOrder + 1; i < sortedCollection.length; i++) {
+                            sortedCollection[i].set("order", i - 1);
+                            sortedCollection[i].save();
                         }
+                    }
 
-                        self.isDeleted = true;
-                        self.onChange();
-                        self.remove();
-                    });
-                },
+                    this.isDeleted = true;
+                    this.onChange();
+                    this.remove();
+                }, this),
+                _.bind(function () {
+                    this.scaleEditor.$el.modal("show");
+                }, this)
+            );
+        },
 
-                /**
-                 * Sort the scale values collection by order value, TODO use collection comparator
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#getSortedCollection
-                 */
-                getSortedCollection: function () {
-                    // Sort the model in the right scale value order
-                    return this.model.collection.sortBy(function (scaleValue) {
-                        return scaleValue.get("order");
-                    });
-                }
+        /**
+         * Sort the scale values collection by order value, TODO use collection comparator
+         */
+        getSortedCollection: function () {
+            // Sort the model in the right scale value order
+            return this.model.collection.sortBy(function (scaleValue) {
+                return scaleValue.get("order");
             });
-
-            return ScaleValueEditor;
-
         }
-);
+    });
+    return ScaleValueEditor;
+});

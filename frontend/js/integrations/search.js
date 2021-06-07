@@ -22,7 +22,7 @@ define([
     "util",
     "models/user",
     "roles",
-    "player_adapter_HTML5",
+    "player-adapter-html5"
 ], function (
     $,
     _,
@@ -61,9 +61,9 @@ define([
             // Sanitize query strings, so that they're actually at the end
             // TODO: Clean this up OR find a better way to do this
             var queryString = this.url.match(/\?(.*?)\//);
-            if(queryString && queryString[0]) {
+            if (queryString && queryString[0]) {
                 this.url = this.url.replace(queryString[0], "");
-                if (queryString[0].slice(-1) === "/") {queryString[0] = queryString[0].slice(0, -1)}
+                if (queryString[0].slice(-1) === "/") { queryString[0] = queryString[0].slice(0, -1) }
                 this.url = this.url + queryString[0];
             }
         };
@@ -126,9 +126,9 @@ define([
 
     /**
      * Module containing the tool integration
-     * @exports annotation-tool-integration
+     * @exports integration
      */
-    var Configuration = {
+    var Integration = {
         /**
          * Get the current video id (video_extid)
          * @return {Promise.<string>} video external id
@@ -139,7 +139,6 @@ define([
 
         /**
          * Get the current series id of the video (series_extid)
-         * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
          * @return {Promise.<string>} video external id
          */
         getSeriesExtId: function () {
@@ -149,26 +148,11 @@ define([
         },
 
         /**
-         * Get the external parameters related to video. The supported parameters are now the following:
-         *     - title: The title of the video
-         *     - src_owner: The owner of the video in the system
-         *     - src_creation_date: The date of the course, when the video itself was created.
-         * @example
-         * {
-         *     video_extid: 123, // Same as the value returned by getVideoExtId
-         *     title: "Math lesson 4", // The title of the video
-         *     src_owner: "Professor X", // The owner of the video in the system
-         *     src_creation_date: "12-12-1023" // The date of the course, when the video itself was created.
-         * }
-         * @return {Object} The literal object containing all the parameters described in the example.
+         * @return {Promise.<object>} Metadata about the video
          */
         getVideoParameters: function () {
             return searchResult.then(function (result) {
-                return {
-                    title: result.dcTitle,
-                    src_owner: result.dcCreator,
-                    src_creaton_date: result.dcCreated
-                };
+                return { title: result.dcTitle };
             });
         },
 
@@ -179,7 +163,7 @@ define([
          */
         getUserRoleFromExt: function (roles) {
             return adminRoles.then(function (adminRoles) {
-                if (_.some(adminRoles.concat(['ROLE_ADMIN']), function (adminRole) {
+                if (_.some(adminRoles.concat(["ROLE_ADMIN"]), function (adminRole) {
                     return _.contains(roles, adminRole);
                 })) {
                     return ROLES.ADMINISTRATOR;
@@ -255,5 +239,5 @@ define([
         }
     };
 
-    return Configuration;
+    return Integration;
 });
