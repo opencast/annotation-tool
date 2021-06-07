@@ -17,14 +17,19 @@
  * A module representing the view for a comments container
  * @module views-comments-container
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "views/comment",
         "templates/comments-container",
-        "backbone",
-        "handlebarsHelpers"],
-
-    function (_, CommentView, template, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        _,
+        CommentView,
+        template,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -32,39 +37,34 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#View}
          * @augments module:Backbone.View
          * @memberOf module:views-comments-container
-         * @alias module:views-comments-container.CommentsContainer
          */
         var CommentsContainer = Backbone.View.extend({
 
             /**
              * Tag name from the view element
-             * @alias module:views-comments-container.CommentsContainer#tagName
              * @type {string}
              */
             tagName: "div",
 
             /**
              * Class name from the view element
-             * @alias module:views-comments-container.CommentsContainer#className
              * @type {string}
              */
             className: "comments-container",
 
             /**
              * View template
-             * @alias module:views-comments-container.CommentsContainer#template
              * @type {HandlebarsTemplate}
              */
 
             /**
              * Events to handle
-             * @alias module:views-comments-container.CommentsContainer#events
              * @type {object}
              */
             events: {
-                "keyup textarea.create"                    : "handleInsertCancelButtonShortcuts",
-                "click button[type=submit].add-comment"    : "insert",
-                "click button[type=button].cancel-comment" : "onCancelComment"
+                "keyup textarea.create": "handleInsertCancelButtonShortcuts",
+                "click button[type=submit].add-comment": "insert",
+                "click button[type=button].cancel-comment": "onCancelComment"
             },
 
             currentState: false,
@@ -72,19 +72,20 @@ define(["underscore",
 
             /**
              * constructor
-             * @alias module:views-comments-container.CommentsContainer#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
                 this.commentViews = [];
 
                 // Bind function to the good context
-                _.bindAll(this,
-                          "render",
-                          "deleteView",
-                          "insert",
-                          "onCancelComment",
-                          "resetViews");
+                _.bindAll(
+                    this,
+                    "render",
+                    "deleteView",
+                    "insert",
+                    "onCancelComment",
+                    "resetViews"
+                );
 
                 this.listenTo(this.collection, "remove", this.deleteView);
                 this.listenTo(this.collection, "reset", this.resetViews);
@@ -109,7 +110,6 @@ define(["underscore",
 
             /**
              * Reset all the views set
-             * @alias module:views-comments-container.CommentsContainer#resetViews
              */
             resetViews: function () {
                 _.each(this.commentViews, function (commentView, index) {
@@ -124,12 +124,11 @@ define(["underscore",
 
             /**
              * Render this view
-             * @alias module:views-comments-container.CommentsContainer#render
              */
             render: function () {
                 this.$el.html(this.template({
-                    comments  : this.collection.models,
-                    addState  : this.currentState === CommentsContainer.STATES.ADD
+                    comments: this.collection.models,
+                    addState: this.currentState === CommentsContainer.STATES.ADD
                 }));
 
                 this.commentList = this.$("div.comment-list");
@@ -146,7 +145,6 @@ define(["underscore",
 
             /**
              * Remove the given comment from the views list
-             * @alias module:views-comments-container.CommentsContainer#deleteView
              * @param {Comment} Comment from which the view has to be deleted
              */
             deleteView: function (delComment) {
@@ -163,7 +161,6 @@ define(["underscore",
 
             /**
              * Handle keyboard shortcuts to control the insert and cancel buttons in the new comment form.
-             * @alias module:views-comments-container.CommentsContainer#handleInsertCancelButtonShortcuts
              * @param  {event} event Event object
              */
             handleInsertCancelButtonShortcuts: function (event) {
@@ -178,7 +175,6 @@ define(["underscore",
 
             /**
              * Submit a comment to the backend
-             * @alias module:views-comments-container.CommentsContainer#insert
              * @param  {event} event Event object
              */
             insert: function (event) {
@@ -200,7 +196,6 @@ define(["underscore",
 
             /**
              * Add a new comment to the container
-             * @alias module:views-comments-container.CommentsContainer#addComment
              * @param {Comment} comment Comment to add
              */
             addComment: function (comment) {
@@ -220,7 +215,6 @@ define(["underscore",
 
             /**
              * Listener for the cancel button
-             * @alias module:views-comments-container.CommentsContainer#onCancelComment
              * @param  {event} event Event object
              */
             onCancelComment: function (event) {
@@ -230,7 +224,6 @@ define(["underscore",
 
             /**
              * Cancel the insertion of a comment
-             * @alias module:views-comments-container.CommentsContainer#cancel
              */
             cancel: function () {
                 this.$("textarea").val("");
@@ -240,7 +233,6 @@ define(["underscore",
 
             /**
              * Remove this view from the DOM and clean up all of its data and event handlers
-             * @alias module:views-comments-container.CommentsContainer#remove
              */
             remove: function () {
                 _.each(this.commentViews, function (commentView) {
@@ -251,12 +243,11 @@ define(["underscore",
         }, {
             /**
              * Possible states for this view
-             * @alias module:views-comments-container.CommentsContainer.STATES
              */
             STATES: {
-                READ : "read",
-                ADD  : "add",
-                EDIT : "edit"
+                READ: "read",
+                ADD: "add",
+                EDIT: "edit"
             }
         });
         return CommentsContainer;

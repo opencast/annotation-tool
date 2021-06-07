@@ -18,12 +18,17 @@
  * A module representing a categories collection
  * @module collections-categories
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "models/category",
-        "backbone"],
-
-    function (_, Category, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        _,
+        Category,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -31,19 +36,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-categories
-         * @alias module:collections-categories.Categories
          */
         var Categories = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-categories.Categories#initialize
              */
             model: Category,
 
             /**
              * constructor
-             * @alias module:collections-categories.Categories#initialize
              */
             initialize: function (models, options) {
                 this.video = options.video;
@@ -52,18 +54,16 @@ define(["underscore",
 
             /**
              * Get the url for this collection
-             * @alias module:collections-categories.Categories#url
              * @return {String} The url of this collection
              */
             url: function () {
-                return (this.video ? _.result(this.video, "url") : "") 
-                + "/categories/" 
+                return (this.video ? _.result(this.video, "url") : "")
+                + "/categories/"
                 + (this.mySeriesExtId ? "?seriesExtId=" + this.mySeriesExtId : "");
             },
 
             /**
              * Parse the given data
-             * @alias module:collections-categories.Categories#parse
              * @param  {object} data Object or array containing the data to parse.
              * @return {object}      the part of the given data related to the categories
              */
