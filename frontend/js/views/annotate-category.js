@@ -88,12 +88,11 @@ define(
                 "click .catItem-header i.visibility": "toggleVisibility",
                 "click .catItem-header i.delete": "onDeleteCategory",
                 "click .catItem-header i.scale": "editScale",
-                "click .catItem-header i.sharedVis": "onChangeSharedVis",
+                "click .catItem-header button[data-access]": "onChangeAccess",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
-                "click .catItem-add": "onCreateLabel",
+                "click .catItem-add": "onCreateLabel"
             },
-
 
             /**
              * Constructor
@@ -120,7 +119,6 @@ define(
                     "removeOne",
                     "onCreateLabel",
                     "editScale",
-                    "onChangeSharedVis",
                     "updateInputWidth"
                 );
 
@@ -138,7 +136,7 @@ define(
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
                 // Not our category but someone elses? Should not be clickable
-                if(attr.category.get("settings").createdAsMine && attr.category.get("created_by") !== annotationTool.user.get("id")) {
+                if (attr.category.get("settings").createdAsMine && !attr.category.isMine()) {
                     this.$el.addClass("read-only");
                 }
                 this.model = attr.category;
@@ -157,22 +155,20 @@ define(
 
                 $(window).on("resize.annotate-category", this.updateInputWidth);
 
-                //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
 
-                this.tooltipSelector =
-                ".sharedVisibility[data-id=" + this.model.id + "] button";
+                this.tooltipSelector = ".category-access[data-id=" + this.model.id + "] button";
 
                 $("body").on(
                     "click",
                     this.tooltipSelector,
                     _.bind(function (event) {
-                        this.onChangeSharedVis(event);
+                        this.onChangeAccess(event);
                     }, this)
                 );
 
                 $(document).on(
-                    "click.sharedVisibilityTooltip",
+                    "click.accessTooltip",
                     _.bind(function (event) {
                         if (this.visibilityButton && (
                             !this.visibilityButton.has(event.target).length
@@ -221,9 +217,12 @@ define(
                 this.render();
             },
 
-            onChangeSharedVis: function (event) {
-                this.model.set("access", ACCESS.parse($(event.currentTarget).data("sharedvis")));
-                this.model.save();
+            /**
+             * Change the access level of a category
+             * @param {Event} event The event causing the change
+             */
+            onChangeAccess: function (event) {
+                this.model.save({ access: ACCESS.parse($(event.currentTarget).data("access")) });
             },
 
             /**
@@ -282,9 +281,9 @@ define(
              */
             addLabel: function (label) {
                 var labelView = new LabelView({
-                    label        : label,
-                    editModus    : this.editModus,
-                    roles        : this.roles
+                    label: label,
+                    editModus: this.editModus,
+                    roles: this.roles
                 });
 
                 this.labelViews.push(labelView);
@@ -299,10 +298,10 @@ define(
              */
             onCreateLabel: function () {
                 this.model.get("labels").create({
-                    value       : i18next.t("new label defaults.description"),
+                    value: i18next.t("new label defaults.description"),
                     abbreviation: i18next.t("new label defaults.abbreviation"),
-                    category    : this.model,
-                    access      : this.model.get("access")
+                    category: this.model,
+                    access: this.model.get("access")
                 }, { wait: true });
             },
 
@@ -372,7 +371,7 @@ define(
                 if (this.visibilityButton) {
                     this.visibilityButton.tooltip("destroy");
                 }
-                
+
                 var modelJSON = this.model.toJSON();
 
                 this.undelegateEvents();
@@ -412,12 +411,11 @@ define(
 
                 this.delegateEvents(this.events);
 
-
-                this.visibilityButton = this.$el.find(".sharedVisibility")
-                .tooltip({
-                    container: 'body',
-                    html: true
-                });
+                this.visibilityButton = this.$el.find(".category-access")
+                    .tooltip({
+                        container: "body",
+                        html: true
+                    });
 
                 return this;
             },
@@ -431,7 +429,7 @@ define(
                 });
                 $(window).off(".annotate-category");
 
-                $(document).off("click.myvisibilityTooltip");
+                $(document).off("click.accessTooltip");
                 $("body").off("click", this.tooltipSelector);
                 if (this.visibilityButton) {
                     this.visibilityButton.tooltip("destroy");

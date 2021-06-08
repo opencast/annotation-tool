@@ -45,7 +45,7 @@ define(
              * @static
              */
             defaults: {
-                text: "",
+                text: ""
             },
 
             /**

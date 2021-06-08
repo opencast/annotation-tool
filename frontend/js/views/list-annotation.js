@@ -301,7 +301,7 @@ define(
 
                     $target.parent().find("span").show();
                     this.model.set({
-                        start   : seconds,
+                        start: seconds,
                         duration: this.model.get("duration") + this.model.get("start") - seconds
                     });
                     this.model.save(null, { silent: true });
@@ -401,7 +401,6 @@ define(
                     this.$el.removeAttr("title");
                 }
 
-
                 // Hack for Firefox, add a button over it
                 if ($.browser.mozilla) {
                     if (modelJSON.duration > 0) {
@@ -409,7 +408,6 @@ define(
                     }
                     this.$el.find(".start").append("<span class=\"start-btn\" title=\"" + i18next.t("list annotation.double click to edit") + "\">&nbsp;</span>");
                 }
-
 
                 if (this.getState().withComments) {
                     if (this.getState() === ListAnnotation.STATES.COMMENTS || this.model.get("comments").length > 0) {

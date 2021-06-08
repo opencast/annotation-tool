@@ -38,12 +38,11 @@ define([
         /**
          * The element in which the print view is displayed.
          */
-        el: '#print-view',
+        el: "#print-view",
         /**
          * The template to render the print view with.
          */
         template: printTemplate,
-
 
         /**
          * Constructor
@@ -70,7 +69,7 @@ define([
                 return tracks.get(trackId);
             });
             var annotations = _.chain(tracks)
-                .invoke('get', 'annotations')
+                .invoke("get", "annotations")
                 .pluck("models")
                 .flatten()
                 .filter(annotationTool.isVisible);

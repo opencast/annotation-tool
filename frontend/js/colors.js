@@ -79,7 +79,6 @@ define([
                 },
                 nextColor;
 
-
             // Look for colors with the less usage
             do {
                 maxValue++;
@@ -110,7 +109,6 @@ define([
         _.each(COLORS, function (color) {
             colors[color] = 0;
         }, self);
-
 
         return self;
     };

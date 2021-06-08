@@ -70,7 +70,7 @@ module.exports = function (grunt) {
                     'jquery.colorPicker',
                     'slider',
                     'bootstrap',
-                    "filesaver"
+                    'filesaver'
                 ]
             },
             all: {
@@ -83,7 +83,9 @@ module.exports = function (grunt) {
         eslint: {
             options: {
                 maxWarnings: 0,
-                failOnError: true
+                failOnError: true,
+                maxWarnings: grunt.option('maxWarnings'),
+                fix: grunt.option('fix')
             },
             files: ['**/{.,}*.js', '!**/node_modules/**/{.,}*', '!js/libs/**/{.,}*']
         }

@@ -31,7 +31,7 @@ require.config({
         "xlsx": "libs/xlsx.full.min",
         "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min",
         "papaparse": "libs/papaparse.min",
-        "filesaver": "libs/FileSaver.min",
+        "filesaver": "libs/FileSaver.min"
     },
     waitSeconds: 10,
 
