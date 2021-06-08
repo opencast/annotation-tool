@@ -25,6 +25,7 @@ define(
         "backbone",
         "i18next",
         "util",
+        "access",
         "views/annotate-label",
         "templates/annotate-category",
         "jquery.colorPicker"
@@ -35,6 +36,7 @@ define(
         Backbone,
         i18next,
         util,
+        ACCESS,
         LabelView,
         Template
     ) {
@@ -86,6 +88,7 @@ define(
                 "click .catItem-header i.visibility": "toggleVisibility",
                 "click .catItem-header i.delete": "onDeleteCategory",
                 "click .catItem-header i.scale": "editScale",
+                "click .catItem-header button[data-access]": "onChangeAccess",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
                 "click .catItem-add": "onCreateLabel"
@@ -132,6 +135,10 @@ define(
                 }
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
+                // Not our category but someone elses? Should not be clickable
+                if (attr.category.get("settings").createdAsMine && !attr.category.isMine()) {
+                    this.$el.addClass("read-only");
+                }
                 this.model = attr.category;
 
                 this.render();
@@ -148,8 +155,29 @@ define(
 
                 $(window).on("resize.annotate-category", this.updateInputWidth);
 
-                //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
+
+                this.tooltipSelector = ".category-access[data-id=" + this.model.id + "] button";
+
+                $("body").on(
+                    "click",
+                    this.tooltipSelector,
+                    _.bind(function (event) {
+                        this.onChangeAccess(event);
+                    }, this)
+                );
+
+                $(document).on(
+                    "click.accessTooltip",
+                    _.bind(function (event) {
+                        if (this.visibilityButton && (
+                            !this.visibilityButton.has(event.target).length
+                        )) {
+                            this.visibilityButton.tooltip("hide");
+                        }
+                    }, this)
+                );
+
                 return this;
             },
 
@@ -187,6 +215,14 @@ define(
                     labelView.changeCategory(this.model.toJSON());
                 }, this);
                 this.render();
+            },
+
+            /**
+             * Change the access level of a category
+             * @param {Event} event The event causing the change
+             */
+            onChangeAccess: function (event) {
+                this.model.save({ access: ACCESS.parse($(event.currentTarget).data("access")) });
             },
 
             /**
@@ -332,11 +368,16 @@ define(
              * @return {CategoryView} this category view
              */
             render: function () {
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+
                 var modelJSON = this.model.toJSON();
 
                 this.undelegateEvents();
 
                 modelJSON.notEdit = !this.editModus;
+                modelJSON.access = ACCESS.render(this.model.get("access"));
 
                 _.each(this.labelViews, function (view) {
                     view.$el.detach();
@@ -370,6 +411,12 @@ define(
 
                 this.delegateEvents(this.events);
 
+                this.visibilityButton = this.$el.find(".category-access")
+                    .tooltip({
+                        container: "body",
+                        html: true
+                    });
+
                 return this;
             },
 
@@ -381,6 +428,13 @@ define(
                     labelView.remove();
                 });
                 $(window).off(".annotate-category");
+
+                $(document).off("click.accessTooltip");
+                $("body").off("click", this.tooltipSelector);
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+
                 Backbone.View.prototype.remove.apply(this, arguments);
             }
         });

@@ -56,7 +56,7 @@ define(
                 id: "all",
                 name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
-                    return category.isPublic() || category.isMine();
+                    return !category.get("settings").createdAsMine || category.isMine();
                 },
                 roles: []
             },
@@ -64,19 +64,29 @@ define(
                 id: "public",
                 name: i18next.t("annotate.categories.public"),
                 filter: function (category) {
-                    return category.isPublic();
+                    return !category.get("settings").createdAsMine;
                 },
                 roles: [ROLES.ADMINISTRATOR],
-                attributes: { access: ACCESS.PUBLIC }
+                attributes: {
+                    access: ACCESS.PUBLIC,
+                    settings: {
+                        createdAsMine: false
+                    }
+                }
             },
             MINE: {
                 id: "mine",
                 name: i18next.t("annotate.categories.mine"),
                 filter: function (category) {
-                    return category.isMine() && !category.isPublic();
+                    return category.get("settings").createdAsMine && category.isMine();
                 },
                 roles: [ROLES.USER, ROLES.ADMINISTRATOR],
-                attributes: { access: ACCESS.PRIVATE }
+                attributes: {
+                    access: ACCESS.PRIVATE,
+                    settings: {
+                        createdAsMine: true
+                    }
+                }
             }
         },
 
@@ -181,6 +191,7 @@ define(
 
                 this.tracks = annotationTool.video.get("tracks");
                 this.listenTo(this.tracks, "select", this.changeTrack);
+                this.listenTo(this.tracks, "visibility", this.updateCategories);
                 this.playerAdapter = attr.playerAdapter;
 
                 this.layout = _.pick(attr, "freeText", "categories");
@@ -192,7 +203,7 @@ define(
                 annotationTool.colorsManager.updateColors(categories.models);
 
                 _.each(DEFAULT_TABS, function (params) {
-                    this.addTab(categories, params);
+                    this.addTab(params);
                 }, this);
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
@@ -315,26 +326,34 @@ define(
              * @param {Categories} categories Categories to add to the new tab
              * @param {object} attr Infos about the new tab like id, name, filter for categories and roles.
              */
-            addTab: function (categories, attr) {
+            addTab: function (attr) {
                 var params = {
-                        id: attr.id,
-                        name: attr.name,
-                        categories: categories,
-                        filter: attr.filter,
-                        roles: attr.roles,
-                        attributes: attr.attributes
-                    },
-                    newButton = this.tabsButtonTemplate(params),
-                    annotateTab;
+                    id: attr.id,
+                    name: attr.name,
+                    filter: attr.filter,
+                    roles: attr.roles,
+                    attributes: attr.attributes
+                };
 
-                newButton = $(newButton).appendTo(this.tabsButtonsElement);
+                var newButton = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
                 params.button = newButton;
 
                 params.id = "labelTab-" + params.id;
-                annotateTab = new AnnotateTab(params);
+                var annotateTab = new AnnotateTab(params);
 
                 this.categoriesTabs[attr.id] = annotateTab;
                 this.tabsContainerElement.append(annotateTab.$el);
+            },
+
+            /**
+             * Remove a categories tab from the annotate view based on the associated id
+             * @param {object} id the associated id
+             */
+            removeTab: function (id) {
+                delete this.categoriesTabs[id];
+
+                this.tabsButtonsElement.find("a[data-tabid=\"" + id + "\"]").parent().remove();
+                this.tabsContainerElement.find("#labelTab-" + id).remove();
             },
 
             /**
@@ -394,6 +413,78 @@ define(
                         freeTextVisible: annotationTool.freeTextVisible
                     })
                 );
+            },
+
+            /**
+             * Displays Categories Tabs for currently visible tracks
+             */
+            updateCategories: function () {
+                var allTab = this.categoriesTabs["all"];
+
+                this.tracks.each(function (track) {
+                    var trackUserId = track.get("created_by");
+
+                    if (track.get("visible")) {
+
+                        // Our own category; should already be visible everywhere
+                        if (track.isMine()) {
+                            return;
+                        }
+
+                        // Otherwise, add a new category to the "All" tab
+                        allTab.addCategories(function (category) {
+
+                            if (!categoryFilter(trackUserId, category)) {
+                                return false;
+                            }
+
+                            // Is the category already present?
+                            if (_.some(allTab.categoryViews, function (e) {
+                                return e.model.id === category.id;
+                            })) {
+                                return false;
+                            }
+
+                            return true;
+                        });
+
+                        // If there is already a tab for this track owner, we don't need to add one
+                        if (this.categoriesTabs.hasOwnProperty(trackUserId)) {
+                            return;
+                        }
+
+                        this.addTab({
+                            id: trackUserId,
+                            name: track.get("created_by_nickname"),
+                            filter: _.partial(categoryFilter, trackUserId),
+                            roles: [],
+                            attributes: { access: ACCESS.PRIVATE }
+                        });
+                    } else {
+                        // Remove categories/tabs that are no longer supposed to be visible
+                        this.removeTab(track.get("created_by"));
+                        annotationTool.video.get("categories").categories.chain()
+                            .filter(function (category) {
+                                return category.get("created_by") === trackUserId
+                                    && category.get("settings").createdAsMine
+                                    && !category.isMine();
+                            })
+                            .each(allTab.removeOne);
+                    }
+                }, this);
+
+                function categoryFilter(trackUserId, category) {
+                    // Is it from the mine category?
+                    if (!category.get("settings").createdAsMine) {
+                        return false;
+                    }
+                    // Was the category created by the user of the tab?
+                    if (category.get("created_by") !== trackUserId) {
+                        return false;
+                    }
+
+                    return true;
+                }
             },
 
             /**
