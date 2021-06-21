@@ -1,4 +1,8 @@
 module.exports = {
+    ignorePatterns: [
+        '/js/libs',
+        '!.*'
+    ],
     rules: {
         'no-trailing-spaces': 'warn',
         'keyword-spacing': 'warn',
@@ -26,7 +30,7 @@ module.exports = {
         'no-multi-spaces': 'warn'
     },
     overrides: [{
-        files: ['Gruntfile.js', '.eslintrc.js'],
+        files: './{,.}*.js',
         env: {
             node: true,
             es2020: true
@@ -35,7 +39,7 @@ module.exports = {
             'quotes': ['warn', 'single']
         }
     }, {
-        files: 'js/**/*.js',
+        files: 'js/**/*',
         env: {
             browser: true,
             amd: true

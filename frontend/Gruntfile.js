@@ -82,12 +82,11 @@ module.exports = function (grunt) {
 
         eslint: {
             options: {
-                maxWarnings: 0,
                 failOnError: true,
                 maxWarnings: grunt.option('maxWarnings'),
                 fix: grunt.option('fix')
             },
-            files: ['js/**/*.js', './{,.}*.js', '!js/libs/**/{,.}*']
+            files: ['js', './{,.}*.js']
         }
     });
 
