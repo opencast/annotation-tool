@@ -87,6 +87,15 @@ module.exports = function (grunt) {
                 fix: grunt.option('fix')
             },
             files: ['js', './{,.}*.js']
+        },
+
+        stylelint: {
+            options: {
+                failOnError: true,
+                maxWarnings: grunt.option('maxWarnings'),
+                fix: grunt.option('fix')
+            },
+            files: ['style/annotations/**/*.less', 'style/style.less', 'style/colorpicker.css']
         }
     });
 
@@ -96,6 +105,7 @@ module.exports = function (grunt) {
         'clean',
         'amdcheck',
         'eslint',
+        'stylelint',
         'handlebars',
         'less',
         'copy'

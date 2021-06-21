@@ -3,626 +3,626 @@
  */
 
 .edit {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 i.check {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 .checked i.check {
-	visibility: visible;
+    visibility: visible;
 }
 
 .no-track {
-	margin: 5px;
-	color: #c7c7c7;
-	font-size: 12px;
-	line-height: 45px;
-	font-weight: normal;
-	text-align: center;
+    margin: 5px;
+    color: #c7c7c7;
+    font-size: 12px;
+    line-height: 45px;
+    font-weight: normal;
+    text-align: center;
 }
 
 
 button.category-access {
-	.link-button();
+    .link-button();
 }
 
 div.category-access button {
-	.link-button();
-	width: 23px;
-	text-align: center;
+    .link-button();
+    width: 23px;
+    text-align: center;
 
-	i {
-		margin-top: 0;
-	}
+    i {
+        margin-top: 0;
+    }
 }
 
 #annotate-form {
 
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
-	#categories {
-		flex-grow: 1;
-		display: flex;
-		flex-direction: column;
-	}
+    #categories {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
 
-	.insert-fields {
-		display: inline-block;
-	}
+    .insert-fields {
+        display: inline-block;
+    }
 
-	.stop-fields {
-		margin-top: 16px;
-		margin-bottom: 32px;
-		padding: 8px;
+    .stop-fields {
+        margin-top: 16px;
+        margin-bottom: 32px;
+        padding: 8px;
 
-		legend {
-			border: none;
-			margin: 0;
-			margin-bottom: -16px;
-			font-size: 14px;
-			font-weight: bold;
-		}
-	}
+        legend {
+            border: none;
+            margin: 0;
+            margin-bottom: -16px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
 
-	#input-container {
+    #input-container {
 
-		width: 100%;
-		text-align: left;
-		margin-bottom: 10px;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 10px;
 
-		#new-annotation {
-			width: 100%;
-			box-sizing: border-box;
-			border: 4px solid @grayLight;
-			margin-bottom: 5px;
-			resize: vertical;
-		}
+        #new-annotation {
+            width: 100%;
+            box-sizing: border-box;
+            border: 4px solid @grayLight;
+            margin-bottom: 5px;
+            resize: vertical;
+        }
 
-		#insert {
-			float: right;
-		}
-	}
+        #insert {
+            float: right;
+        }
+    }
 
-	#label-tabs-buttons {
-		margin-bottom: 0;
-		position: relative;
-		z-index: 10;
+    #label-tabs-buttons {
+        margin-bottom: 0;
+        position: relative;
+        z-index: 10;
 
-		> li button {
-			&.active buttno {
-				border-bottom: 2px solid @white;
-				margin-bottom: 0;
-			}
-		}
-	}
+        > li button {
+            &.active buttno {
+                border-bottom: 2px solid @white;
+                margin-bottom: 0;
+            }
+        }
+    }
 
-	#label-tabs-contents {
-		display: flex;
-		flex-grow: 1;
-		background-color: @white;
-		padding: 0;
-		z-index: 5;
-		border-top: 2px solid @grayDark;
-		margin-top: -2px;
-	}
+    #label-tabs-contents {
+        display: flex;
+        flex-grow: 1;
+        background-color: @white;
+        padding: 0;
+        z-index: 5;
+        border-top: 2px solid @grayDark;
+        margin-top: -2px;
+    }
 
-	#editSwitch {
-		float: right;
-		margin-right: 10px;
-		padding: 0;
-	}
+    #editSwitch {
+        float: right;
+        margin-right: 10px;
+        padding: 0;
+    }
 
-	label, span, p, legend {
-		color: @white;
-		white-space: nowrap;
-	}
+    label, span, p, legend {
+        color: @white;
+        white-space: nowrap;
+    }
 }
 
 #annotate-container {
-	.navbar {
-		.currentTrack {
-			color: @white;
-		}
-
-		.dropdown {
-			visibility: hidden;
-		}
-	}
-
-	&.expanded {
-		.navbar .dropdown {
-			visibility: visible;
-		}
-	}
-
-	.control-group {
-		margin: 0;
-	}
-
-	h3 {
-		line-height: 18px;
-		padding-top: 8px;
-		padding-right: 8px;
-	}
-
-	input.file {
-		display: none;
-	}
-
-	&.edit-on {
-
-		i:not(.edit) {
-			display: none;
-		}
-
-		.colorPicker-picker {
-			display: inline-block !important;
-		}
-
-		i.edit {
-			background-color: none;
-			border: none;
-			margin-left: 5px;
-			float: right;
-			display: inline-block !important;
-
-			&:hover {
-				.iconHover();
-			}
-		}
-
-		.nav i.edit {
-			float: none;
-		}
-
-		ul.nav-tabs {
-			.edit {
-				visibility: hidden;
-			}
-
-			li.edit-on .edit {
-				 visibility: visible;
-			}
-		}
-	}
-
-	#label-tabs-contents div {
-		padding: 0px;
-		&.carousel {
-			.row-fluid {
-				> .span1 {
-					width: 8.33333%;
-				}
-
-				> [class*="span1"] {
-					margin-left: 0;
-				}
-			}
-
-			overflow: auto;
-			margin-bottom: 0;
-
-			.read-only {
-				pointer-events: none;
-				opacity: 0.4;
-			}
-
-
-			.category-item {
-
-				height: 100%;
-				//min-width: 150px !important;
-
-				.catItem-header {
-					display: flex;
-					align-items: center;
-					text-align: left;
-					height: 25px;
-					padding: 1px 3px;
-					font-size: 14px;
-					font-weight: bold;
-					color: @white;
-					border-right: 1px solid @white;
-					border-bottom: 1px solid @white;
-
-					.edit { // Hide Icons and color picker when not in edit mode
-						display: none;
-					}
-
-					input {
-						min-width: 0;
-						margin: 0 0 3px 0;
-						padding: 1px;
-						font-weight: bold;
-						text-overflow: clip;
-						color: @black;
-
-						&[disabled] {
-							margin: 0;
-							text-overflow: ellipsis;
-							background: none;
-							cursor: default;
-							box-shadow: none;
-							border: none;
-							// width: 100%;
-						}
-					}
-
-					.colorPicker-picker {
-						background-image: url("@{iconGreySpritePath}");
-						background-position: -384px -168px;
-					}
-
-					[class*="icon-"] {
-						flex-shrink: 0;
-					}
-				}
-
-				.label-item {
-					@labelHeight: 16px;
-					@padding: 3px;
-					padding: @padding;
-					height: @labelHeight+(2*@padding);
-					position: relative;
-					background-color: fade(@white, 60%);
-					border-right: 1px solid @white;
-					border-bottom: 1px solid @white;
-					width: 100%;
-					.box-sizing(border-box);
-
-					.edit {
-						display: none;
-					}
-
-					.item-abbreviation {
-						width: 30px;
-					}
-
-					.item-value {
-						// min-width: 78px;
-						width: 100%;
-						margin-right: 4px;
-					}
-
-					.label-style {
-
-						color: @black;
-						display: block;
-						width: 100%;
-						text-overflow: ellipsis;
-						overflow: hidden;
-						background: none;
-						padding: 0;
-						border: 1px solid transparent;
-						height: @labelHeight;
-						box-sizing: border-box;
-					}
-
-					input {
-						color: @black;
-						background-color: @white;
-						float: left;
-						box-shadow: none;
-						padding: 1px;
-						margin: 0px;
-						display: inline-block;
-
-						&[disabled] {
-							display: none;
-						}
-					}
-
-					.item-icon {
-						float: right;
-					}
-
-					&:hover {
-						background-color: rgba(255, 255, 255, 0.4);
-					}
-
-					&.scale-disabled {
-						cursor: pointer;
-						&:active {
-							background-color: transparent;
-						}
-					}
-
-					&.scale-enabled {
-						/* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
-						.scalinghover() {
-							display: block;
-						}
-
-						&:hover {
-							cursor: default;
-							.scaling {
-								.scalinghover();
-							}
-						}
-
-						.scaling:hover {
-							.scalinghover();
-						}
-
-						.scaling {
-							@itemWidth: 28px;
-
-							display: none;
-							background-color: @gray;
-							position: absolute;
-							z-index: 100;
-							left: 100%;
-							top: 0;
-							margin: 0;
-							padding: 1px 1px 0 0;
-							max-width: 250px;
-							min-width: (5*(@itemWidth+1)); //Add 1 because of margins and border
-
-							&:before {
-								right: 100%;
-								border: solid transparent;
-								content: " ";
-								height: 0;
-								width: 0;
-								position: absolute;
-								pointer-events: none;
-								border-color: rgba(0, 0, 0, 0);
-								border-right-color: @black;
-								border-width: 8px;
-								margin-top: 2px;
-							}
-
-							li {
-								list-style: none;
-								display: block;
-								background-color: @black;
-								color: @white;
-								font-size: 0.8em;
-								font-weight: bold;
-								padding: 4px;
-								box-sizing: border-box;
-								margin: 0 0 1px 1px;
-								border: none;
-								text-align: center;
-								float: left;
-								min-width: @itemWidth;
-								max-width: 2.5*@itemWidth;
-								overflow: hidden;
-								text-overflow: ellipsis;
-								white-space: nowrap;
-
-								&:hover{
-									cursor: pointer;
-									background-color: @white;
-									color: @black;
-								}
-
-								&:active {
-									background-color: @grayLighter;
-									color: @grayDark;
-								}
-							}
-						} //end .scaling
-					} //end .scale-enabled
-				} //end .label-item
-
-				/* Position 6 to 12 need to carry the scaling on the left side */
-
-				&:nth-child(1n+7) .scale-enabled {
-					.scaling {
-
-						right: 100%;
-						left: auto;
-
-						&:before {
-							left: 100%;
-							right: auto;
-							border-color: rgba(0, 0, 0, 0);
-							border-right-color: rgba(0, 0, 0, 0);
-							border-left-color: @black;
-						}
-					}
-				}
-			} // end category-item
-		}
-
-		@controlsHeight: 22px;
-
-		div.controls {
-			text-align: right;
-			border-bottom: 1px solid @white;
-		}
-
-		div.pagination {
-
-			border-bottom: 2px solid @gray;
-			margin: 0 0 -1px 0; //Hide white border of div.controls
-			height: @controlsHeight;
-			text-align: right;
-
-			ul {
-				box-shadow: none;
-				border-radius: 0;
-			}
-
-			li.active button {
-				background-color: @grayLighter;
-				background-image: none;
-			}
-
-			button {
-				.btn();
-				// Override some Setting of .btn()
-				padding-top: 0;
-				padding-bottom: 0;
-				border: none;
-				border-left: 2px solid @grayDark;
-				border-radius: 0;
-				height: @controlsHeight;
-				line-height: @controlsHeight;
-				float: left;
-
-				&:hover {
-					background-color: @white;
-					background-image: none;
-				}
-			}
-		}
-	}
-
-	#label-tabs-contents div.tab-pane {
-
-		&.active {
-		    display: flex;
-		    flex-direction: column;
-		    flex-grow: 1;
-		}
-
-		.edit {
-			visibility: hidden;
-		}
-
-		.nav i.edit {
-			float: right;
-		}
-
-		i.edit {
-			visibility: hidden;
-		}
-
-		&.edit-on {
-
-			.edit {
-				visibility: visible;
-				display: inline-block;
-			}
-
-			div.carousel {
-
-				flex-grow: 1;
-
-				.carousel-inner {
-					width: 320%;
-
-					@media (min-width: 1000px) and (max-width: 1500px) {
-						width: 250% !important;
-					}
-
-					@media (min-width: 1500px) and (max-width: 2000px) {
-						width: 200% !important;
-					}
-
-					@media (min-width: 2000px) and (max-width: 2500px) {
-						width: 150% !important;
-					}
-				}
-
-				.category-item {
-
-					.catItem-header input {
-						width: 38%;
-						min-width: 42px;
-					}
-
-					.label-item {
-						.item-value {
-							width: 50px;
-						}
-
-						.scaling {
-							display: none;
-						}
-
-						&:hover {
-							cursor: default;
-
-							.scaling {
-								display: none;
-							}
-						}
-					}
-
-					.catItem-add {
-						margin-top: 2px;
-						padding: 5px;
-						text-align: left;
-
-						display: block;
-
-						i {
-							margin-right: 3px;
-						}
-						&:hover {
-							cursor: pointer;
-						}
-					}
-
-					.label-item {
-						height: 26px;
-						.edit {
-							display: inline-block;
-						}
-						.label-style {
-							display: none;
-						}
-						textarea, input {
-							border: 1px solid @white;
-							background-color: @white;
-							&:focus, &:active {
-								box-shadow: 0 0 2px @blue;
-								border: 1px solid @blue;
-							}
-						}
-
-						&:hover {
-							cursor: default;
-							background-color: fade(@white,40%);
-							.scaling {
-								display: none;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		i.edit {
-			margin: 2px 0 0 5px;
-			padding: 1px;
-			float: right;
-			background-color: transparent;
-			border: none;
-
-			&:hover {
-				.iconHover();
-			}
-		}
-	}
+    .navbar {
+        .currentTrack {
+            color: @white;
+        }
+
+        .dropdown {
+            visibility: hidden;
+        }
+    }
+
+    &.expanded {
+        .navbar .dropdown {
+            visibility: visible;
+        }
+    }
+
+    .control-group {
+        margin: 0;
+    }
+
+    h3 {
+        line-height: 18px;
+        padding-top: 8px;
+        padding-right: 8px;
+    }
+
+    input.file {
+        display: none;
+    }
+
+    &.edit-on {
+
+        i:not(.edit) {
+            display: none;
+        }
+
+        .colorPicker-picker {
+            display: inline-block !important;
+        }
+
+        i.edit {
+            background-color: none;
+            border: none;
+            margin-left: 5px;
+            float: right;
+            display: inline-block !important;
+
+            &:hover {
+                .iconHover();
+            }
+        }
+
+        .nav i.edit {
+            float: none;
+        }
+
+        ul.nav-tabs {
+            .edit {
+                visibility: hidden;
+            }
+
+            li.edit-on .edit {
+                visibility: visible;
+            }
+        }
+    }
+
+    #label-tabs-contents div {
+        padding: 0px;
+        &.carousel {
+            .row-fluid {
+                > .span1 {
+                    width: 8.33333%;
+                }
+
+                > [class*="span1"] {
+                    margin-left: 0;
+                }
+            }
+
+            overflow: auto;
+            margin-bottom: 0;
+
+            .read-only {
+                pointer-events: none;
+                opacity: 0.4;
+            }
+
+
+            .category-item {
+
+                height: 100%;
+                //min-width: 150px !important;
+
+                .catItem-header {
+                    display: flex;
+                    align-items: center;
+                    text-align: left;
+                    height: 25px;
+                    padding: 1px 3px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: @white;
+                    border-right: 1px solid @white;
+                    border-bottom: 1px solid @white;
+
+                    .edit { // Hide Icons and color picker when not in edit mode
+                        display: none;
+                    }
+
+                    input {
+                        min-width: 0;
+                        margin: 0 0 3px 0;
+                        padding: 1px;
+                        font-weight: bold;
+                        text-overflow: clip;
+                        color: @black;
+
+                        &[disabled] {
+                            margin: 0;
+                            text-overflow: ellipsis;
+                            background: none;
+                            cursor: default;
+                            box-shadow: none;
+                            border: none;
+                            // width: 100%;
+                        }
+                    }
+
+                    .colorPicker-picker {
+                        background-image: url("@{iconGreySpritePath}");
+                        background-position: -384px -168px;
+                    }
+
+                    [class*="icon-"] {
+                        flex-shrink: 0;
+                    }
+                }
+
+                .label-item {
+                    @labelHeight: 16px;
+                    @padding: 3px;
+                    padding: @padding;
+                    height: @labelHeight+(2*@padding);
+                    position: relative;
+                    background-color: fade(@white, 60%);
+                    border-right: 1px solid @white;
+                    border-bottom: 1px solid @white;
+                    width: 100%;
+                    .box-sizing(border-box);
+
+                    .edit {
+                        display: none;
+                    }
+
+                    .item-abbreviation {
+                        width: 30px;
+                    }
+
+                    .item-value {
+                        // min-width: 78px;
+                        width: 100%;
+                        margin-right: 4px;
+                    }
+
+                    .label-style {
+
+                        color: @black;
+                        display: block;
+                        width: 100%;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        background: none;
+                        padding: 0;
+                        border: 1px solid transparent;
+                        height: @labelHeight;
+                        box-sizing: border-box;
+                    }
+
+                    input {
+                        color: @black;
+                        background-color: @white;
+                        float: left;
+                        box-shadow: none;
+                        padding: 1px;
+                        margin: 0px;
+                        display: inline-block;
+
+                        &[disabled] {
+                            display: none;
+                        }
+                    }
+
+                    .item-icon {
+                        float: right;
+                    }
+
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.4);
+                    }
+
+                    &.scale-disabled {
+                        cursor: pointer;
+                        &:active {
+                            background-color: transparent;
+                        }
+                    }
+
+                    &.scale-enabled {
+                        /* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
+                        .scalinghover() {
+                            display: block;
+                        }
+
+                        &:hover {
+                            cursor: default;
+                            .scaling {
+                                .scalinghover();
+                            }
+                        }
+
+                        .scaling:hover {
+                            .scalinghover();
+                        }
+
+                        .scaling {
+                            @itemWidth: 28px;
+
+                            display: none;
+                            background-color: @gray;
+                            position: absolute;
+                            z-index: 100;
+                            left: 100%;
+                            top: 0;
+                            margin: 0;
+                            padding: 1px 1px 0 0;
+                            max-width: 250px;
+                            min-width: (5*(@itemWidth+1)); //Add 1 because of margins and border
+
+                            &:before {
+                                right: 100%;
+                                border: solid transparent;
+                                content: " ";
+                                height: 0;
+                                width: 0;
+                                position: absolute;
+                                pointer-events: none;
+                                border-color: rgba(0, 0, 0, 0);
+                                border-right-color: @black;
+                                border-width: 8px;
+                                margin-top: 2px;
+                            }
+
+                            li {
+                                list-style: none;
+                                display: block;
+                                background-color: @black;
+                                color: @white;
+                                font-size: 0.8em;
+                                font-weight: bold;
+                                padding: 4px;
+                                box-sizing: border-box;
+                                margin: 0 0 1px 1px;
+                                border: none;
+                                text-align: center;
+                                float: left;
+                                min-width: @itemWidth;
+                                max-width: 2.5*@itemWidth;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+
+                                &:hover{
+                                    cursor: pointer;
+                                    background-color: @white;
+                                    color: @black;
+                                }
+
+                                &:active {
+                                    background-color: @grayLighter;
+                                    color: @grayDark;
+                                }
+                            }
+                        } //end .scaling
+                    } //end .scale-enabled
+                } //end .label-item
+
+                /* Position 6 to 12 need to carry the scaling on the left side */
+
+                &:nth-child(1n+7) .scale-enabled {
+                    .scaling {
+
+                        right: 100%;
+                        left: auto;
+
+                        &:before {
+                            left: 100%;
+                            right: auto;
+                            border-color: rgba(0, 0, 0, 0);
+                            border-right-color: rgba(0, 0, 0, 0);
+                            border-left-color: @black;
+                        }
+                    }
+                }
+            } // end category-item
+        }
+
+        @controlsHeight: 22px;
+
+        div.controls {
+            text-align: right;
+            border-bottom: 1px solid @white;
+        }
+
+        div.pagination {
+
+            border-bottom: 2px solid @gray;
+            margin: 0 0 -1px 0; //Hide white border of div.controls
+            height: @controlsHeight;
+            text-align: right;
+
+            ul {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            li.active button {
+                background-color: @grayLighter;
+                background-image: none;
+            }
+
+            button {
+                .btn();
+                // Override some Setting of .btn()
+                padding-top: 0;
+                padding-bottom: 0;
+                border: none;
+                border-left: 2px solid @grayDark;
+                border-radius: 0;
+                height: @controlsHeight;
+                line-height: @controlsHeight;
+                float: left;
+
+                &:hover {
+                    background-color: @white;
+                    background-image: none;
+                }
+            }
+        }
+    }
+
+    #label-tabs-contents div.tab-pane {
+
+        &.active {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .edit {
+            visibility: hidden;
+        }
+
+        .nav i.edit {
+            float: right;
+        }
+
+        i.edit {
+            visibility: hidden;
+        }
+
+        &.edit-on {
+
+            .edit {
+                visibility: visible;
+                display: inline-block;
+            }
+
+            div.carousel {
+
+                flex-grow: 1;
+
+                .carousel-inner {
+                    width: 320%;
+
+                    @media (min-width: 1000px) and (max-width: 1500px) {
+                        width: 250% !important;
+                    }
+
+                    @media (min-width: 1500px) and (max-width: 2000px) {
+                        width: 200% !important;
+                    }
+
+                    @media (min-width: 2000px) and (max-width: 2500px) {
+                        width: 150% !important;
+                    }
+                }
+
+                .category-item {
+
+                    .catItem-header input {
+                        width: 38%;
+                        min-width: 42px;
+                    }
+
+                    .label-item {
+                        .item-value {
+                            width: 50px;
+                        }
+
+                        .scaling {
+                            display: none;
+                        }
+
+                        &:hover {
+                            cursor: default;
+
+                            .scaling {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    .catItem-add {
+                        margin-top: 2px;
+                        padding: 5px;
+                        text-align: left;
+
+                        display: block;
+
+                        i {
+                            margin-right: 3px;
+                        }
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+
+                    .label-item {
+                        height: 26px;
+                        .edit {
+                            display: inline-block;
+                        }
+                        .label-style {
+                            display: none;
+                        }
+                        textarea, input {
+                            border: 1px solid @white;
+                            background-color: @white;
+                            &:focus, &:active {
+                                box-shadow: 0 0 2px @blue;
+                                border: 1px solid @blue;
+                            }
+                        }
+
+                        &:hover {
+                            cursor: default;
+                            background-color: fade(@white,40%);
+                            .scaling {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        i.edit {
+            margin: 2px 0 0 5px;
+            padding: 1px;
+            float: right;
+            background-color: transparent;
+            border: none;
+
+            &:hover {
+                .iconHover();
+            }
+        }
+    }
 }
 
 
 .notrack {
-	color: red;
-	font-weight: bold;
+    color: red;
+    font-weight: bold;
 }
 
 
 #scale-editor {
-	.header-name {
-		float: left;
-		margin-left: 65px;
-		width: 100px;
-		margin-right: 3px;
-	}
+    .header-name {
+        float: left;
+        margin-left: 65px;
+        width: 100px;
+        margin-right: 3px;
+    }
 
-	.error {
-		color: red;
-		font-weight: bold;
-		border: 1px solid red;
-	}
+    .error {
+        color: red;
+        font-weight: bold;
+        border: 1px solid red;
+    }
 }
 
 #structured-annotations-header {
