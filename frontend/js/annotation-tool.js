@@ -194,7 +194,6 @@ define(
                 _.extend(this, configuration, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
-                this.seriesCategoryOperation.start = _.bind(this.seriesCategoryOperation.start, this);
 
                 this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
 
