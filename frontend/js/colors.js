@@ -54,9 +54,9 @@ define([
 
     return function () {
 
-        var self = this,
-            // colors map with usage number as value
-            colors = {};
+        var self = this;
+        // colors map with usage number as value
+        var colors = {};
 
         /**
          * Get all colors as string in an array
@@ -66,25 +66,18 @@ define([
         };
 
         /**
-         * Returns the next color the less used
+         * Returns the color used least so far
          */
         this.getNextColor = function () {
-            var maxValue = -1,
-                lookForColor = function (value, color) {
-                    if (value <= maxValue) {
-                        nextColor = color;
-                        colors[color]++;
-                        return true;
-                    }
-                },
-                nextColor;
-
-            // Look for colors with the less usage
-            do {
-                maxValue++;
-                _.find(colors, lookForColor, self);
-            } while (_.isUndefined(nextColor));
-
+            var nextColor = COLORS[0];
+            var minValue = colors[nextColor];
+            _.each(colors, function (value, color) {
+                if (value < minValue) {
+                    minValue = value;
+                    nextColor = color;
+                }
+            });
+            ++colors[nextColor];
             return nextColor;
         };
 
@@ -93,11 +86,10 @@ define([
          */
         this.updateColors = function (categories) {
             _.each(categories, function (category) {
-                var settings = category.get("settings"),
-                    color;
+                var settings = category.get("settings");
 
                 if (!_.isUndefined(settings) && !_.isUndefined(settings.color)) {
-                    color = settings.color.replace("#", "");
+                    var color = settings.color.replace("#", "");
                     if (!_.isUndefined(colors[color])) {
                         colors[color]++;
                     }

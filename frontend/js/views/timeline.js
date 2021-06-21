@@ -76,7 +76,8 @@ define([
         var label = item.label;
         if (label) {
             var color = annotation.color();
-            item.style = "background-color:" + color + ";" +
+            item.style =
+                "background-color:" + color + ";" +
                 "color:" + (
                     chroma(color).luminance() < 0.5
                         ? "white"

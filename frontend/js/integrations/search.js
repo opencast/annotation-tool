@@ -63,8 +63,10 @@ define([
             var queryString = this.url.match(/\?(.*?)\//);
             if (queryString && queryString[0]) {
                 this.url = this.url.replace(queryString[0], "");
-                if (queryString[0].slice(-1) === "/") { queryString[0] = queryString[0].slice(0, -1) }
-                this.url = this.url + queryString[0];
+                if (queryString[0].slice(-1) === "/") {
+                    queryString[0] = queryString[0].slice(0, -1);
+                }
+                this.url += queryString[0];
             }
         };
 
@@ -142,9 +144,9 @@ define([
          * @return {Promise.<string>} video external id
          */
         getSeriesExtId: function () {
-          return mediaPackage.then(function (mediaPackage) {
-              return mediaPackage.series;
-          }.bind(this));
+            return mediaPackage.then(function (mediaPackage) {
+                return mediaPackage.series;
+            }.bind(this));
         },
 
         /**

@@ -158,17 +158,13 @@ define(
              * @return {Track} The annotation with the given id
              */
             getAnnotation: function (annotationId, trackId) {
-                var track = this.getTrack(trackId),
-                    tmpAnnotation;
-
+                var track = this.getTrack(trackId);
                 if (track) {
                     return track.getAnnotation(annotationId);
                 } else {
-                    this.get("tracks").find(function (trackItem) {
-                        tmpAnnotation = trackItem.getAnnotation(annotationId);
-                        return !_.isUndefined(tmpAnnotation);
+                    return this.get("tracks").find(function (trackItem) {
+                        return trackItem.getAnnotation(annotationId);
                     });
-                    return tmpAnnotation;
                 }
             },
 

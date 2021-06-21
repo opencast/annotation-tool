@@ -123,7 +123,7 @@ define(
                         });
 
                         $(mediaElement).on("playing", function () {
-                            self.status =  PlayerAdapter.STATUS.PLAYING;
+                            self.status = PlayerAdapter.STATUS.PLAYING;
                         });
 
                         $(mediaElement).on("pause", function () {
@@ -202,7 +202,7 @@ define(
                 case PlayerAdapter.STATUS.ENDED:
                     // If yes, we play it
                     mediaElement.play();
-                    self.status =  PlayerAdapter.STATUS.PLAYING;
+                    self.status = PlayerAdapter.STATUS.PLAYING;
                     self.waitToPlay = false;
                     break;
                 }

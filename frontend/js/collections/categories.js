@@ -58,8 +58,8 @@ define(
              */
             url: function () {
                 return (this.video ? _.result(this.video, "url") : "")
-                + "/categories/"
-                + (this.mySeriesExtId ? "?seriesExtId=" + this.mySeriesExtId : "");
+                    + "/categories/"
+                    + (this.mySeriesExtId ? "?seriesExtId=" + this.mySeriesExtId : "");
             },
 
             /**

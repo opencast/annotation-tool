@@ -88,7 +88,7 @@ define(
                     }
                 }
             }
-        },
+        };
 
         /**
          * @constructor
@@ -96,7 +96,7 @@ define(
          * @memberOf module:views-annotate
          * @augments module:Backbone.View
          */
-        Annotate = Backbone.View.extend({
+        var Annotate = Backbone.View.extend({
             /**
              * Events to handle by the annotate view
              * @type {map}

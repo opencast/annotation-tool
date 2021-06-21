@@ -695,20 +695,20 @@ define(
                         return category.get("visible");
                     });
                 switch (format) {
-                    case "csv":
-                        annotationTool.exportCSV(
-                            tracksToExport,
-                            categoriesToExport,
-                            annotationTool.freeTextVisible
-                        );
-                        break;
-                    case "xlsx":
-                        annotationTool.exportXLSX(
-                            tracksToExport,
-                            categoriesToExport,
-                            annotationTool.freeTextVisible
-                        );
-                        break;
+                case "csv":
+                    annotationTool.exportCSV(
+                        tracksToExport,
+                        categoriesToExport,
+                        annotationTool.freeTextVisible
+                    );
+                    break;
+                case "xlsx":
+                    annotationTool.exportXLSX(
+                        tracksToExport,
+                        categoriesToExport,
+                        annotationTool.freeTextVisible
+                    );
+                    break;
                 }
             },
 

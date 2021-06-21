@@ -62,7 +62,7 @@ define(
                     model.set("id", model.tmpSeriesCategoryId);
                 }
 
-                return Backbone.Model.prototype.sync.call(this, method, model, options);
+                return Resource.prototype.sync.call(this, method, model, options);
             },
 
             /**
@@ -164,7 +164,7 @@ define(
                     json.settings = this.attributes.settings;
                 }
 
-                if (!_.isUndefined(withScale) &&  withScale) {
+                if (!_.isUndefined(withScale) && withScale) {
                     if (this.attributes.scale_id) {
                         json.scale = annotationTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
                     } else if (this.attributes.scale) {
