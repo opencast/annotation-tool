@@ -1015,7 +1015,7 @@ define(
                 },
                 customMessage: function (target) {
                     if (target.get("seriesCategoryId")) {
-                        return i18next.t("series-category modal.customMessage");
+                        return i18next.t("series category modal.custom message");
                     } else {
                         return "";
                     }

@@ -103,12 +103,12 @@
     "title": "Delete {{context}}",
     "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
   },
-  "series-category modal": {
+  "series category modal": {
     "cancel": "$t(common actions.cancel)",
-    "toVideo": "To Video Category",
+    "to video": "To Video Category",
     "title": "Warning!",
     "warning": "Changing the affiliation of this category from series back to video will delete the category from all other videos of this series! Proceed?",
-    "customMessage": "This category belongs to a series and appears in all videos. If you delete this category, it will be deleted for all other videos as well."
+    "custom message": "This category belongs to a series and appears in all videos. If you delete this category, it will be deleted for all other videos as well."
   },
   "description": "Video annotation tool",
   "list annotation": {
