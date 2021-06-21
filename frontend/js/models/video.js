@@ -79,7 +79,7 @@ define(
                 var categories = this.get("categories");
 
                 $.when(annotationTool.getSeriesExtId()).then(_.bind(function (seriesId) {
-                    categories.mySeriesExtId = seriesId;
+                    categories.seriesExtId = seriesId;
                 }, this));
 
                 categories.fetch({ async: false });
