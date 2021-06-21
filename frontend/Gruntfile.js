@@ -44,13 +44,10 @@ module.exports = function (grunt) {
                     expand: true,
                     src: [
                         'index.html',
-                        'js/**/*.js',
+                        'js/**/*',
                         'img/**/*',
-                        'style/**/*.svg',
-                        'style/**/*.png',
                         'style/**/*',
-                        'locales/**/*.json',
-                        '{js,style}/**/*.map'
+                        'locales/**/*'
                     ],
                     dest: '<%= destPath %>'
                 }, {
