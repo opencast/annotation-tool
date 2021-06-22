@@ -540,14 +540,6 @@ public interface ExtendedAnnotationService {
    * 
    * @param videoId
    *          the video id where the category is
-   * @param scaleId
-   *          the scale that is used for this category
-   * @param name
-   *          the category name
-   * @param description
-   *          the category description
-   * @param settings
-   *          the category settings
    * @param resource
    *          the resource
    * @param seriesExtId
@@ -616,8 +608,6 @@ public interface ExtendedAnnotationService {
    *
    * @param category
    *          the category to update
-   * @param newVideoId
-   *          id of the video the category is moved to
    * @throws ExtendedAnnotationException
    *          if an error occurs while storing/retrieving from persistence storage
    */
