@@ -20,9 +20,10 @@ import org.opencast.annotation.api.Comment;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Comment}.
@@ -86,6 +87,6 @@ public final class CommentImpl extends ResourceImpl implements Comment {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, annotationId, text, getTags());
+    return Objects.hash(id, annotationId, text, getTags());
   }
 }

@@ -19,8 +19,9 @@ import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Category}.
@@ -112,6 +113,6 @@ public class CategoryImpl extends ResourceImpl implements Category {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, seriesExtId, seriesCategoryId, getTags());
+    return Objects.hash(id, videoId, seriesExtId, seriesCategoryId, scaleId, name, description, settings, getTags());
   }
 }
