@@ -166,5 +166,4 @@ public class AnnotationDto extends AbstractResourceDto {
   public static JSONObject toJson(ExtendedAnnotationService s, int offset, List<Annotation> as) {
     return jO(p("offset", offset), p("count", as.size()), p("annotations", jA(mlist(as).map(toJson.curry(s)))));
   }
-
 }

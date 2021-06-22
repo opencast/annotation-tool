@@ -108,5 +108,4 @@ public class ResourceImpl implements Resource {
   public Map<String, String> getTags() {
     return tags;
   }
-
 }

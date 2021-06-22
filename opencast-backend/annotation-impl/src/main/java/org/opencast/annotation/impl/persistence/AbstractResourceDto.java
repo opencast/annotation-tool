@@ -131,5 +131,4 @@ public abstract class AbstractResourceDto {
       });
     }
   };
-
 }

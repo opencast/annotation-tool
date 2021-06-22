@@ -98,5 +98,4 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
   public int hashCode() {
     return EqualsUtil.hash(id, scaleId, name, value, order, getTags());
   }
-
 }

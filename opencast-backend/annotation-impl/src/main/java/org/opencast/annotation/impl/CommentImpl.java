@@ -88,5 +88,4 @@ public final class CommentImpl extends ResourceImpl implements Comment {
   public int hashCode() {
     return EqualsUtil.hash(id, annotationId, text, getTags());
   }
-
 }

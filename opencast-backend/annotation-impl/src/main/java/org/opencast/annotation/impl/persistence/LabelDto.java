@@ -143,5 +143,4 @@ public class LabelDto extends AbstractResourceDto {
   public static JSONObject toJson(ExtendedAnnotationService s, int offset, List<Label> ls) {
     return jO(p("offset", offset), p("count", ls.size()), p("labels", jA(mlist(ls).map(toJson.curry(s)))));
   }
-
 }

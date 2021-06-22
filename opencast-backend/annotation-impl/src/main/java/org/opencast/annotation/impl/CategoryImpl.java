@@ -114,5 +114,4 @@ public class CategoryImpl extends ResourceImpl implements Category {
   public int hashCode() {
     return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, seriesExtId, seriesCategoryId, getTags());
   }
-
 }

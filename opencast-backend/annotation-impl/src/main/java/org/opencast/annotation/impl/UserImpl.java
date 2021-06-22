@@ -76,5 +76,4 @@ public final class UserImpl extends ResourceImpl implements User {
   public int hashCode() {
     return EqualsUtil.hash(id, extId, nickname, email, getTags());
   }
-
 }

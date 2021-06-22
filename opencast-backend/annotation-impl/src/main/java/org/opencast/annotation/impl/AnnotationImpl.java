@@ -120,5 +120,4 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
   public int hashCode() {
     return EqualsUtil.hash(id, trackId, start, duration, text, settings, labelId, scaleValueId, getTags());
   }
-
 }

@@ -82,5 +82,4 @@ public class ScaleImpl extends ResourceImpl implements Scale {
   public int hashCode() {
     return EqualsUtil.hash(id, videoId, name, description, getTags());
   }
-
 }
