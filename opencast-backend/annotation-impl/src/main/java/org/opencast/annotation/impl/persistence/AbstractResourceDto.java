@@ -67,29 +67,29 @@ public abstract class AbstractResourceDto {
 
   public AbstractResourceDto update(Resource resource) {
     this.access = resource.getAccess();
-    this.createdBy = resource.getCreatedBy().getOrElse((Long) null);
-    this.updatedBy = resource.getUpdatedBy().getOrElse((Long) null);
-    this.deletedBy = resource.getDeletedBy().getOrElse((Long) null);
-    this.createdAt = resource.getCreatedAt().getOrElse((Date) null);
-    this.updatedAt = resource.getUpdatedAt().getOrElse((Date) null);
-    this.deletedAt = resource.getDeletedAt().getOrElse((Date) null);
+    this.createdBy = resource.getCreatedBy().getOrElseNull();
+    this.updatedBy = resource.getUpdatedBy().getOrElseNull();
+    this.deletedBy = resource.getDeletedBy().getOrElseNull();
+    this.createdAt = resource.getCreatedAt().getOrElseNull();
+    this.updatedAt = resource.getUpdatedAt().getOrElseNull();
+    this.deletedAt = resource.getDeletedAt().getOrElseNull();
     return this;
   }
 
   public static final Function2<ExtendedAnnotationService, Resource, JSONObject> toJson = new Function2<ExtendedAnnotationService, Resource, JSONObject>() {
     @Override
     public JSONObject apply(ExtendedAnnotationService s, Resource resource) {
-      String createdAt = resource.getCreatedAt().map(getDateAsUtc).getOrElse((String) null);
-      String updatedAt = resource.getUpdatedAt().map(getDateAsUtc).getOrElse((String) null);
-      String deletedAt = resource.getDeletedAt().map(getDateAsUtc).getOrElse((String) null);
+      String createdAt = resource.getCreatedAt().map(getDateAsUtc).getOrElseNull();
+      String updatedAt = resource.getUpdatedAt().map(getDateAsUtc).getOrElseNull();
+      String deletedAt = resource.getDeletedAt().map(getDateAsUtc).getOrElseNull();
 
-      Long createdBy = resource.getCreatedBy().getOrElse((Long) null);
-      Long updatedBy = resource.getUpdatedBy().getOrElse((Long) null);
-      Long deletedBy = resource.getDeletedBy().getOrElse((Long) null);
+      Long createdBy = resource.getCreatedBy().getOrElseNull();
+      Long updatedBy = resource.getUpdatedBy().getOrElseNull();
+      Long deletedBy = resource.getDeletedBy().getOrElseNull();
 
-      String createdByNickname = resource.getCreatedBy().map(getUserNickname.curry(s)).getOrElse((String) null);
-      String updatedByNickname = resource.getUpdatedBy().map(getUserNickname.curry(s)).getOrElse((String) null);
-      String deletedByNickname = resource.getDeletedBy().map(getUserNickname.curry(s)).getOrElse((String) null);
+      String createdByNickname = resource.getCreatedBy().map(getUserNickname.curry(s)).getOrElseNull();
+      String updatedByNickname = resource.getUpdatedBy().map(getUserNickname.curry(s)).getOrElseNull();
+      String deletedByNickname = resource.getDeletedBy().map(getUserNickname.curry(s)).getOrElseNull();
 
       String createdByEmail = resource.getCreatedBy().flatMap(getUserEmail.curry(s)).getOrElse("");
       return conc(

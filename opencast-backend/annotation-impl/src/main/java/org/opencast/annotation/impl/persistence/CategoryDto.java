@@ -104,25 +104,25 @@ public class CategoryDto extends AbstractResourceDto {
           Option<String> settings, Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
     CategoryDto dto = new CategoryDto().update(videoId, name, description, scaleId, settings, resource, seriesExtId,
             seriesCategoryId);
-    dto.videoId = videoId.getOrElse((Long) null);
-    dto.scaleId = scaleId.getOrElse((Long) null);
-    dto.seriesExtId = seriesExtId.getOrElse((String) null);
-    dto.seriesCategoryId = seriesCategoryId.getOrElse((Long) null);
+    dto.videoId = videoId.getOrElseNull();
+    dto.scaleId = scaleId.getOrElseNull();
+    dto.seriesExtId = seriesExtId.getOrElseNull();
+    dto.seriesCategoryId = seriesCategoryId.getOrElseNull();
     return dto;
   }
 
   public CategoryDto update(Option<Long> videoId, String name, Option<String> description, Option<Long> scaleId, Option<String> settings,
           Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
     super.update(resource);
-    this.videoId = videoId.getOrElse((Long) null);
+    this.videoId = videoId.getOrElseNull();
     this.name = name;
-    this.description = description.getOrElse((String) null);
-    this.scaleId = scaleId.getOrElse((Long) null);
-    this.settings = settings.getOrElse((String) null);
+    this.description = description.getOrElseNull();
+    this.scaleId = scaleId.getOrElseNull();
+    this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
-    this.seriesExtId = seriesExtId.getOrElse((String) null);
-    this.seriesCategoryId = seriesCategoryId.getOrElse((Long) null);
+    this.seriesExtId = seriesExtId.getOrElseNull();
+    this.seriesCategoryId = seriesCategoryId.getOrElseNull();
     return this;
   }
 

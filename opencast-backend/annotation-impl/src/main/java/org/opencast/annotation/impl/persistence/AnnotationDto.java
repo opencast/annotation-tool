@@ -104,18 +104,18 @@ public class AnnotationDto extends AbstractResourceDto {
           Option<String> settings, Option<Long> labelId, Option<Long> scaleValueId, Resource resource) {
     final AnnotationDto dto = new AnnotationDto().update(text, start, duration, settings, resource);
     dto.trackId = trackId;
-    dto.labelId = labelId.getOrElse((Long) null);
-    dto.scaleValueId = scaleValueId.getOrElse((Long) null);
+    dto.labelId = labelId.getOrElseNull();
+    dto.scaleValueId = scaleValueId.getOrElseNull();
     return dto;
   }
 
   public AnnotationDto update(Option<String> text, double start, Option<Double> duration, Option<String> settings,
           Resource resource) {
     super.update(resource);
-    this.text = text.getOrElse((String) null);
+    this.text = text.getOrElseNull();
     this.start = start;
-    this.duration = duration.getOrElse((Double) null);
-    this.settings = settings.getOrElse((String) null);
+    this.duration = duration.getOrElseNull();
+    this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
     return this;

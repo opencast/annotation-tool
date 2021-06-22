@@ -106,9 +106,9 @@ public class LabelDto extends AbstractResourceDto {
     super.update(resource);
     this.value = value;
     this.abbreviation = abbreviation;
-    this.description = description.getOrElse((String) null);
-    this.seriesLabelId = seriesLabelId.getOrElse((Long) null);
-    this.settings = settings.getOrElse((String) null);
+    this.description = description.getOrElseNull();
+    this.seriesLabelId = seriesLabelId.getOrElseNull();
+    this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
     return this;
