@@ -670,8 +670,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   Response postCategoryResponse(final Option<Long> videoId, final String name, final String description,
           final Long scaleId, final String settings, final Integer access, final String tags,
-          final Option<String> seriesExtId,
-          final Option<Long> seriesCategoryId) {
+          final Option<String> seriesExtId, final Option<Long> seriesCategoryId) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -835,8 +834,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                   eas(),
                   offset,
                   eas().getCategories(videoId, offsetm, limitm, datem.bind(Functions.identity()),
-                          tagsAndArray.bind(Functions.identity()),
-                          tagsOrArray.bind(Functions.identity()),
+                          tagsAndArray.bind(Functions.identity()), tagsOrArray.bind(Functions.identity()),
                           seriesExtIdm)));
         }
       }
@@ -1001,7 +999,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
   Response getLabelsResponse(final Option<Long> videoId, final long categoryId, final int limit,
           final int offset, final String date, final String tagsAnd, final String tagsOr) {
-     return run(nil, new Function0<Response>() {
+    return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
         final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
