@@ -27,7 +27,8 @@ module.exports = {
         }],
         'one-var': ['warn', 'never'],
         'space-infix-ops': 'warn',
-        'no-multi-spaces': 'warn'
+        'no-multi-spaces': 'warn',
+        'space-before-blocks': 'warn'
     },
     overrides: [{
         files: './{,.}*.js',
