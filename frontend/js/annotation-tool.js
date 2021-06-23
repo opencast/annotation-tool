@@ -635,10 +635,10 @@ define(
              * Get all the annotations for the current user
              */
             fetchData: function () {
-                $.when(this.getVideoExtId(), this.getVideoParameters()).then(
-                    _.bind(function (videoExtId, videoParameters) {
+                this.getVideoParameters().then(
+                    _.bind(function (videoParameters) {
                         // If we are using the localstorage
-                        var video = new Videos().add({ video_extid: videoExtId }).at(0);
+                        var video = new Videos().add({ video_extid: videoParameters.videoExtId }).at(0);
                         this.video = video;
                         video.set(videoParameters);
                         video.save(null, {

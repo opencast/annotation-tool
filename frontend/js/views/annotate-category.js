@@ -201,11 +201,7 @@ define(
             toggleSeries: function () {
                 var categorySeriesId = this.model.get("seriesExtId");
                 var categorySeriesCategoryId = this.model.get("seriesCategoryId");
-                var videoSeriesId = "";
-                $.when(annotationTool.getSeriesExtId()).then(function (seriesId){
-                    videoSeriesId = seriesId;
-
-                });
+                var videoSeriesId = annotationTool.video.get("series_extid");
 
                 if (categorySeriesCategoryId) {
                     // Remove from series

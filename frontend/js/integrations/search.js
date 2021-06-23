@@ -132,29 +132,15 @@ define([
      */
     var Integration = {
         /**
-         * Get the current video id (video_extid)
-         * @return {Promise.<string>} video external id
-         */
-        getVideoExtId: function () {
-            return $.when(mediaPackageId);
-        },
-
-        /**
-         * Get the current series id of the video (series_extid)
-         * @return {Promise.<string>} video external id
-         */
-        getSeriesExtId: function () {
-            return mediaPackage.then(function (mediaPackage) {
-                return mediaPackage.series;
-            }.bind(this));
-        },
-
-        /**
          * @return {Promise.<object>} Metadata about the video
          */
         getVideoParameters: function () {
-            return searchResult.then(function (result) {
-                return { title: result.dcTitle };
+            return $.when(mediaPackageId, searchResult, mediaPackage).then(function (id, result, mediaPackage) {
+                return {
+                    video_extid: id,
+                    series_extid: mediaPackage.series,
+                    title: result.dcTitle
+                };
             });
         },
 
