@@ -200,15 +200,15 @@ define(
              */
             toggleSeries: function () {
                 var categorySeriesId = this.model.get("seriesExtId");
-                var categorySeriesCategoryId = this.model.get("seriesCategoryId");
+                var seriesCategoryId = this.model.get("seriesCategoryId");
                 var videoSeriesId = annotationTool.video.get("series_extid");
 
-                if (categorySeriesCategoryId) {
+                if (seriesCategoryId) {
                     // Remove from series
                     // Display modal. If user accepts, execute toVideoCategory callback
-                    annotationTool.seriesCategoryOperation.start(this, categorySeriesCategoryId);
+                    annotationTool.seriesCategoryOperation.start(this, seriesCategoryId);
 
-                } else if (!categorySeriesCategoryId && videoSeriesId) {
+                } else if (!seriesCategoryId && videoSeriesId) {
                     // If there's a scale, show an error message instead.
                     // This doesn't really belong on scaleEditor, but I don't want to create
                     // a whole new class for a simple error modal.
