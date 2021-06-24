@@ -56,8 +56,8 @@ define(
             sync: function (method, model, options) {
 
                 // If the model is referencing another model, sync to the other model
-                if (model.get("seriesCategoryId")) {
-                    model.set("id", model.get("seriesCategoryId"));
+                if (model.get("series_category_id")) {
+                    model.set("id", model.get("series_category_id"));
                 } else if (model.tmpSeriesCategoryId) {
                     model.set("id", model.tmpSeriesCategoryId);
                 }

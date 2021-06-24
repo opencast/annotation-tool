@@ -189,8 +189,8 @@ define(
              */
             toVideoCategory: function (categorySeriesCategoryId) {
                 this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
-                this.model.set("seriesExtId", "");
-                this.model.set("seriesCategoryId", "");
+                this.model.set("series_extid", "");
+                this.model.set("series_category_id", "");
                 this.model.save(null, { wait: true });
             },
 
@@ -199,8 +199,8 @@ define(
              * to a series
              */
             toggleSeries: function () {
-                var categorySeriesId = this.model.get("seriesExtId");
-                var seriesCategoryId = this.model.get("seriesCategoryId");
+                var categorySeriesId = this.model.get("series_extid");
+                var seriesCategoryId = this.model.get("series_category_id");
                 var videoSeriesId = annotationTool.video.get("series_extid");
 
                 if (seriesCategoryId) {
@@ -219,8 +219,8 @@ define(
                         });
                     } else {
                         // Add to series
-                        this.model.set("seriesExtId", videoSeriesId);
-                        this.model.set("seriesCategoryId", this.model.id);
+                        this.model.set("series_extid", videoSeriesId);
+                        this.model.set("series_category_id", this.model.id);
                     }
                     this.model.save(null, { wait: true });
                 }
@@ -299,7 +299,7 @@ define(
              * Open the scales editor modal
              */
             editScale: function () {
-                if (this.model.get("seriesCategoryId")) {
+                if (this.model.get("series_category_id")) {
                     // Workaround for scales and series categories
                     annotationTool.scaleEditor.showWarning({
                         title: i18next.t("scale editor.warning.name"),
