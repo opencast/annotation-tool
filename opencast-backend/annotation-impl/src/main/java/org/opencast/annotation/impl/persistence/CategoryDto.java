@@ -88,7 +88,7 @@ public class CategoryDto extends AbstractResourceDto {
   @Column(name = "scale_id")
   private Long scaleId;
 
-  @Column(name = "series_ext_id")
+  @Column(name = "series_extid")
   private String seriesExtId;
 
   @Column(name = "series_category_id")
@@ -147,7 +147,7 @@ public class CategoryDto extends AbstractResourceDto {
               AbstractResourceDto.toJson.apply(eas, s),
               jO(p("id", s.getId()), p("name", s.getName()), p("description", s.getDescription()),
                       p("settings", s.getSettings()), p("scale_id", s.getScaleId()),
-                      p("seriesExtId", s.getSeriesExtId()), p("seriesCategoryId", s.getSeriesCategoryId())));
+                      p("series_extid", s.getSeriesExtId()), p("series_category_id", s.getSeriesCategoryId())));
     }
   };
 

@@ -620,8 +620,8 @@ public class VideoEndpoint {
   public Response postCategory(@FormParam("name") final String name, @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("category_id") final Long id, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags, @FormParam("seriesExtId") final String seriesExtId,
-          @FormParam("seriesCategoryId") final Long seriesCategoryId) {
+          @FormParam("tags") final String tags, @FormParam("series_extid") final String seriesExtId,
+          @FormParam("series_category_id") final Long seriesCategoryId) {
     if (id == null)
       return host.postCategoryResponse(some(videoId), name, description, scaleId, settings, access,
               tags, trimToNone(seriesExtId), option(seriesCategoryId));
@@ -660,8 +660,8 @@ public class VideoEndpoint {
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("access") final Integer access, @FormParam("tags") final String tags,
-          @FormParam("seriesExtId") final String seriesExtId,
-          @FormParam("seriesCategoryId") final Long seriesCategoryId) {
+          @FormParam("series_extid") final String seriesExtId,
+          @FormParam("series_category_id") final Long seriesCategoryId) {
     return host.putCategoryResponse(some(videoId), id, name, description, option(scaleId), settings, option(access),
             tags, trimToNone(seriesExtId), option(seriesCategoryId));
   }

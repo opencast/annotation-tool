@@ -1013,7 +1013,7 @@ define(
                     });
                 },
                 customMessage: function (target) {
-                    if (target.get("seriesCategoryId")) {
+                    if (target.get("series_category_id")) {
                         return i18next.t("series category modal.custom message");
                     } else {
                         return "";

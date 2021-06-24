@@ -662,8 +662,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("access") final Integer access, @FormParam("tags") final String tags,
-          @FormParam("seriesExtId") final String seriesExtId,
-          @FormParam("seriesCategoryId") final Long seriesCategoryId) {
+          @FormParam("series_extid") final String seriesExtId,
+          @FormParam("series_category_id") final Long seriesCategoryId) {
     return postCategoryResponse(none(), name, description, scaleId, settings, access, tags, none(),
             none());
   }
@@ -696,8 +696,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
           @FormParam("description") final String description,
           @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
           @FormParam("access") final Integer access, @FormParam("tags") final String tags,
-          @FormParam("seriesExtId") final String seriesExtId,
-          @FormParam("seriesCategoryId") final Long seriesCategoryId) {
+          @FormParam("series_extid") final String seriesExtId,
+          @FormParam("series_category_id") final Long seriesCategoryId) {
     return putCategoryResponse(none(), id, name, description, option(scaleId), settings, option(access), tags,
             option(seriesExtId), option(seriesCategoryId));
   }
