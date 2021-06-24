@@ -72,7 +72,7 @@ module.exports = function (grunt) {
             },
             all: {
                 expand: true,
-                src: ['js/**/*.js', '!js/lib/**/*'],
+                src: ['js/**/*.js', '!js/libs/**/*'],
                 dest: '.'
             }
         },
