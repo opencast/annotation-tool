@@ -35,6 +35,8 @@ import org.opencast.annotation.impl.ResourceImpl;
 
 import org.opencastproject.test.rest.RestServiceTestEnv;
 
+import com.jayway.restassured.http.ContentType;
+
 import org.hamcrest.Description;
 import org.json.simple.JSONObject;
 import org.junit.After;
@@ -129,7 +131,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().formParam("video_extid", "lecture").formParam("tags", json.toJSONString()).expect().statusCode(OK)
             .body("tags", equalTo(json)).body("video_extid", equalTo("lecture")).when().put(host("/videos"));
     // put/create/malformed
-    given().expect().statusCode(BAD_REQUEST).when().put(host("/videos"));
+    given().contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when().put(host("/videos"));
     given().formParam("video_extid", "").expect().statusCode(BAD_REQUEST).when().put(host("/videos"));
     // get
     given().pathParam("id", id).expect().statusCode(OK).body("video_extid", equalTo("lecture")).when()
@@ -310,8 +312,8 @@ public class ExtendedAnnotationsRestServiceTest {
             .body("name", equalTo("categoryTemplateName")).when().post(host("/videos/{videoId}/categories"));
     // put template
     json.put("channel", "22");
-    given().pathParam("videoId", 212).pathParam("categoryId", id).expect().statusCode(BAD_REQUEST).when()
-            .put(host("/videos/{videoId}/categories/{categoryId}"));
+    given().pathParam("videoId", 212).pathParam("categoryId", id).contentType(ContentType.URLENC).expect()
+            .statusCode(BAD_REQUEST).when().put(host("/videos/{videoId}/categories/{categoryId}"));
 
     given().pathParam("videoId", videoId).pathParam("categoryId", id).formParam("name", "newName")
             .formParam("tags", json.toJSONString()).expect().statusCode(OK).body("name", equalTo("newName"))
@@ -367,8 +369,8 @@ public class ExtendedAnnotationsRestServiceTest {
             .body("name", equalTo("scaleTemplateName")).when().post(host("/videos/{videoId}/scales"));
     // put template
     json.put("channel", "22");
-    given().pathParam("videoId", 212).pathParam("scaleId", id).expect().statusCode(BAD_REQUEST).when()
-            .put(host("/videos/{videoId}/scales/{scaleId}"));
+    given().pathParam("videoId", 212).pathParam("scaleId", id).contentType(ContentType.URLENC).expect()
+            .statusCode(BAD_REQUEST).when().put(host("/videos/{videoId}/scales/{scaleId}"));
 
     given().pathParam("videoId", videoId).pathParam("scaleId", id).formParam("name", "newName")
             .formParam("tags", json.toJSONString()).expect().statusCode(OK).body("name", equalTo("newName"))
@@ -435,8 +437,9 @@ public class ExtendedAnnotationsRestServiceTest {
             .post(host("/videos/{videoId}/scales/{scaleId}/scalevalues")));
     // put template
     json.put("channel", "22");
-    given().pathParam("videoId", 212).pathParam("scaleId", scaleId).pathParam("scaleValueId", id).expect()
-            .statusCode(BAD_REQUEST).when().put(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
+    given().pathParam("videoId", 212).pathParam("scaleId", scaleId).pathParam("scaleValueId", id)
+            .contentType(ContentType.URLENC).expect() .statusCode(BAD_REQUEST).when()
+            .put(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
 
     given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).pathParam("scaleValueId", id)
             .formParam("name", "newName").formParam("tags", json.toJSONString()).expect().statusCode(OK)
@@ -523,8 +526,9 @@ public class ExtendedAnnotationsRestServiceTest {
             .post(host("/videos/{videoId}/categories/{categoryId}/labels")));
     // put template
     json.put("channel", "22");
-    given().pathParam("videoId", 212).pathParam("categoryId", categoryId).pathParam("labelId", id).expect()
-            .statusCode(BAD_REQUEST).when().put(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
+    given().pathParam("videoId", 212).pathParam("categoryId", categoryId).pathParam("labelId", id)
+            .contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
+            .put(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
 
     given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).pathParam("labelId", id)
             .formParam("value", "newValue").formParam("abbreviation", "newAbbreviation")
@@ -617,13 +621,13 @@ public class ExtendedAnnotationsRestServiceTest {
     // put template
     json.put("channel", "22");
     given().pathParam("videoId", 323233).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
-            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .pathParam("commentId", id).contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
     given().pathParam("videoId", videoId).pathParam("trackId", 32423234).pathParam("annotationId", annotationId)
-            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .pathParam("commentId", id).contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", 32323)
-            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .pathParam("commentId", id).contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
 
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
@@ -765,13 +769,13 @@ public class ExtendedAnnotationsRestServiceTest {
     // put
     json.put("channel", "33");
     given().pathParam("videoId", 323233).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
-            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .pathParam("commentId", id).contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
     given().pathParam("videoId", videoId).pathParam("trackId", 32423234).pathParam("annotationId", annotationId)
-            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .pathParam("commentId", id).contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", 32323)
-            .pathParam("commentId", id).expect().statusCode(BAD_REQUEST).when()
+            .pathParam("commentId", id).contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
 
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
