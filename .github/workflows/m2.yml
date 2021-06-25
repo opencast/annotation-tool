@@ -25,14 +25,14 @@ jobs:
           path: |
             ~/.m2
             frontend/node
-          key: maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: maven-
+          key: maven-2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-2-
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-
+          key: npm-2-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-2-
 
       - name: Get the date
         id: date
@@ -41,6 +41,7 @@ jobs:
         run: mvn clean deploy
           --batch-mode
           -DskipTests
+          -Deslint.maxWarnings=0
           -DaltDeploymentRepository=m2::default::file:m2
           -Drevision=${{ steps.date.outputs.date }}-${{ github.sha }}
 

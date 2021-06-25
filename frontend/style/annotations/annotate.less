@@ -23,6 +23,21 @@ i.check {
 	text-align: center;
 }
 
+
+button.category-access {
+	.link-button();
+}
+
+div.category-access button {
+	.link-button();
+	width: 23px;
+	text-align: center;
+
+	i {
+		margin-top: 0;
+	}
+}
+
 #annotate-form {
 
 	display: flex;
@@ -176,6 +191,12 @@ i.check {
 			overflow: auto;
 			margin-bottom: 0;
 
+			.read-only {
+				pointer-events: none;
+				opacity: 0.4;
+			}
+
+
 			.category-item {
 
 				height: 100%;
@@ -252,7 +273,7 @@ i.check {
 						margin-right: 4px;
 					}
 
-					.read-only {
+					.label-style {
 
 						color: @black;
 						display: block;
@@ -530,7 +551,7 @@ i.check {
 						.edit {
 							display: inline-block;
 						}
-						.read-only {
+						.label-style {
 							display: none;
 						}
 						textarea, input {

@@ -18,13 +18,17 @@
  * A module representing the comment model
  * @module models-comment
  */
-define(["underscore",
-        "access",
+define(
+    [
+        "underscore",
         "models/resource",
-        "collections/comments"],
-
-    function (_, ACCESS, Resource, Comments) {
-
+        "collections/comments"
+    ],
+    function (
+        _,
+        Resource,
+        Comments
+    ) {
         "use strict";
 
         /**
@@ -32,47 +36,51 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Model}
          * @augments module:Backbone.Model
          * @memberOf module:models-comment
-         * @alias module:models-comment.Comment
          */
         var Comment = Resource.extend({
 
             /**
              * Default models value
-             * @alias module:models-comment.Comment#defaults
              * @type {map}
              * @static
              */
             defaults: {
-                text: "",
-                access: ACCESS.PUBLIC
+                text: ""
+            },
+
+            /**
+             * Constructor
+             */
+            initialize: function () {
+                // Fix up circular dependency
+                if (!Comments) Comments = require("collections/comments");
+
+                this.replies = new Comments(null, {
+                    annotation: this.collection.annotation,
+                    replyTo: this
+                });
+
+                Resource.prototype.initialize.apply(this, arguments);
+
+                this.listenTo(this.replies, "add remove reset reply", function () {
+                    this.trigger("reply");
+                });
+            },
+
+            /**
+             * (Re-)Fetch the replies once our ID changes.
+             */
+            fetchChildren: function () {
+                this.replies.fetch();
             },
 
             /**
              * Validate the attribute list passed to the model
-             * @alias module:models-comment.Comment#validate
              * @param {object} attr Object literal containing the model attribute to validate.
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                // Fix up circular dependency
-                if (!Comments) Comments = require("collections/comments");
-
-                if (!this.replies) {
-                    this.replies = new Comments(null, {
-                        annotation: this.collection.annotation,
-                        replyTo: this
-                    });
-
-                    this.listenTo(this.replies, "add remove reset reply", function () {
-                        this.trigger("reply");
-                    });
-                }
-
-                var invalidResource = Resource.prototype.validate.call(this, attr, {
-                    onIdChange: function () {
-                        this.replies.fetch();
-                    }
-                });
+                var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
                 if (attr.text && !_.isString(attr.text)) {
@@ -84,7 +92,6 @@ define(["underscore",
 
             /**
              * The URL root of this model
-             * @alias module:models-comment.Comment#urlRoot
              * @return {string} The URL root of this model
              */
             urlRoot: function () {

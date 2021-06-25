@@ -18,15 +18,17 @@
  * A module containing the player adapter prototype
  * @module player-adapter
  */
-define(["event-target"], function (EventTarget) {
-
+define([
+    "event-target"
+], function (
+    EventTarget
+) {
     "use strict";
 
     /**
      * Interface for the element making the proxy between the player and the annotations tool
      * @constructor
      * @see {@link https://github.com/entwinemedia/annotations/wiki/Player-adapter-API}
-     * @alias module:player-adapter.PlayerAdapter
      */
     var PlayerAdapter = function () {
         EventTarget.apply(this, arguments);
@@ -110,13 +112,13 @@ define(["event-target"], function (EventTarget) {
      * @enum {number}
      */
     PlayerAdapter.STATUS = {
-        INITIALIZING           : 0,
-        LOADING                : 1,
-        SEEKING                : 2,
-        PAUSED                 : 3,
-        PLAYING                : 4,
-        ENDED                  : 5,
-        ERROR_NETWORK          : 6,
+        INITIALIZING: 0,
+        LOADING: 1,
+        SEEKING: 2,
+        PAUSED: 3,
+        PLAYING: 4,
+        ENDED: 5,
+        ERROR_NETWORK: 6,
         ERROR_UNSUPPORTED_MEDIA: 7
     };
 
@@ -126,13 +128,13 @@ define(["event-target"], function (EventTarget) {
      * @enum {string}
      */
     PlayerAdapter.EVENTS = {
-        PLAY      : "pa_play",
-        PAUSE     : "pa_pause",
-        SEEKING   : "pa_seeking",
-        READY     : "pa_ready",
+        PLAY: "pa_play",
+        PAUSE: "pa_pause",
+        SEEKING: "pa_seeking",
+        READY: "pa_ready",
         TIMEUPDATE: "pa_timeupdate",
-        ERROR     : "pa_error",
-        ENDED     : "pa_ended"
+        ERROR: "pa_error",
+        ENDED: "pa_ended"
     };
 
     // Return the complete interface

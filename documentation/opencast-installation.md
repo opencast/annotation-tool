@@ -2,7 +2,7 @@
 
 ## Installing the Annotation Tool
 
-__Note:__ These are the installation instructions for the Opencast `r/6.x` branch or higher.
+__Note:__ These are the installation instructions for the current stable branch of Opencast.
 
 You should make sure that you intended Opencast version was build at least once on the machine you use to build the
 Annotation tool, as this will create the needed dependency for Opencast modules in your local Maven repository. This may change

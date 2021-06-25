@@ -20,7 +20,7 @@ define(function () {
 
     /**
      * Module containing the tool configuration
-     * @exports annotation-tool-configuration
+     * @exports configuration
      */
     var Configuration = {
         /**
@@ -53,7 +53,7 @@ define(function () {
 
         /**
          * Returns the time interval between each timeupdate event to take into account.
-         * It can improve a bit the performance if the amount of annotations is important. 
+         * It can improve the performance a bit if the amount of annotations is important.
          * @return {number} The interval
          */
         getTimeupdateIntervalForTimeline: function () {
