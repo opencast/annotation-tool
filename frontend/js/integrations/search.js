@@ -22,7 +22,7 @@ define([
     "util",
     "models/user",
     "roles",
-    "player_adapter_HTML5",
+    "player-adapter-html5"
 ], function (
     $,
     _,
@@ -61,9 +61,11 @@ define([
             // Sanitize query strings, so that they're actually at the end
             // TODO: Clean this up OR find a better way to do this
             var queryString = this.url.match(/\?(.*?)\//);
-            if(queryString && queryString[0]) {
+            if (queryString && queryString[0]) {
                 this.url = this.url.replace(queryString[0], "");
-                if (queryString[0].slice(-1) === "/") {queryString[0] = queryString[0].slice(0, -1)}
+                if (queryString[0].slice(-1) === "/") {
+                    queryString[0] = queryString[0].slice(0, -1);
+                }
                 this.url = this.url + queryString[0];
             }
         };
@@ -126,9 +128,9 @@ define([
 
     /**
      * Module containing the tool integration
-     * @exports annotation-tool-integration
+     * @exports integration
      */
-    var Configuration = {
+    var Integration = {
         /**
          * Get the current video id (video_extid)
          * @return {Promise.<string>} video external id
@@ -164,7 +166,7 @@ define([
          */
         getUserRoleFromExt: function (roles) {
             return adminRoles.then(function (adminRoles) {
-                if (_.some(adminRoles.concat(['ROLE_ADMIN']), function (adminRole) {
+                if (_.some(adminRoles.concat(["ROLE_ADMIN"]), function (adminRole) {
                     return _.contains(roles, adminRole);
                 })) {
                     return ROLES.ADMINISTRATOR;
@@ -240,5 +242,5 @@ define([
         }
     };
 
-    return Configuration;
+    return Integration;
 });

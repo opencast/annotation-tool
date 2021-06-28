@@ -731,9 +731,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response none() {
             Resource resource = eas().createResource(tags);
             final Category category = eas().createCategory(videoId, scaleId, name, trimToNone(access.toString()),
-                    trimToNone(settings), new ResourceImpl(access, resource.getCreatedBy(), resource.getUpdatedBy(), resource
-                            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource
-                            .getDeletedAt(), resource.getTags()), seriesExtId, seriesCategoryId);
+                    trimToNone(settings), new ResourceImpl(access, resource.getCreatedBy(), resource.getUpdatedBy(),
+                            resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(),
+                            resource.getDeletedAt(), resource.getTags()), seriesExtId, seriesCategoryId);
 
             return Response.created(categoryLocationUri(category, videoId.isSome()))
                     .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();

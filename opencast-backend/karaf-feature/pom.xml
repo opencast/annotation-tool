@@ -53,7 +53,7 @@
     </dependency>
     <dependency>
       <groupId>ch.switch.cast.annotate</groupId>
-      <artifactId>annotation-tool-frontend-delivery</artifactId>
+      <artifactId>annotation-tool-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

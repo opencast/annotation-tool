@@ -184,8 +184,13 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
     } catch (IllegalArgumentException e) {
       throw new BadVideoInterfaceRequestException(e);
     } finally {
-      client.close(response);
-      securityService.setUser(originalUser);
+      try {
+        client.close(response);
+      } catch (IOException e) {
+        throw new VideoInterfaceException(e);
+      } finally {
+        securityService.setUser(originalUser);
+      }
     }
   }
 

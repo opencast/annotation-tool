@@ -106,7 +106,8 @@ public class CategoryImpl extends ResourceImpl implements Category {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, seriesExtId, seriesCategoryId, getTags());
+    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, seriesExtId, seriesCategoryId, getAccess(),
+            getTags());
   }
 
 }

@@ -1,47 +1,44 @@
 <div class="catItem-header" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}} title="{{name}}">
     <input type="text" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}/>
-    <i class="{{#if visible}}icon-eye-open{{else}}icon-eye-close{{/if}} visibility" title="{{#if visible}}{{t "annotate.hide category"}}{{else}}{{t "annotate.show category"}}{{/if}}"></i>
+    <i
+        class="{{#if visible}}icon-eye-open{{else}}icon-eye-close{{/if}} visibility"
+        title="{{#if visible}}{{t "annotate.hide category"}}{{else}}{{t "annotate.show category"}}{{/if}}"
+    ></i>
     <i class="icon-pencil scale edit" title="{{t "annotate.edit category scaling"}}"></i>
     <i class="icon-trash delete edit"></i>
-    {{#if settings.createdAsMine}}
-        <!-- <i class="icon-public sharedVis edit" data-sharedVis='public'></i>
-        <i class="icon-private sharedVis edit" data-sharedVis='private'></i>
-        <i class="icon-shared-with-admin sharedVis edit" data-sharedVis='shared-with-admin'></i> -->
-        <button
+    <button
         type="button"
-        class="sharedVisibility"
+        class="category-access"
         data-trigger="click"
         title="
-            <div class='sharedVisibility' data-id='{{id}}'>
-                <button type='button' data-sharedVis='public'>
+            <div class='category-access' data-id='{{id}}'>
+                <button type='button' data-access='public'>
                     <i
-                        class='icon-white icon-public sharedVis'
+                        class='icon-white icon-public'
                         title='{{t "timeline.change visibility.to public"}}'
                     ></i>
                 </button>
-                <button type='button' data-sharedVis='private'>
+                <button type='button' data-access='private'>
                     <i
-                        class='icon-white icon-private sharedVis'
+                        class='icon-white icon-private'
                         title='{{t "timeline.change visibility.to private"}}'
                     ></i>
                 </button>
-                <button type='button' data-sharedVis='shared-with-admin'>
+                <button type='button' data-access='shared-with-admin'>
                     <i
-                        class='icon-white icon-shared-with-admin sharedVis'
+                        class='icon-white icon-shared-with-admin'
                         title='{{t "timeline.change visibility.to shared with admin"}}'
                     ></i>
                 </button>
             </div>
-            "
-            class="button"
-            data-placement="top"
-        >
-            <i
+        "
+        data-placement="top"
+    >
+        <i
             title="{{t "timeline.change visibility.tooltip"}}"
             class="icon-dark-grey icon-{{access}} edit"
-            ></i>
-        </button>
-    {{/if}}
+        ></i>
+    </button>
     <i class="{{#if seriesCategoryId}}icon-series-category{{else}}icon-video-category{{/if}} toggleSeries edit" title="{{#if seriesCategoryId}}{{t "annotate.series category"}}{{else}}{{t "annotate.event category"}}{{/if}}"></i>
     <div class="colorpicker">
         <input id="color-{{name}}" type="text" class="colorpicker edit" value="{{#if settings}}{{settings.color}}{{/if}}" /></div>

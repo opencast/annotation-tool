@@ -17,17 +17,21 @@
  * A module representing the tracks selection modal
  * @module views-tracks-selection
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "backbone",
         "sortable",
-        "roles",
-        "access",
-        "templates/tracks-selection-modal",
-        "handlebarsHelpers"],
-
-    function ($, _, Backbone, Sortable, ROLES, ACCESS, TracksSelectionTmpl) {
-
+        "templates/tracks-selection-modal"
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        Sortable,
+        TracksSelectionTmpl
+    ) {
         "use strict";
 
         var selectAllCheckbox;
@@ -55,7 +59,6 @@ define(["jquery",
          * @see {@link http://www.backbonejs.org/#View}
          * @augments module:Backbone.View
          * @memberOf module:views-tracks-selection
-         * @alias Alert
          */
         var TracksSelectionView = Backbone.View.extend({
 
@@ -63,14 +66,12 @@ define(["jquery",
 
             /**
              * Template
-             * @alias module:views-tracks-selection.Alert#alertTemplate
              * @type {HandlebarsTemplate}
              */
             template: TracksSelectionTmpl,
 
             /**
              * Events to handle
-             * @alias module:views-tracks-selection.Alert#events
              * @type {object}
              */
             events: {
@@ -89,20 +90,20 @@ define(["jquery",
 
             /**
              * Constructor
-             * @alias module:views-tracks-selection.Alert#initialize
              */
             initialize: function () {
-                _.bindAll(this,
-                          "show",
-                          "hide",
-                          "search");
+                _.bindAll(
+                    this,
+                    "show",
+                    "hide",
+                    "search"
+                );
 
                 this.tracks = annotationTool.getTracks();
             },
 
             /**
              * Display the modal with the given message as the given alert type
-             * @alias module:views-tracks-selection.Alert#show
              * @param  {String} message The message to display
              * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-tracks-selection.Alert#TYPES}
              */
@@ -112,18 +113,18 @@ define(["jquery",
                 // Get all users owning public tracks together with those tracks themselves.
                 // Note that `this.tracks` already only contains public tracks!
                 var usersWithPublicTracks = this.tracks.chain()
-                        .groupBy(function (track) { return track.get("created_by"); })
-                        .map(function (tracks, created_by) {
-                            return {
-                                id: created_by,
-                                nickname: tracks[0].get("created_by_nickname"),
-                                tracks: _.map(tracks, _.compose(
-                                    _.clone,
-                                    _.property("attributes")
-                                )),
-                                visible: _.every(tracks, function (track) { return track.get("visible"); })
-                            };
-                        }).value();
+                    .groupBy(function (track) { return track.get("created_by"); })
+                    .map(function (tracks, created_by) {
+                        return {
+                            id: created_by,
+                            nickname: tracks[0].get("created_by_nickname"),
+                            tracks: _.map(tracks, _.compose(
+                                _.clone,
+                                _.property("attributes")
+                            )),
+                            visible: _.every(tracks, function (track) { return track.get("visible"); })
+                        };
+                    }).value();
 
                 this.$el.append(this.template({
                     users: usersWithPublicTracks
@@ -163,7 +164,6 @@ define(["jquery",
 
             /**
              * Hide the modal
-             * @alias module:views-tracks-selection.Alert#hide
              */
             hide: function () {
                 this.$el.modal("hide");
@@ -171,7 +171,6 @@ define(["jquery",
 
             /**
              * Clear the search field
-             * @alias module:views-tracks-selection.Alert#clear
              */
             clear: function () {
                 this.$("#search-track").val("");
@@ -180,7 +179,6 @@ define(["jquery",
 
             /**
              * Cancel the track selection
-             * @alias module:views-tracks-selection.Alert#cancel
              */
             cancel: function () {
                 this.hide();
@@ -188,7 +186,6 @@ define(["jquery",
 
             /**
              * Confirm the track selection
-             * @alias module:views-tracks-selection.Alert#confirm
              */
             confirm: function () {
                 this.tracks.showTracks(
@@ -199,93 +196,11 @@ define(["jquery",
 
                 annotationTool.orderTracks(this.sortableTrackSelection.toArray());
 
-                this.updateCategories();
-
-                this.updateCategoriesForTheAllTab();
-
                 this.hide();
             },
 
             /**
-             * Displays Categories Tabs for currently visible tracks
-             */
-            updateCategories: function() {
-                let categories = annotationTool.video.get("categories");
-
-                _.each(this.tracks.getVisibleTracks(), function(visibleTrack) {
-                    let trackUserId = visibleTrack.get("created_by");
-                    
-                    // Create new category tab for user ids that or not ours or already present
-                    if(trackUserId !== annotationTool.user.get("id") &&
-                        !annotationTool.views.main.views.annotate.categoriesTabs.hasOwnProperty(trackUserId)) {
-                        // Need to pass all categories here, else code ceases to work
-                        annotationTool.views.main.views.annotate.addTab(categories, {   
-                            id        : trackUserId,
-                            name      : visibleTrack.get("created_by_nickname"),
-                            filter    : function (category) {
-                                // Does the current user have permission to see the category?
-                                return ((annotationTool.user.get("role") === ROLES.ADMINISTRATOR && (category.get("access") === ACCESS.PUBLIC 
-                                        || category.get("access") === ACCESS.SHARED_WITH_ADMIN))
-                                || (annotationTool.user.get("role") === ROLES.USER && (category.get("access")) === ACCESS.PUBLIC))
-                                // Is it from the mine category?
-                                && category.get("settings").createdAsMine
-                                // Was the category created by the user of the tab? 
-                                && category.get("created_by") === trackUserId;
-                            },
-                            roles     : [],
-                            attributes: { access: ACCESS.PRIVATE },
-                        })
-                    }
-                }, this);
-
-                // Try to remove respective category tab of every non-visible track
-                _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function(notVisibleTrack) {
-                    annotationTool.views.main.views.annotate.removeTab(notVisibleTrack.get("created_by"));
-                }, this);
-            },
-
-            /**
-             * Add/Remove views for createdAsMine categories in the all tab
-             */
-            updateCategoriesForTheAllTab: function() {
-              let allTab = annotationTool.views.main.views.annotate.categoriesTabs["all"];
-
-              let categories = annotationTool.video.get("categories");
-              let t = this.tracks.getVisibleTracks();
-              _.each(this.tracks.getVisibleTracks(), function(visibleTrack) {
-                  let trackUserId = visibleTrack.get("created_by");
-                  
-                  // Create new category tab for user ids that or not ours or already present
-                  if(trackUserId !== annotationTool.user.get("id")) {
-                      // Need to pass all categories here, else code ceases to work
-                      annotationTool.views.main.views.annotate.categoriesTabs["all"].addCategories(categories, function(category) {
-                        return ((annotationTool.user.get("role") === ROLES.ADMINISTRATOR && (category.get("access") === ACCESS.PUBLIC 
-                        || category.get("access") === ACCESS.SHARED_WITH_ADMIN))
-                        || (annotationTool.user.get("role") === ROLES.USER && (category.get("access")) === ACCESS.PUBLIC))
-                        // Is it from the mine category?
-                        && category.get("settings").createdAsMine
-                        // Was the category created by the user of the tab? 
-                        && category.get("created_by") === trackUserId
-                        // Is the category already present?
-                        && !annotationTool.views.main.views.annotate.categoriesTabs["all"].categoryViews.some(e => e.model.id === category.id);
-                      });
-                  }
-              }, this);
-
-              _.each(_.difference(this.tracks.models, this.tracks.getVisibleTracks()), function(notVisibleTrack) {
-                _.each(annotationTool.views.main.views.annotate.categoriesTabs["all"].categories.models, function(category) {
-                  if (category.get("created_by") === notVisibleTrack.get("created_by")
-                      && category.get("settings").createdAsMine
-                      && category.get("createy_by") !== annotationTool.user.get("id")) {
-                    annotationTool.views.main.views.annotate.categoriesTabs["all"].removeOne(category);
-                  }
-                }, this);
-              }, this);
-            },
-
-            /**
              * Mark the target track as selected
-             * @alias module:views-tracks-selection.Alert#selectTrack
              */
             selectTrack: function (event) {
                 var trackID = event.target.value;
@@ -296,7 +211,6 @@ define(["jquery",
 
             /**
              * Mark the target user as selected
-             * @alias module:views-tracks-selection.Alert#selectUser
              */
             selectUser: function (event) {
                 var userID = event.target.value;
@@ -306,7 +220,6 @@ define(["jquery",
 
             /**
              * Mark all the users selected or unselected
-             * @alias module:views-tracks-selection.Alert#selectAll
              */
             selectAll: function (event) {
                 _.each(checkboxGroupForUser, function (checkboxGroup) {
@@ -335,7 +248,6 @@ define(["jquery",
 
             /**
              * Update the list of selected tracks based on the current values of the track checkboxes.
-             * @alias module:views-tracks-selection.Alert#updateSelection
              */
             updateSelection: function () {
                 this.order = _.sortBy(
@@ -363,7 +275,6 @@ define(["jquery",
             /**
              * Mark one of the order items as selected.
              * The selected item is the one manipulated by other ordering related functions.
-             * @alias module:views-tracks-selection.Alert#selectOrderItem
              */
             selectOrderItem: function (event) {
                 $("#track-selection .selected").toggleClass("selected");
@@ -374,7 +285,6 @@ define(["jquery",
 
             /**
              * Move the currently selected track up in the ordering.
-             * @alias module:views-tracks-selection.Alert#moveUp
              */
             moveUp: function () {
                 if (!this.selected) return;
@@ -390,7 +300,6 @@ define(["jquery",
 
             /**
              * Move the currently selected track up in the ordering.
-             * @alias module:views-tracks-selection.Alert#moveUp
              */
             moveDown: function () {
                 if (!this.selected) return;
@@ -406,7 +315,6 @@ define(["jquery",
 
             /**
              * Search for users with the given chars in the search input
-             * @alias module:views-tracks-selection.Alert#search
              */
             search: function (event) {
                 var text = "";

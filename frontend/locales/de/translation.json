@@ -1,7 +1,4 @@
 {
-  "about": {
-    "close": "$t(common actions.close)"
-  },
   "alert": {
     "ok": "$t(common actions.ok)",
     "error": {
@@ -129,10 +126,6 @@
     "invalid loop length": "Die angegebene Schleifenlänge ist nicht gültig"
   },
   "menu": {
-    "help": {
-      "head": "Hilfe",
-      "about": "Über diese Software"
-    },
     "processing": {
       "head": "Verarbeiten",
       "export csv": "Für Statistik exportieren",
@@ -246,9 +239,12 @@
     "get users saved locally": "Lokal gepseicherte Benutzer werden ermittelt",
     "initializing the player": "Player wird initialisiert?",
     "loading": "Wird geladen",
-    "loading video": "Video wird geladen",
     "ready": "Fertig.",
-    "starting": "Programm wird gestartet."
+    "starting": "Programm wird gestartet.",
+    "video": {
+      "loading": "Video wird geladen",
+      "failed": "Video konnte nicht geladen werden"
+    }
   },
   "timeline": {
     "change visibility": {

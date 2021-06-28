@@ -25,7 +25,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <opencast.nexus.url>http://nexus.opencast.org</opencast.nexus.url>
-    <eclipselink.version>2.6.4</eclipselink.version>
+    <eclipselink.version>2.6.9</eclipselink.version>
     <commons-collection.version>3.2.2</commons-collection.version>
     <commons-compress.version>1.12</commons-compress.version>
     <httpcomponents-httpcore.version>4.4.1</httpcomponents-httpcore.version>
@@ -35,11 +35,11 @@
     <osgi.compendium.version>5.0.0</osgi.compendium.version>
     <osgi.core.version>5.0.0</osgi.core.version>
     <osgi.enterprise.version>5.0.0</osgi.enterprise.version>
-    <karaf.version>4.0.8</karaf.version>
+    <karaf.version>4.2.2</karaf.version>
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
-    <opencast.version>[8,8.10)</opencast.version>
+    <opencast.version>[9,11-SNAPSHOT)</opencast.version>
   </properties>
 
   <modules>
@@ -207,82 +207,6 @@
       in the child. -->
     <pluginManagement>
       <plugins>
-        <!-- Fix Eclipse Maven integration -->
-        <!-- Since its 1.0 version, the Eclipse Maven integration requires
-          this info to map several workspace actions to specific phases of Maven's
-          lifecycle. Should this section not be included, or should certain plugins
-          not be covered by the list of "pluginExecutions" below, Eclipse users will
-          see errors of the type "plugin execution not covered". -->
-        <!-- See https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html
-          for more information -->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <versionRange>[1.0.0,)</versionRange>
-                    <goals>
-                      <goal>check</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <execute />
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>com.github.eirslett</groupId>
-                    <artifactId>frontend-maven-plugin</artifactId>
-                    <versionRange>[0.0.23,)</versionRange>
-                    <goals>
-                      <goal>install-node-and-npm</goal>
-                      <goal>npm</goal>
-                      <goal>grunt</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore />
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-pmd-plugin</artifactId>
-                    <versionRange>[3.0.0,)</versionRange>
-                    <goals>
-                      <goal>pmd</goal>
-                      <goal>cpd</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <execute />
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>de.empulse.eclipselink</groupId>
-                    <artifactId>staticweave-maven-plugin</artifactId>
-                    <versionRange>[1.0.0,)</versionRange>
-                    <goals>
-                      <goal>weave</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <execute>
-                      <runOnIncremental>true</runOnIncremental>
-                    </execute>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-scr-plugin</artifactId>
@@ -338,6 +262,7 @@
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
           <version>3.5.0</version>
+          <extensions>true</extensions>
           <configuration>
             <instructions>
               <Bundle-Category>opencastproject</Bundle-Category>
@@ -451,10 +376,6 @@
               <goals>
                 <goal>weave</goal>
               </goals>
-              <configuration>
-                <persistenceXMLLocation>META-INF/persistence.xml</persistenceXMLLocation>
-                <logLevel>FINE</logLevel>
-              </configuration>
             </execution>
           </executions>
           <dependencies>
@@ -628,14 +549,6 @@
         <artifactId>slf4j-simple</artifactId>
         <version>1.6.4</version>
         <scope>test</scope>
-      </dependency>
-
-      <!-- apache commons syncing -->
-
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>2.1</version>
       </dependency>
 
       <!-- testing -->
