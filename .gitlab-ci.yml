@@ -2,7 +2,7 @@ workflow:
   rules:
     - if: $CI_COMMIT_BRANCH != "m2"
 
-image: maven:3-openjdk-8
+image: maven:3-openjdk-11
 
 pages:
   stage: deploy
