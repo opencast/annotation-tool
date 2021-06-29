@@ -52,7 +52,7 @@
     <testResources>
       <!-- Add a log4j configuration file to the test resources -->
       <testResource>
-        <directory>${annotation.basedir}/docs/log4j</directory>
+        <directory>${maven.multiModuleProjectDirectory}/docs/log4j</directory>
         <includes>
           <include>log4j.properties</include>
         </includes>

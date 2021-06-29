@@ -16,7 +16,6 @@
 package org.opencast.annotation.endpoint;
 
 import static org.opencastproject.test.rest.RestServiceTestEnv.localhostRandomPort;
-import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -26,12 +25,6 @@ import org.opencast.annotation.api.videointerface.VideoInterfaceException;
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 
-import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.search.api.SearchQuery;
-import org.opencastproject.search.api.SearchResult;
-import org.opencastproject.search.api.SearchResultItem;
-import org.opencastproject.search.api.SearchService;
-import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.User;
@@ -42,6 +35,7 @@ import org.junit.Ignore;
 
 import java.net.URL;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -54,24 +48,27 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
 
   // Declare this dependency static since the TestRestService gets instantiated multiple times.
   // Haven't found out who's responsible for this but that's the way it is.
-  public static final ExtendedAnnotationService eas = new ExtendedAnnotationServiceJpaImpl(
-          persistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
-          getSecurityService(),
-          getVideoInterfaceProvider());
+  public static final ExtendedAnnotationServiceJpaImpl extendedAnnotationService =
+          new ExtendedAnnotationServiceJpaImpl();
+  static {
+    extendedAnnotationService.setSecurityService(getStaticSecurityService());
+    extendedAnnotationService.setEntityManagerFactory(
+            newTestEntityManagerFactory("org.opencast.annotation.impl.persistence"));
+  }
 
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
-    return eas;
+    return extendedAnnotationService;
   }
 
   @DELETE
   @Path("/reset")
   public Response reset() {
-    eas.clearDatabase();
+    extendedAnnotationService.clearDatabase();
     return Response.noContent().build();
   }
 
-  private static SecurityService getSecurityService() {
+  private static SecurityService getStaticSecurityService() {
     SecurityService securityService = EasyMock.createNiceMock(SecurityService.class);
 
     User user = SecurityUtil.createSystemUser("admin", new DefaultOrganization());
@@ -81,49 +78,31 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     return securityService;
   }
 
-  private static VideoInterfaceProvider getVideoInterfaceProvider() {
+  @Override
+  protected SecurityService getSecurityService() {
+    return getStaticSecurityService();
+  }
+
+  @Override
+  protected VideoInterfaceProvider getVideoInterfaceProvider() {
     VideoInterface videoInterface = EasyMock.createNiceMock(VideoInterface.class);
-    EasyMock.expect(videoInterface.getAccess())
-            .andReturn(Access.ANNOTATE)
-            .anyTimes();
+    try {
+      EasyMock.expect(videoInterface.getAccess())
+              .andReturn(Access.ANNOTATE)
+              .anyTimes();
+    } catch (VideoInterfaceException e) {
+    }
     EasyMock.replay(videoInterface);
 
     VideoInterfaceProvider videoInterfaceProvider = EasyMock.createNiceMock(VideoInterfaceProvider.class);
     try {
-      EasyMock.expect(videoInterfaceProvider.getVideoInterface(EasyMock.anyString()))
+      EasyMock.expect(videoInterfaceProvider.getVideoInterface(EasyMock.anyObject(HttpServletRequest.class)))
               .andReturn(videoInterface)
               .anyTimes();
     } catch (VideoInterfaceException e) {
-      // This can never happen
     }
     EasyMock.replay(videoInterfaceProvider);
     return videoInterfaceProvider;
-  }
-
-  private static AuthorizationService getAuthorizationService() {
-    AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
-    EasyMock.expect(authorizationService.hasPermission(EasyMock.anyObject(MediaPackage.class),
-            EasyMock.anyObject(String.class))).andReturn(true).anyTimes();
-    EasyMock.replay(authorizationService);
-    return authorizationService;
-  }
-
-  private static SearchService getSearchService() {
-    MediaPackage mediaPackage = EasyMock.createNiceMock(MediaPackage.class);
-
-    SearchResultItem searchResultItem = EasyMock.createNiceMock(SearchResultItem.class);
-    EasyMock.expect(searchResultItem.getMediaPackage()).andReturn(mediaPackage).anyTimes();
-    EasyMock.replay(searchResultItem);
-
-    SearchResult searchResult = EasyMock.createNiceMock(SearchResult.class);
-    EasyMock.expect(searchResult.getItems()).andReturn(new SearchResultItem[]{searchResultItem}).anyTimes();
-    EasyMock.replay(searchResult);
-
-    SearchService searchService = EasyMock.createNiceMock(SearchService.class);
-    EasyMock.expect(searchService.getByQuery(EasyMock.anyObject(SearchQuery.class)))
-            .andReturn(searchResult).anyTimes();
-    EasyMock.replay(searchService);
-    return searchService;
   }
 
   @Override

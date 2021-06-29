@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.persistence.PersistenceUtil.newPersistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
 import org.opencast.annotation.api.Annotation;
@@ -38,7 +37,6 @@ import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.User;
 import org.opencast.annotation.api.Video;
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
-import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
@@ -667,10 +665,10 @@ public class ExtendedAnnotationServiceJpaImplTest {
     EasyMock.expect(securityService.getUser()).andReturn(user).anyTimes();
     EasyMock.replay(securityService);
 
-    VideoInterfaceProvider videoInterfaceProvider = EasyMock.createNiceMock(VideoInterfaceProvider.class);
-
-    return new ExtendedAnnotationServiceJpaImpl(
-            newPersistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
-            securityService, videoInterfaceProvider);
+    ExtendedAnnotationServiceJpaImpl extendedAnnotationService = new ExtendedAnnotationServiceJpaImpl();
+    extendedAnnotationService.setSecurityService(securityService);
+    extendedAnnotationService.setEntityManagerFactory(
+            newTestEntityManagerFactory("org.opencast.annotation.impl.persistence"));
+    return extendedAnnotationService;
   }
 }

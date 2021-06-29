@@ -21,98 +21,76 @@ import static org.opencastproject.util.RestUtil.getEndpointUrl;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.impl.videointerface.AdminVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProvider;
-import org.opencast.annotation.impl.videointerface.ExternalApiVideoInterfaceProviderConfiguration;
 import org.opencast.annotation.impl.videointerface.UrlSigningAuthorizationVideoInterfaceProvider;
 import org.opencast.annotation.impl.videointerface.VideoInterfaceProvider;
 
 import org.opencastproject.security.api.SecurityService;
-import org.opencastproject.security.api.TrustedHttpClient;
-import org.opencastproject.security.api.UserDirectoryService;
 import org.opencastproject.security.urlsigning.verifier.UrlSigningVerifier;
 import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
 
 import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.Path;
 
+@Component(service = ExtendedAnnotationsRestService.class, property = {
+        "opencast.service.type=org.opencast.annotation",
+        "opencast.service.path=/extended-annotations"})
 @Path("/")
 public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsRestService {
-  private static final Logger logger = LoggerFactory.getLogger(ExtendedAnnotationsRestService.class);
 
-  private ExtendedAnnotationService eas;
+  // TODO Unify `annotations` vs `annotation`
+  private ExtendedAnnotationService extendedAnnotationService;
   // TODO Inject this via OSGi
   private VideoInterfaceProvider videoInterfaceProvider;
-  private ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration;
+  private ExternalApiVideoInterfaceProvider externalApiVideoInterfaceProvider;
   private SecurityService securityService;
-  private UserDirectoryService userDirectoryService;
-  private TrustedHttpClient trustedHttpClient;
   // TODO **WE** should not have this ...
   //   Remember to also remove the OSGi config
   //   when you change this
   private UrlSigningVerifier urlSigningVerifier;
   private String endpointBaseUrl;
 
-  /** OSGi callback. */
   @SuppressWarnings("unused")
+  @Activate
   public void activate(ComponentContext cc) {
-    logger.info("Start");
     final Tuple<String, String> endpointUrl = getEndpointUrl(cc);
     endpointBaseUrl = UrlSupport.concat(endpointUrl.getA(), endpointUrl.getB());
 
     videoInterfaceProvider = new AdminVideoInterfaceProvider(new UrlSigningAuthorizationVideoInterfaceProvider(
-            new ExternalApiVideoInterfaceProvider(externalApiVideoInterfaceProviderConfiguration,
-                    securityService, userDirectoryService, trustedHttpClient), urlSigningVerifier), securityService);
+            externalApiVideoInterfaceProvider, urlSigningVerifier), securityService);
   }
 
-  /** OSGi callback. */
   @SuppressWarnings("unused")
-  public void deactivate() {
-    logger.info("Stop");
+  @Reference
+  public void setExtendedAnnotationsService(ExtendedAnnotationService extendedAnnotationService) {
+    this.extendedAnnotationService = extendedAnnotationService;
   }
 
-  /** OSGi callback. */
   @SuppressWarnings("unused")
-  public void setExtendedAnnotationsService(ExtendedAnnotationService eas) {
-    this.eas = eas;
+  @Reference
+  public void setExternalApiVideoInterfaceProvider(ExternalApiVideoInterfaceProvider externalApiVideoInterfaceProvider) {
+    this.externalApiVideoInterfaceProvider = externalApiVideoInterfaceProvider;
   }
 
-  /** OSGi callback. */
   @SuppressWarnings("unused")
-  public void setExternalApiVideoInterfaceProviderConfiguration(
-          ExternalApiVideoInterfaceProviderConfiguration externalApiVideoInterfaceProviderConfiguration) {
-    this.externalApiVideoInterfaceProviderConfiguration = externalApiVideoInterfaceProviderConfiguration;
-  }
-
-  /** OSGi callback. */
-  @SuppressWarnings("unused")
+  @Reference
   public void setSecurityService(SecurityService securityService) {
     this.securityService = securityService;
   }
 
-  /** OSGi callback. */
   @SuppressWarnings("unused")
-  public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
-    this.userDirectoryService = userDirectoryService;
-  }
-
-  /** OSGi callback. */
-  @SuppressWarnings("unused")
-  public void setTrustedHttpClient(TrustedHttpClient trustedHttpClient) {
-    this.trustedHttpClient = trustedHttpClient;
-  }
-
-  /** OSGi callback. */
-  @SuppressWarnings("unused")
+  @Reference
   public void setUrlSigningVerifier(UrlSigningVerifier urlSigningVerifier) {
     this.urlSigningVerifier = urlSigningVerifier;
   }
 
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
-    return eas;
+    return extendedAnnotationService;
   }
 
   @Override

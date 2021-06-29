@@ -19,10 +19,15 @@ import org.apache.http.client.utils.URIBuilder;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.osgi.service.cm.ConfigurationException;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.AbstractMap;
@@ -42,18 +47,48 @@ import javax.servlet.http.HttpServletRequest;
  * on the constructed object do not incur any further requests to aid performance
  * and return consistent, though potentially stale results.
  */
+@Component(service = ExternalApiVideoInterfaceProvider.class)
 public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider {
-  private final TrustedHttpClient client;
-  private final SecurityService securityService;
-  private final UserDirectoryService userDirectoryService;
-  private final ExternalApiVideoInterfaceProviderConfiguration configuration;
 
-  public ExternalApiVideoInterfaceProvider(ExternalApiVideoInterfaceProviderConfiguration configuration,
-          SecurityService securityService, UserDirectoryService userDirectoryService, TrustedHttpClient client) {
-    this.configuration = configuration;
-    this.securityService = securityService;
-    this.userDirectoryService = userDirectoryService;
+  private TrustedHttpClient client;
+  private SecurityService securityService;
+  private UserDirectoryService userDirectoryService;
+
+  private URI externalApiBase;
+
+  @SuppressWarnings("unused")
+  @Reference
+  public void setClient(TrustedHttpClient client) {
     this.client = client;
+  }
+
+  @SuppressWarnings("unused")
+  @Reference
+  public void setSecurityService(SecurityService securityService) {
+    this.securityService = securityService;
+  }
+
+  @SuppressWarnings("unused")
+  @Reference
+  public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
+    this.userDirectoryService = userDirectoryService;
+  }
+
+  @SuppressWarnings("unused")
+  @Activate
+  public void activate(Map<String, ?> config) throws ConfigurationException {
+    if (config == null) {
+      config = Collections.emptyMap();
+    }
+    try {
+      this.externalApiBase = new URI((String) config.get("externalApiBase"));
+    } catch (URISyntaxException e) {
+      throw new ConfigurationException("externalApiBase", "must be a valid URI", e);
+    } catch (ClassCastException e) {
+      throw new ConfigurationException("externalApiBase", "must be a string", e);
+    } catch (NullPointerException e) {
+      throw new ConfigurationException("externalApiBase", "must be provided");
+    }
   }
 
   @Override
@@ -67,7 +102,7 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
       String mediaPackageId = Requests.getHeaderOrParam(request, "X-Opencast-Annotate-Media-Package", "mediaPackage");
 
       // TODO We need to rename the configuration file for the API base, right?
-      HttpGet apiRequest = new HttpGet(new URIBuilder(configuration.getExternalApiBase())
+      HttpGet apiRequest = new HttpGet(new URIBuilder(externalApiBase)
               .setPath("/api/events/" + mediaPackageId)
               .addParameter("withacl", Boolean.toString(true))
               .addParameter("withpublications", Boolean.toString(true))
