@@ -24,41 +24,37 @@ import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
 
 import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.Path;
 
+@Component(service = ExtendedAnnotationsRestService.class, property = {
+        "opencast.service.type=org.opencast.annotation",
+        "opencast.service.path=/extended-annotations"})
 @Path("/")
 public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsRestService {
-  private static final Logger logger = LoggerFactory.getLogger(ExtendedAnnotationsRestService.class);
 
-  private ExtendedAnnotationService eas;
+  private ExtendedAnnotationService extendedAnnotationService;
   private String endpointBaseUrl;
 
-  /** OSGi callback. */
   @SuppressWarnings("unused")
+  @Activate
   public void activate(ComponentContext cc) {
-    logger.info("Start");
     final Tuple<String, String> endpointUrl = getEndpointUrl(cc);
     endpointBaseUrl = UrlSupport.concat(endpointUrl.getA(), endpointUrl.getB());
   }
 
-  /** OSGi callback. */
   @SuppressWarnings("unused")
-  public void deactivate() {
-    logger.info("Stop");
-  }
-
-  /** OSGi callback. */
-  @SuppressWarnings("unused")
-  public void setExtendedAnnotationsService(ExtendedAnnotationService eas) {
-    this.eas = eas;
+  @Reference
+  public void setExtendedAnnotationsService(ExtendedAnnotationService extendedAnnotationService) {
+    this.extendedAnnotationService = extendedAnnotationService;
   }
 
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
-    return eas;
+    return extendedAnnotationService;
   }
 
   @Override
