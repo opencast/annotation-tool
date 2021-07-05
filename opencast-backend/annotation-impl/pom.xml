@@ -174,10 +174,6 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Service-Component>
-              OSGI-INF/extended-annotation-service-publisher.xml,
-              OSGI-INF/extended-annotation-service-rest.xml
-            </Service-Component>
             <Meta-Persistence>
               META-INF/persistence.xml
             </Meta-Persistence>

@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.persistence.PersistenceUtil.newPersistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
 import org.opencast.annotation.api.Annotation;
@@ -668,8 +667,12 @@ public class ExtendedAnnotationServiceJpaImplTest {
     AuthorizationService authorizationService = EasyMock.createNiceMock(AuthorizationService.class);
     SearchService searchService = EasyMock.createNiceMock(SearchService.class);
 
-    return new ExtendedAnnotationServiceJpaImpl(
-            newPersistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
-            securityService, authorizationService, searchService);
+    ExtendedAnnotationServiceJpaImpl extendedAnnotationService = new ExtendedAnnotationServiceJpaImpl();
+    extendedAnnotationService.setSecurityService(securityService);
+    extendedAnnotationService.setSearchService(searchService);
+    extendedAnnotationService.setAuthorizationService(authorizationService);
+    extendedAnnotationService.setEntityManagerFactory(
+            newTestEntityManagerFactory("org.opencast.annotation.impl.persistence"));
+    return extendedAnnotationService;
   }
 }
