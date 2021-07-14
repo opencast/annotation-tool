@@ -211,7 +211,7 @@ var LoopView = Backbone.View.extend({
             "change #loop-length": function (event) {
                 var newLength = parseInt(event.target.value, 10);
                 if (isNaN(newLength) || newLength <= 0 || newLength > duration) {
-                    alerts.error(i18next.t("loop controller.invalid loop length"));
+                    alerts.error("loop controller.invalid loop length");
                     lengthInput.val(loopLength);
                     slider.slider("setValue", loopLength);
                     return;
