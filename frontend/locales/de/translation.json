@@ -26,7 +26,6 @@
     "download categories": "Kategorien herunterladen",
     "edit category scaling": "Skala für diese Kategorie bearbeiten",
     "edit mode": "Bearbeiten",
-    "insert": "$t(common actions.insert)",
     "items visibility": {
       "collapse all": "Alle zuklappen",
       "expand all": "Alle aufklappen",
@@ -58,24 +57,18 @@
     "track": "auf",
     "comments": {
       "author": "Kommentar von",
-      "cancel": "$t(common actions.cancel)",
       "count": "Ein Kommentar",
       "count_plural": "{{count}} Kommentare",
       "created": "am {{date}}",
-      "delete": "$t(common actions.delete)",
       "edit": {
         "button": "Bearbeiten",
-        "cancel": "$t(common actions.cancel)",
-        "save": "$t(common actions.save)"
       },
-      "insert": "$t(common actions.insert)",
       "modified": "zuletzt verändert am {{date}}",
       "placeholder": "Einen Kommentar für diese Annotation schreiben",
       "title": "Kommentare"
     },
     "edit": {
       "delete": "Annotation löschen.",
-      "double click to edit": "$t(common actions.double click to edit)",
       "edit": "Annotation bearbeiten.",
       "end time": "Schluss",
       "free text placeholder": "Freitext …",
@@ -96,15 +89,10 @@
     "name": "Standard {{nickname}}"
   },
   "delete modal": {
-    "cancel": "$t(common actions.cancel)",
-    "delete": "$t(common actions.delete)",
     "title": "$t(models.nominative, {\"context\": \"{{context}}\" }) löschen",
     "warning": "Wollen Sie $t(models.accusative, {\"context\": \"{{context}}\" }) „{{content}}“ wirklich löschen?"
   },
   "description": "Werkzeug zur Videoannotation",
-  "list annotation": {
-    "double click to edit": "$t(common actions.double click to edit)"
-  },
   "loop controller": {
     "enable": "Schleifen aktivieren",
     "constrain": "Neue Annotationen auf die aktuelle Schleife einschränken",
@@ -184,8 +172,6 @@
   },
   "required fields": "Pflichtfelder",
   "scale editor": {
-    "cancel": "$t(common actions.cancel)",
-    "delete": "$t(common actions.delete)",
     "description": {
       "label": "Beschreibung",
       "placeholder": "Beschreibung der Kategorie einfügen"
@@ -203,7 +189,6 @@
     "new scale name": "Neue Skala",
     "new scale value": "Neuer Skalenwert",
     "no scale": "-- KEINE SKALA --",
-    "save": "$t(common actions.save)",
     "values": {
       "add": "Skalenwert hinzufügen",
       "name": {
@@ -243,7 +228,6 @@
       "button_update": "Spur bearbeiten",
       "action_add": "Hinzufügen",
       "action_update": "Aktualisieren",
-      "cancel": "$t(common actions.cancel)",
       "description": {
         "label": "Beschreibung",
         "placeholder_add": "Beschreibung für die neue Spur einfügen",
@@ -286,8 +270,6 @@
   "track management": {
     "action": "Spuren verwalten",
     "(un-)select all": "Alle (de-)selektieren",
-    "cancel": "$t(common actions.cancel)",
-    "ok": "$t(common actions.ok)",
     "search": {
       "clear": "Löschen",
       "hint": "Benutzer mit öffentlichen Annotationen",
