@@ -21,7 +21,7 @@ define([
     "util",
     "alerts",
     "models/user",
-    "player_adapter_HTML5"
+    "player-adapter-html5"
 ], function (
     $,
     _,
