@@ -18,7 +18,7 @@ define([
     "backbone",
     "i18next",
     "jquery",
-    "collections/annotation_content",
+    "collections/annotation-content",
     "templates/questionnaire-block-categories",
     "templates/questionnaire-block-layout",
     "views/modal-add-labelled",
