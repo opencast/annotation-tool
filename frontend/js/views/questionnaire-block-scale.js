@@ -14,7 +14,7 @@
  *
  */
 define([
-    "models/content_item",
+    "models/content-item",
     "templates/questionnaire-block-scale",
     "templates/questionnaire-block-layout",
     "templates/partial-scale-chooser",

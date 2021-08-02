@@ -16,7 +16,7 @@
 define([
     "templates/questionnaire-block-text",
     "templates/questionnaire-block-layout",
-    "models/content_item",
+    "models/content-item",
     "backbone",
     "bootstrap"
 ], function(template, tmplLayout, ContentItem, Backbone) {

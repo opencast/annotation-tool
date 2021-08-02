@@ -15,7 +15,7 @@
  */
 define([
     "underscore",
-    "models/content_item",
+    "models/content-item",
     "templates/questionnaire-block-label",
     "templates/questionnaire-block-layout",
     "templates/partial-label-chooser",
