@@ -254,6 +254,7 @@ define([
                 _.every(_.invoke(this.items, "validate"))) {
                 var contentItems = _.filter(_.flatten(_.invoke(this.items, "getContentItems")));
                 this.annotation.get("content").reset(contentItems);
+                this.annotation.set({createdFromQuestionnaire: true});
                 this.annotation.save();
                 this.annotation = null;
             }

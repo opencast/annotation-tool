@@ -278,7 +278,8 @@ public interface ExtendedAnnotationService {
    *           if an error occurs while storing/retrieving from persistence storage
    */
   Annotation createAnnotation(long trackId, double start, Option<Double> duration, String content,
-          Option<String> settings, Resource resource) throws ExtendedAnnotationException;
+          boolean createdFromQuestionnaire, Option<String> settings, Resource resource)
+          throws ExtendedAnnotationException;
 
   /**
    * Create an annotation with a certain annotation.

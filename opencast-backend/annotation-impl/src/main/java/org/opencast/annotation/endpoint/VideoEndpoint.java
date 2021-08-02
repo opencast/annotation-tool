@@ -342,6 +342,7 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations")
   public Response postAnnotation(@PathParam("trackId") final long trackId, @FormParam("start") final Double start,
           @FormParam("duration") final Double duration, @FormParam("content") @DefaultValue("[]") final String content,
+          @FormParam("createdFromQuestionnaire") @DefaultValue("false") final boolean createdFromQuestionnaire,
           @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
     return run(array(start), new Function0<Response>() {
       @Override
@@ -353,8 +354,8 @@ public class VideoEndpoint {
 
           Resource resource = eas.createResource(
                   tagsMap.bind(Functions.identity()));
-          final Annotation a = eas.createAnnotation(trackId, start, option(duration), content, trimToNone(settings),
-                  resource);
+          final Annotation a = eas.createAnnotation(trackId, start, option(duration), content, createdFromQuestionnaire,
+                  trimToNone(settings), resource);
           return Response.created(annotationLocationUri(videoId, a))
                   .entity(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas, a))).build();
         } else {
@@ -369,7 +370,9 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations/{id}")
   public Response putAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id,
           @FormParam("start") final double start, @FormParam("duration") final Double duration,
-          @FormParam("content") @DefaultValue("[]") final String content, @FormParam("settings") final String settings,
+          @FormParam("content") @DefaultValue("[]") final String content,
+          @FormParam("createdFromQuestionnaire") @DefaultValue("false") final boolean createdFromQuestionnaire,
+          @FormParam("settings") final String settings,
           @FormParam("tags") final String tags) {
     return run(array(start), new Function0<Response>() {
       @Override
@@ -391,7 +394,7 @@ public class VideoEndpoint {
 
               Resource resource = eas.updateResource(annotation, tags);
               final Annotation updated = new AnnotationImpl(id, trackId, start, option(duration), content,
-                      trimToNone(settings), resource);
+                      createdFromQuestionnaire, trimToNone(settings), resource);
               if (!annotation.equals(updated)) {
                 eas.updateAnnotation(updated);
                 annotation = updated;
@@ -405,8 +408,8 @@ public class VideoEndpoint {
             public Response none() {
               Resource resource = eas.createResource(tags);
               final Annotation a = eas.createAnnotation(
-                      new AnnotationImpl(id, trackId, start, option(duration), content, trimToNone(settings),
-                              resource));
+                      new AnnotationImpl(id, trackId, start, option(duration), content, createdFromQuestionnaire,
+                              trimToNone(settings), resource));
               return Response.created(annotationLocationUri(videoId, a))
                       .entity(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas, a))).build();
             }

@@ -78,6 +78,9 @@ public class AnnotationDto extends AbstractResourceDto {
   @Column(name = "content", nullable = false)
   private String content;
 
+  @Column(name = "createdFromQuestionnaire", nullable = false)
+  private boolean createdFromQuestionnaire;
+
   // Settings as JSON string
   @Column(name = "settings")
   private String settings;
@@ -85,9 +88,6 @@ public class AnnotationDto extends AbstractResourceDto {
   // Foreign keys
   @Column(name = "track_id", nullable = false)
   private long trackId;
-
-  @Column(name = "createdFromQuestionnaire", nullable = false)
-  private boolean createdFromQuestionnaire;
 
   @ElementCollection
   @MapKeyColumn(name = "name")
@@ -109,6 +109,7 @@ public class AnnotationDto extends AbstractResourceDto {
     this.content = content;
     this.start = start;
     this.duration = duration.getOrElseNull();
+    this.createdFromQuestionnaire = createdFromQuestionnaire;
     this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
@@ -141,7 +142,7 @@ public class AnnotationDto extends AbstractResourceDto {
       return conc(
               AbstractResourceDto.toJson.apply(s, a),
               jO(p("id", a.getId()), p("start", a.getStart()), p("duration", a.getDuration()), p("content", a.getContent()),
-                      p("settings", a.getSettings())));
+                      p("createdFromQuestionnaire", a.getCreatedFromQuestionnaire()), p("settings", a.getSettings())));
     }
   };
 
