@@ -189,6 +189,14 @@ public class ExternalApiVideoInterfaceProvider implements VideoInterfaceProvider
                             String flavor = (String) entry.getValue().get("flavor");
                             return flavor != null && flavor.matches("^delivery/.*$");
                           })
+                          .thenComparingLong(entry -> {
+                            Long width = (Long) entry.getValue().get("width");
+                            Long height = (Long) entry.getValue().get("height");
+                            if (height != null && width != null) {
+                             return width * height;
+                            }
+                            return 0;
+                          })
                           .reversed())
                   .map(Map.Entry::getValue)
                   .map(medium -> {
