@@ -142,7 +142,7 @@ define(
 
                 this.listenTo(this.model, "change", this.render);
 
-                this.setupScaling(this.model.get("category"));
+                this.setupScaling();
 
                 if (_.contains(this.roles, annotationTool.user.get("role"))) {
                     this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
@@ -212,26 +212,29 @@ define(
 
             /**
              * Listener for "change" event on the label category
-             * @param {object} category The updated category
              */
-            changeCategory: function (category) {
-                this.setupScaling(category);
+            changeCategory: function () {
+                this.setupScaling();
                 this.render();
             },
 
             /**
              * Set up scale values according to category
-             * @param {object} category The updated category
              */
-            setupScaling: function (category) {
-                var scaleId = category.scale_id;
+            setupScaling: function () {
+                var category = this.model.collection.category;
+                var scaleId = category.get("scale_id");
                 var scale = scaleId && annotationTool.video.get("scales").get(scaleId);
 
                 if (scale) {
                     this.scaleValues = scale.get("scaleValues");
+                } else {
+                    // TODO This should not be taken care of here, I feel like ...
+                    delete this.scaleValues;
                 }
 
-                this.isScaleEnable = (category.settings && category.settings.hasScale);
+                var settings = category.get("settings");
+                this.isScaleEnable = settings && settings.hasScale;
             },
 
             /**

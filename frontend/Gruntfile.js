@@ -32,7 +32,7 @@ module.exports = function (grunt) {
                 files: [{
                     ext: '.js',
                     expand: true,
-                    src: 'templates/*.tmpl',
+                    src: 'templates/**/*.tmpl',
                     dest: '<%= destPath %>'
                 }]
             }

@@ -27,6 +27,7 @@ define(
         "util",
         "access",
         "views/annotate-label",
+        "views/category-modal",
         "templates/annotate-category",
         "jquery.colorPicker"
     ],
@@ -38,6 +39,7 @@ define(
         util,
         ACCESS,
         LabelView,
+        CategoryModal,
         Template
     ) {
         "use strict";
@@ -92,7 +94,10 @@ define(
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
                 "click .catItem-add": "onCreateLabel",
-                "click .catItem-header i.toggle-series": "toggleSeries"
+                "click .catItem-header i.toggle-series": "toggleSeries",
+                "click .moo": function () {
+                    new CategoryModal({ model: this.model }).show();
+                }
             },
 
             /**
@@ -124,6 +129,7 @@ define(
                 );
 
                 // Define the colors (global setting for all color pickers)
+                // TODO Do this somewhere else
                 $.fn.colorPicker.defaults.colors = annotationTool.colorsManager.getColors();
 
                 // Type use for delete operation
@@ -185,7 +191,7 @@ define(
             /**
              * Callback for modal spawned by toggleSeries.
              * Turns a series category back to a video category
-             * @param {Id of the series} categorySeriesCategoryId
+             * @param categorySeriesCategoryId id of the series
              */
             toVideoCategory: function (categorySeriesCategoryId) {
                 this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
@@ -258,7 +264,7 @@ define(
              */
             onChange: function () {
                 _.each(this.labelViews, function (labelView) {
-                    labelView.changeCategory(this.model.toJSON());
+                    labelView.changeCategory();
                 }, this);
                 this.render();
             },

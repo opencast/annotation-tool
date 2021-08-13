@@ -1,4 +1,5 @@
 <div class="catItem-header" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}} title="{{name}}">
+    <button type="button" class="moo">Edit</button>
     <input type="text" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}/>
     <i
         class="{{#if visible}}icon-eye-open{{else}}icon-eye-close{{/if}} visibility"

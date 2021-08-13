@@ -1,0 +1,84 @@
+{{! TODO Placeholders maybe}}
+
+<form>
+    {{! TODO Use a more semantic element?}}
+    {{! TODO Close button?}}
+    <div class="modal-header"><h3>
+        {{! TODO i18n}}
+        {{#if isNew}}
+            New category
+        {{else}}
+            {{! TODO Maybe color this somehow?}}
+            Edit {{model.name}}
+        {{/if}}
+    </h3></div>
+
+    <div class="modal-body">
+        {{! TODO i18n}}
+        {{! TODO CSS `::before` magic}}
+        {{! TODO Label alignment. Can we not?}}
+
+        {{! TODO Alignment}}
+
+        {{! TODO It sucks that we have to repeat the `required`}}
+        <label class="required">Name <input id="name" type="text" value="{{model.name}}" required></label>
+
+        <label>Color <input type="color" value="{{model.settings.color}}"></label>
+
+        <label>Scale <select>
+            <option value="">No scale</option>
+            {{#each scales}}
+                <option value="{{id}}">{{name}}</option>
+            {{/each}}
+        </select></label>
+
+        <span class="help-block" id="no-scale-on-series-category">Series categories can't have scales</span>
+
+        <fieldset>
+            <legend>Affiliation</legend>
+            <label><input type="radio" name="affiliation" value="event"> Belongs to the video</label>
+            <label><input type="radio" name="affiliation" value="series"> Belongs to the series</label>
+        </fieldset>
+
+        <span class="help-block" id="no-series-affiliation-with-scale">Only categories without a scale can be affiliated to a series</span>
+
+        <fieldset>
+            <legend>Access</legend>
+            {{! TODO This should use the new access stuff!}}
+            <label><input type="radio" name="access" value="private"> Private</label>
+            <label><input type="radio" name="access" value="shared-with-admin"> Shared with admin</label>
+            <label><input type="radio" name="access" value="public"> Public</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Labels</legend>
+
+            {{! TODO Show this only when there are labels}}
+            <table id="labels">
+                <tr>
+                    <td class="required">Label</td>
+                    <td class="required">Abbreviation</td>
+                    <td>Remove</td>
+                </tr>
+                {{! TODO Reordering these will generally not be possible ...}}
+            </table>
+            <button type="button" id="new-label" class="btn">Create a new label</button>
+
+            {{! TODO Can you factor this out? In general you could think about reusing some of this stuff ...}}
+            {{!   This was lifted from the track modal now ...}}
+            {{! TODO Actually add the star everywhere, preferrably with a CSS class}}
+            <div style="text-align: right;"><b>* {{t "required fields"}}</b></div>
+        </fieldset>
+    </div>
+
+    {{! TODO Scale}}
+    {{!    Can we put it after the name/color so the fieldsets come after?}}
+
+    {{! TODO Should this not get `.form-actions`?! That fucked up the spacing.}}
+    <div class="modal-footer">
+        <button class="btn cancel" type="button">Cancel</button>
+        <button class="btn btn-primary">Save</button>
+    </div>
+</form>
+
+{{! TODO Fix the margin}}

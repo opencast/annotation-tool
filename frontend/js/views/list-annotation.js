@@ -103,6 +103,9 @@ define(
                     category = this.model.get("label").category;
 
                     if (!category) {
+                        // TODO Apparently this never happens
+                        //   but why did I care?
+                        //debugger;
                         category = this.model.get("label").get("category");
                     }
 

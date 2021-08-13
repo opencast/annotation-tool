@@ -22,28 +22,32 @@ define(
     [
         "jquery",
         "underscore",
+        "backbone",
         "i18next",
         "player-adapter",
         "views/annotate-tab",
+        "views/category-modal",
         "templates/annotate",
         "templates/annotate-tab-title",
         "templates/annotate-toggle-free-text-button",
         "roles",
         "access",
-        "backbone"
+        "models/category"
     ],
     function (
         $,
         _,
+        Backbone,
         i18next,
         PlayerAdapter,
         AnnotateTab,
+        CategoryModal,
         template,
         TabsButtonTemplate,
         toggleFreeTextButtonTemplate,
         ROLES,
         ACCESS,
-        Backbone
+        Category
     ) {
         "use strict";
 
@@ -107,7 +111,8 @@ define(
                 "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
                 "change #editSwitch": "onSwitchEditModus",
-                "click #toggle-free-text button": "toggleFreeTextAnnotations"
+                "click #toggle-free-text button": "toggleFreeTextAnnotations",
+                "click #new-category": "createCategory"
             },
 
             /**
@@ -203,6 +208,19 @@ define(
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
                 this.tabsButtonsElement.find("a:first-child").parent().first().addClass("active");
+            },
+
+            /**
+             * Open a modal to create a new category
+             */
+            createCategory: function () {
+                // TODO We should not set the `hasScale` here ...
+                var category = new Category({ settings: {
+                    hasScale: false,
+                    createdAsMine: true
+                } });
+                new CategoryModal({ model: category }).show();
+                // TODO Maybe activate the corresponding tab afterwards?
             },
 
             /**
