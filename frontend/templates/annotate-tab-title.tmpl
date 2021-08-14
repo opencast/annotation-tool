@@ -2,6 +2,9 @@
     {{! TODO This should not be an `a`, and it should use the Bootstrap stuff}}
     <a data-toggle="tab" data-tabid="{{id}}" data-target="#labelTab-{{id}}">
         {{name}}
-        <i class='icon-download export' title="{{t "annotate.download categories"}}"></i>
+        <i class='icon-upload import edit' title="{{t "annotate.upload categories"}}"></i>
+        <input class="file" type="file" id="file-{{id}}">
+        <i class='icon-download export edit' title="{{t "annotate.download categories"}}"></i>
+        <i class='icon-plus-sign add edit'></i>
     </a>
 </li>
