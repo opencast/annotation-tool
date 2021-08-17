@@ -49,7 +49,8 @@
     "hide category": "Hide category",
     "show category": "Show category",
     "show free text": "Show free text annotations",
-    "hide free text": "Hide free text annotations"
+    "hide free text": "Hide free text annotations",
+    "structured annotations": "Structured Annotations"
   },
   "annotation": {
     "author": "Created by",

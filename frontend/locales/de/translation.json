@@ -49,7 +49,8 @@
     "hide category": "Kategorie verstecken",
     "show category": "Kategorie anzeigen",
     "show free text": "Freitextannotationen anzeigen",
-    "hide free text": "Freitextannotationen ausblenden"
+    "hide free text": "Freitextannotationen ausblenden",
+    "structured annotations": "Strukturierte Annotationen"
   },
   "annotation": {
     "author": "Erstellt von",
