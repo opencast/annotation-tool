@@ -26,6 +26,8 @@
     "download categories": "Download categories",
     "edit category scaling": "Edit scaling for this category",
     "edit mode": "Edit mode",
+    "edit category": "Edit category",
+    "delete category": "Delete category",
     "insert": "$t(common actions.insert)",
     "items visibility": {
       "collapse all": "Collapse all",

@@ -26,6 +26,8 @@
     "download categories": "Kategorien herunterladen",
     "edit category scaling": "Skala für diese Kategorie bearbeiten",
     "edit mode": "Bearbeiten",
+    "edit category": "Kategorie bearbeiten",
+    "delete category": "Kategorie löschen",
     "items visibility": {
       "collapse all": "Alle zuklappen",
       "expand all": "Alle aufklappen",
