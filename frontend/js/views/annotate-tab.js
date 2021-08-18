@@ -191,8 +191,8 @@ define(
 
                 this.titleLink = attr.button;
                 this.titleLink.find("i.add").on("click", this.onAddCategory);
-                this.titleLink.find("i.export").on("click", this.onExport);
-                this.titleLink.find("i.import").on("click", this.chooseFile);
+                this.titleLink.find("button.export").on("click", this.onExport);
+                this.titleLink.find("button.import").on("click", this.chooseFile);
 
                 this.titleLink.find(".file").on("click", function (event) {
                     // We need to stop the propagation of this click event,
