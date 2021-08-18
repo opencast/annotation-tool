@@ -96,7 +96,8 @@ define(
                 "click .catItem-add": "onCreateLabel",
                 "click .catItem-header i.toggle-series": "toggleSeries",
                 "click .editt": "onEditCategory",
-                "click .delete": "onDeleteCategory"
+                "click .delete": "onDeleteCategory",
+                "click .edit-scale": "editScale"
             },
 
             /**
