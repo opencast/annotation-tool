@@ -112,7 +112,8 @@ define(
                 "click #label-tabs-buttons a": "showTab",
                 "change #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations",
-                "click #new-category": "createCategory"
+                "click .new-category-public": "createCategoryPublic",
+                "click .new-category-mine": "createCategoryMine"
             },
 
             /**
@@ -164,7 +165,8 @@ define(
                     "onSwitchEditModus",
                     "switchEditModus",
                     "toggleFreeTextAnnotationPane",
-                    "toggleStructuredAnnotations"
+                    "toggleStructuredAnnotations",
+                    "createCategory"
                 );
 
                 // Parameter for stop on write
@@ -213,17 +215,31 @@ define(
             /**
              * Open a modal to create a new category
              */
-            createCategory: function () {
+            createCategory: function (mine) {
                 // TODO We should not set the `hasScale` here ...
                 var category = new Category({ settings: {
                     hasScale: false,
                     // TODO This needs to be set depending on the tab
                     //   the butotn was pressed in
                     //   See also the `attributes` key of the `DEFAULT_TABS`.
-                    createdAsMine: true
+                    createdAsMine: mine
                 } });
                 new CategoryModal({ model: category }).show();
                 // TODO Maybe activate the corresponding tab afterwards?
+            },
+
+            /**
+             * Called from "Public" tab
+             */
+            createCategoryPublic: function () {
+              this.createCategory(false);
+            },
+
+            /**
+             * Called from "Mine" tab
+             */
+            createCategoryMine: function () {
+              this.createCategory(true);
             },
 
             /**
@@ -326,6 +342,12 @@ define(
                     roles: attr.roles,
                     attributes: attr.attributes
                 };
+
+                if (attr.id === "mine" || attr.id === "public") {
+                  params.showDropdown = true;
+                } else {
+                  params.showDropdown = false;
+                }
 
                 var newButton = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
                 params.button = newButton;
