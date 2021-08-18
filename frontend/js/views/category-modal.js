@@ -52,6 +52,11 @@ define([
             // TODO These parameters should probably be factored out ...
             //   and unified ...
 
+            // Enable all the settings before potentially disabling them later
+            // The reason being hiding any help-blocks
+            this.enableScale();
+            this.enableAffiliation();
+
             // TODO This should be done in the template ...
             var access = ACCESS.render(this.model.get("access"));
             // TODO Is this `attr` call the right thing?!
@@ -61,8 +66,13 @@ define([
             var affiliation = this.model.get("series_category_id") ? "series" : "event";
             this.$el.find("[name='affiliation'][value='" + affiliation + "']").attr("checked", true);
 
+            if (affiliation === "series") {
+                this.disableScale();
+            }
+
             if (this.model.get("scale_id")) {
                 this.$el.find("option[value='" + this.model.get("scale_id") + "']").attr("selected", true);
+                this.disableAffiliation();
             }
 
             // TODO Initialize the picker!
@@ -74,6 +84,7 @@ define([
             });
 
             this.$el.modal({ show: true, backdrop: "static", keyboard: false });
+            console.log("A change")
             return this;
         },
 
@@ -167,22 +178,18 @@ define([
                 // TODO Do this on the initial render as well
                 //   or in the template?
                 if (event.target.value === "series") {
-                    this.$el.find("select").prop("disabled", true);
-                    this.$el.find("#no-scale-on-series-category").show();
+                    this.disableScale();
                     // TODO Show message
                     // TODO Ignore disabled thigns
                 } else {
-                    this.$el.find("select").prop("disabled", false);
-                    this.$el.find("#no-scale-on-series-category").hide();
+                    this.enableScale();
                 }
             },
             "change select": function (event) {
                 if (event.target.value) {
-                    this.$el.find("input[name='affiliation']").prop("disabled", true);
-                    this.$el.find("#no-series-affiliation-with-scale").show();
+                    this.disableAffiliation();
                 } else {
-                    this.$el.find("input[name='affiliation']").prop("disabled", false);
-                    this.$el.find("#no-series-affiliation-with-scale").hide();
+                    this.enableAffiliation();
                 }
             },
             "click #new-label": function () {
@@ -224,7 +231,27 @@ define([
             this.render();
         },
 
-        template: template
+        template: template,
+
+        disableAffiliation: function () {
+          this.$el.find("input[name='affiliation']").prop("disabled", true);
+          this.$el.find("#no-series-affiliation-with-scale").show();
+        },
+
+        enableAffiliation: function () {
+          this.$el.find("input[name='affiliation']").prop("disabled", false);
+          this.$el.find("#no-series-affiliation-with-scale").hide();
+        },
+
+        disableScale: function () {
+          this.$el.find("select").prop("disabled", true);
+          this.$el.find("#no-scale-on-series-category").show();
+        },
+
+        enableScale: function () {
+          this.$el.find("select").prop("disabled", false);
+          this.$el.find("#no-scale-on-series-category").hide();
+        }
     });
 
     return CategoryModal;
