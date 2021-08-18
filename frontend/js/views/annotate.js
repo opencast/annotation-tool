@@ -343,7 +343,7 @@ define(
                     attributes: attr.attributes
                 };
 
-                if (attr.id === "mine" || attr.id === "public") {
+                if (attr.id === "mine" || (attr.id === "public" && attr.roles.includes("administrator"))) {
                   params.showDropdown = true;
                 } else {
                   params.showDropdown = false;
