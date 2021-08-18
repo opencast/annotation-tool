@@ -246,11 +246,13 @@ define([
         disableScale: function () {
           this.$el.find("select").prop("disabled", true);
           this.$el.find("#no-scale-on-series-category").show();
+          this.$el.find("#scales-description").hide();
         },
 
         enableScale: function () {
           this.$el.find("select").prop("disabled", false);
           this.$el.find("#no-scale-on-series-category").hide();
+          this.$el.find("#scales-description").show();
         }
     });
 
