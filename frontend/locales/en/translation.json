@@ -96,6 +96,25 @@
     },
     "you own": "You own this annotation"
   },
+  "category modal": {
+    "abbreviation": "Abbreviation",
+    "affiliation": "Affiliation",
+    "belongs to series": "Belongs to the series",
+    "belongs to video": "Belongs to the video",
+    "create new label": "Create a new label",
+    "color": "Color",
+    "edit": "Edit",
+    "label": "Label",
+    "labels": "Labels",
+    "remove": "Remove",
+    "name": "Name",
+    "new category": "New category",
+    "no-scale-on-series-category": "Series categories can't have scales",
+    "no-series-affiliation-with-scale": "Only categories without a scale can be affiliated to a series",
+    "required": "required",
+    "scale": "Scale",
+    "scale no": "No scale"
+  },
   "default track": {
     "description": "Default track for user {{nickname}}",
     "name": "Default {{nickname}}"

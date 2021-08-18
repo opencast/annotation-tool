@@ -89,6 +89,25 @@
     },
     "you own": "Diese Annotation gehört Ihnen"
   },
+  "category modal": {
+    "abbreviation": "Abkürzung",
+    "affiliation": "Zugehörigkeit",
+    "belongs to series": "Gehört zur Serie",
+    "belongs to video": "Gehört zum Video",
+    "create new label": "Neues Etikett erstellen",
+    "color": "Farbe",
+    "edit": "Bearbeite",
+    "label": "Etikett",
+    "labels": "Etikette",
+    "remove": "Entfernen",
+    "name": "Name",
+    "new category": "Neue Kategorie",
+    "no-scale-on-series-category": "Serienkategorien können keine Skalen haben",
+    "no-series-affiliation-with-scale": "Nur Kategorien ohne Skala können einer Serie zugehören",
+    "required": "benötigt",
+    "scale": "Skala",
+    "scale no": "Keine Skala"
+  },
   "default track": {
     "description": "Standardspur für Benutzer {{nickname}}",
     "name": "Standard {{nickname}}"

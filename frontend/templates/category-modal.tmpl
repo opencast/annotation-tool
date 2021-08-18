@@ -6,63 +6,66 @@
     <div class="modal-header"><h3>
         {{! TODO i18n}}
         {{#if isNew}}
-            New category
+            {{t "category modal.new category"}}
         {{else}}
             {{! TODO Maybe color this somehow?}}
-            Edit {{model.name}}
+            {{t "category modal.edit"}} {{model.name}}
         {{/if}}
     </h3></div>
 
     <div class="modal-body">
-        {{! TODO i18n}}
         {{! TODO CSS `::before` magic}}
         {{! TODO Label alignment. Can we not?}}
 
         {{! TODO Alignment}}
 
         {{! TODO It sucks that we have to repeat the `required`}}
-        <label class="required">Name <input id="name" type="text" value="{{model.name}}" required></label>
+        <label class="required">
+          {{t "category modal.name"}}
+          <input id="name" type="text" value="{{model.name}}"
+          {{t "category modal.required"}}>
+        </label>
 
-        <label>Color <input type="color" value="{{model.settings.color}}"></label>
+        <label>{{t "category modal.color"}} <input type="color" value="{{model.settings.color}}"></label>
 
-        <label>Scale <select>
-            <option value="">No scale</option>
+        <label>{{t "category modal.scale"}} <select>
+            <option value="">{{t "category modal.scale no"}}</option>
             {{#each scales}}
                 <option value="{{id}}">{{name}}</option>
             {{/each}}
         </select></label>
 
-        <span class="help-block" id="no-scale-on-series-category">Series categories can't have scales</span>
+        <span class="help-block" id="no-scale-on-series-category">{{t "category modal.no-scale-on-series-category"}}</span>
 
         <fieldset>
-            <legend>Affiliation</legend>
-            <label><input type="radio" name="affiliation" value="event"> Belongs to the video</label>
-            <label><input type="radio" name="affiliation" value="series"> Belongs to the series</label>
+            <legend>{{t "category modal.affiliation"}}</legend>
+            <label><input type="radio" name="affiliation" value="event"> {{t "category modal.belongs to video"}}</label>
+            <label><input type="radio" name="affiliation" value="series"> {{t "category modal.belongs to series"}}</label>
         </fieldset>
 
-        <span class="help-block" id="no-series-affiliation-with-scale">Only categories without a scale can be affiliated to a series</span>
+        <span class="help-block" id="no-series-affiliation-with-scale">{{t "category modal.no-series-affiliation-with-scale"}}</span>
 
         <fieldset>
-            <legend>Access</legend>
+            <legend>{{t "timeline.track modals.access.label"}}</legend>
             {{! TODO This should use the new access stuff!}}
-            <label><input type="radio" name="access" value="private"> Private</label>
-            <label><input type="radio" name="access" value="shared-with-admin"> Shared with admin</label>
-            <label><input type="radio" name="access" value="public"> Public</label>
+            <label><input type="radio" name="access" value="private"> {{t "timeline.track modals.access.private"}}</label>
+            <label><input type="radio" name="access" value="shared-with-admin"> {{t "timeline.track modals.access.shared with admin"}}</label>
+            <label><input type="radio" name="access" value="public"> {{t "timeline.track modals.access.public"}}</label>
         </fieldset>
 
         <fieldset>
-            <legend>Labels</legend>
+            <legend>{{t "category modal.labels"}}</legend>
 
             {{! TODO Show this only when there are labels}}
             <table id="labels">
                 <tr>
-                    <td class="required">Label</td>
-                    <td class="required">Abbreviation</td>
-                    <td>Remove</td>
+                    <td class="required">{{t "category modal.label"}}</td>
+                    <td class="required">{{t "category modal.abbreviation"}}</td>
+                    <td>{{t "category modal.remove"}}</td>
                 </tr>
                 {{! TODO Reordering these will generally not be possible ...}}
             </table>
-            <button type="button" id="new-label" class="btn">Create a new label</button>
+            <button type="button" id="new-label" class="btn">{{t "category modal.create new label"}}</button>
 
             {{! TODO Can you factor this out? In general you could think about reusing some of this stuff ...}}
             {{!   This was lifted from the track modal now ...}}
@@ -76,8 +79,8 @@
 
     {{! TODO Should this not get `.form-actions`?! That fucked up the spacing.}}
     <div class="modal-footer">
-        <button class="btn cancel" type="button">Cancel</button>
-        <button class="btn btn-primary">Save</button>
+        <button class="btn cancel" type="button">{{t "common actions.cancel"}}</button>
+        <button class="btn btn-primary">{{t "common actions.save"}}</button>
     </div>
 </form>
 
