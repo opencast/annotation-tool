@@ -15,9 +15,11 @@
 
 define([
     "backbone",
+    "underscore",
     "templates/category-modal/label"
 ], function (
     Backbone,
+    _,
     template
 ) {
     "use strict";
@@ -31,6 +33,7 @@ define([
             //   but the category modal does all the cloning
             "change .value": function (event) {
                 this.model.set({ value: event.target.value });
+                this.updateAbbreviation();
             },
             "change .abbreviation": function (event) {
                 this.model.set({ abbreviation: event.target.value });
@@ -38,7 +41,7 @@ define([
             "click .remove": function (event) {
                 this.model.collection.remove(this.model.cid);
                 this.remove();
-            },
+            }
         },
 
         render: function () {
@@ -50,6 +53,17 @@ define([
         initialize: function (options) {
             this.model = options.model;
             this.render();
+        },
+
+        updateAbbreviation: function () {
+            var abbreviation = this.model.get("abbreviation");
+            var value = this.model.get("value");
+
+            if (_.isUndefined(abbreviation) || abbreviation === "" || abbreviation === value.substr(0, 3).toUpperCase()) {
+                var newAbbreviation = value.substr(0, 3).toUpperCase();
+                this.model.set({ abbreviation: newAbbreviation });
+                this.$el.find(".abbreviation").val(newAbbreviation);
+            }
         },
 
         template: template,
