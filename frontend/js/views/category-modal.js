@@ -104,12 +104,12 @@ define([
                     scale_id: scale,
                     settings: _.extend({}, this.model.get("settings"), {
                         color: this.$el.find("input[type='color']").val(),
-                        hasScale: !!scale,
+                        hasScale: !!scale
                         // TODO I hate that this is here
                         //   Maybe this can stay in `annotate-tab` for now ...
                         //   since the button will eventually be there
                         //createdAsMine: access !== ACCESS.PUBLIC
-                    }),
+                    })
                 });
 
                 // TODO Can we not call `save` directly?

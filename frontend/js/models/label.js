@@ -50,7 +50,7 @@ define(
             defaults: {
                 // TODO It sucks that this is necessary
                 //   and why was it again?
-                access: ACCESS.PUBLIC,
+                access: ACCESS.PUBLIC
             },
 
             /**
