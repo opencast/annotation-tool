@@ -219,7 +219,7 @@
   "required fields": "Required fields",
   "scale editor": {
     "cancel": "$t(common actions.cancel)",
-    "delete": "$t(common actions.delete)",
+    "delete": "Delete scale",
     "close": "$t(common actions.close)",
     "description": {
       "label": "Description",

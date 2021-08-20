@@ -206,6 +206,7 @@
   },
   "required fields": "Pflichtfelder",
   "scale editor": {
+    "delete": "$t(common actions.delete)",
     "description": {
       "label": "Beschreibung",
       "placeholder": "Beschreibung der Kategorie einfügen"
