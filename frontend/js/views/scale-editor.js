@@ -242,15 +242,14 @@ define([
          * Save the current scale or category with the modification done in the editor and quit it
          */
         save: function () {
+            var name = this.$el.find(".modal-body .scale-name").val();
+            var description = this.$el.find(".modal-body .scale-description").val();
+            this.currentScale.set({
+                name: name,
+                description: description
+            });
+
             if (this.isInEditMode) {
-                var name = this.$el.find(".modal-body .scale-name").val();
-                var description = this.$el.find(".modal-body .scale-description").val();
-
-                this.currentScale.set({
-                    name: name,
-                    description: description
-                });
-
                 this.currentScale.save(null, { async: false });
                 this.currentScale.get("scaleValues").each(function (scaleValue) {
                     scaleValue.save();
