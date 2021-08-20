@@ -22,8 +22,7 @@
         {{! TODO It sucks that we have to repeat the `required`}}
         <label class="required">
           {{t "category modal.name"}}
-          <input id="name" type="text" value="{{model.name}}"
-          {{t "category modal.required"}}>
+          <input id="name" type="text" value="{{model.name}}" required>
         </label>
 
         <label>{{t "category modal.color"}} <input type="color" value="{{model.settings.color}}"></label>

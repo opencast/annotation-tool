@@ -104,7 +104,6 @@
     "new category": "Neue Kategorie",
     "no-scale-on-series-category": "Serienkategorien können keine Skalen haben",
     "no-series-affiliation-with-scale": "Nur Kategorien ohne Skala können einer Serie zugehören",
-    "required": "benötigt",
     "scale": "Skala",
     "scale no": "Keine Skala",
     "scales description": "Die Ausprägungen der Skala erscheinen bei jedem Label / Etikett, um z.B. die Ausprägung eines Labels weiter zu spezifizieren."

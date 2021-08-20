@@ -111,7 +111,6 @@
     "new category": "New category",
     "no-scale-on-series-category": "Series categories can't have scales",
     "no-series-affiliation-with-scale": "Only categories without a scale can be affiliated to a series",
-    "required": "required",
     "scale": "Scale",
     "scale no": "No scale",
     "scales description": "The characteristics of the scale appear on each label, in order to further specify the characteristic of a label."
