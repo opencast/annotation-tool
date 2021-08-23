@@ -242,8 +242,20 @@ define([
          * Save the current scale or category with the modification done in the editor and quit it
          */
         save: function () {
-            var name = this.$el.find(".modal-body .scale-name").val();
+            var nameInput = this.$el.find(".modal-body .scale-name");
+            var nameControlGroup = nameInput.parents(".control-group");
+            var name = nameInput.val();
             var description = this.$el.find(".modal-body .scale-description").val();
+
+            nameControlGroup.removeClass("error");
+
+            var isNameInvalid = name.trim().length === 0;
+            if (isNameInvalid) {
+                nameControlGroup.addClass("error");
+
+                return;
+            }
+
             this.currentScale.set({
                 name: name,
                 description: description

@@ -229,7 +229,8 @@
     "edit scales": "Edit scales",
     "name": {
       "label": "Name",
-      "placeholder": "Insert the category name"
+      "placeholder": "Insert the category name",
+      "invalid": "Name must not be empty"
     },
     "new scale": {
       "name": "New scale",

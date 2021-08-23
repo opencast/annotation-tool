@@ -96,12 +96,18 @@ define([
 
                 // TODO Waiting? Error handling?
 
-                var scale = this.$el.find("select").val();
+                var scaleId = this.$el.find("select").val();
+                var scale = null;
+                if (scaleId.length) {
+                    var scale = annotationTool.video.get("scales").get(scaleId).toExportJSON();
+                }
+
                 var access = ACCESS.parse(this.$el.find("[name='access']:checked").val());
                 this.model.set({
                     access: access,
                     name: this.$el.find("#name").val(),
-                    scale_id: scale,
+                    scale_id: scaleId,
+                    scale: scale,
                     settings: _.extend({}, this.model.get("settings"), {
                         color: this.$el.find("input[type='color']").val(),
                         hasScale: !!scale

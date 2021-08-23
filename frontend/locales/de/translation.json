@@ -215,7 +215,8 @@
     "edit scales": "Skalen bearbeiten",
     "name": {
       "label": "Name",
-      "placeholder": "Namen der Kategorie einfügen"
+      "placeholder": "Namen der Skala einfügen",
+      "invalid": "Der Name darf nicht leer sein."
     },
     "new scale": {
       "name": "Neue Skala",
