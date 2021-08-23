@@ -271,9 +271,7 @@ define([
                 this.isInEditMode = false;
                 this.renderScaleSelect();
                 this.changeScale();
-
-                this.$el.find(".modal-body").hide();
-                this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
+                this.hide();
             } else if (this.currentCategory) {
                 var settings = this.currentCategory.get("settings");
 
