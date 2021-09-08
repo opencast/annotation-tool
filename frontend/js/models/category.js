@@ -64,7 +64,7 @@ define(
 
                 this.set("settings", _.extend({
                     hasScale: true,
-                    createdAsMine: this.isMine()
+                    createdAsMine: !this.isPublic()
                 }, this.get("settings")));
             },
 
