@@ -34,10 +34,11 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
   private final double start;
   private final Option<Double> duration;
   private final String content;
+  private final boolean createdFromQuestionnaire;
   private final Option<String> settings;
 
   public AnnotationImpl(long id, long trackId, double start, Option<Double> duration,
-          String content, Option<String> settings, Resource resource) {
+          String content, boolean createdFromQuestionnaire, Option<String> settings, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
             .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
             .getTags());
@@ -46,6 +47,7 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
     this.start = start;
     this.duration = duration;
     this.content = content;
+    this.createdFromQuestionnaire = createdFromQuestionnaire;
     this.settings = settings;
   }
 
@@ -82,6 +84,11 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
   @Override
   public String getContent() {
     return content;
+  }
+
+  @Override
+  public boolean getCreatedFromQuestionnaire() {
+    return createdFromQuestionnaire;
   }
 
   @Override

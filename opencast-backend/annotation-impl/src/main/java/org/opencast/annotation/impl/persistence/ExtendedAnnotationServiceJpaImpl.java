@@ -320,10 +320,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Annotation createAnnotation(final long trackId, final double start, final Option<Double> duration,
-          final String content, final Option<String> settings, final Resource resource)
+          final String content, final boolean createdFromQuestionnaire, final Option<String> settings, final Resource resource)
           throws ExtendedAnnotationException {
     if (getTrack(trackId).isSome()) {
-      final AnnotationDto dto = AnnotationDto.create(trackId, start, duration, content, settings, resource);
+      final AnnotationDto dto = AnnotationDto.create(trackId, start, duration, content, createdFromQuestionnaire,
+              settings, resource);
       return tx(Queries.persist(dto)).toAnnotation();
     } else {
       throw notFound;
@@ -344,7 +345,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     update("Annotation.findById", a.getId(), new Effect<AnnotationDto>() {
       @Override
       protected void run(AnnotationDto dto) {
-        dto.update(a.getStart(), a.getDuration(), a.getContent(), a.getSettings(), a);
+        dto.update(a.getStart(), a.getDuration(), a.getContent(), a.getCreatedFromQuestionnaire(), a.getSettings(), a);
       }
     });
   }
@@ -358,7 +359,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public boolean deleteAnnotation(Annotation a) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(a);
     final Annotation updated = new AnnotationImpl(a.getId(), a.getTrackId(), a.getStart(), a.getDuration(),
-            a.getContent(), a.getSettings(), deleteResource);
+            a.getContent(), a.getCreatedFromQuestionnaire(), a.getSettings(), deleteResource);
     updateAnnotation(updated);
     return true;
   }

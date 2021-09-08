@@ -210,16 +210,17 @@ public class ExtendedAnnotationsRestServiceTest {
   public void testEqualsIgnoreTimestamp() throws Exception {
     Resource resource = new ResourceImpl(some(Resource.PRIVATE), none(), none(), none(), some(new Date()), none(),
             none(), new HashMap<String, String>());
-    final Annotation a = new AnnotationImpl(1, 1, 10D, some(20D), textAnnotation("a text"), some("the settings"),
-            resource);
+    final Annotation a = new AnnotationImpl(1, 1, 10D, some(20D), textAnnotation("a text"),
+            false, some("the settings"), resource);
     Thread.sleep(10);
-    final Annotation b = new AnnotationImpl(1, 1, 10D, some(20D), textAnnotation("a text"), some("the settings"),
+    final Annotation b = new AnnotationImpl(1, 1, 10D, some(20D), textAnnotation("a text"),
+            false, some("the settings"),
             new ResourceImpl(some(Resource.PRIVATE), none(), none(), none(), some(new Date()), none(), none(),
                     new HashMap<String, String>()));
-    final Annotation c = new AnnotationImpl(1, 2, 10D, some(10D), textAnnotation("a text"), some("the settings"),
-            resource);
+    final Annotation c = new AnnotationImpl(1, 2, 10D, some(10D), textAnnotation("a text"),
+            false, some("the settings"), resource);
     final Annotation d = new AnnotationImpl(1, 1, 10D, some(20D), textAnnotation("another text"),
-            some("other settings"), resource);
+            false, some("other settings"), resource);
     assertTrue(a.equals(b));
     assertFalse(a.equals(c));
     assertFalse(a.equals(d));

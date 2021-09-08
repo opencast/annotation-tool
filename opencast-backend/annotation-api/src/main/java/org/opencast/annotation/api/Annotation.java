@@ -33,6 +33,9 @@ public interface Annotation extends Resource {
   /** The content of the annotation */
   String getContent();
 
+  /** If the annotation was created from a questionnaire */
+  boolean getCreatedFromQuestionnaire();
+
   /** The annotation settings */
   Option<String> getSettings();
 }

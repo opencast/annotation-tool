@@ -78,6 +78,9 @@ public class AnnotationDto extends AbstractResourceDto {
   @Column(name = "content", nullable = false)
   private String content;
 
+  @Column(name = "createdFromQuestionnaire", nullable = false)
+  private boolean createdFromQuestionnaire;
+
   // Settings as JSON string
   @Column(name = "settings")
   private String settings;
@@ -93,18 +96,20 @@ public class AnnotationDto extends AbstractResourceDto {
   protected Map<String, String> tags = new HashMap<String, String>();
 
   public static AnnotationDto create(long trackId, double start, Option<Double> duration, String content,
-          Option<String> settings, Resource resource) {
-    final AnnotationDto dto = new AnnotationDto().update(start, duration, content, settings, resource);
+          boolean createdFromQuestionnaire, Option<String> settings, Resource resource) {
+    final AnnotationDto dto = new AnnotationDto().update(start, duration, content, createdFromQuestionnaire,
+            settings, resource);
     dto.trackId = trackId;
     return dto;
   }
 
-  public AnnotationDto update(double start, Option<Double> duration, String content, Option<String> settings,
-          Resource resource) {
+  public AnnotationDto update(double start, Option<Double> duration, String content, boolean createdFromQuestionnaire,
+          Option<String> settings, Resource resource) {
     super.update(resource);
     this.content = content;
     this.start = start;
     this.duration = duration.getOrElseNull();
+    this.createdFromQuestionnaire = createdFromQuestionnaire;
     this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
@@ -112,13 +117,14 @@ public class AnnotationDto extends AbstractResourceDto {
   }
 
   public static AnnotationDto fromAnnotation(Annotation a) {
-    final AnnotationDto dto = create(a.getTrackId(), a.getStart(), a.getDuration(), a.getContent(), a.getSettings(), a);
+    final AnnotationDto dto = create(a.getTrackId(), a.getStart(), a.getDuration(), a.getContent(),
+            a.getCreatedFromQuestionnaire(), a.getSettings(), a);
     dto.id = a.getId();
     return dto;
   }
 
   public Annotation toAnnotation() {
-    return new AnnotationImpl(id, trackId, start, option(duration), content, option(settings),
+    return new AnnotationImpl(id, trackId, start, option(duration), content, createdFromQuestionnaire, option(settings),
             new ResourceImpl(option(access), option(createdBy), option(updatedBy),
                     option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), tags));
   }
@@ -136,7 +142,7 @@ public class AnnotationDto extends AbstractResourceDto {
       return conc(
               AbstractResourceDto.toJson.apply(s, a),
               jO(p("id", a.getId()), p("start", a.getStart()), p("duration", a.getDuration()), p("content", a.getContent()),
-                      p("settings", a.getSettings())));
+                      p("createdFromQuestionnaire", a.getCreatedFromQuestionnaire()), p("settings", a.getSettings())));
     }
   };
 
