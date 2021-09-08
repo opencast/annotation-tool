@@ -139,7 +139,6 @@ define([
         /**
          * Helper function for resetting the local state and re-rendering.
          * @alias module:views-questionnaire.QuestionnaireView#onDestroy
-         * @param {Event} event the click event
          */
         onDestroy: function() {
             this.stopListening(this.annotation);
@@ -259,7 +258,7 @@ define([
                 this.annotation = null;
             }
 
-            this.render();
+            this.onDestroy();
         }
     });
 
