@@ -463,7 +463,7 @@ define(
                     } else {
                         // Remove categories/tabs that are no longer supposed to be visible
                         this.removeTab(track.get("created_by"));
-                        annotationTool.video.get("categories").categories.chain()
+                        annotationTool.video.get("categories").chain()
                             .filter(function (category) {
                                 return category.get("created_by") === trackUserId
                                     && category.get("settings").createdAsMine
