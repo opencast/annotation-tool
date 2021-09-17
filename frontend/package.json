@@ -32,5 +32,17 @@
   },
   "prettier": {
     "tabWidth": 4
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module",
+      "rules": {
+        "eslint no-undef": "error"
+      }
+    }
   }
 }

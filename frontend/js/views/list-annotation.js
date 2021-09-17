@@ -353,9 +353,6 @@ define(
                         }
                     );
 
-                // TODO
-                modelJSON.hasQuestionnaire = false; // !!annotationTool.video.getQuestionnaire();
-
                 var partials = _.extend(
                     {
                         category: TmplCategory,
@@ -452,11 +449,16 @@ define(
                     event.stopImmediatePropagation();
                 }
 
-                this.commentContainer.setState(CommentsContainer.STATES.READ);
-                this.setState(ListAnnotation.STATES.EDIT, ListAnnotation.STATES.EXPANDED);
+                if (this.model.get("createdFromQuestionnaire")) {
+                    Backbone.trigger("questionnaire:edit-annotation", this.model);
+                } else {
 
-                if (this.isEditEnable) {
-                    this.trigger("edit", this);
+                    this.commentContainer.setState(CommentsContainer.STATES.READ);
+                    this.setState(ListAnnotation.STATES.EDIT, ListAnnotation.STATES.EXPANDED);
+
+                    if (this.isEditEnable) {
+                        this.trigger("edit", this);
+                    }
                 }
 
                 this.render();

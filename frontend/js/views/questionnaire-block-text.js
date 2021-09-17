@@ -30,10 +30,12 @@ define([
         },
         initialize: function(options) {
             this.item = options.item;
+            var value = options.value || null;
             this.model = new ContentItem({
                 type: "text",
+                schema: options.schema,
                 title: this.item.title,
-                value: null
+                value: value
             });
             this.validationErrors = [];
         },

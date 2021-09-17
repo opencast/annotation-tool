@@ -57,6 +57,8 @@ define([
             this.questionnaire = getMockupQuestionnaire();
             this.resetQuestionnaire();
             this.render();
+
+            Backbone.on("questionnaire:edit-annotation", this.onShowEdit.bind(this));
         },
 
         /**
@@ -72,7 +74,7 @@ define([
             if (this.items) {
                 _.invoke(this.items, "remove");
             }
-            this.items = createItems(this.questionnaire);
+            this.items = {};
             this.validationErrors = { start: null, end: null };
         },
 
@@ -84,6 +86,8 @@ define([
             if (this.items) {
                 _.invoke(this.items, "remove");
             }
+            Backbone.off("questionnaire:edit-annotation");
+
             Backbone.View.prototype.remove.apply(this, arguments);
         },
 
@@ -129,11 +133,15 @@ define([
          * @param {Event} event the click event
          */
         onCancel: function(event) {
-            annotationTool.deleteOperation.start(
-                this.annotation,
-                annotationTool.deleteOperation.targetTypes.ANNOTATION,
-                this.onDestroy.bind(this)
-            );
+            if (!this.annotation.get("createdFromQuestionnaire")) {
+                annotationTool.deleteOperation.start(
+                    this.annotation,
+                    annotationTool.deleteOperation.targetTypes.ANNOTATION,
+                    this.closeQuestionnaire.bind(this)
+                );
+            } else {
+                this.closeQuestionnaire();
+            }
         },
 
         /**
@@ -142,7 +150,16 @@ define([
          * @param {Event} event the click event
          */
         onDestroy: function() {
+            this.closeQuestionnaire();
+        },
+
+        /**
+         * Closes the questionnaire.
+         * @alias module:views-questionnaire.QuestionnaireView#closeQuestionnaire
+         */
+        closeQuestionnaire: function() {
             this.stopListening(this.annotation);
+            this.annotation = null;
             this.resetQuestionnaire();
             this.render();
         },
@@ -236,8 +253,19 @@ define([
          * @param {Event} event the click event
          */
         onStart: function(event) {
-            this.annotation = annotationTool.createAnnotation({});
+            var annotation = annotationTool.createAnnotation({});
+            this.openQuestionnaire(annotation);
+        },
+
+        /**
+         * Opens the questionnaire using the given annotation.
+         * @alias module:views-questionnaire.QuestionnaireView#openQuestionnaire
+         * @param {Annotation} annotation the annotation to show
+         */
+        openQuestionnaire: function (annotation) {
+            this.annotation = annotation;
             this.listenTo(this.annotation, "destroy", this.onDestroy);
+            this.items = createItems(this.questionnaire, this.annotation);
             this.render();
         },
 
@@ -259,46 +287,86 @@ define([
                 this.annotation = null;
             }
 
-            this.render();
+            this.closeQuestionnaire();
+        },
+
+        /**
+         * Listener for the signal to open the questionnaire for editing of an existing annotation.
+         * @alias module:views-questionnaire.QuestionnaireView#onShowEdit
+         * @param {Annotation} annotation the annotation to edit
+         */
+        onShowEdit: function(annotation) {
+            // we are already editing this annotation
+            if (this.annotation && this.annotation.cid === annotation.cid) {
+                console.error("You are already editing this annotation.");
+                return;
+            }
+
+            if (!annotation.get("createdFromQuestionnaire")) {
+                console.error("This annotation cannot be edited via questionnaire.");
+                return;
+            }
+
+            if (this.annotation) {
+                var confirmed = confirm(i18next.t("annotate.confirm edit"));
+                if (!confirmed) {
+                    return;
+                }
+            }
+
+            this.closeQuestionnaire();
+            this.openQuestionnaire(annotation);
         }
     });
 
-    function createItems(jsonform) {
+    function createItems(jsonform, annotation) {
+        var typeMapping = {
+            label: LabelBlock,
+            scale: ScaleBlock,
+            string: TextBlock,
+            categories: CategoriesBlock
+        };
+
         var formFields = _.reduce(
             jsonform.schema,
             function(memo, item, key) {
-                var block;
-                switch (item.type) {
-                    case "label":
-                        block = new LabelBlock({ item: item });
-                        break;
-                    case "scale":
-                        block = new ScaleBlock({ item: item });
-                        break;
-                    case "string":
-                        block = new TextBlock({ item: item });
-                        break;
-                    case "categories":
-                        block = new CategoriesBlock({ item: item });
-                        break;
-
-                    default:
-                        throw new Error("Missing item type: " + item.type);
+                if (!(item.type in typeMapping)) {
+                    throw new Error("Missing item type: " + item.type);
                 }
-                memo[key] = block;
+                memo[key] = item;
 
                 return memo;
             },
             {}
         );
 
-        return _.map(jsonform.form, function(item) {
-            if (_.isString(item) && item in formFields) {
-                return formFields[item];
+        var values = annotation.get("content").groupBy(function (contentItem) {
+            return contentItem.get("schema");
+        });
+
+        return _.map(jsonform.form, function(formItem) {
+            if (_.isString(formItem) && formItem in formFields) {
+
+                var formField = formFields[formItem];
+                var typeFunction = typeMapping[formField.type];
+                var value = null;
+                if (formItem in values) {
+                    value =
+                        formField.type !== 'categories'
+                        ? _.head(values[formItem]).get("value")
+                        : values[formItem];
+                }
+                var block = new typeFunction({
+                    item: formField,
+                    schema: formItem,
+                    value: value
+                });
+
+                return block;
             }
 
-            if (_.isObject(item) && item.type && item.type === "help") {
-                return new HelpBlock({ item: item });
+            if (_.isObject(formItem) && formItem.type && formItem.type === "help") {
+                return new HelpBlock({ item: formItem });
             }
 
             throw "Invalid JSON form.";

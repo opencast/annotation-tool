@@ -8,13 +8,13 @@
     </span>
     <span class="actions">
         {{#if annotation.isMine}}
+        {{#unless annotation.createdFromQuestionnaire}}
         <i class="icon-pencil content-item-edit"
-           title="{{t "annotation.edit.edit"}}"
+            title="{{t "annotation.edit.edit"}}"
         ></i>
-        {{#unless @root.hasQuestionnaire}}
-            <i class="icon-trash content-item-trash"
-               title="{{t "annotation.edit.delete"}}"
-            ></i>
+        <i class="icon-trash content-item-trash"
+           title="{{t "annotation.edit.delete"}}"
+        ></i>
         {{/unless}}
         {{/if}}
     </span>

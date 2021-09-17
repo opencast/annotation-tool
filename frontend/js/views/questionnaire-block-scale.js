@@ -31,7 +31,8 @@ define([
         },
         initialize: function(options) {
             this.item = options.item;
-            this.model = new ContentItem({ type: "scaling", title: this.item.title, value: {} });
+            var value = options.value || {};
+            this.model = new ContentItem({ type: "scaling", title: this.item.title, value: value });
             this.validationErrors = [];
         },
         render: function() {

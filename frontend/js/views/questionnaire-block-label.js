@@ -32,7 +32,13 @@ define([
         },
         initialize: function (options) {
             this.item = options.item;
-            this.model = new ContentItem({ type: "label", title: this.item.title, value: null });
+            var value = options.value || null;
+            this.model = new ContentItem({
+                type: "label",
+                schema: options.schema,
+                title: this.item.title,
+                value: value
+            });
             this.validationErrors = [];
         },
         render: function () {
