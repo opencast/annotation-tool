@@ -319,11 +319,11 @@ function getMockupQuestionnaire() {
                 "type": "categories",
                 "title": "2a. Interpretation",
                 "description": "Interpretieren und erklären Sie möglichst theoriegeleitet die (Re-)Aktion der Lehrperson (und ggf. der SuS) in dieser Unterrichtssequenz. Nutzen Sie die Kategorien des Analysefokus. (Wählen Sie mindestens eine Kategorie aus)",
-                "categories": [
-                    "KF-MO: Monitoring",
-                    "KF-ST: Strukturierung",
-                    "KF-RR: Regeln und Routinen"
-                ],
+                // "categories": [
+                //     "KF-MO: Monitoring",
+                //     "KF-ST: Strukturierung",
+                //     "KF-RR: Regeln und Routinen"
+                // ],
                 "minItems": 1
             },
             "item-2": {

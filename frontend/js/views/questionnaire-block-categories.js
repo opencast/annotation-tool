@@ -40,7 +40,7 @@ define([
             this.validationErrors = [];
         },
         render: function () {
-            var categories = _.invoke(_.filter(_.map(this.item.categories, getCategoryByName)), "toJSON");
+            var categories = getCategories(this.item);
             this.$el.html(
                 template(
                     {
@@ -87,6 +87,15 @@ define([
             this.contentItems.remove(this.contentItems.at(position));
         }
     });
+
+    function getCategories(item) {
+        return _.invoke(
+            "categories" in item
+                ? _.filter(_.map(item.categories, getCategoryByName))
+                : annotationTool.video.get("categories").models,
+            "toJSON"
+        );
+    }
 
     function getCategoryByName(name) {
         return annotationTool.video.get("categories").models.find(function (category) {
