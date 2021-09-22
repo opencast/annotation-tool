@@ -401,12 +401,12 @@ public class ExtendedAnnotationsRestServiceTest {
             .get(host("/videos/{videoId}/scales"));
     // delete
     given().pathParam("scaleId", 12345).expect().statusCode(NOT_FOUND).when().delete(host("/scales/{scaleId}"));
-    given().pathParam("scaleId", templateId).expect().statusCode(NO_CONTENT).when().delete(host("/scales/{scaleId}"));
+    given().pathParam("scaleId", templateId).expect().statusCode(OK).when().delete(host("/scales/{scaleId}"));
     given().pathParam("videoId", "3290").pathParam("scaleId", id).expect().statusCode(BAD_REQUEST).when()
             .delete(host("/videos/{videoId}/scales/{scaleId}"));
     given().pathParam("videoId", videoId).pathParam("scaleId", 32342).expect().statusCode(NOT_FOUND).when()
             .delete(host("/videos/{videoId}/scales/{scaleId}"));
-    given().pathParam("videoId", videoId).pathParam("scaleId", id).expect().statusCode(NO_CONTENT).when()
+    given().pathParam("videoId", videoId).pathParam("scaleId", id).expect().statusCode(OK).when()
             .delete(host("/videos/{videoId}/scales/{scaleId}"));
   }
 
@@ -481,7 +481,7 @@ public class ExtendedAnnotationsRestServiceTest {
     // delete
     given().pathParam("scaleId", scaleId).pathParam("scaleValueId", 12345).expect().statusCode(NOT_FOUND).when()
             .delete(host("/scales/{scaleId}/scalevalues/{scaleValueId}"));
-    given().pathParam("scaleId", scaleId).pathParam("scaleValueId", templateId).expect().statusCode(NO_CONTENT).when()
+    given().pathParam("scaleId", scaleId).pathParam("scaleValueId", templateId).expect().statusCode(OK).when()
             .delete(host("/scales/{scaleId}/scalevalues/{scaleValueId}"));
     given().pathParam("videoId", "3290").pathParam("scaleId", scaleId).pathParam("scaleValueId", id).expect()
             .statusCode(BAD_REQUEST).when()
@@ -492,8 +492,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).pathParam("scaleValueId", 12345).expect()
             .statusCode(NOT_FOUND).when().delete(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
     given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).pathParam("scaleValueId", id).expect()
-            .statusCode(NO_CONTENT).when()
-            .delete(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
+            .statusCode(OK).when().delete(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
   }
 
   @Test
@@ -569,7 +568,7 @@ public class ExtendedAnnotationsRestServiceTest {
     // delete
     given().pathParam("categoryId", categoryId).pathParam("labelId", 12345).expect().statusCode(NOT_FOUND).when()
             .delete(host("/categories/{categoryId}/labels/{labelId}"));
-    given().pathParam("categoryId", categoryId).pathParam("labelId", templateId).expect().statusCode(NO_CONTENT).when()
+    given().pathParam("categoryId", categoryId).pathParam("labelId", templateId).expect().statusCode(OK).when()
             .delete(host("/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", "3290").pathParam("categoryId", categoryId).pathParam("labelId", id).expect()
             .statusCode(BAD_REQUEST).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
@@ -578,7 +577,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).pathParam("labelId", 12345).expect()
             .statusCode(NOT_FOUND).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).pathParam("labelId", id).expect()
-            .statusCode(NO_CONTENT).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
+            .statusCode(OK).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
   }
 
   @Test
