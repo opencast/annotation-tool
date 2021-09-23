@@ -35,7 +35,9 @@ define([
         },
         initialize: function (options) {
             this.item = options.item;
-            this.contentItems = new ContentItems([]);
+            this.schema = options.schema;
+            var value = options.value || [];
+            this.contentItems = new ContentItems(value);
             this.listenTo(this.contentItems, "all", this.render);
             this.validationErrors = [];
         },
@@ -73,10 +75,17 @@ define([
             var categoryID = $(event.target).data("category");
             var category = annotationTool.video.get("categories").get(categoryID);
 
+            var self = this;
             annotationTool.addModal(
                 i18next.t("annotation.add content.category") + " " + category.get("name"),
                 new AddLabelledModal({
-                    model: { addContent: this.contentItems.add.bind(this.contentItems) },
+                    model: {
+                        addContent: function (content) {
+                            content.schema = self.schema;
+
+                            return self.contentItems.add(content);
+                        }
+                    },
                     category: category
                 })
             );
