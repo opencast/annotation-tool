@@ -84,7 +84,6 @@ define([
             });
 
             this.$el.modal({ show: true, backdrop: "static", keyboard: false });
-            console.log("A change")
             return this;
         },
 
@@ -239,26 +238,30 @@ define([
 
         template: template,
 
+        // TODO Until we update jQuery, we can't use `show` and `hide` here,
+        //   since our current jQuery version does not preserve
+        //   the `display` property correctly.
+
         disableAffiliation: function () {
-          this.$el.find("input[name='affiliation']").prop("disabled", true);
-          this.$el.find("#no-series-affiliation-with-scale").show();
+            this.$el.find("input[name='affiliation']").prop("disabled", true);
+            this.$el.find("#no-series-affiliation-with-scale").css("display", "");
         },
 
         enableAffiliation: function () {
-          this.$el.find("input[name='affiliation']").prop("disabled", false);
-          this.$el.find("#no-series-affiliation-with-scale").hide();
+            this.$el.find("input[name='affiliation']").prop("disabled", false);
+            this.$el.find("#no-series-affiliation-with-scale").hide();
         },
 
         disableScale: function () {
-          this.$el.find("select").prop("disabled", true);
-          this.$el.find("#no-scale-on-series-category").show();
-          this.$el.find("#scales-description").hide();
+            this.$el.find("select").prop("disabled", true);
+            this.$el.find("#no-scale-on-series-category").css("display", "");
+            this.$el.find("#scales-description").hide();
         },
 
         enableScale: function () {
-          this.$el.find("select").prop("disabled", false);
-          this.$el.find("#no-scale-on-series-category").hide();
-          this.$el.find("#scales-description").show();
+            this.$el.find("select").prop("disabled", false);
+            this.$el.find("#no-scale-on-series-category").hide();
+            this.$el.find("#scales-description").css("display", "");
         }
     });
 

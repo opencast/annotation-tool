@@ -238,3 +238,9 @@ input, textarea, select, .uneditable-input {
     .selection(@annotationSelectionColor);
     .selectable-annotation();
 }
+
+/* Fix Bootstrap radio and checkbox alignment */
+/* TODO This should not be necessary with more modern Bootstrap versions */
+input[type="radio"], input[type="checkbox"] {
+    margin-top: 2px;
+}
