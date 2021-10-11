@@ -148,6 +148,9 @@ body {
 
         > a {
 
+            display: flex;
+            align-items: baseline;
+
             border-radius: 0px;
             padding: 2px 10px;
             margin: 0;
@@ -155,6 +158,26 @@ body {
             color: @black;
             margin: 0 4px 2px 0;
             border: none;
+        }
+    }
+
+    .dropdown {
+
+        margin-left: 5px;
+
+        button.dropdown-toggle {
+            .link-button();
+
+            .caret {
+                margin-top: 6px;
+                border-top-color: black;
+            }
+
+            &:hover, &:active {
+                .caret {
+                    border-top-color: black;
+                }
+            }
         }
     }
 }
