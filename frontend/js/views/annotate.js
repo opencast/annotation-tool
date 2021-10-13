@@ -232,14 +232,14 @@ define(
              * Called from "Public" tab
              */
             createCategoryPublic: function () {
-              this.createCategory(false);
+                this.createCategory(false);
             },
 
             /**
              * Called from "Mine" tab
              */
             createCategoryMine: function () {
-              this.createCategory(true);
+                this.createCategory(true);
             },
 
             /**

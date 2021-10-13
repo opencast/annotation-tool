@@ -79,7 +79,7 @@ define(
             },
 
             /**
-             * (Re-)Fetch the scale values once our ID changes.
+             * (Re-)Fetch all the other data once our ID changes.
              */
             fetchChildren: function () {
                 this.get("categories").fetch({ async: false });

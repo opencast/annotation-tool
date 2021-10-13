@@ -222,7 +222,7 @@ define(
                     if (this.model.get("settings").hasScale) {
                         annotationTool.scaleEditor.showWarning({
                             title: i18next.t("scale editor.warning.name"),
-                            message: i18next.t("scale editor.warning.messageScaleOnSeriesCategory")
+                            message: i18next.t("scale editor.warning.no series categories with scale")
                         });
                     } else {
                         // Add to series
@@ -310,7 +310,7 @@ define(
                     // Workaround for scales and series categories
                     annotationTool.scaleEditor.showWarning({
                         title: i18next.t("scale editor.warning.name"),
-                        message: i18next.t("scale editor.warning.message")
+                        message: i18next.t("scale editor.warning.no scale on series category")
                     });
                 } else {
                     annotationTool.scaleEditor.show(this.model, this.model.get("access"));

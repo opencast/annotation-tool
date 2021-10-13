@@ -109,8 +109,8 @@
     "remove": "Remove",
     "name": "Name",
     "new category": "New category",
-    "no-scale-on-series-category": "Series categories can't have scales",
-    "no-series-affiliation-with-scale": "Only categories without a scale can be affiliated to a series",
+    "no scale on series category": "Series categories can't have scales",
+    "no series affiliation with scale": "Only categories without a scale can be affiliated to a series",
     "scale": "Scale",
     "scale no": "No scale",
     "scales description": "The characteristics of the scale appear on each label, in order to further specify the characteristic of a label."
@@ -252,8 +252,8 @@
     },
     "warning": {
       "name": "Attention!",
-      "message": "This category belongs to a series. Therefore, assigning a scale is not possible.",
-      "messageScaleOnSeriesCategory": "Category has a scale. Changing category affiliation is not possible."
+      "no scale on series category": "This category belongs to a series. Therefore, assigning a scale is not possible.",
+      "no series categories with scale": "Category has a scale. Changing category affiliation is not possible."
     }
   },
   "startup": {
