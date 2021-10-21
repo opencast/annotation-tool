@@ -5,8 +5,8 @@
 target/
 target-grunt/
 node_modules/
-node/
 /build/
+deploy
 
 # ignore Eclipse project data
 .project

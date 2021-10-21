@@ -430,6 +430,10 @@ define(
                     event.originalEvent.detail > 1,
                     "list"
                 );
+
+                if (event.originalEvent.detail > 1 && this.model.get("createdFromQuestionnaire")) {
+                    Backbone.trigger("questionnaire:edit-annotation", this.model);
+                }
             },
 
             /**

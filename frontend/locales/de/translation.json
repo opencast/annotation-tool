@@ -379,7 +379,8 @@
     "empty": "Dieses Feld darf nicht leer sein",
     "min items": "Es wurde nicht eine genügende Menge an Einträgen gewählt.",
     "start after end": "Die Startzeit liegt nach dem Schluss.",
-    "wrong format": "Falsches Format"
+    "wrong format": "Falsches Format",
+    "out of bounds": "Die Zeit liegt außerhalb des möglichen Bereichs."
   },
   "common actions": {
     "cancel": "Abbrechen",
