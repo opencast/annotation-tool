@@ -60,7 +60,6 @@
         <directory>${project.basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
-    <!-- This defines what plugins run on a global basis.  Plugins defined here run for all child poms without needing to reference them from the child pom.  Note that configuration data goes in the pluginManagement stanza below -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
