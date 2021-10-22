@@ -25,6 +25,7 @@
       "mine": "Meine",
       "public": "Öffentlich"
     },
+    "confirm edit": "Warnhinweis: Das Editieren der selektierten Annotation verwirft den aktuellen Annotationsentwurf!",
     "create a label": "Etikett erstellen",
     "download categories": "Kategorien herunterladen",
     "edit category scaling": "Skala für diese Kategorie bearbeiten",
