@@ -47,19 +47,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <testResources>
-      <!-- Add a log4j configuration file to the test resources -->
-      <testResource>
-        <directory>${maven.multiModuleProjectDirectory}/docs/log4j</directory>
-        <includes>
-          <include>log4j.properties</include>
-        </includes>
-      </testResource>
-      <!-- Re-add the test resources as defined by the project -->
-      <testResource>
-        <directory>${project.basedir}/src/test/resources</directory>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -112,23 +99,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-
-      <!-- Run tests and display test output in the console -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <useFile>false</useFile>
-          <argLine>-Dfile.encoding=UTF-8</argLine> <!-- see https://jira.codehaus.org/browse/SUREFIRE-951 -->
-          <systemPropertyVariables>
-            <M2_REPO>${settings.localRepository}</M2_REPO>
-            <java.awt.headless>true</java.awt.headless>
-            <eclipselink.logging.level>CONFIG</eclipselink.logging.level>
-            <java.util.logging.config.file>${basedir}/conf/services/java.util.logging.properties</java.util.logging.config.file>
-            <logj4.configuration>${basedir}/docs/log4j/log4j.properties</logj4.configuration>
-          </systemPropertyVariables>
-        </configuration>
       </plugin>
       <plugin>
         <!-- use this to generate a code coverage report:
@@ -242,6 +212,14 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.19.1</version>
+          <configuration>
+            <useFile>false</useFile>
+            <argLine>-Dfile.encoding=UTF-8</argLine> <!-- see https://jira.codehaus.org/browse/SUREFIRE-951 -->
+            <systemPropertyVariables>
+              <java.util.logging.config.file>${maven.multiModuleProjectDirectory}/opencast-backend/test-logging/java.util.logging.properties</java.util.logging.config.file>
+              <log4j.configuration>file:${maven.multiModuleProjectDirectory}/opencast-backend/test-logging/log4j.properties</log4j.configuration>
+            </systemPropertyVariables>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -513,13 +491,6 @@
         <version>2.1.0</version>
       </dependency>
 
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <scope>test</scope>
-        <version>3.4</version>
-      </dependency>
-
       <!-- logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -542,11 +513,18 @@
         <scope>test</scope>
       </dependency>
 
-      <!-- testing -->
+      <!-- Testing -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.13.1</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>3.4</version>
         <scope>test</scope>
       </dependency>
 
