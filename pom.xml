@@ -68,17 +68,9 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Require Java 8 or higher for building -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <!-- TODO Why does `pluginManagement` say something else?! -->
-          <source>1.8</source>
-          <target>1.8</target>
-          <encoding>UTF-8</encoding>
-          <compilerArgument>${compilerArgument}</compilerArgument>
-        </configuration>
       </plugin>
       <!-- Deploy OSGi bundles to a container -->
       <plugin>
@@ -160,8 +152,9 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.3</version>
           <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
+            <source>1.8</source>
+            <target>1.8</target>
+            <encoding>UTF-8</encoding>
             <compilerArgument>${compilerArgument}</compilerArgument>
           </configuration>
         </plugin>
