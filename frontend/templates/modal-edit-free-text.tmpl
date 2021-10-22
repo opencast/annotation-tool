@@ -5,7 +5,10 @@
     required
     placeholder="{{t "annotate.new.placeholder"}}"
     title="{{t "annotate.new.title"}}"
-    rows="3">{{contentItem.value}}</textarea>
+    rows="10"
+    style="min-width:95%">
+    {{contentItem.value}}
+</textarea>
 
 {{#error}}
 <div class="alert alert-error">
