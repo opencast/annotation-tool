@@ -305,7 +305,7 @@
           <version>1.7</version>
           <configuration>
             <sources>
-              <source>${basedir}/src/main/resources/</source>
+              <source>${project.basedir}/src/main/resources/</source>
             </sources>
           </configuration>
           <executions>
