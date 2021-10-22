@@ -25,6 +25,7 @@
       "mine": "Mine",
       "public": "Public"
     },
+    "confirm edit": "Warning: Editing the selected annotation discards the current annotation draft!",
     "create a label": "Create a label",
     "download categories": "Download categories",
     "edit category scaling": "Edit scaling for this category",
