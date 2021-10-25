@@ -25,7 +25,7 @@ define(
         "backbone",
         "util",
         "i18next",
-        "collections/videos",
+        "models/video",
         "views/main",
         "alerts",
         "templates/delete-modal",
@@ -42,7 +42,7 @@ define(
         Backbone,
         util,
         i18next,
-        Videos,
+        Video,
         MainView,
         alerts,
         DeleteModalTmpl,
@@ -635,27 +635,24 @@ define(
              * Get all the annotations for the current user
              */
             fetchData: function () {
-                this.getVideoParameters().then(
-                    _.bind(function (videoParameters) {
-                        // If we are using the localstorage
-                        var video = new Videos().add({ video_extid: videoParameters.videoExtId }).at(0);
-                        this.video = video;
-                        video.set(videoParameters);
-                        video.save(null, {
-                            error: _.bind(function (model, response, options) {
-                                if (response.status === 403) {
-                                    alerts.fatal("annotation not allowed");
-                                    this.views.main.loadingBox.hide();
-                                }
-                            }, this)
-                        });
-                        var ready = $.Deferred();
-                        this.listenToOnce(video, "ready", function () {
-                            ready.resolve();
-                        });
-                        return ready;
-                    }, this)
-                ).then(_.bind(function () {
+                this.getVideoParameters().then(_.bind(function (videoParameters) {
+                    var video = new Video(videoParameters);
+                    this.video = video;
+                    return video.save();
+                    var savedSuccessfully = $.Deferred();
+                    video.save().then(
+                        function () {
+                            savedSuccessfully.resolveWith(this, arguments);
+                        },
+                        _.bind(function (model, response, options) {
+                            if (response.status === 403) {
+                                alerts.fatal("annotation not allowed");
+                                this.views.main.loadingBox.hide();
+                            }
+                        }, this)
+                    );
+                    return savedSuccessfully;
+                }, this)).then(_.bind(function () {
                     var tracks = this.video.get("tracks");
 
                     var ready = $.Deferred();

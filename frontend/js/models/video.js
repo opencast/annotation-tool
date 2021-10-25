@@ -85,7 +85,6 @@ define(
                 this.get("categories").fetch({ async: false });
                 this.get("tracks").fetch({ async: false });
                 this.get("scales").fetch({ async: false });
-                this.trigger("ready");
             },
 
             /**

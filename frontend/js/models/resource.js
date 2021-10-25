@@ -21,11 +21,13 @@
 define([
     "underscore",
     "backbone",
+    "jquery",
     "util",
     "access"
 ], function (
     _,
     Backbone,
+    $,
     util,
     ACCESS
 ) {
@@ -63,17 +65,29 @@ var Resource = Backbone.Model.extend({
             }
         }
         fetchChildren.call(this);
-        this.listenTo(this, "change:id", function (id) {
-            fetchChildren.call(this);
-        });
     },
 
     /**
      * A convenient function for resources to override to fetch subresources.
      * It will (hopefully) be called at all the right times.
-     * (Namely when the <code>id</code> of the resource changes.
      */
     fetchChildren: function () {},
+
+    sync: function () {
+        return Backbone.Model.prototype.sync.apply(this, arguments)
+            .then(_.bind(function (data, state, response) {
+                var passthrough = $.Deferred().resolve(data, state, response);
+
+                // No need to fetch children for previously nonexistent entities
+                if (response.status !== 201 /* Created */ && this.hasChanged("id")) {
+                    return $.when(this.fetchChildren()).then(function () {
+                        return passthrough;
+                    });
+                } else {
+                    return passthrough;
+                }
+            }, this));
+    },
 
     /**
      * Validate the attribute list passed to the model
