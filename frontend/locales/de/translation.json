@@ -22,11 +22,9 @@
       "mine": "Meine",
       "public": "Öffentlich"
     },
-    "create a label": "Etikett erstellen",
     "create category": "Kategorie erstellen",
     "delete category": "Kategorie löschen",
     "download categories": "Kategorien herunterladen",
-    "edit category scaling": "Skala für diese Kategorie bearbeiten",
     "edit mode": "Bearbeiten",
     "edit category": "Kategorie bearbeiten",
     "items visibility": {
@@ -34,8 +32,6 @@
       "expand all": "Alle aufklappen",
       "head": "Sichtbarkeit"
     },
-    "new category name": "NEUE KATEGORIE",
-    "new label placeholder": "Wert des Etiketts …",
     "new": {
       "placeholder": "Freitextannotation schreiben ($t(annotate.new.title))",
       "title": "„Shift + Return“ drücken, um eine neue Zeile einzufügen."
@@ -52,8 +48,6 @@
     "show category": "Zugehörige Annotationen einblenden",
     "show free text": "Freitextannotationen anzeigen",
     "hide free text": "Freitextannotationen ausblenden",
-    "video category": "Kategorie gehört zu diesem Video",
-    "series category": "Kategorie gehört zur Serie und erscheint bei allen Videos",
     "structured annotations": "Strukturierte Annotationen",
     "create scale": "Skala erstellen",
     "edit scales": "Skalen bearbeiten"
@@ -118,13 +112,6 @@
     "title": "$t(models.{{context}}.identifier) löschen",
     "warning": "Wollen Sie $t(models.determined, { 'determiner': 'definite article', 'case': 'accusative' }) „{{content}}“ wirklich löschen?"
   },
-  "series category modal": {
-    "cancel": "$t(common actions.cancel)",
-    "to video": "Ja, zu Video-Kategorie machen",
-    "title": "Achtung: In Video-Kategorie ändern",
-    "warning": "Wenn Sie die Zugehörigkeit dieser Kategorie von \"gehört zur Serie\" auf \"gehört zum Video\" ändern, wird die Kategorie in allen anderen Videos dieser Serie entfernt. Wollen Sie fortfahren?",
-    "custom message": "Diese Kategorie gehört zur Serie und erscheint bei allen Videos. Wenn Sie diese Kategorie löschen, wird sie auch für alle anderen Videos gelöscht. "
-  },
   "description": "Werkzeug zur Videoannotation",
   "delete operations": {
     "unauthorized": "Sie sind nicht autorisiert, $t(models.determined, { 'determiner': 'demonstrative', 'case': 'accusative' }) zu löschen!"
@@ -169,10 +156,6 @@
       "drag here": "Icon ziehen, um das Element zu platzieren"
     }
   },
-  "new label defaults": {
-    "abbreviation": "NEU",
-    "description": "Neu"
-  },
   "print": {
     "annotations": {
       "header": "Annotationen",
@@ -207,42 +190,6 @@
     "title": "Name des Videos: {{title}}"
   },
   "required fields": "Pflichtfelder",
-  "scale editor": {
-    "delete": "$t(common actions.delete)",
-    "description": {
-      "label": "Beschreibung",
-      "placeholder": "Beschreibung der Kategorie einfügen"
-    },
-    "edit category scale": "Skala der Kategorie bearbeiten",
-    "edit scales": "Skalen bearbeiten",
-    "name": {
-      "label": "Name",
-      "placeholder": "Namen der Skala einfügen",
-      "invalid": "Der Name darf nicht leer sein."
-    },
-    "new scale": {
-      "name": "Neue Skala",
-      "value": "Neuer Skalenwert"
-    },
-    "new scale name": "Neue Skala",
-    "new scale value": "Neuer Skalenwert",
-    "no scale": "-- KEINE SKALA --",
-    "values": {
-      "add": "Skalenwert hinzufügen",
-      "name": {
-        "header": "Name"
-      },
-      "value": {
-        "header": "Wert",
-        "placeholder": "Dezimalzahl einfügen."
-      }
-    },
-    "warning": {
-      "name": "Achtung!",
-      "no scale on series category": "Diese Kategorie gehört zu einer Serie. Daher kann ihr keine Skala zugeordnet werden.",
-      "no series categories with scale": "Kategorie verfügt über eine Skala. Wechsel der Zugehörigkeit der Kategorie nicht möglich."
-    }
-  },
   "scale modal": {
     "select scale": "Skala auswählen",
     "create scale": "Neue Skala erstellen",

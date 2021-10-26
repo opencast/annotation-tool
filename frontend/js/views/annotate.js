@@ -112,7 +112,6 @@ define(
                 "click #insert": "insert",
                 "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
-                "change #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations",
                 "click .new-category-public": "createCategoryPublic",
                 "click .new-category-mine": "createCategoryMine",
@@ -127,22 +126,10 @@ define(
             tabsButtonTemplate: TabsButtonTemplate,
 
             /**
-             * Define if the view is or not in edit modus.
-             * @type {boolean}
-             */
-            editModus: false,
-
-            /**
              * Map with all the category tabs
              * @type {map}
              */
             categoriesTabs: {},
-
-            /**
-             * The default tabs when switching in edit modus
-             * @type {map}
-             */
-            DEFAULT_TAB_ON_EDIT: DEFAULT_TABS.MINE.id,
 
             /**
              * Layout configuration
@@ -166,8 +153,6 @@ define(
                     "insert",
                     "changeTrack",
                     "addTab",
-                    "onSwitchEditModus",
-                    "switchEditModus",
                     "toggleFreeTextAnnotationPane",
                     "toggleStructuredAnnotations",
                     "createCategory"
@@ -205,8 +190,6 @@ define(
                 if (!this.layout.categories) this.categoriesElement.hide();
 
                 categories = annotationTool.video.get("categories");
-
-                annotationTool.colorsManager.updateColors(categories.models);
 
                 _.each(DEFAULT_TABS, function (params) {
                     this.addTab(params);
@@ -386,35 +369,6 @@ define(
 
                 this.tabsButtonsElement.find("a[data-tabid=\"" + id + "\"]").parent().remove();
                 this.tabsContainerElement.find("#labelTab-" + id).remove();
-            },
-
-            /**
-             * Listener for edit modus switch.
-             * @param {Event} event Event related to this action
-             */
-            onSwitchEditModus: function (event) {
-                var status = event.target.checked;
-
-                this.switchEditModus(status);
-
-                if (status) {
-                    this.showTab({
-                        currentTarget: this.categoriesTabs[this.DEFAULT_TAB_ON_EDIT].titleLink.find("a")[0]
-                    });
-                }
-            },
-
-            /**
-             * Switch the edit modus to the given status.
-             * @param  {boolean} status The current status
-             */
-            switchEditModus: function (status) {
-                this.editModus = status;
-
-                this.$el.find("#annotate-container").toggleClass("edit-on", status);
-
-                // trigger an event that all element switch in edit modus
-                annotationTool.trigger(annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, status);
             },
 
             /**
