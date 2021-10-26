@@ -22,11 +22,9 @@
       "mine": "Mine",
       "public": "Public"
     },
-    "create a label": "Create a label",
     "create category": "Create category",
     "delete category": "Delete category",
     "download categories": "Download categories",
-    "edit category scaling": "Edit scaling for this category",
     "edit mode": "Edit mode",
     "edit category": "Edit category",
     "insert": "$t(common actions.insert)",
@@ -36,7 +34,6 @@
       "head": "Items Visibility"
     },
     "new category name": "NEW CATEGORY",
-    "new label placeholder": "Label value …",
     "new": {
       "placeholder": "Write a free text annotation. ($t(annotate.new.title))",
       "title": "Use “ shift + return” keys to create a new line."
@@ -53,8 +50,6 @@
     "show category": "Show associated annotations",
     "show free text": "Show free text annotations",
     "hide free text": "Hide free text annotations",
-    "video category": "Category belongs to this video",
-    "series category": "Category belongs to the series and is shown in all videos",
     "structured annotations": "Structured Annotations",
     "create scale": "Create scale",
     "edit scales": "Edit scales"
@@ -127,13 +122,6 @@
     "title": "Delete {{context}}",
     "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
   },
-  "series category modal": {
-    "cancel": "$t(common actions.cancel)",
-    "to video": "To Video Category",
-    "title": "Warning!",
-    "warning": "Changing the affiliation of this category from series back to video will delete the category from all other videos of this series! Proceed?",
-    "custom message": "This category belongs to a series and appears in all videos. If you delete this category, it will be deleted for all other videos as well."
-  },
   "description": "Video annotation tool",
   "list annotation": {
     "double click to edit": "Double click to edit"
@@ -181,10 +169,6 @@
       "drag here": "Drag icon to place element"
     }
   },
-  "new label defaults": {
-    "abbreviation": "NEW",
-    "description": "New"
-  },
   "print": {
     "annotations": {
       "header": "Annotations",
@@ -219,45 +203,6 @@
     "title": "Name of the video: {{title}}"
   },
   "required fields": "Required fields",
-  "scale editor": {
-    "cancel": "$t(common actions.cancel)",
-    "delete": "Delete scale",
-    "close": "$t(common actions.close)",
-    "description": {
-      "label": "Description",
-      "placeholder": "Insert the category description"
-    },
-    "edit category scale": "Edit category scale",
-    "edit scales": "Edit scales",
-    "name": {
-      "label": "Name",
-      "placeholder": "Insert the category name",
-      "invalid": "Name must not be empty"
-    },
-    "new scale": {
-      "name": "New scale",
-      "value": "New scale value"
-    },
-    "new scale name": "New scale",
-    "new scale value": "New scale value",
-    "no scale": "-- NO SCALE --",
-    "save": "$t(common actions.save)",
-    "values": {
-      "add": "Add scale value",
-      "name": {
-        "header": "Name"
-      },
-      "value": {
-        "header": "Value",
-        "placeholder": "Insert a decimal number."
-      }
-    },
-    "warning": {
-      "name": "Attention!",
-      "no scale on series category": "This category belongs to a series. Therefore, assigning a scale is not possible.",
-      "no series categories with scale": "Category has a scale. Changing category affiliation is not possible."
-    }
-  },
   "scale modal": {
     "select scale": "select scale",
     "create scale": "Create new scale",

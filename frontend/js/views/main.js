@@ -30,7 +30,6 @@ define(
         "views/list",
         "views/timeline",
         "views/loop",
-        "views/scale-editor",
         "views/tracks-selection",
         "views/print",
         "backbone",
@@ -48,7 +47,6 @@ define(
         ListView,
         TimelineView,
         LoopView,
-        ScaleEditorView,
         TracksSelectionView,
         PrintView,
         Backbone,
@@ -121,8 +119,6 @@ define(
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
 
                 this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
-
-                annotationTool.scaleEditor = new ScaleEditorView();
 
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 

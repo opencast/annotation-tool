@@ -61,12 +61,6 @@ define(
             className: "tab-pane",
 
             /**
-             * Define if the view is or not in edit modus.
-             * @type {boolean}
-             */
-            editModus: false,
-
-            /**
              * List of categories in this tab
              * @type {Categories}
              */
@@ -163,11 +157,9 @@ define(
                     "moveCarouselPrevious",
                     "moveCarouselNext",
                     "onCarouselSlid",
-                    "onSwitchEditModus",
                     "onExport",
                     "onImport",
                     "chooseFile",
-                    "switchEditModus",
                     "insertCategoryView",
                     "initCarousel",
                     "render"
@@ -210,10 +202,6 @@ define(
                     this.addCategory(category);
                 });
                 this.listenTo(this.categories, "remove", this.removeOne);
-
-                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
-
-                this.hasEditMode = _.contains(this.roles, annotationTool.user.get("role"));
 
                 return this;
             },
@@ -279,7 +267,6 @@ define(
 
                 this.insertCategoryView(new CategoryView({
                     category: category,
-                    editModus: this.editModus,
                     roles: this.roles
                 }));
             },
@@ -477,36 +464,12 @@ define(
             },
 
             /**
-             * Listener for edit modus switch.
-             * @param {boolean} status The new status
-             */
-            onSwitchEditModus: function (status) {
-                if (this.hasEditMode) {
-                    this.switchEditModus(status);
-                } else if (status) {
-                    this.titleLink.css("visibility", "hidden");
-                } else {
-                    this.titleLink.css("visibility", "visible");
-                }
-            },
-
-            /**
              * Simulate the a click on file input box to choose a file to import
              */
             chooseFile: function (event) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
                 this.titleLink.find(".file").click();
-            },
-
-            /**
-             * Switch the edit modus to the given status.
-             * @param {boolean} status The current status
-             */
-            switchEditModus: function (status) {
-                this.titleLink.toggleClass("edit-on", status);
-                this.$el.toggleClass("edit-on", status);
-                this.editModus = status;
             },
 
             /**

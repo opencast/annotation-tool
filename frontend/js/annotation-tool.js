@@ -29,12 +29,12 @@ define(
         "views/main",
         "alerts",
         "templates/delete-modal",
-        "templates/series-category",
         "player-adapter",
         "colors",
         "xlsx",
         "papaparse",
-        "filesaver"
+        "filesaver",
+        "jquery.colorPicker"
     ],
     function (
         $,
@@ -46,7 +46,6 @@ define(
         MainView,
         alerts,
         DeleteModalTmpl,
-        SeriesCategoryTmpl,
         PlayerAdapter,
         ColorsManager,
         XLSX,
@@ -63,7 +62,6 @@ define(
             EVENTS: {
                 ANNOTATION_SELECTION: "at:annotation-selection",
                 ACTIVE_ANNOTATIONS: "at:active-annotations",
-                ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus",
                 MODELS_INITIALIZED: "at:models-initialized",
                 TIMEUPDATE: "at:timeupdate",
                 USER_LOGGED: "at:logged",
@@ -124,47 +122,6 @@ define(
                 }
             },
 
-            seriesCategoryOperation: {
-                /**
-                 * Function to delete element with warning
-                 *
-                 * @param {Object} target Element to be delete
-                 * @param {TargetsType} type Type of the target to be deleted
-                 */
-                start: function (target, categorySeriesCategoryId) {
-
-                    var seriesCategoryModal = $(SeriesCategoryTmpl({
-                        context: "HI",
-                        content: "BI"
-                    }));
-
-                    function confirm() {
-                        target.toVideoCategory(categorySeriesCategoryId);
-                        seriesCategoryModal.modal("toggle");
-                    }
-                    function confirmWithEnter(event) {
-                        if (event.keyCode === 13) {
-                            confirm();
-                        }
-                    };
-
-                    // Listener for delete confirmation
-                    seriesCategoryModal.find("#confirm-delete").one("click", confirm);
-
-                    // Add possiblity to confirm with return key
-                    $(window).on("keypress", confirmWithEnter);
-
-                    // Unbind the listeners when the modal is hidden
-                    seriesCategoryModal.one("hide", function () {
-                        $(window).off("keypress", confirmWithEnter);
-                        seriesCategoryModal.remove();
-                    });
-
-                    // Show the modal
-                    seriesCategoryModal.modal("show");
-                }
-            },
-
             /**
              * Initialize the tool
              * @param {module:configuration.Configuration} configuration The tool configuration
@@ -202,6 +159,7 @@ define(
                 this.freeTextVisible = true;
 
                 this.colorsManager = new ColorsManager();
+                $.fn.colorPicker.defaults.colors = this.colorsManager.getColors();
 
                 this.listenToOnce(this, this.EVENTS.USER_LOGGED, function () {
 
@@ -220,6 +178,8 @@ define(
                         }
                     );
                     this.orderTracks(this.tracksOrder);
+
+                    this.colorsManager.updateColors(this.video.get("categories").models);
 
                     this.views.main = new MainView();
                 });
