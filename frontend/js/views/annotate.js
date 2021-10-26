@@ -27,6 +27,7 @@ define(
         "player-adapter",
         "views/annotate-tab",
         "views/category-modal",
+        "views/scale-modal",
         "templates/annotate",
         "templates/annotate-tab-title",
         "templates/annotate-toggle-free-text-button",
@@ -42,6 +43,7 @@ define(
         PlayerAdapter,
         AnnotateTab,
         CategoryModal,
+        ScaleModal,
         template,
         TabsButtonTemplate,
         toggleFreeTextButtonTemplate,
@@ -113,7 +115,9 @@ define(
                 "change #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations",
                 "click .new-category-public": "createCategoryPublic",
-                "click .new-category-mine": "createCategoryMine"
+                "click .new-category-mine": "createCategoryMine",
+                "click .create-scale": "createScale",
+                "click .edit-scales": "editScales"
             },
 
             /**
@@ -210,6 +214,20 @@ define(
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
                 this.tabsButtonsElement.find("a:first-child").parent().first().addClass("active");
+            },
+
+            /**
+             * Create a new scale
+             */
+            createScale: function () {
+                new ScaleModal({ create: true }).show();
+            },
+
+            /**
+             * Edit existing scales
+             */
+            editScales: function () {
+                new ScaleModal().show();
             },
 
             /**

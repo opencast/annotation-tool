@@ -81,6 +81,18 @@ define(
             },
 
             /**
+             * Parse the attribute list passed to the model
+             * @param {object} data Object literal containing the model attribute to parse.
+             * @return {object} The object literal with the list of parsed model attribute.
+             */
+            parse: function (data) {
+                if (data.scaleValues) {
+                    data.scaleValues = new ScaleValues(data.scaleValues, { scale: this });
+                }
+                return data;
+            },
+
+            /**
              * Override the default toJSON function to ensure complete JSONing.
              * @return {JSON} JSON representation of the instance
              */

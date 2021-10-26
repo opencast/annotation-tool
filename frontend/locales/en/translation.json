@@ -55,7 +55,9 @@
     "hide free text": "Hide free text annotations",
     "video category": "Category belongs to this video",
     "series category": "Category belongs to the series and is shown in all videos",
-    "structured annotations": "Structured Annotations"
+    "structured annotations": "Structured Annotations",
+    "create scale": "Create scale",
+    "edit scales": "Edit scales"
   },
   "annotation": {
     "author": "Created by",
@@ -254,6 +256,17 @@
       "name": "Attention!",
       "no scale on series category": "This category belongs to a series. Therefore, assigning a scale is not possible.",
       "no series categories with scale": "Category has a scale. Changing category affiliation is not possible."
+    }
+  },
+  "scale modal": {
+    "select scale": "select scale",
+    "create scale": "Create new scale",
+    "edit scale": "Edit scale \"{{name}}\"",
+    "help": "Note: Scales can supplement categories. The chosen scale will appear on any label of the category in question to further specify its expression.",
+    "name": "Name",
+    "scale value": {
+      "name": "Name",
+      "value": "Value"
     }
   },
   "startup": {

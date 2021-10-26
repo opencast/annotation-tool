@@ -1,0 +1,33 @@
+<form class="form-horizontal">
+    <h3 class="modal-header">
+        {{#if create}}
+            {{t "scale modal.create scale"}}
+        {{else}}
+            {{#if model}}
+                {{t "scale modal.edit scale" name=model.name}}
+            {{else}}
+                {{t "scale modal.select scale"}}
+            {{/if}}
+        {{/if}}
+    </h3>
+
+    <div class="modal-body">
+        {{! Not really a control group, but Bootstrap wants this for the margins}}
+        <div class="control-group">
+            <p class="help-block">
+                {{t "scale modal.help"}}
+            </p>
+        </div>
+
+        {{#unless model}}
+            {{> selector scales}}
+        {{/unless}}
+    </div>
+
+    <div class="modal-footer form-actions">
+        <button class="btn cancel" type="button">{{t "common actions.cancel"}}</button>
+        {{#if model}}
+            <button class="btn btn-primary">{{t "common actions.save"}}</button>
+        {{/if}}
+    </div>
+</form>

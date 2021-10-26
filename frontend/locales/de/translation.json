@@ -54,7 +54,9 @@
     "hide free text": "Freitextannotationen ausblenden",
     "video category": "Kategorie gehört zu diesem Video",
     "series category": "Kategorie gehört zur Serie und erscheint bei allen Videos",
-    "structured annotations": "Strukturierte Annotationen"
+    "structured annotations": "Strukturierte Annotationen",
+    "create scale": "Skala erstellen",
+    "edit scales": "Skalen bearbeiten"
   },
   "annotation": {
     "author": "Erstellt von",
@@ -239,6 +241,17 @@
       "name": "Achtung!",
       "no scale on series category": "Diese Kategorie gehört zu einer Serie. Daher kann ihr keine Skala zugeordnet werden.",
       "no series categories with scale": "Kategorie verfügt über eine Skala. Wechsel der Zugehörigkeit der Kategorie nicht möglich."
+    }
+  },
+  "scale modal": {
+    "select scale": "Skala auswählen",
+    "create scale": "Neue Skala erstellen",
+    "edit scale": "Skala „{{name}}“ bearbeiten",
+    "help": "Hinweis: Skalen können Kategorien ergänzen. Die Ausgewählte Skala erscheint dann bei jedem Label einer entsprechenden Kategorie, um z.B. die Ausprägung eines Labels genauer zu spezifizieren.",
+    "name": "Name",
+    "scale value": {
+      "name": "Ausprägung",
+      "value": "Wert"
     }
   },
   "startup": {
