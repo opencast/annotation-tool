@@ -83,7 +83,7 @@ define(["jquery",
                     renderers: ['html5', 'native_hls'],
                     alwaysShowControls: true,
                     autoRewind: false,
-                    stretching: "fill",
+                    stretching: "auto",
                     success: function (wrapper) {
                         mediaElement = wrapper;
                         /**
