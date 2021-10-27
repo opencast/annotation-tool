@@ -83,7 +83,7 @@ define(["jquery",
                     renderers: ['html5', 'native_hls'],
                     alwaysShowControls: true,
                     autoRewind: false,
-                    stretching: "auto",
+                    stretching: "fill",
                     success: function (wrapper) {
                         mediaElement = wrapper;
                         /**
@@ -166,6 +166,11 @@ define(["jquery",
 
                         $(mediaElement).on("contextmenu", function (e) {
                             e.preventDefault();
+                        });
+
+                        // Workaround to fix chrome fullscreen bug (#214)
+                        $(document).bind('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', function (e) {
+                            self.resetSize();
                         });
 
                         if (sources) {
