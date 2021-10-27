@@ -100,14 +100,6 @@
   "list annotation": {
     "double click to edit": "$t(common actions.double click to edit)"
   },
-  "login error": {
-    "nickname": {
-      "absent": "Benutzername kann nicht leer sein"
-    },
-    "email": {
-      "invalid": "{{attribute}} ist keine gültige E-Mail-Adresse"
-    }
-  },
   "loop controller": {
     "enable": "Schleifen aktivieren",
     "constrain": "Neue Annotationen auf die aktuelle Schleife einschränken",
@@ -300,21 +292,6 @@
     "move down": "Nach unten verschieben"
   },
   "untitled video": "Video ohne Titel",
-  "user login": {
-    "email": {
-      "label": "E-Mail",
-      "placeholder": "E-Mail-Adresse eingeben"
-    },
-    "header": "Benutzeranmeldung",
-    "login": "Anmelden",
-    "login as supervisor": "Als Aufsicht anmelden",
-    "nickname": {
-      "label": "Benutzername",
-      "placeholder": "Benutzernamen eingeben"
-    },
-    "remember me": "Angemeldet bleiben"
-  },
-  "version": "Version: {{version}}",
   "models": {
     "nominative_annotation": "Annotation",
     "nominative_comment": "Kommentar",

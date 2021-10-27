@@ -22,14 +22,12 @@ define(
     [
         "roles",
         "access",
-        "models/resource",
-        "email-addresses"
+        "models/resource"
     ],
     function (
         ROLES,
         ACCESS,
-        Resource,
-        emailAddresses
+        Resource
     ) {
         "use strict";
 
@@ -62,32 +60,6 @@ define(
              * @type {boolean}
              */
             noPOST: true,
-
-            /**
-             * Validate the attribute list passed to the model
-             * @param {Object} attr Object literal containing the model attribute to validate.
-             * @return {string} If the validation failed, an error message will be returned.
-             */
-            validate: function (attr) {
-                var invalidResource = Resource.prototype.validate.call(this, attr);
-                if (invalidResource) return invalidResource;
-
-                if (!attr.nickname) {
-                    return {
-                        attribute: "nickname",
-                        error: "absent"
-                    };
-                }
-
-                if (attr.email && !emailAddresses.parseOneAddress(attr.email)) {
-                    return {
-                        attribute: "email",
-                        error: "invalid"
-                    };
-                }
-
-                return undefined;
-            },
 
             /**
              * @return {boolean} Whether or not this user is an admin
