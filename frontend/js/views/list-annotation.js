@@ -355,8 +355,11 @@ define(
 
                 var partials = _.extend(
                     {
-                        category: TmplCategory,
-                        "content-item-header": TmplContentItemHeader
+                      "category": TmplCategory,
+                      "text": TmplTypeText,
+                      "label": TmplTypeLabel,
+                      "scaling": TmplTypeScaling,
+                      "content-item-header": TmplContentItemHeader
                     },
                     this.currentState.partials || {}
                 );
