@@ -355,8 +355,11 @@ define(
 
                 var partials = _.extend(
                     {
-                        category: TmplCategory,
-                        "content-item-header": TmplContentItemHeader
+                      "category": TmplCategory,
+                      "text": TmplTypeText,
+                      "label": TmplTypeLabel,
+                      "scaling": TmplTypeScaling,
+                      "content-item-header": TmplContentItemHeader
                     },
                     this.currentState.partials || {}
                 );
@@ -427,6 +430,10 @@ define(
                     event.originalEvent.detail > 1,
                     "list"
                 );
+
+                if (event.originalEvent.detail > 1 && this.model.get("createdFromQuestionnaire")) {
+                    Backbone.trigger("questionnaire:edit-annotation", this.model);
+                }
             },
 
             /**

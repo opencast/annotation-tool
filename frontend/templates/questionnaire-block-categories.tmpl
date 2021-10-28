@@ -10,12 +10,14 @@
         </div>
         {{/if}}
 
+        {{!--
         <p>
-            <span class="help-block">{{item.description}}</span>
+             <span class="help-block">{{item.description}}</span>
         </p>
+        --}}
 
         {{#if item.minItems}}
-        <span class="help-block">
+        <span class="help-block mt-1">
             <b>
                 {{#ifeq item.minItems 1}}
                 {{t "questionnaire.help min items singular"}}
@@ -26,9 +28,14 @@
         </span>
         {{/if}}
 
+        {{#each categories as |category|}}
+          {{#unless category.deleted_at}}
+            {{> chooser category=category}}
+          {{/unless}}
+        {{/each}}
 
         {{#if contentItems}}
-        <ul class="questionnaire-content-items">
+        <ul class="questionnaire-content-items mt-2">
             {{#each contentItems as |item|}}
             <li>
                 <button class="questionnaire-content-item-remove" type="button">
@@ -43,17 +50,14 @@
         </ul>
         {{/if}}
 
-        {{#each categories as |category|}}
-            {{> chooser category=category}}
-        {{/each}}
     </div>
 </div>
 {{/layout}}
 
 
 {{#*inline "chooser"}}
-<button class="btn add-labelled-content" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
-    {{t "annotation.add content.category"}} {{name}}
+<button class="btn add-labelled-content mb-1" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
+  {{!--  {{t "annotation.add content.category"}}  --}} {{name}}
 </button>
 {{/inline}}
 
@@ -63,10 +67,9 @@
 
 <span
     class="content-item-label"
-    title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"
-    {{#if label.category.settings.color}}style="background-color: {{label.category.settings.color}};"{{/if}}>
+    title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})">
 
-    <b> {{label.abbreviation}} </b>
+    <b>{{label.value}} ({{label.abbreviation}})</b> <b {{#if label.category.settings.color}}style="background-color: {{label.category.settings.color}};"{{/if}}>[{{label.category.name}}]</b>
 
 </span>
 
