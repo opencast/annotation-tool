@@ -284,9 +284,10 @@ define([
                 this.annotation.set({createdFromQuestionnaire: true});
                 this.annotation.save();
                 this.annotation = null;
+                this.onDestroy();
+            } else {
+              this.render();
             }
-
-            this.onDestroy();
         },
 
         /**
