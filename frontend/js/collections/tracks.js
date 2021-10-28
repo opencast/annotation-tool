@@ -18,12 +18,17 @@
  * A module representing a tracks collection
  * @module collections-tracks
  */
-define(["underscore",
+define(
+    [
+        "underscore",
         "models/track",
-        "backbone"],
-
-    function (_, Track, Backbone) {
-
+        "backbone"
+    ],
+    function (
+        _,
+        Track,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -31,19 +36,16 @@ define(["underscore",
          * @see {@link http://www.backbonejs.org/#Collection}
          * @augments module:Backbone.Collection
          * @memberOf module:collections-tracks
-         * @alias module:collections-tracks.Tracks
          */
         var Tracks = Backbone.Collection.extend({
 
             /**
              * Model of the instances contained in this collection
-             * @alias module:collections-tracks.Tracks#model
              */
             model: Track,
 
             /**
              * constructor
-             * @alias module:collections-tracks.Tracks#initialize
              */
             initialize: function (models, options) {
                 this.video = options.video;
@@ -59,7 +61,6 @@ define(["underscore",
 
             /**
              * Parse the given data
-             * @alias module:collections-tracks.Tracks#parse
              * @param {object} data object or array containing the data to parse.
              * @return {object} the part of the given data related to the tracks
              */
@@ -79,7 +80,7 @@ define(["underscore",
              */
             getVisibleTracks: function () {
                 return this.filter(function (track) {
-                    return track.get(Track.FIELDS.VISIBLE);
+                    return track.get("visible");
                 });
             },
 
@@ -95,14 +96,13 @@ define(["underscore",
                 if (!keepPrevious) {
                     _.each(visibleTracks, function (track) {
                         // TODO Is this field even used?
-                        track.set(Track.FIELDS.VISIBLE, false);
+                        track.set("visible", false);
                     });
                     visibleTracks = [];
                 }
 
                 _.each(tracks, function (track) {
-                    track.fetchAnnotations();
-                    track.set(Track.FIELDS.VISIBLE, true);
+                    track.set("visible", true);
                     visibleTracks.push(track);
                 }, this);
 
@@ -118,7 +118,6 @@ define(["underscore",
 
             /**
              * Get the url for this collection
-             * @alias module:collections-tracks.Tracks#url
              * @return {String} the url of this collection
              */
             url: function () {

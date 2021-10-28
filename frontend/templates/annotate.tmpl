@@ -18,22 +18,18 @@
 
     <div class="control-group" id="annotate-form">
 
-        <div id="input-container" class="insert-fields annotate">
+        <div id="input-container" class="insert-fields">
             <textarea
                 id="new-annotation"
                 placeholder="{{t "annotate.new.placeholder"}}"
                 title="{{t "annotate.new.title"}}"
                 rows="3"
             ></textarea>
-            <div class="stop-fields">
-                <label class="checkbox inline">
-                    <input id="pause-video" type="checkbox"> <span>{{t "annotate.pause while editing"}}</span>
-                </label>
-            </div>
             <button id="insert" type="button" class="btn">{{t "annotate.insert"}}</button>
         </div>
 
-        <div id="categories" class="annotate">
+        <div id="categories">
+            <h5 id="structured-annotations-header">{{t "annotate.structured annotations"}}</h5>
             <ul class="nav nav-tabs" id="label-tabs-buttons">
                 <label class="checkbox inline" id="editSwitch">
                     <input type="checkbox">{{t "annotate.edit mode"}}
@@ -41,5 +37,14 @@
             </ul>
             <div class="tab-content" id="label-tabs-contents"></div>
         </div>
+        <fieldset class="stop-fields">
+            <legend>{{t "annotate.pause.legend"}}</legend>
+            <label class="checkbox inline">
+                <input id="pause-video-freetext" type="checkbox" checked> <span>{{t "annotate.pause.freetext"}}</span>
+            </label><br>
+            <label class="checkbox inline">
+                <input id="pause-video-structured" type="checkbox"> <span>{{t "annotate.pause.structured"}}</span>
+            </label>
+        </fieldset>
     </div>
 </div>

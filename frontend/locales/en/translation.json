@@ -1,7 +1,4 @@
 {
-  "about": {
-    "close": "$t(common actions.close)"
-  },
   "alert": {
     "ok": "$t(common actions.ok)",
     "error": {
@@ -42,13 +39,18 @@
       "title": "Use “ shift + return” keys to create a new line."
     },
     "no selected track": "No tracak selected",
-    "pause while editing": "Pause video during writing",
+    "pause": {
+      "legend": "Pause video:",
+      "freetext": "When writing a free text annotation",
+      "structured": "When placing a structured annotation"
+    },
     "select track prompt": "Select a track to start annotating",
     "upload categories": "Upload categories",
     "hide category": "Hide category",
     "show category": "Show category",
     "show free text": "Show free text annotations",
-    "hide free text": "Hide free text annotations"
+    "hide free text": "Hide free text annotations",
+    "structured annotations": "Structured Annotations"
   },
   "annotation": {
     "author": "Created by",
@@ -103,14 +105,6 @@
   "list annotation": {
     "double click to edit": "Double click to edit"
   },
-  "login error": {
-    "nickname": {
-      "absent": "Nickname can't be blank"
-    },
-    "email": {
-      "invalid": "{{attribute}} is not a valid email address"
-    }
-  },
   "loop controller": {
     "enable": "Enable loops",
     "constrain": "Constrain new annotations to current loop",
@@ -120,10 +114,6 @@
     "invalid loop length": "The given value for the loop length is not valid!"
   },
   "menu": {
-    "help": {
-      "head": "Help",
-      "about": "About"
-    },
     "processing": {
       "head": "Process",
       "export csv": "Export for statistics",
@@ -312,20 +302,6 @@
     "move down": "Move down"
   },
   "untitled video": "Untitled video",
-  "user login": {
-    "email": {
-      "label": "Email",
-      "placeholder": "Insert your email address"
-    },
-    "header": "User login",
-    "login": "Log in",
-    "login as supervisor": "Log in as supervisor",
-    "nickname": {
-      "label": "Nickname",
-      "placeholder": "Insert your nickname"
-    },
-    "remember me": "Remember me"
-  },
   "views": {
     "annotate": "Create new annotations",
     "list": "Annotation list",
@@ -333,7 +309,6 @@
     "timeline": "Timeline",
     "player": "Player"
   },
-  "version": "Version: {{version}}",
   "common actions": {
     "cancel": "Cancel",
     "close": "Close",

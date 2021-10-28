@@ -18,13 +18,14 @@
  * A module representing the main view
  * @module views-main
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "underscore",
         "mousetrap",
         "i18next",
         "alerts",
         "player-adapter",
-        "views/about",
         "views/annotate",
         "views/list",
         "views/timeline",
@@ -34,9 +35,8 @@ define(["jquery",
         "views/print",
         "backbone",
         "goldenlayout",
-        "localstorage",
-        "bootstrap"],
-
+        "bootstrap"
+    ],
     function (
         $,
         _,
@@ -44,7 +44,6 @@ define(["jquery",
         i18next,
         alerts,
         PlayerAdapter,
-        AboutDialog,
         AnnotateView,
         ListView,
         TimelineView,
@@ -67,33 +66,28 @@ define(["jquery",
          * @see {@link http://www.backbonejs.org/#View}
          * @augments module:Backbone.View
          * @memberOf module:views-main
-         * @alias module:views-main.MainView
          */
         var MainView = Backbone.View.extend({
 
             /**
              * Main container of the appplication
-             * @alias module:views-main.MainView#el
              * @type {DOMElement}
              */
             el: $("body"),
 
             /**
              * jQuery element for the loading box
-             * @alias module:views-main.MainView#loadingBox
              * @type {DOMElement}
              */
             loadingBox: $("#loading"),
 
             /**
              * Events to handle by the main view
-             * @alias module:views-main.MainView#event
              * @type {Map}
              */
             events: {
                 "click #export-csv": "exportCSV",
                 "click #export-xlsx": "exportXLSX",
-                "click #about": "about",
                 "click #logout": "onLogout",
                 "click #print": "print",
                 "click #opt-annotate-text": "toggleFreeTextAnnotations",
@@ -108,19 +102,21 @@ define(["jquery",
 
             /**
              * Constructor
-             * @alias module:views-main.MainView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
-                _.bindAll(this, "createViews",
-                                "onDeletePressed",
-                                "onWindowResize",
-                                "print",
-                                "ready",
-                                "setupKeyboardShortcuts",
-                                "interruptAnnotationShortcut",
-                                "tracksSelection",
-                                "setLoadingProgress");
+                _.bindAll(
+                    this,
+                    "createViews",
+                    "onDeletePressed",
+                    "onWindowResize",
+                    "print",
+                    "ready",
+                    "setupKeyboardShortcuts",
+                    "interruptAnnotationShortcut",
+                    "tracksSelection",
+                    "setLoadingProgress"
+                );
 
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
 
@@ -130,7 +126,7 @@ define(["jquery",
 
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
-                this.once(MainView.EVENTS.READY, function () {
+                this.listenToOnce(this, MainView.EVENTS.READY, function () {
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
@@ -142,14 +138,13 @@ define(["jquery",
                         $("#opt-annotate-categories").parent().hide();
                     }
 
-                }, this);
+                });
                 this.createViews();
             },
 
             /**
              * Updates the title of the page to reflect the video title
              * @param  {object} video The video model
-             * @alias module:views-main.MainView#updateTitle
              */
             updateTitle: function (video) {
                 this.$el.find("#video-title").text(video.get("title") || i18next.t("untitled video"));
@@ -157,7 +152,6 @@ define(["jquery",
 
             /**
              * Creates the views for the annotations
-             * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
                 var views = [
@@ -269,9 +263,9 @@ define(["jquery",
                         "reviewing",
                         "fullscreen timeline"
                     ], function (template) {
-                        return '<li><button class="opt-template" type="button" data-template="' + template + '">' +
+                        return "<li><button class=\"opt-template\" type=\"button\" data-template=\"" + template + "\">" +
                             i18next.t("menu.view.templates." + template) +
-                            '</button></li>';
+                            "</button></li>";
                     }).join("")
                 );
 
@@ -374,7 +368,7 @@ define(["jquery",
                             callback.apply(null, resolvedDependencies);
                         });
                         _.each(missingDependencies, function (dependency) {
-                            self.once("view:" + dependency, doTheThing);
+                            self.listenToOnce(self, "view:" + dependency, doTheThing);
                         });
                     }
                 }
@@ -401,7 +395,7 @@ define(["jquery",
                     function failed() {
                         alerts.fatal(i18next.t("startup.video.failed"));
                     }
-                    annotationTool.once(annotationTool.EVENTS.VIDEO_LOADED, function () {
+                    self.listenToOnce(annotationTool, annotationTool.EVENTS.VIDEO_LOADED, function () {
                         if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                             videoLoaded();
                         } else if (annotationTool.playerAdapter.failed()) {
@@ -510,7 +504,6 @@ define(["jquery",
 
             /**
              * Function to signal that the tool is ready
-             * @alias module:views-main.MainView#ready
              */
             ready: function () {
                 this.setLoadingProgress(100, i18next.t("startup.ready"));
@@ -525,7 +518,6 @@ define(["jquery",
 
             /**
              * Initialize global keyboard shortcuts
-             * @alias module:views-main.MainView#setupKeyboardShortcuts
              */
             setupKeyboardShortcuts: function () {
 
@@ -550,22 +542,22 @@ define(["jquery",
                     annotationView.toggleCommentsState();
                     var wasPlaying = annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
                     annotationTool.playerAdapter.pause();
-                    annotationView.once("cancel", function () {
+                    this.listenToOnce(annotationView, "cancel", function () {
                         if (wasPlaying) {
                             annotationTool.playerAdapter.play();
                         }
                     });
                 }, this);
 
-                Mousetrap.bind('.', setActiveAnnotationDuration);
-                Mousetrap.bind('r', function (event) {
+                Mousetrap.bind(".", setActiveAnnotationDuration);
+                Mousetrap.bind("r", function (event) {
                     // We prevent the default behavior, i.e. inserting the letter "r", here,
                     // because otherwise the newly created comment would be prepopulated with,
                     // well, an "r".
                     event.preventDefault();
                     addComment();
                 });
-                Mousetrap.bind('space', _.bind(function () {
+                Mousetrap.bind("space", _.bind(function () {
                     // See whether the player has the focus; it manages this function itself.
                     if ($.contains(this.playerContainer, document.activeElement)) return;
 
@@ -586,7 +578,6 @@ define(["jquery",
              * then the label, and then -- if necessary -- a scale value.
              * The sequence is interrupted by pressing any other key,
              * or changing the input focus in any way.
-             * @alias module:views-main.MainView#handleAnnotationShortcut
              */
             handleAnnotationShortcut: function (event) {
                 if ((
@@ -603,7 +594,6 @@ define(["jquery",
                 var selectedEntity = Number(event.key) - 1;
 
                 // Note that this might fail horribly when the entities change in between keys of the sequence
-
 
                 if (!annotationShortcutState.category) {
                     annotationShortcutState.category = annotationTool.video.get("categories").at(selectedEntity);
@@ -647,7 +637,6 @@ define(["jquery",
 
             /**
              * Interrupt an in-process annotation key combination
-             * @alias module:views-main.MainView#interruptAnnotationShortcut
              */
             interruptAnnotationShortcut: function () {
                 annotationShortcutState = { params: {} };
@@ -683,12 +672,6 @@ define(["jquery",
                 localStorage.setItem("layout", event.currentTarget.dataset.template);
                 location.reload();
             },
-
-            /**
-             * The about dialog
-             * @alias module:views-main.MainView#aboutDialog
-             */
-            aboutDialog: new AboutDialog(),
 
             /**
              * Offer the user a spreadsheet version of the annotations for download.
@@ -730,16 +713,7 @@ define(["jquery",
             },
 
             /**
-             * Show a dialog with information about the tool
-             * @alias module:views-main.MainView#about
-             */
-            about: function () {
-                this.aboutDialog.show();
-            },
-
-            /**
              * Logout from the tool
-             * @alias module:views-main.MainView#onLogout
              */
             onLogout: function () {
                 annotationTool.logout();
@@ -747,7 +721,6 @@ define(["jquery",
 
             /**
              * Print the annotations
-             * @alias module:views-main.MainView#print
              */
             print: function () {
                 window.focus();
@@ -769,7 +742,6 @@ define(["jquery",
 
             /**
              * Show the track management dialog
-             * @alias module:views-main.MainView#tracksSelection
              */
             tracksSelection: function (event) {
                 this.tracksSelectionModal.show();
@@ -777,7 +749,6 @@ define(["jquery",
 
             /**
              * Enable/disable the free text annotations pane in the annotate view
-             * @alias module:views-main.MainView#toggleFreeTextAnnotations
              */
             toggleFreeTextAnnotations: function () {
                 $("#opt-annotate-text").toggleClass("checked");
@@ -786,7 +757,6 @@ define(["jquery",
 
             /**
              * Enable/disable the structured annotations pane in the annotate view
-             * @alias module:views-main.MainView#toggleStructuredAnnotations
              */
             toggleStructuredAnnotations: function () {
                 $("#opt-annotate-categories").toggleClass("checked");
@@ -795,7 +765,6 @@ define(["jquery",
 
             /**
              * Toggle the automatic expanding/collapsing of the annotations relevant to the current player time
-             * @alias module:views-main.MainView#toggleAutoExpand
              */
             toggleAutoExpand: function (event) {
                 $(event.currentTarget).toggleClass("checked");
@@ -804,7 +773,6 @@ define(["jquery",
 
             /**
              * Annotation through the "<-" key
-             * @alias module:views-main.MainView#onDeletePressed
              * @param  {Event} event Event object
              */
             onDeletePressed: function (event) {
@@ -823,7 +791,6 @@ define(["jquery",
 
             /**
              * Listener for window resizing
-             * @alias module:views-main.MainView#onWindowResize
              */
             onWindowResize: function () {
                 var mainContainer = this.$el.find("#main-container");
@@ -833,7 +800,6 @@ define(["jquery",
 
             /**
              * Update loading box with given percent & message
-             * @alias module:views-main.MainView#setLoadingProgress
              * @param {integer} percent loaded of the tool
              * @param {string} current loading operation message
              */

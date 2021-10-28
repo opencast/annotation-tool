@@ -7,13 +7,9 @@
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="style/style.css">
-    <!-- build:[data-main]:build bundle.min.js-->
     <script src="js/libs/require/require.js"></script>
-    <!-- /build -->
-    <!-- build:remove:build -->
     <script src="js/require.config.js"></script>
     <script src="js/main.js"></script>
-    <!-- /build -->
   </head>
   <body>
     <div id="screen">
@@ -25,7 +21,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <span id="video-title" class="brand"><span data-i18n="title"></span> - <%= version %></span>
+            <span data-i18n="title" id="video-title" class="brand"></span>
 
             <ul class="nav pull-right">
               <li class="dropdown" id="view-options">
@@ -88,14 +84,6 @@
                   <li><button type="button" id="print" data-i18n="menu.processing.print"></button></li>
                 </ul>
               </li>
-              <li class="dropdown">
-                <button type="button" class="dropdown-toggle" data-toggle="dropdown">
-                  <span data-i18n="menu.help.head"></span> <b class="caret"></b>
-                </button>
-                <ul class="dropdown-menu">
-                  <li><button type="button" id="about" data-i18n="menu.help.about"></button></li>
-                </ul>
-              </li>
               <li id="user-menu" class="dropdown">
                 <button type="button" class="dropdown-toggle" data-toggle="dropdown">
                   <span id="user-menu-label"></span> <b class="caret"></b>
@@ -122,9 +110,6 @@
 
       <div id="main-container"></div>
 
-      <div id="dialogs"></div>
-      <div class="modal" id="about-dialog" style="display:none"></div>
-      <div class="modal" id="user-login" style="display:none"></div>
       <div class="modal" id="scale-editor" style="display:none"></div>
       <div class="modal" id="alert" style="display:none"></div>
       <div class="modal" id="tracks-selection" style="display:none"></div>

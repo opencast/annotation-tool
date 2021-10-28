@@ -37,7 +37,6 @@ define([
      * @see {@link http://www.backbonejs.org/#View}
      * @augments module:Backbone.View
      * @memberOf module:views-timeline
-     * @alias module:views-timeline.TimelineView
      */
     var TimelineGroup = Backbone.View.extend({
         /** @override */
@@ -92,7 +91,7 @@ define([
             this.$el.html(template(modelJSON));
             this.visibilityButton = this.$el.find(".visibility")
                 .tooltip({
-                    container: 'body',
+                    container: "body",
                     html: true
                 });
             return this;

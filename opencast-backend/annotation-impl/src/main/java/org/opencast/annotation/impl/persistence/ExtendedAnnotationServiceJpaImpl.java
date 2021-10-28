@@ -71,7 +71,11 @@ import org.opencastproject.util.data.Predicate;
 import org.opencastproject.util.data.Tuple;
 import org.opencastproject.util.data.functions.Options;
 import org.opencastproject.util.persistence.PersistenceEnv;
+import org.opencastproject.util.persistence.PersistenceEnvs;
 import org.opencastproject.util.persistence.Queries;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,6 +85,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
@@ -89,18 +94,31 @@ import javax.persistence.RollbackException;
 /**
  * JPA-based implementation of the {@link ExtendedAnnotationService}.
  */
+@Component
 public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotationService {
 
-  private final PersistenceEnv penv;
-  private final SecurityService securityService;
-  private final AuthorizationService authorizationService;
-  private final SearchService searchService;
+  private PersistenceEnv persistenceEnv;
+  private SecurityService securityService;
+  private AuthorizationService authorizationService;
+  private SearchService searchService;
 
-  public ExtendedAnnotationServiceJpaImpl(PersistenceEnv penv, SecurityService securityService,
-          AuthorizationService authorizationService, SearchService searchService) {
-    this.penv = penv;
+  @Reference(target = "(osgi.unit.name=org.opencast.annotation.impl.persistence)")
+  public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+    this.persistenceEnv = PersistenceEnvs.persistenceEnvironment(entityManagerFactory);
+  }
+
+  @Reference
+  public void setSecurityService(SecurityService securityService) {
     this.securityService = securityService;
+  }
+
+  @Reference
+  public void setAuthorizationService(AuthorizationService authorizationService) {
     this.authorizationService = authorizationService;
+  }
+
+  @Reference
+  public void setSearchService(SearchService searchService) {
     this.searchService = searchService;
   }
 
@@ -110,7 +128,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    * @see #exhandler
    */
   private <A> A tx(Function<EntityManager, A> f) {
-    return penv.<A> tx().rethrow(exhandler).apply(f);
+    return persistenceEnv.<A> tx().rethrow(exhandler).apply(f);
   }
 
   @Override

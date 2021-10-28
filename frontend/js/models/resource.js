@@ -18,7 +18,17 @@
  * A module representing a generic annotation tool resource.
  * @module models-resource
  */
-define(["underscore", "backbone", "util", "access"], function (_, Backbone, util, ACCESS) {
+define([
+    "underscore",
+    "backbone",
+    "util",
+    "access"
+], function (
+    _,
+    Backbone,
+    util,
+    ACCESS
+) {
 "use strict";
 
 /**
@@ -26,64 +36,46 @@ define(["underscore", "backbone", "util", "access"], function (_, Backbone, util
  * @see {@link http://www.backbonejs.org/#Model}
  * @augments module:Backbone.Model
  * @memberOf module:models-resource
- * @alias module:models-resource.Resource
  */
 var Resource = Backbone.Model.extend({
 
     /**
      * Constructor
-     * @alias module:models-resource.Resource#initialize
-     * @param {object} attr Object literal containing the model initialion attributes.
      */
-    initialize: function (attr) {
-        var annotationTool = window.annotationTool || {};
-
-        if (!attr) attr = {};
-        if (annotationTool.localStorage) {
-            if (annotationTool.user) {
-                if (!attr.created_by) {
-                    this.set("created_by", annotationTool.user.id);
-                }
-                if (!attr.created_by_nickname) {
-                    this.set("created_by_nickname", annotationTool.user.get("nickname"));
-                }
-                if (!attr.created_by_email) {
-                    this.set("created_by_email", annotationTool.user.get("email"));
-                }
-            }
-            if (!attr.created_at) {
-                this.set("created_at", new Date());
-            }
-            if (!attr.updated_at) {
-                this.set("updated_at", new Date());
-            }
+    initialize: function () {
+        if (this.attributes.tags) {
+            this.set("tags", util.parseJSONString(this.attributes.tags));
         }
 
-        if (attr.tags) {
-            this.set("tags", util.parseJSONString(attr.tags));
+        if (this.attributes.settings) {
+            this.set("settings", util.parseJSONString(this.attributes.settings));
         }
 
-        if (attr.settings) {
-            this.set("settings", util.parseJSONString(attr.settings));
+        function fetchChildren() {
+            if (this.id) {
+                this.fetchChildren();
+            }
         }
+        fetchChildren.call(this);
+        this.listenTo(this, "change:id", function (id) {
+            fetchChildren.call(this);
+        });
     },
 
     /**
+     * A convenient function for resources to override to fetch subresources.
+     * It will (hopefully) be called at all the right times.
+     * (Namely when the <code>id</code> of the resource changes.
+     */
+    fetchChildren: function () {},
+
+    /**
      * Validate the attribute list passed to the model
-     * @alias module:models-resource.Resource#validate
      * @param {object} attr Object literal containing the model attribute to validate.
      * @return {string} If the validation failed, an error message will be returned.
      */
     validate: function (attr, callbacks) {
         var created = this.get("created_at");
-
-        if (attr.id) {
-            if (this.get("id") !== attr.id) {
-                this.id = attr.id;
-                this.attributes.id = attr.id;
-                if (callbacks && callbacks.onIdChange) callbacks.onIdChange.call(this);
-            }
-        }
 
         if (attr.tags && _.isUndefined(util.parseJSONString(attr.tags))) {
             return "\"tags\" attribute must be a string or a JSON object";
@@ -118,18 +110,10 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Parse the attribute list passed to the model
-     * @alias module:models-resource.Resource#parse
-     * @param {object} data Object literal containing the model attribute to parse.
-     * @param {function} callback Callback function that parses and potentially modifies <tt>data</tt>
-     *   It does not need to worry about whether a POJO or a Backbone model was passed
-     *   and it does not have to return anything. It works directly on the passed hash
+     * @param {object} attr Object literal containing the model attribute to parse.
      * @return {object} The object literal with the list of parsed model attribute.
      */
-    parse: function (data, callback) {
-        var annotationTool = window.annotationTool || {};
-
-        var attr = data.attributes || data;
-
+    parse: function (attr) {
         if (attr.created_at) {
             attr.created_at = util.parseDate(attr.created_at);
         }
@@ -148,14 +132,11 @@ var Resource = Backbone.Model.extend({
             attr.settings = util.parseJSONString(attr.settings);
         }
 
-        if (callback) callback.call(this, attr);
-
-        return data;
+        return attr;
     },
 
     /**
      * Override the default toJSON function to ensure complete JSONing.
-     * @alias module:models-resource.Resource#toJSON
      * @param {options} options Potential options influencing the JSONing process
      * @return {JSON} JSON representation of the instance
      */
@@ -174,7 +155,6 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Check whether this resource is public
-     * @alias module:models-resource.Resource#isPublic
      */
     isPublic: function () {
         var access = this.get("access");
@@ -183,7 +163,6 @@ var Resource = Backbone.Model.extend({
 
     /**
      * Check whether this resource belongs to the current user
-     * @alias module:models-resource.Resource#isMine
      */
     isMine: function () {
         var creator = this.get("created_by");
@@ -193,7 +172,6 @@ var Resource = Backbone.Model.extend({
     /**
      * Decide whether this resource can be deleted by the current user.
      * @see administratorCanEditPublicInstances
-     * @alias module:models-resource.Resource#isEditable
      */
     isEditable: function () {
         return this.isMine() || (

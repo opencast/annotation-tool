@@ -17,34 +17,35 @@
  * A module to print annotations to be able to compare them nicely.
  * @module views-print
  */
-define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], function (_, Backbone, printTemplate) {
-
+define([
+    "underscore",
+    "backbone",
+    "templates/print"
+], function (
+    _,
+    Backbone,
+    printTemplate
+) {
     "use strict";
-
 
     /**
      * @constructor
      * @see {@link http://www.backbonejs.org/#View}
      * @augments module:Backbone.View
      * @memberOf module:views-print
-     * @alias PrintView
      */
     var PrintView = Backbone.View.extend({
         /**
          * The element in which the print view is displayed.
-         * @alias module:views-print.PrintView#el
          */
-        el: '#print-view',
+        el: "#print-view",
         /**
          * The template to render the print view with.
-         * @alias module:views-print.PrintView#template
          */
         template: printTemplate,
 
-
         /**
          * Constructor
-         * @alias module:views-print.PrintView#initialize
          * @param {Object} model The model managing all the annotations and related data. See {@link annotation-tool}.
          */
         initialize: function (model) {
@@ -68,7 +69,7 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                 return tracks.get(trackId);
             });
             var annotations = _.chain(tracks)
-                .invoke('get', 'annotations')
+                .invoke("get", "annotations")
                 .pluck("models")
                 .flatten()
                 .filter(annotationTool.isVisible);
@@ -146,10 +147,6 @@ define(["underscore", "backbone", "templates/print", "handlebarsHelpers"], funct
                     }
                     result.timecode = formatTime(startTime) + "–" + formatTime(endTime);
 
-                    // Get comments by user
-                    if (!annotation.areCommentsLoaded()) {
-                        annotation.fetchComments();
-                    }
                     function commentWithReplies(comment) {
                         return {
                             author: comment.get("created_by_nickname"),

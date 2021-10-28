@@ -19,7 +19,6 @@
   <modules>
     <module>annotation-api</module>
     <module>annotation-impl</module>
-    <module>annotation-tool</module>
     <module>karaf-feature</module>
   </modules>
 
@@ -43,8 +42,6 @@
           <configuration>
             <instructions>
               <Import-Package>
-                javax.ws.rs;version=2.0.1,
-                javax.ws.rs.core;version=2.0.1,
                 org.opencastproject.*;version="${opencast.version}",
                 *
               </Import-Package>
