@@ -364,7 +364,8 @@
     "empty": "This field must not be empty",
     "min items": "You have to choose the required number of items.",
     "start after end": "Start time must be before end time",
-    "wrong format": "Wrong format"
+    "wrong format": "Wrong format",
+    "out of bounds": "Chosen time is out of bounds."
   },
   "common actions": {
     "cancel": "Cancel",
