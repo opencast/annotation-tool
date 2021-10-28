@@ -49,7 +49,7 @@ define([
              * @static
              */
             defaults: {
-                access: ACCESS.SHARED_WITH_ADMIN,
+                access: ACCESS.PRIVATE,
                 visible: false
             },
 

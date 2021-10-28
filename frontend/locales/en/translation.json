@@ -25,7 +25,6 @@
       "mine": "Mine",
       "public": "Public"
     },
-    "confirm edit": "Warning: Editing the selected annotation discards the current annotation draft!",
     "create a label": "Create a label",
     "download categories": "Download categories",
     "edit category scaling": "Edit scaling for this category",
@@ -365,8 +364,7 @@
     "empty": "This field must not be empty",
     "min items": "You have to choose the required number of items.",
     "start after end": "Start time must be before end time",
-    "wrong format": "Wrong format",
-    "out of bounds": "Chosen time is out of bounds."
+    "wrong format": "Wrong format"
   },
   "common actions": {
     "cancel": "Cancel",

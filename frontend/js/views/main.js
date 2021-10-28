@@ -208,39 +208,19 @@ define(["jquery",
                     },
                     "questionnaire": {
                         type: "row",
-                        content: [
-                            {
-                                type: "column",
-                                content: [
-                                  {
-                                      type: "column",
-                                      content: [
-                                          "player"
-                                      ].map(viewConfig)
-                                  },
-                                  {
-                                      type: "stack",
-                                      content: [
-                                          "timeline",
-                                          "list"
-                                      ].map(viewConfig)
-                                  },
-                                ]
-                            },
-                            {
-                                type: "column",
-                                content: [
-                                  {
-                                      type: "stack",
-                                      content: [
-                                          "questionnaire",
-                                          "annotate",
-                                          "loop"
-                                      ].map(viewConfig)
-                                  }
-                                ]
-                            }
-                        ]
+                        content: [{
+                            type: "column",
+                            content: [
+                                "player",
+                                "timeline"
+                            ].map(viewConfig)
+                        }, {
+                            type: "column",
+                            content: [
+                                "questionnaire",
+                                "list"
+                            ].map(viewConfig)
+                        }]
                     },
                     "with loops": {
                         type: "row",

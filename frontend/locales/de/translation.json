@@ -25,7 +25,6 @@
       "mine": "Meine",
       "public": "Öffentlich"
     },
-    "confirm edit": "Warnhinweis: Das Editieren der selektierten Annotation verwirft den aktuellen Annotationsentwurf!",
     "create a label": "Etikett erstellen",
     "download categories": "Kategorien herunterladen",
     "edit category scaling": "Skala für diese Kategorie bearbeiten",
@@ -380,8 +379,7 @@
     "empty": "Dieses Feld darf nicht leer sein",
     "min items": "Es wurde nicht eine genügende Menge an Einträgen gewählt.",
     "start after end": "Die Startzeit liegt nach dem Schluss.",
-    "wrong format": "Falsches Format",
-    "out of bounds": "Die Zeit liegt außerhalb des möglichen Bereichs."
+    "wrong format": "Falsches Format"
   },
   "common actions": {
     "cancel": "Abbrechen",

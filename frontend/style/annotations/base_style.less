@@ -209,8 +209,7 @@ input, textarea, select, .uneditable-input {
     cursor: pointer;
     color: black;
     &:hover {
-      background-color: #e5e5e5!important;
-      //  .selection(@annotationSelectableColor);
+        .selection(@annotationSelectableColor);
     }
 }
 
@@ -219,8 +218,6 @@ input, textarea, select, .uneditable-input {
 }
 
 .selected-annotation {
-    //.selection(@annotationSelectionColor);
-    border: 2px solid #00d0ff;
-    background-color: #f5f5f5!important;
+    .selection(@annotationSelectionColor);
     .selectable-annotation();
 }
