@@ -44,7 +44,9 @@
         {{/if}}
 
         {{#each categories as |category|}}
+          {{#unless category.deleted_at}}
             {{> chooser category=category}}
+          {{/unless}}
         {{/each}}
     </div>
 </div>
