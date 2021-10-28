@@ -9,7 +9,6 @@ define([
     i18next,
     util
 ) {
-
     /**
      * Expose the global annotation tool to the templates to access configuration.
      * @param {String} key The property to access from the global anntoation tool
