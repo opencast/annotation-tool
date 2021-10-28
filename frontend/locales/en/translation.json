@@ -249,7 +249,8 @@
         "label": "Access",
         "public": "Public",
         "private": "Private",
-        "shared with admin": "Shared with admin"
+        "shared with admin": "Share with admin",
+        "shared with everyone": "Automatically display to all users"
       },
       "name": {
         "label": "Name",
@@ -261,7 +262,8 @@
       "tooltip": "Change visibility",
       "to public": "Make public",
       "to private": "Make private",
-      "to shared with admin": "Share with admins"
+      "to shared with admin": "Share with admin",
+      "to shared with everyone": "Automatically display to all users"
     },
     "delete track": "Delete track",
     "name required": "Name is required!",
