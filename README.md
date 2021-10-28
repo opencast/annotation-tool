@@ -3,7 +3,7 @@
 The Opencast Annotation Tool (aka Annotating Academic Video by Entwine)
 is a video annotation service that is suitable for research, teaching or learning.
 
-The software is currently divided into two parts:
+The software consists of two parts:
 
 * The frontend component, containing the annotation webapp.
 * The Opencast Backend modules, that need to be integrated into an Opencast installation.
@@ -13,15 +13,14 @@ The software is currently divided into two parts:
 Unlike for Opencast, the community surrounding the Opencast Annotation Tool is relatively small,
 and the resources for its development and maintenance limited.
 With that in mind it makes little sense
-to try to support multiple versions of the tool simultaniously.
+to try to support multiple versions of the tool simultaneously.
 The situation also doesn't really warrant any formal and/or regular release cycle.
 
 As a result, this project follows kind of a rolling release strategy:
 We try our best to have the `master` branch on GitHub
-contain a working version of the software
-at any given point in time.
+always contain a working version of the software.
 Every push to `master` thus constitutes a release,
-versioned by an up-to-the-second timestamp
+versioned by an up-to-the-second timestamp,
 and the appropriate git commit hash.
 You can get to the source code of any particular such release
 by checking out the corresponding commit in git.
@@ -35,8 +34,8 @@ to our [GitHub hosted repository](https://github.com/opencast/annotation-tool/ra
 With the same motivation of a smaller community and fewer resources,
 we decided to only support the currently supported Opencast versions, by default,
 with a strong preference towards the newer versions.
-This commitment might be further restricted at any point,
-should the maintenance burde prove too high.
+We reserve the right to further restrict this commitment at any point
+should the maintenance burden prove too high.
 We also try our best to be compatible with Opencast `develop`,
 seeing as how this is going to be our next "premium support" version
 in at most six months time. 😉

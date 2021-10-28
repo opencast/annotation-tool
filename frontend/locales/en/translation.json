@@ -105,14 +105,6 @@
   "list annotation": {
     "double click to edit": "Double click to edit"
   },
-  "login error": {
-    "nickname": {
-      "absent": "Nickname can't be blank"
-    },
-    "email": {
-      "invalid": "{{attribute}} is not a valid email address"
-    }
-  },
   "loop controller": {
     "enable": "Enable loops",
     "constrain": "Constrain new annotations to current loop",
@@ -308,20 +300,6 @@
     "move down": "Move down"
   },
   "untitled video": "Untitled video",
-  "user login": {
-    "email": {
-      "label": "Email",
-      "placeholder": "Insert your email address"
-    },
-    "header": "User login",
-    "login": "Log in",
-    "login as supervisor": "Log in as supervisor",
-    "nickname": {
-      "label": "Nickname",
-      "placeholder": "Insert your nickname"
-    },
-    "remember me": "Remember me"
-  },
   "views": {
     "annotate": "Create new annotations",
     "list": "Annotation list",
@@ -329,7 +307,6 @@
     "timeline": "Timeline",
     "player": "Player"
   },
-  "version": "Version: {{version}}",
   "common actions": {
     "cancel": "Cancel",
     "close": "Close",

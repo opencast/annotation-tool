@@ -2,8 +2,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-        srcPath: 'js/**/*.js',
-        destPath: '../opencast-backend/annotation-tool/src/main/resources/ui/',
+        destPath: './src/main/resources/ui',
 
         clean: {
             options: {
@@ -27,7 +26,7 @@ module.exports = function (grunt) {
         handlebars: {
             options: {
                 namespace: false,
-                amd: ['handlebars', 'handlebarsHelpers']
+                amd: ['handlebars', 'handlebars-helpers']
             },
             compile: {
                 files: [{
@@ -45,20 +44,18 @@ module.exports = function (grunt) {
                     expand: true,
                     src: [
                         'index.html',
-                        '<%= srcPath %>',
+                        'js/**/*.js',
                         'img/**/*',
                         'style/**/*.svg',
                         'style/**/*.png',
                         'style/**/*',
-                        'locales/**/*.json'
+                        'locales/**/*.json',
+                        '{js,style}/**/*.map'
                     ],
                     dest: '<%= destPath %>'
                 }, {
-                    src: `build/integration/${grunt.option('integration') || 'search'}.js`,
-                    dest: '<%= destPath %>/js/annotation-tool-integration.js'
-                }, {
-                    src: 'build/config/annotation-tool-configuration.js',
-                    dest: '<%= destPath %>/js/annotation-tool-configuration.js'
+                    src: `js/integrations/${grunt.option('integration') || 'search'}.js`,
+                    dest: '<%= destPath %>/js/integration.js'
                 }]
             }
         },
@@ -73,18 +70,35 @@ module.exports = function (grunt) {
                     'jquery.colorPicker',
                     'slider',
                     'bootstrap',
-                    "filesaver"
+                    'filesaver'
                 ]
             },
             all: {
                 expand: true,
-                src: ['<%= srcPath %>', '!js/libs/**'],
+                src: ['js/**/*.js', '!js/lib/**/*'],
                 dest: '.'
             }
+        },
+
+        eslint: {
+            options: {
+                maxWarnings: 0,
+                failOnError: true,
+                maxWarnings: grunt.option('maxWarnings'),
+                fix: grunt.option('fix')
+            },
+            files: ['js/**/*.js', './{,.}*.js', '!js/libs/**/{,.}*']
         }
     });
 
     require('jit-grunt')(grunt);
 
-    grunt.registerTask('default', ['clean', 'amdcheck', 'handlebars', 'less', 'copy']);
+    grunt.registerTask('default', [
+        'clean',
+        'amdcheck',
+        'eslint',
+        'handlebars',
+        'less',
+        'copy'
+    ]);
 };

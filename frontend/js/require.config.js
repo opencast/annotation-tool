@@ -4,7 +4,7 @@
 require.config({
     baseUrl: "js",
     paths: {
-        "backbone": "libs/backbone-0.9.9",
+        "backbone": "libs/backbone-min",
         "bootstrap": "libs/bootstrap/bootstrap.min",
         "chroma": "libs/chroma.min",
         "domReady": "libs/require/domReady",
@@ -16,7 +16,6 @@ require.config({
         "templates": "../templates",
         "text": "libs/require/text",
         "underscore": "libs/underscore-min",
-        "email-addresses": "libs/email-addresses.min",
         "mousetrap": "libs/mousetrap.min",
         "i18next": "libs/i18next.min",
         "i18next-xhr-backend": "libs/i18nextXHRBackend.min",
@@ -31,7 +30,7 @@ require.config({
         "xlsx": "libs/xlsx.full.min",
         "vis-timeline": "libs/vis-timeline/vis-timeline-graph2d.min",
         "papaparse": "libs/papaparse.min",
-        "filesaver": "libs/FileSaver.min",
+        "filesaver": "libs/FileSaver.min"
     },
     waitSeconds: 10,
 
@@ -46,10 +45,6 @@ require.config({
 
         "bootstrap": ["jquery"],
         "slider": ["bootstrap"],
-
-        "email-addresses": {
-            exports: "emailAddresses"
-        },
 
         "mediaelementplayer": {
             exports: "mejs"

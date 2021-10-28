@@ -62,7 +62,10 @@ define(
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                this.set("settings", _.extend({ hasScale: true }, this.get("settings")));
+                this.set("settings", _.extend({
+                    hasScale: true,
+                    createdAsMine: !this.isPublic()
+                }, this.get("settings")));
             },
 
             /**
@@ -117,12 +120,7 @@ define(
                 delete json.labels;
 
                 if (this.attributes.scale) {
-                    if (this.attributes.scale.attributes) {
-                        json.scale_id = this.attributes.scale.get("id");
-                    } else {
-                        json.scale_id = this.attributes.scale.id;
-                    }
-
+                    json.scale_id = this.attributes.scale.id;
                     delete json.scale;
                 }
 
@@ -163,7 +161,7 @@ define(
                 }
 
                 return json;
-            },
+            }
         });
         return Category;
     }

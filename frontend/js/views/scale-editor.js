@@ -176,9 +176,7 @@ define([
             scales.push(this.EMPTY_SCALE);
 
             if (this.currentScaleId) {
-                selectedScale = _.find(scales, function (scale) {
-                    return scale.id === this.currentScaleId;
-                }, this);
+                selectedScale = _.findWhere(scales, { id: this.currentScaleId });
 
                 if (selectedScale) {
                     selectedScale.isSelected = true;
@@ -336,7 +334,7 @@ define([
         createScaleValue: function () {
             this.currentScale.get("scaleValues").create({
                 order: this.$el.find(".scale-value").length,
-                name : i18next.t("scale editor.new scale.value"),
+                name: i18next.t("scale editor.new scale.value"),
                 value: 0,
                 access: this.currentCategory.get("access")
             });
@@ -418,11 +416,10 @@ define([
             scaleValues = scaleValues.sortBy(sortModelByOrderValue, this);
             _.each(scaleValues, addScaleValue, this);
 
-            this.$el.find(".modal-body").empty().append(this.scaleEditorContentTemplate({scale: scale.toJSON()}));
+            this.$el.find(".modal-body").empty().append(this.scaleEditorContentTemplate({ scale: scale.toJSON() }));
             renderScaleValues.call(this);
             this.delegateEvents(this.events);
         }
     });
     return ScaleEditor;
-}
-);
+});

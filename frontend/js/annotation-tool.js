@@ -123,9 +123,9 @@ define(
 
             /**
              * Initialize the tool
-             * @param {module:annotation-tool-configuration.Configuration} config The tool configuration
+             * @param {module:configuration.Configuration} configuration The tool configuration
              */
-            start: function (config, integration) {
+            start: function (configuration, integration) {
                 _.bindAll(
                     this,
                     "updateSelectionOnTimeUpdate",
@@ -147,7 +147,7 @@ define(
                     "updateSelectionOnTimeUpdate"
                 );
 
-                _.extend(this, config, integration);
+                _.extend(this, configuration, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
 
@@ -159,15 +159,15 @@ define(
 
                 this.colorsManager = new ColorsManager();
 
-                this.once(this.EVENTS.USER_LOGGED, function () {
+                this.listenToOnce(this, this.EVENTS.USER_LOGGED, function () {
 
                     $("#user-menu-label").html(this.user.get("nickname"));
                     $("#user-menu").show();
 
                     this.fetchData();
-                }, this);
+                });
 
-                this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                this.listenToOnce(this, this.EVENTS.MODELS_INITIALIZED, function () {
                     this.listenTo(
                         this.video.get("tracks"),
                         "add remove reset visibility",
@@ -178,9 +178,9 @@ define(
                     this.orderTracks(this.tracksOrder);
 
                     this.views.main = new MainView();
-                }, this);
+                });
 
-                this.once(this.EVENTS.VIDEO_LOADED, function () {
+                this.listenToOnce(this, this.EVENTS.VIDEO_LOADED, function () {
 
                     if (!(this.playerAdapter instanceof PlayerAdapter)) {
                         throw "The player adapter is not valid! It must have PlayerAdapter as prototype.";
@@ -189,7 +189,7 @@ define(
                     $(this.playerAdapter).on("pa_timeupdate", this.onTimeUpdate);
 
                     this.playerAdapter.load();
-                }, this);
+                });
 
                 this.authenticate();
             },
@@ -235,10 +235,7 @@ define(
                     timeupdateEvent += ":" + interval;
 
                     // Check if the interval needs to be added to list
-                    // TODO Use `findWhere` once that is available
-                    if (!_.find(this.timeUpdateIntervals, function (value) {
-                        return value.interval === interval;
-                    }, this)) {
+                    if (!_.findWhere(this.timeUpdateIntervals, { interval: interval })) {
                         // Add interval to list
                         this.timeUpdateIntervals.push({
                             interval: interval,
@@ -659,7 +656,7 @@ define(
                                 }
                             }, this)
                         });
-                        video.once("ready", createDefaultTrack);
+                        this.listenToOnce(video, "ready", createDefaultTrack);
                     }, this)
                 );
             },
@@ -675,9 +672,9 @@ define(
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
             exportCSV: function (tracks, categories, freeText) {
-                let bookData = this.gatherExportData(tracks, categories, freeText);
+                var bookData = this.gatherExportData(tracks, categories, freeText);
                 var csv = PapaParse.unparse(JSON.stringify(bookData));
-                saveAs(new Blob([csv], {type:"text/csv;charset=utf-8;"}), 'export.csv');
+                saveAs(new Blob([csv], { type: "text/csv;charset=utf-8;" }), "export.csv");
             },
 
             /**
@@ -687,7 +684,7 @@ define(
              * @param {Boolean} freeText Should free-text annotations be exported?
              */
             exportXLSX: function (tracks, categories, freeText) {
-                let bookData = this.gatherExportData(tracks, categories, freeText);
+                var bookData = this.gatherExportData(tracks, categories, freeText);
 
                 // Generate workbook
                 var wb = XLSX.utils.book_new();
@@ -701,7 +698,7 @@ define(
 
                 bookData.forEach(function (arr) {
                     Object.keys(arr).forEach(function (key) {
-                        var value = arr[key] === null ? '' : arr[key];
+                        var value = arr[key] === null ? "" : arr[key];
 
                         // Arbitrarily increase len by one to avoid cases where just len would
                         // lead to too small columns
@@ -721,7 +718,7 @@ define(
                 wb.Sheets["Sheet 1"] = ws;
 
                 // Export workbook
-                var wbout = XLSX.write(wb, { bookType:'xlsx',  type: 'binary' });
+                var wbout = XLSX.write(wb, { bookType: "xlsx",  type: "binary" });
 
                 function s2ab(s) {
                     var buf = new ArrayBuffer(s.length); // convert s to arrayBuffer
@@ -732,7 +729,7 @@ define(
                     return buf;
                 }
 
-                saveAs(new Blob([s2ab(wbout)], { type:"application/octet-stream" }), 'export.xlsx');
+                saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "export.xlsx");
             },
 
             gatherExportData: function (tracks, categories, freeText) {
@@ -762,7 +759,9 @@ define(
                         var label = annotation.attributes.label;
                         // Exclude annotations that are currently not visible
                         if (label) {
-                            if (categories && !categories.map(category => category.id).includes(label.category.id)) return;
+                            if (categories && !categories.map(function (category) {
+                                return category.id;
+                            }).includes(label.category.id)) return;
                         } else {
                             if (!freeText) return;
                         }
@@ -812,8 +811,8 @@ define(
 
                 function addResourceHeaders(header, presuffix) {
                     if (presuffix == null) presuffix = "";
-                    let prefix = "";
-                    let suffix = "";
+                    var prefix = "";
+                    var suffix = "";
                     if (presuffix) {
                         prefix = presuffix + " ";
                         suffix = " of " + presuffix;
@@ -834,7 +833,7 @@ define(
                 }
 
                 function addCommentLine(line, comment) {
-                    let commentLine = [];
+                    var commentLine = [];
                     Array.prototype.push.apply(commentLine, line);
 
                     addResource(commentLine, comment);
@@ -896,7 +895,6 @@ define(
                     });
                 }
             },
-
 
             COMMENT: {
                 name: "comment",

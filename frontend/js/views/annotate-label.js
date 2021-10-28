@@ -91,13 +91,13 @@ define(
              * @type {map}
              */
             events: {
-                "click"                         : "annotate",
-                "click i.delete"                : "onDeleteLabel",
-                "focusout .item-value"          : "onFocusOut",
-                "keydown .item-value"           : "onKeyDown",
-                "focusout .item-abbreviation"   : "onFocusOut",
-                "keydown .item-abbreviation"    : "onKeyDown",
-                "click .scaling li"             : "annnotateWithScaling"
+                "click": "annotate",
+                "click i.delete": "onDeleteLabel",
+                "focusout .item-value": "onFocusOut",
+                "keydown .item-value": "onKeyDown",
+                "focusout .item-abbreviation": "onFocusOut",
+                "keydown .item-abbreviation": "onKeyDown",
+                "click .scaling li": "annnotateWithScaling"
             },
 
             /**
@@ -225,8 +225,8 @@ define(
              * @param {object} category The updated category
              */
             setupScaling: function (category) {
-                var scaleId = category.scale_id || (category.scale && category.scale.id),
-                    scale = scaleId && annotationTool.video.get("scales").get(scaleId);
+                var scaleId = category.scale_id;
+                var scale = scaleId && annotationTool.video.get("scales").get(scaleId);
 
                 if (scale) {
                     this.scaleValues = scale.get("scaleValues");
@@ -241,8 +241,8 @@ define(
              */
             onFocusOut: function () {
                 this.model.set({
-                    "value"        : _.escape(this.$el.find("input.item-value").val()),
-                    "abbreviation" : _.escape(this.$el.find("input.item-abbreviation").val())
+                    value: _.escape(this.$el.find("input.item-value").val()),
+                    abbreviation: _.escape(this.$el.find("input.item-abbreviation").val())
                 });
                 this.model.save();
             },
@@ -260,8 +260,8 @@ define(
 
                 if (e.keyCode === 13) { // If "return" key
                     this.model.set({
-                        "value"        : _.escape(this.$el.find("input.item-value").val()),
-                        "abbreviation" : _.escape(this.$el.find("input.item-abbreviation").val())
+                        "value": _.escape(this.$el.find("input.item-value").val()),
+                        "abbreviation": _.escape(this.$el.find("input.item-abbreviation").val())
                     });
                     this.model.save();
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
@@ -311,11 +311,7 @@ define(
                 var modelJSON = this.model.toJSON();
 
                 modelJSON.notEdit = !this.editModus;
-                if (!this.isScaleEnable) {
-                    if (modelJSON.scale_id) {
-                        delete modelJSON.scale_id;
-                    }
-                } else if (this.scaleValues) {
+                if (this.scaleValues) {
                     modelJSON.scaleValues = this.scaleValues.sort().toJSON();
                 }
 

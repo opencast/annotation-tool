@@ -120,7 +120,7 @@ define(
                     title: "alert.warning.title",
                     className: ""
                 },
-                INFO : {
+                INFO: {
                     title: "alert.info.title",
                     className: "alert-info"
                 }

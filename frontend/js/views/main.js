@@ -126,7 +126,7 @@ define(
 
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
-                this.once(MainView.EVENTS.READY, function () {
+                this.listenToOnce(this, MainView.EVENTS.READY, function () {
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
@@ -138,7 +138,7 @@ define(
                         $("#opt-annotate-categories").parent().hide();
                     }
 
-                }, this);
+                });
                 this.createViews();
             },
 
@@ -263,9 +263,9 @@ define(
                         "reviewing",
                         "fullscreen timeline"
                     ], function (template) {
-                        return '<li><button class="opt-template" type="button" data-template="' + template + '">' +
+                        return "<li><button class=\"opt-template\" type=\"button\" data-template=\"" + template + "\">" +
                             i18next.t("menu.view.templates." + template) +
-                            '</button></li>';
+                            "</button></li>";
                     }).join("")
                 );
 
@@ -368,7 +368,7 @@ define(
                             callback.apply(null, resolvedDependencies);
                         });
                         _.each(missingDependencies, function (dependency) {
-                            self.once("view:" + dependency, doTheThing);
+                            self.listenToOnce(self, "view:" + dependency, doTheThing);
                         });
                     }
                 }
@@ -395,7 +395,7 @@ define(
                     function failed() {
                         alerts.fatal(i18next.t("startup.video.failed"));
                     }
-                    annotationTool.once(annotationTool.EVENTS.VIDEO_LOADED, function () {
+                    self.listenToOnce(annotationTool, annotationTool.EVENTS.VIDEO_LOADED, function () {
                         if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                             videoLoaded();
                         } else if (annotationTool.playerAdapter.failed()) {
@@ -542,22 +542,22 @@ define(
                     annotationView.toggleCommentsState();
                     var wasPlaying = annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
                     annotationTool.playerAdapter.pause();
-                    annotationView.once("cancel", function () {
+                    this.listenToOnce(annotationView, "cancel", function () {
                         if (wasPlaying) {
                             annotationTool.playerAdapter.play();
                         }
                     });
                 }, this);
 
-                Mousetrap.bind('.', setActiveAnnotationDuration);
-                Mousetrap.bind('r', function (event) {
+                Mousetrap.bind(".", setActiveAnnotationDuration);
+                Mousetrap.bind("r", function (event) {
                     // We prevent the default behavior, i.e. inserting the letter "r", here,
                     // because otherwise the newly created comment would be prepopulated with,
                     // well, an "r".
                     event.preventDefault();
                     addComment();
                 });
-                Mousetrap.bind('space', _.bind(function () {
+                Mousetrap.bind("space", _.bind(function () {
                     // See whether the player has the focus; it manages this function itself.
                     if ($.contains(this.playerContainer, document.activeElement)) return;
 
@@ -594,7 +594,6 @@ define(
                 var selectedEntity = Number(event.key) - 1;
 
                 // Note that this might fail horribly when the entities change in between keys of the sequence
-
 
                 if (!annotationShortcutState.category) {
                     annotationShortcutState.category = annotationTool.video.get("categories").at(selectedEntity);
