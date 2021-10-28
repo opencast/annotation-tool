@@ -49,8 +49,22 @@ div.category-access button {
 		flex-direction: column;
 	}
 
-	.insert-fields, .stop-fields {
+	.insert-fields {
 		display: inline-block;
+	}
+
+	.stop-fields {
+		margin-top: 16px;
+		margin-bottom: 32px;
+		padding: 8px;
+
+		legend {
+			border: none;
+			margin: 0;
+			margin-bottom: -16px;
+			font-size: 14px;
+			font-weight: bold;
+		}
 	}
 
 	#input-container {
@@ -101,7 +115,7 @@ div.category-access button {
 		padding: 0;
 	}
 
-	label, span, p {
+	label, span, p, legend {
 		color: @white;
 		white-space: nowrap;
 	}
@@ -609,4 +623,8 @@ div.category-access button {
 		font-weight: bold;
 		border: 1px solid red;
 	}
+}
+
+#structured-annotations-header {
+    margin: 0;
 }

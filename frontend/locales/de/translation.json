@@ -39,13 +39,18 @@
       "title": "„Shift + Return“ drücken, um eine neue Zeile einzufügen."
     },
     "no selected track": "Keine Spur ausgewählt",
-    "pause while editing": "Video während des Schreibens anhalten",
+    "pause": {
+      "legend": "Video anhalten:",
+      "freetext": "Während des Schreibens einer Freitextannotation",
+      "structured": "Beim Setzen einer strukturierten Annotation"
+    },
     "select track prompt": "Wählen Sie eine Spur um mit dem annotieren zu beginnen",
     "upload categories": "Kategorien hochladen",
     "hide category": "Kategorie verstecken",
     "show category": "Kategorie anzeigen",
     "show free text": "Freitextannotationen anzeigen",
-    "hide free text": "Freitextannotationen ausblenden"
+    "hide free text": "Freitextannotationen ausblenden",
+    "structured annotations": "Strukturierte Annotationen"
   },
   "annotation": {
     "author": "Erstellt von",

@@ -104,8 +104,7 @@ define(
             events: {
                 "keyup #new-annotation": "keydownOnAnnotate",
                 "click #insert": "insert",
-                "keydown #new-annotation": "onFocusIn",
-                "focusout #new-annotation": "onFocusOut",
+                "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
                 "click #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations"
@@ -155,12 +154,9 @@ define(
                 _.bindAll(
                     this,
                     "insert",
-                    "onFocusIn",
-                    "onFocusOut",
                     "changeTrack",
                     "addTab",
                     "onSwitchEditModus",
-                    "checkToContinueVideo",
                     "switchEditModus",
                     "keydownOnAnnotate",
                     "toggleFreeTextAnnotationPane",
@@ -239,13 +235,11 @@ define(
                 annotationTool.createAnnotation({ text: value });
 
                 if (this.continueVideo) {
+                    this.continueVideo = false;
                     this.playerAdapter.play();
                 }
 
                 this.input.val("");
-                setTimeout(function () {
-                    $("#new-annotation").focus();
-                }, 500);
             },
 
             /**
@@ -275,35 +269,13 @@ define(
              * Listener for when a user start to write a new annotation,
              * manage if the video has to be or not paused.
              */
-            onFocusIn: function () {
-                if (!this.$el.find("#pause-video").attr("checked") || (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
+            maybePause: function () {
+                if (!this.$el.find("#pause-video-freetext").prop("checked") || this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                     return;
                 }
 
                 this.continueVideo = true;
                 this.playerAdapter.pause();
-
-                // If the video is moved, or played, we do no continue the video after insertion
-                $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
-                    this.continueVideo = false;
-                });
-            },
-
-            /**
-             * Listener for when we leave the annotation input
-             */
-            onFocusOut: function () {
-                setTimeout(this.checkToContinueVideo, 200);
-            },
-
-            /**
-             * Check if the video must continue, and if yes, continue to play it
-             */
-            checkToContinueVideo: function () {
-                if ((this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
-                    this.continueVideo = false;
-                    this.playerAdapter.play();
-                }
             },
 
             /**

@@ -39,13 +39,18 @@
       "title": "Use “ shift + return” keys to create a new line."
     },
     "no selected track": "No tracak selected",
-    "pause while editing": "Pause video during writing",
+    "pause": {
+      "legend": "Pause video:",
+      "freetext": "When writing a free text annotation",
+      "structured": "When placing a structured annotation"
+    },
     "select track prompt": "Select a track to start annotating",
     "upload categories": "Upload categories",
     "hide category": "Hide category",
     "show category": "Show category",
     "show free text": "Show free text annotations",
-    "hide free text": "Hide free text annotations"
+    "hide free text": "Hide free text annotations",
+    "structured annotations": "Structured Annotations"
   },
   "annotation": {
     "author": "Created by",
