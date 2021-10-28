@@ -2,8 +2,8 @@
     <div class="control-group{{#if validationErrors}} error{{/if}}">
         <label class="control-label">{{item.title}}{{#if item.required}} *{{/if}}</label>
         <div class="controls">
-            <textarea class="input-block-level"{{#if item.required}} required{{/if}}>{{contentItem.value}}</textarea>
-            <span class="help-block">{{item.description}}</span>
+            {{!-- <span class="help-block pt-1">{{item.description}}</span> --}}
+            <textarea rows="5" class="input-block-level"{{#if item.required}} required{{/if}}>{{contentItem.value}}</textarea>
             {{#each validationErrors as |error|}}
                 <span class="help-block"> {{t error}} </span>
             {{/each}}
