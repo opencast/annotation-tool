@@ -1,47 +1,38 @@
-# Opencast Installation Instructions
+# Installation Instructions
+
+## Prerequisites
+
+We assume throughout this document that you already have a running Opencast instance.
+If you need help setting that up please consult the [official documentation](https://docs.opencast.org/develop/admin/#installation/).
 
 ## Installing the Annotation Tool
 
-__Note:__ These are the installation instructions for the current stable branch of Opencast.
+There are multiple ways to install this tool. Here are some possibilities:
 
-You should make sure that you intended Opencast version was build at least once on the machine you use to build the
-Annotation tool, as this will create the needed dependency for Opencast modules in your local Maven repository. This may change
-in the future when Opencast packages might become available on the Nexus repository server.
-
-In general you should follow the [installation from source](https://docs.opencast.org/r/6.x/admin/installation/)
-instructions for Opencast.
-
-If you want to use the annotation tool in your production system, you can copy over the JAR-files from
-__<opencast_home>/deploy/opencast-annotation-*__ to the deploy dir of the other Opencast.
-
-### Preparing the Build of Opencast with the Annotation Tool
-
-Additional to the Opencast source code you will also need the source code for the Annotation Tool.
-In this manual we use `<annotationtool-dir>` for the base dir of the Annotation Tool checkout and
-`<opencast-dir>` as the directory where your Opencast build/binaries are.
-
-#### Cloning the Annotation Tool Git repository
-
-    git clone https://github.com/opencast/annotation-tool.git
+### From Source
 
 #### Prerequisites
 
-Make sure that you have openjdk-8-jdk and maven installed.
+Make sure that you have OpenJDK 11 and Maven installed.
+You will also need a `git` client.
+
+#### Cloning the Annotation Tool Git repository
+
+For example using the following command:
+
+    git clone https://github.com/opencast/annotation-tool.git
 
 ### Building the Annotation Tool
 
-    mvn clean install -DdeployTo=<opencast-dir>
+Now just run
 
-This should build the frontend, include it into the Opencast modules and copies the JARs
-to your Opencast installation. You should provide the built Opencast directory, e.g. `-DdeployTo=/home/user/opencast/build/opencast-dist-develop-8-SNAPSHOT/`
+    mvn clean install -DdeployTo=<opencast-deploy-dir>
 
-Note that if you are building against an Opencast version prior to 7,
-you currently need to skip the tests due to an incompatibility
-between Opencast 6 and 7.
-You can do this by passing the additional option `-Dmaven.test.skip`
-to Maven in the command above.
+where `<opencast-deploy-dir>` is the [Karaf hot deployment folder](https://karaf.apache.org/manual/latest/#_deployers)
+of your Opencast installation. (This is usually something like `/usr/share/opencast/deploy`
+if using the official packages.
 
-#### As a Karaf Feature
+### As a Karaf Feature
 
 As an alternative, the Annotation Tool is also packaged as a Karaf feature
 under the name `opencast-annotation-tool` and the Maven coordinates
@@ -93,7 +84,7 @@ Note that for this to work, you need to have built the Annotation Tool at least 
 so that the corresponding Maven artifacts can be found by Karaf, since they are currently not
 in any remote repository!
 
-## Configuration of Opencast
+## Configuring Opencast
 
 ### Adding ACL Actions
 

@@ -7,7 +7,7 @@ The Annotating Academic Video (AAV) project is a video annotation service that i
 The AAV tool is composed of a javascript web application communicating with REST endpoints for persistence resources and a player adapter. This one is the interface between the javascript annotations tool and the used player.
 This architecture aims to make the tool integrable in any video system.
 
-![Image of the architecture](annotationtool.png)
+![Image of the architecture](Annotation-Tool.png)
 
 [Architecture](Rest-API-Architecture.md)
 
