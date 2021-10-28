@@ -40,11 +40,11 @@ We also try our best to be compatible with Opencast `develop`,
 seeing as how this is going to be our next "premium support" version
 in at most six months time. 😉
 
-## [Installation](documentation/opencast-installation.md)
-The instruction on how to install the Annotation Tool in Opencast [can be found here](documentation/opencast-installation.md)
+## [Installation](documentation/Installation.md)
+The instructions on how to install the Annotation Tool in Opencast can be found [here](documentation/Installation.md)
 
 ## [Documentation](documentation/Home.md)
-A general documentation including the REST endpoints, the architecture etc. [can be found here](documentation/Home.md).
+A general documentation including the REST endpoints, the architecture etc. can be found [here](documentation/Home.md).
 
 ## Participants
 
