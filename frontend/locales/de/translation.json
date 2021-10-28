@@ -244,7 +244,7 @@
       "to public": "Öffentlich machen",
       "to private": "Privat machen",
       "to shared with admin": "Mit Administratoren teilen",
-      "to shared with everyone": "Allen Benutzern anzeigen"
+      "to shared with everyone": "Allen Benutzern automatisch anzeigen"
     },
     "track modals": {
       "header_add": "Neue Spur hinzufügen",
@@ -263,8 +263,8 @@
         "label": "Zugriff",
         "public": "Öffentlich",
         "private": "Privat",
-        "shared with admin": "Mit Administrator geteilt",
-        "shared with everyone": "Allen Benutzern anzeigen"
+        "shared with admin": "Mit Administrator teilen",
+        "shared with everyone": "Allen Benutzern automatisch anzeigen"
       },
       "name": {
         "label": "Name",
