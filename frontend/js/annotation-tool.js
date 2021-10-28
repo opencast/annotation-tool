@@ -208,37 +208,37 @@ define(
                         this.modelsInitialized = true;
                         this.trigger(this.EVENTS.MODELS_INITIALIZED);
                     }
-                }, this),
+                }, this);
 
-                    /**
-                     * Create a default track for the current user if no private track is present
-                     */
-                    createDefaultTrack = _.bind(function () {
+                /**
+                 * Create a default track for the current user if no private track is present
+                 */
+                var createDefaultTrack = _.bind(function () {
 
-                        var tracks = this.video.get("tracks");
+                    var tracks = this.video.get("tracks");
 
-                        if (!tracks.filter(util.caller("isMine")).length) {
-                            tracks.create({
-                                name: i18next.t("default track.name", {
-                                    nickname: this.user.get("nickname")
-                                }),
-                                description: i18next.t("default track.description", {
-                                    nickname: this.user.get("nickname")
-                                })
-                            }, {
-                                wait: true,
-                                success: concludeInitialization
-                            });
-                        } else {
-                            tracks.showTracks(
-                                tracks.filter(function (track) {
-                                    return track.isMine()
-                                        || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
-                                })
-                            );
-                            concludeInitialization();
-                        }
-                    }, this);
+                    if (!tracks.filter(util.caller("isMine")).length) {
+                        tracks.create({
+                            name: i18next.t("default track.name", {
+                                nickname: this.user.get("nickname")
+                            }),
+                            description: i18next.t("default track.description", {
+                                nickname: this.user.get("nickname")
+                            })
+                        }, {
+                            wait: true,
+                            success: concludeInitialization
+                        });
+                    } else {
+                        tracks.showTracks(
+                            tracks.filter(function (track) {
+                                return track.isMine()
+                                    || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                            })
+                        );
+                        concludeInitialization();
+                    }
+                }, this);
 
                 $.when(this.getVideoExtId(), this.getVideoParameters()).then(
                     _.bind(function (videoExtId, videoParameters) {
