@@ -537,12 +537,18 @@ define([
             // the item would just be deselected in that scenario.
             this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
+                var model = this.items.get(properties.items[0]).model;
                 annotationTool.setSelection(
-                    this.items.get(properties.items[0]).model,
+                    model,
                     // Toggle selection on single click,
                     // unconditionally select on double click
                     properties.event.tapCount > 1
                 );
+
+                if (properties.event.tapCount > 1 && model && model.get("createdFromQuestionnaire")) {
+                    Backbone.trigger("questionnaire:edit-annotation", this.items.get(properties.items[0]).model);
+                }
+
             }, this));
 
 
