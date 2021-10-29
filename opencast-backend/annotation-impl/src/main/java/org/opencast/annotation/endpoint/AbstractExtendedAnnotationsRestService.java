@@ -725,13 +725,14 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
             // If we are updating a master series category from a local copy, avoid changing the video
             // the master series category belongs to
-            Option<Long> seriesCategoryVideoId = Option.none();
-            if (seriesCategoryId.isSome()) {
-              seriesCategoryVideoId = eas().getCategory(seriesCategoryId.get(), false).get().getVideoId();
-            }
+            Option<Long> seriesCategoryVideoId = seriesCategoryId.flatMap(new Function<Long, Option<Long>>() {
+              @Override
+              public Option<Long> apply(Long seriesCategoryId) {
+                return eas().getCategory(seriesCategoryId, false).get().getVideoId();
+              }
+            });
 
-            final Category updated = new CategoryImpl(id,
-                    seriesCategoryVideoId.isSome() ? seriesCategoryVideoId : videoId, scaleId, name,
+            final Category updated = new CategoryImpl(id, seriesCategoryVideoId.orElse(videoId), scaleId, name,
                     trimToNone(description), trimToNone(settings), new ResourceImpl(access, resource.getCreatedBy(),
                             resource.getUpdatedBy(), resource.getDeletedBy(), resource.getCreatedAt(),
                             resource.getUpdatedAt(), resource.getDeletedAt(), resource.getTags()), seriesExtId,
