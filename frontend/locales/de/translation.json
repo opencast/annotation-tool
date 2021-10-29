@@ -50,7 +50,7 @@
     "show category": "Kategorie anzeigen",
     "show free text": "Freitextannotationen anzeigen",
     "hide free text": "Freitextannotationen ausblenden"
-    "event category": "Kategorie gehört zu diesem Video",
+    "video category": "Kategorie gehört zu diesem Video",
     "series category": "Kategorie gehört zur Serie & erscheint bei allen Videos",
     "structured annotations": "Strukturierte Annotationen"
   },
