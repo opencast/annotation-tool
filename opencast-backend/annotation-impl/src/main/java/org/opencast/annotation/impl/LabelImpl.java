@@ -31,24 +31,24 @@ import java.util.Objects;
 public final class LabelImpl extends ResourceImpl implements Label {
 
   private final long id;
+  private final Option<Long> seriesLabelId;
   private final long categoryId;
   private final String value;
   private final String abbreviation;
   private final Option<String> description;
-  private final Option<Long> seriesLabelId;
   private final Option<String> settings;
 
-  public LabelImpl(long id, long categoryId, String value, String abbreviation, Option<String> description,
-          Option<Long> seriesLabelId, Option<String> settings, Resource resource) {
-    super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+  public LabelImpl(long id, Option<Long> seriesLabelId, long categoryId, String value, String abbreviation,
+          Option<String> description, Option<String> settings, Resource resource) {
+    super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(),
+            resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
+            resource.getTags());
     this.id = id;
+    this.seriesLabelId = seriesLabelId;
     this.categoryId = categoryId;
     this.value = value;
     this.abbreviation = abbreviation;
     this.description = description;
-    this.seriesLabelId = seriesLabelId;
     this.settings = settings;
   }
 
@@ -66,6 +66,11 @@ public final class LabelImpl extends ResourceImpl implements Label {
         return category.getVideo(eas);
       }
     });
+  }
+
+  @Override
+  public Option<Long> getSeriesLabelId() {
+    return seriesLabelId;
   }
 
   @Override
@@ -89,11 +94,6 @@ public final class LabelImpl extends ResourceImpl implements Label {
   }
 
   @Override
-  public Option<Long> getSeriesLabelId() {
-    return seriesLabelId;
-  }
-
-  @Override
   public Option<String> getSettings() {
     return settings;
   }
@@ -112,6 +112,6 @@ public final class LabelImpl extends ResourceImpl implements Label {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, categoryId, seriesLabelId, value, abbreviation, description, settings, getTags());
+    return Objects.hash(id, seriesLabelId, categoryId, value, abbreviation, description, settings, getTags());
   }
 }
