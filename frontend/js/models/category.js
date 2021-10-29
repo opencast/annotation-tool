@@ -74,7 +74,10 @@ define(
 
                 Resource.prototype.initialize.apply(this, arguments);
 
-                this.set("settings", _.extend({ hasScale: true }, this.get("settings")));
+                this.set("settings", _.extend({
+                    hasScale: true,
+                    createdAsMine: !this.isPublic()
+                }, this.get("settings")));
             },
 
             /**

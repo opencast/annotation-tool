@@ -23,6 +23,21 @@ i.check {
 	text-align: center;
 }
 
+
+button.category-access {
+	.link-button();
+}
+
+div.category-access button {
+	.link-button();
+	width: 23px;
+	text-align: center;
+
+	i {
+		margin-top: 0;
+	}
+}
+
 #annotate-form {
 
 	display: flex;
@@ -34,8 +49,22 @@ i.check {
 		flex-direction: column;
 	}
 
-	.insert-fields, .stop-fields {
+	.insert-fields {
 		display: inline-block;
+	}
+
+	.stop-fields {
+		margin-top: 16px;
+		margin-bottom: 32px;
+		padding: 8px;
+
+		legend {
+			border: none;
+			margin: 0;
+			margin-bottom: -16px;
+			font-size: 14px;
+			font-weight: bold;
+		}
 	}
 
 	#input-container {
@@ -86,7 +115,7 @@ i.check {
 		padding: 0;
 	}
 
-	label, span, p {
+	label, span, p, legend {
 		color: @white;
 		white-space: nowrap;
 	}
@@ -176,6 +205,12 @@ i.check {
 			overflow: auto;
 			margin-bottom: 0;
 
+			.read-only {
+				pointer-events: none;
+				opacity: 0.4;
+			}
+
+
 			.category-item {
 
 				height: 100%;
@@ -252,7 +287,7 @@ i.check {
 						margin-right: 4px;
 					}
 
-					.read-only {
+					.label-style {
 
 						color: @black;
 						display: block;
@@ -530,7 +565,7 @@ i.check {
 						.edit {
 							display: inline-block;
 						}
-						.read-only {
+						.label-style {
 							display: none;
 						}
 						textarea, input {
@@ -588,4 +623,8 @@ i.check {
 		font-weight: bold;
 		border: 1px solid red;
 	}
+}
+
+#structured-annotations-header {
+    margin: 0;
 }

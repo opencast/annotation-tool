@@ -39,15 +39,20 @@
       "title": "„Shift + Return“ drücken, um eine neue Zeile einzufügen."
     },
     "no selected track": "Keine Spur ausgewählt",
-    "pause while editing": "Video während des Schreibens anhalten",
+    "pause": {
+      "legend": "Video anhalten:",
+      "freetext": "Während des Schreibens einer Freitextannotation",
+      "structured": "Beim Setzen einer strukturierten Annotation"
+    },
     "select track prompt": "Wählen Sie eine Spur um mit dem annotieren zu beginnen",
     "upload categories": "Kategorien hochladen",
     "hide category": "Kategorie verstecken",
     "show category": "Kategorie anzeigen",
     "show free text": "Freitextannotationen anzeigen",
-    "hide free text": "Freitextannotationen ausblenden",
+    "hide free text": "Freitextannotationen ausblenden"
     "event category": "Kategorie gehört zu diesem Video",
-    "series category": "Kategorie gehört zur Serie & erscheint bei allen Videos"
+    "series category": "Kategorie gehört zur Serie & erscheint bei allen Videos",
+    "structured annotations": "Strukturierte Annotationen"
   },
   "annotation": {
     "author": "Erstellt von",
@@ -108,14 +113,6 @@
   "description": "Werkzeug zur Videoannotation",
   "list annotation": {
     "double click to edit": "$t(common actions.double click to edit)"
-  },
-  "login error": {
-    "nickname": {
-      "absent": "Benutzername kann nicht leer sein"
-    },
-    "email": {
-      "invalid": "{{attribute}} ist keine gültige E-Mail-Adresse"
-    }
   },
   "loop controller": {
     "enable": "Schleifen aktivieren",
@@ -251,7 +248,8 @@
       "tooltip": "Sichtbarkeit ändern",
       "to public": "Öffentlich machen",
       "to private": "Privat machen",
-      "to shared with admin": "Mit Administratoren teilen"
+      "to shared with admin": "Mit Administratoren teilen",
+      "to shared with everyone": "Allen Benutzern automatisch anzeigen"
     },
     "track modals": {
       "header_add": "Neue Spur hinzufügen",
@@ -270,7 +268,8 @@
         "label": "Zugriff",
         "public": "Öffentlich",
         "private": "Privat",
-        "shared with admin": "Mit Administrator geteilt"
+        "shared with admin": "Mit Administrator teilen",
+        "shared with everyone": "Allen Benutzern automatisch anzeigen"
       },
       "name": {
         "label": "Name",
@@ -315,21 +314,6 @@
     "move down": "Nach unten verschieben"
   },
   "untitled video": "Video ohne Titel",
-  "user login": {
-    "email": {
-      "label": "E-Mail",
-      "placeholder": "E-Mail-Adresse eingeben"
-    },
-    "header": "Benutzeranmeldung",
-    "login": "Anmelden",
-    "login as supervisor": "Als Aufsicht anmelden",
-    "nickname": {
-      "label": "Benutzername",
-      "placeholder": "Benutzernamen eingeben"
-    },
-    "remember me": "Angemeldet bleiben"
-  },
-  "version": "Version: {{version}}",
   "models": {
     "nominative_annotation": "Annotation",
     "nominative_comment": "Kommentar",

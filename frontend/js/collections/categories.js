@@ -54,7 +54,7 @@ define(
 
             /**
              * Get the url for this collection
-             * @return {String} The url of this collection
+             * @return {string} The url of this collection
              */
             url: function () {
                 return (this.video ? _.result(this.video, "url") : "")
@@ -64,8 +64,8 @@ define(
 
             /**
              * Parse the given data
-             * @param  {object} data Object or array containing the data to parse.
-             * @return {object}      the part of the given data related to the categories
+             * @param {object} data Object or array containing the data to parse.
+             * @return {object} the part of the given data related to the categories
              */
             parse: function (data) {
                 if (data.categories && _.isArray(data.categories)) {

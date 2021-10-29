@@ -16,7 +16,6 @@ require.config({
         "templates": "../templates",
         "text": "libs/require/text",
         "underscore": "libs/underscore-min",
-        "email-addresses": "libs/email-addresses.min",
         "mousetrap": "libs/mousetrap.min",
         "i18next": "libs/i18next.min",
         "i18next-xhr-backend": "libs/i18nextXHRBackend.min",
@@ -46,10 +45,6 @@ require.config({
 
         "bootstrap": ["jquery"],
         "slider": ["bootstrap"],
-
-        "email-addresses": {
-            exports: "emailAddresses"
-        },
 
         "mediaelementplayer": {
             exports: "mejs"

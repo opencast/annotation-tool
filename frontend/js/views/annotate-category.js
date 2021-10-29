@@ -25,6 +25,7 @@ define(
         "backbone",
         "i18next",
         "util",
+        "access",
         "views/annotate-label",
         "templates/annotate-category",
         "jquery.colorPicker"
@@ -35,6 +36,7 @@ define(
         Backbone,
         i18next,
         util,
+        ACCESS,
         LabelView,
         Template
     ) {
@@ -86,6 +88,7 @@ define(
                 "click .catItem-header i.visibility": "toggleVisibility",
                 "click .catItem-header i.delete": "onDeleteCategory",
                 "click .catItem-header i.scale": "editScale",
+                "click .catItem-header button[data-access]": "onChangeAccess",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
                 "click .catItem-add": "onCreateLabel",
@@ -134,6 +137,10 @@ define(
                 }
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
+                // Not our category but someone elses? Should not be clickable
+                if (attr.category.get("settings").createdAsMine && !attr.category.isMine()) {
+                    this.$el.addClass("read-only");
+                }
                 this.model = attr.category;
 
                 this.render();
@@ -150,8 +157,29 @@ define(
 
                 $(window).on("resize.annotate-category", this.updateInputWidth);
 
-                //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
+
+                this.tooltipSelector = ".category-access[data-id=" + this.model.id + "] button";
+
+                $("body").on(
+                    "click",
+                    this.tooltipSelector,
+                    _.bind(function (event) {
+                        this.onChangeAccess(event);
+                    }, this)
+                );
+
+                $(document).on(
+                    "click.accessTooltip",
+                    _.bind(function (event) {
+                        if (this.visibilityButton && (
+                            !this.visibilityButton.has(event.target).length
+                        )) {
+                            this.visibilityButton.tooltip("hide");
+                        }
+                    }, this)
+                );
+
                 return this;
             },
 
@@ -203,7 +231,6 @@ define(
 
             /**
              * Update the size of all the input for the label value
-             * alias module:views-annotate-category.CategoryView#updateInputWidth
              */
             updateInputWidth: function () {
                 var $headerEl   = this.$el.find(".catItem-header"),
@@ -238,8 +265,16 @@ define(
             },
 
             /**
+             * Change the access level of a category
+             * @param {Event} event The event causing the change
+             */
+            onChangeAccess: function (event) {
+                this.model.save({ access: ACCESS.parse($(event.currentTarget).data("access")) });
+            },
+
+            /**
              * Switch the edit modus to the given status.
-             * @param  {boolean} status The current status
+             * @param {boolean} status The current status
              */
             switchEditModus: function (status) {
                 this.editModus = status;
@@ -276,7 +311,7 @@ define(
 
             /**
              * Listener for category deletion request from UI
-             * @param  {Event} event
+             * @param {Event} event
              */
             onDeleteCategory: function () {
                 annotationTool.deleteOperation.start(this.model, this.typeForDelete);
@@ -294,7 +329,7 @@ define(
 
             /**
              * Add one label to this view
-             * @param {Label} label  The label to add
+             * @param {Label} label The label to add
              * @param {boolean} single Define if this is part of a list insertion (false) or a single insertion (true)
              */
             addLabel: function (label) {
@@ -365,7 +400,7 @@ define(
             /**
              * Get the position of the caret in the given input element
              * @param  {DOMElement} inputElement The given element with focus
-             * @return {integer}              The posisiton of the carret
+             * @return {integer} The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
                 return inputElement.selectionStart;
@@ -373,8 +408,8 @@ define(
 
             /**
              * Listener for color selection through color picker
-             * @param  {string} id       Id of the colorpicker element
-             * @param  {string} newValue Value of the selected color
+             * @param {string} id Id of the colorpicker element
+             * @param {string} newValue Value of the selected color
              */
             onColorChange: function (id, newValue) {
                 this.model.setColor(newValue);
@@ -386,11 +421,16 @@ define(
              * @return {CategoryView} this category view
              */
             render: function () {
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+
                 var modelJSON = this.model.toJSON();
 
                 this.undelegateEvents();
 
                 modelJSON.notEdit = !this.editModus;
+                modelJSON.access = ACCESS.render(this.model.get("access"));
 
                 _.each(this.labelViews, function (view) {
                     view.$el.detach();
@@ -424,6 +464,12 @@ define(
 
                 this.delegateEvents(this.events);
 
+                this.visibilityButton = this.$el.find(".category-access")
+                    .tooltip({
+                        container: "body",
+                        html: true
+                    });
+
                 return this;
             },
 
@@ -435,6 +481,13 @@ define(
                     labelView.remove();
                 });
                 $(window).off(".annotate-category");
+
+                $(document).off("click.accessTooltip");
+                $("body").off("click", this.tooltipSelector);
+                if (this.visibilityButton) {
+                    this.visibilityButton.tooltip("destroy");
+                }
+
                 Backbone.View.prototype.remove.apply(this, arguments);
             }
         });

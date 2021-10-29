@@ -9,7 +9,6 @@ define([
     i18next,
     util
 ) {
-
     /**
      * Expose the global annotation tool to the templates to access configuration.
      * @param {String} key The property to access from the global anntoation tool
@@ -75,6 +74,14 @@ define([
         return new Handlebars.SafeString(
             _.escape(text).replace(/\n/g, "<br/>")
         );
+    });
+
+    /**
+     * Check whether the current user is an annotation tool admin.
+     * @alias module:Handlebars#isAdmin
+     */
+    Handlebars.registerHelper("isAdmin", function () {
+        return annotationTool.user.isAdmin();
     });
 
     return Handlebars;

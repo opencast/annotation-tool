@@ -56,7 +56,7 @@ define(
                 id: "all",
                 name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
-                    return category.isPublic() || category.isMine();
+                    return !category.get("settings").createdAsMine || category.isMine();
                 },
                 roles: []
             },
@@ -64,19 +64,29 @@ define(
                 id: "public",
                 name: i18next.t("annotate.categories.public"),
                 filter: function (category) {
-                    return category.isPublic();
+                    return !category.get("settings").createdAsMine;
                 },
                 roles: [ROLES.ADMINISTRATOR],
-                attributes: { access: ACCESS.PUBLIC }
+                attributes: {
+                    access: ACCESS.PUBLIC,
+                    settings: {
+                        createdAsMine: false
+                    }
+                }
             },
             MINE: {
                 id: "mine",
                 name: i18next.t("annotate.categories.mine"),
                 filter: function (category) {
-                    return category.isMine() && !category.isPublic();
+                    return category.get("settings").createdAsMine && category.isMine();
                 },
                 roles: [ROLES.USER, ROLES.ADMINISTRATOR],
-                attributes: { access: ACCESS.PRIVATE }
+                attributes: {
+                    access: ACCESS.PRIVATE,
+                    settings: {
+                        createdAsMine: true
+                    }
+                }
             }
         },
 
@@ -92,12 +102,11 @@ define(
              * @type {map}
              */
             events: {
-                "keyup #new-annotation": "keydownOnAnnotate",
+                "keyup #new-annotation": "maybeInsert",
                 "click #insert": "insert",
-                "keydown #new-annotation": "onFocusIn",
-                "focusout #new-annotation": "onFocusOut",
+                "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
-                "click #editSwitch": "onSwitchEditModus",
+                "change #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations"
             },
 
@@ -145,14 +154,10 @@ define(
                 _.bindAll(
                     this,
                     "insert",
-                    "onFocusIn",
-                    "onFocusOut",
                     "changeTrack",
                     "addTab",
                     "onSwitchEditModus",
-                    "checkToContinueVideo",
                     "switchEditModus",
-                    "keydownOnAnnotate",
                     "toggleFreeTextAnnotationPane",
                     "toggleStructuredAnnotations"
                 );
@@ -181,6 +186,7 @@ define(
 
                 this.tracks = annotationTool.video.get("tracks");
                 this.listenTo(this.tracks, "select", this.changeTrack);
+                this.listenTo(this.tracks, "visibility", this.updateCategories);
                 this.playerAdapter = attr.playerAdapter;
 
                 this.layout = _.pick(attr, "freeText", "categories");
@@ -192,7 +198,7 @@ define(
                 annotationTool.colorsManager.updateColors(categories.models);
 
                 _.each(DEFAULT_TABS, function (params) {
-                    this.addTab(categories, params);
+                    this.addTab(params);
                 }, this);
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
@@ -203,7 +209,7 @@ define(
              * Proxy function for insert through 'enter' keypress
              * @param {event} event Event object
              */
-            keydownOnAnnotate: function (e) {
+            maybeInsert: function (e) {
                 // If enter is pressed and shit not, we insert a new annotation
                 if (e.keyCode === 13 && !e.shiftKey) {
                     this.insert();
@@ -228,13 +234,11 @@ define(
                 annotationTool.createAnnotation({ text: value });
 
                 if (this.continueVideo) {
+                    this.continueVideo = false;
                     this.playerAdapter.play();
                 }
 
                 this.input.val("");
-                setTimeout(function () {
-                    $("#new-annotation").focus();
-                }, 500);
             },
 
             /**
@@ -247,14 +251,14 @@ define(
                     // TODO Until we update jQuery, we can't use `show` and `hide` here,
                     //   since our current jQuery version does not preserve
                     //   the `display` property correctly.
-                    this.$el.find(".annotate").css("display", "");
+                    this.$el.find("#annotate-form").css("display", "");
                     this.$el.find(".no-track").hide();
 
                     this.trackDIV.html(track.get("name"));
 
                 } else {
                     // Otherwise, we disable the input and inform the user that no track is set
-                    this.$el.find(".annotate").css("display", "none");
+                    this.$el.find("#annotate-form").css("display", "none");
                     this.$el.find(".no-track").show();
                     this.trackDIV.html("<span>" + i18next.t("annotate.no selected track") + "</span>");
                 }
@@ -264,35 +268,13 @@ define(
              * Listener for when a user start to write a new annotation,
              * manage if the video has to be or not paused.
              */
-            onFocusIn: function () {
-                if (!this.$el.find("#pause-video").attr("checked") || (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
+            maybePause: function () {
+                if (!this.$el.find("#pause-video-freetext").prop("checked") || this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                     return;
                 }
 
                 this.continueVideo = true;
                 this.playerAdapter.pause();
-
-                // If the video is moved, or played, we do no continue the video after insertion
-                $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
-                    this.continueVideo = false;
-                });
-            },
-
-            /**
-             * Listener for when we leave the annotation input
-             */
-            onFocusOut: function () {
-                setTimeout(this.checkToContinueVideo, 200);
-            },
-
-            /**
-             * Check if the video must continue, and if yes, continue to play it
-             */
-            checkToContinueVideo: function () {
-                if ((this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
-                    this.continueVideo = false;
-                    this.playerAdapter.play();
-                }
             },
 
             /**
@@ -315,26 +297,34 @@ define(
              * @param {Categories} categories Categories to add to the new tab
              * @param {object} attr Infos about the new tab like id, name, filter for categories and roles.
              */
-            addTab: function (categories, attr) {
+            addTab: function (attr) {
                 var params = {
-                        id: attr.id,
-                        name: attr.name,
-                        categories: categories,
-                        filter: attr.filter,
-                        roles: attr.roles,
-                        attributes: attr.attributes
-                    },
-                    newButton = this.tabsButtonTemplate(params),
-                    annotateTab;
+                    id: attr.id,
+                    name: attr.name,
+                    filter: attr.filter,
+                    roles: attr.roles,
+                    attributes: attr.attributes
+                };
 
-                newButton = $(newButton).appendTo(this.tabsButtonsElement);
+                var newButton = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
                 params.button = newButton;
 
                 params.id = "labelTab-" + params.id;
-                annotateTab = new AnnotateTab(params);
+                var annotateTab = new AnnotateTab(params);
 
                 this.categoriesTabs[attr.id] = annotateTab;
                 this.tabsContainerElement.append(annotateTab.$el);
+            },
+
+            /**
+             * Remove a categories tab from the annotate view based on the associated id
+             * @param {object} id the associated id
+             */
+            removeTab: function (id) {
+                delete this.categoriesTabs[id];
+
+                this.tabsButtonsElement.find("a[data-tabid=\"" + id + "\"]").parent().remove();
+                this.tabsContainerElement.find("#labelTab-" + id).remove();
             },
 
             /**
@@ -394,6 +384,78 @@ define(
                         freeTextVisible: annotationTool.freeTextVisible
                     })
                 );
+            },
+
+            /**
+             * Displays Categories Tabs for currently visible tracks
+             */
+            updateCategories: function () {
+                var allTab = this.categoriesTabs["all"];
+
+                this.tracks.each(function (track) {
+                    var trackUserId = track.get("created_by");
+
+                    if (track.get("visible")) {
+
+                        // Our own category; should already be visible everywhere
+                        if (track.isMine()) {
+                            return;
+                        }
+
+                        // Otherwise, add a new category to the "All" tab
+                        allTab.addCategories(function (category) {
+
+                            if (!categoryFilter(trackUserId, category)) {
+                                return false;
+                            }
+
+                            // Is the category already present?
+                            if (_.some(allTab.categoryViews, function (e) {
+                                return e.model.id === category.id;
+                            })) {
+                                return false;
+                            }
+
+                            return true;
+                        });
+
+                        // If there is already a tab for this track owner, we don't need to add one
+                        if (this.categoriesTabs.hasOwnProperty(trackUserId)) {
+                            return;
+                        }
+
+                        this.addTab({
+                            id: trackUserId,
+                            name: track.get("created_by_nickname"),
+                            filter: _.partial(categoryFilter, trackUserId),
+                            roles: [],
+                            attributes: { access: ACCESS.PRIVATE }
+                        });
+                    } else {
+                        // Remove categories/tabs that are no longer supposed to be visible
+                        this.removeTab(track.get("created_by"));
+                        annotationTool.video.get("categories").chain()
+                            .filter(function (category) {
+                                return category.get("created_by") === trackUserId
+                                    && category.get("settings").createdAsMine
+                                    && !category.isMine();
+                            })
+                            .each(allTab.removeOne);
+                    }
+                }, this);
+
+                function categoryFilter(trackUserId, category) {
+                    // Is it from the mine category?
+                    if (!category.get("settings").createdAsMine) {
+                        return false;
+                    }
+                    // Was the category created by the user of the tab?
+                    if (category.get("created_by") !== trackUserId) {
+                        return false;
+                    }
+
+                    return true;
+                }
             },
 
             /**

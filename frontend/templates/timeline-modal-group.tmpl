@@ -24,17 +24,23 @@
 			<div class="control-group">
 				<label class="control-label" for="access">{{t "timeline.track modals.access.label" context=action}}</label>
 				<div class="controls">
+					{{#if (isAdmin)}}
+						<label class="radio">
+							<input type="radio" name="access-radio" value="shared-with-everyone">
+							{{t "timeline.track modals.access.shared with everyone" context=action}}
+						</label>
+					{{/if}}
 					<label class="radio">
 						<input type="radio" name="access-radio" value="public">
 						{{t "timeline.track modals.access.public" context=action}}
 					</label>
 					<label class="radio">
-						<input type="radio" name="access-radio" value="private">
-						{{t "timeline.track modals.access.private" context=action}}
-					</label>
-					<label class="radio">
 						<input type="radio" name="access-radio" value="shared-with-admin">
 						{{t "timeline.track modals.access.shared with admin" context=action}}
+					</label>
+					<label class="radio">
+						<input type="radio" name="access-radio" value="private">
+						{{t "timeline.track modals.access.private" context=action}}
 					</label>
 				</div>
 			</div>
