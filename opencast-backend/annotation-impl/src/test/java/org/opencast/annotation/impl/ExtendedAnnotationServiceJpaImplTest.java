@@ -345,15 +345,14 @@ public class ExtendedAnnotationServiceJpaImplTest {
 
     final Scale s = eas.createScale(Option.none(), "test scale", some("test description"), resource);
 
-    final Category categoryTemplate = eas.createCategory(none(), some(s.getId()), "Sozialform",
-            some("description Sozialform"), some("sozial form settings"), resource, none(), none());
+    final Category categoryTemplate = eas.createCategory(none(), none(), none(), some(s.getId()), "Sozialform",
+            some("description Sozialform"), some("sozial form settings"), resource);
     eas.createLabel(categoryTemplate.getId(), "Bla", "Test", none(), none(), resource);
 
-    final Category c = eas.createCategory(some(3L), some(32L), "Verhalten", some("verhalten "), some("settings"),
-            resource, some("seriesId"), none());
+    final Category c = eas.createCategory(some("seriesId"), none(), some(3L), some(32L), "Verhalten", some("verhalten "),
+            some("settings"), resource);
     assertEquals(tags.get(), c.getTags());
-    Option<Category> cCopy = eas.createCategoryFromTemplate(20, categoryTemplate.getId(), resource,
-            "SeriesId", 1337L);
+    Option<Category> cCopy = eas.createCategoryFromTemplate(categoryTemplate.getId(), "SeriesId", 1337L, 20, resource);
     assertTrue(eas.getCategory(categoryTemplate.getId(), false).isSome());
     assertTrue(eas.getCategory(c.getId(), false).isSome());
     assertTrue(cCopy.isSome());
@@ -383,18 +382,18 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateCategory(new CategoryImpl(1212, some(323L), some(32L), "bla", none(), none(), resource,
-                some("seriesId"), none()));
+        eas.updateCategory(new CategoryImpl(1212, some("seriesId"), none(), some(323L), some(32L), "bla", none(), none(),
+                resource));
       }
     });
     // create
-    final Category c = eas.createCategory(none(), none(), name, some("description Sozialform"),
-            some("sozial form settings"), resource, some("seriesId"), none());
+    final Category c = eas.createCategory(some("seriesId"), none(), none(), none(), name, some("description Sozialform"),
+            some("sozial form settings"), resource);
     assertEquals(name, eas.getCategory(c.getId(), false).get().getName());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateCategory(new CategoryImpl(c.getId(), some(323L), some(32L), "name2", none(), none(), updatedResource,
-            some("seriesId"), none()));
+    eas.updateCategory(new CategoryImpl(c.getId(), some("seriesId"), none(), some(323L), some(32L), "name2", none(),
+            none(), updatedResource));
     assertEquals("name2", eas.getCategory(c.getId(), false).get().getName());
     assertEquals(tags.get(), eas.getCategory(c.getId(), false).get().getTags());
   }
@@ -404,8 +403,8 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource();
     // create
-    final Category c = eas.createCategory(none(), none(), "Sozialform", some("description Sozialform"),
-            some("sozial form settings"), resource, some("seriesId"), none());
+    final Category c = eas.createCategory(some("seriesId"), none(), none(), none(), "Sozialform",
+            some("description Sozialform"), some("sozial form settings"), resource);
     assertTrue(eas.getCategory(c.getId(), false).isSome());
     // delete
     eas.deleteCategory(c);
@@ -552,7 +551,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
-        eas.updateLabel(new LabelImpl(323, 29, "test", "i dont know", none(), none(), none(), resource));
+        eas.updateLabel(new LabelImpl(323, none(), 29, "test", "i dont know", none(), none(), resource));
       }
     });
     // create
@@ -560,7 +559,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertEquals("Good", eas.getLabel(l.getId(), false).get().getValue());
 
     final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateLabel(new LabelImpl(l.getId(), 11, "test", "i dont know", none(), none(), none(), updatedResource));
+    eas.updateLabel(new LabelImpl(l.getId(), none(), 11, "test", "i dont know", none(), none(), updatedResource));
     assertEquals("test", eas.getLabel(l.getId(), false).get().getValue());
     assertEquals(tags.get(), eas.getLabel(l.getId(), false).get().getTags());
   }

@@ -58,9 +58,9 @@ import javax.persistence.Table;
         @NamedQuery(name = "Category.findByIdIncludeDeleted", query = "select a from Category a where a.id = :id"),
         @NamedQuery(name = "Category.findById", query = "select a from Category a where a.id = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfTemplate", query = "select a from Category a where a.videoId IS NULL and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Category.findAllOfVideo", query = "select a from Category a where a.videoId = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfExtSeries", query = "select a from Category a where a.seriesExtId = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfSeriesCategory", query = "select a from Category a where a.seriesCategoryId = :id and a.deletedAt IS NULL"),
+        @NamedQuery(name = "Category.findAllOfVideo", query = "select a from Category a where a.videoId = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Category.findAllOfVideoSince", query = "select a from Category a where a.videoId = :id and a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
         @NamedQuery(name = "Category.deleteById", query = "delete from Category a where a.id = :id"),
         @NamedQuery(name = "Category.count", query = "select count(a) from Category a where a.deletedAt IS NULL"),
@@ -81,6 +81,12 @@ public class CategoryDto extends AbstractResourceDto {
   private String settings;
 
   // Foreign keys
+  @Column(name = "series_extid")
+  private String seriesExtId;
+
+  @Column(name = "series_category_id")
+  private Long seriesCategoryId;
+
   /** If video id is null this is a template */
   @Column(name = "video_id")
   private Long videoId;
@@ -88,32 +94,28 @@ public class CategoryDto extends AbstractResourceDto {
   @Column(name = "scale_id")
   private Long scaleId;
 
-  @Column(name = "series_extid")
-  private String seriesExtId;
-
-  @Column(name = "series_category_id")
-  private Long seriesCategoryId;
-
   @ElementCollection
   @MapKeyColumn(name = "name")
   @Column(name = "value")
   @CollectionTable(name = "xannotations_category_tags", joinColumns = @JoinColumn(name = "category_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
-  public static CategoryDto create(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
-    CategoryDto dto = new CategoryDto().update(videoId, name, description, scaleId, settings, resource, seriesExtId,
-            seriesCategoryId);
-    dto.videoId = videoId.getOrElseNull();
-    dto.scaleId = scaleId.getOrElseNull();
+  public static CategoryDto create(Option<String> seriesExtId, Option<Long> seriesCategoryId, Option<Long> videoId,
+          Option<Long> scaleId, String name, Option<String> description, Option<String> settings, Resource resource) {
+    CategoryDto dto = new CategoryDto().update(seriesExtId, seriesCategoryId, videoId, name, description, scaleId,
+            settings, resource);
     dto.seriesExtId = seriesExtId.getOrElseNull();
     dto.seriesCategoryId = seriesCategoryId.getOrElseNull();
+    dto.videoId = videoId.getOrElseNull();
+    dto.scaleId = scaleId.getOrElseNull();
     return dto;
   }
 
-  public CategoryDto update(Option<Long> videoId, String name, Option<String> description, Option<Long> scaleId, Option<String> settings,
-          Resource resource, Option<String> seriesExtId, Option<Long> seriesCategoryId) {
+  public CategoryDto update(Option<String> seriesExtId, Option<Long> seriesCategoryId, Option<Long> videoId,
+          String name, Option<String> description, Option<Long> scaleId, Option<String> settings, Resource resource) {
     super.update(resource);
+    this.seriesExtId = seriesExtId.getOrElseNull();
+    this.seriesCategoryId = seriesCategoryId.getOrElseNull();
     this.videoId = videoId.getOrElseNull();
     this.name = name;
     this.description = description.getOrElseNull();
@@ -121,16 +123,14 @@ public class CategoryDto extends AbstractResourceDto {
     this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
-    this.seriesExtId = seriesExtId.getOrElseNull();
-    this.seriesCategoryId = seriesCategoryId.getOrElseNull();
     return this;
   }
 
   public Category toCategory() {
-    return new CategoryImpl(id, option(videoId), option(scaleId), name, option(description), option(settings),
-            new ResourceImpl(option(access), option(createdBy), option(updatedBy), option(deletedBy), option(createdAt),
-                    option(updatedAt), option(deletedAt), tags),
-            option(seriesExtId), option(seriesCategoryId));
+    return new CategoryImpl(id, option(seriesExtId), option(seriesCategoryId), option(videoId), option(scaleId), name,
+            option(description), option(settings), new ResourceImpl(option(access), option(createdBy),
+                    option(updatedBy), option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt),
+                    tags));
   }
 
   public static final Function<CategoryDto, Category> toCategory = new Function<CategoryDto, Category>() {
@@ -145,9 +145,10 @@ public class CategoryDto extends AbstractResourceDto {
     public JSONObject apply(ExtendedAnnotationService eas, Category s) {
       return conc(
               AbstractResourceDto.toJson.apply(eas, s),
-              jO(p("id", s.getId()), p("name", s.getName()), p("description", s.getDescription()),
-                      p("settings", s.getSettings()), p("scale_id", s.getScaleId()),
-                      p("series_extid", s.getSeriesExtId()), p("series_category_id", s.getSeriesCategoryId())));
+              jO(p("id", s.getId()), p("series_extid", s.getSeriesExtId()),
+                      p("series_category_id", s.getSeriesCategoryId()), p("name", s.getName()),
+                      p("description", s.getDescription()), p("settings", s.getSettings()),
+                      p("scale_id", s.getScaleId())));
     }
   };
 
