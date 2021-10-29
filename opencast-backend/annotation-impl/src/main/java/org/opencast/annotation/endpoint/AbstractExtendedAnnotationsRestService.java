@@ -723,12 +723,21 @@ public abstract class AbstractExtendedAnnotationsRestService {
               return UNAUTHORIZED;
             Resource resource = eas().updateResource(c, tags);
 
-            // If we are updating a master series category from a local copy, avoid changing the video
-            // the master series category belongs to
-            Option<Long> seriesCategoryVideoId = seriesCategoryId.flatMap(new Function<Long, Option<Long>>() {
+            // If we are updating a master series category from a local copy avoid changing the video
+            // the master series category belongs to by passing the series' category's video id
+            Option<Category> seriesCategory = seriesCategoryId.flatMap(new Function<Long, Option<Category>>() {
               @Override
-              public Option<Long> apply(Long seriesCategoryId) {
-                return eas().getCategory(seriesCategoryId, false).get().getVideoId();
+              public Option<Category> apply(Long seriesCategoryId) {
+                return eas().getCategory(seriesCategoryId, false);
+              }
+            });
+            if (seriesCategoryId.isSome() && seriesCategory.isNone()) {
+              return BAD_REQUEST;
+            }
+            Option<Long> seriesCategoryVideoId = seriesCategory.flatMap(new Function<Category, Option<Long>>() {
+              @Override
+              public Option<Long> apply(Category seriesCategory) {
+                return seriesCategory.getVideoId();
               }
             });
 
