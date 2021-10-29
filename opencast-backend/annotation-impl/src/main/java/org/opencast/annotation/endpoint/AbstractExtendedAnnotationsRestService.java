@@ -730,10 +730,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
               seriesCategoryVideoId = eas().getCategory(seriesCategoryId.get(), false).get().getVideoId();
             }
 
-            final Category updated = new CategoryImpl(id, seriesCategoryVideoId.isSome() ? seriesCategoryVideoId : videoId , scaleId, name, trimToNone(access.toString()),
-                    trimToNone(settings), new ResourceImpl(access, resource.getCreatedBy(), resource.getUpdatedBy(),
-                            resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(),
-                            resource.getDeletedAt(), resource.getTags()), seriesExtId, seriesCategoryId);
+            final Category updated = new CategoryImpl(id,
+                    seriesCategoryVideoId.isSome() ? seriesCategoryVideoId : videoId, scaleId, name,
+                    trimToNone(access.toString()), trimToNone(settings), new ResourceImpl(access,
+                            resource.getCreatedBy(), resource.getUpdatedBy(), resource.getDeletedBy(),
+                            resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
+                            resource.getTags()), seriesExtId, seriesCategoryId);
             if (!c.equals(updated)) {
               if (seriesCategoryId.isNone()) {
                 eas().updateCategoryAndDeleteOtherSeriesCategories(updated);
