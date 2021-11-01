@@ -92,7 +92,7 @@ module.exports = function (grunt) {
                 maxWarnings: grunt.option('maxWarnings'),
                 fix: grunt.option('fix')
             },
-            files: ['style/annotations/**/*.less', 'style/style.less', 'style/colorpicker.css']
+            files: ['style/annotations/**/*.less', 'style/style.less']
         }
     });
 
