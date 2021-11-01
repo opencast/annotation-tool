@@ -19,7 +19,6 @@ define([
     AlertModal
 ) { "use strict";
 
-
 /**
  * Handy functions to show alerts.
  * @exports alerts

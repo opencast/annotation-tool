@@ -88,7 +88,7 @@ define(
                     hideButtons: true
                 },
                 WARNING: {
-                    title: "alert.warning.title",
+                    title: "alert.warning.title"
                 },
                 INFO: {
                     title: "alert.info.title",
