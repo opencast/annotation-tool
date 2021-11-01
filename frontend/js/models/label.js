@@ -43,7 +43,7 @@ define(
              */
             administratorCanEditPublicInstances: true,
 
-             /**
+            /**
              * Constructor
              */
             initialize: function () {
