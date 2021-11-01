@@ -124,30 +124,15 @@ define([
      */
     var Configuration = {
         /**
-         * Get the current video id (video_extid)
-         * @return {Promise.<string>} video external id
-         */
-        getVideoExtId: function () {
-            return util.queryParameters.id;
-        },
-
-        /**
-         * Get the current series id of the video (series_extid)
-         * @alias module:annotation-tool-configuration.Configuration.getVideoExtId
-         * @return {Promise.<string>} video external id
-         */
-        getSeriesExtId: function () {
-            return annotationInfo.then(function (info) {
-                return info.series;
-            }.bind(this));
-        },
-
-        /**
          * @return {Promise.<object>} Metadata about the video
          */
         getVideoParameters: function () {
             return annotationInfo.then(function (info) {
-                return { title: info.title };
+                return {
+                    video_extid: util.queryParameters.id,
+                    series_extid: info.series,
+                    title: info.title
+                };
             });
         },
 

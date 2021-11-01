@@ -75,9 +75,9 @@ define(
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                this.commentId      = attr.model.get("id");
-                this.id             = "comment" + this.commentId;
-                this.el.id          = this.id;
+                this.commentId = attr.model.get("id");
+                this.id = "comment" + this.commentId;
+                this.el.id = this.id;
 
                 // Bind function to the good context
                 _.bindAll(
@@ -165,7 +165,7 @@ define(
              * @param  {event} event Event object
              */
             keyupInsertProxy: function (event) {
-                  // If enter is pressed and shit not, we insert a new annotation
+                // If enter is pressed but shift is not, we insert a new annotation
                 if (event.keyCode === 13 && !event.shiftKey) {
                     this.onSubmit();
                 }
@@ -199,8 +199,8 @@ define(
                     canEdit: this.model.isMine(),
                     numberOfReplies: this.model.replies.countCommentsAndReplies(),
                     isEditEnable: this.isEditEnable
-                },
-                    updatedAt = this.model.get("updated_at");
+                };
+                var updatedAt = this.model.get("updated_at");
                 if (updatedAt && !util.datesEqual(updatedAt, data.creationdate)) {
                     data.updator = this.model.get("updated_by_nickname");
                     data.updateddate = updatedAt;

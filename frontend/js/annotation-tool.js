@@ -125,45 +125,45 @@ define(
             },
 
             seriesCategoryOperation: {
-              /**
-               * Function to delete element with warning
-               *
-               * @param {Object} target Element to be delete
-               * @param {TargetsType} type Type of the target to be deleted
-               */
-              start: function (target, categorySeriesCategoryId) {
+                /**
+                 * Function to delete element with warning
+                 *
+                 * @param {Object} target Element to be delete
+                 * @param {TargetsType} type Type of the target to be deleted
+                 */
+                start: function (target, categorySeriesCategoryId) {
 
-                  var seriesCategoryModal = $(SeriesCategoryTmpl({
-                      context: "HI",
-                      content: "BI"
-                  }));
+                    var seriesCategoryModal = $(SeriesCategoryTmpl({
+                        context: "HI",
+                        content: "BI"
+                    }));
 
-                  function confirm() {
-                      target.toVideoCategory(categorySeriesCategoryId);
-                      seriesCategoryModal.modal("toggle");
-                  }
-                  function confirmWithEnter(event) {
-                      if (event.keyCode === 13) {
-                          confirm();
-                      }
-                  };
+                    function confirm() {
+                        target.toVideoCategory(categorySeriesCategoryId);
+                        seriesCategoryModal.modal("toggle");
+                    }
+                    function confirmWithEnter(event) {
+                        if (event.keyCode === 13) {
+                            confirm();
+                        }
+                    };
 
-                  // Listener for delete confirmation
-                  seriesCategoryModal.find("#confirm-delete").one("click", confirm);
+                    // Listener for delete confirmation
+                    seriesCategoryModal.find("#confirm-delete").one("click", confirm);
 
-                  // Add possiblity to confirm with return key
-                  $(window).on("keypress", confirmWithEnter);
+                    // Add possiblity to confirm with return key
+                    $(window).on("keypress", confirmWithEnter);
 
-                  // Unbind the listeners when the modal is hidden
-                  seriesCategoryModal.one("hide", function () {
-                      $(window).off("keypress", confirmWithEnter);
-                      seriesCategoryModal.remove();
-                  });
+                    // Unbind the listeners when the modal is hidden
+                    seriesCategoryModal.one("hide", function () {
+                        $(window).off("keypress", confirmWithEnter);
+                        seriesCategoryModal.remove();
+                    });
 
-                  // Show the modal
-                  seriesCategoryModal.modal("show");
-              }
-          },
+                    // Show the modal
+                    seriesCategoryModal.modal("show");
+                }
+            },
 
             /**
              * Initialize the tool
@@ -194,7 +194,6 @@ define(
                 _.extend(this, configuration, integration);
 
                 this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
-                this.seriesCategoryOperation.start = _.bind(this.seriesCategoryOperation.start, this);
 
                 this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
 
@@ -329,7 +328,10 @@ define(
                         if (noToggle) return;
                         selection = null;
                     }
-                } else if (!selection) return;  // Both selections are `null`, nothing to do
+                } else if (!selection) {
+                    // Both selections are `null`, nothing to do
+                    return;
+                }
 
                 var previousSelection = this.selection;
                 this.selection = selection;
@@ -524,13 +526,11 @@ define(
              * @return {Object} The annotation object or undefined if not found
              */
             getAnnotation: function (annotationId, trackId) {
-                var track,
-                    annotation;
 
                 if (!_.isUndefined(trackId)) {
                     // If the track id is given, we only search for the annotation on it
 
-                    track = this.getTrack(trackId);
+                    var track = this.getTrack(trackId);
 
                     if (_.isUndefined(track)) {
                         console.warn("Not able to find the track with the given Id");
@@ -545,6 +545,7 @@ define(
                         console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
                         return undefined;
                     } else {
+                        var annotation;
                         this.video.get("tracks").each(function (trackItem) {
                             var tmpAnnotation = trackItem.getAnnotation(annotationId);
                             if (!_.isUndefined(tmpAnnotation)) {
@@ -562,26 +563,22 @@ define(
              * @return {Array} The annotations
              */
             getAnnotations: function (trackId) {
-                var track,
-                    tracks,
-                    annotations = [];
-
                 if (_.isUndefined(this.video)) {
                     console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                    return [];
                 } else {
                     if (!_.isUndefined(trackId)) {
-                        track = this.getTrack(trackId);
+                        var track = this.getTrack(trackId);
                         if (!_.isUndefined(track)) {
-                            annotations = track.annotations.toArray();
+                            return track.annotations.toArray();
                         }
                     } else {
-                        tracks = this.video.get("tracks");
+                        var tracks = this.video.get("tracks");
                         tracks.each(function (t) {
-                            annotations = _.union(annotations, t.annotations.toArray());
+                            return _.union(annotations, t.annotations.toArray());
                         }, this);
                     }
                 }
-                return annotations;
             },
 
             ////////////////
@@ -594,26 +591,20 @@ define(
              * @param {PlainObject} defaultCategoryAttributes The default attributes to use to insert the imported categories (like access)
              */
             importCategories: function (imported, defaultCategoryAttributes) {
-                var videoCategories = this.video.get("categories"),
-                    videoScales = this.video.get("scales"),
-                    labelsToAdd,
-                    newCat,
-                    newScale,
-                    scaleValuesToAdd,
-                    scaleOldId,
-                    scalesIdMap = {};
 
                 if (!imported.categories || imported.categories.length === 0) {
                     return;
                 }
 
+                var scalesIdMap = {};
+
                 _.each(imported.scales, function (scale) {
-                    scaleOldId = scale.id;
-                    scaleValuesToAdd = scale.scaleValues;
+                    var scaleOldId = scale.id;
+                    var scaleValuesToAdd = scale.scaleValues;
                     delete scale.id;
                     delete scale.scaleValues;
 
-                    newScale = videoScales.create(scale, { async: false });
+                    var newScale = this.video.get("scales").create(scale, { async: false });
                     scalesIdMap[scaleOldId] = newScale.get("id");
 
                     if (scaleValuesToAdd) {
@@ -625,10 +616,11 @@ define(
                 });
 
                 _.each(imported.categories, function (category) {
-                    labelsToAdd = category.labels;
+                    var labelsToAdd = category.labels;
                     category.scale_id = scalesIdMap[category.scale_id];
                     delete category.labels;
-                    newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes), { async: false });
+                    var newCat = this.video.get("categories")
+                        .create(_.extend(category, defaultCategoryAttributes), { async: false });
 
                     if (labelsToAdd) {
                         _.each(labelsToAdd, function (label) {
@@ -643,54 +635,10 @@ define(
              * Get all the annotations for the current user
              */
             fetchData: function () {
-                var tracks,
-                    // function to conclude the retrieve of annotations
-                    concludeInitialization = _.bind(function () {
-
-                        // At least one private track should exist, we select the first one
-                        var selectedTrack = tracks.filter(util.caller("isMine"))[0];
-
-                        if (!selectedTrack.get("id")) {
-                            selectedTrack.on("ready", concludeInitialization, this);
-                        } else {
-                            this.selectedTrack = selectedTrack;
-
-                            this.modelsInitialized = true;
-                            this.trigger(this.EVENTS.MODELS_INITIALIZED);
-                        }
-                    }, this),
-
-                    /**
-                     * Create a default track for the current user if no private track is present
-                     */
-                    createDefaultTrack = _.bind(function () {
-
-                        tracks = this.video.get("tracks");
-
-                        if (!tracks.filter(util.caller("isMine")).length) {
-                            tracks.create({
-                                name: i18next.t("default track.name", {
-                                    nickname: this.user.get("nickname")
-                                }),
-                                description: i18next.t("default track.description", {
-                                    nickname: this.user.get("nickname")
-                                })
-                            }, {
-                                wait: true,
-                                success: concludeInitialization
-                            });
-                        } else {
-                            tracks.showTracks(
-                                tracks.filter(util.caller("isMine"))
-                            );
-                            concludeInitialization();
-                        }
-                    }, this);
-
-                $.when(this.getVideoExtId(), this.getVideoParameters()).then(
-                    _.bind(function (videoExtId, videoParameters) {
+                this.getVideoParameters().then(
+                    _.bind(function (videoParameters) {
                         // If we are using the localstorage
-                        var video = new Videos().add({ video_extid: videoExtId }).at(0);
+                        var video = new Videos().add({ video_extid: videoParameters.videoExtId }).at(0);
                         this.video = video;
                         video.set(videoParameters);
                         video.save(null, {
@@ -701,9 +649,42 @@ define(
                                 }
                             }, this)
                         });
-                        this.listenToOnce(video, "ready", createDefaultTrack);
+                        var ready = $.Deferred();
+                        this.listenToOnce(video, "ready", function () {
+                            ready.resolve();
+                        });
+                        return ready;
                     }, this)
-                );
+                ).then(_.bind(function () {
+                    var tracks = this.video.get("tracks");
+
+                    var ready = $.Deferred();
+                    if (!tracks.filter(util.caller("isMine")).length) {
+                        tracks.create({
+                            name: i18next.t("default track.name", {
+                                nickname: this.user.get("nickname")
+                            }),
+                            description: i18next.t("default track.description", {
+                                nickname: this.user.get("nickname")
+                            })
+                        }, {
+                            wait: true,
+                            success: function () { ready.resolve(); }
+                        });
+                    } else {
+                        tracks.showTracks(
+                            tracks.filter(util.caller("isMine"))
+                        );
+                        ready.resolve();
+                    }
+                    return ready.then(function () { return tracks; });
+                }, this)).then(_.bind(function (tracks) {
+                    // At least one private track should exist, we select the first one
+                    this.selectedTrack = tracks.filter(util.caller("isMine"))[0];
+
+                    this.modelsInitialized = true;
+                    this.trigger(this.EVENTS.MODELS_INITIALIZED);
+                }, this));
             },
 
             ////////////////
@@ -743,7 +724,7 @@ define(
 
                 bookData.forEach(function (arr) {
                     Object.keys(arr).forEach(function (key) {
-                        var value = arr[key] === null ? "" : arr[key];
+                        var value = arr[key] || "";
 
                         // Arbitrarily increase len by one to avoid cases where just len would
                         // lead to too small columns
@@ -763,11 +744,11 @@ define(
                 wb.Sheets["Sheet 1"] = ws;
 
                 // Export workbook
-                var wbout = XLSX.write(wb, { bookType: "xlsx",  type: "binary" });
+                var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
 
                 function s2ab(s) {
                     var buf = new ArrayBuffer(s.length); // convert s to arrayBuffer
-                    var view = new Uint8Array(buf);  // create uint8array as viewer
+                    var view = new Uint8Array(buf); // create uint8array as viewer
                     for (var i = 0; i < s.length; i++) {
                         view[i] = s.charCodeAt(i) & 0xFF; // convert to octet
                     }
@@ -1032,11 +1013,11 @@ define(
                     });
                 },
                 customMessage: function (target) {
-                  if (target.get("seriesCategoryId")) {
-                    return i18next.t("series-category modal.customMessage")
-                  } else {
-                    return ""
-                  }
+                    if (target.get("series_category_id")) {
+                        return i18next.t("series category modal.custom message");
+                    } else {
+                        return "";
+                    }
                 }
             },
 

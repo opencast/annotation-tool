@@ -185,8 +185,7 @@ define([
          * Generate the list of scales to be drawn
          */
         generateScalesForTemplate: function () {
-            var scales = annotationTool.video.get("scales").toJSON(),
-                selectedScale;
+            var scales = annotationTool.video.get("scales").toJSON();
 
             // Filter by access values
             scales = _.where(scales, { access: this.currentCategory.get("access") });
@@ -194,7 +193,7 @@ define([
             scales.push(this.EMPTY_SCALE);
 
             if (this.currentScaleId) {
-                selectedScale = _.findWhere(scales, { id: this.currentScaleId });
+                var selectedScale = _.findWhere(scales, { id: this.currentScaleId });
 
                 if (selectedScale) {
                     selectedScale.isSelected = true;
@@ -243,13 +242,9 @@ define([
          * Save the current scale or category with the modification done in the editor and quit it
          */
         save: function () {
-            var name,
-                description,
-                settings;
-
             if (this.isInEditMode) {
-                name = this.$el.find(".modal-body .scale-name").val();
-                description = this.$el.find(".modal-body .scale-description").val();
+                var name = this.$el.find(".modal-body .scale-name").val();
+                var description = this.$el.find(".modal-body .scale-description").val();
 
                 this.currentScale.set({
                     name: name,
@@ -269,7 +264,7 @@ define([
                 this.$el.find(".modal-body").hide();
                 this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
             } else if (this.currentCategory) {
-                settings = this.currentCategory.get("settings");
+                var settings = this.currentCategory.get("settings");
 
                 if (this.currentScaleId === this.EMPTY_SCALE.id) {
                     settings.hasScale = false;
@@ -393,42 +388,8 @@ define([
          * @param  {Scale} scale The scale to edit
          */
         renderEditContent: function (scale) {
-            var scaleValuesViews = [],
-                scaleValues = this.currentScale.get("scaleValues"),
-                // Sort the model in the right scale volue order
-                sortModelByOrderValue = function (model) {
-                    return model.get("order");
-                },
-                // Refresh the list of scale values
-                renderScaleValues = function () {
-                    scaleValuesViews = _.where(scaleValuesViews, { isDeleted: false });
-                    scaleValuesViews = _.sortBy(scaleValuesViews, function (view) {
-                        return sortModelByOrderValue(view.model);
-                    });
-
-                    this.$el.find(".list-scale-values").empty();
-
-                    _.each(scaleValuesViews, function (view) {
-                        this.$el.find(".list-scale-values").append(view.render().$el);
-                    }, this);
-                },
-                // Create view from newly added scale value
-                addScaleValue = function (scaleValue, index) {
-                    var self = this,
-                        params = {
-                            scaleEditor: this,
-                            model: scaleValue,
-                            onChange: function () {
-                                renderScaleValues.call(self);
-                            }
-                        };
-
-                    scaleValuesViews.push(new ScaleValueEditorView(params));
-
-                    if (!_.isNumber(index)) {
-                        renderScaleValues.call(self);
-                    }
-                };
+            var scaleValuesViews = [];
+            var scaleValues = this.currentScale.get("scaleValues");
 
             scaleValues.on("add", addScaleValue, this);
             scaleValues = scaleValues.sortBy(sortModelByOrderValue, this);
@@ -437,6 +398,38 @@ define([
             this.$el.find(".modal-body").empty().append(this.scaleEditorContentTemplate({ scale: scale.toJSON() }));
             renderScaleValues.call(this);
             this.delegateEvents(this.events);
+
+            // Sort the model in the right scale volue order
+            function sortModelByOrderValue(model) {
+                return model.get("order");
+            }
+
+            // Refresh the list of scale values
+            function renderScaleValues() {
+                scaleValuesViews = _.where(scaleValuesViews, { isDeleted: false });
+                scaleValuesViews = _.sortBy(scaleValuesViews, function (view) {
+                    return sortModelByOrderValue(view.model);
+                });
+
+                this.$el.find(".list-scale-values").empty();
+
+                _.each(scaleValuesViews, function (view) {
+                    this.$el.find(".list-scale-values").append(view.render().$el);
+                }, this);
+            }
+
+            // Create view from newly added scale value
+            function addScaleValue(scaleValue, index) {
+                scaleValuesViews.push(new ScaleValueEditorView({
+                    scaleEditor: this,
+                    model: scaleValue,
+                    onChange: _.bind(renderScaleValues, this)
+                }));
+
+                if (!_.isNumber(index)) {
+                    renderScaleValues.call(this);
+                }
+            }
         }
     });
     return ScaleEditor;

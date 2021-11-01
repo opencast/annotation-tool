@@ -18,8 +18,9 @@ package org.opencast.annotation.impl;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Scale}.
@@ -74,7 +75,6 @@ public class ScaleImpl extends ResourceImpl implements Scale {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, videoId, name, description, getTags());
+    return Objects.hash(id, videoId, name, description, getTags());
   }
-
 }

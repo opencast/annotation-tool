@@ -80,13 +80,6 @@ define(
              */
             template: Template,
 
-            // /**
-            //  * Main container of the editor modal
-            //  * @alias module:views-login.Login#el
-            //  * @type {DOMElement}
-            //  */
-            // el: $("#series-categories-warning"),
-
             /**
              * Events to handle by the annotate-category view
              * @type {map}
@@ -99,7 +92,7 @@ define(
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
                 "click .catItem-add": "onCreateLabel",
-                "click .catItem-header i.toggleSeries": "toggleSeries"
+                "click .catItem-header i.toggle-series": "toggleSeries"
             },
 
             /**
@@ -196,10 +189,10 @@ define(
              * @param {Id of the series} categorySeriesCategoryId
              */
             toVideoCategory: function (categorySeriesCategoryId) {
-              this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
-              this.model.set("seriesExtId", "");
-              this.model.set("seriesCategoryId", "");
-              this.model.save(null, { wait: true });
+                this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
+                this.model.set("series_extid", "");
+                this.model.set("series_category_id", "");
+                this.model.save(null, { wait: true });
             },
 
             /**
@@ -207,50 +200,50 @@ define(
              * to a series
              */
             toggleSeries: function () {
-                var categorySeriesId = this.model.get("seriesExtId");
-                var categorySeriesCategoryId = this.model.get("seriesCategoryId");
-                var videoSeriesId = "";
-                $.when(annotationTool.getSeriesExtId()).then(function (seriesId){
-                    videoSeriesId = seriesId;
-                });
+                var categorySeriesId = this.model.get("series_extid");
+                var seriesCategoryId = this.model.get("series_category_id");
+                var videoSeriesId = annotationTool.video.get("series_extid");
 
-                if (categorySeriesCategoryId) {
+                if (seriesCategoryId) {
                     // Remove from series
                     // Display modal. If user accepts, execute toVideoCategory callback
-                    annotationTool.seriesCategoryOperation.start(this, categorySeriesCategoryId);
+                    annotationTool.seriesCategoryOperation.start(this, seriesCategoryId);
 
-                } else if (!categorySeriesCategoryId && videoSeriesId) {
-                  // If there's a scale, show an error message instead.
-                  // This doesn't really belong on scaleEditor, but I don't want to create
-                  // a whole new class for a simple error modal.
-                  if (this.model.get("settings").hasScale) {
-                    annotationTool.scaleEditor.showWarning({ title: i18next.t("scale editor.warning.name"),
-                    message: i18next.t("scale editor.warning.messageScaleOnSeriesCategory") });
-                  } else {
-                    // Add to series
-                    this.model.set("seriesExtId", videoSeriesId);
-                    this.model.set("seriesCategoryId", this.model.id);
-                  }
-                  this.model.save(null, { wait: true });
+                } else if (!seriesCategoryId && videoSeriesId) {
+                    // If there's a scale, show an error message instead.
+                    // This doesn't really belong on scaleEditor, but I don't want to create
+                    // a whole new class for a simple error modal.
+                    if (this.model.get("settings").hasScale) {
+                        annotationTool.scaleEditor.showWarning({
+                            title: i18next.t("scale editor.warning.name"),
+                            message: i18next.t("scale editor.warning.messageScaleOnSeriesCategory")
+                        });
+                    } else {
+                        // Add to series
+                        this.model.set("series_extid", videoSeriesId);
+                        this.model.set("series_category_id", this.model.id);
+                    }
+                    this.model.save(null, { wait: true });
                 }
             },
 
             /**
              * Update the size of all the input for the label value
-             * alias module:views-annotate-category.CategoryView#updateInputWidth
              */
             updateInputWidth: function () {
-                var $headerEl   = this.$el.find(".catItem-header"),
-                    titleWidth;
+                var $headerEl = this.$el.find(".catItem-header");
+                var titleWidth;
 
                 if (this.editModus) {
-                    titleWidth = $headerEl.width() - ($headerEl.find(".colorPicker-picker").outerWidth() +
-                                                    $headerEl.find(".delete").outerWidth() +
-                                                    $headerEl.find(".scale").outerWidth() +
-                                                    30);
+                    titleWidth = $headerEl.width() - (
+                        $headerEl.find(".colorPicker-picker").outerWidth() +
+                            $headerEl.find(".delete").outerWidth() +
+                            $headerEl.find(".scale").outerWidth() +
+                            30
+                    );
 
                     $headerEl.find("input").width(titleWidth);
-                }  else {
+                } else {
                     $headerEl.find("input").width("100%");
                 }
 
@@ -281,7 +274,7 @@ define(
 
             /**
              * Switch the edit modus to the given status.
-             * @param  {boolean} status The current status
+             * @param {boolean} status The current status
              */
             switchEditModus: function (status) {
                 this.editModus = status;
@@ -307,20 +300,20 @@ define(
              * Open the scales editor modal
              */
             editScale: function () {
-                if (this.model.get("seriesCategoryId")) {
-                  // Workaround for scales and series categories
+                if (this.model.get("series_category_id")) {
+                    // Workaround for scales and series categories
                     annotationTool.scaleEditor.showWarning({
                         title: i18next.t("scale editor.warning.name"),
                         message: i18next.t("scale editor.warning.message")
                     });
                 } else {
-                  annotationTool.scaleEditor.show(this.model, this.model.get("access"));
+                    annotationTool.scaleEditor.show(this.model, this.model.get("access"));
                 }
             },
 
             /**
              * Listener for category deletion request from UI
-             * @param  {Event} event
+             * @param {Event} event
              */
             onDeleteCategory: function () {
                 annotationTool.deleteOperation.start(this.model, this.typeForDelete);
@@ -338,7 +331,7 @@ define(
 
             /**
              * Add one label to this view
-             * @param {Label} label  The label to add
+             * @param {Label} label The label to add
              * @param {boolean} single Define if this is part of a list insertion (false) or a single insertion (true)
              */
             addLabel: function (label) {
@@ -409,7 +402,7 @@ define(
             /**
              * Get the position of the caret in the given input element
              * @param  {DOMElement} inputElement The given element with focus
-             * @return {integer}              The posisiton of the carret
+             * @return {integer} The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
                 return inputElement.selectionStart;
@@ -417,8 +410,8 @@ define(
 
             /**
              * Listener for color selection through color picker
-             * @param  {string} id       Id of the colorpicker element
-             * @param  {string} newValue Value of the selected color
+             * @param {string} id Id of the colorpicker element
+             * @param {string} newValue Value of the selected color
              */
             onColorChange: function (id, newValue) {
                 this.model.setColor(newValue);

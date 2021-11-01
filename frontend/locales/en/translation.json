@@ -39,15 +39,20 @@
       "title": "Use “ shift + return” keys to create a new line."
     },
     "no selected track": "No tracak selected",
-    "pause while editing": "Pause video during writing",
+    "pause": {
+      "legend": "Pause video:",
+      "freetext": "When writing a free text annotation",
+      "structured": "When placing a structured annotation"
+    },
     "select track prompt": "Select a track to start annotating",
     "upload categories": "Upload categories",
     "hide category": "Hide category",
     "show category": "Show category",
     "show free text": "Show free text annotations",
     "hide free text": "Hide free text annotations",
-    "event category": "Category belongs to this video",
-    "series category": "Category belongs to the series & is shown in all videos"
+    "video category": "Category belongs to this video",
+    "series category": "Category belongs to the series and is shown in all videos",
+    "structured annotations": "Structured Annotations"
   },
   "annotation": {
     "author": "Created by",
@@ -98,24 +103,16 @@
     "title": "Delete {{context}}",
     "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
   },
-  "series-category modal": {
+  "series category modal": {
     "cancel": "$t(common actions.cancel)",
-    "toVideo": "To Video Category",
+    "to video": "To Video Category",
     "title": "Warning!",
     "warning": "Changing the affiliation of this category from series back to video will delete the category from all other videos of this series! Proceed?",
-    "customMessage": "This category belongs to a series and appears in all videos. If you delete this category, it will be deleted for all other videos as well."
+    "custom message": "This category belongs to a series and appears in all videos. If you delete this category, it will be deleted for all other videos as well."
   },
   "description": "Video annotation tool",
   "list annotation": {
     "double click to edit": "Double click to edit"
-  },
-  "login error": {
-    "nickname": {
-      "absent": "Nickname can't be blank"
-    },
-    "email": {
-      "invalid": "{{attribute}} is not a valid email address"
-    }
   },
   "loop controller": {
     "enable": "Enable loops",
@@ -267,7 +264,8 @@
         "label": "Access",
         "public": "Public",
         "private": "Private",
-        "shared with admin": "Shared with admin"
+        "shared with admin": "Share with admin",
+        "shared with everyone": "Automatically display to all users"
       },
       "name": {
         "label": "Name",
@@ -279,7 +277,8 @@
       "tooltip": "Change visibility",
       "to public": "Make public",
       "to private": "Make private",
-      "to shared with admin": "Share with admins"
+      "to shared with admin": "Share with admin",
+      "to shared with everyone": "Automatically display to all users"
     },
     "delete track": "Delete track",
     "name required": "Name is required!",
@@ -318,20 +317,6 @@
     "move down": "Move down"
   },
   "untitled video": "Untitled video",
-  "user login": {
-    "email": {
-      "label": "Email",
-      "placeholder": "Insert your email address"
-    },
-    "header": "User login",
-    "login": "Log in",
-    "login as supervisor": "Log in as supervisor",
-    "nickname": {
-      "label": "Nickname",
-      "placeholder": "Insert your nickname"
-    },
-    "remember me": "Remember me"
-  },
   "views": {
     "annotate": "Create new annotations",
     "list": "Annotation list",
@@ -339,7 +324,6 @@
     "timeline": "Timeline",
     "player": "Player"
   },
-  "version": "Version: {{version}}",
   "common actions": {
     "cancel": "Cancel",
     "close": "Close",

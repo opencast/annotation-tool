@@ -1,4 +1,8 @@
 module.exports = {
+    ignorePatterns: [
+        '/js/libs',
+        '!.*'
+    ],
     rules: {
         'no-trailing-spaces': 'warn',
         'keyword-spacing': 'warn',
@@ -14,10 +18,20 @@ module.exports = {
         'comma-dangle': 'warn',
         'quotes': 'warn',
         'no-multiple-empty-lines': ['warn', { max: 1 }],
-        'space-infix-ops': 'warn'
+        'semi': 'warn',
+        'indent': ['warn', 4, {
+            ignoredNodes: [
+                'Program > ExpressionStatement > CallExpression[callee.name="define"] > FunctionExpression.arguments > .body'
+            ],
+            VariableDeclarator: 0
+        }],
+        'one-var': ['warn', 'never'],
+        'space-infix-ops': 'warn',
+        'no-multi-spaces': 'warn',
+        'space-before-blocks': 'warn'
     },
     overrides: [{
-        files: ['Gruntfile.js', '.eslintrc.js'],
+        files: './{,.}*.js',
         env: {
             node: true,
             es2020: true
@@ -26,7 +40,7 @@ module.exports = {
             'quotes': ['warn', 'single']
         }
     }, {
-        files: 'js/**/*.js',
+        files: 'js/**/*',
         env: {
             browser: true,
             amd: true

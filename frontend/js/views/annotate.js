@@ -88,7 +88,7 @@ define(
                     }
                 }
             }
-        },
+        };
 
         /**
          * @constructor
@@ -96,18 +96,17 @@ define(
          * @memberOf module:views-annotate
          * @augments module:Backbone.View
          */
-        Annotate = Backbone.View.extend({
+        var Annotate = Backbone.View.extend({
             /**
              * Events to handle by the annotate view
              * @type {map}
              */
             events: {
-                "keyup #new-annotation": "keydownOnAnnotate",
+                "keyup #new-annotation": "maybeInsert",
                 "click #insert": "insert",
-                "keydown #new-annotation": "onFocusIn",
-                "focusout #new-annotation": "onFocusOut",
+                "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
-                "click #editSwitch": "onSwitchEditModus",
+                "change #editSwitch": "onSwitchEditModus",
                 "click #toggle-free-text button": "toggleFreeTextAnnotations"
             },
 
@@ -155,14 +154,10 @@ define(
                 _.bindAll(
                     this,
                     "insert",
-                    "onFocusIn",
-                    "onFocusOut",
                     "changeTrack",
                     "addTab",
                     "onSwitchEditModus",
-                    "checkToContinueVideo",
                     "switchEditModus",
-                    "keydownOnAnnotate",
                     "toggleFreeTextAnnotationPane",
                     "toggleStructuredAnnotations"
                 );
@@ -214,7 +209,7 @@ define(
              * Proxy function for insert through 'enter' keypress
              * @param {event} event Event object
              */
-            keydownOnAnnotate: function (e) {
+            maybeInsert: function (e) {
                 // If enter is pressed and shit not, we insert a new annotation
                 if (e.keyCode === 13 && !e.shiftKey) {
                     this.insert();
@@ -239,13 +234,11 @@ define(
                 annotationTool.createAnnotation({ text: value });
 
                 if (this.continueVideo) {
+                    this.continueVideo = false;
                     this.playerAdapter.play();
                 }
 
                 this.input.val("");
-                setTimeout(function () {
-                    $("#new-annotation").focus();
-                }, 500);
             },
 
             /**
@@ -258,14 +251,14 @@ define(
                     // TODO Until we update jQuery, we can't use `show` and `hide` here,
                     //   since our current jQuery version does not preserve
                     //   the `display` property correctly.
-                    this.$el.find(".annotate").css("display", "");
+                    this.$el.find("#annotate-form").css("display", "");
                     this.$el.find(".no-track").hide();
 
                     this.trackDIV.html(track.get("name"));
 
                 } else {
                     // Otherwise, we disable the input and inform the user that no track is set
-                    this.$el.find(".annotate").css("display", "none");
+                    this.$el.find("#annotate-form").css("display", "none");
                     this.$el.find(".no-track").show();
                     this.trackDIV.html("<span>" + i18next.t("annotate.no selected track") + "</span>");
                 }
@@ -275,35 +268,13 @@ define(
              * Listener for when a user start to write a new annotation,
              * manage if the video has to be or not paused.
              */
-            onFocusIn: function () {
-                if (!this.$el.find("#pause-video").attr("checked") || (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
+            maybePause: function () {
+                if (!this.$el.find("#pause-video-freetext").prop("checked") || this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                     return;
                 }
 
                 this.continueVideo = true;
                 this.playerAdapter.pause();
-
-                // If the video is moved, or played, we do no continue the video after insertion
-                $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
-                    this.continueVideo = false;
-                });
-            },
-
-            /**
-             * Listener for when we leave the annotation input
-             */
-            onFocusOut: function () {
-                setTimeout(this.checkToContinueVideo, 200);
-            },
-
-            /**
-             * Check if the video must continue, and if yes, continue to play it
-             */
-            checkToContinueVideo: function () {
-                if ((this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
-                    this.continueVideo = false;
-                    this.playerAdapter.play();
-                }
             },
 
             /**

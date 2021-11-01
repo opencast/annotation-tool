@@ -88,14 +88,14 @@ public class ScaleDto extends AbstractResourceDto {
 
   public static ScaleDto create(Option<Long> videoId, String name, Option<String> description, Resource resource) {
     final ScaleDto dto = new ScaleDto().update(name, description, resource);
-    dto.videoId = videoId.getOrElse((Long) null);
+    dto.videoId = videoId.getOrElseNull();
     return dto;
   }
 
   public ScaleDto update(String name, Option<String> description, Resource resource) {
     super.update(resource);
     this.name = name;
-    this.description = description.getOrElse((String) null);
+    this.description = description.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
     return this;

@@ -18,8 +18,9 @@ package org.opencast.annotation.impl;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.ScaleValue;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.ScaleValue}.
@@ -82,7 +83,6 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, scaleId, name, value, order, getTags());
+    return Objects.hash(id, scaleId, name, value, order, getTags());
   }
-
 }

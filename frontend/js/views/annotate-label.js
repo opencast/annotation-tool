@@ -152,8 +152,8 @@ define(
             },
 
             updateAbbreviation: function () {
-                var abbreviation = this.model.get("abbreviation"),
-                    value = this.model.get("value");
+                var abbreviation = this.model.get("abbreviation");
+                var value = this.model.get("value");
 
                 if (_.isUndefined(abbreviation) || abbreviation === "" || abbreviation === value.substr(0, 3).toUpperCase()) {
                     this.$el.find("input.item-abbreviation").val(this.$el.find("input.item-value").val().substr(0, 3).toUpperCase());
@@ -167,16 +167,14 @@ define(
             annnotateWithScaling: function (event) {
                 event.stopImmediatePropagation();
 
-                var id = event.target.getAttribute("value"),
-                    scalevalue = this.scaleValues.get(id),
-                    annotation,
-                    params = {
-                        text: this.model.get("value"),
-                        label: this.model,
-                        scalevalue: scalevalue.toJSON()
-                    };
+                var id = event.target.getAttribute("value");
+                var scalevalue = this.scaleValues.get(id);
 
-                annotation = annotationTool.createAnnotation(params);
+                createAnnotation({
+                    text: this.model.get("value"),
+                    label: this.model,
+                    scalevalue: scalevalue.toJSON()
+                });
             },
 
             /**
@@ -190,7 +188,7 @@ define(
                     return;
                 }
 
-                var annotation = annotationTool.createAnnotation({
+                createAnnotation({
                     text: this.model.get("value"),
                     label: this.model
                 });
@@ -332,6 +330,15 @@ define(
             }
 
         });
+
+        function createAnnotation(params) {
+            if (annotationTool.views.main.views.annotate.$el.find("#pause-video-structured").prop("checked")) {
+                annotationTool.playerAdapter.pause();
+            }
+
+            return annotationTool.createAnnotation(params);
+        }
+
         return LabelView;
     }
 );

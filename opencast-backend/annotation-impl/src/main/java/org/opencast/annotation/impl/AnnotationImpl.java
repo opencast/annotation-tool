@@ -18,8 +18,9 @@ package org.opencast.annotation.impl;
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Resource;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Annotation}.
@@ -105,7 +106,6 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, trackId, start, duration, text, settings, labelId, scaleValueId, getTags());
+    return Objects.hash(id, trackId, start, duration, text, settings, labelId, scaleValueId, getTags());
   }
-
 }

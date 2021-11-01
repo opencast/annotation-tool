@@ -18,8 +18,9 @@ package org.opencast.annotation.impl;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Video;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Video}.
@@ -59,6 +60,6 @@ public final class VideoImpl extends ResourceImpl implements Video {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, extId, getTags());
+    return Objects.hash(id, extId, getTags());
   }
 }

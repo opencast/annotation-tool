@@ -30,5 +30,4 @@ public interface ScaleValue extends Resource {
 
   /** The order of the scale value in the scale values list */
   int getOrder();
-
 }

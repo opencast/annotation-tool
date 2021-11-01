@@ -36,6 +36,7 @@ define([
         PRIVATE: 0,
         PUBLIC: 1,
         SHARED_WITH_ADMIN: 2,
+        SHARED_WITH_EVERYONE: 3,
 
         /**
          * @param {string} specifier an access specifier
