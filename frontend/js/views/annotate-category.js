@@ -169,7 +169,7 @@ define(
              * Shows the edit modal
              */
             onEditCategory: function () {
-              new CategoryModal({ model: this.model }).show();
+                new CategoryModal({ model: this.model }).show();
             },
 
             /**
