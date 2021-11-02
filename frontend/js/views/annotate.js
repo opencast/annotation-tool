@@ -345,9 +345,9 @@ define(
                 };
 
                 if (attr.id === "mine" || (attr.id === "public" && attr.roles.includes("administrator"))) {
-                  params.showDropdown = true;
+                    params.showDropdown = true;
                 } else {
-                  params.showDropdown = false;
+                    params.showDropdown = false;
                 }
 
                 var newButton = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
