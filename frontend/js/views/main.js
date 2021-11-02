@@ -30,7 +30,6 @@ define(
         "views/list",
         "views/timeline",
         "views/loop",
-        "views/scale-editor",
         "views/tracks-selection",
         "views/print",
         "backbone",
@@ -48,7 +47,6 @@ define(
         ListView,
         TimelineView,
         LoopView,
-        ScaleEditorView,
         TracksSelectionView,
         PrintView,
         Backbone,
@@ -121,8 +119,6 @@ define(
                 this.setLoadingProgress(10, i18next.t("startup.starting"));
 
                 this.setLoadingProgress(20, i18next.t("startup.get users saved locally"));
-
-                annotationTool.scaleEditor = new ScaleEditorView();
 
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
@@ -393,7 +389,7 @@ define(
                         resolveView("player", annotationTool.playerAdapter);
                     }
                     function failed() {
-                        alerts.fatal(i18next.t("startup.video.failed"));
+                        alerts.fatal("startup.video.failed");
                     }
                     self.listenToOnce(annotationTool, annotationTool.EVENTS.VIDEO_LOADED, function () {
                         if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {

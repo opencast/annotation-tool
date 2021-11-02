@@ -144,10 +144,15 @@ body {
     }
 }
 
-#alert {
+.alert {
     overflow: visible!important;
 
     h4 {
         margin-bottom: 10px;
     }
+}
+
+/* When the entire modal is a form, we don't need the extra spacing Bootstrap adds */
+.modal > form {
+    margin-bottom: 0;
 }

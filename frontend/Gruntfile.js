@@ -32,7 +32,7 @@ module.exports = function (grunt) {
                 files: [{
                     ext: '.js',
                     expand: true,
-                    src: 'templates/*.tmpl',
+                    src: 'templates/**/*.tmpl',
                     dest: '<%= destPath %>'
                 }]
             }
@@ -92,7 +92,7 @@ module.exports = function (grunt) {
                 maxWarnings: grunt.option('maxWarnings'),
                 fix: grunt.option('fix')
             },
-            files: ['style/annotations/**/*.less', 'style/style.less', 'style/colorpicker.css']
+            files: ['style/annotations/**/*.less', 'style/style.less']
         }
     });
 

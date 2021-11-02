@@ -22,11 +22,13 @@ define(
     [
         "underscore",
         "util",
+        "access",
         "models/resource"
     ],
     function (
         _,
         util,
+        ACCESS,
         Resource
     ) {
         "use strict";
@@ -42,6 +44,14 @@ define(
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
             administratorCanEditPublicInstances: true,
+
+            // TODO docs
+            // TODO overriding liek in cat
+            defaults: {
+                // TODO It sucks that this is necessary
+                //   and why was it again?
+                access: ACCESS.PUBLIC
+            },
 
             /**
              * Constructor
@@ -80,8 +90,16 @@ define(
                     return "'value' attribute must be a string!";
                 }
 
+                if (!attr.value.trim()) {
+                    return "'value' attribute must not be blank";
+                }
+
                 if (attr.abbreviation && !_.isString(attr.abbreviation)) {
                     return "'abbreviation' attribute must be a string!";
+                }
+
+                if (!attr.abbreviation.trim()) {
+                    return "'abbreviation' attribute must not be blank";
                 }
 
                 if (attr.description && !_.isString(attr.description)) {

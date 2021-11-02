@@ -54,7 +54,7 @@ define(
             },
 
             /**
-             * (Re-)Fetch the comments once our ID changes.
+             * (Re-)Fetch the scale values once our ID changes.
              */
             fetchChildren: function () {
                 this.attributes.scaleValues.fetch({ async: false });
@@ -66,8 +66,6 @@ define(
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var scalevalues;
-
                 var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
@@ -80,6 +78,18 @@ define(
                 }
 
                 return undefined;
+            },
+
+            /**
+             * Parse the attribute list passed to the model
+             * @param {object} data Object literal containing the model attribute to parse.
+             * @return {object} The object literal with the list of parsed model attribute.
+             */
+            parse: function (data) {
+                if (data.scaleValues) {
+                    data.scaleValues = new ScaleValues(data.scaleValues, { scale: this });
+                }
+                return data;
             },
 
             /**

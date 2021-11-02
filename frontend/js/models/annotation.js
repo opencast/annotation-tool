@@ -52,7 +52,7 @@ define(
             },
 
             /**
-             * (Re-)Fetch the scale values once our ID changes.
+             * (Re-)Fetch the comments once our ID changes.
              */
             fetchChildren: function () {
                 this.attributes.comments.fetch();

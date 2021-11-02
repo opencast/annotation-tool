@@ -79,13 +79,12 @@ define(
             },
 
             /**
-             * (Re-)Fetch the scale values once our ID changes.
+             * (Re-)Fetch all the other data once our ID changes.
              */
             fetchChildren: function () {
                 this.get("categories").fetch({ async: false });
                 this.get("tracks").fetch({ async: false });
                 this.get("scales").fetch({ async: false });
-                this.trigger("ready");
             },
 
             /**

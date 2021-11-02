@@ -783,7 +783,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/categories")
-  public Response getCategories(@QueryParam("seriesExtId") final String seriesExtId,
+  public Response getCategories(@QueryParam("series-extid") final String seriesExtId,
           @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
           @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {

@@ -1,0 +1,107 @@
+{{! TODO Placeholders maybe}}
+
+<form>
+    {{! TODO Use a more semantic element?}}
+    {{! TODO Close button?}}
+    <div class="modal-header"><h3>
+        {{! TODO i18n}}
+        {{#if isNew}}
+            {{t "category modal.new category"}}
+        {{else}}
+            {{! TODO Maybe color this somehow?}}
+            {{t "category modal.edit"}} {{model.name}}
+        {{/if}}
+    </h3></div>
+
+    <div class="modal-body">
+        {{! TODO CSS `::before` magic}}
+        {{! TODO Label alignment. Can we not?}}
+
+        {{! TODO Alignment}}
+
+        {{! TODO It sucks that we have to repeat the `required`}}
+        <label>
+          <span class="required">{{t "category modal.name"}}</span>
+          <input id="name" type="text" value="{{model.name}}" required>
+        </label>
+
+        <label>{{t "category modal.color"}} <input type="color" value="{{model.settings.color}}"></label>
+
+        <fieldset>
+            <legend>{{t "category modal.affiliation"}}</legend>
+            <label class="radio">
+                <input type="radio" name="affiliation" value="event">
+                {{t "category modal.belongs to video"}}
+            </label>
+            <label class="radio">
+                <input type="radio" name="affiliation" value="series">
+                {{t "category modal.belongs to series"}}
+            </label>
+
+            <span class="help-block" id="no-series-affiliation-with-scale">
+                {{t "category modal.no series affiliation with scale"}}
+            </span>
+        </fieldset>
+
+        <fieldset>
+            <legend>{{t "timeline.track modals.access.label"}}</legend>
+            {{! TODO This should use the new access stuff!}}
+            <label class="radio">
+                <input type="radio" name="access" value="private">
+                {{t "timeline.track modals.access.private"}}
+            </label>
+            <label class="radio">
+                <input type="radio" name="access" value="shared-with-admin">
+                {{t "timeline.track modals.access.shared with admin"}}
+            </label>
+            <label class="radio">
+                <input type="radio" name="access" value="public">
+                {{t "timeline.track modals.access.public"}}
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>{{t "category modal.labels"}}</legend>
+
+            {{! TODO Show this only when there are labels}}
+            <table id="labels">
+                <tr>
+                    <td class="required">{{t "category modal.label"}}</td>
+                    <td class="required">{{t "category modal.abbreviation"}}</td>
+                    <td>{{t "category modal.remove"}}</td>
+                </tr>
+                {{! TODO Reordering these will generally not be possible ...}}
+            </table>
+            <button type="button" id="new-label" class="btn">{{t "category modal.create new label"}}</button>
+        </fieldset>
+
+        <fieldset>
+            <legend>{{t "category modal.scale"}}</legend>
+            <label>{{t "category modal.scale"}} <select>
+                <option value="">{{t "category modal.scale no"}}</option>
+                {{#each scales}}
+                    <option value="{{id}}">{{name}}</option>
+                {{/each}}
+            </select></label>
+
+            <span class="help-block" id="scales-description">
+                {{t "category modal.scales description"}}
+            </span>
+            <span class="help-block" id="no-scale-on-series-category">
+                {{t "category modal.no scale on series category"}}
+            </span>
+        </fieldset>
+
+        {{! TODO Can you factor this out? In general you could think about reusing some of this stuff ...}}
+        {{!   This was lifted from the track modal now ...}}
+        {{! TODO Actually add the star everywhere, preferrably with a CSS class}}
+        <div style="text-align: right;"><b>* {{t "required fields"}}</b></div>
+    </div>
+
+    <div class="modal-footer form-actions">
+        <button class="btn cancel" type="button">{{t "common actions.cancel"}}</button>
+        <button class="btn btn-primary">{{t "common actions.save"}}</button>
+    </div>
+</form>
+
+{{! TODO Fix the margin}}

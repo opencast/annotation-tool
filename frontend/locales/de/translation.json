@@ -22,18 +22,17 @@
       "mine": "Meine",
       "public": "Öffentlich"
     },
-    "create a label": "Etikett erstellen",
+    "create category": "Kategorie erstellen",
+    "delete category": "Kategorie löschen",
     "download categories": "Kategorien herunterladen",
-    "edit category scaling": "Skala für diese Kategorie bearbeiten",
     "edit mode": "Bearbeiten",
-    "insert": "$t(common actions.insert)",
+    "edit category": "Kategorie bearbeiten",
     "items visibility": {
       "collapse all": "Alle zuklappen",
       "expand all": "Alle aufklappen",
       "head": "Sichtbarkeit"
     },
     "new category name": "NEUE KATEGORIE",
-    "new label placeholder": "Wert des Etiketts …",
     "new": {
       "placeholder": "Freitextannotation schreiben ($t(annotate.new.title))",
       "title": "„Shift + Return“ drücken, um eine neue Zeile einzufügen."
@@ -46,13 +45,13 @@
     },
     "select track prompt": "Wählen Sie eine Spur um mit dem annotieren zu beginnen",
     "upload categories": "Kategorien hochladen",
-    "hide category": "Kategorie verstecken",
-    "show category": "Kategorie anzeigen",
+    "hide category": "Zugehörige Annotationen ausblenden",
+    "show category": "Zugehörige Annotationen einblenden",
     "show free text": "Freitextannotationen anzeigen",
     "hide free text": "Freitextannotationen ausblenden",
-    "video category": "Kategorie gehört zu diesem Video",
-    "series category": "Kategorie gehört zur Serie und erscheint bei allen Videos",
-    "structured annotations": "Strukturierte Annotationen"
+    "structured annotations": "Strukturierte Annotationen",
+    "create scale": "Skala erstellen",
+    "edit scales": "Skalen bearbeiten"
   },
   "annotation": {
     "author": "Erstellt von",
@@ -60,24 +59,18 @@
     "track": "auf",
     "comments": {
       "author": "Kommentar von",
-      "cancel": "$t(common actions.cancel)",
       "count": "Ein Kommentar",
       "count_plural": "{{count}} Kommentare",
       "created": "am {{date}}",
-      "delete": "$t(common actions.delete)",
       "edit": {
         "button": "Bearbeiten",
-        "cancel": "$t(common actions.cancel)",
-        "save": "$t(common actions.save)"
       },
-      "insert": "$t(common actions.insert)",
       "modified": "zuletzt verändert am {{date}}",
       "placeholder": "Einen Kommentar für diese Annotation schreiben",
       "title": "Kommentare"
     },
     "edit": {
       "delete": "Annotation löschen.",
-      "double click to edit": "$t(common actions.double click to edit)",
       "edit": "Annotation bearbeiten.",
       "end time": "Schluss",
       "free text placeholder": "Freitext …",
@@ -93,26 +86,36 @@
     },
     "you own": "Diese Annotation gehört Ihnen"
   },
+  "category modal": {
+    "abbreviation": "Abkürzung",
+    "affiliation": "Zugehörigkeit",
+    "belongs to series": "Gehört zur Serie",
+    "belongs to video": "Gehört zum Video",
+    "create new label": "Neues Etikett erstellen",
+    "color": "Farbe",
+    "edit": "Bearbeite",
+    "label": "Etikett",
+    "labels": "Etikette",
+    "remove": "Entfernen",
+    "name": "Name",
+    "new category": "Neue Kategorie",
+    "no scale on series category": "Diese Kategorie gehört zu einer Serie. Daher kann ihr keine Skala zugeordnet werden.",
+    "no series affiliation with scale": "Nur Kategorien ohne Skala können einer Serie zugehören.",
+    "scale": "Skala",
+    "scale no": "Keine Skala",
+    "scales description": "Die Ausprägungen der Skala erscheinen bei jedem Label / Etikett, um z.B. die Ausprägung eines Labels weiter zu spezifizieren."
+  },
   "default track": {
     "description": "Standardspur für Benutzer {{nickname}}",
     "name": "Standard {{nickname}}"
   },
   "delete modal": {
-    "cancel": "$t(common actions.cancel)",
-    "delete": "$t(common actions.delete)",
-    "title": "$t(models.nominative, {\"context\": \"{{context}}\" }) löschen",
-    "warning": "Wollen Sie $t(models.accusative, {\"context\": \"{{context}}\" }) „{{content}}“ wirklich löschen?"
-  },
-  "series category modal": {
-    "cancel": "$t(common actions.cancel)",
-    "to video": "Ja, zu Video-Kategorie machen",
-    "title": "Achtung: In Video-Kategorie ändern",
-    "warning": "Wenn Sie die Zugehörigkeit dieser Kategorie von \"gehört zur Serie\" auf \"gehört zum Video\" ändern, wird die Kategorie in allen anderen Videos dieser Serie entfernt. Wollen Sie fortfahren?",
-    "custom message": "Diese Kategorie gehört zur Serie und erscheint bei allen Videos. Wenn Sie diese Kategorie löschen, wird sie auch für alle anderen Videos gelöscht. "
+    "title": "$t(models.{{context}}.identifier) löschen",
+    "warning": "Wollen Sie $t(models.determined, { 'determiner': 'definite article', 'case': 'accusative' }) „{{content}}“ wirklich löschen?"
   },
   "description": "Werkzeug zur Videoannotation",
-  "list annotation": {
-    "double click to edit": "$t(common actions.double click to edit)"
+  "delete operations": {
+    "unauthorized": "Sie sind nicht autorisiert, $t(models.determined, { 'determiner': 'demonstrative', 'case': 'accusative' }) zu löschen!"
   },
   "loop controller": {
     "enable": "Schleifen aktivieren",
@@ -154,10 +157,6 @@
       "drag here": "Icon ziehen, um das Element zu platzieren"
     }
   },
-  "new label defaults": {
-    "abbreviation": "NEU",
-    "description": "Neu"
-  },
   "print": {
     "annotations": {
       "header": "Annotationen",
@@ -192,42 +191,15 @@
     "title": "Name des Videos: {{title}}"
   },
   "required fields": "Pflichtfelder",
-  "scale editor": {
-    "cancel": "$t(common actions.cancel)",
-    "delete": "$t(common actions.delete)",
-    "close": "$t(common actions.close)",
-    "description": {
-      "label": "Beschreibung",
-      "placeholder": "Beschreibung der Kategorie einfügen"
-    },
-    "edit category scale": "Skala der Kategorie bearbeiten",
-    "edit scales": "Skalen bearbeiten",
-    "name": {
-      "label": "Name",
-      "placeholder": "Namen der Kategorie einfügen"
-    },
-    "new scale": {
-      "name": "Neue Skala",
-      "value": "Neuer Skalenwert"
-    },
-    "new scale name": "Neue Skala",
-    "new scale value": "Neuer Skalenwert",
-    "no scale": "-- KEINE SKALA --",
-    "save": "$t(common actions.save)",
-    "values": {
-      "add": "Skalenwert hinzufügen",
-      "name": {
-        "header": "Name"
-      },
-      "value": {
-        "header": "Wert",
-        "placeholder": "Dezimalzahl einfügen."
-      }
-    },
-    "warning": {
-      "name": "Achtung!",
-      "message": "Diese Kategorie gehört zu einer Serie. Daher kann ihr keine Skala zugeordnet werden.",
-      "messageScaleOnSeriesCategory": "Kategorie verfügt über eine Skala. Wechsel der Zugehörigkeit der Kategorie nicht möglich."
+  "scale modal": {
+    "select scale": "Skala auswählen",
+    "create scale": "Neue Skala erstellen",
+    "edit scale": "Skala „{{name}}“ bearbeiten",
+    "help": "Hinweis: Skalen können Kategorien ergänzen. Die Ausgewählte Skala erscheint dann bei jedem Label einer entsprechenden Kategorie, um z.B. die Ausprägung eines Labels genauer zu spezifizieren.",
+    "name": "Name",
+    "scale value": {
+      "name": "Ausprägung",
+      "value": "Wert"
     }
   },
   "startup": {
@@ -258,7 +230,6 @@
       "button_update": "Spur bearbeiten",
       "action_add": "Hinzufügen",
       "action_update": "Aktualisieren",
-      "cancel": "$t(common actions.cancel)",
       "description": {
         "label": "Beschreibung",
         "placeholder_add": "Beschreibung für die neue Spur einfügen",
@@ -301,8 +272,6 @@
   "track management": {
     "action": "Spuren verwalten",
     "(un-)select all": "Alle (de-)selektieren",
-    "cancel": "$t(common actions.cancel)",
-    "ok": "$t(common actions.ok)",
     "search": {
       "clear": "Löschen",
       "hint": "Benutzer mit öffentlichen Annotationen",
@@ -315,20 +284,51 @@
   },
   "untitled video": "Video ohne Titel",
   "models": {
-    "nominative_annotation": "Annotation",
-    "nominative_comment": "Kommentar",
-    "nominative_label": "Etikett",
-    "nominative_track": "Spur",
-    "nominative_category": "Kategorie",
-    "nominative_scale value": "Skalenwert",
-    "nominative_scale": "Skala",
-    "accusative_annotation": "die Annotation",
-    "accusative_comment": "den Kommentar",
-    "accusative_label": "das Etikett",
-    "accusative_track": "die Spur",
-    "accusative_category": "die Kategorie",
-    "accusative_scale value": "den Skalenwert",
-    "accusative_scale": "die Skala"
+    "annotation": {
+      "identifier": "Annotation",
+      "gender": "female"
+    },
+    "comment": {
+      "identifier": "Kommentar",
+      "gender": "male"
+    },
+    "label": {
+      "identifier": "Etikett",
+      "gender": "neutral"
+    },
+    "track": {
+      "identifier": "Spur",
+      "gender": "female"
+    },
+    "category": {
+      "identifier": "Kategorie",
+      "gender": "female"
+    },
+    "scale value": {
+      "identifier": "Skalenwert",
+      "gender": "male"
+    },
+    "scale": {
+      "identifier": "Skala",
+      "gender": "female"
+    },
+    "determined": "$t(determiners.{{determiner}}.{{case}}.$t(models.{{context}}.gender))",
+  },
+  "determiners": {
+    "definite article": {
+      "accusative": {
+        "male": "den",
+        "female": "die",
+        "neutral": "das"
+      }
+    },
+    "demonstratives": {
+      "accusative": {
+        "male accusative": "diesen",
+        "female accusative": "diese",
+        "neutral accusative": "dieses",
+      }
+    },
   },
   "views": {
     "annotate": "Neue Annotationen erstellen",

@@ -59,7 +59,7 @@ define([
             },
 
             /**
-             * (Re-)Fetch the scale values once our ID changes.
+             * (Re-)Fetch the annotations once our ID changes.
              */
             fetchChildren: function () {
                 this.annotations.fetch({ async: false });

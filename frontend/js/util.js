@@ -266,6 +266,27 @@ var util = {
      */
     capitalize: function (s) {
         return s.charAt(0).toUpperCase() + s.slice(1);
+    },
+
+    /**
+     * Slightly more flexible version of {@link _.result}
+     * which allows you to specify a calling context and arguments.
+     * @param {object} o an object that you want to evaluate directly,
+     *         or by calling it if it's a callable
+     * @return {function} a function you can apply to arbitrary contexts
+     *         and arguments passing those along to <code>o</code>
+     *         if it's callable, and just giving you <code>o</code> otherwise.
+     */
+    result: function (o) {
+        if (_.isFunction(o)) {
+            return function () {
+                return o.apply(this, arguments);
+            };
+        } else {
+            return function () {
+                return o;
+            };
+        }
     }
 };
 

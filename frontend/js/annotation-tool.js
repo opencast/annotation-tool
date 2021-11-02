@@ -25,16 +25,16 @@ define(
         "backbone",
         "util",
         "i18next",
-        "collections/videos",
+        "models/video",
         "views/main",
         "alerts",
         "templates/delete-modal",
-        "templates/series-category",
         "player-adapter",
         "colors",
         "xlsx",
         "papaparse",
-        "filesaver"
+        "filesaver",
+        "jquery.colorPicker"
     ],
     function (
         $,
@@ -42,11 +42,10 @@ define(
         Backbone,
         util,
         i18next,
-        Videos,
+        Video,
         MainView,
         alerts,
         DeleteModalTmpl,
-        SeriesCategoryTmpl,
         PlayerAdapter,
         ColorsManager,
         XLSX,
@@ -63,7 +62,6 @@ define(
             EVENTS: {
                 ANNOTATION_SELECTION: "at:annotation-selection",
                 ACTIVE_ANNOTATIONS: "at:active-annotations",
-                ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus",
                 MODELS_INITIALIZED: "at:models-initialized",
                 TIMEUPDATE: "at:timeupdate",
                 USER_LOGGED: "at:logged",
@@ -86,7 +84,7 @@ define(
                 start: function (target, type, confirmCallback, closeCallback) {
 
                     if (!target.isEditable()) {
-                        alerts.warning("You are not authorized to deleted this " + type.name + "!");
+                        alerts.warning("delete operations.unauthorized", { context: type.name });
                         return;
                     }
 
@@ -124,47 +122,6 @@ define(
                 }
             },
 
-            seriesCategoryOperation: {
-                /**
-                 * Function to delete element with warning
-                 *
-                 * @param {Object} target Element to be delete
-                 * @param {TargetsType} type Type of the target to be deleted
-                 */
-                start: function (target, categorySeriesCategoryId) {
-
-                    var seriesCategoryModal = $(SeriesCategoryTmpl({
-                        context: "HI",
-                        content: "BI"
-                    }));
-
-                    function confirm() {
-                        target.toVideoCategory(categorySeriesCategoryId);
-                        seriesCategoryModal.modal("toggle");
-                    }
-                    function confirmWithEnter(event) {
-                        if (event.keyCode === 13) {
-                            confirm();
-                        }
-                    };
-
-                    // Listener for delete confirmation
-                    seriesCategoryModal.find("#confirm-delete").one("click", confirm);
-
-                    // Add possiblity to confirm with return key
-                    $(window).on("keypress", confirmWithEnter);
-
-                    // Unbind the listeners when the modal is hidden
-                    seriesCategoryModal.one("hide", function () {
-                        $(window).off("keypress", confirmWithEnter);
-                        seriesCategoryModal.remove();
-                    });
-
-                    // Show the modal
-                    seriesCategoryModal.modal("show");
-                }
-            },
-
             /**
              * Initialize the tool
              * @param {module:configuration.Configuration} configuration The tool configuration
@@ -196,6 +153,7 @@ define(
                 this.freeTextVisible = true;
 
                 this.colorsManager = new ColorsManager();
+                $.fn.colorPicker.defaults.colors = this.colorsManager.getColors();
 
                 this.listenToOnce(this, this.EVENTS.USER_LOGGED, function () {
 
@@ -214,6 +172,8 @@ define(
                         }
                     );
                     this.orderTracks(this.tracksOrder);
+
+                    this.colorsManager.updateColors(this.video.get("categories").models);
 
                     this.views.main = new MainView();
                 });
@@ -236,27 +196,24 @@ define(
              * Get all the annotations for the current user
              */
             fetchData: function () {
-                this.getVideoParameters().then(
-                    _.bind(function (videoParameters) {
-                        // If we are using the localstorage
-                        var video = new Videos().add({ video_extid: videoParameters.videoExtId }).at(0);
-                        this.video = video;
-                        video.set(videoParameters);
-                        video.save(null, {
-                            error: _.bind(function (model, response, options) {
-                                if (response.status === 403) {
-                                    alerts.fatal(i18next.t("annotation not allowed"));
-                                    this.views.main.loadingBox.hide();
-                                }
-                            }, this)
-                        });
-                        var ready = $.Deferred();
-                        this.listenToOnce(video, "ready", function () {
-                            ready.resolve();
-                        });
-                        return ready;
-                    }, this)
-                ).then(_.bind(function () {
+                this.getVideoParameters().then(_.bind(function (videoParameters) {
+                    var video = new Video(videoParameters);
+                    this.video = video;
+                    return video.save();
+                    var savedSuccessfully = $.Deferred();
+                    video.save().then(
+                        function () {
+                            savedSuccessfully.resolveWith(this, arguments);
+                        },
+                        _.bind(function (model, response, options) {
+                            if (response.status === 403) {
+                                alerts.fatal("annotation not allowed");
+                                this.views.main.loadingBox.hide();
+                            }
+                        }, this)
+                    );
+                    return savedSuccessfully;
+                }, this)).then(_.bind(function () {
                     var tracks = this.video.get("tracks");
 
                     var ready = $.Deferred();

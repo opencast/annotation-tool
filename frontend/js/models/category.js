@@ -20,11 +20,13 @@
  */
 define(
     [
+        "util",
         "underscore",
         "collections/labels",
         "models/resource"
     ],
     function (
+        util,
         _,
         Labels,
         Resource
@@ -47,10 +49,14 @@ define(
              * Default model values
              */
             defaults: function () {
-                return {
+                // TODO All `defaults` now need to do that, which sucks ...
+                // TODO The `|| {}` stuff
+                // TODO It sucks that we have defaults here and in `initialize`
+                //   basically for `settings`
+                return _.extend(util.result(Resource.prototype.defaults || {}).apply(this), {
                     visible: true,
                     labels: new Labels([], { category: this })
-                };
+                });
             },
 
             sync: function (method, model, options) {
@@ -76,6 +82,8 @@ define(
 
                 this.set("settings", _.extend({
                     hasScale: true,
+                    // TODO Make this dynamic?
+                    color: "#008080",
                     createdAsMine: !this.isPublic()
                 }, this.get("settings")));
             },
@@ -95,6 +103,12 @@ define(
             validate: function (attr) {
                 var invalidResource = Resource.prototype.validate.apply(this, arguments);
                 if (invalidResource) return invalidResource;
+
+                // TODO Make a `blank` helper?
+                // TODO Use `trim` instead?
+                if (!attr.name || /^\s*$/.test(attr.name)) {
+                    return "\"name\" must not be blank";
+                }
 
                 if (attr.description && !_.isString(attr.description)) {
                     return "\"description\" attribute must be a string";
