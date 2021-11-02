@@ -331,5 +331,8 @@
     "insert": "Insert",
     "save": "Save",
     "delete": "Delete"
+  },
+  "delete operations": {
+    "unauthorized": "You are not authorized to deleted this {{context}}!"
   }
 }

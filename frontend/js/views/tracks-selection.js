@@ -21,15 +21,15 @@ define(
     [
         "jquery",
         "underscore",
-        "backbone",
         "sortable",
+        "views/modal",
         "templates/tracks-selection-modal"
     ],
     function (
         $,
         _,
-        Backbone,
         Sortable,
+        Modal,
         TracksSelectionTmpl
     ) {
         "use strict";
@@ -60,9 +60,14 @@ define(
          * @augments module:Backbone.View
          * @memberOf module:views-tracks-selection
          */
-        var TracksSelectionView = Backbone.View.extend({
+        var TracksSelectionView = Modal.extend({
 
-            tag: $("#tracks-selection"),
+            id: "tracks-selection",
+
+            modalOptions: {
+                backdrop: true,
+                keyboard: true
+            },
 
             /**
              * Template
@@ -92,20 +97,14 @@ define(
              * Constructor
              */
             initialize: function () {
-                _.bindAll(
-                    this,
-                    "show",
-                    "hide",
-                    "search"
-                );
+
+                Modal.prototype.initialize.apply(this, arguments);
 
                 this.tracks = annotationTool.getTracks();
             },
 
             /**
-             * Display the modal with the given message as the given alert type
-             * @param  {String} message The message to display
-             * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-tracks-selection.Alert#TYPES}
+             * Display the modal
              */
             show: function () {
                 this.$el.empty();
@@ -159,14 +158,7 @@ define(
                 this.order = annotationTool.tracksOrder;
                 this.renderSelection();
 
-                this.$el.modal({ show: true, backdrop: false, keyboard: false });
-            },
-
-            /**
-             * Hide the modal
-             */
-            hide: function () {
-                this.$el.modal("hide");
+                Modal.prototype.show.apply(this, arguments);
             },
 
             /**

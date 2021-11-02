@@ -26,7 +26,6 @@
     "download categories": "Kategorien herunterladen",
     "edit category scaling": "Skala für diese Kategorie bearbeiten",
     "edit mode": "Bearbeiten",
-    "insert": "$t(common actions.insert)",
     "items visibility": {
       "collapse all": "Alle zuklappen",
       "expand all": "Alle aufklappen",
@@ -60,24 +59,18 @@
     "track": "auf",
     "comments": {
       "author": "Kommentar von",
-      "cancel": "$t(common actions.cancel)",
       "count": "Ein Kommentar",
       "count_plural": "{{count}} Kommentare",
       "created": "am {{date}}",
-      "delete": "$t(common actions.delete)",
       "edit": {
         "button": "Bearbeiten",
-        "cancel": "$t(common actions.cancel)",
-        "save": "$t(common actions.save)"
       },
-      "insert": "$t(common actions.insert)",
       "modified": "zuletzt verändert am {{date}}",
       "placeholder": "Einen Kommentar für diese Annotation schreiben",
       "title": "Kommentare"
     },
     "edit": {
       "delete": "Annotation löschen.",
-      "double click to edit": "$t(common actions.double click to edit)",
       "edit": "Annotation bearbeiten.",
       "end time": "Schluss",
       "free text placeholder": "Freitext …",
@@ -98,10 +91,8 @@
     "name": "Standard {{nickname}}"
   },
   "delete modal": {
-    "cancel": "$t(common actions.cancel)",
-    "delete": "$t(common actions.delete)",
-    "title": "$t(models.nominative, {\"context\": \"{{context}}\" }) löschen",
-    "warning": "Wollen Sie $t(models.accusative, {\"context\": \"{{context}}\" }) „{{content}}“ wirklich löschen?"
+    "title": "$t(models.{{context}}.identifier) löschen",
+    "warning": "Wollen Sie $t(models.determined, { 'determiner': 'definite article', 'case': 'accusative' }) „{{content}}“ wirklich löschen?"
   },
   "series category modal": {
     "cancel": "$t(common actions.cancel)",
@@ -111,8 +102,8 @@
     "custom message": "Diese Kategorie gehört zur Serie und erscheint bei allen Videos. Wenn Sie diese Kategorie löschen, wird sie auch für alle anderen Videos gelöscht. "
   },
   "description": "Werkzeug zur Videoannotation",
-  "list annotation": {
-    "double click to edit": "$t(common actions.double click to edit)"
+  "delete operations": {
+    "unauthorized": "Sie sind nicht autorisiert, $t(models.determined, { 'determiner': 'demonstrative', 'case': 'accusative' }) zu löschen!"
   },
   "loop controller": {
     "enable": "Schleifen aktivieren",
@@ -193,9 +184,6 @@
   },
   "required fields": "Pflichtfelder",
   "scale editor": {
-    "cancel": "$t(common actions.cancel)",
-    "delete": "$t(common actions.delete)",
-    "close": "$t(common actions.close)",
     "description": {
       "label": "Beschreibung",
       "placeholder": "Beschreibung der Kategorie einfügen"
@@ -213,7 +201,6 @@
     "new scale name": "Neue Skala",
     "new scale value": "Neuer Skalenwert",
     "no scale": "-- KEINE SKALA --",
-    "save": "$t(common actions.save)",
     "values": {
       "add": "Skalenwert hinzufügen",
       "name": {
@@ -258,7 +245,6 @@
       "button_update": "Spur bearbeiten",
       "action_add": "Hinzufügen",
       "action_update": "Aktualisieren",
-      "cancel": "$t(common actions.cancel)",
       "description": {
         "label": "Beschreibung",
         "placeholder_add": "Beschreibung für die neue Spur einfügen",
@@ -301,8 +287,6 @@
   "track management": {
     "action": "Spuren verwalten",
     "(un-)select all": "Alle (de-)selektieren",
-    "cancel": "$t(common actions.cancel)",
-    "ok": "$t(common actions.ok)",
     "search": {
       "clear": "Löschen",
       "hint": "Benutzer mit öffentlichen Annotationen",
@@ -315,20 +299,51 @@
   },
   "untitled video": "Video ohne Titel",
   "models": {
-    "nominative_annotation": "Annotation",
-    "nominative_comment": "Kommentar",
-    "nominative_label": "Etikett",
-    "nominative_track": "Spur",
-    "nominative_category": "Kategorie",
-    "nominative_scale value": "Skalenwert",
-    "nominative_scale": "Skala",
-    "accusative_annotation": "die Annotation",
-    "accusative_comment": "den Kommentar",
-    "accusative_label": "das Etikett",
-    "accusative_track": "die Spur",
-    "accusative_category": "die Kategorie",
-    "accusative_scale value": "den Skalenwert",
-    "accusative_scale": "die Skala"
+    "annotation": {
+      "identifier": "Annotation",
+      "gender": "female"
+    },
+    "comment": {
+      "identifier": "Kommentar",
+      "gender": "male"
+    },
+    "label": {
+      "identifier": "Etikett",
+      "gender": "neutral"
+    },
+    "track": {
+      "identifier": "Spur",
+      "gender": "female"
+    },
+    "category": {
+      "identifier": "Kategorie",
+      "gender": "female"
+    },
+    "scale value": {
+      "identifier": "Skalenwert",
+      "gender": "male"
+    },
+    "scale": {
+      "identifier": "Skala",
+      "gender": "female"
+    },
+    "determined": "$t(determiners.{{determiner}}.{{case}}.$t(models.{{context}}.gender))",
+  },
+  "determiners": {
+    "definite article": {
+      "accusative": {
+        "male": "den",
+        "female": "die",
+        "neutral": "das"
+      }
+    },
+    "demonstratives": {
+      "accusative": {
+        "male accusative": "diesen",
+        "female accusative": "diese",
+        "neutral accusative": "dieses",
+      }
+    },
   },
   "views": {
     "annotate": "Neue Annotationen erstellen",
