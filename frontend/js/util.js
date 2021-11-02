@@ -224,8 +224,18 @@ var util = {
      * @param {String} name The name of the method to call on the argument of the returned function
      */
     caller: function (name) {
+        var args = Array.prototype.slice.call(arguments, 1);
         return function (o) {
-            return o[name].apply(o, arguments);
+            return _.partial.apply(
+                _,
+                Array.prototype.concat(
+                    o[name],
+                    args
+                )
+            ).apply(
+                o,
+                Array.prototype.slice.call(arguments, 1)
+            );
         };
     },
 
