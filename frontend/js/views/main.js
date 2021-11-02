@@ -122,7 +122,7 @@ define(
 
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
-                this.listenToOnce("ready", function () {
+                this.listenToOnce(this, "ready", function () {
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
