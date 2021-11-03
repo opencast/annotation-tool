@@ -332,12 +332,7 @@ define(
              * @param {object} attr Infos about the new tab like id, name and a filter for categories.
              */
             addTab: function (attr) {
-                var params = {
-                    id: attr.id,
-                    name: attr.name,
-                    filter: attr.filter,
-                    attributes: attr.attributes
-                };
+                var params = _.clone(attr);
 
                 if (attr.id === "mine" || attr.id === "public") {
                     params.showDropdown = true;
@@ -345,8 +340,7 @@ define(
                     params.showDropdown = false;
                 }
 
-                var newButton = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
-                params.button = newButton;
+                params.button = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
 
                 params.id = "labelTab-" + params.id;
                 var annotateTab = new AnnotateTab(params);
