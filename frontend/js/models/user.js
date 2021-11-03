@@ -20,13 +20,13 @@
  */
 define(
     [
-        "roles",
         "access",
+        "roles",
         "models/resource"
     ],
     function (
-        ROLES,
         ACCESS,
+        ROLES,
         Resource
     ) {
         "use strict";
@@ -40,12 +40,19 @@ define(
         var User = Resource.extend({
 
             /**
+             * Constructor
+             */
+            initialize: function (attributes, options) {
+                this.isAdmin = options.isAdmin;
+                return Resource.prototype.initialize.apply(this, arguments);
+            },
+
+            /**
              * Default models value
              * @type {map}
              * @static
              */
             defaults: {
-                role: ROLES.USER,
                 access: ACCESS.PUBLIC
             },
 
@@ -62,10 +69,17 @@ define(
             noPOST: true,
 
             /**
-             * @return {boolean} Whether or not this user is an admin
+             * Whether or not this user is an Annotation Tool admin
+             * @type {boolean}
              */
-            isAdmin: function () {
-                return this.get("role") === ROLES.ADMINISTRATOR;
+            isAdmin: false,
+
+            /**
+             * @return {boolean} Whether or not this user has the given role
+             * @param {string} role A valid role name. See {@link module:ROLES}.
+             */
+            hasRole: function (role) {
+                return role === ROLES.USER || this.isAdmin;
             }
         });
         return User;
