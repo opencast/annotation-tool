@@ -32,6 +32,7 @@ define(
         "templates/annotate-tab-title",
         "templates/annotate-toggle-free-text-button",
         "access",
+        "roles",
         "models/category"
     ],
     function (
@@ -47,13 +48,14 @@ define(
         TabsButtonTemplate,
         toggleFreeTextButtonTemplate,
         ACCESS,
+        ROLES,
         Category
     ) {
         "use strict";
 
         /**
-         * List of default tabs, each object contains an id, a name, a filter for categories
-         * and possibly some additional attributes
+         * List of default tabs, each object contains an id, a name, a filter for categories,
+         * a role that can edit things in the tab, and possibly some additional attributes
          * @type {Object}
          */
         var DEFAULT_TABS = {
@@ -70,6 +72,7 @@ define(
                 filter: function (category) {
                     return !category.get("settings").createdAsMine;
                 },
+                role: ROLES.ADMINISTRATOR,
                 attributes: {
                     access: ACCESS.PUBLIC,
                     settings: {
@@ -83,6 +86,7 @@ define(
                 filter: function (category) {
                     return category.get("settings").createdAsMine && category.isMine();
                 },
+                role: ROLES.USER,
                 attributes: {
                     access: ACCESS.PRIVATE,
                     settings: {
@@ -334,10 +338,8 @@ define(
             addTab: function (attr) {
                 var params = _.clone(attr);
 
-                if (attr.id === "mine" || attr.id === "public") {
+                if (params.role && annotationTool.user.hasRole(params.role)) {
                     params.showDropdown = true;
-                } else {
-                    params.showDropdown = false;
                 }
 
                 params.button = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
