@@ -164,7 +164,6 @@ define(
 
                 this.categories = annotationTool.video.get("categories");
                 this.filter = attr.filter;
-                this.roles = attr.roles;
                 this.defaultCategoryAttributes = attr.attributes;
 
                 this.categoryViews = [];
@@ -261,10 +260,7 @@ define(
              */
             addCategory: function (category, collection, options) {
 
-                this.insertCategoryView(new CategoryView({
-                    category: category,
-                    roles: this.roles
-                }));
+                this.insertCategoryView(new CategoryView({ category: category }));
             },
 
             /**

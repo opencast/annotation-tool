@@ -106,7 +106,6 @@ define(
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.CATEGORY;
-                this.roles = attr.roles;
                 this.labelViews = [];
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
@@ -188,10 +187,7 @@ define(
              * @param {boolean} single Define if this is part of a list insertion (false) or a single insertion (true)
              */
             addLabel: function (label) {
-                var labelView = new LabelView({
-                    label: label,
-                    roles: this.roles
-                });
+                var labelView = new LabelView({ label: label });
 
                 this.labelViews.push(labelView);
 

@@ -31,7 +31,6 @@ define(
         "templates/annotate",
         "templates/annotate-tab-title",
         "templates/annotate-toggle-free-text-button",
-        "roles",
         "access",
         "models/category"
     ],
@@ -47,14 +46,14 @@ define(
         template,
         TabsButtonTemplate,
         toggleFreeTextButtonTemplate,
-        ROLES,
         ACCESS,
         Category
     ) {
         "use strict";
 
         /**
-         * List of default tabs, each object contains an id, name and an array of roles
+         * List of default tabs, each object contains an id, a name, a filter for categories
+         * and possibly some additional attributes
          * @type {Object}
          */
         var DEFAULT_TABS = {
@@ -63,8 +62,7 @@ define(
                 name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
                     return !category.get("settings").createdAsMine || category.isMine();
-                },
-                roles: []
+                }
             },
             PUBLIC: {
                 id: "public",
@@ -72,7 +70,6 @@ define(
                 filter: function (category) {
                     return !category.get("settings").createdAsMine;
                 },
-                roles: [ROLES.ADMINISTRATOR],
                 attributes: {
                     access: ACCESS.PUBLIC,
                     settings: {
@@ -86,7 +83,6 @@ define(
                 filter: function (category) {
                     return category.get("settings").createdAsMine && category.isMine();
                 },
-                roles: [ROLES.USER, ROLES.ADMINISTRATOR],
                 attributes: {
                     access: ACCESS.PRIVATE,
                     settings: {
@@ -333,19 +329,18 @@ define(
             /**
              * Add a new categories tab in the annotate view
              * @param {Categories} categories Categories to add to the new tab
-             * @param {object} attr Infos about the new tab like id, name, filter for categories and roles.
+             * @param {object} attr Infos about the new tab like id, name and a filter for categories.
              */
             addTab: function (attr) {
                 var params = {
                     id: attr.id,
                     name: attr.name,
                     filter: attr.filter,
-                    roles: attr.roles,
                     attributes: attr.attributes
                 };
 
                 if (attr.id === "mine" || attr.id === "public") {
-                  params.showDropdown = true;
+                    params.showDropdown = true;
                 } else {
                     params.showDropdown = false;
                 }
@@ -443,7 +438,6 @@ define(
                             id: trackUserId,
                             name: track.get("created_by_nickname"),
                             filter: _.partial(categoryFilter, trackUserId),
-                            roles: [],
                             attributes: { access: ACCESS.PRIVATE }
                         });
                     } else {
