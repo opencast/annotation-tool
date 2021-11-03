@@ -89,8 +89,7 @@ define([
     });
     // Get user data from Opencast
     var user = $.ajax({
-        url: "/info/me.json",
-        dataType: "json"
+        url: "/info/me.json"
     });
     // Find out which roles should have admin rights
     var adminRoles = mediaPackage.then(function (mediaPackage) {
