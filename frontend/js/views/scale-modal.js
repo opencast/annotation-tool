@@ -49,7 +49,8 @@ define([
                 }
                 return this.model.save(this.scaleEditor.model.attributes)
                     .then(_.bind(function () {
-                        return $.when(
+                        return $.when.apply(
+                            $,
                             this.model.get("scaleValues").map(function (scaleValue, index) {
                                 return scaleValue.save({ order: index });
                             })
