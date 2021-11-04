@@ -20,7 +20,6 @@
 define([
     "underscore",
     "access",
-    "models/category",
     "collections/labels",
     "views/modal",
     "views/category-modal/label",
@@ -30,7 +29,6 @@ define([
 ], function (
     _,
     ACCESS,
-    Category,
     Labels,
     Modal,
     LabelView,
@@ -209,11 +207,8 @@ define([
 
         initialize: function (options) {
             Modal.prototype.initialize.apply(this, arguments);
-            // TODO Should we allow passing a hash of attributes?!
-            this.model = (options || {}).model || new Category({
-                // TODO This needs to be done differently and maybe not here?
-                settings: { color: "#008080" }
-            });
+
+            this.model = options.model;
 
             // TODO This sucks!
             this.labels = new Labels(
