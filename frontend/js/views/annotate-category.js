@@ -24,7 +24,6 @@ define(
         "underscore",
         "backbone",
         "util",
-        "access",
         "views/annotate-label",
         "views/category-modal",
         "templates/annotate-category"
@@ -34,7 +33,6 @@ define(
         _,
         Backbone,
         util,
-        ACCESS,
         LabelView,
         CategoryModal,
         Template
@@ -217,8 +215,6 @@ define(
                 var modelJSON = this.model.toJSON();
 
                 this.undelegateEvents();
-
-                modelJSON.access = ACCESS.render(this.model.get("access"));
 
                 _.each(this.labelViews, function (view) {
                     view.$el.detach();
