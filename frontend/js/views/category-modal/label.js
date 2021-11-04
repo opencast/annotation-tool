@@ -35,8 +35,13 @@ define([
                 this.model.set({ abbreviation: event.target.value });
             },
             "click .remove": function (event) {
-                this.model.collection.remove(this.model.cid);
-                this.remove();
+                if (this.model.collection.length === 1) {
+                    this.model.set({ value: "", abbreviation: "" });
+                    this.render();
+                } else {
+                    this.model.collection.remove(this.model.cid);
+                    this.remove();
+                }
             }
         },
 

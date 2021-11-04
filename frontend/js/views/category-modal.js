@@ -213,6 +213,12 @@ define([
 
             this.addLabels = {};
             this.removeLabels = [];
+
+            if (!this.labels.length) {
+                var newLabel = this.labels.add({}).at(0);
+                this.addLabels[newLabel.cid] = newLabel;
+            }
+
             this.listenTo(this.labels, "remove", function (label) {
                 if (label.isNew()) {
                     delete this.addLabels[label.cid];
