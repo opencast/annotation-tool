@@ -207,9 +207,7 @@ define([
             this.model = options.model;
 
             this.labels = new Labels(
-                this.model.get("labels").map(
-                    function (label) { return label.clone(); }
-                ),
+                this.model.get("labels").invoke("clone"),
                 { category: this.model }
             );
 
