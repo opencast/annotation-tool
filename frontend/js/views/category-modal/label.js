@@ -26,11 +26,7 @@ define([
 
     var LabelView = Backbone.View.extend({
 
-        // TODO Factor out some of the boilerplate-y stuff?
-
         events: {
-            // TODO I don't like how direct/immediate this component is,
-            //   but the category modal does all the cloning
             "change .value": function (event) {
                 this.model.set({ value: event.target.value });
                 this.updateAbbreviation();
@@ -68,7 +64,6 @@ define([
 
         template: template,
 
-        // TODO Should this really render table rows?
         tagName: "tr"
     });
 

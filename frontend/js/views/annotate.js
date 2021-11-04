@@ -217,16 +217,11 @@ define(
              * Open a modal to create a new category
              */
             createCategory: function (mine) {
-                // TODO We should not set the `hasScale` here ...
                 var category = new Category({ settings: {
                     hasScale: false,
-                    // TODO This needs to be set depending on the tab
-                    //   the butotn was pressed in
-                    //   See also the `attributes` key of the `DEFAULT_TABS`.
                     createdAsMine: mine
                 } });
                 new CategoryModal({ model: category }).show();
-                // TODO Maybe activate the corresponding tab afterwards?
             },
 
             /**

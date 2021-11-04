@@ -13,10 +13,6 @@
  *  permissions and limitations under the License.
  */
 
-// TODO Escape to close?
-// TODO Click outside to close?
-//   Only with a warning?
-
 define([
     "underscore",
     "access",
@@ -86,8 +82,6 @@ define([
         },
 
         events: {
-            // TODO Actually name these? Navigating them is a bitch already.
-
             "submit form": function (event) {
                 event.preventDefault();
 
@@ -210,7 +204,6 @@ define([
 
             this.model = options.model;
 
-            // TODO This sucks!
             this.labels = new Labels(
                 this.model.get("labels").map(
                     function (label) { return label.clone(); }
