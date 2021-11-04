@@ -168,6 +168,8 @@ define([
                 this.remove();
             },
             "click input[type='color']": function (event) {
+                // Don't open the browsers' built-in color picker;
+                // we provide our own.
                 event.preventDefault();
             },
             "change input[name='affiliation']": function (event) {
