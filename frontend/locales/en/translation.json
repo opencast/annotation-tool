@@ -250,7 +250,8 @@
         "public": "Public",
         "private": "Private",
         "shared with admin": "Share with admin",
-        "shared with everyone": "Automatically display to all users"
+        "shared with everyone": "Automatically display to all users",
+        "shared with everyone explanation": "The track is displayed to all users automatically and in read-only mode. So other users can not make any changes."
       },
       "name": {
         "label": "Name",
