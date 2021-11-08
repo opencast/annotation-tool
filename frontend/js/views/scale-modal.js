@@ -59,11 +59,12 @@ define([
                     .then(_.bind(this.remove, this));
             },
             "click #delete": function () {
-                this.remove();
+                this.hide();
                 annotationTool.deleteOperation.start(
                     this.model,
                     annotationTool.deleteOperation.targetTypes.SCALE,
-                    _.bind(this.remove, this)
+                    _.bind(this.remove, this),
+                    _.bind(this.show, this)
                 );
             }
         },
