@@ -28,6 +28,29 @@ i.check {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+
+        .dropdown {
+
+            margin-left: 5px;
+
+            button.dropdown-toggle {
+                .link-button();
+
+                .caret {
+                    margin-top: 5px;
+                    border-top-color: black;
+                    border-top-width: 6px;
+                    border-left-width: 6px;
+                    border-right-width: 6px;
+                }
+
+                &:hover, &:active {
+                    .caret {
+                        border-top-color: black;
+                    }
+                }
+            }
+        }
     }
 
     .insert-fields {
@@ -160,6 +183,7 @@ i.check {
                     text-align: left;
                     height: 25px;
                     padding: 1px 3px;
+                    padding-right: 5px;
                     font-size: 14px;
                     font-weight: bold;
                     color: @white;

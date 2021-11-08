@@ -5,15 +5,15 @@
         title="{{#if visible}}{{t "annotate.hide category"}}{{else}}{{t "annotate.show category"}}{{/if}}"
     ></i>
     {{#if isMine}}
-        <i class="dropdown">
+        <div class="dropdown">
             <button type="button" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="caret"></i>
+                <b class="caret"></b>
             </button>
             <ul class="dropdown-menu">
                 <li><button type="button" class="edit">{{t "annotate.edit category"}}</button></li>
                 <li><button type="button" class="delete">{{t "annotate.delete category"}}</button></li>
             </ul>
-        </i>
+        </div>
     {{/if}}
 </div>
 <div class="catItem-labels" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}}></div>
