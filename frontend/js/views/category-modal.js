@@ -89,7 +89,9 @@ define([
 
                 var scale = this.$el.find("select").val();
 
-                var access = ACCESS.parse(this.$el.find("[name='access']:checked").val());
+                var access = this.model.get("settings").createdAsMine
+                    ? ACCESS.parse(this.$el.find("[name='access']:checked").val())
+                    : ACCESS.PUBLIC;
                 this.model.set({
                     access: access,
                     name: this.$el.find("#name").val(),

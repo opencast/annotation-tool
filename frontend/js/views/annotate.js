@@ -217,10 +217,13 @@ define(
              * Open a modal to create a new category
              */
             createCategory: function (mine) {
-                var category = new Category({ settings: {
-                    hasScale: false,
-                    createdAsMine: mine
-                } });
+                var category = new Category({
+                    settings: {
+                        hasScale: false,
+                        createdAsMine: mine
+                    },
+                    access: mine ? ACCESS.PRIVATE : ACCESS.PUBLIC
+                });
                 new CategoryModal({ model: category }).show();
             },
 

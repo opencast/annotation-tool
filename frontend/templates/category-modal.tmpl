@@ -43,22 +43,24 @@
             </span>
         </fieldset>
 
-        <fieldset>
-            <legend>{{t "timeline.track modals.access.label"}}</legend>
-            {{! TODO This should use the new access stuff!}}
-            <label class="radio">
-                <input type="radio" name="access" value="private">
-                {{t "timeline.track modals.access.private"}}
-            </label>
-            <label class="radio">
-                <input type="radio" name="access" value="shared-with-admin">
-                {{t "timeline.track modals.access.shared with admin"}}
-            </label>
-            <label class="radio">
-                <input type="radio" name="access" value="public">
-                {{t "timeline.track modals.access.public"}}
-            </label>
-        </fieldset>
+        {{#if model.settings.createdAsMine}}
+            <fieldset>
+                <legend>{{t "timeline.track modals.access.label"}}</legend>
+                {{! TODO This should use the new access stuff!}}
+                <label class="radio">
+                    <input type="radio" name="access" value="private">
+                    {{t "timeline.track modals.access.private"}}
+                </label>
+                <label class="radio">
+                    <input type="radio" name="access" value="shared-with-admin">
+                    {{t "timeline.track modals.access.shared with admin"}}
+                </label>
+                <label class="radio">
+                    <input type="radio" name="access" value="public">
+                    {{t "timeline.track modals.access.public"}}
+                </label>
+            </fieldset>
+        {{/if}}
 
         <fieldset>
             <legend>{{t "category modal.labels"}}</legend>
