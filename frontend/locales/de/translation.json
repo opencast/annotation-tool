@@ -87,6 +87,12 @@
   },
   "category modal": {
     "abbreviation": "Abkürzung",
+    "access": {
+      "label": "Zugriff",
+      "private": "Privat",
+      "public": "Mit allen Benutzern teilen",
+      "shared with admin": "Mit Administrator teilen"
+    },
     "affiliation": "Zugehörigkeit",
     "belongs to series": "Gehört zur Serie",
     "belongs to video": "Gehört zum Video",

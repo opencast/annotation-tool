@@ -94,6 +94,12 @@
   },
   "category modal": {
     "abbreviation": "Abbreviation",
+    "access": {
+      "label": "Access",
+      "private": "Private",
+      "public": "Share with everyone",
+      "shared with admin": "Share with admin"
+    },
     "affiliation": "Affiliation",
     "belongs to series": "Belongs to the series",
     "belongs to video": "Belongs to the video",
