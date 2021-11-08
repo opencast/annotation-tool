@@ -107,7 +107,7 @@
     "no scale on series category": "Diese Kategorie gehört zu einer Serie. Daher kann ihr keine Skala zugeordnet werden.",
     "no series affiliation with scale": "Dieser Kategorie wurde eine Skala zugewiesen. Kategorien mit Skalen können NICHT zu einer Serie gehören.",
     "scale": "Skala",
-    "scale no": "Keine Skala",
+    "scale no": "-- KEINE SKALA AUSGEWÄHLT --",
     "scales description": "Die Ausprägungen der Skala erscheinen bei jedem Label, um z.B. die Ausprägung eines Labels weiter zu spezifizieren."
   },
   "default track": {

@@ -114,7 +114,7 @@
     "no scale on series category": "This category belongs to a series. Therefore it cannot be assigned a scale.",
     "no series affiliation with scale": "This category was assigned a scale. Categories with scales can NOT belong to a series.",
     "scale": "Scale",
-    "scale no": "No scale",
+    "scale no": "-- NO SCALE SELECTED --",
     "scales description": "The characteristics of the scale appear on each label, in order to further specify the characteristic of a label."
   },
   "default track": {
