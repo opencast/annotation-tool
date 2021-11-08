@@ -40,23 +40,16 @@ define([
             this.$el.html(this.template({
                 model: model,
                 isNew: this.model.isNew(),
-                // TODO Should the template get this itself from some global scope somehow?
                 scales: annotationTool.video.get("scales").toJSON()
             }));
-            // TODO These parameters should probably be factored out ...
-            //   and unified ...
 
             // Enable all the settings before potentially disabling them later
             // The reason being hiding any help-blocks
             this.enableScale();
             this.enableAffiliation();
 
-            // TODO This should be done in the template ...
             var access = ACCESS.render(this.model.get("access"));
-            // TODO Is this `attr` call the right thing?!
-            //   What about the place about tracks where you copied this from?!
             this.$el.find("[name='access'][value='" + access + "']").attr("checked", true);
-            // TODO Same for the affiliation
             var affiliation = this.model.get("series_category_id") ? "series" : "event";
             this.$el.find("[name='affiliation'][value='" + affiliation + "']").attr("checked", true);
 
@@ -69,7 +62,6 @@ define([
                 this.disableAffiliation();
             }
 
-            // TODO Initialize the picker!
             this.$el.find("input[type='color']").colorPicker();
 
             var labelsTable = this.$el.find("#labels");
@@ -92,6 +84,7 @@ define([
                 var access = this.model.get("settings").createdAsMine
                     ? ACCESS.parse(this.$el.find("[name='access']:checked").val())
                     : ACCESS.PUBLIC;
+
                 this.model.set({
                     access: access,
                     name: this.$el.find("#name").val(),
@@ -99,10 +92,6 @@ define([
                     settings: _.extend({}, this.model.get("settings"), {
                         color: this.$el.find("input[type='color']").val(),
                         hasScale: !!scale
-                        // TODO I hate that this is here
-                        //   Maybe this can stay in `annotate-tab` for now ...
-                        //   since the button will eventually be there
-                        //createdAsMine: access !== ACCESS.PUBLIC
                     })
                 });
 
@@ -125,25 +114,19 @@ define([
                 }
                 this.model.save(null, { async: false });
 
-                // TODO It sucks that there is no way to create a new series category from scratch
                 // Fix the affiliation. We do this as a second step
                 // because the category needs an ID for this
                 var affiliation = this.$el.find("[name='affiliation']:checked").val();
                 var seriesCategoryId = this.model.get("series_category_id") || this.model.id;
                 // TODO Async?
-                this.model.save({
-                    // TODO Is this even right, generally? Shouldn't setting the series ID be enough?
-                    //   It should be set automatically ...
-                    //   Also, what about the matching stuff?
-                    series_category_id: affiliation === "series" ? seriesCategoryId : "",
-                    // TODO This attribute does not belong here
-                    //   Together with the above, we basically just want to specify the affiliation
-                    //   (series vs. event) in the category, right?!
-                    //   Or we reify series and let categories refer to either?
-                    //   Because why would a series category refer to a specific video, still?
-                    // TODO Duplication of the conditional
-                    series_extid: affiliation === "series" ? annotationTool.video.get("series_extid") : ""
-                });
+                var seriesParams = null;
+                if (affiliation === "series") {
+                    seriesParams = {
+                        series_category_id: seriesCategoryId,
+                        series_extid: annotationTool.video.get("series_extid")
+                    };
+                }
+                this.model.save(seriesParams);
 
                 // TODO Do the following async as well? What if they fail?
 
@@ -175,7 +158,6 @@ define([
                 //   or in the template?
                 if (event.target.value === "series") {
                     this.disableScale();
-                    // TODO Show message
                     // TODO Ignore disabled thigns
                 } else {
                     this.enableScale();
@@ -189,8 +171,6 @@ define([
                 }
             },
             "click #new-label": function () {
-                // TODO Why even add it here? It's not like we rerender the thing, right?
-                //   But we need to add it so that we notice when it's removed!
                 var label = this.labels.push();
                 this.addLabels[label.cid] = label;
                 this.$el.find("#labels").append(new LabelView({ model: label }).el);
