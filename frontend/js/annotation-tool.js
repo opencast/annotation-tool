@@ -86,7 +86,7 @@ define(
                 start: function (target, type, confirmCallback, closeCallback) {
 
                     if (!target.isEditable()) {
-                        alerts.warning("You are not authorized to deleted this " + type.name + "!");
+                        alerts.warning("delete operations.unauthorized", { context: type.name });
                         return;
                     }
 
@@ -247,7 +247,7 @@ define(
                         this.video.save(null, {
                             error: _.bind(function (model, response, options) {
                                 if (response.status === 403) {
-                                    alerts.fatal(i18next.t("annotation not allowed"));
+                                    alerts.fatal("annotation not allowed");
                                 }
                             }, this)
                         });

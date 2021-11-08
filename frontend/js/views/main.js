@@ -393,7 +393,7 @@ define(
                         resolveView("player", annotationTool.playerAdapter);
                     }
                     function failed() {
-                        alerts.fatal(i18next.t("startup.video.failed"));
+                        alerts.fatal("startup.video.failed");
                     }
                     self.listenToOnce(annotationTool, annotationTool.EVENTS.VIDEO_LOADED, function () {
                         if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
