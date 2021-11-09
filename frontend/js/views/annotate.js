@@ -220,7 +220,8 @@ define(
                 var category = new Category({
                     settings: {
                         hasScale: false,
-                        createdAsMine: mine
+                        createdAsMine: mine,
+                        color: "#" + annotationTool.colorsManager.getNextColor()
                     },
                     access: mine ? ACCESS.PRIVATE : ACCESS.PUBLIC
                 });
