@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opencast.annotate</groupId>
+    <artifactId>annotation-tool-backend</artifactId>
+    <version>2021.1109.080933-8c7af01123a35d2359f47bd2ea6c93d1bd18d10c</version>
+  </parent>
+  <groupId>org.opencast.annotate</groupId>
+  <artifactId>annotation-tool-karaf-feature</artifactId>
+  <version>2021.1109.080933-8c7af01123a35d2359f47bd2ea6c93d1bd18d10c</version>
+  <packaging>feature</packaging>
+  <name>Opencast Annotation Tool :: Backend :: Karaf Feature</name>
+  <licenses>
+    <license>
+      <name>Educational Community License, Version 2.0</name>
+      <url>http://www.osedu.org/licenses/ECL-2.0/ecl2.txt</url>
+    </license>
+  </licenses>
+  <dependencies>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>annotation-tool-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>annotation-tool-impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>annotation-tool-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>${karaf.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <primaryFeatureName>opencast-annotation-tool</primaryFeatureName>
+          <includeTransitiveDependency>false</includeTransitiveDependency>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
