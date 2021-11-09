@@ -259,7 +259,6 @@ define(
              * @param {Category} category The category to add
              */
             addCategory: function (category, collection, options) {
-
                 this.insertCategoryView(new CategoryView({ category: category }));
             },
 
