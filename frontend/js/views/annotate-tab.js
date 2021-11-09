@@ -195,6 +195,11 @@ define(
                 this.listenTo(this.categories, "add", function (category) {
                     if (!this.filter(category)) return;
                     this.addCategory(category);
+                    if (attr.container.activeTab === this) {
+                        this.carouselElement.carousel(Math.floor(
+                            this.categories.length / annotationTool.CATEGORIES_PER_TAB
+                        ));
+                    }
                 });
                 this.listenTo(this.categories, "remove", this.removeOne);
 

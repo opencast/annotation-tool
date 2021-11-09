@@ -320,6 +320,7 @@ define(
              */
             showTab: function (event) {
                 var tabId = event.currentTarget.dataset.tabid;
+                this.activeTab = this.categoriesTabs[tabId];
 
                 $(event.currentTarget).one("shown", _.bind(function () {
                     this.categoriesTabs[tabId].initCarousel();
@@ -336,6 +337,8 @@ define(
              */
             addTab: function (attr) {
                 var params = _.clone(attr);
+
+                params.container = this;
 
                 if (params.role && annotationTool.user.hasRole(params.role)) {
                     params.showDropdown = true;
