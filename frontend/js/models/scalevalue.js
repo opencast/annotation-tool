@@ -21,12 +21,10 @@
 define(
     [
         "underscore",
-        "access",
         "models/resource"
     ],
     function (
         _,
-        ACCESS,
         Resource
     ) {
         "use strict";
@@ -38,21 +36,6 @@ define(
          * @memberOf module:models-scalevalue
          */
         var ScaleValue = Resource.extend({
-
-            /**
-             * Default models value
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                access: ACCESS.PRIVATE,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null
-            },
 
             /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
