@@ -232,6 +232,7 @@ define(
 
                 var categoryViews = this.categoryViews;
                 this.categoryViews = [];
+                _.each(categoryViews, this.insertCategoryView, this);
 
                 this.updateNavigation();
                 this.carouselElement.find(".item").eq(this.currentPage).addClass("active");
