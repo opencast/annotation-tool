@@ -132,11 +132,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
           Access access = videoInterface.getAccess();
 
           JSONObject userJson = UserDto.toJson.apply(eas(), user);
-          String role = "user";
           if (access == Access.ADMIN) {
-            role = "administrator";
+            userJson.put("isAdmin", true);
           }
-          userJson.put("role", role);
 
           JSONObject responseObject = new JSONObject();
           responseObject.put("user", userJson);
