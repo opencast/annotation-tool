@@ -77,8 +77,6 @@ define([
             "submit form": function (event) {
                 event.preventDefault();
 
-                // TODO Waiting? Error handling?
-
                 var scale = this.$el.find("select").val();
 
                 var access = this.model.get("settings").createdAsMine
@@ -95,20 +93,6 @@ define([
                     })
                 });
 
-                // TODO Can we not call `save` directly?
-                //   Then we need to add first,
-                //   and remove later in case of errors
-
-                // TODO Is there no easier way to do these two steps?
-                //   Can we just `create`? Well, we could steal the `attributes`, I guess.
-                // TODO Should we assume that we need to add only because it's a new category?
-                //   Maybe check if it already has a collection?
-                // TODO This check needs to come before `save`!
-                // TODO The thing needs to be removed again, if something fails!
-                //   Which it shouldn't, though, because we validate, right?!
-                // TODO We don't need this check, we can just always add
-                //   But we only need to remove new ones if something goes wrong, though!
-                // TODO Skip validation?
                 if (this.model.isNew()) {
                     annotationTool.video.get("categories").add(this.model);
                 }
@@ -118,7 +102,6 @@ define([
                 // because the category needs an ID for this
                 var affiliation = this.$el.find("[name='affiliation']:checked").val();
                 var seriesCategoryId = this.model.get("series_category_id") || this.model.id;
-                // TODO Async?
                 var seriesParams = null;
                 if (affiliation === "series") {
                     seriesParams = {
@@ -127,8 +110,6 @@ define([
                     };
                 }
                 this.model.save(seriesParams);
-
-                // TODO Do the following async as well? What if they fail?
 
                 _.each(this.removeLabels, function (label) {
                     this.model.get("labels").get(label).destroy();
@@ -139,9 +120,6 @@ define([
                 }, this);
 
                 _.each(this.addLabels, function (label) {
-                    // TODO Is another clone really necessary here?
-                    //   And is this the way to do it in general?
-                    //   We could also just add it and `save`?
                     this.model.get("labels").create(label.attributes);
                 }, this);
 
@@ -153,12 +131,8 @@ define([
                 event.preventDefault();
             },
             "change input[name='affiliation']": function (event) {
-                // TODO Actually change back the selection?
-                // TODO Do this on the initial render as well
-                //   or in the template?
                 if (event.target.value === "series") {
                     this.disableScale();
-                    // TODO Ignore disabled thigns
                 } else {
                     this.enableScale();
                 }
