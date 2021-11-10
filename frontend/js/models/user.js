@@ -38,22 +38,14 @@ define(
          * @memberOf module:models-user
          */
         var User = Resource.extend({
-
-            /**
-             * Constructor
-             */
-            initialize: function (attributes, options) {
-                this.isAdmin = options.isAdmin;
-                return Resource.prototype.initialize.apply(this, arguments);
-            },
-
             /**
              * Default models value
              * @type {map}
              * @static
              */
             defaults: {
-                access: ACCESS.PUBLIC
+                access: ACCESS.PUBLIC,
+                isAdmin: false
             },
 
             /**
@@ -69,17 +61,11 @@ define(
             noPOST: true,
 
             /**
-             * Whether or not this user is an Annotation Tool admin
-             * @type {boolean}
-             */
-            isAdmin: false,
-
-            /**
              * @return {boolean} Whether or not this user has the given role
              * @param {string} role A valid role name. See {@link module:ROLES}.
              */
             hasRole: function (role) {
-                return role === ROLES.USER || this.isAdmin;
+                return role === ROLES.USER || this.get("isAdmin");
             }
         });
         return User;

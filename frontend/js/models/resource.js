@@ -200,7 +200,7 @@ var Resource = Backbone.Model.extend({
                 //   so for now we assume that this is only ever checked when the resource is public
                 //   in the right sense, i.e. it can be seen at all.
                 //&& this.isPublic()
-                && annotationTool.user.isAdmin
+                && annotationTool.user.get("isAdmin")
         );
     },
 
