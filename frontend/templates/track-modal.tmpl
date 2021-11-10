@@ -1,0 +1,57 @@
+<form class="form-horizontal">
+    <div class="modal-header">
+        <h3>{{t "timeline.track modals.header" context=action}}</h3>
+    </div>
+    <div class="modal-body">
+        <fieldset>
+            <div class="alert alert-error" style="display:none">
+                <span><i class="icon-exclamation-sign"></i></span>
+                <span id="content"></span>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="name"><b>*</b> {{t "timeline.track modals.name.label" context=action}}: </label>
+                <div class="controls">
+                    <input type="text" placeholder="{{t "timeline.track modals.name.placeholder" context=action}}" id="name" value="{{track.name}}">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="description">{{t "timeline.track modals.description.label" context=action}}: </label>
+                <div class="controls">
+                    <input type="text" placeholder="{{t "timeline.track modals.description.placeholder" context=action}}" id="description" value="{{track.description}}">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="access">{{t "timeline.track modals.access.label" context=action}}</label>
+                <div class="controls">
+                    {{#if (isAdmin)}}
+                        <label class="radio">
+                            <input type="radio" name="access-radio" value="shared-with-everyone">
+                            {{t "timeline.track modals.access.shared with everyone" context=action}}<br>
+                            <span class="explanation">
+                                {{t "timeline.track modals.access.shared with everyone explanation"}}
+                            </span>
+                        </label>
+                    {{/if}}
+                    <label class="radio">
+                        <input type="radio" name="access-radio" value="public">
+                        {{t "timeline.track modals.access.public" context=action}}
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="access-radio" value="shared-with-admin">
+                        {{t "timeline.track modals.access.shared with admin" context=action}}
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="access-radio" value="private">
+                        {{t "timeline.track modals.access.private" context=action}}
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+	<div style="float:right"><b>* {{t "required fields"}}</b></div>
+    </div>
+    <div class="modal-footer form-actions">
+        <button type="button" class="cancel btn">{{t "timeline.track modals.cancel" context=action}}</button>
+        <button id="{{action}}-group" class="btn btn-primary">{{t "timeline.track modals.action" context=action}}</button>
+    </div>
+</form>
