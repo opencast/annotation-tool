@@ -38,6 +38,15 @@ define(
         var ScaleValue = Resource.extend({
 
             /**
+             * Default models value
+             * @type {map}
+             * @static
+             */
+            defaults: {
+                value: 0
+            },
+
+            /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
              */
             administratorCanEditPublicInstances: true,
