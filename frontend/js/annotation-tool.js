@@ -176,7 +176,7 @@ define(
                     );
                     this.orderTracks(this.tracksOrder);
 
-                    this.colorsManager = new ColorManager(this.video.get("categories"));
+                    this.colorManager = new ColorManager(this.video.get("categories"));
                     $.fn.colorPicker.defaults.colors = ColorManager.COLORS;
 
                     this.views.main = new MainView();

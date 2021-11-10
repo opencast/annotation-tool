@@ -221,7 +221,7 @@ define(
                     settings: {
                         hasScale: false,
                         createdAsMine: mine,
-                        color: "#" + annotationTool.colorsManager.getNextColor()
+                        color: "#" + annotationTool.colorManager.getNextColor()
                     },
                     access: mine ? ACCESS.PRIVATE : ACCESS.PUBLIC
                 });
