@@ -20,13 +20,13 @@
  */
 define(
     [
-        "roles",
         "access",
+        "roles",
         "models/resource"
     ],
     function (
-        ROLES,
         ACCESS,
+        ROLES,
         Resource
     ) {
         "use strict";
@@ -38,15 +38,14 @@ define(
          * @memberOf module:models-user
          */
         var User = Resource.extend({
-
             /**
              * Default models value
              * @type {map}
              * @static
              */
             defaults: {
-                role: ROLES.USER,
-                access: ACCESS.PUBLIC
+                access: ACCESS.PUBLIC,
+                isAdmin: false
             },
 
             /**
@@ -62,10 +61,11 @@ define(
             noPOST: true,
 
             /**
-             * @return {boolean} Whether or not this user is an admin
+             * @return {boolean} Whether or not this user has the given role
+             * @param {string} role A valid role name. See {@link module:ROLES}.
              */
-            isAdmin: function () {
-                return this.get("role") === ROLES.ADMINISTRATOR;
+            hasRole: function (role) {
+                return role === ROLES.USER || this.get("isAdmin");
             }
         });
         return User;

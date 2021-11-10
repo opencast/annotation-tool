@@ -47,7 +47,7 @@ define(
         alerts,
         DeleteModalTmpl,
         PlayerAdapter,
-        ColorsManager,
+        ColorManager,
         XLSX,
         PapaParse
     ) {
@@ -152,9 +152,6 @@ define(
 
                 this.freeTextVisible = true;
 
-                this.colorsManager = new ColorsManager();
-                $.fn.colorPicker.defaults.colors = this.colorsManager.getColors();
-
                 this.listenToOnce(this, this.EVENTS.USER_LOGGED, function () {
 
                     $("#user-menu-label").html(this.user.get("nickname"));
@@ -173,7 +170,8 @@ define(
                     );
                     this.orderTracks(this.tracksOrder);
 
-                    this.colorsManager.updateColors(this.video.get("categories").models);
+                    this.colorManager = new ColorManager(this.video.get("categories"));
+                    $.fn.colorPicker.defaults.colors = ColorManager.COLORS;
 
                     this.views.main = new MainView();
                 });

@@ -21,12 +21,10 @@
 define(
     [
         "underscore",
-        "access",
         "models/resource"
     ],
     function (
         _,
-        ACCESS,
         Resource
     ) {
         "use strict";
@@ -45,13 +43,7 @@ define(
              * @static
              */
             defaults: {
-                access: ACCESS.PRIVATE,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null
+                value: 0
             },
 
             /**

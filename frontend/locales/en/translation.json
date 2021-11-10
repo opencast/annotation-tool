@@ -33,7 +33,6 @@
       "expand all": "Expand all",
       "head": "Items Visibility"
     },
-    "new category name": "NEW CATEGORY",
     "new": {
       "placeholder": "Write a free text annotation. ($t(annotate.new.title))",
       "title": "Use “ shift + return” keys to create a new line."
@@ -95,6 +94,12 @@
   },
   "category modal": {
     "abbreviation": "Abbreviation",
+    "access": {
+      "label": "Access",
+      "private": "Private",
+      "public": "Share with everyone",
+      "shared with admin": "Share with admin"
+    },
     "affiliation": "Affiliation",
     "belongs to series": "Belongs to the series",
     "belongs to video": "Belongs to the video",
@@ -106,10 +111,10 @@
     "remove": "Remove",
     "name": "Name",
     "new category": "New category",
-    "no scale on series category": "Series categories can't have scales",
-    "no series affiliation with scale": "Only categories without a scale can be affiliated to a series",
+    "no scale on series category": "This category belongs to a series. Therefore it cannot be assigned a scale.",
+    "no series affiliation with scale": "This category was assigned a scale. Categories with scales can NOT belong to a series.",
     "scale": "Scale",
-    "scale no": "No scale",
+    "scale no": "-- NO SCALE SELECTED --",
     "scales description": "The characteristics of the scale appear on each label, in order to further specify the characteristic of a label."
   },
   "default track": {

@@ -24,7 +24,6 @@ define(
         "underscore",
         "backbone",
         "handlebars",
-        "i18next",
         "views/annotate-category",
         "templates/annotate-tab",
         "filesaver"
@@ -34,7 +33,6 @@ define(
         _,
         Backbone,
         Handlebars,
-        i18next,
         CategoryView,
         Template
     ) {
@@ -150,7 +148,6 @@ define(
                     "select",
                     "addCategories",
                     "addCategory",
-                    "onAddCategory",
                     "removeOne",
                     "addCarouselItem",
                     "moveCarouselToFrame",
@@ -167,7 +164,6 @@ define(
 
                 this.categories = annotationTool.video.get("categories");
                 this.filter = attr.filter;
-                this.roles = attr.roles;
                 this.defaultCategoryAttributes = attr.attributes;
 
                 this.categoryViews = [];
@@ -182,7 +178,6 @@ define(
                 this.addCategories(this.filter);
 
                 this.titleLink = attr.button;
-                this.titleLink.find("i.add").on("click", this.onAddCategory);
                 this.titleLink.find("button.export").on("click", this.onExport);
                 this.titleLink.find("button.import").on("click", this.chooseFile);
 
@@ -200,6 +195,11 @@ define(
                 this.listenTo(this.categories, "add", function (category) {
                     if (!this.filter(category)) return;
                     this.addCategory(category);
+                    if (attr.container.activeTab === this) {
+                        this.carouselElement.carousel(Math.floor(
+                            this.categories.length / annotationTool.CATEGORIES_PER_TAB
+                        ));
+                    }
                 });
                 this.listenTo(this.categories, "remove", this.removeOne);
 
@@ -232,7 +232,6 @@ define(
 
                 var categoryViews = this.categoryViews;
                 this.categoryViews = [];
-                _.each(categoryViews, this.insertCategoryView, this);
 
                 this.updateNavigation();
                 this.carouselElement.find(".item").eq(this.currentPage).addClass("active");
@@ -264,36 +263,7 @@ define(
              * @param {Category} category The category to add
              */
             addCategory: function (category, collection, options) {
-
-                this.insertCategoryView(new CategoryView({
-                    category: category,
-                    roles: this.roles
-                }));
-            },
-
-            /**
-             * Listener for category creation request from UI
-             */
-            onAddCategory: function (event) {
-                var attributes = {
-                    name: i18next.t("annotate.new category name"),
-                    settings: _.extend(this.defaultCategoryAttributes.settings || {}, {
-                        color: "#" + annotationTool.colorsManager.getNextColor(),
-                        hasScale: false
-                    })
-                };
-                this.categories.create(
-                    _.extend(attributes, this.defaultCategoryAttributes),
-                    {
-                        wait: true,
-                        success: _.bind(function () {
-                            // Move the carousel to the container of the new item
-                            this.carouselElement.carousel(Math.floor(
-                                this.categories.length / annotationTool.CATEGORIES_PER_TAB
-                            ));
-                        }, this)
-                    }
-                );
+                this.insertCategoryView(new CategoryView({ category: category }));
             },
 
             /**

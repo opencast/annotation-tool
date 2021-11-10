@@ -21,7 +21,6 @@ define([
     "backbone",
     "util",
     "models/user",
-    "roles",
     "player-adapter-html5"
 ], function (
     $,
@@ -29,7 +28,6 @@ define([
     Backbone,
     util,
     User,
-    ROLES,
     HTML5PlayerAdapter
 ) {
     "use strict";
@@ -89,8 +87,7 @@ define([
     });
     // Get user data from Opencast
     var user = $.ajax({
-        url: "/info/me.json",
-        dataType: "json"
+        url: "/info/me.json"
     });
     // Find out which roles should have admin rights
     var adminRoles = mediaPackage.then(function (mediaPackage) {
@@ -145,34 +142,20 @@ define([
         },
 
         /**
-         * Maps a list of roles of the external user to a corresponding user role
-         * @param {string[]} roles The roles of the external user
-         * @return {Promise.<ROLE>} The corresponding user role in the annotations tool
-         */
-        getUserRoleFromExt: function (roles) {
-            return adminRoles.then(function (adminRoles) {
-                if (_.some(adminRoles.concat(["ROLE_ADMIN"]), function (adminRole) {
-                    return _.contains(roles, adminRole);
-                })) {
-                    return ROLES.ADMINISTRATOR;
-                } else {
-                    return ROLES.USER;
-                }
-            });
-        },
-
-        /**
          * Authenticate the user
          */
         authenticate: function () {
-            user.then(function (userData) {
-                return $.when(userData.user, this.getUserRoleFromExt(userData.roles));
-            }.bind(this)).then(function (user, role) {
+            $.when(user, adminRoles).then(function (userResult, adminRoles) {
+                var user = userResult[0];
+                var userData = user.user;
                 this.user = new User({
-                    user_extid: user.username,
-                    nickname: user.username,
-                    email: user.email,
-                    role: role
+                    user_extid: userData.username,
+                    nickname: userData.username,
+                    email: userData.email,
+                    isAdmin: _.intersection(
+                        adminRoles.concat(["ROLE_ADMIN"]),
+                        user.roles
+                    ).length > 0
                 });
                 return this.user.save();
             }.bind(this)).then(function () {

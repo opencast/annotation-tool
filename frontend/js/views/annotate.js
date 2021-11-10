@@ -31,8 +31,8 @@ define(
         "templates/annotate",
         "templates/annotate-tab-title",
         "templates/annotate-toggle-free-text-button",
-        "roles",
         "access",
+        "roles",
         "models/category"
     ],
     function (
@@ -47,14 +47,15 @@ define(
         template,
         TabsButtonTemplate,
         toggleFreeTextButtonTemplate,
-        ROLES,
         ACCESS,
+        ROLES,
         Category
     ) {
         "use strict";
 
         /**
-         * List of default tabs, each object contains an id, name and an array of roles
+         * List of default tabs, each object contains an id, a name, a filter for categories,
+         * a role that can edit things in the tab, and possibly some additional attributes
          * @type {Object}
          */
         var DEFAULT_TABS = {
@@ -63,8 +64,7 @@ define(
                 name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
                     return !category.get("settings").createdAsMine || category.isMine();
-                },
-                roles: []
+                }
             },
             PUBLIC: {
                 id: "public",
@@ -72,7 +72,7 @@ define(
                 filter: function (category) {
                     return !category.get("settings").createdAsMine;
                 },
-                roles: [ROLES.ADMINISTRATOR],
+                role: ROLES.ADMINISTRATOR,
                 attributes: {
                     access: ACCESS.PUBLIC,
                     settings: {
@@ -86,7 +86,7 @@ define(
                 filter: function (category) {
                     return category.get("settings").createdAsMine && category.isMine();
                 },
-                roles: [ROLES.USER, ROLES.ADMINISTRATOR],
+                role: ROLES.USER,
                 attributes: {
                     access: ACCESS.PRIVATE,
                     settings: {
@@ -217,16 +217,15 @@ define(
              * Open a modal to create a new category
              */
             createCategory: function (mine) {
-                // TODO We should not set the `hasScale` here ...
-                var category = new Category({ settings: {
-                    hasScale: false,
-                    // TODO This needs to be set depending on the tab
-                    //   the butotn was pressed in
-                    //   See also the `attributes` key of the `DEFAULT_TABS`.
-                    createdAsMine: mine
-                } });
+                var category = new Category({
+                    settings: {
+                        hasScale: false,
+                        createdAsMine: mine,
+                        color: "#" + annotationTool.colorManager.getNextColor()
+                    },
+                    access: mine ? ACCESS.PRIVATE : ACCESS.PUBLIC
+                });
                 new CategoryModal({ model: category }).show();
-                // TODO Maybe activate the corresponding tab afterwards?
             },
 
             /**
@@ -321,6 +320,7 @@ define(
              */
             showTab: function (event) {
                 var tabId = event.currentTarget.dataset.tabid;
+                this.activeTab = this.categoriesTabs[tabId];
 
                 $(event.currentTarget).one("shown", _.bind(function () {
                     this.categoriesTabs[tabId].initCarousel();
@@ -333,25 +333,18 @@ define(
             /**
              * Add a new categories tab in the annotate view
              * @param {Categories} categories Categories to add to the new tab
-             * @param {object} attr Infos about the new tab like id, name, filter for categories and roles.
+             * @param {object} attr Infos about the new tab like id, name and a filter for categories.
              */
             addTab: function (attr) {
-                var params = {
-                    id: attr.id,
-                    name: attr.name,
-                    filter: attr.filter,
-                    roles: attr.roles,
-                    attributes: attr.attributes
-                };
+                var params = _.clone(attr);
 
-                if (attr.id === "mine" || (attr.id === "public" && attr.roles.includes("administrator"))) {
+                params.container = this;
+
+                if (params.role && annotationTool.user.hasRole(params.role)) {
                     params.showDropdown = true;
-                } else {
-                    params.showDropdown = false;
                 }
 
-                var newButton = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
-                params.button = newButton;
+                params.button = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
 
                 params.id = "labelTab-" + params.id;
                 var annotateTab = new AnnotateTab(params);
@@ -443,7 +436,6 @@ define(
                             id: trackUserId,
                             name: track.get("created_by_nickname"),
                             filter: _.partial(categoryFilter, trackUserId),
-                            roles: [],
                             attributes: { access: ACCESS.PRIVATE }
                         });
                     } else {

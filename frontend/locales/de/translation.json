@@ -32,7 +32,6 @@
       "expand all": "Alle aufklappen",
       "head": "Sichtbarkeit"
     },
-    "new category name": "NEUE KATEGORIE",
     "new": {
       "placeholder": "Freitextannotation schreiben ($t(annotate.new.title))",
       "title": "„Shift + Return“ drücken, um eine neue Zeile einzufügen."
@@ -88,22 +87,28 @@
   },
   "category modal": {
     "abbreviation": "Abkürzung",
+    "access": {
+      "label": "Zugriff",
+      "private": "Privat",
+      "public": "Mit allen Benutzern teilen",
+      "shared with admin": "Mit Administrator teilen"
+    },
     "affiliation": "Zugehörigkeit",
     "belongs to series": "Gehört zur Serie",
     "belongs to video": "Gehört zum Video",
-    "create new label": "Neues Etikett erstellen",
+    "create new label": "Neues Label erstellen",
     "color": "Farbe",
     "edit": "Bearbeite",
-    "label": "Etikett",
-    "labels": "Etikette",
+    "label": "Label",
+    "labels": "Labels",
     "remove": "Entfernen",
     "name": "Name",
     "new category": "Neue Kategorie",
     "no scale on series category": "Diese Kategorie gehört zu einer Serie. Daher kann ihr keine Skala zugeordnet werden.",
-    "no series affiliation with scale": "Nur Kategorien ohne Skala können einer Serie zugehören.",
+    "no series affiliation with scale": "Dieser Kategorie wurde eine Skala zugewiesen. Kategorien mit Skalen können NICHT zu einer Serie gehören.",
     "scale": "Skala",
-    "scale no": "Keine Skala",
-    "scales description": "Die Ausprägungen der Skala erscheinen bei jedem Label / Etikett, um z.B. die Ausprägung eines Labels weiter zu spezifizieren."
+    "scale no": "-- KEINE SKALA AUSGEWÄHLT --",
+    "scales description": "Die Ausprägungen der Skala erscheinen bei jedem Label, um z.B. die Ausprägung eines Labels weiter zu spezifizieren."
   },
   "default track": {
     "description": "Standardspur für Benutzer {{nickname}}",
@@ -294,7 +299,7 @@
       "gender": "male"
     },
     "label": {
-      "identifier": "Etikett",
+      "identifier": "Label",
       "gender": "neutral"
     },
     "track": {

@@ -107,7 +107,6 @@ define(
                 );
 
                 this.model = attr.label;
-                this.roles = attr.roles;
                 this.isScaleEnable = attr.isScaleEnable;
 
                 this.el.id = this.ID_PREFIX + this.model.get("id");

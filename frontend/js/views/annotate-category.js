@@ -24,7 +24,6 @@ define(
         "underscore",
         "backbone",
         "util",
-        "access",
         "views/annotate-label",
         "views/category-modal",
         "templates/annotate-category"
@@ -34,7 +33,6 @@ define(
         _,
         Backbone,
         util,
-        ACCESS,
         LabelView,
         CategoryModal,
         Template
@@ -106,7 +104,6 @@ define(
 
                 // Type use for delete operation
                 this.typeForDelete = annotationTool.deleteOperation.targetTypes.CATEGORY;
-                this.roles = attr.roles;
                 this.labelViews = [];
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
@@ -188,10 +185,7 @@ define(
              * @param {boolean} single Define if this is part of a list insertion (false) or a single insertion (true)
              */
             addLabel: function (label) {
-                var labelView = new LabelView({
-                    label: label,
-                    roles: this.roles
-                });
+                var labelView = new LabelView({ label: label });
 
                 this.labelViews.push(labelView);
 
@@ -221,8 +215,6 @@ define(
                 var modelJSON = this.model.toJSON();
 
                 this.undelegateEvents();
-
-                modelJSON.access = ACCESS.render(this.model.get("access"));
 
                 _.each(this.labelViews, function (view) {
                     view.$el.detach();

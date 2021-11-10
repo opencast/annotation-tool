@@ -81,7 +81,7 @@ define([
      * @alias module:Handlebars#isAdmin
      */
     Handlebars.registerHelper("isAdmin", function () {
-        return annotationTool.user.isAdmin();
+        return annotationTool.user.get("isAdmin");
     });
 
     return Handlebars;

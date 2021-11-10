@@ -17,6 +17,7 @@ define([
     "underscore",
     "jquery",
     "models/scale",
+    "collections/scalevalues",
     "views/modal",
     "views/scale-modal/scale-editor",
     "templates/scale-modal",
@@ -25,6 +26,7 @@ define([
     _,
     $,
     Scale,
+    ScaleValues,
     Modal,
     ScaleEditor,
     template,
@@ -47,22 +49,32 @@ define([
                 if (this.model.isNew()) {
                     annotationTool.video.get("scales").add(this.model);
                 }
+                var previousScaleValues = this.model.get("scaleValues");
                 return this.model.save(this.scaleEditor.model.attributes)
                     .then(_.bind(function () {
-                        return $.when(
+                        return $.when.apply(
+                            $,
                             this.model.get("scaleValues").map(function (scaleValue, index) {
                                 return scaleValue.save({ order: index });
-                            })
+                            }).concat(
+                                previousScaleValues.chain()
+                                    .filter(function (scaleValue) {
+                                        return !this.model.get("scaleValues").get(scaleValue.id);
+                                    }, this)
+                                    .invoke("destroy")
+                                    .value()
+                            )
                         );
                     }, this))
                     .then(_.bind(this.remove, this));
             },
             "click #delete": function () {
-                this.remove();
+                this.hide();
                 annotationTool.deleteOperation.start(
                     this.model,
                     annotationTool.deleteOperation.targetTypes.SCALE,
-                    _.bind(this.remove, this)
+                    _.bind(this.remove, this),
+                    _.bind(this.show, this)
                 );
             }
         },
@@ -91,7 +103,20 @@ define([
             this.body = this.$el.find(".modal-body");
 
             if (this.model) {
-                this.scaleEditor = new ScaleEditor({ model: this.model.clone() });
+                // Roundabout way to clone our scale so that it doesn't refetch the scale values,
+                // and also gets a new scale value collection.
+                var clone = new Scale(
+                    _.chain(this.model.attributes)
+                        .omit("id")
+                        .extend({ scaleValues: new ScaleValues(
+                            this.model.get("scaleValues").invoke("clone"),
+                            {
+                                scale: this.model
+                            }
+                        ) })
+                        .value()
+                );
+                this.scaleEditor = new ScaleEditor({ model: clone });
                 this.body.append(this.scaleEditor.el);
             }
         },
