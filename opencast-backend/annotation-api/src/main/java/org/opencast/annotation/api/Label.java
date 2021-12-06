@@ -38,5 +38,4 @@ public interface Label extends Resource {
 
   /** The label settings */
   Option<String> getSettings();
-
 }

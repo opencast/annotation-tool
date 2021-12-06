@@ -617,14 +617,15 @@ public class VideoEndpoint {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories")
-  public Response postCategory(@FormParam("name") final String name, @FormParam("description") final String description,
-          @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("category_id") final Long id, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags, @FormParam("seriesExtId") final String seriesExtId,
-          @FormParam("seriesCategoryId") final Long seriesCategoryId) {
+  public Response postCategory(@FormParam("category_id") final Long id,
+          @FormParam("series_extid") final String seriesExtId,
+          @FormParam("series_category_id") final Long seriesCategoryId, @FormParam("name") final String name,
+          @FormParam("description") final String description, @FormParam("scale_id") final Long scaleId,
+          @FormParam("settings") final String settings, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
     if (id == null)
-      return host.postCategoryResponse(some(videoId), name, description, scaleId, settings, access,
-              tags, trimToNone(seriesExtId), option(seriesCategoryId));
+      return host.postCategoryResponse(trimToNone(seriesExtId), option(seriesCategoryId), some(videoId), name,
+              description, scaleId, settings, access, tags);
     return run(array(id), new Function0<Response>() {
       @Override
       public Response apply() {
@@ -633,8 +634,8 @@ public class VideoEndpoint {
           return BAD_REQUEST;
 
         Resource resource = eas.createResource(tagsMap.bind(Functions.identity()));
-        Option<Category> categoryFromTemplate = eas.createCategoryFromTemplate(videoId, id, resource, seriesExtId,
-                seriesCategoryId);
+        Option<Category> categoryFromTemplate = eas.createCategoryFromTemplate(id, seriesExtId, seriesCategoryId,
+                videoId, resource);
         return categoryFromTemplate.fold(new Option.Match<Category, Response>() {
 
           @Override
@@ -656,14 +657,14 @@ public class VideoEndpoint {
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories/{categoryId}")
-  public Response putCategory(@PathParam("categoryId") final long id, @FormParam("name") final String name,
-          @FormParam("description") final String description,
-          @FormParam("scale_id") final Long scaleId, @FormParam("settings") final String settings,
-          @FormParam("access") final Integer access, @FormParam("tags") final String tags,
-          @FormParam("seriesExtId") final String seriesExtId,
-          @FormParam("seriesCategoryId") final Long seriesCategoryId) {
-    return host.putCategoryResponse(some(videoId), id, name, description, option(scaleId), settings, option(access),
-            tags, trimToNone(seriesExtId), option(seriesCategoryId));
+  public Response putCategory(@PathParam("categoryId") final long id,
+          @FormParam("series_extid") final String seriesExtId,
+          @FormParam("series_category_id") final Long seriesCategoryId, @FormParam("name") final String name,
+          @FormParam("description") final String description, @FormParam("scale_id") final Long scaleId,
+          @FormParam("settings") final String settings, @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return host.putCategoryResponse(id, trimToNone(seriesExtId), option(seriesCategoryId), some(videoId), name,
+            description, option(scaleId), settings, option(access), tags);
   }
 
   @GET
@@ -676,10 +677,11 @@ public class VideoEndpoint {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories")
-  public Response getCategories(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
+  public Response getCategories(@QueryParam("series-extid") final String seriesExtId,
+          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr, @QueryParam("seriesExtId") final String seriesExtId) {
-    return host.getCategoriesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr, seriesExtId);
+          @QueryParam("tags-or") final String tagsOr) {
+    return host.getCategoriesResponse(seriesExtId, some(videoId), limit, offset, date, tagsAnd, tagsOr);
   }
 
   @DELETE

@@ -51,7 +51,7 @@
     "show free text": "Freitextannotationen anzeigen",
     "hide free text": "Freitextannotationen ausblenden",
     "video category": "Kategorie gehört zu diesem Video",
-    "series category": "Kategorie gehört zur Serie & erscheint bei allen Videos",
+    "series category": "Kategorie gehört zur Serie und erscheint bei allen Videos",
     "structured annotations": "Strukturierte Annotationen"
   },
   "annotation": {
@@ -103,12 +103,12 @@
     "title": "$t(models.nominative, {\"context\": \"{{context}}\" }) löschen",
     "warning": "Wollen Sie $t(models.accusative, {\"context\": \"{{context}}\" }) „{{content}}“ wirklich löschen?"
   },
-  "series-category modal": {
+  "series category modal": {
     "cancel": "$t(common actions.cancel)",
-    "toVideo": "Ja, zu Video-Kategorie machen",
+    "to video": "Ja, zu Video-Kategorie machen",
     "title": "Achtung: In Video-Kategorie ändern",
     "warning": "Wenn Sie die Zugehörigkeit dieser Kategorie von \"gehört zur Serie\" auf \"gehört zum Video\" ändern, wird die Kategorie in allen anderen Videos dieser Serie entfernt. Wollen Sie fortfahren?",
-    "customMessage": "Diese Kategorie gehört zur Serie und erscheint bei allen Videos. Wenn Sie diese Kategorie löschen, wird sie auch für alle anderen Videos gelöscht. "
+    "custom message": "Diese Kategorie gehört zur Serie und erscheint bei allen Videos. Wenn Sie diese Kategorie löschen, wird sie auch für alle anderen Videos gelöscht. "
   },
   "description": "Werkzeug zur Videoannotation",
   "list annotation": {

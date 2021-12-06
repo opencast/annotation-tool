@@ -49,7 +49,7 @@ define(
              */
             initialize: function (models, options) {
                 this.video = options.video;
-                this.mySeriesExtId = options.seriesExtId;
+                this.seriesExtId = options.seriesExtId;
             },
 
             /**
@@ -58,8 +58,8 @@ define(
              */
             url: function () {
                 return (this.video ? _.result(this.video, "url") : "")
-                + "/categories/"
-                + (this.mySeriesExtId ? "?seriesExtId=" + this.mySeriesExtId : "");
+                    + "/categories/"
+                    + (this.seriesExtId ? "?series-extid=" + this.seriesExtId : "");
             },
 
             /**

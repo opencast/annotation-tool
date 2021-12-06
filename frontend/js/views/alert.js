@@ -77,7 +77,7 @@ define(
                 }
 
                 if (_.isUndefined(message) || _.isUndefined(type) ||
-                    _.isUndefined(type.title)  || _.isUndefined(type.className)) {
+                    _.isUndefined(type.title) || _.isUndefined(type.className)) {
                     throw "Alert modal requires a valid type and a message!";
                 }
 

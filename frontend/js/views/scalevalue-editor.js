@@ -105,9 +105,9 @@ define([
          * Move the scale value up in the list (change the order)
          */
         up: function () {
-            var currentOrder = this.model.get("order"),
-                sortedCollection = this.getSortedCollection(),
-                previous;
+            var currentOrder = this.model.get("order");
+            var sortedCollection = this.getSortedCollection();
+            var previous;
 
             if (currentOrder > 0) {
                 previous = sortedCollection[currentOrder - 1];
@@ -124,9 +124,9 @@ define([
          * Move the scale value down in the list (change the order)
          */
         down: function () {
-            var currentOrder = this.model.get("order"),
-                sortedCollection = this.getSortedCollection(),
-                next;
+            var currentOrder = this.model.get("order");
+            var sortedCollection = this.getSortedCollection();
+            var next;
 
             if (currentOrder < (sortedCollection.length - 1)) {
                 next = sortedCollection[currentOrder + 1];
@@ -153,9 +153,9 @@ define([
          * Save the scale value
          */
         save: function () {
-            var name = this.$el.find(".scale-value-name").val(),
-                $value = this.$el.find(".scale-value-value"),
-                value = parseFloat($value.val());
+            var name = this.$el.find(".scale-value-name").val();
+            var $value = this.$el.find(".scale-value-value");
+            var value = parseFloat($value.val());
 
             if (!isNaN(value)) {
                 $value.removeClass("error");
@@ -186,12 +186,11 @@ define([
                 _.bind(function () {
                     this.scaleEditor.$el.modal("show");
 
-                    var currentOrder = this.model.get("order"),
-                        i;
+                    var currentOrder = this.model.get("order");
 
                     // Update order for following item
                     if (currentOrder < (sortedCollection.length - 1)) {
-                        for (i = currentOrder + 1; i < sortedCollection.length; i++) {
+                        for (var i = currentOrder + 1; i < sortedCollection.length; i++) {
                             sortedCollection[i].set("order", i - 1);
                             sortedCollection[i].save();
                         }

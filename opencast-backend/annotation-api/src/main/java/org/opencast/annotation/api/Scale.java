@@ -29,5 +29,4 @@ public interface Scale extends Resource {
 
   /** The scale description */
   Option<String> getDescription();
-
 }

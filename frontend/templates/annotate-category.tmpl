@@ -6,7 +6,10 @@
     ></i>
     <i class="icon-pencil scale edit" title="{{t "annotate.edit category scaling"}}"></i>
     <i class="icon-trash delete edit"></i>
-    <i class="{{#if seriesCategoryId}}icon-series-category{{else}}icon-video-category{{/if}} toggleSeries edit" title="{{#if seriesCategoryId}}{{t "annotate.series category"}}{{else}}{{t "annotate.video category"}}{{/if}}"></i>
+    <i
+        class="{{#if series_category_id}}icon-series-category{{else}}icon-video-category{{/if}} toggle-series edit"
+        title="{{#if series_category_id}}{{t "annotate.series category"}}{{else}}{{t "annotate.event category"}}{{/if}}"
+    ></i>
     <button
         type="button"
         class="category-access"
@@ -41,7 +44,12 @@
         ></i>
     </button>
     <div class="colorpicker">
-        <input id="color-{{name}}" type="text" class="colorpicker edit" value="{{#if settings}}{{settings.color}}{{/if}}" /></div>
+        <input
+            id="color-{{name}}"
+            type="text"
+            class="colorpicker edit"
+            value="{{#if settings}}{{settings.color}}{{/if}}"
+        >
     </div>
 </div>
 <div class="catItem-labels" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}}></div>

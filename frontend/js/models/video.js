@@ -21,7 +21,6 @@
 define(
     [
         "underscore",
-        "jquery",
         "access",
         "collections/tracks",
         "collections/categories",
@@ -30,7 +29,6 @@ define(
     ],
     function (
         _,
-        $,
         ACCESS,
         Tracks,
         Categories,
@@ -73,16 +71,18 @@ define(
             },
 
             /**
+             * Constructor
+             */
+            initialize: function () {
+                this.get("categories").seriesExtId = this.get("series_extid");
+                Resource.prototype.initialize.apply(this, arguments);
+            },
+
+            /**
              * (Re-)Fetch the scale values once our ID changes.
              */
             fetchChildren: function () {
-                var categories = this.get("categories");
-
-                $.when(annotationTool.getSeriesExtId()).then(_.bind(function (seriesId) {
-                    categories.mySeriesExtId = seriesId;
-                }, this));
-
-                categories.fetch({ async: false });
+                this.get("categories").fetch({ async: false });
                 this.get("tracks").fetch({ async: false });
                 this.get("scales").fetch({ async: false });
                 this.trigger("ready");
@@ -158,17 +158,13 @@ define(
              * @return {Track} The annotation with the given id
              */
             getAnnotation: function (annotationId, trackId) {
-                var track = this.getTrack(trackId),
-                    tmpAnnotation;
-
+                var track = this.getTrack(trackId);
                 if (track) {
                     return track.getAnnotation(annotationId);
                 } else {
-                    this.get("tracks").find(function (trackItem) {
-                        tmpAnnotation = trackItem.getAnnotation(annotationId);
-                        return !_.isUndefined(tmpAnnotation);
+                    return this.get("tracks").find(function (trackItem) {
+                        return trackItem.getAnnotation(annotationId);
                     });
-                    return tmpAnnotation;
                 }
             },
 

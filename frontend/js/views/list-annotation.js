@@ -221,11 +221,11 @@ define(
              * @param  {event} event Event object
              */
             saveEnd: function (event) {
-                var $target = $(event.currentTarget),
-                    value = $target.val(),
-                    radix = 10, // Radix is 10 for decimal
-                    values,
-                    seconds;
+                var $target = $(event.currentTarget);
+                var value = $target.val();
+                var radix = 10; // Radix is 10 for decimal
+                var values;
+                var seconds;
 
                 // If keydown event but not enter, value must not be saved
                 if (event.type === "keydown" && event.keyCode !== 13) {
@@ -264,19 +264,16 @@ define(
              * @param  {event} event Event object
              */
             saveStart: function (event) {
-                var $target = $(event.currentTarget),
-                    value = $target.val(),
-                    radix = 10, // Radix is 10 for decimal
-                    values,
-                    duration,
-                    seconds;
+                var $target = $(event.currentTarget);
+                var value = $target.val();
+                var radix = 10; // Radix is 10 for decimal
 
                 // If keydown event but not enter, value must not be saved
                 if (event.type === "keydown" && event.keyCode !== 13) {
                     return;
                 }
 
-                duration = this.model.get("duration");
+                var duration = this.model.get("duration");
 
                 $target.removeClass("error");
 
@@ -284,8 +281,9 @@ define(
                     $target.addClass("error");
                     return;
                 } else {
-                    values = value.split(":");
+                    var values = value.split(":");
 
+                    var seconds;
                     if (values.length === 3) {
                         seconds = parseInt(values[0], radix) * 3600 + parseInt(values[1], radix) * 60 + parseInt(values[2], radix);
                     } else if (values.length === 2) {
@@ -313,8 +311,8 @@ define(
              * @param  {event} event Event object
              */
             setCurrentTimeAsStart: function (event) {
-                var currentTime = annotationTool.playerAdapter.getCurrentTime(),
-                    end = this.model.get("start") + this.model.get("duration");
+                var currentTime = annotationTool.playerAdapter.getCurrentTime();
+                var end = this.model.get("start") + this.model.get("duration");
 
                 event.stopImmediatePropagation();
 
@@ -344,18 +342,14 @@ define(
              * Render this view
              */
             render: function () {
-                var modelJSON,
-                    scaleValues,
-                    category,
-                    selectedScaleValue,
-                    title;
-
-                modelJSON              = this.model.toJSON();
-                modelJSON.track        = this.track.get("name");
+                var modelJSON = this.model.toJSON();
+                modelJSON.track = this.track.get("name");
                 modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
-                modelJSON.duration     = (modelJSON.duration || 0.0);
-                modelJSON.textHeight   = this.$el.find("span.freetext").height();
+                modelJSON.duration = (modelJSON.duration || 0.0);
+                modelJSON.textHeight = this.$el.find("span.freetext").height();
 
+                var title;
+                var category;
                 if (modelJSON.label) {
                     category = this.model.category();
 
@@ -374,9 +368,10 @@ define(
                         modelJSON.hasScale = this.model.get("label").category.settings.hasScale;
                     }
 
+                    var scaleValues;
                     if (modelJSON.hasScale && this.scale) {
                         scaleValues = this.scaleValues.toJSON();
-                        selectedScaleValue = _.where(scaleValues, { id: modelJSON.scale_value_id });
+                        var selectedScaleValue = _.where(scaleValues, { id: modelJSON.scale_value_id });
 
                         if (selectedScaleValue.length > 0) {
                             selectedScaleValue[0].isSelected = true;
