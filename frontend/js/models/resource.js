@@ -41,8 +41,6 @@ define([
  */
 var Resource = Backbone.Model.extend({
 
-    // TODO Remove this (and other useless defaults) from everywehre else
-    // TODO Is this a good idea?
     defaults: {
         access: ACCESS.PRIVATE
     },

@@ -108,6 +108,11 @@ define([
                         series_category_id: seriesCategoryId,
                         series_extid: annotationTool.video.get("series_extid")
                     };
+                } else {
+                    seriesParams = {
+                        series_category_id: null,
+                        series_extid: null
+                    };
                 }
                 this.model.save(seriesParams);
 
