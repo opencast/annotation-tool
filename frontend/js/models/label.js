@@ -45,11 +45,7 @@ define(
              */
             administratorCanEditPublicInstances: true,
 
-            // TODO docs
-            // TODO overriding liek in cat
             defaults: {
-                // TODO It sucks that this is necessary
-                //   and why was it again?
                 access: ACCESS.PUBLIC
             },
 

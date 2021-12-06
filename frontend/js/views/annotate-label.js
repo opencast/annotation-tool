@@ -171,7 +171,6 @@ define(
                 if (scale) {
                     this.scaleValues = scale.get("scaleValues");
                 } else {
-                    // TODO This should not be taken care of here, I feel like ...
                     delete this.scaleValues;
                 }
 
