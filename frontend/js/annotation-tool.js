@@ -24,6 +24,7 @@ define(
         "underscore",
         "backbone",
         "util",
+        "access",
         "i18next",
         "collections/videos",
         "views/main",
@@ -41,6 +42,7 @@ define(
         _,
         Backbone,
         util,
+        ACCESS,
         i18next,
         Videos,
         MainView,
@@ -681,7 +683,10 @@ define(
                             });
                         } else {
                             tracks.showTracks(
-                                tracks.filter(util.caller("isMine"))
+                                tracks.filter(function (track) {
+                                    return track.isMine()
+                                        || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                                })
                             );
                             concludeInitialization();
                         }

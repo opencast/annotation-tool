@@ -13,7 +13,8 @@ module.exports = {
         'key-spacing': 'warn',
         'comma-dangle': 'warn',
         'quotes': 'warn',
-        'no-multiple-empty-lines': ['warn', { max: 1 }]
+        'no-multiple-empty-lines': ['warn', { max: 1 }],
+        'space-infix-ops': 'warn'
     },
     overrides: [{
         files: ['Gruntfile.js', '.eslintrc.js'],

@@ -2,7 +2,7 @@
 
 
 * [Login and User Handling](Login-and-User-Handling)
-* [General Status Codes and Messages](General-Status-Codes-and-Messages)
+* [General Status Codes and Messages](General-status-codes-and-messages)
 
 ## Resources
 * [User](Rest-user.md)

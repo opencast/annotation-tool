@@ -26,6 +26,7 @@ public interface Resource {
   int PRIVATE = 0;
   int PUBLIC = 1;
   int SHARED_WITH_ADMIN = 2;
+  int SHARED_WITH_EVERYONE = 3;
 
   /** The id of the resource */
   long getId();

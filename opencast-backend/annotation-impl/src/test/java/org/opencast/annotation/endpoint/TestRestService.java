@@ -16,7 +16,6 @@
 package org.opencast.annotation.endpoint;
 
 import static org.opencastproject.test.rest.RestServiceTestEnv.localhostRandomPort;
-import static org.opencastproject.util.persistence.PersistenceEnvs.persistenceEnvironment;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -50,21 +49,25 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
 
   // Declare this dependency static since the TestRestService gets instantiated multiple times.
   // Haven't found out who's responsible for this but that's the way it is.
-  public static final ExtendedAnnotationService eas = new ExtendedAnnotationServiceJpaImpl(
-          persistenceEnvironment(newTestEntityManagerFactory("org.opencast.annotation.impl.persistence")),
-          getSecurityService(),
-          getAuthorizationService(),
-          getSearchService());
+  public static final ExtendedAnnotationServiceJpaImpl extendedAnnotationService =
+          new ExtendedAnnotationServiceJpaImpl();
+  static {
+    extendedAnnotationService.setSearchService(getSearchService());
+    extendedAnnotationService.setSecurityService(getSecurityService());
+    extendedAnnotationService.setAuthorizationService(getAuthorizationService());
+    extendedAnnotationService.setEntityManagerFactory(
+            newTestEntityManagerFactory("org.opencast.annotation.impl.persistence"));
+  }
 
   @Override
   protected ExtendedAnnotationService getExtendedAnnotationsService() {
-    return eas;
+    return extendedAnnotationService;
   }
 
   @DELETE
   @Path("/reset")
   public Response reset() {
-    eas.clearDatabase();
+    extendedAnnotationService.clearDatabase();
     return Response.noContent().build();
   }
 

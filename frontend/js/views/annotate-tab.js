@@ -146,8 +146,8 @@ define(
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                if (!attr.id || !attr.name || !attr.categories) {
-                    throw "Tab id,name and categories must be given as constuctor attributes!";
+                if (!attr.id || !attr.name) {
+                    throw "Tab id and name must be given as constuctor attributes!";
                 }
 
                 // Set the current context for all these functions
@@ -173,7 +173,7 @@ define(
                     "render"
                 );
 
-                this.categories = attr.categories;
+                this.categories = annotationTool.video.get("categories");
                 this.filter = attr.filter;
                 this.roles = attr.roles;
                 this.defaultCategoryAttributes = attr.attributes;
@@ -187,7 +187,7 @@ define(
                 this.currentPage = 0;
                 this.render();
 
-                this.addCategories(this.categories, this.filter);
+                this.addCategories(this.filter);
 
                 this.titleLink = attr.button;
                 this.titleLink.find("i.add").on("click", this.onAddCategory);
@@ -205,7 +205,10 @@ define(
                 });
                 this.titleLink.find(".file").on("change", this.onImport);
 
-                this.listenTo(this.categories, "add", this.addCategory);
+                this.listenTo(this.categories, "add", function (category) {
+                    if (!this.filter(category)) return;
+                    this.addCategory(category);
+                });
                 this.listenTo(this.categories, "remove", this.removeOne);
 
                 this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
@@ -262,46 +265,35 @@ define(
              * Add a list of category
              * @param {Categories} categories list of categories
              */
-            addCategories: function (categories, filter) {
-                categories.each(function (category) {
-                    if (filter(category)) {
-                        this.addCategory(category, categories, { skipTests: true });
-                    }
-                }, this);
+            addCategories: function (filter) {
+                this.categories.chain()
+                    .filter(filter)
+                    .each(this.addCategory);
             },
 
             /**
              * Add a category to the category view
              * @param {Category} category The category to add
-             * @param {Categories} collection The collection, if the category is already part of one
-             * @param {object} options Options to define if the category should be filtered or not (skipTests)
              */
             addCategory: function (category, collection, options) {
-                var categoryView;
 
-                if (!options.skipTests && !this.filter(category)) {
-                    return;
-                }
-
-                categoryView = new CategoryView({
+                this.insertCategoryView(new CategoryView({
                     category: category,
                     editModus: this.editModus,
                     roles: this.roles
-                });
-
-                this.insertCategoryView(categoryView);
+                }));
             },
 
             /**
              * Listener for category creation request from UI
              */
-            onAddCategory: function () {
+            onAddCategory: function (event) {
                 var attributes = {
                     name: i18next.t("annotate.new category name"),
-                    settings: {
+                    settings: _.extend(this.defaultCategoryAttributes.settings || {}, {
                         color: "#" + annotationTool.colorsManager.getNextColor(),
                         hasScale: false
-                    }
+                    })
                 };
                 this.categories.create(
                     _.extend(attributes, this.defaultCategoryAttributes),
@@ -432,14 +424,13 @@ define(
              */
             onExport: function () {
                 var json = {
-                        categories: [],
-                        scales: []
-                    },
-                    tmpScales = {},
-                    tmpScaleId;
+                    categories: [],
+                    scales: []
+                };
+                var tmpScales = {};
 
-                _.each(this.categories.filter(this.filter), function (category) {
-                    tmpScaleId = category.attributes.scale_id;
+                this.categories.chain().filter(this.filter).each(function (category) {
+                    var tmpScaleId = category.attributes.scale_id;
 
                     if (tmpScaleId && !tmpScales[tmpScaleId]) {
                         tmpScales[tmpScaleId] = annotationTool.video.get("scales").get(tmpScaleId);

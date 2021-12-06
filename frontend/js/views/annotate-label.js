@@ -169,14 +169,13 @@ define(
 
                 var id = event.target.getAttribute("value"),
                     scalevalue = this.scaleValues.get(id),
-                    annotation,
                     params = {
                         text: this.model.get("value"),
                         label: this.model,
                         scalevalue: scalevalue.toJSON()
                     };
 
-                annotation = annotationTool.createAnnotation(params);
+                createAnnotation(params);
             },
 
             /**
@@ -190,7 +189,7 @@ define(
                     return;
                 }
 
-                var annotation = annotationTool.createAnnotation({
+                createAnnotation({
                     text: this.model.get("value"),
                     label: this.model
                 });
@@ -332,6 +331,15 @@ define(
             }
 
         });
+
+        function createAnnotation(params) {
+            if (annotationTool.views.main.views.annotate.$el.find("#pause-video-structured").prop("checked")) {
+                annotationTool.playerAdapter.pause();
+            }
+
+            return annotationTool.createAnnotation(params);
+        }
+
         return LabelView;
     }
 );

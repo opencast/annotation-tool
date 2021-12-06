@@ -157,7 +157,8 @@ var Resource = Backbone.Model.extend({
      * Check whether this resource is public
      */
     isPublic: function () {
-        return this.get("access") === ACCESS.PUBLIC;
+        var access = this.get("access");
+        return access === ACCESS.PUBLIC || access === ACCESS.SHARED_WITH_EVERYONE;
     },
 
     /**

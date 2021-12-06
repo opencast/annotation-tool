@@ -39,7 +39,7 @@
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
-    <opencast.version>[8,10-SNAPSHOT)</opencast.version>
+    <opencast.version>[9,11-SNAPSHOT)</opencast.version>
   </properties>
 
   <modules>
@@ -52,7 +52,7 @@
     <testResources>
       <!-- Add a log4j configuration file to the test resources -->
       <testResource>
-        <directory>${annotation.basedir}/docs/log4j</directory>
+        <directory>${maven.multiModuleProjectDirectory}/docs/log4j</directory>
         <includes>
           <include>log4j.properties</include>
         </includes>
@@ -264,6 +264,7 @@
           <version>3.5.0</version>
           <extensions>true</extensions>
           <configuration>
+            <obrRepository>NONE</obrRepository>
             <instructions>
               <Bundle-Category>opencastproject</Bundle-Category>
               <Bundle-DocURL>https://opencast.org</Bundle-DocURL>
