@@ -25,6 +25,7 @@ define(
         "backbone",
         "util",
         "i18next",
+        "access",
         "models/video",
         "views/main",
         "alerts",
@@ -42,6 +43,7 @@ define(
         Backbone,
         util,
         i18next,
+        ACCESS,
         Video,
         MainView,
         alerts,
@@ -229,7 +231,10 @@ define(
                         });
                     } else {
                         tracks.showTracks(
-                            tracks.filter(util.caller("isMine"))
+                            tracks.filter(function (track) {
+                                return track.isMine()
+                                    || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                            })
                         );
                         ready.resolve();
                     }

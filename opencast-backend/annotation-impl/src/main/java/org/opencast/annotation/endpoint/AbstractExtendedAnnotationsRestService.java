@@ -1072,7 +1072,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     //   you might still want them to only be accessible when your requests
     //   come from a link that includes a valid media package id
     //   that you have access to
-    if (resource.getAccess() == Resource.PUBLIC) return true;
+    if (resource.getAccess() == Resource.PUBLIC || resource.getAccess() == Resource.SHARED_WITH_EVERYONE) return true;
     try {
       if (resource.getAccess() == Resource.SHARED_WITH_ADMIN && videoInterface.getAccess() == Access.ADMIN) return true;
     } catch (VideoInterfaceException e) {
