@@ -53,7 +53,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>install --engine-strict</arguments>
+              <arguments>install --engine-strict --no-audit</arguments>
             </configuration>
           </execution>
           <execution>
