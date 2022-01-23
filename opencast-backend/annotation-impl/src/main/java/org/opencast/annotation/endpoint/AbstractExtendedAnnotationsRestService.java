@@ -634,11 +634,16 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/categories")
-  public Response postCategoryTemplate(@FormParam("series_extid") final String seriesExtId,
-          @FormParam("series_category_id") final Long seriesCategoryId, @FormParam("name") final String name,
-          @FormParam("description") final String description, @FormParam("scale_id") final Long scaleId,
-          @FormParam("settings") final String settings, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags, @Context final HttpServletRequest request) {
+  public Response postCategoryTemplate(
+          @FormParam("series_extid") final String seriesExtId,
+          @FormParam("series_category_id") final Long seriesCategoryId,
+          @FormParam("name") final String name,
+          @FormParam("description") final String description,
+          @FormParam("scale_id") final Long scaleId,
+          @FormParam("settings") final String settings,
+          @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags,
+          @Context final HttpServletRequest request) {
     return postCategoryResponse(none(), none(), none(), name, description, scaleId, settings, access, tags, request);
   }
 
@@ -781,7 +786,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/categories")
-  public Response getCategories(@QueryParam("series-extid") final String seriesExtId,
+  public Response getCategories(@QueryParam("seriesExtId") final String seriesExtId,
           @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
           @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
           @QueryParam("tags-or") final String tagsOr, @Context final HttpServletRequest request) {

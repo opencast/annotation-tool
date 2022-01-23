@@ -59,7 +59,7 @@ define(
             url: function () {
                 return (this.video ? _.result(this.video, "url") : "")
                     + "/categories/"
-                    + (this.seriesExtId ? "?series-extid=" + this.seriesExtId : "");
+                    + (this.seriesExtId ? "?seriesExtId=" + this.seriesExtId : "");
             },
 
             /**
