@@ -67,9 +67,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -119,7 +121,8 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         try {
           JSONArray videos = new JSONArray();
-          for (VideoTrack track : videoInterface.getTracks()) {
+          Iterable<VideoTrack> tracks = Optional.ofNullable(videoInterface.getTracks()).orElse(Collections.emptyList());
+          for (VideoTrack track : tracks) {
             JSONObject video = new JSONObject();
             video.put("url", track.getUrl().toString());
             video.put("type", track.getType().toString());
