@@ -22,6 +22,7 @@ import org.opencast.annotation.api.ExtendedAnnotationService;
 
 import org.opencastproject.util.UrlSupport;
 import org.opencastproject.util.data.Tuple;
+import org.opencastproject.util.doc.rest.RestService;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -34,6 +35,12 @@ import javax.ws.rs.Path;
         "opencast.service.type=org.opencast.annotation",
         "opencast.service.path=/extended-annotations"})
 @Path("/")
+@RestService(
+    name = "extended-annotations",
+    title = "Annotation Tool Backend",
+    abstractText = "Scientific video annotations on Opencast media..",
+    notes = { }
+)
 public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsRestService {
 
   private ExtendedAnnotationService extendedAnnotationService;
