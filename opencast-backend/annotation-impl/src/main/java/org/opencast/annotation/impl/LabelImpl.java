@@ -18,7 +18,6 @@ package org.opencast.annotation.impl;
 import org.opencast.annotation.api.Label;
 import org.opencast.annotation.api.Resource;
 
-import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Option;
 
 import java.util.Objects;
