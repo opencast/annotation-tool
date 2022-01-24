@@ -3,10 +3,11 @@
   <groupId>ch.switch.cast.annotate</groupId>
   <artifactId>annotation-tool-api</artifactId>
   <versioning>
-    <release>2022.0111.144244-8ba2f91a7c5d3695225cd99cb0615d0f622886de</release>
+    <release>2022.0124.152954-6d4aa09d7fb7239beab1a3ccfc3ba670eee47684</release>
     <versions>
       <version>2022.0111.144244-8ba2f91a7c5d3695225cd99cb0615d0f622886de</version>
+      <version>2022.0124.152954-6d4aa09d7fb7239beab1a3ccfc3ba670eee47684</version>
     </versions>
-    <lastUpdated>20220111144246</lastUpdated>
+    <lastUpdated>20220124152956</lastUpdated>
   </versioning>
 </metadata>
