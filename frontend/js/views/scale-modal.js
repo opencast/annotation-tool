@@ -116,7 +116,9 @@ define([
                         ) })
                         .value()
                 );
-                this.scaleEditor = new ScaleEditor({ model: clone });
+                this.scaleEditor = new ScaleEditor({
+                    model: clone,
+                    deletable: !this.model.isNew() });
                 this.body.append(this.scaleEditor.el);
             }
         },
