@@ -35,7 +35,7 @@ define([
             this.model = options.model;
 
             var modelJSON = this.model.toJSON();
-            modelJSON.isNew = this.model.isNew();
+            modelJSON.deletable = options.deletable;
 
             this.$el.html(this.template(modelJSON));
 

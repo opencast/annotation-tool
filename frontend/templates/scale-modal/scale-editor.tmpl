@@ -1,4 +1,4 @@
-{{#unless isNew}}
+{{#if deletable}}
     <div class="control-group">
         <div class="controls">
             <button id="delete" type="button" class="btn btn-danger">
@@ -7,7 +7,7 @@
             </button>
         </div>
     </div>
-{{/unless}}
+{{/if}}
 
 <div class="control-group">
     <label class="control-label required" for="scale-modal-name">{{t "scale modal.name"}}</label>
