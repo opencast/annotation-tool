@@ -209,10 +209,10 @@
   },
   "required fields": "Required fields",
   "scale modal": {
-    "select scale": "select scale",
+    "select scale": "Select scale",
     "create scale": "Create new scale",
     "edit scale": "Edit scale \"{{name}}\"",
-    "help": "Note: Scales can supplement categories. The chosen scale will appear on any label of the category in question to further specify its expression.",
+    "help": "Scales can supplement categories. The chosen scale will appear on any label of the category in question to further specify its expression.",
     "name": "Name",
     "scale value": {
       "name": "Name",
