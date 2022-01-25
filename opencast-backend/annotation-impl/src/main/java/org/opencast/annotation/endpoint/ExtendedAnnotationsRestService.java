@@ -39,7 +39,7 @@ import javax.ws.rs.Path;
     name = "extended-annotations",
     title = "Annotation Tool Backend",
     abstractText = "Scientific video annotations on Opencast media..",
-    notes = { }
+    notes = { "The Annotation Tool does not yet provide REST documentation." }
 )
 public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsRestService {
 
