@@ -1,9 +1,17 @@
+<style>
+.track-modal .control-label {
+    width: 100px;
+}
+.track-modal .controls {
+    margin-left: 140px;
+}
+</style>
 <form class="form-horizontal">
     <div class="modal-header">
         <h3>{{t "timeline.track modals.header" context=action}}</h3>
     </div>
     <div class="modal-body">
-        <fieldset>
+        <fieldset class="track-modal">
             <div class="alert alert-error" style="display:none">
                 <span><i class="icon-exclamation-sign"></i></span>
                 <span id="content"></span>
@@ -28,9 +36,6 @@
                         <label class="radio">
                             <input type="radio" name="access-radio" value="shared-with-everyone">
                             {{t "timeline.track modals.access.shared with everyone" context=action}}<br>
-                            <span class="explanation">
-                                {{t "timeline.track modals.access.shared with everyone explanation"}}
-                            </span>
                         </label>
                     {{/if}}
                     <label class="radio">
