@@ -40,12 +40,6 @@ define([
             var access = ACCESS.render(this.track.get("access"));
             this.$el.find("[name='access-radio'][value='" + access + "']").prop("checked", true);
 
-            this.sharedWithEveryoneExplanation = this.$el.find(".explanation");
-            this.sharedWithEveryoneRadio = this.$el.find(
-                "[name='access-radio'][value='" + ACCESS.render(ACCESS.SHARED_WITH_EVERYONE) + "']"
-            );
-            this.fixExplanationVisibility();
-
             return this;
         },
 
@@ -95,14 +89,6 @@ define([
             show: true,
             backdrop: false,
             keyboard: true
-        },
-
-        fixExplanationVisibility: function (event) {
-            if (this.sharedWithEveryoneRadio.prop("checked")) {
-                this.sharedWithEveryoneExplanation.show();
-            } else {
-                this.sharedWithEveryoneExplanation.hide();
-            }
         },
 
         template: template

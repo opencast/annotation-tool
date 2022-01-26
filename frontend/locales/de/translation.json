@@ -224,10 +224,10 @@
   "timeline": {
     "change visibility": {
       "tooltip": "Sichtbarkeit ändern",
-      "to public": "Öffentlich machen",
-      "to private": "Privat machen",
-      "to shared with admin": "Mit Administratoren teilen",
-      "to shared with everyone": "Allen Benutzern automatisch anzeigen"
+      "to shared with everyone": "Standardmäßig anzeigen",
+      "to public": "Mit allen teilen",
+      "to shared with admin": "Mit Admin teilen",
+      "to private": "Privat schalten"
     },
     "track modals": {
       "header_add": "Neue Spur hinzufügen",
@@ -243,11 +243,10 @@
       },
       "access": {
         "label": "Zugriff",
-        "public": "Öffentlich",
-        "private": "Privat",
-        "shared with admin": "Mit Administrator teilen",
-        "shared with everyone": "Allen Benutzern automatisch anzeigen",
-        "shared with everyone explanation": "Die Spur wird allen Benutzern automatisch und schreibgeschützt angezeigt. Andere Benutzer können also keine Änderungen vornehmen."
+        "shared with everyone": "<b>Standardmäßig angezeigt</b> (wird allen Nutzern automatisch angezeigt)",
+        "public": "<b>Mit allen geteilt</b> (alle Nutzer können zugreifen)",
+        "shared with admin": "<b>Mit Admin geteilt</b> (Administratoren können zugreifen)",
+        "private": "<b>Privat</b> (nur Besitzer hat Zugriff)"
       },
       "name": {
         "label": "Name",

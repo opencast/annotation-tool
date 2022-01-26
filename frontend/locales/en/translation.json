@@ -249,11 +249,10 @@
       },
       "access": {
         "label": "Access",
-        "public": "Public",
-        "private": "Private",
-        "shared with admin": "Share with admin",
-        "shared with everyone": "Automatically display to all users",
-        "shared with everyone explanation": "The track is displayed to all users automatically and in read-only mode. So other users can not make any changes."
+        "shared with everyone": "<b>Visible by default</b> (automatically shown to all users)",
+        "public": "<b>Shared with anyone</b> (any user may access this)",
+        "shared with admin": "<b>Shared with admin</b> (admins may access this)",
+        "private": "<b>Private</b> (only owner has access)"
       },
       "name": {
         "label": "Name",
@@ -263,10 +262,10 @@
     },
     "change visibility": {
       "tooltip": "Change visibility",
-      "to public": "Make public",
-      "to private": "Make private",
+      "to shared with everyone": "Make visible by default",
+      "to public": "Shared with anyone",
       "to shared with admin": "Share with admin",
-      "to shared with everyone": "Automatically display to all users"
+      "to private": "Make private"
     },
     "delete track": "Delete track",
     "name required": "Name is required!",
