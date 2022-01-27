@@ -96,7 +96,11 @@ define([
                 if (this.model.isNew()) {
                     annotationTool.video.get("categories").add(this.model);
                 }
-                this.model.save(null, { async: false });
+
+                // Save this to get an id if we do not have one.
+                if (!this.model.id) {
+                    this.model.save(null, { async: false });
+                }
 
                 // Fix the affiliation. We do this as a second step
                 // because the category needs an ID for this
@@ -114,7 +118,7 @@ define([
                         series_extid: null
                     };
                 }
-                this.model.save(seriesParams);
+                this.model.save(seriesParams, { async: false });
 
                 _.each(this.removeLabels, function (label) {
                     this.model.get("labels").get(label).destroy();
