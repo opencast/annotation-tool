@@ -880,11 +880,6 @@ define(
                     return target.get("name");
                 },
                 destroy: function (scale, callback) {
-                    _.invoke(
-                        _.clone(scale.get("scaleValues").models),
-                        "destroy",
-                        { error: function () { throw "cannot delete scale value"; } }
-                    );
                     scale.destroy({
                         success: function () {
                             if (callback) {

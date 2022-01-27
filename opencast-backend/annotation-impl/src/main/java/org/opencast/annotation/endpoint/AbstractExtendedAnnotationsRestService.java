@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.DELETE;
@@ -466,8 +467,17 @@ public abstract class AbstractExtendedAnnotationsRestService {
         return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale s) {
-            if (!eas().hasResourceAccess(s))
+            if (!eas().hasResourceAccess(s)) {
               return UNAUTHORIZED;
+            }
+            // Delete all scale values
+            List<ScaleValue> values = eas().getScaleValues(s.getId(), Option.none(), Option.none(), Option.none(),
+                    Option.none(), Option.none());
+            for (ScaleValue value: values) {
+              logger.debug("Deleting {}", value.getName());
+              eas().deleteScaleValue(value);
+            }
+            // Delete scale itself
             return eas().deleteScale(s) ? NO_CONTENT : NOT_FOUND;
           }
 
