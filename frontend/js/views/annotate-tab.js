@@ -412,6 +412,9 @@ define(
              */
             onImport: function (evt) {
 
+                // unfocus menu
+                document.children[0].click()
+
                 var reader = new FileReader();
                 var file = evt.target.files[0];
                 var defaultCategoryAttributes = this.defaultCategoryAttributes;
@@ -425,7 +428,7 @@ define(
                             );
                         } catch (error) {
                             // TODO pop up an error modal to the user
-                            console.warn("The uploaded file is not valid!");
+                            console.warn("The uploaded file is not valid!", error);
                         }
                     };
                 })(file);

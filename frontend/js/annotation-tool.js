@@ -506,11 +506,12 @@ define(
                     }
                 });
 
+                var videoCategories = this.video.get("categories");
                 _.each(imported.categories, function (category) {
                     var labelsToAdd = category.labels;
                     category.scale_id = scalesIdMap[category.scale_id];
                     delete category.labels;
-                    var newCat = this.video.get("categories")
+                    var newCat = videoCategories
                         .create(_.extend(category, defaultCategoryAttributes), { async: false });
 
                     if (labelsToAdd) {
