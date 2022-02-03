@@ -1,0 +1,19 @@
+name: Check translation file syntax
+on:
+  - push
+  - pull_request
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Check syntax of translation files
+        run: |
+          set -uex
+          for json in frontend/locales/*/translation.json
+          do
+            jq < "$json"
+          done
