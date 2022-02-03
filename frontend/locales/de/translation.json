@@ -61,7 +61,7 @@
       "count_plural": "{{count}} Kommentare",
       "created": "am {{date}}",
       "edit": {
-        "button": "Bearbeiten",
+        "button": "Bearbeiten"
       },
       "modified": "zuletzt verändert am {{date}}",
       "placeholder": "Einen Kommentar für diese Annotation schreiben",
@@ -313,7 +313,7 @@
       "identifier": "Skala",
       "gender": "female"
     },
-    "determined": "$t(determiners.{{determiner}}.{{case}}.$t(models.{{context}}.gender))",
+    "determined": "$t(determiners.{{determiner}}.{{case}}.$t(models.{{context}}.gender))"
   },
   "determiners": {
     "definite article": {
@@ -327,9 +327,9 @@
       "accusative": {
         "male accusative": "diesen",
         "female accusative": "diese",
-        "neutral accusative": "dieses",
+        "neutral accusative": "dieses"
       }
-    },
+    }
   },
   "views": {
     "annotate": "Neue Annotationen erstellen",
