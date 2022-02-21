@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opencast.annotate</groupId>
+    <artifactId>annotation-tool-backend</artifactId>
+    <version>2022.0221.123022-4fd1cb407e0df2b350c01ba0a6f80a665ea58faf</version>
+  </parent>
+  <groupId>org.opencast.annotate</groupId>
+  <artifactId>annotation-tool-api</artifactId>
+  <version>2022.0221.123022-4fd1cb407e0df2b350c01ba0a6f80a665ea58faf</version>
+  <packaging>bundle</packaging>
+  <name>Opencast Annotation Tool :: Backend :: API</name>
+  <licenses>
+    <license>
+      <name>Educational Community License, Version 2.0</name>
+      <url>http://www.osedu.org/licenses/ECL-2.0/ecl2.txt</url>
+    </license>
+  </licenses>
+  <dependencies>
+    <dependency>
+      <groupId>org.opencastproject</groupId>
+      <artifactId>opencast-common</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Export-Package>org.opencast.annotation.api;version=${project.version}</Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
