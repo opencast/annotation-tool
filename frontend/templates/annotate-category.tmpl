@@ -4,7 +4,7 @@
         class="{{#if visible}}icon-eye-open{{else}}icon-eye-close{{/if}} visibility"
         title="{{#if visible}}{{t "annotate.hide category"}}{{else}}{{t "annotate.show category"}}{{/if}}"
     ></i>
-    {{#if isMine}}
+    {{#if canEdit}}
         <div class="dropdown">
             <button type="button" class="dropdown-toggle" data-toggle="dropdown">
                 <b class="caret"></b>

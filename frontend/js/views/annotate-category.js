@@ -24,6 +24,7 @@ define(
         "underscore",
         "backbone",
         "util",
+        "access",
         "views/annotate-label",
         "views/category-modal",
         "templates/annotate-category"
@@ -33,6 +34,7 @@ define(
         _,
         Backbone,
         util,
+        ACCESS,
         LabelView,
         CategoryModal,
         Template
@@ -213,6 +215,12 @@ define(
              */
             render: function () {
                 var modelJSON = this.model.toJSON();
+
+                if (modelJSON.access === ACCESS.PUBLIC) {
+                    modelJSON.canEdit = annotationTool.user.get("isAdmin");
+                } else {
+                    modelJSON.canEdit = modelJSON.isMine;
+                }
 
                 this.undelegateEvents();
 
