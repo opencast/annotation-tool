@@ -197,8 +197,17 @@ define(
                 // function to conclude the retrieve of annotations
                 var concludeInitialization = _.bind(function () {
 
+                    var tracks = this.video.get("tracks");
+
+                    tracks.showTracks(
+                        tracks.filter(function (track) {
+                            return track.isMine()
+                                || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                        })
+                    );
+
                     // At least one private track should exist, we select the first one
-                    var selectedTrack = this.video.get("tracks").filter(util.caller("isMine"))[0];
+                    var selectedTrack = tracks.filter(util.caller("isMine"))[0];
 
                     if (!selectedTrack.get("id")) {
                         selectedTrack.on("ready", concludeInitialization, this);
@@ -230,12 +239,6 @@ define(
                             success: concludeInitialization
                         });
                     } else {
-                        tracks.showTracks(
-                            tracks.filter(function (track) {
-                                return track.isMine()
-                                    || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
-                            })
-                        );
                         concludeInitialization();
                     }
                 }, this);
