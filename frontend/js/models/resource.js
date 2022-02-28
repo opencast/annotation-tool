@@ -74,16 +74,10 @@ var Resource = Backbone.Model.extend({
     sync: function () {
         return Backbone.Model.prototype.sync.apply(this, arguments)
             .then(_.bind(function (data, state, response) {
-                var passthrough = $.Deferred().resolve(data, state, response);
-
                 // No need to fetch children for previously nonexistent entities
-                if (response.status !== 201 /* Created */ && this.hasChanged("id")) {
-                    return $.when(this.fetchChildren()).then(function () {
-                        return passthrough;
-                    });
-                } else {
-                    return passthrough;
-                }
+                return $.when(this.fetchChildren()).then(function () {
+                    return $.Deferred().resolve(data, state, response);
+                });
             }, this));
     },
 
