@@ -82,7 +82,7 @@
             <phase>install</phase>
             <configuration>
               <target if="deployTo">
-                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${deployTo}/deploy"
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${deployTo}"
                   overwrite="true" failonerror="false" />
               </target>
             </configuration>
