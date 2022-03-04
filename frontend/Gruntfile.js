@@ -88,6 +88,12 @@ module.exports = function (grunt) {
                 fix: grunt.option('fix')
             },
             files: ['js/**/*.js', './{,.}*.js', '!js/libs/**/{,.}*']
+        },
+
+        jsonlint: {
+            translations: {
+                src: 'locales/*/translation.json'
+            }
         }
     });
 
@@ -97,6 +103,7 @@ module.exports = function (grunt) {
         'clean',
         'amdcheck',
         'eslint',
+        'jsonlint',
         'handlebars',
         'less',
         'copy'
