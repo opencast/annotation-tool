@@ -107,7 +107,6 @@ define(
             getAnnotations: (function () {
                 return function (category) {
                     return this.get("tracks").chain()
-                    // TODO This needs Underscore 1.9
                         .map(_.property(["annotations", "models"]))
                         .flatten()
                         .filter(filter(category))
