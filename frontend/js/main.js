@@ -38,6 +38,15 @@ require(
                 },
                 detection: {
                     caches: []
+                },
+                interpolation: {
+                    format: function (value, format, lng) {
+                        if (format.startsWith("lookup:")) {
+                            var key = format.split(":")[1].replace("_", value);
+                            return i18next.t(key);
+                        }
+                        return value;
+                    }
                 }
             }, function () {
                 moment.locale(i18next.language);

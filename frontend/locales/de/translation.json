@@ -313,7 +313,7 @@
       "identifier": "Skala",
       "gender": "female"
     },
-    "determined": "$t(determiners.{{determiner}}.{{case}}.$t(models.{{context}}.gender)) $t(models.{{context}}.identifier)"
+    "determined": "$t(determiners.{{determiner}}.{{case}}.{{context, lookup:models._.gender}}) $t(models.{{context}}.identifier)"
   },
   "determiners": {
     "definite article": {
