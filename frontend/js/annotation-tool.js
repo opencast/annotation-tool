@@ -132,14 +132,8 @@ define(
                     this,
                     "updateSelectionOnTimeUpdate",
                     "createAnnotation",
-                    "getAnnotation",
-                    "getSelection",
-                    "getTrack",
-                    "getTracks",
-                    "getSelectedTrack",
                     "fetchData",
                     "importCategories",
-                    "hasSelection",
                     "onDestroyRemoveSelection",
                     "onTimeUpdate",
                     "selectTrack",
@@ -194,6 +188,72 @@ define(
                 });
 
                 this.authenticate();
+            },
+
+            /**
+             * Get all the annotations for the current user
+             */
+            fetchData: function () {
+                // function to conclude the retrieve of annotations
+                var concludeInitialization = _.bind(function () {
+
+                    // At least one private track should exist, we select the first one
+                    var selectedTrack = this.video.get("tracks").filter(util.caller("isMine"))[0];
+
+                    if (!selectedTrack.get("id")) {
+                        selectedTrack.on("ready", concludeInitialization, this);
+                    } else {
+                        this.selectedTrack = selectedTrack;
+
+                        this.modelsInitialized = true;
+                        this.trigger(this.EVENTS.MODELS_INITIALIZED);
+                    }
+                }, this);
+
+                /**
+                 * Create a default track for the current user if no private track is present
+                 */
+                var createDefaultTrack = _.bind(function () {
+
+                    var tracks = this.video.get("tracks");
+
+                    if (!tracks.filter(util.caller("isMine")).length) {
+                        tracks.create({
+                            name: i18next.t("default track.name", {
+                                nickname: this.user.get("nickname")
+                            }),
+                            description: i18next.t("default track.description", {
+                                nickname: this.user.get("nickname")
+                            })
+                        }, {
+                            wait: true,
+                            success: concludeInitialization
+                        });
+                    } else {
+                        tracks.showTracks(
+                            tracks.filter(function (track) {
+                                return track.isMine()
+                                    || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                            })
+                        );
+                        concludeInitialization();
+                    }
+                }, this);
+
+                $.when(this.getVideoExtId(), this.getVideoParameters()).then(
+                    _.bind(function (videoExtId, videoParameters) {
+                        this.video = new Videos().add({ video_extid: videoExtId }).at(0);
+                        this.video.set(videoParameters);
+                        this.video.save(null, {
+                            error: _.bind(function (model, response, options) {
+                                if (response.status === 403) {
+                                    alerts.fatal(i18next.t("annotation not allowed"));
+                                }
+                            }, this)
+                        });
+                        this.listenToOnce(this.video, "ready", createDefaultTrack);
+                    }, this)
+                );
             },
 
             /**
@@ -304,19 +364,14 @@ define(
             },
 
             /**
-             * Returns the current selection of the tool
-             * @return {Annotation} The current selection or undefined if no selection.
+             * Select the given track
+             * @param {Object} track the track to select
              */
-            getSelection: function () {
-                return this.selection;
-            },
-
-            /**
-             * Informs if there is or not some items selected
-             * @return {Boolean} true if an annotation is selected or false.
-             */
-            hasSelection: function () {
-                return !!this.selection;
+            selectTrack: function (track) {
+                if (track === this.selectedTrack) return;
+                var previousTrack = this.selectedTrack;
+                this.selectedTrack = track;
+                this.video.get("tracks").trigger("select", track, previousTrack);
             },
 
             /**
@@ -328,7 +383,7 @@ define(
                 var strOrder = order.map(function (item) { return "" + item; });
                 //   Make sure every visible track is represented in the order,
                 // and only those, with non-explicitly ordered tracks in front.
-                this.tracksOrder = _.chain(this.getTracks().getVisibleTracks())
+                this.tracksOrder = _.chain(this.video.get("tracks").getVisibleTracks())
                     .sortBy(function (track) {
                         // convert each track ID to string to reliably compare them
                         return strOrder.indexOf("" + track.id);
@@ -422,125 +477,6 @@ define(
                 return annotation;
             },
 
-            /////////////
-            // GETTERs //
-            /////////////
-
-            /**
-             * Get the track with the given Id
-             * @param  {String} id The track Id
-             * @return {Object} The track object or undefined if not found
-             */
-            getTrack: function (id) {
-                if (_.isUndefined(this.video)) {
-                    console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
-                    return undefined;
-                } else {
-                    return this.video.getTrack(id);
-                }
-            },
-
-            /**
-             * Get all the tracks
-             * @return {Object} The list of the tracks
-             */
-            getTracks: function () {
-                if (_.isUndefined(this.video)) {
-                    console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
-                    return undefined;
-                } else {
-                    return this.video.get("tracks");
-                }
-            },
-
-            /**
-             * Get the track with the given Id
-             * @param {String} id The track Id
-             * @return {Object} The track object or undefined if not found
-             */
-            getSelectedTrack: function () {
-                return this.selectedTrack;
-            },
-
-            /**
-             * Select the given track
-             * @param {Object} track the track to select
-             */
-            selectTrack: function (track) {
-                if (track === this.selectedTrack) return;
-                var previousTrack = this.selectedTrack;
-                this.selectedTrack = track;
-                this.video.get("tracks")
-                    .trigger("select", track, previousTrack);
-            },
-
-            /**
-             * Get the annotation with the given Id
-             * @param {String} annotationId The annotation
-             * @param {String} trackId The track Id (Optional)
-             * @return {Object} The annotation object or undefined if not found
-             */
-            getAnnotation: function (annotationId, trackId) {
-                var track,
-                    annotation;
-
-                if (!_.isUndefined(trackId)) {
-                    // If the track id is given, we only search for the annotation on it
-
-                    track = this.getTrack(trackId);
-
-                    if (_.isUndefined(track)) {
-                        console.warn("Not able to find the track with the given Id");
-                        return undefined;
-                    } else {
-                        return track.annotations.get(annotationId);
-                    }
-                } else {
-                    // If no trackId present, we search through all tracks
-
-                    if (_.isUndefined(this.video)) {
-                        console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
-                        return undefined;
-                    } else {
-                        this.video.get("tracks").each(function (trackItem) {
-                            var tmpAnnotation = trackItem.getAnnotation(annotationId);
-                            if (!_.isUndefined(tmpAnnotation)) {
-                                annotation = tmpAnnotation;
-                            }
-                        }, this);
-                        return annotation;
-                    }
-                }
-            },
-
-            /**
-             * Get an array containning all the annotations or only the ones from the given track
-             * @param {String} trackId The track Id (Optional)
-             * @return {Array} The annotations
-             */
-            getAnnotations: function (trackId) {
-                var track,
-                    tracks,
-                    annotations = [];
-
-                if (_.isUndefined(this.video)) {
-                    console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
-                } else {
-                    if (!_.isUndefined(trackId)) {
-                        track = this.getTrack(trackId);
-                        if (!_.isUndefined(track)) {
-                            annotations = track.annotations.toArray();
-                        }
-                    } else {
-                        tracks = this.video.get("tracks");
-                        tracks.each(function (t) {
-                            annotations = _.union(annotations, t.annotations.toArray());
-                        }, this);
-                    }
-                }
-                return annotations;
-            },
-
             ////////////////
             // IMPORTERs  //
             ////////////////
@@ -594,76 +530,6 @@ define(
                         });
                     }
                 });
-            },
-
-            /**
-             * Get all the annotations for the current user
-             */
-            fetchData: function () {
-                var tracks,
-                    // function to conclude the retrieve of annotations
-                    concludeInitialization = _.bind(function () {
-
-                        // At least one private track should exist, we select the first one
-                        var selectedTrack = tracks.filter(util.caller("isMine"))[0];
-
-                        if (!selectedTrack.get("id")) {
-                            selectedTrack.on("ready", concludeInitialization, this);
-                        } else {
-                            this.selectedTrack = selectedTrack;
-
-                            this.modelsInitialized = true;
-                            this.trigger(this.EVENTS.MODELS_INITIALIZED);
-                        }
-                    }, this),
-
-                    /**
-                     * Create a default track for the current user if no private track is present
-                     */
-                    createDefaultTrack = _.bind(function () {
-
-                        tracks = this.video.get("tracks");
-
-                        if (!tracks.filter(util.caller("isMine")).length) {
-                            tracks.create({
-                                name: i18next.t("default track.name", {
-                                    nickname: this.user.get("nickname")
-                                }),
-                                description: i18next.t("default track.description", {
-                                    nickname: this.user.get("nickname")
-                                })
-                            }, {
-                                wait: true,
-                                success: concludeInitialization
-                            });
-                        } else {
-                            tracks.showTracks(
-                                tracks.filter(function (track) {
-                                    return track.isMine()
-                                        || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
-                                })
-                            );
-                            concludeInitialization();
-                        }
-                    }, this);
-
-                $.when(this.getVideoExtId(), this.getVideoParameters()).then(
-                    _.bind(function (videoExtId, videoParameters) {
-                        // If we are using the localstorage
-                        var video = new Videos().add({ video_extid: videoExtId }).at(0);
-                        this.video = video;
-                        video.set(videoParameters);
-                        video.save(null, {
-                            error: _.bind(function (model, response, options) {
-                                if (response.status === 403) {
-                                    alerts.fatal(i18next.t("annotation not allowed"));
-                                    this.views.main.loadingBox.hide();
-                                }
-                            }, this)
-                        });
-                        this.listenToOnce(video, "ready", createDefaultTrack);
-                    }, this)
-                );
             },
 
             ////////////////
@@ -758,7 +624,7 @@ define(
                 bookData.push(header);
 
                 _.each(tracks, function (track) {
-                    _.each(annotationTool.getAnnotations(track.id), function (annotation) {
+                    track.annotations.each(function (annotation) {
                         var line = [];
 
                         var label = annotation.attributes.label;
