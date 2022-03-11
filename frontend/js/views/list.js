@@ -83,7 +83,7 @@ define(
 
                 this.setTrackList(tracks.getVisibleTracks());
 
-                this.renderSelection(annotationTool.getSelection());
+                this.renderSelection(annotationTool.selection);
                 this.renderActive(annotationTool.getCurrentAnnotations());
 
                 return this;
@@ -211,7 +211,7 @@ define(
              * @param {Array<Annotation>} previousSelection the previously active annotations
              */
             renderActive: function (currentAnnotations, previousAnnotations) {
-                var selection = annotationTool.getSelection();
+                var selection = annotationTool.selection;
                 var refocusSelection = selection && this.autoExpand;
                 if (refocusSelection) {
                     var selectionView = this.getViewFromAnnotation(selection.id).$el;

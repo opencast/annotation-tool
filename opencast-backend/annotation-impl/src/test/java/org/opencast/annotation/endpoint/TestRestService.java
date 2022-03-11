@@ -15,7 +15,6 @@
  */
 package org.opencast.annotation.endpoint;
 
-import static org.opencastproject.test.rest.RestServiceTestEnv.localhostRandomPort;
 import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -35,8 +34,6 @@ import org.opencastproject.security.util.SecurityUtil;
 import org.easymock.EasyMock;
 import org.junit.Ignore;
 
-import java.net.URL;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -45,8 +42,6 @@ import javax.ws.rs.core.Response;
 // put @Ignore here to prevent maven surefire from complaining about missing test methods
 @Ignore
 public class TestRestService extends AbstractExtendedAnnotationsRestService {
-  public static final URL BASE_URL = localhostRandomPort();
-
   // Declare this dependency static since the TestRestService gets instantiated multiple times.
   // Haven't found out who's responsible for this but that's the way it is.
   public static final ExtendedAnnotationServiceJpaImpl extendedAnnotationService =
@@ -109,6 +104,6 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
 
   @Override
   protected String getEndpointBaseUrl() {
-    return BASE_URL.toString();
+    return ExtendedAnnotationsRestServiceTest.rt.host("/");
   }
 }

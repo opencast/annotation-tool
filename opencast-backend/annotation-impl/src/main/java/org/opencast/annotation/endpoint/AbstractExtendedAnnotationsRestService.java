@@ -1051,6 +1051,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         case NOT_FOUND:
           return NOT_FOUND;
         default:
+          logger.error("The annotation tool endpoint experienced an unexpected error.", e);
           return SERVER_ERROR;
       }
     }

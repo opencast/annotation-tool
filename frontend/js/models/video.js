@@ -97,72 +97,41 @@ define(
             },
 
             /**
-             * Get the track with the given id
-             * @param {integer} trackId The id from the wanted track
-             * @return {Track} The track with the given id
-             */
-            getTrack: function (trackId) {
-                if (_.isUndefined(this.tracks)) {
-                    this.tracks = this.get("tracks");
-                }
-
-                return this.tracks.get(trackId);
-            },
-
-            /**
              * @return {Annotation[]} This video's annotations
              *     across all tracks, potentially filtered
              *     by a given category.
-             * @param {(Category | null)?} category
+             * @param {Category?} category
              *     A category to filter the returned annotations by.
-             *     <code>null</code> means free text annotations.
-             *     <code>undefined</code> means all annotations.
+             *     Falsy values mean free text annotations.
              */
-            getAnnotations: function (category) {
-                var result = [];
-                var handleAnnotation;
-                if (_.isUndefined(category)) {
-                    handleAnnotation = _.bind(Array.prototype.push, result);
-                } else if (category) {
-                    handleAnnotation = function (annotation) {
+            getAnnotations: (function () {
+                return function (category) {
+                    return this.get("tracks").chain()
+                        .map(_.property(["annotations", "models"]))
+                        .flatten()
+                        .filter(filter(category))
+                        .value();
+                };
+
+                function filter(category) {
+                    if (category) {
+                        return withCategory(category);
+                    } else {
+                        return withoutCategory;
+                    }
+                }
+
+                function withoutCategory(annotation) {
+                    return annotation.get("label");
+                }
+
+                function withCategory(category) {
+                    return function (annotation) {
                         var label = annotation.get("label");
-                        if (label && label.category.id === category.id) {
-                            result.push(annotation);
-                        }
-                    };
-                } else {
-                    handleAnnotation = function (annotation) {
-                        if (!annotation.get("label")) {
-                            result.push(annotation);
-                        }
+                        return label && label.category.id === category.id;
                     };
                 }
-                this.get("tracks").each(function (track) {
-                    track.annotations.each(handleAnnotation);
-                });
-                return result;
-            },
-
-            /**
-             * Get the annotation with the given id on the given track
-             * @param {integer} annotationId The id from the wanted annotation
-             * @param {integer} trackId The id from the track containing the annotation
-             * @return {Track} The annotation with the given id
-             */
-            getAnnotation: function (annotationId, trackId) {
-                var track = this.getTrack(trackId),
-                    tmpAnnotation;
-
-                if (track) {
-                    return track.getAnnotation(annotationId);
-                } else {
-                    this.get("tracks").find(function (trackItem) {
-                        tmpAnnotation = trackItem.getAnnotation(annotationId);
-                        return !_.isUndefined(tmpAnnotation);
-                    });
-                    return tmpAnnotation;
-                }
-            },
+            })(),
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
