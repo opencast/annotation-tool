@@ -90,10 +90,10 @@
   },
   "delete modal": {
     "title": "$t(models.{{context}}.identifier) löschen",
-    "warning": "Wollen Sie $t(models.determined, { 'determiner': 'definite article', 'case': 'accusative' }) „{{content}}“ wirklich löschen?"
+    "warning": "Wollen Sie $t(models.determined, { 'determiner': 'definite article', 'case': 'accusative', 'context': '{{context}}' }) „{{content}}“ wirklich löschen?"
   },
   "delete operations": {
-    "unauthorized": "Sie sind nicht autorisiert, $t(models.determined, { 'determiner': 'demonstrative', 'case': 'accusative' }) zu löschen!"
+    "unauthorized": "Sie sind nicht autorisiert, $t(models.determined, { 'determiner': 'demonstrative', 'case': 'accusative', 'context': '{{context}}' }) zu löschen!"
   },
   "description": "Werkzeug zur Videoannotation",
   "loop controller": {
@@ -313,7 +313,7 @@
       "identifier": "Skala",
       "gender": "female"
     },
-    "determined": "$t(determiners.{{determiner}}.{{case}}.$t(models.{{context}}.gender))"
+    "determined": "$t(determiners.{{determiner}}.{{case}}.$t(models.{{context}}.gender)) $t(models.{{context}}.identifier)"
   },
   "determiners": {
     "definite article": {
@@ -323,11 +323,11 @@
         "neutral": "das"
       }
     },
-    "demonstratives": {
+    "demonstrative": {
       "accusative": {
-        "male accusative": "diesen",
-        "female accusative": "diese",
-        "neutral accusative": "dieses"
+        "male": "diesen",
+        "female": "diese",
+        "neutral": "dieses"
       }
     }
   },
