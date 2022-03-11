@@ -19,16 +19,14 @@
  */
 define(
     [
-        "jquery",
         "underscore",
-        "backbone",
+        "views/modal",
         "templates/alert-modal",
         "bootstrap"
     ],
     function (
-        $,
         _,
-        Backbone,
+        Modal,
         AlertTemplate
     ) {
         "use strict";
@@ -39,10 +37,7 @@ define(
          * @augments module:Backbone.View
          * @memberOf module:views-alert
          */
-        var Alert = Backbone.View.extend({
-
-            el: $("#alert"),
-
+        var Alert = Modal.extend({
             /**
              * Alert template
              * @type {HandlebarsTemplate}
@@ -54,47 +49,27 @@ define(
              * @type {object}
              */
             events: {
-                "click #confirm-alert": "hide"
+                "click .confirm-alert": "remove"
             },
 
             /**
              * Constructor
+             * @param {object} attr Object literal containing the view initialization attributes.
+             *     Sensible values for this parameter can be found in {@link Alert.TYPES}.
              */
-            initialize: function () {
-                _.bindAll(this, "show", "hide");
+            initialize: function (attr) {
+                Modal.prototype.initialize.call(this, attr.modalOptions);
+                _.extend(this, _.pick(attr, Alert.ATTRIBUTES));
+
+                this.render();
             },
 
             /**
-             * Display the modal with the given message as the given alert type
-             * @param  {String} message The message to display
-             * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-alert.Alert#TYPES}
+             * Draw the modal
+             * @return {Alert} this alert modal
              */
-            show: function (message, type) {
-                var params;
-
-                if (_.isString(type)) {
-                    type = Alert.TYPES[type.toUpperCase()];
-                }
-
-                if (_.isUndefined(message) || _.isUndefined(type) ||
-                    _.isUndefined(type.title)  || _.isUndefined(type.className)) {
-                    throw "Alert modal requires a valid type and a message!";
-                }
-
-                params = _.extend(type, { message: message });
-
-                this.$el.empty();
-                this.$el.append(this.template(params));
-                this.delegateEvents();
-
-                this.$el.modal(_.defaults(type.modalOptions || {}, { show: true, backdrop: true, keyboard: false }));
-            },
-
-            /**
-             * Hide the modal
-             */
-            hide: function () {
-                this.$el.modal("hide");
+            render: function () {
+                this.$el.html(this.template(_.pick(this, Alert.ATTRIBUTES)));
             }
         }, {
             /**
@@ -105,26 +80,27 @@ define(
             TYPES: {
                 ERROR: {
                     title: "alert.error.title",
-                    className: "alert-error"
+                    severity: "alert-error"
                 },
                 FATAL: {
                     title: "alert.fatal.title",
-                    className: "alert-error",
-                    hideButtons: true,
-                    modalOptions: {
-                        backdrop: "static",
-                        keyboard: false
-                    }
+                    severity: "alert-error",
+                    hideButtons: true
                 },
                 WARNING: {
-                    title: "alert.warning.title",
-                    className: ""
+                    title: "alert.warning.title"
                 },
                 INFO: {
                     title: "alert.info.title",
-                    className: "alert-info"
+                    severity: "alert-info"
                 }
-            }
+            },
+            ATTRIBUTES: [
+                "title",
+                "message",
+                "severity",
+                "hideButtons"
+            ]
         });
 
         return Alert;

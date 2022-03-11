@@ -86,7 +86,7 @@ define(
                 start: function (target, type, confirmCallback, closeCallback) {
 
                     if (!target.isEditable()) {
-                        alerts.warning("You are not authorized to deleted this " + type.name + "!");
+                        alerts.warning(i18next.t("delete operations.unauthorized", { context: type.name }));
                         return;
                     }
 
