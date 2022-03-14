@@ -82,8 +82,10 @@ require(
                 // So our first guess will be to just use the lowercases detected language tag.
                 mediaelementLanguage = i18next.language.toLowerCase();
                 (function guess() {
-                    require(["mediaelement/lang/" + mediaelementLanguage],
-                        start,  // If that worked, we can jsut start the app.
+                    require(
+                        ["mediaelement/lang/" + mediaelementLanguage],
+                        start,
+                        // If that worked, we can jsut start the app.
                         function () {
                             // If this fails, we strip a subtag from the last guess and try again.
                             var subtagStart = mediaelementLanguage.lastIndexOf("-");

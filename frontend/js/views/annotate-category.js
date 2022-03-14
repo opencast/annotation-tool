@@ -91,7 +91,8 @@ define(
                 "click .catItem-header button[data-access]": "onChangeAccess",
                 "focusout .catItem-header input": "onFocusOut",
                 "keydown .catItem-header input": "onKeyDown",
-                "click .catItem-add": "onCreateLabel"
+                "click .catItem-add": "onCreateLabel",
+                "click .catItem-header i.toggle-series": "toggleSeries"
             },
 
             /**
@@ -182,20 +183,66 @@ define(
             },
 
             /**
+             * Callback for modal spawned by toggleSeries.
+             * Turns a series category back to a video category
+             * @param {Id of the series} categorySeriesCategoryId
+             */
+            toVideoCategory: function (categorySeriesCategoryId) {
+                this.model.tmpSeriesCategoryId = categorySeriesCategoryId;
+                this.model.set("series_extid", "");
+                this.model.set("series_category_id", "");
+                this.model.save(null, { wait: true });
+            },
+
+            /**
+             * Toggle the category between belonging to an event and belonging
+             * to a series
+             */
+            toggleSeries: function () {
+                var categorySeriesId = this.model.get("series_extid");
+                var seriesCategoryId = this.model.get("series_category_id");
+                var videoSeriesId = annotationTool.video.get("series_extid");
+
+                if (seriesCategoryId) {
+                    // Remove from series
+                    // Display modal. If user accepts, execute toVideoCategory callback
+                    annotationTool.seriesCategoryOperation.start(this, seriesCategoryId);
+
+                } else if (!seriesCategoryId && videoSeriesId) {
+                    // If there's a scale, show an error message instead.
+                    // This doesn't really belong on scaleEditor, but I don't want to create
+                    // a whole new class for a simple error modal.
+                    if (this.model.get("settings").hasScale) {
+                        annotationTool.scaleEditor.showWarning({
+                            title: i18next.t("scale editor.warning.name"),
+                            message: i18next.t("scale editor.warning.messageScaleOnSeriesCategory")
+                        });
+                    } else {
+                        // Add to series
+                        this.model.set("series_extid", videoSeriesId);
+                        this.model.set("series_category_id", this.model.id);
+                    }
+                    this.model.save(null, { wait: true });
+                }
+            },
+
+            /**
              * Update the size of all the input for the label value
              */
             updateInputWidth: function () {
-                var $headerEl   = this.$el.find(".catItem-header"),
-                    titleWidth;
+                var $headerEl = this.$el.find(".catItem-header");
+                var titleWidth;
 
                 if (this.editModus) {
-                    titleWidth = $headerEl.width() - ($headerEl.find(".colorPicker-picker").outerWidth() +
-                                                    $headerEl.find(".delete").outerWidth() +
-                                                    $headerEl.find(".scale").outerWidth() +
-                                                    30);
+                    titleWidth = $headerEl.width() - (
+                        $headerEl.find(".colorPicker-picker").outerWidth() +
+                            $headerEl.find(".delete").outerWidth() +
+                            $headerEl.find(".scale").outerWidth() +
+                            30
+                    );
 
                     $headerEl.find("input").width(titleWidth);
-                }  else {
+                } else {
                     $headerEl.find("input").width("100%");
                 }
 
@@ -252,7 +299,15 @@ define(
              * Open the scales editor modal
              */
             editScale: function () {
-                annotationTool.scaleEditor.show(this.model, this.model.get("access"));
+                if (this.model.get("series_category_id")) {
+                    // Workaround for scales and series categories
+                    annotationTool.scaleEditor.showWarning({
+                        title: i18next.t("scale editor.warning.name"),
+                        message: i18next.t("scale editor.warning.message")
+                    });
+                } else {
+                    annotationTool.scaleEditor.show(this.model, this.model.get("access"));
+                }
             },
 
             /**

@@ -50,6 +50,8 @@
     "show category": "Show category",
     "show free text": "Show free text annotations",
     "hide free text": "Hide free text annotations",
+    "video category": "Category belongs to this video",
+    "series category": "Category belongs to the series and is shown in all videos",
     "structured annotations": "Structured Annotations"
   },
   "annotation": {
@@ -100,6 +102,13 @@
     "delete": "$t(common actions.delete)",
     "title": "Delete {{context}}",
     "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
+  },
+  "series category modal": {
+    "cancel": "$t(common actions.cancel)",
+    "to video": "To Video Category",
+    "title": "Warning!",
+    "warning": "Changing the affiliation of this category from series back to video will delete the category from all other videos of this series! Proceed?",
+    "custom message": "This category belongs to a series and appears in all videos. If you delete this category, it will be deleted for all other videos as well."
   },
   "description": "Video annotation tool",
   "list annotation": {
@@ -189,6 +198,7 @@
   "scale editor": {
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
+    "close": "$t(common actions.close)",
     "description": {
       "label": "Description",
       "placeholder": "Insert the category description"
@@ -216,6 +226,11 @@
         "header": "Value",
         "placeholder": "Insert a decimal number."
       }
+    },
+    "warning": {
+      "name": "Attention!",
+      "message": "This category belongs to a series. Therefore, assigning a scale is not possible.",
+      "messageScaleOnSeriesCategory": "Category has a scale. Changing category affiliation is not possible."
     }
   },
   "startup": {

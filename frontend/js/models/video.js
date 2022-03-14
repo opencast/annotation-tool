@@ -71,6 +71,14 @@ define(
             },
 
             /**
+             * Constructor
+             */
+            initialize: function () {
+                this.get("categories").seriesExtId = this.get("series_extid");
+                Resource.prototype.initialize.apply(this, arguments);
+            },
+
+            /**
              * (Re-)Fetch the scale values once our ID changes.
              */
             fetchChildren: function () {

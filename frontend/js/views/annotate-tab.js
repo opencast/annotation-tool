@@ -351,8 +351,8 @@ define(
              * Add a new carousel item to this tabe
              */
             addCarouselItem: function () {
-                var length = this.categoryViews.length,
-                    pageNumber = Math.floor(length / annotationTool.CATEGORIES_PER_TAB) + 1;
+                var length = this.categoryViews.length;
+                var pageNumber = Math.floor(length / annotationTool.CATEGORIES_PER_TAB) + 1;
 
                 this.categoriesContainer.append(this.itemContainerTemplate());
 
@@ -454,19 +454,17 @@ define(
              */
             onImport: function (evt) {
 
-                var reader = new FileReader(),
-                    file = evt.target.files[0],
-                    defaultCategoryAttributes = this.defaultCategoryAttributes;
+                var reader = new FileReader();
+                var file = evt.target.files[0];
+                var defaultCategoryAttributes = this.defaultCategoryAttributes;
 
                 reader.onload = (function () {
                     return function (e) {
-                        // Render thumbnail.
-                        var importAsString = e.target.result,
-                            importAsJSON;
-
                         try {
-                            importAsJSON = JSON.parse(importAsString);
-                            annotationTool.importCategories(importAsJSON, defaultCategoryAttributes);
+                            annotationTool.importCategories(
+                                JSON.parse(e.target.result),
+                                defaultCategoryAttributes
+                            );
                         } catch (error) {
                             // TODO pop up an error modal to the user
                             console.warn("The uploaded file is not valid!");

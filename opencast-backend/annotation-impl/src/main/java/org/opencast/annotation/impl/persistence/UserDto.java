@@ -91,7 +91,7 @@ public class UserDto extends AbstractResourceDto {
     super.update(resource);
     this.userId = userId;
     this.nickname = nickname;
-    this.email = email.getOrElse((String) null);
+    this.email = email.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
     return this;

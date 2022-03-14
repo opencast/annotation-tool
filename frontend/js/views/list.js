@@ -228,7 +228,8 @@ define(
                         view.collapse(true);
                     }
                 }, this);
-                var firstView, lastView;
+                var firstView;
+                var lastView;
                 _.each(currentAnnotations, function (annotation) {
                     var view = this.getViewFromAnnotation(annotation.id);
 

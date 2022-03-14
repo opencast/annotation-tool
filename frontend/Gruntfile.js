@@ -44,13 +44,10 @@ module.exports = function (grunt) {
                     expand: true,
                     src: [
                         'index.html',
-                        'js/**/*.js',
+                        'js/**/*',
                         'img/**/*',
-                        'style/**/*.svg',
-                        'style/**/*.png',
                         'style/**/*',
-                        'locales/**/*.json',
-                        '{js,style}/**/*.map'
+                        'locales/**/*'
                     ],
                     dest: '<%= destPath %>'
                 }, {
@@ -75,19 +72,27 @@ module.exports = function (grunt) {
             },
             all: {
                 expand: true,
-                src: ['js/**/*.js', '!js/lib/**/*'],
+                src: ['js/**/*.js', '!js/libs/**/*'],
                 dest: '.'
             }
         },
 
         eslint: {
             options: {
-                maxWarnings: 0,
                 failOnError: true,
                 maxWarnings: grunt.option('maxWarnings'),
                 fix: grunt.option('fix')
             },
             files: ['js/**/*.js', './{,.}*.js', '!js/libs/**/{,.}*']
+        },
+
+        stylelint: {
+            options: {
+                failOnError: true,
+                maxWarnings: grunt.option('maxWarnings'),
+                fix: grunt.option('fix')
+            },
+            files: ['style/annotations/**/*.less', 'style/style.less']
         },
 
         jsonlint: {
@@ -103,6 +108,7 @@ module.exports = function (grunt) {
         'clean',
         'amdcheck',
         'eslint',
+        'stylelint',
         'jsonlint',
         'handlebars',
         'less',

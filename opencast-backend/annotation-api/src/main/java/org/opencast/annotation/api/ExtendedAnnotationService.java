@@ -443,7 +443,7 @@ public interface ExtendedAnnotationService {
    *          the scale value
    * @param order
    *          the scale order
-   * @param sclaeId
+   * @param scaleId
    *          the scaleId
    * @param resource
    *          the resource
@@ -511,6 +511,10 @@ public interface ExtendedAnnotationService {
   /**
    * Creates a template category
    * 
+   * @param seriesExtId
+   *          the external series the category belongs to
+   * @param seriesCategoryId
+   *          the series category the category belongs to
    * @param videoId
    *          the video id
    * @param scaleId
@@ -527,30 +531,27 @@ public interface ExtendedAnnotationService {
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Category createCategory(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource) throws ExtendedAnnotationException;
+  Category createCategory(Option<String> seriesExtId, Option<Long> seriesCategoryId, Option<Long> videoId,
+          Option<Long> scaleId, String name, Option<String> description, Option<String> settings, Resource resource)
+          throws ExtendedAnnotationException;
 
   /**
    * Creates a category
    * 
+   * @param seriesExtId
+   *          the external series the category belongs to
+   * @param seriesCategoryId
+   *          the series category the category belongs to
    * @param videoId
    *          the video id where the category is
-   * @param scaleId
-   *          the scale that is used for this category
-   * @param name
-   *          the category name
-   * @param description
-   *          the category description
-   * @param settings
-   *          the category settings
    * @param resource
    *          the resource
    * @return the created category
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Option<Category> createCategoryFromTemplate(long videoId, long templateCategoryId, Resource resource)
-          throws ExtendedAnnotationException;
+  Option<Category> createCategoryFromTemplate(long templateCategoryId, String seriesExtId, Long seriesCategoryId,
+          long videoId, Resource resource) throws ExtendedAnnotationException;
 
   /**
    * Get a category value by id.
@@ -568,6 +569,8 @@ public interface ExtendedAnnotationService {
   /**
    * Get all categories from a video.
    * 
+   * @param seriesExtId
+   *          the external series the category belongs to
    * @param videoId
    *          the video id
    * @param offset
@@ -584,8 +587,9 @@ public interface ExtendedAnnotationService {
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  List<Category> getCategories(Option<Long> videoId, Option<Integer> offset, Option<Integer> limit, Option<Date> since,
-          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+  List<Category> getCategories(Option<String> seriesExtId, Option<Long> videoId, Option<Integer> offset,
+          Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
+          Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
 
   /**
    * Update a category.
@@ -596,6 +600,17 @@ public interface ExtendedAnnotationService {
    *           if an error occurs while storing/retrieving from persistence storage
    */
   void updateCategory(Category category) throws ExtendedAnnotationException;
+
+  /**
+   * Update a series category
+   * Moves the master series category to the newVideoId and deletes all other series categories
+   *
+   * @param category
+   *          the category to update
+   * @throws ExtendedAnnotationException
+   *          if an error occurs while storing/retrieving from persistence storage
+   */
+  void updateCategoryAndDeleteOtherSeriesCategories(Category category) throws ExtendedAnnotationException;
 
   /**
    * Delete a category.

@@ -130,5 +130,4 @@ public class ScaleValueDto extends AbstractResourceDto {
     return jO(p("offset", offset), p("count", scaleValues.size()),
             p("scaleValues", jA(mlist(scaleValues).map(toJson.curry(s)))));
   }
-
 }

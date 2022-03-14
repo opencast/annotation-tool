@@ -225,7 +225,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       deleteTrack(track);
     }
 
-    List<Category> categories = getCategories(some(video.getId()), none(), none(), none(), none(), none());
+    List<Category> categories = getCategories(none(), some(video.getId()), none(), none(), none(), none(), none());
     for (Category category : categories) {
       deleteCategory(category);
     }
@@ -555,21 +555,22 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public Category createCategory(Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource) throws ExtendedAnnotationException {
-    final CategoryDto dto = CategoryDto.create(videoId, scaleId, name, description, settings, resource);
+  public Category createCategory(Option<String> seriesExtId, Option<Long> seriesCategoryId, Option<Long> videoId,
+          Option<Long> scaleId, String name, Option<String> description, Option<String> settings, Resource resource)
+          throws ExtendedAnnotationException {
+    final CategoryDto dto = CategoryDto.create(seriesExtId, seriesCategoryId, videoId, scaleId, name, description,
+            settings, resource);
 
     return tx(Queries.persist(dto)).toCategory();
   }
 
   @Override
-  public Option<Category> createCategoryFromTemplate(final long videoId, final long templateCategoryId,
-          final Resource resource) throws ExtendedAnnotationException {
+  public Option<Category> createCategoryFromTemplate(final long templateCategoryId, final String seriesExtId,
+          final Long seriesCategoryId, final long videoId, final Resource resource) throws ExtendedAnnotationException {
     return getCategory(templateCategoryId, false).map(new Function<Category, Category>() {
       @Override
       public Category apply(Category c) {
         Long scaleId = null;
-
         // Copy scale
         if (c.getScaleId().isSome()) {
           Option<Scale> scale = getScale(c.getScaleId().get(), false);
@@ -583,10 +584,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             createScaleValue(scaleId, sv.getName(), sv.getValue(), sv.getOrder(), resource);
           }
         }
-
         // Copy category
-        final CategoryDto copyDto = CategoryDto.create(Option.some(videoId), option(scaleId), c.getName(),
-                c.getDescription(), c.getSettings(), resource);
+        final CategoryDto copyDto = CategoryDto.create(option(seriesExtId), option(seriesCategoryId),
+                Option.some(videoId), option(scaleId), c.getName(), c.getDescription(), c.getSettings(), resource);
         Category category = (Category) tx(new Function<EntityManager, Object>() {
           @Override
           public Object apply(EntityManager em) {
@@ -609,9 +609,38 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     update("Category.findById", c.getId(), new Effect<CategoryDto>() {
       @Override
       public void run(CategoryDto dto) {
-        dto.update(c.getName(), c.getDescription(), c.getScaleId(), c.getSettings(), c);
+        dto.update(c.getSeriesExtId(), c.getSeriesCategoryId(), c.getVideoId(), c.getName(), c.getDescription(),
+                c.getScaleId(), c.getSettings(), c);
       }
     });
+  }
+
+  @Override
+  public void updateCategoryAndDeleteOtherSeriesCategories(final Category c) throws ExtendedAnnotationException {
+    // Get the pre-update version of the category, to figure out its seriesCategoryId
+    Option<CategoryDto> dto;
+    Option<Category> pastC = none();
+    dto = findById("Category.findById", c.getId());
+    if (dto.isSome()) {
+      pastC = dto.map(toCategory);
+    }
+
+    // Get all categories on all videos belonging to the seriesCategoryId (including the master)
+    if (pastC.isSome() && pastC.get().getSeriesCategoryId().isSome()) {
+      List<Category> categoryAndClones = findAllById(toCategory, none(), none(), "Category.findAllOfSeriesCategory",
+              pastC.get().getSeriesCategoryId().get());
+
+      // Delete all but the master category (which is the "c" passed to this function)
+      // Update the master category with the videoId to move it to this video
+      for (int j = 0; j < categoryAndClones.size(); j++) {
+        long a = categoryAndClones.get(j).getId();
+        long b = c.getId();
+        if (a != b) {
+          deleteCategoryImpl(categoryAndClones.get(j));
+        }
+      }
+    }
+    updateCategory(c);
   }
 
   @Override
@@ -626,9 +655,10 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public List<Category> getCategories(final Option<Long> videoId, final Option<Integer> offset,
-          final Option<Integer> limit, Option<Date> since, final Option<Map<String, String>> tagsAnd,
-          final Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException {
+  public List<Category> getCategories(final Option<String> seriesExtId, final Option<Long> videoId,
+          final Option<Integer> offset, final Option<Integer> limit, Option<Date> since,
+          final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
+          throws ExtendedAnnotationException {
     List<Category> categories = videoId.fold(new Option.Match<Long, List<Category>>() {
       @Override
       public List<Category> some(Long id) {
@@ -641,6 +671,76 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       }
     });
 
+    if (seriesExtId.isSome()) {
+      // Make categories editable
+      List<Category> allCategories = new ArrayList<>(categories);
+
+      List<Category> createdCategories = new ArrayList<>();
+      // Grab the categories with seriesExtId.
+      List<Category> seriesExtIdCategories = findAllById(toCategory, offset, limit, "Category.findAllOfExtSeries",
+              seriesExtId.get());
+
+      // Grab all master series categories by removing every category that is not referencing itself
+      List<Category> seriesCategories = new ArrayList<>(seriesExtIdCategories);
+      seriesCategories.removeIf(n -> n.getId() != n.getSeriesCategoryId().getOrElse(-1L));
+
+      // Link a category to a master series category if they are "sufficiently" equal
+      for (Category videoCategory : allCategories) {
+        for (Category seriesCategory: seriesCategories) {
+          if (categoriesSufficientlyEqual(videoCategory, seriesCategory)) {
+            Category update = new CategoryImpl(videoCategory.getId(), seriesCategory.getSeriesExtId(),
+                    option(seriesCategory.getId()), videoCategory.getVideoId(), seriesCategory.getScaleId(),
+                    seriesCategory.getName(), seriesCategory.getDescription(), seriesCategory.getSettings(),
+                    new ResourceImpl(option(seriesCategory.getAccess()), seriesCategory.getCreatedBy(),
+                            seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(), seriesCategory.getCreatedAt(),
+                            seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(), seriesCategory.getTags()));
+            updateCategory(update);
+            allCategories.set(allCategories.indexOf(videoCategory), update);
+          }
+        }
+      }
+
+      // Check for every master series category if a local copy needs to be created or updated
+      for (Category seriesCategory : seriesCategories) {
+        boolean alreadyExists = false;
+        Category existingCategory = null;
+
+        // Check if we already have video category corresponding to the series category
+        for (Category videoCategory : allCategories) {
+          // If we have, update the existing video category
+          if (videoCategory.getSeriesCategoryId().isSome() && videoCategory.getSeriesCategoryId().get() == seriesCategory.getId()) {
+            alreadyExists = true;
+            existingCategory = videoCategory;
+            break;  // Don't need to continue the loop
+          }
+        }
+        // If we have, update the existing video category
+        if (alreadyExists) {
+          Category update = new CategoryImpl(existingCategory.getId(), seriesCategory.getSeriesExtId(),
+                  option(seriesCategory.getId()), videoId, seriesCategory.getScaleId(), seriesCategory.getName(),
+                  seriesCategory.getDescription(), seriesCategory.getSettings(),
+                  new ResourceImpl(option(seriesCategory.getAccess()), seriesCategory.getCreatedBy(),
+                          seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(), seriesCategory.getCreatedAt(),
+                          seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(), seriesCategory.getTags()));
+          updateCategory(update);
+          allCategories.set(allCategories.indexOf(existingCategory), update);
+          // If we don't have, create a new video category
+        } else {
+          Category newCategory;
+          newCategory = createCategory(seriesCategory.getSeriesExtId(), option(seriesCategory.getId()), videoId,
+                  seriesCategory.getScaleId(), seriesCategory.getName(), seriesCategory.getDescription(),
+                  seriesCategory.getSettings(), new ResourceImpl(option(seriesCategory.getAccess()),
+                          seriesCategory.getCreatedBy(), seriesCategory.getUpdatedBy(), seriesCategory.getDeletedBy(),
+                          seriesCategory.getCreatedAt(), seriesCategory.getUpdatedAt(), seriesCategory.getDeletedAt(),
+                          seriesCategory.getTags()));
+          createdCategories.add(newCategory);
+        }
+      }
+
+      allCategories.addAll(createdCategories);
+      categories = allCategories;
+    }
+
     if (tagsAnd.isSome())
       categories = filterAndTags(categories, tagsAnd.get());
 
@@ -650,32 +750,85 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return categories;
   }
 
+  private boolean categoriesSufficientlyEqual(Category a, Category b) {
+    if (a.getName().equals(b.getName()) && a.getDescription().equals(b.getDescription())
+    && a.getSettings().equals(b.getSettings()) && a.getTags().equals(b.getTags())) {
+      return true;
+    }
+
+    return false;
+  }
+
   @Override
   public boolean deleteCategory(Category category) throws ExtendedAnnotationException {
+    boolean result = true;
+    // If the category is a series category, delete all corresponding series category
+    if (category.getSeriesCategoryId().isSome()) {
+      List<Category> withSeriesCategoryId = findAllById(toCategory, none(), none(), "Category.findAllOfSeriesCategory",
+              category.getSeriesCategoryId().get());
+      for (Category categoryBelongingToMaster: withSeriesCategoryId) {
+        result = deleteCategoryImpl(categoryBelongingToMaster);
+        if (!result) { break; }
+      }
+    // Delete the category
+    } else {
+      result = deleteCategoryImpl(category);
+    }
+
+    return result;
+  }
+
+  public boolean deleteCategoryImpl(Category category) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(category);
-    final Category updated = new CategoryImpl(category.getId(), category.getVideoId(), category.getScaleId(),
-            category.getName(), category.getDescription(), category.getSettings(), deleteResource);
+    final Category updated = new CategoryImpl(category.getId(), category.getSeriesExtId(),
+            category.getSeriesCategoryId(), category.getVideoId(), category.getScaleId(), category.getName(),
+            category.getDescription(), category.getSettings(), deleteResource);
     updateCategory(updated);
 
     for (Label l : getLabelsByCategoryId(category.getId())) {
       deleteLabel(l);
     }
+
     return true;
   }
 
   @Override
   public Label createLabel(long categoryId, String value, String abbreviation, Option<String> description,
           Option<String> settings, Resource resource) throws ExtendedAnnotationException {
-    final LabelDto dto = LabelDto.create(categoryId, value, abbreviation, description, settings, resource);
+    // Handle series categories
+    // If the category belongs to a series, create the label on the series category instead
+    Option<Category> category = getCategory(categoryId, false);
+    Option<Category> seriesCategory;
+    // If the category belongs to a series
+    if (category.isSome() && category.get().getSeriesCategoryId().isSome()) {
+      Long categorySeriesCategoryId = category.get().getSeriesCategoryId().get();
+      seriesCategory = getCategory(categorySeriesCategoryId, false);
+      // And the category is not itself (aka the master series category)
+      if (seriesCategory.isSome() && categoryId != (seriesCategory.get().getId())) {
+        final LabelDto dto = LabelDto.create(none(), categorySeriesCategoryId, value, abbreviation, description,
+                settings, resource);
+        return tx(Queries.persist(dto)).toLabel();
+      }
+    }
+
+    // Normal Create
+    final LabelDto dto = LabelDto.create(none(), categoryId, value, abbreviation, description, settings, resource);
     return tx(Queries.persist(dto)).toLabel();
   }
 
   @Override
   public void updateLabel(final Label l) throws ExtendedAnnotationException {
-    update("Label.findById", l.getId(), new Effect<LabelDto>() {
+    long updateLabelId = l.getId();
+
+    // If the label belongs to a category copy of a series category, update the label on the series category instead
+    if (l.getSeriesLabelId().isSome()) {
+      updateLabelId = l.getSeriesLabelId().get();
+    }
+
+    update("Label.findById", updateLabelId, new Effect<LabelDto>() {
       @Override
       protected void run(LabelDto dto) {
-        dto.update(l.getValue(), l.getAbbreviation(), l.getDescription(), l.getSettings(), l);
+        dto.update(l.getSeriesLabelId(), l.getValue(), l.getAbbreviation(), l.getDescription(), l.getSettings(), l);
       }
     });
   }
@@ -704,6 +857,45 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     else
       labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategory", tuple("id", categoryId));
 
+    // Handle series categories
+    // Series categories initially do not have any labels of themselves, so we need to generate them in case they
+    // ever turn into back into normal categories
+    Option<Category> category = getCategory(categoryId, false);
+    Option<Category> seriesCategory;
+    // If the category belongs to a series
+    if (category.isSome() && category.get().getSeriesCategoryId().isSome()) {
+      Long categorySeriesCategoryId = category.get().getSeriesCategoryId().get();
+      seriesCategory = getCategory(categorySeriesCategoryId, false);
+      // And the category is not itself (aka the master series category)
+      if (seriesCategory.isSome() && categoryId != (seriesCategory.get().getId())) {
+        // Get labels from the master series category
+        List<Label> seriesCategoryLabels = getLabels(seriesCategory.get().getId(), none(), none(), none(), none(), none());
+
+        // Update our labels with the labels from the master series category
+        // Note: Maybe do an actual update instead of delete/create
+        for (Label label: labels) {
+          deleteLabel(label);
+        }
+        List<Label> newLabels = new ArrayList<>();
+        for (Label seriesLabel : seriesCategoryLabels) {
+          final LabelDto dto = LabelDto.create(some(seriesLabel.getId()), categoryId, seriesLabel.getValue(),
+                  seriesLabel.getAbbreviation(), seriesLabel.getDescription(), seriesLabel.getSettings(),
+                  new ResourceImpl(option(seriesLabel.getAccess()),
+                          seriesLabel.getCreatedBy(), seriesLabel.getUpdatedBy(), seriesLabel.getDeletedBy(),
+                          seriesLabel.getCreatedAt(), seriesLabel.getUpdatedAt(), seriesLabel.getDeletedAt(),
+                          seriesLabel.getTags()));
+          newLabels.add(tx(Queries.persist(dto)).toLabel());
+        }
+
+        // Return series labels, so that they are updated in the backend
+        // At some point you probably want to associated copied labels with their original, so they can be properly updated
+        // This will lose changes made on non-master category labels if the master then looses their series.
+        // But that is quite a rare scenario (hopefully) and I'm running out of time.
+        //labels = newLabels;
+        labels = newLabels;
+      }
+    }
+
     if (tagsAnd.isSome())
       labels = filterAndTags(labels, tagsAnd.get());
 
@@ -720,7 +912,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public boolean deleteLabel(Label label) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(label);
-    final Label updated = new LabelImpl(label.getId(), label.getCategoryId(), label.getValue(),
+    final Label updated = new LabelImpl(label.getId(), none(), label.getCategoryId(), label.getValue(),
             label.getAbbreviation(), label.getDescription(), label.getSettings(), deleteResource);
     updateLabel(updated);
     return true;

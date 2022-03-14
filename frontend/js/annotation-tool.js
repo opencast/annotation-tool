@@ -24,12 +24,12 @@ define(
         "underscore",
         "backbone",
         "util",
-        "access",
         "i18next",
         "collections/videos",
         "views/main",
         "alerts",
         "templates/delete-modal",
+        "templates/series-category",
         "player-adapter",
         "colors",
         "xlsx",
@@ -41,12 +41,12 @@ define(
         _,
         Backbone,
         util,
-        ACCESS,
         i18next,
         Videos,
         MainView,
         alerts,
         DeleteModalTmpl,
+        SeriesCategoryTmpl,
         PlayerAdapter,
         ColorsManager,
         XLSX,
@@ -92,7 +92,8 @@ define(
 
                     var deleteModal = $(DeleteModalTmpl({
                         context: type.name,
-                        content: type.getContent(target)
+                        content: type.getContent(target),
+                        customMessage: type.customMessage ? type.customMessage(target) : ""
                     }));
 
                     function confirm() {
@@ -120,6 +121,47 @@ define(
 
                     // Show the modal
                     deleteModal.modal("show");
+                }
+            },
+
+            seriesCategoryOperation: {
+                /**
+                 * Function to delete element with warning
+                 *
+                 * @param {Object} target Element to be delete
+                 * @param {TargetsType} type Type of the target to be deleted
+                 */
+                start: function (target, categorySeriesCategoryId) {
+
+                    var seriesCategoryModal = $(SeriesCategoryTmpl({
+                        context: "HI",
+                        content: "BI"
+                    }));
+
+                    function confirm() {
+                        target.toVideoCategory(categorySeriesCategoryId);
+                        seriesCategoryModal.modal("toggle");
+                    }
+                    function confirmWithEnter(event) {
+                        if (event.keyCode === 13) {
+                            confirm();
+                        }
+                    };
+
+                    // Listener for delete confirmation
+                    seriesCategoryModal.find("#confirm-delete").one("click", confirm);
+
+                    // Add possiblity to confirm with return key
+                    $(window).on("keypress", confirmWithEnter);
+
+                    // Unbind the listeners when the modal is hidden
+                    seriesCategoryModal.one("hide", function () {
+                        $(window).off("keypress", confirmWithEnter);
+                        seriesCategoryModal.remove();
+                    });
+
+                    // Show the modal
+                    seriesCategoryModal.modal("show");
                 }
             },
 
@@ -194,29 +236,29 @@ define(
              * Get all the annotations for the current user
              */
             fetchData: function () {
-                // function to conclude the retrieve of annotations
-                var concludeInitialization = _.bind(function () {
-
-                    // At least one private track should exist, we select the first one
-                    var selectedTrack = this.video.get("tracks").filter(util.caller("isMine"))[0];
-
-                    if (!selectedTrack.get("id")) {
-                        selectedTrack.on("ready", concludeInitialization, this);
-                    } else {
-                        this.selectedTrack = selectedTrack;
-
-                        this.modelsInitialized = true;
-                        this.trigger(this.EVENTS.MODELS_INITIALIZED);
-                    }
-                }, this);
-
-                /**
-                 * Create a default track for the current user if no private track is present
-                 */
-                var createDefaultTrack = _.bind(function () {
-
+                this.getVideoParameters().then(
+                    _.bind(function (videoParameters) {
+                        // If we are using the localstorage
+                        this.video = new Videos().add({ video_extid: videoParameters.videoExtId }).at(0);
+                        this.video.set(videoParameters);
+                        this.video.save(null, {
+                            error: _.bind(function (model, response, options) {
+                                if (response.status === 403) {
+                                    alerts.fatal(i18next.t("annotation not allowed"));
+                                    this.views.main.loadingBox.hide();
+                                }
+                            }, this)
+                        });
+                        var ready = $.Deferred();
+                        this.listenToOnce(this.video, "ready", function () {
+                            ready.resolve();
+                        });
+                        return ready;
+                    }, this)
+                ).then(_.bind(function () {
                     var tracks = this.video.get("tracks");
 
+                    var ready = $.Deferred();
                     if (!tracks.filter(util.caller("isMine")).length) {
                         tracks.create({
                             name: i18next.t("default track.name", {
@@ -227,7 +269,7 @@ define(
                             })
                         }, {
                             wait: true,
-                            success: concludeInitialization
+                            success: function () { ready.resolve(); }
                         });
                     } else {
                         tracks.showTracks(
@@ -236,24 +278,16 @@ define(
                                     || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
                             })
                         );
-                        concludeInitialization();
+                        ready.resolve();
                     }
-                }, this);
+                    return ready.then(function () { return tracks; });
+                }, this)).then(_.bind(function (tracks) {
+                    // At least one private track should exist, we select the first one
+                    this.selectedTrack = tracks.filter(util.caller("isMine"))[0];
 
-                $.when(this.getVideoExtId(), this.getVideoParameters()).then(
-                    _.bind(function (videoExtId, videoParameters) {
-                        this.video = new Videos().add({ video_extid: videoExtId }).at(0);
-                        this.video.set(videoParameters);
-                        this.video.save(null, {
-                            error: _.bind(function (model, response, options) {
-                                if (response.status === 403) {
-                                    alerts.fatal(i18next.t("annotation not allowed"));
-                                }
-                            }, this)
-                        });
-                        this.listenToOnce(this.video, "ready", createDefaultTrack);
-                    }, this)
-                );
+                    this.modelsInitialized = true;
+                    this.trigger(this.EVENTS.MODELS_INITIALIZED);
+                }, this));
             },
 
             /**
@@ -346,7 +380,10 @@ define(
                         if (noToggle) return;
                         selection = null;
                     }
-                } else if (!selection) return;  // Both selections are `null`, nothing to do
+                } else if (!selection) {
+                    // Both selections are `null`, nothing to do
+                    return;
+                }
 
                 var previousSelection = this.selection;
                 this.selection = selection;
@@ -487,26 +524,20 @@ define(
              * @param {PlainObject} defaultCategoryAttributes The default attributes to use to insert the imported categories (like access)
              */
             importCategories: function (imported, defaultCategoryAttributes) {
-                var videoCategories = this.video.get("categories"),
-                    videoScales = this.video.get("scales"),
-                    labelsToAdd,
-                    newCat,
-                    newScale,
-                    scaleValuesToAdd,
-                    scaleOldId,
-                    scalesIdMap = {};
 
                 if (!imported.categories || imported.categories.length === 0) {
                     return;
                 }
 
+                var scalesIdMap = {};
+
                 _.each(imported.scales, function (scale) {
-                    scaleOldId = scale.id;
-                    scaleValuesToAdd = scale.scaleValues;
+                    var scaleOldId = scale.id;
+                    var scaleValuesToAdd = scale.scaleValues;
                     delete scale.id;
                     delete scale.scaleValues;
 
-                    newScale = videoScales.create(scale, { async: false });
+                    var newScale = this.video.get("scales").create(scale, { async: false });
                     scalesIdMap[scaleOldId] = newScale.get("id");
 
                     if (scaleValuesToAdd) {
@@ -518,10 +549,11 @@ define(
                 });
 
                 _.each(imported.categories, function (category) {
-                    labelsToAdd = category.labels;
+                    var labelsToAdd = category.labels;
                     category.scale_id = scalesIdMap[category.scale_id];
                     delete category.labels;
-                    newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes), { async: false });
+                    var newCat = this.video.get("categories")
+                        .create(_.extend(category, defaultCategoryAttributes), { async: false });
 
                     if (labelsToAdd) {
                         _.each(labelsToAdd, function (label) {
@@ -569,11 +601,11 @@ define(
 
                 bookData.forEach(function (arr) {
                     Object.keys(arr).forEach(function (key) {
-                        var value = arr[key] === null ? "" : arr[key];
+                        var value = arr[key] || "";
 
                         // Arbitrarily increase len by one to avoid cases where just len would
                         // lead to too small columns
-                        var len = value.toString().length + 1
+                        var len = value.toString().length + 1;
 
                         objectMaxLength[key] = Math.max(objectMaxLength[key] || 0, len);
                     });
@@ -589,11 +621,11 @@ define(
                 wb.Sheets["Sheet 1"] = ws;
 
                 // Export workbook
-                var wbout = XLSX.write(wb, { bookType: "xlsx",  type: "binary" });
+                var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
 
                 function s2ab(s) {
                     var buf = new ArrayBuffer(s.length); // convert s to arrayBuffer
-                    var view = new Uint8Array(buf);  // create uint8array as viewer
+                    var view = new Uint8Array(buf); // create uint8array as viewer
                     for (var i = 0; i < s.length; i++) {
                         view[i] = s.charCodeAt(i) & 0xFF; // convert to octet
                     }
@@ -856,6 +888,13 @@ define(
                             console.warn("Cannot delete category: " + error);
                         }
                     });
+                },
+                customMessage: function (target) {
+                    if (target.get("series_category_id")) {
+                        return i18next.t("series category modal.custom message");
+                    } else {
+                        return "";
+                    }
                 }
             },
 
