@@ -22,11 +22,13 @@ define(
     [
         "underscore",
         "util",
+        "access",
         "models/resource"
     ],
     function (
         _,
         util,
+        ACCESS,
         Resource
     ) {
         "use strict";
@@ -43,7 +45,11 @@ define(
              */
             administratorCanEditPublicInstances: true,
 
-             /**
+            defaults: {
+                access: ACCESS.PUBLIC
+            },
+
+            /**
              * Constructor
              */
             initialize: function () {
@@ -80,8 +86,16 @@ define(
                     return "'value' attribute must be a string!";
                 }
 
+                if (!attr.value.trim()) {
+                    return "'value' attribute must not be blank";
+                }
+
                 if (attr.abbreviation && !_.isString(attr.abbreviation)) {
                     return "'abbreviation' attribute must be a string!";
+                }
+
+                if (!attr.abbreviation.trim()) {
+                    return "'abbreviation' attribute must not be blank";
                 }
 
                 if (attr.description && !_.isString(attr.description)) {

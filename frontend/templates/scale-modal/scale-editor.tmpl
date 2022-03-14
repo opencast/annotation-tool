@@ -1,0 +1,22 @@
+{{#unless isNew}}
+    <div class="control-group">
+        <div class="controls">
+            <button id="delete" type="button" class="btn btn-danger">
+                <i class="icon-trash"></i>
+                {{t "common actions.delete"}}
+            </button>
+        </div>
+    </div>
+{{/unless}}
+
+<div class="control-group">
+    <label class="control-label required" for="scale-modal-name">{{t "scale modal.name"}}</label>
+    <div class="controls">
+        <input type="text" value="{{name}}" required id="scale-modal-name">
+    </div>
+</div>
+
+<fieldset id="scale-values"></fieldset>
+
+<div style="text-align: right;"><b>* {{t "required fields"}}</b></div>
+</div>

@@ -49,6 +49,7 @@ define(
              */
             initialize: function (models, options) {
                 this.video = options.video;
+                this.seriesExtId = options.seriesExtId;
             },
 
             /**
@@ -56,7 +57,9 @@ define(
              * @return {string} The url of this collection
              */
             url: function () {
-                return (this.video ? _.result(this.video, "url") : "") + "/categories";
+                return (this.video ? _.result(this.video, "url") : "")
+                    + "/categories/"
+                    + (this.seriesExtId ? "?series-extid=" + this.seriesExtId : "");
             },
 
             /**

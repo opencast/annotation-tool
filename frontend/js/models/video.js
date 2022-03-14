@@ -71,13 +71,20 @@ define(
             },
 
             /**
-             * (Re-)Fetch the scale values once our ID changes.
+             * Constructor
+             */
+            initialize: function () {
+                this.get("categories").seriesExtId = this.get("series_extid");
+                Resource.prototype.initialize.apply(this, arguments);
+            },
+
+            /**
+             * (Re-)Fetch all the other data once our ID changes.
              */
             fetchChildren: function () {
                 this.get("categories").fetch({ async: false });
                 this.get("tracks").fetch({ async: false });
                 this.get("scales").fetch({ async: false });
-                this.trigger("ready");
             },
 
             /**
@@ -107,7 +114,6 @@ define(
             getAnnotations: (function () {
                 return function (category) {
                     return this.get("tracks").chain()
-                    // TODO This needs Underscore 1.9
                         .map(_.property(["annotations", "models"]))
                         .flatten()
                         .filter(filter(category))

@@ -32,6 +32,13 @@ where `<opencast-deploy-dir>` is the [Karaf hot deployment folder](https://karaf
 of your Opencast installation. (This is usually something like `/usr/share/opencast/deploy`
 if using the official packages.
 
+If you built the tool before and are now getting errors during the frontend build,
+you might want to try to remove the NodeJS artifacts downloaded during the process:
+
+```
+rm -rf frontend/node*
+```
+
 ### As a Karaf Feature
 
 As an alternative, the Annotation Tool is also packaged as a Karaf feature

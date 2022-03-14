@@ -20,12 +20,10 @@
  */
 define(
     [
-        "underscore",
         "collections/labels",
         "models/resource"
     ],
     function (
-        _,
         Labels,
         Resource
     ) {
@@ -47,10 +45,22 @@ define(
              * Default model values
              */
             defaults: function () {
-                return {
+                return _.extend(Resource.prototype.defaults, {
                     visible: true,
                     labels: new Labels([], { category: this })
-                };
+                });
+            },
+
+            sync: function (method, model, options) {
+
+                // If the model is referencing another model, sync to the other model
+                if (model.get("series_category_id")) {
+                    model.set("id", model.get("series_category_id"));
+                } else if (model.tmpSeriesCategoryId) {
+                    model.set("id", model.tmpSeriesCategoryId);
+                }
+
+                return Resource.prototype.sync.call(this, method, model, options);
             },
 
             /**
@@ -64,6 +74,7 @@ define(
 
                 this.set("settings", _.extend({
                     hasScale: true,
+                    color: "#008080",
                     createdAsMine: !this.isPublic()
                 }, this.get("settings")));
             },
@@ -83,6 +94,10 @@ define(
             validate: function (attr) {
                 var invalidResource = Resource.prototype.validate.apply(this, arguments);
                 if (invalidResource) return invalidResource;
+
+                if (!attr.name || /^\s*$/.test(attr.name)) {
+                    return "\"name\" must not be blank";
+                }
 
                 if (attr.description && !_.isString(attr.description)) {
                     return "\"description\" attribute must be a string";
@@ -152,7 +167,7 @@ define(
                     json.settings = this.attributes.settings;
                 }
 
-                if (!_.isUndefined(withScale) &&  withScale) {
+                if (!_.isUndefined(withScale) && withScale) {
                     if (this.attributes.scale_id) {
                         json.scale = annotationTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
                     } else if (this.attributes.scale) {

@@ -101,8 +101,8 @@ public class TrackDto extends AbstractResourceDto {
           Resource resource) {
     super.update(resource);
     this.name = name;
-    this.description = description.getOrElse((String) null);
-    this.settings = settings.getOrElse((String) null);
+    this.description = description.getOrElseNull();
+    this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
     return this;

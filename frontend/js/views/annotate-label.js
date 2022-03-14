@@ -20,13 +20,11 @@
  */
 define(
     [
-        "jquery",
         "underscore",
         "backbone",
         "templates/annotate-label"
     ],
     function (
-        $,
         _,
         Backbone,
         Template
@@ -69,12 +67,6 @@ define(
             ID_PREFIX: "labelItem-",
 
             /**
-             * Define if the view is or not in edit modus.
-             * @type {boolean}
-             */
-            editModus: false,
-
-            /**
              * List of categories view in this tab
              * @type {array}
              */
@@ -92,11 +84,6 @@ define(
              */
             events: {
                 "click": "annotate",
-                "click i.delete": "onDeleteLabel",
-                "focusout .item-value": "onFocusOut",
-                "keydown .item-value": "onKeyDown",
-                "focusout .item-abbreviation": "onFocusOut",
-                "keydown .item-abbreviation": "onKeyDown",
                 "click .scaling li": "annnotateWithScaling"
             },
 
@@ -116,48 +103,19 @@ define(
                     this,
                     "render",
                     "annotate",
-                    "switchEditModus",
-                    "onSwitchEditModus",
-                    "onFocusOut",
-                    "onKeyDown",
-                    "onDeleteLabel",
-                    "annnotateWithScaling",
-                    "updateAbbreviation",
-                    "updateInputWidth"
+                    "annnotateWithScaling"
                 );
 
-                // Type use for delete operation
-                this.typeForDelete = annotationTool.deleteOperation.targetTypes.LABEL;
-
-                // Change the edit modus, if this config is given as parameter
-                if (attr.editModus) {
-                    this.editModus = attr.editModus;
-                }
-
                 this.model = attr.label;
-                this.roles = attr.roles;
                 this.isScaleEnable = attr.isScaleEnable;
 
                 this.el.id = this.ID_PREFIX + this.model.get("id");
 
                 this.listenTo(this.model, "change", this.render);
 
-                this.setupScaling(this.model.get("category"));
-
-                if (_.contains(this.roles, annotationTool.user.get("role"))) {
-                    this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
-                }
+                this.setupScaling();
 
                 return this.render();
-            },
-
-            updateAbbreviation: function () {
-                var abbreviation = this.model.get("abbreviation"),
-                    value = this.model.get("value");
-
-                if (_.isUndefined(abbreviation) || abbreviation === "" || abbreviation === value.substr(0, 3).toUpperCase()) {
-                    this.$el.find("input.item-abbreviation").val(this.$el.find("input.item-value").val().substr(0, 3).toUpperCase());
-                }
             },
 
             /**
@@ -167,15 +125,14 @@ define(
             annnotateWithScaling: function (event) {
                 event.stopImmediatePropagation();
 
-                var id = event.target.getAttribute("value"),
-                    scalevalue = this.scaleValues.get(id),
-                    params = {
-                        text: this.model.get("value"),
-                        label: this.model,
-                        scalevalue: scalevalue.toJSON()
-                    };
+                var id = event.target.getAttribute("value");
+                var scalevalue = this.scaleValues.get(id);
 
-                createAnnotation(params);
+                createAnnotation({
+                    text: this.model.get("value"),
+                    label: this.model,
+                    scalevalue: scalevalue.toJSON()
+                });
             },
 
             /**
@@ -185,7 +142,7 @@ define(
             annotate: function (event) {
                 event.stopImmediatePropagation();
 
-                if (this.editModus || this.isScaleEnable) {
+                if (this.isScaleEnable) {
                     return;
                 }
 
@@ -196,111 +153,29 @@ define(
             },
 
             /**
-             * Listener for edit modus switch.
-             * @param {event} event Event related to this action
-             */
-            onSwitchEditModus: function (status) {
-                this.switchEditModus(status);
-            },
-
-            /**
-             * Switch the edit modus to the given status.
-             * @param  {boolean} status The current status
-             */
-            switchEditModus: function (status) {
-                this.editModus = status;
-            },
-
-            /**
              * Listener for "change" event on the label category
-             * @param {object} category The updated category
              */
-            changeCategory: function (category) {
-                this.setupScaling(category);
+            changeCategory: function () {
+                this.setupScaling();
                 this.render();
             },
 
             /**
              * Set up scale values according to category
-             * @param {object} category The updated category
              */
-            setupScaling: function (category) {
-                var scaleId = category.scale_id;
+            setupScaling: function () {
+                var category = this.model.collection.category;
+                var scaleId = category.get("scale_id");
                 var scale = scaleId && annotationTool.video.get("scales").get(scaleId);
 
                 if (scale) {
                     this.scaleValues = scale.get("scaleValues");
+                } else {
+                    delete this.scaleValues;
                 }
 
-                this.isScaleEnable = (category.settings && category.settings.hasScale);
-            },
-
-            /**
-             * Listener for focus out event on name field
-             * @param {event} e Event related to this action
-             */
-            onFocusOut: function () {
-                this.model.set({
-                    value: _.escape(this.$el.find("input.item-value").val()),
-                    abbreviation: _.escape(this.$el.find("input.item-abbreviation").val())
-                });
-                this.model.save();
-            },
-
-            /**
-             * Listener for key down event on name field
-             * @param {event} e Event related to this action
-             */
-            onKeyDown: function (e) {
-                e.stopImmediatePropagation();
-
-                if ($(e.target).hasClass("item-value")) {
-                    this.updateAbbreviation(e);
-                }
-
-                if (e.keyCode === 13) { // If "return" key
-                    this.model.set({
-                        "value": _.escape(this.$el.find("input.item-value").val()),
-                        "abbreviation": _.escape(this.$el.find("input.item-abbreviation").val())
-                    });
-                    this.model.save();
-                } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
-                           e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
-                    // Avoid scrolling through arrows keys
-                    e.preventDefault();
-                }
-            },
-
-            /**
-             * Get the position of the caret in the given input element
-             * @param {DOMElement} inputElement The given element with focus
-             * @return {integer} The posisiton of the carret
-             */
-            getCaretPosition: function (inputElement) {
-                return inputElement.selectionStart;
-            },
-
-            /**
-             * Listener for label deletion request from UI
-             */
-            onDeleteLabel: function () {
-                annotationTool.deleteOperation.start(this.model, this.typeForDelete);
-            },
-
-            /**
-             * Update the size of all the input for the label value
-             * alias module:views-annotate-category.CategoryView#updateInputWidth
-             */
-            updateInputWidth: function () {
-                var width = this.$el.width() - (this.$el.find("input.item-abbreviation").outerWidth() + 25);
-
-                if (this.editModus) {
-                    width -= this.$el.find("i.delete").outerWidth();
-                }
-
-                this.$el.find("input.item-value").width(width);
-
-                this.delegateEvents(this.events);
+                var settings = category.get("settings");
+                this.isScaleEnable = settings && settings.hasScale;
             },
 
             /**
@@ -310,7 +185,6 @@ define(
             render: function () {
                 var modelJSON = this.model.toJSON();
 
-                modelJSON.notEdit = !this.editModus;
                 if (this.scaleValues) {
                     modelJSON.scaleValues = this.scaleValues.sort().toJSON();
                 }
@@ -326,7 +200,6 @@ define(
                     this.$el.addClass(this.CLASS_SCALE.DISABLED);
                 }
 
-                this.updateInputWidth();
                 return this;
             }
 

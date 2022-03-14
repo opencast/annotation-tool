@@ -52,64 +52,25 @@ define([
         "6569ff"
     ];
 
-    return function () {
+    function ColorManager(categories) {
+        this.categories = categories;
+    }
 
-        var self = this,
-            // colors map with usage number as value
-            colors = {};
+    ColorManager.COLORS = COLORS;
 
-        /**
-         * Get all colors as string in an array
-         */
-        this.getColors = function () {
-            return COLORS;
-        };
+    ColorManager.prototype.getNextColor = function () {
+        var usedColorCounts = this.categories.chain()
+            .groupBy(function (category) {
+                return category.get("settings").color
+                    .slice(1); // Remove the `#`-prefix
+            })
+            .mapObject("length")
+            .value();
 
-        /**
-         * Returns the next color the less used
-         */
-        this.getNextColor = function () {
-            var maxValue = -1,
-                lookForColor = function (value, color) {
-                    if (value <= maxValue) {
-                        nextColor = color;
-                        colors[color]++;
-                        return true;
-                    }
-                },
-                nextColor;
-
-            // Look for colors with the less usage
-            do {
-                maxValue++;
-                _.find(colors, lookForColor, self);
-            } while (_.isUndefined(nextColor));
-
-            return nextColor;
-        };
-
-        /**
-         * Update the colors usage with the given categories
-         */
-        this.updateColors = function (categories) {
-            _.each(categories, function (category) {
-                var settings = category.get("settings"),
-                    color;
-
-                if (!_.isUndefined(settings) && !_.isUndefined(settings.color)) {
-                    color = settings.color.replace("#", "");
-                    if (!_.isUndefined(colors[color])) {
-                        colors[color]++;
-                    }
-                }
-            }, self);
-        };
-
-        // Generate colors map with usage sum
-        _.each(COLORS, function (color) {
-            colors[color] = 0;
-        }, self);
-
-        return self;
+        return _.min(COLORS, function (color) {
+            return usedColorCounts[color] || 0;
+        });
     };
+
+    return ColorManager;
 });

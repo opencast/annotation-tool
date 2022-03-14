@@ -32,5 +32,4 @@ public interface Track extends Resource {
 
   /** The track settings */
   Option<String> getSettings();
-
 }

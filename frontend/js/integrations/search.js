@@ -21,7 +21,6 @@ define([
     "backbone",
     "util",
     "models/user",
-    "roles",
     "player-adapter-html5"
 ], function (
     $,
@@ -29,7 +28,6 @@ define([
     Backbone,
     util,
     User,
-    ROLES,
     HTML5PlayerAdapter
 ) {
     "use strict";
@@ -57,6 +55,17 @@ define([
 
         options.beforeSend = function () {
             this.url = "../../extended-annotations" + this.url;
+
+            // Sanitize query strings, so that they're actually at the end
+            // TODO: Clean this up OR find a better way to do this
+            var queryString = this.url.match(/\?(.*?)\//);
+            if (queryString && queryString[0]) {
+                this.url = this.url.replace(queryString[0], "");
+                if (queryString[0].slice(-1) === "/") {
+                    queryString[0] = queryString[0].slice(0, -1);
+                }
+                this.url += queryString[0];
+            }
         };
 
         return backboneSync.call(this, method, model, options);
@@ -78,8 +87,7 @@ define([
     });
     // Get user data from Opencast
     var user = $.ajax({
-        url: "/info/me.json",
-        dataType: "json"
+        url: "/info/me.json"
     });
     // Find out which roles should have admin rights
     var adminRoles = mediaPackage.then(function (mediaPackage) {
@@ -121,36 +129,15 @@ define([
      */
     var Integration = {
         /**
-         * Get the current video id (video_extid)
-         * @return {Promise.<string>} video external id
-         */
-        getVideoExtId: function () {
-            return $.when(mediaPackageId);
-        },
-
-        /**
          * @return {Promise.<object>} Metadata about the video
          */
         getVideoParameters: function () {
-            return searchResult.then(function (result) {
-                return { title: result.dcTitle };
-            });
-        },
-
-        /**
-         * Maps a list of roles of the external user to a corresponding user role
-         * @param {string[]} roles The roles of the external user
-         * @return {Promise.<ROLE>} The corresponding user role in the annotations tool
-         */
-        getUserRoleFromExt: function (roles) {
-            return adminRoles.then(function (adminRoles) {
-                if (_.some(adminRoles.concat(["ROLE_ADMIN"]), function (adminRole) {
-                    return _.contains(roles, adminRole);
-                })) {
-                    return ROLES.ADMINISTRATOR;
-                } else {
-                    return ROLES.USER;
-                }
+            return $.when(mediaPackageId, searchResult, mediaPackage).then(function (id, result, mediaPackage) {
+                return {
+                    video_extid: id,
+                    series_extid: mediaPackage.series,
+                    title: result.dcTitle
+                };
             });
         },
 
@@ -158,14 +145,17 @@ define([
          * Authenticate the user
          */
         authenticate: function () {
-            user.then(function (userData) {
-                return $.when(userData.user, this.getUserRoleFromExt(userData.roles));
-            }.bind(this)).then(function (user, role) {
+            $.when(user, adminRoles).then(function (userResult, adminRoles) {
+                var user = userResult[0];
+                var userData = user.user;
                 this.user = new User({
-                    user_extid: user.username,
-                    nickname: user.username,
-                    email: user.email,
-                    role: role
+                    user_extid: userData.username,
+                    nickname: userData.username,
+                    email: userData.email,
+                    isAdmin: _.intersection(
+                        adminRoles.concat(["ROLE_ADMIN"]),
+                        user.roles
+                    ).length > 0
                 });
                 return this.user.save();
             }.bind(this)).then(function () {

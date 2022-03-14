@@ -180,14 +180,13 @@ define(
             insert: function (event) {
                 event.stopImmediatePropagation();
 
-                var textValue = this.$("textarea").val(),
-                    commentModel;
+                var textValue = this.$("textarea").val();
 
                 if (textValue === "") {
                     return;
                 }
 
-                commentModel = this.collection.create({ text: textValue });
+                var commentModel = this.collection.create({ text: textValue });
 
                 this.cancel();
                 this.addComment(commentModel);

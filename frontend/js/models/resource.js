@@ -21,11 +21,13 @@
 define([
     "underscore",
     "backbone",
+    "jquery",
     "util",
     "access"
 ], function (
     _,
     Backbone,
+    $,
     util,
     ACCESS
 ) {
@@ -39,6 +41,10 @@ define([
  */
 var Resource = Backbone.Model.extend({
 
+    defaults: {
+        access: ACCESS.PRIVATE
+    },
+
     /**
      * Constructor
      */
@@ -51,23 +57,29 @@ var Resource = Backbone.Model.extend({
             this.set("settings", util.parseJSONString(this.attributes.settings));
         }
 
+        // TODO This is unnecessary
         function fetchChildren() {
             if (this.id) {
                 this.fetchChildren();
             }
         }
         fetchChildren.call(this);
-        this.listenTo(this, "change:id", function (id) {
-            fetchChildren.call(this);
-        });
     },
 
     /**
      * A convenient function for resources to override to fetch subresources.
      * It will (hopefully) be called at all the right times.
-     * (Namely when the <code>id</code> of the resource changes.
      */
     fetchChildren: function () {},
+
+    sync: function () {
+        return Backbone.Model.prototype.sync.apply(this, arguments)
+            .then(_.bind(function (data, state, response) {
+                return $.when(this.fetchChildren()).then(function () {
+                    return $.Deferred().resolve(data, state, response);
+                });
+            }, this));
+    },
 
     /**
      * Validate the attribute list passed to the model
@@ -180,7 +192,7 @@ var Resource = Backbone.Model.extend({
                 //   so for now we assume that this is only ever checked when the resource is public
                 //   in the right sense, i.e. it can be seen at all.
                 //&& this.isPublic()
-                && annotationTool.user.isAdmin()
+                && annotationTool.user.get("isAdmin")
         );
     },
 

@@ -84,7 +84,7 @@ define(
                 },
                 FATAL: {
                     title: "alert.fatal.title",
-                    className: "alert-error",
+                    severity: "alert-error",
                     hideButtons: true
                 },
                 WARNING: {

@@ -1,9 +1,22 @@
-<li class='tab-button'>
+<li class="tab-button">
     <a data-toggle="tab" data-tabid="{{id}}" data-target="#labelTab-{{id}}">
         {{name}}
-        <i class='icon-upload import edit' title="{{t "annotate.upload categories"}}"></i>
-        <input class="file" type="file" id="file-{{id}}">
-        <i class='icon-download export edit' title="{{t "annotate.download categories"}}"></i>
-        <i class='icon-plus-sign add edit'></i>
+        {{#if showDropdown}}
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" data-toggle="dropdown">
+                    <b class="caret"></b>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><button type="button" class="new-category-{{id}}">{{t "annotate.create category"}}</button></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><button type="button" class="create-scale">{{t "annotate.create scale"}}</button></li>
+                    <li><button type="button" class="edit-scales">{{t "annotate.edit scales"}}</button></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><button type="button" class="import">{{t "annotate.upload categories"}}</button></li>
+                    <li><button type="button" class="export">{{t "annotate.download categories"}}</button></li>
+                </ul>
+            </div>
+        {{/if}}
     </a>
+    <input class="file" type="file" id="file-{{id}}">
 </li>

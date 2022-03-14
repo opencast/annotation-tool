@@ -22,21 +22,19 @@ define(
     [
         "jquery",
         "underscore",
-        "i18next",
-        "views/annotate-category",
-        "templates/annotate-tab",
         "backbone",
         "handlebars",
+        "views/annotate-category",
+        "templates/annotate-tab",
         "filesaver"
     ],
     function (
         $,
         _,
-        i18next,
-        CategoryView,
-        Template,
         Backbone,
-        Handlebars
+        Handlebars,
+        CategoryView,
+        Template
     ) {
         "use strict";
 
@@ -59,12 +57,6 @@ define(
              * @type {string}
              */
             className: "tab-pane",
-
-            /**
-             * Define if the view is or not in edit modus.
-             * @type {boolean}
-             */
-            editModus: false,
 
             /**
              * List of categories in this tab
@@ -156,18 +148,15 @@ define(
                     "select",
                     "addCategories",
                     "addCategory",
-                    "onAddCategory",
                     "removeOne",
                     "addCarouselItem",
                     "moveCarouselToFrame",
                     "moveCarouselPrevious",
                     "moveCarouselNext",
                     "onCarouselSlid",
-                    "onSwitchEditModus",
                     "onExport",
                     "onImport",
                     "chooseFile",
-                    "switchEditModus",
                     "insertCategoryView",
                     "initCarousel",
                     "render"
@@ -175,7 +164,6 @@ define(
 
                 this.categories = annotationTool.video.get("categories");
                 this.filter = attr.filter;
-                this.roles = attr.roles;
                 this.defaultCategoryAttributes = attr.attributes;
 
                 this.categoryViews = [];
@@ -190,9 +178,8 @@ define(
                 this.addCategories(this.filter);
 
                 this.titleLink = attr.button;
-                this.titleLink.find("i.add").on("click", this.onAddCategory);
-                this.titleLink.find("i.export").on("click", this.onExport);
-                this.titleLink.find("i.import").on("click", this.chooseFile);
+                this.titleLink.find("button.export").on("click", this.onExport);
+                this.titleLink.find("button.import").on("click", this.chooseFile);
 
                 this.titleLink.find(".file").on("click", function (event) {
                     // We need to stop the propagation of this click event,
@@ -208,12 +195,13 @@ define(
                 this.listenTo(this.categories, "add", function (category) {
                     if (!this.filter(category)) return;
                     this.addCategory(category);
+                    if (attr.container.activeTab === this) {
+                        this.carouselElement.carousel(Math.floor(
+                            this.categories.length / annotationTool.CATEGORIES_PER_TAB
+                        ));
+                    }
                 });
                 this.listenTo(this.categories, "remove", this.removeOne);
-
-                this.listenTo(annotationTool, annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
-
-                this.hasEditMode = _.contains(this.roles, annotationTool.user.get("role"));
 
                 return this;
             },
@@ -276,37 +264,7 @@ define(
              * @param {Category} category The category to add
              */
             addCategory: function (category, collection, options) {
-
-                this.insertCategoryView(new CategoryView({
-                    category: category,
-                    editModus: this.editModus,
-                    roles: this.roles
-                }));
-            },
-
-            /**
-             * Listener for category creation request from UI
-             */
-            onAddCategory: function (event) {
-                var attributes = {
-                    name: i18next.t("annotate.new category name"),
-                    settings: _.extend(this.defaultCategoryAttributes.settings || {}, {
-                        color: "#" + annotationTool.colorsManager.getNextColor(),
-                        hasScale: false
-                    })
-                };
-                this.categories.create(
-                    _.extend(attributes, this.defaultCategoryAttributes),
-                    {
-                        wait: true,
-                        success: _.bind(function () {
-                            // Move the carousel to the container of the new item
-                            this.carouselElement.carousel(Math.floor(
-                                this.categories.length / annotationTool.CATEGORIES_PER_TAB
-                            ));
-                        }, this)
-                    }
-                );
+                this.insertCategoryView(new CategoryView({ category: category }));
             },
 
             /**
@@ -351,8 +309,8 @@ define(
              * Add a new carousel item to this tabe
              */
             addCarouselItem: function () {
-                var length = this.categoryViews.length,
-                    pageNumber = Math.floor(length / annotationTool.CATEGORIES_PER_TAB) + 1;
+                var length = this.categoryViews.length;
+                var pageNumber = Math.floor(length / annotationTool.CATEGORIES_PER_TAB) + 1;
 
                 this.categoriesContainer.append(this.itemContainerTemplate());
 
@@ -454,19 +412,17 @@ define(
              */
             onImport: function (evt) {
 
-                var reader = new FileReader(),
-                    file = evt.target.files[0],
-                    defaultCategoryAttributes = this.defaultCategoryAttributes;
+                var reader = new FileReader();
+                var file = evt.target.files[0];
+                var defaultCategoryAttributes = this.defaultCategoryAttributes;
 
                 reader.onload = (function () {
                     return function (e) {
-                        // Render thumbnail.
-                        var importAsString = e.target.result,
-                            importAsJSON;
-
                         try {
-                            importAsJSON = JSON.parse(importAsString);
-                            annotationTool.importCategories(importAsJSON, defaultCategoryAttributes);
+                            annotationTool.importCategories(
+                                JSON.parse(e.target.result),
+                                defaultCategoryAttributes
+                            );
                         } catch (error) {
                             // TODO pop up an error modal to the user
                             console.warn("The uploaded file is not valid!");
@@ -479,36 +435,12 @@ define(
             },
 
             /**
-             * Listener for edit modus switch.
-             * @param {boolean} status The new status
-             */
-            onSwitchEditModus: function (status) {
-                if (this.hasEditMode) {
-                    this.switchEditModus(status);
-                } else if (status) {
-                    this.titleLink.css("visibility", "hidden");
-                } else {
-                    this.titleLink.css("visibility", "visible");
-                }
-            },
-
-            /**
              * Simulate the a click on file input box to choose a file to import
              */
             chooseFile: function (event) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
                 this.titleLink.find(".file").click();
-            },
-
-            /**
-             * Switch the edit modus to the given status.
-             * @param {boolean} status The current status
-             */
-            switchEditModus: function (status) {
-                this.titleLink.toggleClass("edit-on", status);
-                this.$el.toggleClass("edit-on", status);
-                this.editModus = status;
             },
 
             /**

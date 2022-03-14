@@ -152,10 +152,15 @@ body {
     }
 }
 
+/* When the entire modal is a form, we don't need the extra spacing Bootstrap adds */
 .modal > form {
     margin-bottom: 0;
 }
 
 .modal-footer.form-actions {
     margin-top: 0;
+}
+
+.modal-body {
+    max-height: 450px;
 }

@@ -69,6 +69,9 @@ public class LabelDto extends AbstractResourceDto {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
+  @Column(name = "seriesLabelId")
+  private Long seriesLabelId;
+
   @Column(name = "value", nullable = false)
   private String value;
 
@@ -91,29 +94,30 @@ public class LabelDto extends AbstractResourceDto {
   @CollectionTable(name = "xannotations_label_tags", joinColumns = @JoinColumn(name = "label_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
-  public static LabelDto create(long categoryId, String value, String abbreviation, Option<String> description,
-          Option<String> settings, Resource resource) {
-    LabelDto dto = new LabelDto().update(value, abbreviation, description, settings, resource);
+  public static LabelDto create(Option<Long> seriesLabelId, long categoryId, String value, String abbreviation,
+          Option<String> description, Option<String> settings, Resource resource) {
+    LabelDto dto = new LabelDto().update(seriesLabelId, value, abbreviation, description, settings, resource);
     dto.categoryId = categoryId;
     return dto;
   }
 
-  public LabelDto update(String value, String abbreviation, Option<String> description, Option<String> settings,
-          Resource resource) {
+  public LabelDto update(Option<Long> seriesLabelId, String value, String abbreviation, Option<String> description,
+          Option<String> settings, Resource resource) {
     super.update(resource);
+    this.seriesLabelId = seriesLabelId.getOrElseNull();
     this.value = value;
     this.abbreviation = abbreviation;
-    this.description = description.getOrElse((String) null);
-    this.settings = settings.getOrElse((String) null);
+    this.description = description.getOrElseNull();
+    this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
     return this;
   }
 
   public Label toLabel() {
-    return new LabelImpl(id, categoryId, value, abbreviation, option(description), option(settings), new ResourceImpl(
-            option(access), option(createdBy), option(updatedBy), option(deletedBy), option(createdAt),
-            option(updatedAt), option(deletedAt), tags));
+    return new LabelImpl(id, option(seriesLabelId), categoryId, value, abbreviation, option(description),
+            option(settings), new ResourceImpl(option(access), option(createdBy), option(updatedBy), option(deletedBy),
+                    option(createdAt), option(updatedAt), option(deletedAt), tags));
   }
 
   public static final Function<LabelDto, Label> toLabel = new Function<LabelDto, Label>() {
@@ -139,5 +143,4 @@ public class LabelDto extends AbstractResourceDto {
   public static JSONObject toJson(ExtendedAnnotationService s, int offset, List<Label> ls) {
     return jO(p("offset", offset), p("count", ls.size()), p("labels", jA(mlist(ls).map(toJson.curry(s)))));
   }
-
 }

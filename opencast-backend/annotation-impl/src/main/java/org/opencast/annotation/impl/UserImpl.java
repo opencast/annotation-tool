@@ -18,8 +18,9 @@ package org.opencast.annotation.impl;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.User;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.User}.
@@ -74,7 +75,6 @@ public final class UserImpl extends ResourceImpl implements User {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, extId, nickname, email, getTags());
+    return Objects.hash(id, extId, nickname, email, getTags());
   }
-
 }

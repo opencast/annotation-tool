@@ -19,8 +19,9 @@ import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Category}.
@@ -28,18 +29,22 @@ import org.opencastproject.util.data.Option;
 public class CategoryImpl extends ResourceImpl implements Category {
 
   private final long id;
+  private final Option<String> seriesExtId;
+  private final Option<Long> seriesCategoryId;
   private final Option<Long> videoId;
   private final Option<Long> scaleId;
   private final String name;
   private final Option<String> description;
   private final Option<String> settings;
 
-  public CategoryImpl(long id, Option<Long> videoId, Option<Long> scaleId, String name, Option<String> description,
-          Option<String> settings, Resource resource) {
-    super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+  public CategoryImpl(long id, Option<String> seriesExtId, Option<Long> seriesCategoryId, Option<Long> videoId,
+          Option<Long> scaleId, String name, Option<String> description, Option<String> settings, Resource resource) {
+    super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(),
+            resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
+            resource.getTags());
     this.id = id;
+    this.seriesExtId = seriesExtId;
+    this.seriesCategoryId = seriesCategoryId;
     this.videoId = videoId;
     this.scaleId = scaleId;
     this.name = name;
@@ -50,6 +55,16 @@ public class CategoryImpl extends ResourceImpl implements Category {
   @Override
   public long getId() {
     return id;
+  }
+
+  @Override
+  public Option<String> getSeriesExtId() {
+    return seriesExtId;
+  }
+
+  @Override
+  public Option<Long> getSeriesCategoryId() {
+    return seriesCategoryId;
   }
 
   @Override
@@ -89,15 +104,15 @@ public class CategoryImpl extends ResourceImpl implements Category {
     if (o == null || getClass() != o.getClass())
       return false;
     Category category = (Category) o;
-    return id == category.getId() && videoId.equals(category.getVideoId()) && scaleId.equals(category.getScaleId())
-            && name.equals(category.getName()) && description.equals(category.getDescription())
-            && getAccess() == category.getAccess() && settings.equals(category.getSettings())
-            && getTags().equals(category.getTags());
+    return id == category.getId() && seriesExtId.equals(category.getSeriesExtId())
+            && seriesCategoryId.equals(category.getSeriesCategoryId()) && videoId.equals(category.getVideoId())
+            && scaleId.equals(category.getScaleId()) && name.equals(category.getName())
+            && description.equals(category.getDescription()) && getAccess() == category.getAccess()
+            && settings.equals(category.getSettings()) && getTags().equals(category.getTags());
   }
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, videoId, scaleId, name, description, settings, getTags());
+    return Objects.hash(id, seriesExtId, seriesCategoryId, videoId, scaleId, name, description, settings, getTags());
   }
-
 }

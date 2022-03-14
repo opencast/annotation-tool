@@ -21,8 +21,9 @@ import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Track;
 
-import org.opencastproject.util.EqualsUtil;
 import org.opencastproject.util.data.Option;
+
+import java.util.Objects;
 
 /**
  * The business model implementation of {@link org.opencast.annotation.api.Track}.
@@ -92,6 +93,6 @@ public final class TrackImpl extends ResourceImpl implements Track {
 
   @Override
   public int hashCode() {
-    return EqualsUtil.hash(id, videoId, name, description, settings, getTags());
+    return Objects.hash(id, videoId, name, description, settings, getTags());
   }
 }

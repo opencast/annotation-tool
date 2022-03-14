@@ -124,5 +124,4 @@ public class CommentDto extends AbstractResourceDto {
   public static JSONObject toJson(ExtendedAnnotationService s, int offset, List<Comment> ls) {
     return jO(p("offset", offset), p("count", ls.size()), p("comments", jA(mlist(ls).map(toJson.curry(s)))));
   }
-
 }
