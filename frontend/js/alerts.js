@@ -14,12 +14,12 @@
  */
 
 define([
+    "underscore",
     "views/alert"
 ], function (
-    AlertView
+    _,
+    AlertModal
 ) { "use strict";
-
-var alertModal = new AlertView();
 
 /**
  * Handy functions to show alerts.
@@ -28,36 +28,36 @@ var alertModal = new AlertView();
 var alerts = {
     /**
      * Display an alert modal
-     * @param {String} message The message to display
+     * @param {string} message The message to display
      */
     error: function (message) {
-        alertModal.show(message, AlertView.TYPES.ERROR);
+        new AlertModal(_.extend({}, AlertModal.TYPES.ERROR, { message: message })).show(message);
     },
 
     /**
      * Display a fatal error.
      * In addition to what {@link alertError} does, this also disables user interaction.
      * It effectively "crashes" the application with a (hopefully useful) error message.
-     * @param {String} message The error message to display
+     * @param {string} message The error message to display
      */
     fatal: function (message) {
-        alertModal.show(message, AlertView.TYPES.FATAL);
+        new AlertModal(_.extend({}, AlertModal.TYPES.FATAL, { message: message })).show(message);
     },
 
     /**
      * Display an warning modal
-     * @param {String} message The message to display
+     * @param {string} message The message to display
      */
     warning: function (message) {
-        alertModal.show(message, AlertView.TYPES.WARNING);
+        new AlertModal(_.extend({}, AlertModal.TYPES.WARNING, { message: message })).show(message);
     },
 
     /**
      * Display an information modal
-     * @param {String} message The message to display
+     * @param {string} message The message to display
      */
     info: function (message) {
-        alertModal.show(message, AlertView.TYPES.INFO);
+        new AlertModal(_.extend({}, AlertModal.TYPES.INFO, { message: message })).show(message);
     }
 };
 
