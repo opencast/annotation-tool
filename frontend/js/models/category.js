@@ -20,12 +20,10 @@
  */
 define(
     [
-        "underscore",
         "collections/labels",
         "models/resource"
     ],
     function (
-        _,
         Labels,
         Resource
     ) {
@@ -47,10 +45,10 @@ define(
              * Default model values
              */
             defaults: function () {
-                return {
+                return _.extend(Resource.prototype.defaults, {
                     visible: true,
                     labels: new Labels([], { category: this })
-                };
+                });
             },
 
             sync: function (method, model, options) {
@@ -76,6 +74,7 @@ define(
 
                 this.set("settings", _.extend({
                     hasScale: true,
+                    color: "#008080",
                     createdAsMine: !this.isPublic()
                 }, this.get("settings")));
             },
@@ -95,6 +94,10 @@ define(
             validate: function (attr) {
                 var invalidResource = Resource.prototype.validate.apply(this, arguments);
                 if (invalidResource) return invalidResource;
+
+                if (!attr.name || /^\s*$/.test(attr.name)) {
+                    return "\"name\" must not be blank";
+                }
 
                 if (attr.description && !_.isString(attr.description)) {
                     return "\"description\" attribute must be a string";

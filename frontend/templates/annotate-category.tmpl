@@ -1,56 +1,19 @@
 <div class="catItem-header" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}} title="{{name}}">
-    <input type="text" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}/>
+    <input type="text" value="{{name}}" disabled>
     <i
         class="{{#if visible}}icon-eye-open{{else}}icon-eye-close{{/if}} visibility"
         title="{{#if visible}}{{t "annotate.hide category"}}{{else}}{{t "annotate.show category"}}{{/if}}"
     ></i>
-    <i class="icon-pencil scale edit" title="{{t "annotate.edit category scaling"}}"></i>
-    <i class="icon-trash delete edit"></i>
-    <i
-        class="{{#if series_category_id}}icon-series-category{{else}}icon-video-category{{/if}} toggle-series edit"
-        title="{{#if series_category_id}}{{t "annotate.series category"}}{{else}}{{t "annotate.event category"}}{{/if}}"
-    ></i>
-    <button
-        type="button"
-        class="category-access"
-        data-trigger="click"
-        title="
-            <div class='category-access' data-id='{{id}}'>
-                <button type='button' data-access='public'>
-                    <i
-                        class='icon-white icon-public'
-                        title='{{t "timeline.change visibility.to public"}}'
-                    ></i>
-                </button >
-                <button type='button' data-access='private'>
-                    <i
-                        class='icon-white icon-private'
-                        title='{{t "timeline.change visibility.to private"}}'
-                    ></i>
-                </button>
-                <button type='button' data-access='shared-with-admin'>
-                    <i
-                        class='icon-white icon-shared-with-admin'
-                        title='{{t "timeline.change visibility.to shared with admin"}}'
-                    ></i>
-                </button>
-            </div>
-        "
-        data-placement="top"
-    >
-        <i
-            title="{{t "timeline.change visibility.tooltip"}}"
-            class="icon-dark-grey icon-{{access}} edit"
-        ></i>
-    </button>
-    <div class="colorpicker">
-        <input
-            id="color-{{name}}"
-            type="text"
-            class="colorpicker edit"
-            value="{{#if settings}}{{settings.color}}{{/if}}"
-        >
-    </div>
+    {{#if canEdit}}
+        <div class="dropdown">
+            <button type="button" class="dropdown-toggle" data-toggle="dropdown">
+                <b class="caret"></b>
+            </button>
+            <ul class="dropdown-menu">
+                <li><button type="button" class="edit">{{t "annotate.edit category"}}</button></li>
+                <li><button type="button" class="delete">{{t "annotate.delete category"}}</button></li>
+            </ul>
+        </div>
+    {{/if}}
 </div>
 <div class="catItem-labels" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}}></div>
-<div class="catItem-add edit"><i class="icon-plus-sign"></i>{{t "annotate.create a label"}}</div>

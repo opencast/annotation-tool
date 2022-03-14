@@ -1,0 +1,89 @@
+<form>
+    <div class="modal-header"><h3>
+        {{#if isNew}}
+            {{t "category modal.new category"}}
+        {{else}}
+            {{t "category modal.edit"}} {{model.name}}
+        {{/if}}
+    </h3></div>
+
+    <div class="modal-body">
+        <label>
+          <span class="required">{{t "category modal.name"}}</span>
+          <input id="name" type="text" value="{{model.name}}" required>
+        </label>
+
+        <label>{{t "category modal.color"}} <input type="color" value="{{model.settings.color}}"></label>
+
+        <fieldset>
+            <legend>{{t "category modal.affiliation"}}</legend>
+            <label class="radio">
+                <input type="radio" name="affiliation" value="event">
+                {{t "category modal.belongs to video"}}
+            </label>
+            <label class="radio">
+                <input type="radio" name="affiliation" value="series">
+                {{t "category modal.belongs to series"}}
+            </label>
+
+            <span class="help-block" id="no-series-affiliation-with-scale">
+                {{t "category modal.no series affiliation with scale"}}
+            </span>
+        </fieldset>
+
+        {{#if model.settings.createdAsMine}}
+            <fieldset>
+                <legend>{{t "category modal.access.label"}}</legend>
+                <label class="radio">
+                    <input type="radio" name="access" value="private">
+                    {{t "category modal.access.private"}}
+                </label>
+                <label class="radio">
+                    <input type="radio" name="access" value="shared-with-admin">
+                    {{t "category modal.access.shared with admin"}}
+                </label>
+                <label class="radio">
+                    <input type="radio" name="access" value="public">
+                    {{t "category modal.access.public"}}
+                </label>
+            </fieldset>
+        {{/if}}
+
+        <fieldset>
+            <legend>{{t "category modal.labels"}}</legend>
+
+            <table id="labels">
+                <tr>
+                    <td class="required">{{t "category modal.label"}}</td>
+                    <td class="required">{{t "category modal.abbreviation"}}</td>
+                    <td>{{t "category modal.remove"}}</td>
+                </tr>
+            </table>
+            <button type="button" id="new-label" class="btn">{{t "category modal.create new label"}}</button>
+        </fieldset>
+
+        <fieldset>
+            <legend>{{t "category modal.scale"}}</legend>
+            <label>{{t "category modal.scale"}} <select>
+                <option value="">{{t "category modal.scale no"}}</option>
+                {{#each scales}}
+                    <option value="{{id}}">{{name}}</option>
+                {{/each}}
+            </select></label>
+
+            <span class="help-block" id="scales-description">
+                {{t "category modal.scales description"}}
+            </span>
+            <span class="help-block" id="no-scale-on-series-category">
+                {{t "category modal.no scale on series category"}}
+            </span>
+        </fieldset>
+
+        <div style="text-align: right;"><b>* {{t "required fields"}}</b></div>
+    </div>
+
+    <div class="modal-footer form-actions">
+        <button class="btn cancel" type="button">{{t "common actions.cancel"}}</button>
+        <button class="btn btn-primary">{{t "common actions.save"}}</button>
+    </div>
+</form>

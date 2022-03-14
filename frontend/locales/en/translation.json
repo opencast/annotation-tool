@@ -15,6 +15,7 @@
     }
   },
   "annotation not allowed": "You are not allowed to annotate this video!",
+  "unexpected error": "An unexpected error occured",
   "annotate on": "Annotate on",
   "annotate": {
     "categories": {
@@ -22,18 +23,17 @@
       "mine": "Mine",
       "public": "Public"
     },
-    "create a label": "Create a label",
+    "create category": "Create category",
+    "delete category": "Delete category",
     "download categories": "Download categories",
-    "edit category scaling": "Edit scaling for this category",
     "edit mode": "Edit mode",
+    "edit category": "Edit category",
     "insert": "$t(common actions.insert)",
     "items visibility": {
       "collapse all": "Collapse all",
       "expand all": "Expand all",
       "head": "Items Visibility"
     },
-    "new category name": "NEW CATEGORY",
-    "new label placeholder": "Label value …",
     "new": {
       "placeholder": "Write a free text annotation. ($t(annotate.new.title))",
       "title": "Use “ shift + return” keys to create a new line."
@@ -46,13 +46,13 @@
     },
     "select track prompt": "Select a track to start annotating",
     "upload categories": "Upload categories",
-    "hide category": "Hide category",
-    "show category": "Show category",
+    "hide category": "Hide associated annotations",
+    "show category": "Show associated annotations",
     "show free text": "Show free text annotations",
     "hide free text": "Hide free text annotations",
-    "video category": "Category belongs to this video",
-    "series category": "Category belongs to the series and is shown in all videos",
-    "structured annotations": "Structured Annotations"
+    "structured annotations": "Structured Annotations",
+    "create scale": "Create scale",
+    "edit scales": "Edit scales"
   },
   "annotation": {
     "author": "Created by",
@@ -93,6 +93,31 @@
     },
     "you own": "You own this annotation"
   },
+  "category modal": {
+    "abbreviation": "Abbreviation",
+    "access": {
+      "label": "Access",
+      "private": "Private",
+      "public": "Share with everyone",
+      "shared with admin": "Share with admin"
+    },
+    "affiliation": "Affiliation",
+    "belongs to series": "Belongs to the series",
+    "belongs to video": "Belongs to the video",
+    "create new label": "Create a new label",
+    "color": "Color",
+    "edit": "Edit",
+    "label": "Label",
+    "labels": "Labels",
+    "remove": "Remove",
+    "name": "Name",
+    "new category": "New category",
+    "no scale on series category": "This category belongs to a series. Therefore it cannot be assigned a scale.",
+    "no series affiliation with scale": "This category was assigned a scale. Categories with scales can NOT belong to a series.",
+    "scale": "Scale",
+    "scale no": "-- NO SCALE SELECTED --",
+    "scales description": "The characteristics of the scale appear on each label, in order to further specify the characteristic of a label."
+  },
   "default track": {
     "description": "Default track for user {{nickname}}",
     "name": "Default {{nickname}}"
@@ -102,13 +127,6 @@
     "delete": "$t(common actions.delete)",
     "title": "Delete {{context}}",
     "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
-  },
-  "series category modal": {
-    "cancel": "$t(common actions.cancel)",
-    "to video": "To Video Category",
-    "title": "Warning!",
-    "warning": "Changing the affiliation of this category from series back to video will delete the category from all other videos of this series! Proceed?",
-    "custom message": "This category belongs to a series and appears in all videos. If you delete this category, it will be deleted for all other videos as well."
   },
   "description": "Video annotation tool",
   "list annotation": {
@@ -157,10 +175,6 @@
       "drag here": "Drag icon to place element"
     }
   },
-  "new label defaults": {
-    "abbreviation": "NEW",
-    "description": "New"
-  },
   "print": {
     "annotations": {
       "header": "Annotations",
@@ -195,42 +209,15 @@
     "title": "Name of the video: {{title}}"
   },
   "required fields": "Required fields",
-  "scale editor": {
-    "cancel": "$t(common actions.cancel)",
-    "delete": "$t(common actions.delete)",
-    "close": "$t(common actions.close)",
-    "description": {
-      "label": "Description",
-      "placeholder": "Insert the category description"
-    },
-    "edit category scale": "Edit category scale",
-    "edit scales": "Edit scales",
-    "name": {
-      "label": "Name",
-      "placeholder": "Insert the category name"
-    },
-    "new scale": {
-      "name": "New scale",
-      "value": "New scale value"
-    },
-    "new scale name": "New scale",
-    "new scale value": "New scale value",
-    "no scale": "-- NO SCALE --",
-    "save": "$t(common actions.save)",
-    "values": {
-      "add": "Add scale value",
-      "name": {
-        "header": "Name"
-      },
-      "value": {
-        "header": "Value",
-        "placeholder": "Insert a decimal number."
-      }
-    },
-    "warning": {
-      "name": "Attention!",
-      "message": "This category belongs to a series. Therefore, assigning a scale is not possible.",
-      "messageScaleOnSeriesCategory": "Category has a scale. Changing category affiliation is not possible."
+  "scale modal": {
+    "select scale": "select scale",
+    "create scale": "Create new scale",
+    "edit scale": "Edit scale \"{{name}}\"",
+    "help": "Note: Scales can supplement categories. The chosen scale will appear on any label of the category in question to further specify its expression.",
+    "name": "Name",
+    "scale value": {
+      "name": "Name",
+      "value": "Value"
     }
   },
   "startup": {

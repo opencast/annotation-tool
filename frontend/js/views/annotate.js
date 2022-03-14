@@ -22,33 +22,40 @@ define(
     [
         "jquery",
         "underscore",
+        "backbone",
         "i18next",
         "player-adapter",
         "views/annotate-tab",
+        "views/category-modal",
+        "views/scale-modal",
         "templates/annotate",
         "templates/annotate-tab-title",
         "templates/annotate-toggle-free-text-button",
-        "roles",
         "access",
-        "backbone"
+        "roles",
+        "models/category"
     ],
     function (
         $,
         _,
+        Backbone,
         i18next,
         PlayerAdapter,
         AnnotateTab,
+        CategoryModal,
+        ScaleModal,
         template,
         TabsButtonTemplate,
         toggleFreeTextButtonTemplate,
-        ROLES,
         ACCESS,
-        Backbone
+        ROLES,
+        Category
     ) {
         "use strict";
 
         /**
-         * List of default tabs, each object contains an id, name and an array of roles
+         * List of default tabs, each object contains an id, a name, a filter for categories,
+         * a role that can edit things in the tab, and possibly some additional attributes
          * @type {Object}
          */
         var DEFAULT_TABS = {
@@ -57,8 +64,7 @@ define(
                 name: i18next.t("annotate.categories.all"),
                 filter: function (category) {
                     return !category.get("settings").createdAsMine || category.isMine();
-                },
-                roles: []
+                }
             },
             PUBLIC: {
                 id: "public",
@@ -66,7 +72,7 @@ define(
                 filter: function (category) {
                     return !category.get("settings").createdAsMine;
                 },
-                roles: [ROLES.ADMINISTRATOR],
+                role: ROLES.ADMINISTRATOR,
                 attributes: {
                     access: ACCESS.PUBLIC,
                     settings: {
@@ -80,7 +86,7 @@ define(
                 filter: function (category) {
                     return category.get("settings").createdAsMine && category.isMine();
                 },
-                roles: [ROLES.USER, ROLES.ADMINISTRATOR],
+                role: ROLES.USER,
                 attributes: {
                     access: ACCESS.PRIVATE,
                     settings: {
@@ -106,8 +112,11 @@ define(
                 "click #insert": "insert",
                 "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
-                "change #editSwitch": "onSwitchEditModus",
-                "click #toggle-free-text button": "toggleFreeTextAnnotations"
+                "click #toggle-free-text button": "toggleFreeTextAnnotations",
+                "click .new-category-public": "createCategoryPublic",
+                "click .new-category-mine": "createCategoryMine",
+                "click .create-scale": "createScale",
+                "click .edit-scales": "editScales"
             },
 
             /**
@@ -117,22 +126,10 @@ define(
             tabsButtonTemplate: TabsButtonTemplate,
 
             /**
-             * Define if the view is or not in edit modus.
-             * @type {boolean}
-             */
-            editModus: false,
-
-            /**
              * Map with all the category tabs
              * @type {map}
              */
             categoriesTabs: {},
-
-            /**
-             * The default tabs when switching in edit modus
-             * @type {map}
-             */
-            DEFAULT_TAB_ON_EDIT: DEFAULT_TABS.MINE.id,
 
             /**
              * Layout configuration
@@ -156,10 +153,9 @@ define(
                     "insert",
                     "changeTrack",
                     "addTab",
-                    "onSwitchEditModus",
-                    "switchEditModus",
                     "toggleFreeTextAnnotationPane",
-                    "toggleStructuredAnnotations"
+                    "toggleStructuredAnnotations",
+                    "createCategory"
                 );
 
                 // Parameter for stop on write
@@ -195,14 +191,55 @@ define(
 
                 categories = annotationTool.video.get("categories");
 
-                annotationTool.colorsManager.updateColors(categories.models);
-
                 _.each(DEFAULT_TABS, function (params) {
                     this.addTab(params);
                 }, this);
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
                 this.tabsButtonsElement.find("a:first-child").parent().first().addClass("active");
+            },
+
+            /**
+             * Create a new scale
+             */
+            createScale: function () {
+                new ScaleModal({ create: true }).show();
+            },
+
+            /**
+             * Edit existing scales
+             */
+            editScales: function () {
+                new ScaleModal().show();
+            },
+
+            /**
+             * Open a modal to create a new category
+             */
+            createCategory: function (mine) {
+                var category = new Category({
+                    settings: {
+                        hasScale: false,
+                        createdAsMine: mine,
+                        color: "#" + annotationTool.colorManager.getNextColor()
+                    },
+                    access: mine ? ACCESS.PRIVATE : ACCESS.PUBLIC
+                });
+                new CategoryModal({ model: category }).show();
+            },
+
+            /**
+             * Called from "Public" tab
+             */
+            createCategoryPublic: function () {
+                this.createCategory(false);
+            },
+
+            /**
+             * Called from "Mine" tab
+             */
+            createCategoryMine: function () {
+                this.createCategory(true);
             },
 
             /**
@@ -283,6 +320,7 @@ define(
              */
             showTab: function (event) {
                 var tabId = event.currentTarget.dataset.tabid;
+                this.activeTab = this.categoriesTabs[tabId];
 
                 $(event.currentTarget).one("shown", _.bind(function () {
                     this.categoriesTabs[tabId].initCarousel();
@@ -295,19 +333,18 @@ define(
             /**
              * Add a new categories tab in the annotate view
              * @param {Categories} categories Categories to add to the new tab
-             * @param {object} attr Infos about the new tab like id, name, filter for categories and roles.
+             * @param {object} attr Infos about the new tab like id, name and a filter for categories.
              */
             addTab: function (attr) {
-                var params = {
-                    id: attr.id,
-                    name: attr.name,
-                    filter: attr.filter,
-                    roles: attr.roles,
-                    attributes: attr.attributes
-                };
+                var params = _.clone(attr);
 
-                var newButton = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
-                params.button = newButton;
+                params.container = this;
+
+                if (params.role && annotationTool.user.hasRole(params.role)) {
+                    params.showDropdown = true;
+                }
+
+                params.button = $(this.tabsButtonTemplate(params)).appendTo(this.tabsButtonsElement);
 
                 params.id = "labelTab-" + params.id;
                 var annotateTab = new AnnotateTab(params);
@@ -325,35 +362,6 @@ define(
 
                 this.tabsButtonsElement.find("a[data-tabid=\"" + id + "\"]").parent().remove();
                 this.tabsContainerElement.find("#labelTab-" + id).remove();
-            },
-
-            /**
-             * Listener for edit modus switch.
-             * @param {Event} event Event related to this action
-             */
-            onSwitchEditModus: function (event) {
-                var status = event.target.checked;
-
-                this.switchEditModus(status);
-
-                if (status) {
-                    this.showTab({
-                        currentTarget: this.categoriesTabs[this.DEFAULT_TAB_ON_EDIT].titleLink.find("a")[0]
-                    });
-                }
-            },
-
-            /**
-             * Switch the edit modus to the given status.
-             * @param  {boolean} status The current status
-             */
-            switchEditModus: function (status) {
-                this.editModus = status;
-
-                this.$el.find("#annotate-container").toggleClass("edit-on", status);
-
-                // trigger an event that all element switch in edit modus
-                annotationTool.trigger(annotationTool.EVENTS.ANNOTATE_TOGGLE_EDIT, status);
             },
 
             /**
@@ -428,7 +436,6 @@ define(
                             id: trackUserId,
                             name: track.get("created_by_nickname"),
                             filter: _.partial(categoryFilter, trackUserId),
-                            roles: [],
                             attributes: { access: ACCESS.PRIVATE }
                         });
                     } else {

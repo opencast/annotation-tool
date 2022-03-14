@@ -2,10 +2,6 @@
  * Style for annotate view
  */
 
-.edit {
-    visibility: hidden;
-}
-
 i.check {
     visibility: hidden;
 }
@@ -23,21 +19,6 @@ i.check {
     text-align: center;
 }
 
-
-button.category-access {
-    .link-button();
-}
-
-div.category-access button {
-    .link-button();
-    width: 23px;
-    text-align: center;
-
-    i {
-        margin-top: 0;
-    }
-}
-
 #annotate-form {
 
     display: flex;
@@ -47,6 +28,29 @@ div.category-access button {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+
+        .dropdown {
+
+            margin-left: 5px;
+
+            button.dropdown-toggle {
+                .link-button();
+
+                .caret {
+                    margin-top: 5px;
+                    border-top-color: black;
+                    border-top-width: 6px;
+                    border-left-width: 6px;
+                    border-right-width: 6px;
+                }
+
+                &:hover, &:active {
+                    .caret {
+                        border-top-color: black;
+                    }
+                }
+            }
+        }
     }
 
     .insert-fields {
@@ -109,12 +113,6 @@ div.category-access button {
         margin-top: -2px;
     }
 
-    #editSwitch {
-        float: right;
-        margin-right: 10px;
-        padding: 0;
-    }
-
     label, span, p, legend {
         color: @white;
         white-space: nowrap;
@@ -152,43 +150,6 @@ div.category-access button {
         display: none;
     }
 
-    &.edit-on {
-
-        i:not(.edit) {
-            display: none;
-        }
-
-        .colorPicker-picker {
-            display: inline-block !important;
-        }
-
-        i.edit {
-            background-color: none;
-            border: none;
-            margin-left: 5px;
-            float: right;
-            display: inline-block !important;
-
-            &:hover {
-                .iconHover();
-            }
-        }
-
-        .nav i.edit {
-            float: none;
-        }
-
-        ul.nav-tabs {
-            .edit {
-                visibility: hidden;
-            }
-
-            li.edit-on .edit {
-                visibility: visible;
-            }
-        }
-    }
-
     #label-tabs-contents div {
         padding: 0px;
         &.carousel {
@@ -222,15 +183,12 @@ div.category-access button {
                     text-align: left;
                     height: 25px;
                     padding: 1px 3px;
+                    padding-right: 5px;
                     font-size: 14px;
                     font-weight: bold;
                     color: @white;
                     border-right: 1px solid @white;
                     border-bottom: 1px solid @white;
-
-                    .edit { // Hide Icons and color picker when not in edit mode
-                        display: none;
-                    }
 
                     input {
                         min-width: 0;
@@ -251,11 +209,6 @@ div.category-access button {
                         }
                     }
 
-                    .colorPicker-picker {
-                        background-image: url("@{iconGreySpritePath}");
-                        background-position: -384px -168px;
-                    }
-
                     [class*="icon-"] {
                         flex-shrink: 0;
                     }
@@ -273,18 +226,8 @@ div.category-access button {
                     width: 100%;
                     .box-sizing(border-box);
 
-                    .edit {
-                        display: none;
-                    }
-
                     .item-abbreviation {
                         width: 30px;
-                    }
-
-                    .item-value {
-                        // min-width: 78px;
-                        width: 100%;
-                        margin-right: 4px;
                     }
 
                     .label-style {
@@ -480,149 +423,12 @@ div.category-access button {
             flex-direction: column;
             flex-grow: 1;
         }
-
-        .edit {
-            visibility: hidden;
-        }
-
-        .nav i.edit {
-            float: right;
-        }
-
-        i.edit {
-            visibility: hidden;
-        }
-
-        &.edit-on {
-
-            .edit {
-                visibility: visible;
-                display: inline-block;
-            }
-
-            div.carousel {
-
-                flex-grow: 1;
-
-                .carousel-inner {
-                    width: 320%;
-
-                    @media (min-width: 1000px) and (max-width: 1500px) {
-                        width: 250% !important;
-                    }
-
-                    @media (min-width: 1500px) and (max-width: 2000px) {
-                        width: 200% !important;
-                    }
-
-                    @media (min-width: 2000px) and (max-width: 2500px) {
-                        width: 150% !important;
-                    }
-                }
-
-                .category-item {
-
-                    .catItem-header input {
-                        width: 38%;
-                        min-width: 42px;
-                    }
-
-                    .label-item {
-                        .item-value {
-                            width: 50px;
-                        }
-
-                        .scaling {
-                            display: none;
-                        }
-
-                        &:hover {
-                            cursor: default;
-
-                            .scaling {
-                                display: none;
-                            }
-                        }
-                    }
-
-                    .catItem-add {
-                        margin-top: 2px;
-                        padding: 5px;
-                        text-align: left;
-
-                        display: block;
-
-                        i {
-                            margin-right: 3px;
-                        }
-                        &:hover {
-                            cursor: pointer;
-                        }
-                    }
-
-                    .label-item {
-                        height: 26px;
-                        .edit {
-                            display: inline-block;
-                        }
-                        .label-style {
-                            display: none;
-                        }
-                        textarea, input {
-                            border: 1px solid @white;
-                            background-color: @white;
-                            &:focus, &:active {
-                                box-shadow: 0 0 2px @blue;
-                                border: 1px solid @blue;
-                            }
-                        }
-
-                        &:hover {
-                            cursor: default;
-                            background-color: fade(@white,40%);
-                            .scaling {
-                                display: none;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        i.edit {
-            margin: 2px 0 0 5px;
-            padding: 1px;
-            float: right;
-            background-color: transparent;
-            border: none;
-
-            &:hover {
-                .iconHover();
-            }
-        }
     }
 }
-
 
 .notrack {
     color: red;
     font-weight: bold;
-}
-
-
-#scale-editor {
-    .header-name {
-        float: left;
-        margin-left: 65px;
-        width: 100px;
-        margin-right: 3px;
-    }
-
-    .error {
-        color: red;
-        font-weight: bold;
-        border: 1px solid red;
-    }
 }
 
 #structured-annotations-header {
