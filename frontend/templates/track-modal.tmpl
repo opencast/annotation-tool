@@ -27,7 +27,10 @@
                     {{#if (isAdmin)}}
                         <label class="radio">
                             <input type="radio" name="access-radio" value="shared-with-everyone">
-                            {{t "timeline.track modals.access.shared with everyone" context=action}}
+                            {{t "timeline.track modals.access.shared with everyone" context=action}}<br>
+                            <span class="explanation">
+                                {{t "timeline.track modals.access.shared with everyone explanation"}}
+                            </span>
                         </label>
                     {{/if}}
                     <label class="radio">

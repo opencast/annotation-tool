@@ -246,7 +246,8 @@
         "public": "Öffentlich",
         "private": "Privat",
         "shared with admin": "Mit Administrator teilen",
-        "shared with everyone": "Allen Benutzern automatisch anzeigen"
+        "shared with everyone": "Allen Benutzern automatisch anzeigen",
+        "shared with everyone explanation": "Die Spur wird allen Benutzern automatisch und schreibgeschützt angezeigt. Andere Benutzer können also keine Änderungen vornehmen."
       },
       "name": {
         "label": "Name",
