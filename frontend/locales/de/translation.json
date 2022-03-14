@@ -227,8 +227,7 @@
       "to public": "Öffentlich machen",
       "to private": "Privat machen",
       "to shared with admin": "Mit Administratoren teilen",
-      "to shared with everyone": "Allen Benutzern automatisch anzeigen",
-      "to shared with everyone explanation": "Die Spur wird allen Benutzern automatisch und schreibgeschützt angezeigt. Andere Benutzer können also keine Änderungen vornehmen."
+      "to shared with everyone": "Allen Benutzern automatisch anzeigen"
     },
     "track modals": {
       "header_add": "Neue Spur hinzufügen",
@@ -247,7 +246,8 @@
         "public": "Öffentlich",
         "private": "Privat",
         "shared with admin": "Mit Administrator teilen",
-        "shared with everyone": "Allen Benutzern automatisch anzeigen"
+        "shared with everyone": "Allen Benutzern automatisch anzeigen",
+        "shared with everyone explanation": "Die Spur wird allen Benutzern automatisch und schreibgeschützt angezeigt. Andere Benutzer können also keine Änderungen vornehmen."
       },
       "name": {
         "label": "Name",
