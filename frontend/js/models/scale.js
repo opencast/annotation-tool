@@ -86,6 +86,10 @@ define(
              * @return {object} The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
+                // The API might return the values of this scale as part of the response
+                // for asking for a scale. If this is the case, we want to parse it
+                // (the JSON data of the scale values) into a proper Backbone collection
+                // for easier access and manipulation.
                 if (data.scaleValues) {
                     data.scaleValues = new ScaleValues(data.scaleValues, { scale: this });
                 }
