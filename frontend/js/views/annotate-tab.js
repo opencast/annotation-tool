@@ -413,7 +413,7 @@ define(
             onImport: function (evt) {
 
                 // unfocus menu
-                document.children[0].click()
+                document.children[0].click();
 
                 var reader = new FileReader();
                 var file = evt.target.files[0];
