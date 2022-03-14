@@ -100,7 +100,7 @@ define(
 
                 Modal.prototype.initialize.apply(this, arguments);
 
-                this.tracks = annotationTool.getTracks();
+                this.tracks = annotationTool.video.get("tracks");
             },
 
             /**

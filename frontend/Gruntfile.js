@@ -83,7 +83,7 @@ module.exports = function (grunt) {
                 maxWarnings: grunt.option('maxWarnings'),
                 fix: grunt.option('fix')
             },
-            files: ['js', './{,.}*.js']
+            files: ['js/**/*.js', './{,.}*.js', '!js/libs/**/{,.}*']
         },
 
         stylelint: {
@@ -93,6 +93,12 @@ module.exports = function (grunt) {
                 fix: grunt.option('fix')
             },
             files: ['style/annotations/**/*.less', 'style/style.less']
+        },
+
+        jsonlint: {
+            translations: {
+                src: 'locales/*/translation.json'
+            }
         }
     });
 
@@ -103,6 +109,7 @@ module.exports = function (grunt) {
         'amdcheck',
         'eslint',
         'stylelint',
+        'jsonlint',
         'handlebars',
         'less',
         'copy'

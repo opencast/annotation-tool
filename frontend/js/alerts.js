@@ -14,8 +14,10 @@
  */
 
 define([
+    "underscore",
     "views/alert"
 ], function (
+    _,
     AlertModal
 ) { "use strict";
 
@@ -29,7 +31,7 @@ var alerts = {
      * @param {string} message The message to display
      */
     error: function (message) {
-        new AlertModal(AlertModal.TYPES.ERROR).show(message);
+        new AlertModal(_.extend({}, AlertModal.TYPES.ERROR, { message: message })).show(message);
     },
 
     /**
@@ -39,7 +41,7 @@ var alerts = {
      * @param {string} message The error message to display
      */
     fatal: function (message) {
-        new AlertModal(AlertModal.TYPES.FATAL).show(message);
+        new AlertModal(_.extend({}, AlertModal.TYPES.FATAL, { message: message })).show(message);
     },
 
     /**
@@ -47,7 +49,7 @@ var alerts = {
      * @param {string} message The message to display
      */
     warning: function (message) {
-        new AlertModal(AlertModal.TYPES.WARNING).show(message);
+        new AlertModal(_.extend({}, AlertModal.TYPES.WARNING, { message: message })).show(message);
     },
 
     /**
@@ -55,7 +57,7 @@ var alerts = {
      * @param {string} message The message to display
      */
     info: function (message) {
-        new AlertModal(AlertModal.TYPES.INFO).show(message);
+        new AlertModal(_.extend({}, AlertModal.TYPES.INFO, { message: message })).show(message);
     }
 };
 

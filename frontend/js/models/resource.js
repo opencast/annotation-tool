@@ -57,6 +57,7 @@ var Resource = Backbone.Model.extend({
             this.set("settings", util.parseJSONString(this.attributes.settings));
         }
 
+        // TODO This is unnecessary
         function fetchChildren() {
             if (this.id) {
                 this.fetchChildren();
@@ -74,7 +75,6 @@ var Resource = Backbone.Model.extend({
     sync: function () {
         return Backbone.Model.prototype.sync.apply(this, arguments)
             .then(_.bind(function (data, state, response) {
-                // No need to fetch children for previously nonexistent entities
                 return $.when(this.fetchChildren()).then(function () {
                     return $.Deferred().resolve(data, state, response);
                 });

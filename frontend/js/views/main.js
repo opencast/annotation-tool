@@ -122,7 +122,7 @@ define(
 
                 $(window).on("keydown", _.bind(this.onDeletePressed, this));
 
-                this.listenToOnce(this, MainView.EVENTS.READY, function () {
+                this.listenToOnce(this, "ready", function () {
                     this.updateTitle(annotationTool.video);
                     this.tracksSelectionModal = new TracksSelectionView();
 
@@ -389,7 +389,7 @@ define(
                         resolveView("player", annotationTool.playerAdapter);
                     }
                     function failed() {
-                        alerts.fatal("startup.video.failed");
+                        alerts.fatal(i18next.t("startup.video.failed"));
                     }
                     self.listenToOnce(annotationTool, annotationTool.EVENTS.VIDEO_LOADED, function () {
                         if (annotationTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
@@ -509,7 +509,7 @@ define(
 
                 this.setupKeyboardShortcuts();
 
-                this.trigger(MainView.EVENTS.READY);
+                this.trigger("ready");
             },
 
             /**
@@ -518,7 +518,7 @@ define(
             setupKeyboardShortcuts: function () {
 
                 var setActiveAnnotationDuration = function () {
-                    var selection = annotationTool.getSelection();
+                    var selection = annotationTool.selection;
                     if (!selection) return;
 
                     var currentTime = annotationTool.playerAdapter.getCurrentTime();
@@ -529,7 +529,7 @@ define(
 
                 var addComment = _.bind(function () {
                     if (!this.views.list) return;
-                    var selection = annotationTool.getSelection();
+                    var selection = annotationTool.selection;
                     if (!selection) return;
 
                     var annotationView = this.views.list.getViewFromAnnotation(
@@ -772,15 +772,20 @@ define(
              * @param  {Event} event Event object
              */
             onDeletePressed: function (event) {
-                if (event.keyCode !== 8 ||
-                    document.activeElement.tagName === "TEXTAREA" ||
-                    document.activeElement.tagName === "INPUT" ||
-                    !annotationTool.hasSelection()) return;
+                if ((
+                    event.keyCode !== 8
+                ) || (
+                    document.activeElement.tagName === "TEXTAREA"
+                ) || (
+                    document.activeElement.tagName === "INPUT"
+                ) || (
+                    !annotationTool.selection
+                )) return;
 
                 event.preventDefault();
 
                 annotationTool.deleteOperation.start(
-                    annotationTool.getSelection(),
+                    annotationTool.selection,
                     annotationTool.deleteOperation.targetTypes.ANNOTATION
                 );
             },
@@ -804,10 +809,6 @@ define(
 
                 this.loadingBox.find(".bar").width(this.loadingPercent + "%");
                 this.loadingBox.find(".info").text(message);
-            }
-        }, {
-            EVENTS: {
-                READY: "ready"
             }
         });
         return MainView;

@@ -15,6 +15,7 @@
     }
   },
   "annotation not allowed": "Sie haben nicht die nötigen Rechte, um dieses Video zu annotieren!",
+  "unexpected error": "Ein unerwarteter Fehler ist aufgetreten",
   "annotate on": "Annotieren auf",
   "annotate": {
     "categories": {
@@ -62,7 +63,7 @@
       "count_plural": "{{count}} Kommentare",
       "created": "am {{date}}",
       "edit": {
-        "button": "Bearbeiten",
+        "button": "Bearbeiten"
       },
       "modified": "zuletzt verändert am {{date}}",
       "placeholder": "Einen Kommentar für diese Annotation schreiben",
@@ -116,11 +117,11 @@
   },
   "delete modal": {
     "title": "$t(models.{{context}}.identifier) löschen",
-    "warning": "Wollen Sie $t(models.determined, { 'determiner': 'definite article', 'case': 'accusative' }) „{{content}}“ wirklich löschen?"
+    "warning": "Wollen Sie $t(models.determined, { 'determiner': 'definite article', 'case': 'accusative', 'context': '{{context}}' }) „{{content}}“ wirklich löschen?"
   },
   "description": "Werkzeug zur Videoannotation",
   "delete operations": {
-    "unauthorized": "Sie sind nicht autorisiert, $t(models.determined, { 'determiner': 'demonstrative', 'case': 'accusative' }) zu löschen!"
+    "unauthorized": "Sie sind nicht autorisiert, $t(models.determined, { 'determiner': 'demonstrative', 'case': 'accusative', 'context': '{{context}}' }) zu löschen!"
   },
   "loop controller": {
     "enable": "Schleifen aktivieren",
@@ -317,7 +318,7 @@
       "identifier": "Skala",
       "gender": "female"
     },
-    "determined": "$t(determiners.{{determiner}}.{{case}}.$t(models.{{context}}.gender))",
+    "determined": "$t(determiners.{{determiner}}.{{case}}.{{context, lookup:models._.gender}}) $t(models.{{context}}.identifier)"
   },
   "determiners": {
     "definite article": {
@@ -327,13 +328,13 @@
         "neutral": "das"
       }
     },
-    "demonstratives": {
+    "demonstrative": {
       "accusative": {
-        "male accusative": "diesen",
-        "female accusative": "diese",
-        "neutral accusative": "dieses",
+        "male": "diesen",
+        "female": "diese",
+        "neutral": "dieses"
       }
-    },
+    }
   },
   "views": {
     "annotate": "Neue Annotationen erstellen",

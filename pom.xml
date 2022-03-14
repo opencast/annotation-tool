@@ -21,10 +21,8 @@
     <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
     <joda-time.version>2.9.4</joda-time.version>
     <json-simple.version>1.1.1</json-simple.version>
-    <annotation.basedir>${basedir}</annotation.basedir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <opencast.nexus.url>http://nexus.opencast.org</opencast.nexus.url>
     <eclipselink.version>2.6.9</eclipselink.version>
     <commons-collection.version>3.2.2</commons-collection.version>
     <commons-compress.version>1.12</commons-compress.version>
@@ -39,7 +37,7 @@
     <pax.web.version>4.3.0</pax.web.version>
     <cxf.version>3.1.7</cxf.version>
     <jackson.version>2.7.0</jackson.version>
-    <opencast.version>[9,11-SNAPSHOT)</opencast.version>
+    <opencast.version>[10,12-SNAPSHOT)</opencast.version>
   </properties>
 
   <modules>
@@ -49,20 +47,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <testResources>
-      <!-- Add a log4j configuration file to the test resources -->
-      <testResource>
-        <directory>${maven.multiModuleProjectDirectory}/docs/log4j</directory>
-        <includes>
-          <include>log4j.properties</include>
-        </includes>
-      </testResource>
-      <!-- Re-add the test resources as defined by the project -->
-      <testResource>
-        <directory>${project.basedir}/src/test/resources</directory>
-      </testResource>
-    </testResources>
-    <!-- This defines what plugins run on a global basis.  Plugins defined here run for all child poms without needing to reference them from the child pom.  Note that configuration data goes in the pluginManagement stanza below -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -84,17 +68,9 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Require Java 8 or higher for building -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <!-- TODO Why does `pluginManagement` say something else?! -->
-          <source>1.8</source>
-          <target>1.8</target>
-          <encoding>UTF-8</encoding>
-          <compilerArgument>${compilerArgument}</compilerArgument>
-        </configuration>
       </plugin>
       <!-- Deploy OSGi bundles to a container -->
       <plugin>
@@ -106,61 +82,12 @@
             <phase>install</phase>
             <configuration>
               <target if="deployTo">
-                <delete dir="${deployTo}/deploy/${project.build.finalName}" />
-                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${deployTo}/deploy"
-                  failonerror="false" />
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${deployTo}"
+                  overwrite="true" failonerror="false" />
               </target>
             </configuration>
             <goals>
               <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Run tests and display test output in the console -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <useFile>false</useFile>
-          <argLine>-Dfile.encoding=UTF-8</argLine> <!-- see https://jira.codehaus.org/browse/SUREFIRE-951 -->
-          <systemPropertyVariables>
-            <M2_REPO>${settings.localRepository}</M2_REPO>
-            <java.awt.headless>true</java.awt.headless>
-            <eclipselink.logging.level>CONFIG</eclipselink.logging.level>
-            <java.util.logging.config.file>${basedir}/conf/services/java.util.logging.properties</java.util.logging.config.file>
-            <logj4.configuration>${basedir}/docs/log4j/log4j.properties</logj4.configuration>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-      <!-- Ensure that the source code matches the style rules -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>8.29</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <configLocation>docs/checkstyle/matterhorn-checkstyle.xml</configLocation>
-          <headerLocation>docs/checkstyle/matterhorn-header.txt</headerLocation>
-          <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <consoleOutput>true</consoleOutput>
-          <logViolationsToConsole>true</logViolationsToConsole>
-          <excludes>**/package-info.java</excludes>
-          <failOnViolation>true</failOnViolation>
-          <failsOnError>true</failsOnError>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
             </goals>
           </execution>
         </executions>
@@ -202,9 +129,6 @@
         </executions>
       </plugin>
     </plugins>
-    <!-- This defines the global plugin configurations. Plugins with configuration
-      shared across multiple child poms should be configured here, and then referenced
-      in the child. -->
     <pluginManagement>
       <plugins>
         <plugin>
@@ -225,8 +149,9 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.3</version>
           <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
+            <source>1.8</source>
+            <target>1.8</target>
+            <encoding>UTF-8</encoding>
             <compilerArgument>${compilerArgument}</compilerArgument>
           </configuration>
         </plugin>
@@ -277,11 +202,44 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.19.1</version>
+          <configuration>
+            <useFile>false</useFile>
+            <argLine>-Dfile.encoding=UTF-8</argLine> <!-- see https://jira.codehaus.org/browse/SUREFIRE-951 -->
+            <systemPropertyVariables>
+              <java.util.logging.config.file>${maven.multiModuleProjectDirectory}/opencast-backend/test-logging/java.util.logging.properties</java.util.logging.config.file>
+              <log4j.configuration>file:${maven.multiModuleProjectDirectory}/opencast-backend/test-logging/log4j.properties</log4j.configuration>
+            </systemPropertyVariables>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.17</version>
+          <version>3.1.0</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>8.29</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <configLocation>opencast-backend/checkstyle/matterhorn-checkstyle.xml</configLocation>
+            <headerLocation>opencast-backend/checkstyle/matterhorn-header.txt</headerLocation>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+            <consoleOutput>true</consoleOutput>
+            <logViolationsToConsole>true</logViolationsToConsole>
+            <excludes>**/package-info.java</excludes>
+            <failOnViolation>true</failOnViolation>
+            <failsOnError>true</failsOnError>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>validate</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -337,7 +295,7 @@
           <version>1.7</version>
           <configuration>
             <sources>
-              <source>${basedir}/src/main/resources/</source>
+              <source>${project.basedir}/src/main/resources/</source>
             </sources>
           </configuration>
           <executions>
@@ -523,13 +481,6 @@
         <version>2.1.0</version>
       </dependency>
 
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <scope>test</scope>
-        <version>3.4</version>
-      </dependency>
-
       <!-- logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -552,11 +503,18 @@
         <scope>test</scope>
       </dependency>
 
-      <!-- testing -->
+      <!-- Testing -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.13.1</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>3.4</version>
         <scope>test</scope>
       </dependency>
 

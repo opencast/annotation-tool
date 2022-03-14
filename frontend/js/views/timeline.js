@@ -22,13 +22,13 @@ define([
     "jquery",
     "underscore",
     "i18next",
+    "models/track",
     "player-adapter",
     "views/timeline-group",
+    "views/track-modal",
     "templates/timeline",
     "templates/timeline-item",
     "templates/timeline-group",
-    "templates/timeline-modal-group",
-    "access",
     "backbone",
     "vis-timeline",
     "chroma",
@@ -38,13 +38,13 @@ define([
     $,
     _,
     i18next,
+    Track,
     PlayerAdapter,
     TimelineGroup,
+    TrackModal,
     template,
     itemTemplate,
     groupTemplate,
-    groupModalTemplate,
-    ACCESS,
     Backbone,
     vis,
     chroma
@@ -651,80 +651,7 @@ define([
          * @param {Track} track The track to edit or <tt>undefined</tt> to create a new one
          */
         initTrackModal: function (event, track) {
-            var action = track ? "update" : "add";
-
-            var modal = this.$el.find("#modal-" + action + "-group");
-            modal.off();
-            modal.html(
-                groupModalTemplate(_.extend(
-                    { action: action },
-                    track && track.attributes
-                ))
-            );
-
-            var dismissModal = function () {
-                modal.modal("hide");
-            };
-
-            var saveTrack = _.bind(function () {
-                var name = modal.find("#name").val();
-                var description = modal.find("#description").val();
-
-                if (name === "") {
-                    modal.find(".alert #content").html(i18next.t("timeline.name required"));
-                    modal.find(".alert").show();
-                    return;
-                } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
-                    modal.find(".alert #content").html(i18next.t("timeline.scripts not allowed"));
-                    modal.find(".alert").show();
-                    return;
-                }
-
-                var access;
-                var accessRadio = modal.find("input[name='access-radio']:checked");
-                if (accessRadio.length > 0) {
-                    access = ACCESS.parse(accessRadio.val());
-                } else {
-                    access = ACCESS.PUBLIC;
-                }
-
-                var attrs = {
-                    name: name,
-                    description: description,
-                    access: access
-                };
-                if (track) {
-                    track.save(attrs);
-                } else {
-                    track = this.tracks.create(attrs, { wait: true });
-                }
-
-                dismissModal();
-            }, this);
-
-            modal.find(".submit").on("click", saveTrack);
-            modal.on("keypress", function (event) {
-                if (event.keyCode === 13) {
-                    saveTrack();
-                }
-            });
-
-            modal.find(".cancel").on("click", dismissModal);
-
-            modal.on("shown", function () {
-                modal.find("#name").focus();
-                var access = ACCESS.render(
-                    track
-                        ? track.get("access")
-                        : ACCESS.PUBLIC
-                );
-                modal.find("[name='access-radio'][value='" + access + "']").prop("checked", true);
-            });
-            modal.modal({
-                show: true,
-                backdrop: false,
-                keyboard: true
-            });
+            new TrackModal({ track: track || new Track() }).show();
         },
 
         /**

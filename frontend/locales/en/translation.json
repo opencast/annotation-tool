@@ -15,6 +15,7 @@
     }
   },
   "annotation not allowed": "You are not allowed to annotate this video!",
+  "unexpected error": "An unexpected error occured",
   "annotate on": "Annotate on",
   "annotate": {
     "categories": {

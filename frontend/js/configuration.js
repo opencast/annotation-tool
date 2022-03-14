@@ -33,7 +33,7 @@ define(function () {
          * Define the number of categories pro tab in the annotate box. Bigger is number, thinner will be the columns for the categories.
          * @type {Number}
          */
-        CATEGORIES_PER_TAB: 7,
+        CATEGORIES_PER_TAB: 6,
 
         /**
          * Define if the structured annotations are or not enabled

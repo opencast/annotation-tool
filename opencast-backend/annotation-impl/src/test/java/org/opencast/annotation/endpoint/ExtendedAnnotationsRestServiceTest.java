@@ -859,7 +859,7 @@ public class ExtendedAnnotationsRestServiceTest {
 
   // --
 
-  private static final RestServiceTestEnv rt = testEnvForClasses(TestRestService.BASE_URL, TestRestService.class);
+  static final RestServiceTestEnv rt = testEnvForClasses(TestRestService.class);
 
   @BeforeClass
   public static void setUp() {
