@@ -46,6 +46,9 @@ The instructions on how to install the Annotation Tool in Opencast can be found 
 ## [Documentation](documentation/Home.md)
 A general documentation including the REST endpoints, the architecture etc. can be found [here](documentation/Home.md).
 
+## Communication
+For discussion around the Opencast Annotation Tool the [mailing list](https://groups.google.com/a/opencast.org/g/oat) can be used. You can subscribe to the list via [Google Groups](https://groups.google.com/a/opencast.org/g/oat) or by sending a mail to oat+subscribe@opencast.org.
+
 ## Participants
 
 ### Initial Development
