@@ -1,10 +1,10 @@
-# Annotating Academic Video
+# Opencast Annotation Tool
 
 ### Project description
-The Annotating Academic Video (AAV) project is a video annotation service that is suitable for research, teaching or learning.  Architected as a stand-alone service, AAV can be integrated with most video players, video management systems, learning management systems, and lecture capture systems.
+The Opencast Annotation Tool (OAT) project is a video annotation service that is suitable for research, teaching or learning.  Architected as a stand-alone service, OAT can be integrated with most video players, video management systems, learning management systems, and lecture capture systems.
 
 ### Architecture overview
-The AAV tool is composed of a javascript web application communicating with REST endpoints for persistence resources and a player adapter. This one is the interface between the javascript annotations tool and the used player.
+The OAT tool is composed of a javascript web application communicating with REST endpoints for persistence resources and a player adapter. This one is the interface between the javascript annotations tool and the used player.
 This architecture aims to make the tool integrable in any video system.
 
 ![Image of the architecture](Annotation-Tool.png)

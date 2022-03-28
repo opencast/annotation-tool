@@ -286,7 +286,7 @@
       "collapse": "Collapse track"
     }
   },
-  "title": "Annotating Academic Video",
+  "title": "Opencast Annotation Tool",
   "track management": {
     "action": "Track management",
     "(un-)select all": "Select/unselect all",

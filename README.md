@@ -1,6 +1,6 @@
 # Opencast Annotation Tool
 
-The Opencast Annotation Tool (aka Annotating Academic Video by Entwine)
+The Opencast Annotation Tool (formerly Annotating Academic Video by Entwine)
 is a video annotation service that is suitable for research, teaching or learning.
 
 The software consists of two parts:
