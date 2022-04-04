@@ -117,24 +117,28 @@ Users are only allowed to access the annotation tool if the have the action `ann
 
 Although the Annotation Tool can access a recording when it shows up in the Opencast search service, the Annotation Tool can also be added to the list of publications for an event.
 
-Within the `etc/workflows/partial-publish` you need to add this operation to the `<operations>` section. It is recommended to add it after the "publish-engage" operation.
+Within the `etc/workflows/partial-publish.xml` you need to add this operation to the `<operations>` section. It is recommended to add it after the "publish-engage" operation.
 
-    <operation
-      id="publish-configure"
-      exception-handler-workflow="partial-error"
-      description="Publish to preview publication channel">
-      <configurations>
-        <configuration key="source-tags">preview</configuration>
-        <configuration key="channel-id">annotation</configuration>
-        <configuration key="url-pattern">http://localhost:8080/annotation-tool/index.html?id=${event_id}</configuration>
-      </configurations>
-    </operation>
+```
+<operation
+  id="publish-configure"
+  exception-handler-workflow="partial-error"
+  description="Publish to annotation publication channel">
+  <configurations>
+    <configuration key="source-tags">engage-download</configuration>
+    <configuration key="channel-id">annotation</configuration>
+    <configuration key="url-pattern">http://localhost:8080/annotation-tool/index.html?id=${event_id}</configuration>
+  </configurations>
+</operation>
+```
 
-You can add this operation also to every other workflow definition that should distribute videos to the Annotation Tool.
+You can also add this operation to every other workflow definition that should distribute videos to the Annotation Tool.
 
-Additionally you must set the label for the annotation publication channel. Add to the file `etc/listproviders/publication.channel.labels.properties` the following line:
+Additionally you must set the label for the annotation publication channel. Add the following line to the file `etc/listproviders/publication.channels.properties`:
 
-    annotation=Annotation Tool
+```
+annotation={"label":"Annotation Tool", "icon":"img/engage_2x.png", "order":6}
+```
 
 ### Security Configuration
 
