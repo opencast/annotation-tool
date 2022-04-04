@@ -132,13 +132,14 @@ Within the `etc/workflows/partial-publish.xml` you need to add this operation to
 </operation>
 ```
 
-You can add this operation also to every other workflow definition that should distribute videos to the Annotation Tool.
+You can also add this operation to every other workflow definition that should distribute videos to the Annotation Tool.
 
-Additionally you must set the label for the annotation publication channel. Add to the file `etc/listproviders/publication.channels.properties` the following line:
+Additionally you must set the label for the annotation publication channel. Add the following line to the file `etc/listproviders/publication.channels.properties`:
 
 ```
 annotation={"label":"Annotation Tool", "icon":"img/engage_2x.png", "order":6}
 ```
+
 ### Security Configuration
 
 In order to be able to access the tool,
