@@ -3,7 +3,7 @@
   <groupId>org.opencast.annotate</groupId>
   <artifactId>annotation-tool-backend</artifactId>
   <versioning>
-    <release>2022.0404.071204-cce1dd3a5a389f72590afdd315d88f70f9aea8da</release>
+    <release>2022.0404.071756-3f1d88c64bc8de993bb82aa6ce489eec7fa2953d</release>
     <versions>
       <version>2020.1015.145954-041d93419136f64dffa8123372fbb902fc02b470</version>
       <version>2020.1201.162152-242846e0d09c4ce12cd6e62b880c413c701f0b5f</version>
@@ -114,7 +114,8 @@
       <version>2022.0325.113651-e0e42c9fbb3797b40303f98c05b4956d50a6286f</version>
       <version>2022.0328.085119-75608a7e047718983ec964f72b64c3b9eb49434e</version>
       <version>2022.0404.071204-cce1dd3a5a389f72590afdd315d88f70f9aea8da</version>
+      <version>2022.0404.071756-3f1d88c64bc8de993bb82aa6ce489eec7fa2953d</version>
     </versions>
-    <lastUpdated>20220404071205</lastUpdated>
+    <lastUpdated>20220404071759</lastUpdated>
   </versioning>
 </metadata>
