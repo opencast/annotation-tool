@@ -365,11 +365,13 @@ define(
                 );
                 this.$el.html(this.currentState.render(modelJSON, { partials: partials }));
 
-                this.$el.css("background-color", this.model.getColor() || '');
+                // removed background color
+                // this.$el.css("background-color", this.model.getColor() || '');
+
 
                 title = this.model.getTitleAttribute();
 
-                if (this.getState() == ListAnnotation.STATES.EDIT) {
+                if (this.getState() === ListAnnotation.STATES.EDIT) {
                     title += " edit-on";
                 }
 
@@ -378,7 +380,6 @@ define(
                 } else {
                     this.$el.removeAttr("title");
                 }
-
 
                 // Hack for Firefox, add a button over it
                 if ($.browser.mozilla) {
