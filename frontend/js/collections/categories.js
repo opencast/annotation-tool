@@ -58,6 +58,22 @@ define(["underscore",
                 return (this.video ? _.result(this.video, "url") : "") + "/categories";
             },
 
+            /*
+             * Sorts the given data
+             * @alias module:collections-questionnaires.Categories#sort
+             * @param  {object} data Object or array containing the data to sort.
+             * @return {object} sorted data
+             */
+            sort: function (data) {
+                return data.sort((a, b) => {
+                    var aa = a.name.toLowerCase();
+                    var ab = b.name.toLowerCase();
+                    if(aa < ab) { return -1; }
+                    if(aa > ab) { return 1; }
+                    return 0;
+                });
+            },
+
             /**
              * Parse the given data
              * @alias module:collections-categories.Categories#parse
@@ -66,9 +82,10 @@ define(["underscore",
              */
             parse: function (data) {
                 if (data.categories && _.isArray(data.categories)) {
-                    return data.categories;
+                    return this.sort(data.categories);
                 } else if (_.isArray(data)) {
-                    return data;
+                    // sort categories alphabetically
+                    return this.sort(data);
                 } else {
                     return null;
                 }
