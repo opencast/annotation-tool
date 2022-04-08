@@ -59,7 +59,14 @@ define(["underscore",
                 if (resp.labels && _.isArray(resp.labels)) {
                     return resp.labels;
                 } else if (_.isArray(resp)) {
-                    return resp;
+                    // sort by abbreviation of label
+                    return resp.sort((a, b) => {
+                        let aa = a.abbreviation.toLowerCase();
+                        let ab = b.abbreviation.toLowerCase();
+                        if(aa < ab) { return -1; }
+                        if(aa > ab) { return 1; }
+                        return 0;
+                    });
                 } else {
                     return null;
                 }
