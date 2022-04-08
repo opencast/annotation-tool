@@ -40,6 +40,10 @@
 
         {{#with (withLabel value) as |label|}}
             <span class="category" title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})">
+                <span {{#if label.category.settings.color}}style="margin-right: 5px; background-color: {{label.category.settings.color}};"{{/if}}>
+                    &nbsp;
+                </span>
+
                 <span class="abbreviation">
                     {{label.abbreviation}}
                 </span>

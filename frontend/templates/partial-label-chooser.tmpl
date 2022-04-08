@@ -1,8 +1,8 @@
 <div class="label-chooser">
     {{#each labels as |label|}}
-    <a class="btn label{{#if label.selected}} btn-primary{{/if}}" title="{{label.value}}" data-label="{{label.id}}"
+    <a class="btn label{{#if label.selected}} btn-primary{{/if}}" title="{{label.value}} ({{label.abbreviation}})" data-label="{{label.id}}"
         href="#"{{#if ../color}} style="background-color:{{../color}};"{{/if}}>
-        <span> {{label.abbreviation}} </span>
+        <span><b>{{label.abbreviation}}</b> {{label.value}}</span>
     </a>
     {{/each}}
 </div>

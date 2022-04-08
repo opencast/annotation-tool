@@ -1,11 +1,17 @@
 {{#with (withLabel value) as |label|}}
-<div class="content-item" data-position="{{@index}}"{{#if category.settings.color}} style="background-color: {{category.settings.color}}"{{/if}}>
+<div class="content-item" data-position="{{@index}}">
     {{#> content-item-header annotation=../annotation}}
         {{#if ../../title}}
             <b>{{../../title}}</b>
+
+
         {{^}}
-            <b> {{label.category.name}} </b>
-            <i>({{t "annotation.types.label"}})</i>
+            {{#if label.category.settings.color}}
+            <span style="margin-right: 5px; background-color: {{label.category.settings.color}};">
+                                &nbsp;
+                            </span>
+            {{/if}}
+            <b>{{label.abbreviation}}</b> {{label.value}} | {{label.category.name}} ({{t "annotation.types.label"}})
         {{/if}}
     {{/content-item-header}}
     <div class="well">
