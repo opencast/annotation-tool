@@ -31,6 +31,16 @@ define([
         initialize: function(options) {
             this.item = options.item;
             var value = options.value || null;
+
+            if (typeof(Storage) !== "undefined") {
+                if(window.localStorage.getItem("oat_questionnaire_draft") != null) {
+                    //console.log("init block while draft = true, prefill");
+                    value = window.localStorage.getItem("oat_questionnaire_field_" + this.item.name);
+                } else {
+                    //console.log("init block while draft = false, no prefill");
+                }
+            }
+
             this.model = new ContentItem({
                 type: "text",
                 schema: options.schema,
@@ -70,6 +80,11 @@ define([
         },
         onKeyup: function(event) {
             event.stopImmediatePropagation();
+            //console.log($(event.target).attr("name"));
+            if (typeof(Storage) !== "undefined") {
+                window.localStorage.setItem("oat_questionnaire_draft","true");
+                window.localStorage.setItem("oat_questionnaire_field_"+$(event.target).attr("name"), $(event.target).val());
+            }
             this.model.set("value", $(event.target).val());
         }
     });

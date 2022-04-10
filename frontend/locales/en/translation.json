@@ -4,6 +4,7 @@
   },
   "alert": {
     "ok": "$t(common actions.ok)",
+    "cancel": "$t(common actions.cancel)",
     "error": {
       "title": "Error!"
     },
@@ -214,6 +215,9 @@
     "title": "Name of the video: {{title}}"
   },
   "questionnaire": {
+    "draft": {
+      "cancel": "Delete draft?"
+    },
     "form prompt": "Create an annotation using a questionnaire",
     "blank slate": {
       "heading": "Questionnaire-based Annotations",

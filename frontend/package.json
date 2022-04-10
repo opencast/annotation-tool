@@ -31,7 +31,7 @@
     "mime": "^1.4.1"
   },
   "prettier": {
-    "tabWidth": 4
+    "tabWidth": 3
   },
   "eslintConfig": {
     "env": {

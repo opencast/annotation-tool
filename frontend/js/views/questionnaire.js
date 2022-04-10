@@ -62,6 +62,20 @@ define([
         },
 
         /**
+         * Reset local storage of questionnaire
+         * @alias module:views-questionnaire.QuestionnaireView#resetDraft
+         */
+        resetDraft: function() {
+            // remove fields + draft from local storage
+            if (typeof(Storage) !== "undefined") {
+                Object.keys(localStorage)
+                    .filter(x => x.startsWith('oat_questionnaire'))
+                    .forEach(x => localStorage.removeItem(x));
+
+            }
+        },
+
+        /**
          * Reset local state of questionnaire.
          * @alias module:views-questionnaire.QuestionnaireView#resetQuestionnaire
          */
@@ -140,6 +154,10 @@ define([
                     this.closeQuestionnaire.bind(this)
                 );
             } else {
+                //alerts.warning( i18next.t("questionnaire.draft.cancel") );
+                // Listener for cancel confirmation
+                //$( "#confirm-alert" ).one("click", this.onDestroy());
+                // TODO: !!!
                 this.closeQuestionnaire();
             }
         },
@@ -160,6 +178,7 @@ define([
             this.stopListening(this.annotation);
             this.annotation = null;
             this.resetQuestionnaire();
+            this.resetDraft();
             this.render();
         },
 
@@ -252,7 +271,10 @@ define([
          * @param {Event} event the click event
          */
         onStart: function(event) {
-            var annotation = annotationTool.createAnnotation({});
+            /*
+             { createdFromQuestionnaire: true } does not work as params because delete operation in onCancel fails
+             */
+            var annotation = annotationTool.createAnnotation({} );
             this.openQuestionnaire(annotation);
         },
 
@@ -313,7 +335,6 @@ define([
                     return;
                 }
             }
-
             this.closeQuestionnaire();
             this.openQuestionnaire(annotation);
         }
@@ -356,6 +377,7 @@ define([
                         ? _.head(values[formItem]).get("value")
                         : values[formItem];
                 }
+
                 var block = new typeFunction({
                     item: formField,
                     schema: formItem,
@@ -379,6 +401,7 @@ function getMockupQuestionnaire() {
         "schema": {
             "item-0": {
                 "type": "string",
+                "name": "description",
                 "title": "1. Beschreibung",
                 "description": "Beschreiben Sie alle relevanten Ereignisse, die Sie hinsichtlich des Analysefokus entdecken können.",
                 "required": true
@@ -396,18 +419,21 @@ function getMockupQuestionnaire() {
             },
             "item-2": {
                 "type": "string",
+                "name": "interpretation",
                 "title": "2b. Interpretation",
                 "description": "Interpretieren und erklären Sie möglichst theoriegeleitet die (Re-)Aktion der Lehrperson (und ggf. der SuS) in dieser Unterrichtssequenz. Begründen Sie Ihre Interpretation.",
                 "required": true
             },
             "item-3": {
                 "type": "string",
+                "name": "evaluation",
                 "title": "3. Bewertung",
                 "description": "Bewerten Sie, wie angemessen die (Re-)Aktion der Lehrperson im jeweiligen Kontext erscheint und begründen Sie Ihre Einschätzung.",
                 "required": true
             },
             "item-4": {
                 "type": "string",
+                "name": "alternatives",
                 "title": "4. Handlungsalternative",
                 "description": "Formulieren Sie eine sinnvolle Handlungsalternative für die Lehrperson und diskutieren Sie, ob und inwiefern diese im gegebenen Kontext angemessener als die realisierte Handlung der Lehrperson wäre.",
                 "required": true

@@ -4,6 +4,7 @@
   },
   "alert": {
     "ok": "$t(common actions.ok)",
+    "cancel": "$t(common actions.cancel)",
     "error": {
       "title": "Fehler!"
     },
@@ -213,6 +214,9 @@
     "title": "Name des Videos: {{title}}"
   },
   "questionnaire": {
+    "draft": {
+      "cancel": "Möchten Sie den Entwurf wirklich verwerfen?"
+    },
     "form prompt": "Fragebogengestütze Annotation erstellen",
     "blank slate": {
       "heading": "Fragebogengestütze Annotationen",
