@@ -88,7 +88,7 @@ define([
             "background-color:" + color + ";" +
                 "color:" + (
                     chroma(color).luminance() < 0.5
-                        ? "white"
+                        ? "black" // before: white
                         : "black"
                 ) + ";"
         );
