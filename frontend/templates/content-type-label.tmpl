@@ -3,15 +3,11 @@
     {{#> content-item-header annotation=../annotation}}
         {{#if ../../title}}
             <b>{{../../title}}</b>
-
-
         {{^}}
             {{#if label.category.settings.color}}
-            <span style="margin-right: 5px; background-color: {{label.category.settings.color}};">
-                                &nbsp;
-                            </span>
+            <span style="margin-right: 2px; background-color: {{label.category.settings.color}};">&nbsp;&nbsp;</span>
             {{/if}}
-            <b>{{label.abbreviation}}</b> {{label.value}} | {{label.category.name}} ({{t "annotation.types.label"}})
+            <b>{{label.abbreviation}}</b> {{label.value}}, {{label.category.name}} ({{t "annotation.types.label"}})
         {{/if}}
     {{/content-item-header}}
     <div class="well">
