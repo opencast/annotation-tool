@@ -195,6 +195,10 @@ define([
                 //zoomKey: 'shiftKey',
                 //horizontalScroll: true,
                 type: "box",
+                itemsAlwaysDraggable: {
+                    item: true,
+                    range: true
+                },
                 editable: {
                     add: false,
                     updateTime: true,
