@@ -313,6 +313,22 @@ define(["jquery",
                 return !!this.selection;
             },
 
+           /**
+             * Switch to different tab in goldenLayout
+             * @alias annotationTool.switchLayout
+             */
+            switchLayout: function (component_name) {
+                // TODO: use MainView instead
+                var goldenLayout = annotationTool.views.main.goldenlayout;
+                for (var i = 0; i < goldenLayout._getAllContentItems().length; i++) {
+                    // console.log(myLayout._getAllContentItems()[i].componentName);
+                    if (goldenLayout._getAllContentItems()[i].componentName == component_name) {
+                        var contentItem = goldenLayout._getAllContentItems()[i];
+                        contentItem.parent.setActiveContentItem(contentItem);
+                    }
+                }
+            },
+
             /**
              * Update the ordering of the tracks and alert everyone who is interested.
              * @alias annotationTool.orderTracks

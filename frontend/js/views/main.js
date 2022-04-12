@@ -556,6 +556,7 @@ define(["jquery",
                     localStorage.setItem("layout", "custom");
                 });
                 goldenLayout.init();
+                this.goldenlayout = goldenLayout; // TODO expose?
             },
 
             /**

@@ -434,6 +434,7 @@ define(
 
                 if (event.originalEvent.detail > 1 && this.model.get("createdFromQuestionnaire")) {
                     Backbone.trigger("questionnaire:edit-annotation", this.model);
+                    annotationTool.switchLayout("questionnaire");
                 }
             },
 
@@ -459,6 +460,7 @@ define(
 
                 if (this.model.get("createdFromQuestionnaire")) {
                     Backbone.trigger("questionnaire:edit-annotation", this.model);
+                    annotationTool.switchLayout("questionnaire");
                 } else {
 
                     this.commentContainer.setState(CommentsContainer.STATES.READ);

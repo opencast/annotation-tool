@@ -532,6 +532,7 @@ define([
             function getClassName(annotation) {
                 return this.items.get(annotation.id).className || "";
             }
+
             // Long-pressing is normally only used for multiple selections,
             // which we don't support.
             // Additionally this is a problem when you select an item
@@ -551,10 +552,10 @@ define([
 
                 if (properties.event.tapCount > 1 && model && model.get("createdFromQuestionnaire")) {
                     Backbone.trigger("questionnaire:edit-annotation", this.items.get(properties.items[0]).model);
+                    annotationTool.switchLayout("questionnaire");
                 }
 
             }, this));
-
 
             function updateCategoryAnnotations(category, visible) {
                 var relevantAnnotations = annotationTool.video
