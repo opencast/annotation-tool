@@ -554,9 +554,10 @@ define(["jquery",
                 goldenLayout.on("stateChanged", function (event) {
                     localStorage.setItem("layout-custom", JSON.stringify(goldenLayout.toConfig()));
                     localStorage.setItem("layout", "custom");
+                    annotationTool.playerAdapter.resetSize();
                 });
                 goldenLayout.init();
-                this.goldenlayout = goldenLayout; // TODO expose?
+                this.goldenlayout = goldenLayout; // TODO do not expose?
             },
 
             /**
