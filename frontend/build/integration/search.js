@@ -178,9 +178,10 @@ define([
             user.then(function (userData) {
                 return $.when(userData.user, this.getUserRoleFromExt(userData.roles));
             }.bind(this)).then(function (user, role) {
+                var nickname = (typeof(user.name) !== "undefined" && user.name !== null) ? user.name : user.username;
                 this.user = new User({
                     user_extid: user.username,
-                    nickname: user.username,
+                    nickname: nickname,
                     email: user.email,
                     role: role
                 });
