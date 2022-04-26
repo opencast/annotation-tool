@@ -77,8 +77,5 @@ Actually the tool has been integrated in two video lecture system:
 ## [Documentation](documentation/Home.md)
 All the documentation is present on the [wiki](Home.md).
 
-## [DEMO](http://entwinemedia.github.com/annotations/)
-A demo is available [here](http://entwinemedia.github.com/annotations/). It works with localStorage and no real backend communication. Therefore all the functionalities related to rights management / authorisations are not working on this version.
-
 ## License
 [ECL 2.0](http://www.osedu.org/licenses/ECL-2.0)
