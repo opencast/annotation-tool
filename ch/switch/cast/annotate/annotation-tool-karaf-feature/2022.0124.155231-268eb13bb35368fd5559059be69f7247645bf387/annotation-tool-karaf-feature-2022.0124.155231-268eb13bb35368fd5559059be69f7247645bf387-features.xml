@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.5.0" name="annotation-tool-karaf-feature">
-    <feature name="opencast-annotation-tool" description="SWITCHcastAnnotate :: Backend :: Karaf Feature" version="2022.0124.155231.268eb13bb35368fd5559059be69f7247645bf387">
-        <details>SWITCHcastAnnotate is an additional module for SWITCHCast to scientifialy annotate videos</details>
-        <bundle>mvn:ch.switch.cast.annotate/annotation-tool-api/2022.0124.155231-268eb13bb35368fd5559059be69f7247645bf387</bundle>
-        <bundle>mvn:ch.switch.cast.annotate/annotation-tool-impl/2022.0124.155231-268eb13bb35368fd5559059be69f7247645bf387</bundle>
-        <bundle>mvn:ch.switch.cast.annotate/annotation-tool-frontend/2022.0124.155231-268eb13bb35368fd5559059be69f7247645bf387</bundle>
-    </feature>
-</features>
