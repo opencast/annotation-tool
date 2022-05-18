@@ -34,10 +34,18 @@
                 class="delete icon-trash me-2"
                 title="{{t "annotation.edit.delete"}}"
             ></i>
-            <i
-                class="toggle-edit icon-pencil me-2"
-                title="{{t "annotation.edit.edit"}}"
-            ></i>
+
+            {{#if createdFromQuestionnaire}}
+                  <i
+                     class="toggle-edit icon-pencil me-2"
+                     title="{{t "annotation.edit.edit"}}"
+                  ></i>
+            {{else}}
+                 <i
+                    class="toggle-edit icon-time me-2"
+                    title="{{t "annotation.edit.edit"}}"
+                 ></i>
+            {{/if}}
         {{/if}}
 
         <i
