@@ -3,7 +3,7 @@
     <label class="control-label">{{item.title}}</label>
     <div class="controls">
         {{> labelChooser}}
-        <span class="help-block">{{item.description}}</span>
+        {{#if item.description}}<span class="help-block">{{item.description}}</span>{{/if}}
         {{#each validationErrors as |error|}}
             <span class="help-block"> {{t error}} </span>
         {{/each}}
