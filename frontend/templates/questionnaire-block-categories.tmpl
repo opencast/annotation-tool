@@ -30,7 +30,11 @@
 
         {{#each categories as |category|}}
           {{#unless category.deleted_at}}
-            {{> chooser category=category}}
+              {{#if category.isPublic}}
+                  {{> chooser category=category}}
+              {{else if category.isMine}}
+                  {{> chooser category=category}}
+              {{/if}}
           {{/unless}}
         {{/each}}
 
