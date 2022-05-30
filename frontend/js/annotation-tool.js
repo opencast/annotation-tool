@@ -206,7 +206,6 @@ define(
                     } else {
                         alerts.fatal(i18next.t("unexpected error"));
                     }
-                    this.views.main.loadingBox.hide();
                     return $.Deferred().reject();
                 }, this)).then(_.bind(function () {
                     var tracks = this.video.get("tracks");
