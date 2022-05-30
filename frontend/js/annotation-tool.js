@@ -208,8 +208,7 @@ define(
                     }
                     this.views.main.loadingBox.hide();
                     return $.Deferred().reject();
-                }, this)
-                ).then(_.bind(function () {
+                }, this)).then(_.bind(function () {
                     var tracks = this.video.get("tracks");
 
                     var ready = $.Deferred();
