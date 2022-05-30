@@ -200,7 +200,7 @@ define(
                     // If we are using the localstorage
                     this.video = new Video(videoParameters);
                     return this.video.save();
-                }, this)).then(undefined, _.bind(function (model, response, options) {
+                }, this)).then(undefined, _.bind(function (response) {
                     if (response.status === 403) {
                         alerts.fatal(i18next.t("annotation not allowed"));
                     } else {
