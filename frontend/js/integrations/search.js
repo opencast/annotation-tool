@@ -150,7 +150,7 @@ define([
                 var userData = user.user;
                 this.user = new User({
                     user_extid: userData.username,
-                    nickname: userData.username,
+                    nickname: userData.name || userData.username,
                     email: userData.email,
                     isAdmin: _.intersection(
                         adminRoles.concat(["ROLE_ADMIN"]),
