@@ -342,10 +342,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Path("/scales/{scaleId}")
   public Response putScale(@PathParam("scaleId") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return updateScale(none(), id, name, description, tags);
+    return putScaleResponse(none(), id, name, description, tags);
   }
 
-  Response updateScale(final Option<Long> videoId, final long id, final String name, final String description,
+  Response putScaleResponse(final Option<Long> videoId, final long id, final String name, final String description,
           final String tags) {
     return run(array(name), new Function0<Response>() {
       @Override
@@ -357,7 +357,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
-        return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
+        return eas().getScale(id, true).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale scale) {
             if (!eas().hasResourceAccess(scale))
@@ -464,12 +464,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getScale(id, false).fold(new Option.Match<Scale, Response>() {
+        return eas().getScale(id, true).fold(new Option.Match<Scale, Response>() {
           @Override
           public Response some(Scale s) {
             if (!eas().hasResourceAccess(s)) {
               return UNAUTHORIZED;
             }
+
+            // @todo CC-MERGE | 1 | Master: Delete scale; Feature: Keep deleted entities, return type
+
             // Delete all scale values
             List<ScaleValue> values = eas().getScaleValues(s.getId(), Option.none(), Option.none(), Option.none(),
                     Option.none(), Option.none());
@@ -477,8 +480,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
               logger.debug("Deleting {}", value.getName());
               eas().deleteScaleValue(value);
             }
+
             // Delete scale itself
-            return eas().deleteScale(s) ? NO_CONTENT : NOT_FOUND;
+            // return eas().deleteScale(s) ? NO_CONTENT : NOT_FOUND;
+            s = eas().deleteScale(s);
+            return Response.ok(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), s)))
+                    .header(LOCATION, scaleLocationUri(s, videoId.isSome())).build();
           }
 
           @Override
@@ -541,7 +548,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
-        return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
+        return eas().getScaleValue(id, true).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
@@ -583,7 +590,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
+        return eas().getScaleValue(id, false).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
@@ -620,7 +627,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
         final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
 
-        if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, false).isNone()
+        if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getScale(scaleId, true).isNone()
                 || (datem.isSome() && datem.get().isNone()) || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
           return BAD_REQUEST;
@@ -648,12 +655,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getScaleValue(id).fold(new Option.Match<ScaleValue, Response>() {
+        // @todo CC-MERGE | 1 | Feature: Change return type
+        return eas().getScaleValue(id, true).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
               return UNAUTHORIZED;
-            return eas().deleteScaleValue(s) ? NO_CONTENT : NOT_FOUND;
+            s = eas().deleteScaleValue(s);
+            return Response.ok(Strings.asStringNull().apply(ScaleValueDto.toJson.apply(eas(), s)))
+                    .header(LOCATION, scaleValueLocationUri(s, videoId)).build();
           }
 
           @Override
@@ -723,7 +733,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
-        return eas().getCategory(id, false).fold(new Option.Match<Category, Response>() {
+        return eas().getCategory(id, true).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
             if (!eas().hasResourceAccess(c))
@@ -862,12 +872,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getCategory(categoryId, false).fold(new Option.Match<Category, Response>() {
+        // @todo CC-MERGE | 1 | Feature: Change return type
+        return eas().getCategory(categoryId, true).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
             if (!eas().hasResourceAccess(c))
               return UNAUTHORIZED;
-            return eas().deleteCategory(c) ? NO_CONTENT : NOT_FOUND;
+            c = eas().deleteCategory(c);
+            return Response.ok(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), c)))
+                    .header(LOCATION, categoryLocationUri(c, videoId.isSome())).build();
           }
 
           @Override
@@ -935,7 +948,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
         final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
 
-        return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
+        return eas().getLabel(id, true).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
             if (!eas().hasResourceAccess(l))
@@ -1017,7 +1030,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
 
         if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
-                || eas().getCategory(categoryId, false).isNone() || (datem.isSome() && datem.get().isNone())
+                || eas().getCategory(categoryId, true).isNone() || (datem.isSome() && datem.get().isNone())
                 || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
           return BAD_REQUEST;
@@ -1045,11 +1058,13 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        return eas().getLabel(id, false).fold(new Option.Match<Label, Response>() {
+        return eas().getLabel(id, true).fold(new Option.Match<Label, Response>() {
           @Override
           public Response some(Label l) {
             if (!eas().hasResourceAccess(l))
               return UNAUTHORIZED;
+
+              // @todo CC-MERGE | 1.2 | Master: Deletion behaviour, Feature: Return type
 
             // If the label is a copy from a series category, delete it on the series category instead
             if (l.getSeriesLabelId().isSome()) {
@@ -1059,7 +1074,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
                   if (!eas().hasResourceAccess(l))
                     return UNAUTHORIZED;
 
-                  return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+                  //return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+                  l = eas().deleteLabel(l);
+                  return Response.ok(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), l)))
+                          .header(LOCATION, labelLocationUri(l, videoId)).build();
                 }
 
                 @Override
@@ -1069,7 +1087,10 @@ public abstract class AbstractExtendedAnnotationsRestService {
               });
             // Otherwise, delete normally
             } else {
-              return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+              //return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
+              l = eas().deleteLabel(l);
+              return Response.ok(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), l)))
+                      .header(LOCATION, labelLocationUri(l, videoId)).build();
             }
           }
 

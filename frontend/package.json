@@ -19,5 +19,20 @@
     "grunt-stylelint": "^0.16.0",
     "jit-grunt": "^0.10.0",
     "stylelint": "^13.13.1"
+  },
+  "prettier": {
+    "tabWidth": 4
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module",
+      "rules": {
+        "eslint no-undef": "error"
+      }
+    }
   }
 }

@@ -51,6 +51,9 @@ define(
              */
             administratorCanEditPublicInstances: true,
 
+            /** @override */
+            keepDeleted: true,
+
             /**
              * Validate the attribute list passed to the model
              * @param {object} attr Object literal containing the model attribute to validate.

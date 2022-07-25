@@ -22,14 +22,13 @@ define(
         "underscore",
         "util",
         "collections/comments",
-        "models/resource"
+        "collections/annotation-content",
+        "models/content-item",
+        "models/resource",
+        "i18next"
     ],
-    function (
-        _,
-        util,
-        Comments,
-        Resource
-    ) {
+  function (_, util, Comments, AnnotationContent, ContentItem, Resource, i18next) {
+
         "use strict";
 
         /**
@@ -47,7 +46,8 @@ define(
                 return {
                     start: 0,
                     duration: 0,
-                    comments: new Comments([], { annotation: this })
+                    comments: new Comments([], { annotation: this }),
+                    content: new AnnotationContent([])
                 };
             },
 
@@ -63,19 +63,27 @@ define(
              * @param {object} attr Object literal containing the model attribute to parse.
              * @return {object} The object literal with the list of parsed model attribute.
              */
-            parse: function (attr) {
-                attr = Resource.prototype.parse.call(this, attr);
-                if (attr.label) {
-                    var tempSettings;
-                    if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
-                        attr.label.category.settings = tempSettings;
+            parse: function (data) {
+                console.log(annotationTool);
+                console.log(annotationTool.localstorage);
+                console.log(annotationTool.localStorage);
+
+                return Resource.prototype.parse.call(this, data, function (attr) {
+                    if (annotationTool.user.get("id") === attr.created_by) {
+                        attr.isMine = true;
+                    } else {
+                        attr.isMine = false;
                     }
 
-                    if ((tempSettings = util.parseJSONString(attr.label.settings))) {
-                        attr.label.settings = tempSettings;
+                    if (annotationTool.localStorage && _.isArray(attr.comments)) {
+                        attr.comments = new Comments(attr.comments, { annotation: this });
                     }
-                }
-                return attr;
+
+                    if (_.isString(attr.content)) {
+                        attr.content = util.parseJSONString(attr.content);
+                    }
+                    attr.content = new AnnotationContent(attr.content);
+                });
             },
 
             /**
@@ -99,6 +107,9 @@ define(
                     return "\"duration\" attribute must be a positive number";
                 }
 
+                if (!attr.content || !_.isArray(attr.content) || !attr.content instanceof AnnotationContent) {
+                }
+
                 return undefined;
             },
 
@@ -106,27 +117,43 @@ define(
              * Override the default toJSON function to ensure complete JSONing.
              * @return {JSON} JSON representation of the instance
              */
-            toJSON: function () {
-                var json = Resource.prototype.toJSON.call(this);
+            toJSON: function (options) {
+                var json = Resource.prototype.toJSON.apply(this, arguments);
 
                 json.end = json.start + json.duration;
 
-                if (json.label) {
-                    if (json.label.id) {
-                        json.label_id = json.label.id;
-                    }
-                    if (json.label.toJSON) {
-                        json.label = json.label.toJSON();
-                    }
-                }
-
-                if (json.scalevalue && json.scalevalue.id) {
-                    json.scale_value_id = json.scalevalue.id;
+                json.content = json.content.toJSON.apply(json.content, arguments);
+                if (options && options.stringifySub) {
+                    json.content = JSON.stringify(json.content);
                 }
 
                 delete json.comments;
 
                 return json;
+            },
+
+            /**
+             * @return {string} The type of the annotation.
+             *                  If there is exactly one content item, it's that item's type.
+             *                  Otherwise it is <code>multi</code>.
+             * @see module:models-content-item.ContentItem#getType
+             * @alias module:models-annotation.Annotation#getType
+             */
+            getType: function () {
+                var content = this.get("content");
+                return content.models.length !== 1 ? "multi" : content.first().get("type");
+            },
+
+            /**
+             * Add a content item to this annotation.
+             * @alias module:models-annotation.Annotation#addContent
+             * @param {object} JSON representation of the content item
+             */
+            addContent: function (content) {
+                var contentItem = new ContentItem(content);
+                this.attributes.content.add(contentItem);
+                this.save();
+                this.trigger("change", this, {});
             },
 
             /**
@@ -145,33 +172,76 @@ define(
             },
 
             /**
-             * Access an annotations category, if it has any.
-             * Note that this returns <code>undefined</code>
-             * if the category has been deleted!
-             * @return {Category} The category this annotations label belongs to, if it has a label
+             * Access an annotation's categories, if it has any.
+             * @alias module:models-annotation.Annotation#getCategories
+             * @return {array} The array of categories this annotation' labels belongs to, if it has any labels
              */
-            category: function () {
-                var label = this.get("label");
-                return label && annotationTool.video.get("categories").get(label.category.id);
+            getCategories: function () {
+                return this.get("content").chain()
+                    .invoke("getCategory")
+                    .compact()
+                    .value();
             },
 
             /**
-             * Get the display color of an annotation.
-             * This is determined by the color of the category of its label,
-             * if it has any.
-             * Free text annotations return <code>undefined</code>
-             * @return {string} a CSS color value
+             * Access an annotation's color, if it has any.
+             * @alias module:models-annotation.Annotation#getColor
+             * @return {string} The string containing a CSS color value.
              */
-            color: function () {
-                var category = this.category();
-                var label = this.get("label");
-                return category && category.get("settings").color ||
-                    // If the category is a deleted one, we don't get it from `category`.
-                    // However, the label should still have it.
-                    label && label.category.settings.color;
+            getColor: function () {
+                switch (this.getType()) {
+                case "text":
+                    return undefined;
+                case "multi":
+                    return "white";
+                default:
+                    // There should be exactly one category here ...
+                    return this.getCategories()[0].get("settings").color;
+                }
+            },
+
+            /**
+             * Access an annotation's content items' labels, if it has any.
+             * @alias module:models-annotation.Annotation#getLabels
+             * @return {Label[]} An array of labels.
+             */
+            getLabels: function () {
+                return this.get("content").chain()
+                    .invoke("getLabel")
+                    .compact()
+                    .value();
+            },
+
+            /**
+             * Generate a `title` attribute according to this annotation's content items.
+             * @alias module:models-annotation.Annotation#getTitleAttribute
+             * @return {string} A string containing the value for the `title` attribute.
+             */
+            getTitleAttribute: function () {
+                var firstContent = this.get("content").first();
+                switch (this.getType()) {
+                case "label":
+                case "scaling":
+                    var label = firstContent.getLabel();
+                    return getTitleFromLabel(label);
+                case "text":
+                    return firstContent.get("value");
+                case "multi":
+                    var empty = !this.get("content").size();
+                    return "<" + i18next.t(empty ? "annotation.types.empty" : "annotation.types.multi") + ">";
+                }
             }
         });
 
         return Annotation;
+
+        // Todo: Order -after- return intended?
+        function getTitleFromLabel(label) {
+            var title;
+            if (label) {
+                title = label.get("abbreviation") + " - " + label.get("value");
+            }
+            return title;
+        }
     }
 );

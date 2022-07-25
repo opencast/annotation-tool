@@ -58,7 +58,7 @@ import javax.persistence.Table;
         @NamedQuery(name = "Scale.findById", query = "select a from Scale a where a.id = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Scale.findByIdIncludeDeleted", query = "select a from Scale a where a.id = :id"),
         @NamedQuery(name = "Scale.findAllOfTemplate", query = "select a from Scale a where a.videoId IS NULL and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Scale.findAllOfVideo", query = "select a from Scale a where a.videoId = :id and a.deletedAt IS NULL"),
+        @NamedQuery(name = "Scale.findAllOfVideo", query = "select a from Scale a where a.videoId = :id"),
         @NamedQuery(name = "Scale.findAllOfVideoSince", query = "select a from Scale a where a.videoId = :id and a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
         @NamedQuery(name = "Scale.deleteById", query = "delete from Scale a where a.id = :id"),
         @NamedQuery(name = "Scale.count", query = "select count(a) from Scale a where a.deletedAt IS NULL"),

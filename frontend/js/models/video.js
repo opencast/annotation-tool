@@ -63,7 +63,6 @@ define(
             defaults: function () {
                 return {
                     access: ACCESS.PUBLIC,
-
                     tracks: new Tracks([], { video: this }),
                     categories: new Categories([], { video: this }),
                     scales: new Scales([], { video: this })
@@ -110,35 +109,95 @@ define(
              * @param {Category?} category
              *     A category to filter the returned annotations by.
              *     Falsy values mean free text annotations.
+             * @todo CC-MERGE | Re-implement refactoring from master? - 3c479627f8978159bdd2b88ddfd6dad64574a635
              */
-            getAnnotations: (function () {
-                return function (category) {
-                    return this.get("tracks").chain()
-                        .map(_.property(["annotations", "models"]))
-                        .flatten()
-                        .filter(filter(category))
-                        .value();
-                };
-
-                function filter(category) {
-                    if (category) {
-                        return withCategory(category);
-                    } else {
-                        return withoutCategory;
-                    }
-                }
-
-                function withoutCategory(annotation) {
-                    return annotation.get("label");
-                }
-
-                function withCategory(category) {
-                    return function (annotation) {
-                        var label = annotation.get("label");
-                        return label && label.category.id === category.id;
+            getAnnotations: function (category) {
+                var result = [];
+                var handleAnnotation;
+                if (_.isUndefined(category)) {
+                    handleAnnotation = _.bind(Array.prototype.push, result);
+                } else if (category) {
+                    handleAnnotation = function (annotation) {
+                        var labels = annotation.getLabels();
+                        var anyMatches = _.some(labels, function (label) {
+                            return category.id === label.get('category').id;
+                        });
+                        if (anyMatches) {
+                            result.push(annotation);
+                        }
+                    };
+                } else {
+                    handleAnnotation = function (annotation) {
+                        var labels = annotation.getLabels();
+                        if (!labels.length) {
+                            result.push(annotation);
+                        }
                     };
                 }
-            })(),
+                this.get("tracks").each(function (track) {
+                    track.annotations.each(handleAnnotation);
+                });
+                return result;
+            },
+
+            /**
+             * Get the annotation with the given id on the given track
+             * @alias module:models-video.Video#getAnnotation
+             * @param  {integer} annotationId The id from the wanted annotation
+             * @param  {integer} trackId      The id from the track containing the annotation
+             * @return {Track}                The annotation with the given id
+             */
+            getAnnotation: function (annotationId, trackId) {
+                var track = this.getTrack(trackId),
+                    tmpAnnotation;
+
+                if (track) {
+                    return track.getAnnotation(annotationId);
+                } else {
+                    this.get("tracks").find(function (trackItem) {
+                        tmpAnnotation = trackItem.getAnnotation(annotationId);
+                        return !_.isUndefined(tmpAnnotation);
+                    });
+                    return tmpAnnotation;
+                }
+            },
+
+            /**
+             * Get all labels present in all of this video's categories
+             * @alias module:models-video.Video#getLabels
+             * @return {array} an array of all the labels
+             */
+            getLabels: function() {
+                return _.flatten(this.get("categories").map(
+                    function (category) {
+                        return category.get("labels").models;
+                    }
+                ));
+            },
+
+            /**
+             * Get all scale values present in all of this video's categories
+             * @alias module:models-video.Video#getScaleValues
+             * @return {array} an array of all the scale values
+             */
+            getScaleValues: function() {
+                return _.flatten(this.get("scales").map(
+                    function (scale) {
+                        return scale.get("scaleValues").models;
+                    }
+                ));
+            },
+
+            /**
+             * Get questionnaire.
+             * @alias module:models-video.Video#getQuestionnaire
+             * @return {object|undefined} an object describing a questionnaire if there is one connected to this video
+             */
+            getQuestionnaire: function() {
+                // TODO: this has to be provided by the backend
+                // return undefined
+                return {};
+            },
 
             /**
              * Override the default toJSON function to ensure complete JSONing.

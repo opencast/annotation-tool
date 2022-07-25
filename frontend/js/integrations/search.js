@@ -53,7 +53,9 @@ define([
             method = "update";
         }
 
+        var beforeSend = options.beforeSend;
         options.beforeSend = function () {
+            if (beforeSend) beforeSend.apply(this, arguments);
             this.url = "../../extended-annotations" + this.url;
 
             // Sanitize query strings, so that they're actually at the end
@@ -148,9 +150,11 @@ define([
             $.when(user, adminRoles).then(function (userResult, adminRoles) {
                 var user = userResult[0];
                 var userData = user.user;
+                var nickname = (typeof(userData.name) !== "undefined" && userData.name !== null) ? userData.name : userData.username;
+
                 this.user = new User({
                     user_extid: userData.username,
-                    nickname: userData.username,
+                    nickname: nickname, //userData.username,
                     email: userData.email,
                     isAdmin: _.intersection(
                         adminRoles.concat(["ROLE_ADMIN"]),
@@ -201,7 +205,9 @@ define([
                     videos.map(function (track) {
                         return {
                             src: track.url,
-                            type: track.mimetype
+                            type: track.mimetype,
+                            framerate: track.video.framerate,
+                            resolution: track.video.resolution
                         };
                     })
                 );

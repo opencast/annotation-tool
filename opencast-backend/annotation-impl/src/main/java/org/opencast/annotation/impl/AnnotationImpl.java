@@ -32,26 +32,24 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
 
   private final long id;
   private final long trackId;
-  private final Option<String> text;
   private final double start;
   private final Option<Double> duration;
+  private final String content;
+  private final boolean createdFromQuestionnaire;
   private final Option<String> settings;
-  private final Option<Long> labelId;
-  private final Option<Long> scaleValueId;
 
-  public AnnotationImpl(long id, long trackId, Option<String> text, double start, Option<Double> duration,
-          Option<String> settings, Option<Long> labelId, Option<Long> scaleValueId, Resource resource) {
+  public AnnotationImpl(long id, long trackId, double start, Option<Double> duration,
+          String content, boolean createdFromQuestionnaire, Option<String> settings, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
             .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
             .getTags());
     this.id = id;
     this.trackId = trackId;
-    this.text = text;
     this.start = start;
     this.duration = duration;
+    this.content = content;
+    this.createdFromQuestionnaire = createdFromQuestionnaire;
     this.settings = settings;
-    this.labelId = labelId;
-    this.scaleValueId = scaleValueId;
   }
 
   @Override
@@ -75,11 +73,6 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
   }
 
   @Override
-  public Option<String> getText() {
-    return text;
-  }
-
-  @Override
   public double getStart() {
     return start;
   }
@@ -90,18 +83,18 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
   }
 
   @Override
+  public String getContent() {
+    return content;
+  }
+
+  @Override
+  public boolean getCreatedFromQuestionnaire() {
+    return createdFromQuestionnaire;
+  }
+
+  @Override
   public Option<String> getSettings() {
     return settings;
-  }
-
-  @Override
-  public Option<Long> getLabelId() {
-    return labelId;
-  }
-
-  @Override
-  public Option<Long> getScaleValueId() {
-    return scaleValueId;
   }
 
   @Override
@@ -112,13 +105,12 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
       return false;
     Annotation annotation = (Annotation) o;
     return id == annotation.getId() && trackId == annotation.getTrackId() && duration.equals(annotation.getDuration())
-            && start == annotation.getStart() && text.equals(annotation.getText())
-            && settings.equals(annotation.getSettings()) && labelId.equals(annotation.getLabelId())
-            && scaleValueId.equals(annotation.getScaleValueId()) && getTags().equals(annotation.getTags());
+            && start == annotation.getStart() && content.equals(annotation.getContent())
+            && settings.equals(annotation.getSettings()) && getTags().equals(annotation.getTags());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, trackId, start, duration, text, settings, labelId, scaleValueId, getTags());
+    return Objects.hash(id, trackId, start, duration, content, settings, getTags());
   }
 }

@@ -109,6 +109,7 @@ define(
              */
             events: {
                 "keyup #new-annotation": "maybeInsert",
+                "click #insert-mca": "insertMCA",
                 "click #insert": "insert",
                 "keydown #new-annotation": "maybePause",
                 "click #label-tabs-buttons a": "showTab",
@@ -151,6 +152,7 @@ define(
                 _.bindAll(
                     this,
                     "insert",
+                    "insertMCA",
                     "changeTrack",
                     "addTab",
                     "toggleFreeTextAnnotationPane",
@@ -253,6 +255,11 @@ define(
                 }
             },
 
+            insertMCA: function (event) {
+                event.stopImmediatePropagation();
+                annotationTool.createAnnotation();
+            },
+
             /**
              * Insert a new annotation
              * @param {event} event Event object
@@ -268,7 +275,10 @@ define(
                     return;
                 }
 
-                annotationTool.createAnnotation({ text: value });
+                var annotation = annotationTool.createAnnotation({ content: [{
+                    type: "text",
+                    value: value
+                }] });
 
                 if (this.continueVideo) {
                     this.continueVideo = false;

@@ -5,6 +5,7 @@
 target/
 node_modules/
 node/
+deploy
 
 # ignore Eclipse project data
 .project
@@ -20,6 +21,9 @@ node/
 *.swp
 *.iml
 .idea
+
+# OS
+.DS_Store
 
 # Ignore directory with frontend build
 /frontend/src/main/resources/ui

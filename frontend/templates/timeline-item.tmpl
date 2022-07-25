@@ -1,4 +1,68 @@
-<span title="{{text}}">
-    {{#if label}}<b>{{label.abbreviation}}</b>{{/if}}
-    {{text}}
+{{#* inline "contentItemLabel"}}
+{{#with (withLabel value) as |label|}}
+
+<span
+    class="content-item-label"
+    title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"
+    {{#if label.category.settings.color}}style="background-color: {{label.category.settings.color}};"{{/if}}>
+
+    <b> {{label.abbreviation}} </b>
+
+</span>
+
+{{/with}}
+{{/inline}}
+
+{{#*inline "contentItemScaling"}}
+{{#with (withLabel value.label) as |label|}}
+
+<span
+    class="content-item-scaling"
+    title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"
+    {{#if label.category.settings.color}}style="background-color: {{label.category.settings.color}};"{{/if}}>
+
+    <b>
+        {{label.abbreviation}}
+        {{#with (withScaleValue ../value.scaling) as |scaleValue|}}
+        <span class="scalevalue"> ({{scaleValue.value}}) </span>
+        {{/with}}
+    </b>
+
+</span>
+
+{{/with}}
+{{/inline}}
+
+
+{{#*inline "concatTextContentItems"}}
+{{#each contentItems as |contentItem|}}
+    {{#ifeq contentItem.type "text"}} {{value}}{{/ifeq}}
+{{/each}}
+{{/inline}}
+
+{{#*inline "singleContentItemText"}}
+<span class="content-item-text"> {{value}} </span>
+{{/inline}}
+
+<span title="{{text}}" style="min-width: 10em;">
+    {{!-- show labels and scale values first --}}
+    {{#each contentItems as |contentItem|}}
+        {{#ifeq contentItem.type "label"}} {{> contentItemLabel}} {{/ifeq}}
+        {{#ifeq contentItem.type "scaling"}} {{> contentItemScaling}} {{/ifeq}}
+    {{/each}}
+
+    {{#if hasTextContentItems}}
+
+        {{!-- Annotation contains only a single text item. Just show it. --}}
+        {{#ifeq contentItems.length 1}}
+            {{#each contentItems as |contentItem|}} {{> singleContentItemText}} {{/each}}
+
+        {{!-- otherwise we hide the text as the title of an icon --}}
+        {{^}}
+            <span class="content-item-text" title="{{> concatTextContentItems}}">
+                <i class="icon-align-left"></i>
+            </span>
+        {{/ifeq}}
+    {{/if}}
+
 </span>

@@ -45,6 +45,9 @@ define(
              */
             administratorCanEditPublicInstances: true,
 
+            /** @override */
+            keepDeleted: true,
+
             defaults: {
                 access: ACCESS.PUBLIC
             },

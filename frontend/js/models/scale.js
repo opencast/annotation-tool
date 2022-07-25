@@ -44,6 +44,9 @@ define(
              */
             administratorCanEditPublicInstances: true,
 
+            /** @override */
+            keepDeleted: true,
+
             /**
              * Default model values
              */
@@ -116,7 +119,11 @@ define(
                 var json = {
                     id: this.id,
                     name: this.attributes.name,
-                    scaleValues: this.attributes.scaleValues.map(function (scaleValue) {
+                    scaleValues: this.attributes.scaleValues
+                        .filter(function (scaleValue) {
+                            return !scaleValue.get("deleted_at");
+                        })
+                        .map(function (scaleValue) {
                         return scaleValue.toExportJSON();
                     })
                 };

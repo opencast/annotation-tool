@@ -24,9 +24,7 @@ import static org.opencastproject.util.data.Option.option;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.ExtendedAnnotationService;
-import org.opencast.annotation.api.Label;
 import org.opencast.annotation.api.Resource;
-import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 
@@ -71,14 +69,17 @@ public class AnnotationDto extends AbstractResourceDto {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-  @Column(name = "text")
-  private String text;
-
   @Column(name = "start", nullable = false)
   private double start;
 
   @Column(name = "duration")
   private Double duration;
+
+  @Column(name = "content", nullable = false)
+  private String content;
+
+  @Column(name = "createdFromQuestionnaire", nullable = false)
+  private boolean createdFromQuestionnaire;
 
   // Settings as JSON string
   @Column(name = "settings")
@@ -88,33 +89,27 @@ public class AnnotationDto extends AbstractResourceDto {
   @Column(name = "track_id", nullable = false)
   private long trackId;
 
-  @Column(name = "label_id")
-  private Long labelId;
-
-  @Column(name = "scale_value_id")
-  private Long scaleValueId;
-
   @ElementCollection
   @MapKeyColumn(name = "name")
   @Column(name = "value")
   @CollectionTable(name = "xannotations_annotation_tags", joinColumns = @JoinColumn(name = "annotation_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
-  public static AnnotationDto create(long trackId, Option<String> text, double start, Option<Double> duration,
-          Option<String> settings, Option<Long> labelId, Option<Long> scaleValueId, Resource resource) {
-    final AnnotationDto dto = new AnnotationDto().update(text, start, duration, settings, resource);
+  public static AnnotationDto create(long trackId, double start, Option<Double> duration, String content,
+          boolean createdFromQuestionnaire, Option<String> settings, Resource resource) {
+    final AnnotationDto dto = new AnnotationDto().update(start, duration, content, createdFromQuestionnaire,
+            settings, resource);
     dto.trackId = trackId;
-    dto.labelId = labelId.getOrElseNull();
-    dto.scaleValueId = scaleValueId.getOrElseNull();
     return dto;
   }
 
-  public AnnotationDto update(Option<String> text, double start, Option<Double> duration, Option<String> settings,
-          Resource resource) {
+  public AnnotationDto update(double start, Option<Double> duration, String content, boolean createdFromQuestionnaire,
+          Option<String> settings, Resource resource) {
     super.update(resource);
-    this.text = text.getOrElseNull();
+    this.content = content;
     this.start = start;
     this.duration = duration.getOrElseNull();
+    this.createdFromQuestionnaire = createdFromQuestionnaire;
     this.settings = settings.getOrElseNull();
     if (resource.getTags() != null)
       this.tags = resource.getTags();
@@ -122,15 +117,15 @@ public class AnnotationDto extends AbstractResourceDto {
   }
 
   public static AnnotationDto fromAnnotation(Annotation a) {
-    final AnnotationDto dto = create(a.getTrackId(), a.getText(), a.getStart(), a.getDuration(), a.getSettings(),
-            a.getLabelId(), a.getScaleValueId(), a);
+    final AnnotationDto dto = create(a.getTrackId(), a.getStart(), a.getDuration(), a.getContent(),
+            a.getCreatedFromQuestionnaire(), a.getSettings(), a);
     dto.id = a.getId();
     return dto;
   }
 
   public Annotation toAnnotation() {
-    return new AnnotationImpl(id, trackId, option(text), start, option(duration), option(settings), option(labelId),
-            option(scaleValueId), new ResourceImpl(option(access), option(createdBy), option(updatedBy),
+    return new AnnotationImpl(id, trackId, start, option(duration), content, createdFromQuestionnaire, option(settings),
+            new ResourceImpl(option(access), option(createdBy), option(updatedBy),
                     option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), tags));
   }
 
@@ -144,22 +139,10 @@ public class AnnotationDto extends AbstractResourceDto {
   public static final Function2<ExtendedAnnotationService, Annotation, JSONObject> toJson = new Function2<ExtendedAnnotationService, Annotation, JSONObject>() {
     @Override
     public JSONObject apply(ExtendedAnnotationService s, Annotation a) {
-      JSONObject labelJson = null;
-      JSONObject scaleValueJson = null;
-
-      if (a.getLabelId().isSome()) {
-        Label label = s.getLabel(a.getLabelId().get(), true).get();
-        labelJson = LabelDto.toJson.apply(s, label);
-      }
-
-      if (a.getScaleValueId().isSome()) {
-        ScaleValue scaleValue = s.getScaleValue(a.getScaleValueId().get()).get();
-        scaleValueJson = ScaleValueDto.toJson.apply(s, scaleValue);
-      }
       return conc(
               AbstractResourceDto.toJson.apply(s, a),
-              jO(p("id", a.getId()), p("text", a.getText()), p("start", a.getStart()), p("duration", a.getDuration()),
-                      p("settings", a.getSettings()), p("label", labelJson), p("scalevalue", scaleValueJson)));
+              jO(p("id", a.getId()), p("start", a.getStart()), p("duration", a.getDuration()), p("content", a.getContent()),
+                      p("createdFromQuestionnaire", a.getCreatedFromQuestionnaire()), p("settings", a.getSettings())));
     }
   };
 

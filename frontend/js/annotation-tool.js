@@ -28,6 +28,7 @@ define(
         "i18next",
         "models/video",
         "views/main",
+        "views/modal-container",
         "alerts",
         "templates/delete-modal",
         "player-adapter",
@@ -46,6 +47,7 @@ define(
         i18next,
         Video,
         MainView,
+        ModalContainerView,
         alerts,
         DeleteModalTmpl,
         PlayerAdapter,
@@ -140,8 +142,7 @@ define(
                     "selectTrack",
                     "setSelection",
                     "addTimeupdateListener",
-                    "removeTimeupdateListener",
-                    "updateSelectionOnTimeUpdate"
+                    "removeTimeupdateListener"
                 );
 
                 _.extend(this, configuration, integration);
@@ -225,10 +226,10 @@ define(
                         });
                     } else {
                         tracks.showTracks(
-                            tracks.filter(function (track) {
-                                return track.isMine()
-                                    || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
-                            })
+                          tracks.filter(function (track) {
+                              return track.isMine()
+                                || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                          })
                         );
                         ready.resolve();
                     }
@@ -363,6 +364,22 @@ define(
                 this.video.get("tracks").trigger("select", track, previousTrack);
             },
 
+           /**
+             * Switch to different tab in goldenLayout
+             * @alias annotationTool.switchLayout
+             */
+            switchLayout: function (component_name) {
+                // TODO: use MainView instead
+                var goldenLayout = annotationTool.views.main.goldenlayout;
+                for (var i = 0; i < goldenLayout._getAllContentItems().length; i++) {
+                    // console.log(myLayout._getAllContentItems()[i].componentName);
+                    if (goldenLayout._getAllContentItems()[i].componentName == component_name) {
+                        var contentItem = goldenLayout._getAllContentItems()[i];
+                        contentItem.parent.setActiveContentItem(contentItem);
+                    }
+                }
+            },
+
             /**
              * Update the ordering of the tracks and alert everyone who is interested.
              * @param {Array} order The new track order
@@ -429,10 +446,15 @@ define(
              */
             isVisible: function (annotation) {
                 if (!annotation.collection.track.get("visible")) return false;
-                var category = annotation.category();
-                if (category && !category.get("visible")) return false;
-                if (!category && !annotationTool.freeTextVisible) return false;
-                return true;
+                var categories = annotation.getCategories();
+                if (categories.length) {
+                    return _.chain(categories)
+                        .invoke("get", "visible")
+                        .every().value();
+                } else {
+                    // Free text annotation
+                    return annotationTool.freeTextVisible;
+                }
             },
 
             //////////////
@@ -451,12 +473,12 @@ define(
             createAnnotation: function (params) {
                 var annotation = this.selectedTrack.annotations
                     .create(_.extend(
-                        params,
                         { start: this.playerAdapter.getCurrentTime() },
                         // The loop controller can constrain annotations
                         // to the current loop using this.
                         // @see module:views-loop.Loop#toggleConstrainAnnotations
-                        this.annotationConstraints
+                        this.annotationConstraints,
+                        params
                     ), {
                         wait: true,
                         success: _.bind(function () {
@@ -515,6 +537,20 @@ define(
                         });
                     }
                 });
+            },
+
+            addModal: function (header, contentView, buttonText) {
+                var container = new ModalContainerView(
+                    {
+                        buttonText: buttonText,
+                        contentView: contentView,
+                        header: header
+                    }
+                );
+
+                return function closeModal() {
+                    container.close();
+                };
             },
 
             ////////////////
@@ -734,7 +770,7 @@ define(
             ANNOTATION: {
                 name: "annotation",
                 getContent: function (target) {
-                    return target.get("text");
+                    return target.getTitleAttribute();
                 },
                 destroy: function (target, callback) {
 

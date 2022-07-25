@@ -58,9 +58,23 @@ define(
              */
             parse: function (resp) {
                 if (resp.labels && _.isArray(resp.labels)) {
-                    return resp.labels;
+                    // sort by abbreviation of label
+                    return resp.labels.sort((a, b) => {
+                        let aa = a.abbreviation.toLowerCase();
+                        let ab = b.abbreviation.toLowerCase();
+                        if(aa < ab) { return -1; }
+                        if(aa > ab) { return 1; }
+                        return 0;
+                    });
                 } else if (_.isArray(resp)) {
-                    return resp;
+                    // sort by abbreviation of label
+                    return resp.sort((a, b) => {
+                        let aa = a.abbreviation.toLowerCase();
+                        let ab = b.abbreviation.toLowerCase();
+                        if(aa < ab) { return -1; }
+                        if(aa > ab) { return 1; }
+                        return 0;
+                    });
                 } else {
                     return null;
                 }

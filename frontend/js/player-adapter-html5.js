@@ -173,6 +173,11 @@ define(
                             e.preventDefault();
                         });
 
+                        // Workaround to fix chrome fullscreen bug (#214)
+                        $(document).bind('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', function (e) {
+                            self.resetSize();
+                        });
+
                         if (sources) {
                             mediaElement.setSrc(sources);
                         }

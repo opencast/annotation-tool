@@ -58,7 +58,7 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Label.findByIdIncludeDeleted", query = "select a from Label a where a.id = :id"),
         @NamedQuery(name = "Label.findById", query = "select a from Label a where a.id = :id and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Label.findAllOfCategory", query = "select a from Label a where a.categoryId = :id and a.deletedAt IS NULL"),
+        @NamedQuery(name = "Label.findAllOfCategory", query = "select a from Label a where a.categoryId = :id"),
         @NamedQuery(name = "Label.findAllOfCategorySince", query = "select a from Label a where a.categoryId = :id and a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
         @NamedQuery(name = "Label.deleteById", query = "delete from Label a where a.id = :id"),
         @NamedQuery(name = "Label.count", query = "select count(a) from Label a where a.deletedAt IS NULL"),

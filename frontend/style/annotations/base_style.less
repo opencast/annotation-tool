@@ -229,16 +229,19 @@ input, textarea, select, .uneditable-input {
     cursor: pointer;
     color: black;
     &:hover {
-        .selection(@annotationSelectableColor);
+      background-color: #e5e5e5!important;
+      //  .selection(@annotationSelectableColor);
     }
 }
 
 .active-annotation {
-    box-shadow: inset 0px 0px 2px 1px red;
+    box-shadow: inset 0px 0px 2px 1px #ff9b00;
 }
 
 .selected-annotation {
-    .selection(@annotationSelectionColor);
+    //.selection(@annotationSelectionColor);
+    border: 2px solid #00d0ff;
+    background-color: #f5f5f5!important;
     .selectable-annotation();
 }
 

@@ -32,6 +32,7 @@ define(
         "views/loop",
         "views/tracks-selection",
         "views/print",
+        "views/questionnaire",
         "backbone",
         "goldenlayout",
         "bootstrap"
@@ -49,6 +50,7 @@ define(
         LoopView,
         TracksSelectionView,
         PrintView,
+        QuestionnaireView,
         Backbone,
         GoldenLayout
     ) {
@@ -155,10 +157,11 @@ define(
                     "timeline",
                     "annotate",
                     "list",
-                    "loop"
+                    "loop",
+                    "questionnaire"
                 ];
 
-                var closableViews = ["list", "annotate", "loop"];
+                var closableViews = ["list", "annotate", "loop", "questionnaire"];
                 this.viewConfigs = _.object(_.map(views, function (view) { return [
                     view, {
                         type: "component",
@@ -192,6 +195,42 @@ define(
                                 "list"
                             ].map(viewConfig)
                         }]
+                    },
+                    "questionnaire": {
+                        type: "row",
+                        content: [
+                            {
+                                type: "column",
+                                content: [
+                                  {
+                                      type: "column",
+                                      content: [
+                                          "player"
+                                      ].map(viewConfig)
+                                  },
+                                  {
+                                      type: "stack",
+                                      content: [
+                                          "timeline",
+                                          "list"
+                                      ].map(viewConfig)
+                                  },
+                                ]
+                            },
+                            {
+                                type: "column",
+                                content: [
+                                  {
+                                      type: "stack",
+                                      content: [
+                                          "questionnaire",
+                                          "annotate",
+                                          "loop"
+                                      ].map(viewConfig)
+                                  }
+                                ]
+                            }
+                        ]
                     },
                     "with loops": {
                         type: "row",
@@ -254,6 +293,7 @@ define(
                         //   instead of relying on the keys of the above map
                         //   to impose an order!
                         "default",
+                        "questionnaire",
                         "with loops",
                         "alternative",
                         "reviewing",
@@ -451,6 +491,16 @@ define(
                         }));
                     });
                 });
+                goldenLayout.registerComponent("questionnaire", function (container) {
+                    container.getElement().addClass("golden-layout-component-questionnaire");
+                    requireViews(["player"], function (player) {
+                        setupClosing("questionnaire", container);
+                        resolveView("questionnaire", new QuestionnaireView({
+                            playerAdapter: player,
+                            el: container.getElement(),
+                        }));
+                    });
+                });
 
                 goldenLayout.registerComponent("loop", function (container) {
                     requireViews(["player", "timeline"], function (player, timeline) {
@@ -494,8 +544,10 @@ define(
                 goldenLayout.on("stateChanged", function (event) {
                     localStorage.setItem("layout-custom", JSON.stringify(goldenLayout.toConfig()));
                     localStorage.setItem("layout", "custom");
+                    annotationTool.playerAdapter.resetSize();
                 });
                 goldenLayout.init();
+                this.goldenlayout = goldenLayout; // TODO do not expose?
             },
 
             /**

@@ -96,7 +96,7 @@
                 title="{{t "annotation.edit.delete"}}"
             ></i>
             <i
-                class="toggle-edit icon-pencil"
+                class="toggle-edit icon-time"
                 title="{{t "annotation.edit.edit"}}"
             ></i>
         {{/if}}
@@ -117,26 +117,5 @@
         </i>
     </div>
 </div>
-
-{{#unless label}}
-    <div id="text-container{{id}}" class="in text-container">
-        <span class="text">
-            <span class="freetext">
-                <textarea
-                    placeholder="{{t "annotation.edit.free text placeholder"}}"
-                    style="height: {{textHeight}}px"
-                >{{text}}</textarea>
-            </span>
-            <div class="button-bar">
-                <button type="button" class="btn">
-                    Cancel
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    OK
-                </button>
-            </div>
-        </span>
-    </div>
-{{/unless}}
 
 <div class="comments"></div>

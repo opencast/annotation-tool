@@ -73,22 +73,38 @@ define([
         item.group = annotation.collection.track.id;
         item.start = util.dateFromSeconds(item.start);
         item.end = util.dateFromSeconds(item.end);
-        var label = item.label;
-        if (label) {
-            var color = annotation.color();
-            item.style =
-                "background-color:" + color + ";" +
+        delete item.content;
+
+        item.text = annotation.get("content")
+            .chain()
+            .sortBy(function (c) { return c.get("type"); })
+            .invoke("getText")
+            .value()
+            .join(", ");
+
+        var color = annotation.getColor();
+        item.style = color && (
+            "background-color:" + color + ";" +
                 "color:" + (
                     chroma(color).luminance() < 0.5
-                        ? "white"
+                        ? "black" // before: white
                         : "black"
-                ) +
-                ";";
+                ) + ";"
+        );
+
+        var labels = annotation.getLabels();
+        if (labels.length === 1) {
+            item.label = labels[0].toJSON();
+        } else {
+            item.label = undefined;
         }
+        item.contentItems = annotation.get("content").invoke("toJSON");
+        item.hasTextContentItems = _.any(item.contentItems, function (item) { return item.type === "text"; });
         item.type = item.duration
             ? "range"
             : "box";
         item.model = annotation;
+
         return item;
     }
 
@@ -174,6 +190,10 @@ define([
                 //zoomKey: 'shiftKey',
                 //horizontalScroll: true,
                 type: "box",
+                itemsAlwaysDraggable: {
+                    item: true,
+                    range: true
+                },
                 editable: {
                     add: false,
                     updateTime: true,
@@ -507,6 +527,7 @@ define([
             function getClassName(annotation) {
                 return this.items.get(annotation.id).className || "";
             }
+
             // Long-pressing is normally only used for multiple selections,
             // which we don't support.
             // Additionally this is a problem when you select an item
@@ -516,12 +537,19 @@ define([
             // the item would just be deselected in that scenario.
             this.timeline.itemSet.hammer.off("press");
             this.timeline.on("select", _.bind(function (properties) {
+                var model = this.items.get(properties.items[0]).model;
                 annotationTool.setSelection(
-                    this.items.get(properties.items[0]).model,
+                    model,
                     // Toggle selection on single click,
                     // unconditionally select on double click
                     properties.event.tapCount > 1
                 );
+
+                if (properties.event.tapCount > 1 && model && model.get("createdFromQuestionnaire")) {
+                    Backbone.trigger("questionnaire:edit-annotation", this.items.get(properties.items[0]).model);
+                    annotationTool.switchLayout("questionnaire");
+                }
+
             }, this));
 
             function updateCategoryAnnotations(category, visible) {
