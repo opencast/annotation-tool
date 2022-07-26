@@ -59,32 +59,69 @@ define(
             },
 
             /**
+             * Constructor
+             * @alias module:models-annotation.Annotation#initialize
+             * @param {object} attr Object literal containing the model initialion attributes.
+             */
+            initialize: function (attr) {
+                Resource.prototype.initialize.apply(this, arguments);
+
+                if (!attr || _.isUndefined(attr.start)) {
+                    throw "\"start\" attribute is required";
+                }
+
+                if (!(this.get("content") instanceof AnnotationContent)) {
+                    this.attributes.content = new AnnotationContent(attr.content || []);
+                }
+            },
+
+            /**
              * Parse the attribute list passed to the model
              * @param {object} attr Object literal containing the model attribute to parse.
              * @return {object} The object literal with the list of parsed model attribute.
+             * @todo CC-MERGE | Accept Backbone/parse signature change, util/JSON, annotationTool isMine + content; Removed label/category
+             * @todo CC-MERGE | ERROR | Merge variant – Uncaught TypeError: this.model.fetchComments is not a function
              */
-            parse: function (data) {
-                console.log(annotationTool);
-                console.log(annotationTool.localstorage);
-                console.log(annotationTool.localStorage);
+            parse: function (attr) {
+                attr = Resource.prototype.parse.call(this, attr);
 
-                return Resource.prototype.parse.call(this, data, function (attr) {
-                    if (annotationTool.user.get("id") === attr.created_by) {
-                        attr.isMine = true;
-                    } else {
-                        attr.isMine = false;
-                    }
+                if (annotationTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
 
-                    if (annotationTool.localStorage && _.isArray(attr.comments)) {
-                        attr.comments = new Comments(attr.comments, { annotation: this });
-                    }
+                if (_.isString(attr.content)) {
+                    attr.content = util.parseJSONString(attr.content);
+                }
 
-                    if (_.isString(attr.content)) {
-                        attr.content = util.parseJSONString(attr.content);
-                    }
-                    attr.content = new AnnotationContent(attr.content);
-                });
+                attr.content = new AnnotationContent(attr.content);
+
+                return attr;
             },
+            /* */
+
+            /**
+             * Parse the attribute list passed to the model
+             * @param {object} attr Object literal containing the model attribute to parse.
+             * @return {object} The object literal with the list of parsed model attribute.
+             * @todo CC-MERGE | ERROR | Merge variant – Error with getColor: annotation.js:225 Uncaught TypeError: Cannot read properties of undefined (reading 'get') at child.getColor (annotation.js:225:51)
+             * /
+            parse: function (attr) {
+                attr = Resource.prototype.parse.call(this, attr);
+                if (attr.label) {
+                    var tempSettings;
+                    if (attr.label.category && (tempSettings = util.parseJSONString(attr.label.category.settings))) {
+                        attr.label.category.settings = tempSettings;
+                    }
+
+                    if ((tempSettings = util.parseJSONString(attr.label.settings))) {
+                        attr.label.settings = tempSettings;
+                    }
+                }
+                return attr;
+            },
+            /* */
 
             /**
              * Validate the attribute list passed to the model
@@ -107,7 +144,9 @@ define(
                     return "\"duration\" attribute must be a positive number";
                 }
 
+                // @todo CC-MERGE | Implement validation message here? Message was empty in the original code
                 if (!attr.content || !_.isArray(attr.content) || !attr.content instanceof AnnotationContent) {
+                    // return "\"content\" attribute must set and be array|AnnotationContent";
                 }
 
                 return undefined;
