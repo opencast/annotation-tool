@@ -24,7 +24,6 @@ import static org.junit.Assert.assertTrue;
 import static org.opencast.annotation.Annotations.scalingAnnotation;
 import static org.opencast.annotation.Annotations.textAnnotation;
 import static org.opencast.annotation.endpoint.ExtendedAnnotationsRestServiceTest.RegexMatcher.regex;
-import static org.opencastproject.test.rest.RestServiceTestEnv.localhostRandomPort;
 import static org.opencastproject.test.rest.RestServiceTestEnv.testEnvForClasses;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
@@ -850,8 +849,7 @@ public class ExtendedAnnotationsRestServiceTest {
 
   // --
 
-  // @todo CC-MERGE | Added localhostRandomPort() to fix call to testEnvForClasses() - Desired?
-  static final RestServiceTestEnv rt = testEnvForClasses(localhostRandomPort(), TestRestService.class);
+  static final RestServiceTestEnv rt = testEnvForClasses(TestRestService.class);
 
   @BeforeClass
   public static void setUp() {
