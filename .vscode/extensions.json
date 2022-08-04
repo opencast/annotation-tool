@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "alefragnani.bookmarks",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "eamodio.gitlens",
+    "editorconfig.editorconfig",
+    "huizhou.githd",
+    "davidanson.vscode-markdownlint",
+    "mhutchie.git-graph",
+    "mkaufman.htmlhint"
+  ]
+}
