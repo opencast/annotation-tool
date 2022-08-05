@@ -9,5 +9,12 @@
   "files.trimTrailingWhitespace": true,
   "css.validate": false,
   "less.validate": false,
-  "scss.validate": false
+  "scss.validate": false,
+  "search.exclude": {
+      "**/.git": true,
+      "**/node_modules": true,
+      "frontend/src/main/resources/ui/**": true,
+      "frontend/target/classes/ui/**": true,
+      "opencast-backend/annotation-tool/target/classes/ui/js/**": true
+  },
 }

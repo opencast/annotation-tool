@@ -1,13 +1,16 @@
 {
   "recommendations": [
-    "alefragnani.bookmarks",
-    "christian-kohler.npm-intellisense",
-    "christian-kohler.path-intellisense",
-    "eamodio.gitlens",
-    "editorconfig.editorconfig",
-    "huizhou.githd",
-    "davidanson.vscode-markdownlint",
-    "mhutchie.git-graph",
-    "mkaufman.htmlhint"
-  ]
+		"alefragnani.bookmarks",
+		"andrejunges.Handlebars",
+		"christian-kohler.npm-intellisense",
+		"christian-kohler.path-intellisense",
+		"davidanson.vscode-markdownlint",
+		"dbaeumer.vscode-eslint",
+		"donjayamanne.githistory",
+		"eamodio.gitlens",
+		"editorconfig.editorconfig",
+		"huizhou.githd",
+		"mhutchie.git-graph",
+		"mkaufman.htmlhint"
+	]
 }
