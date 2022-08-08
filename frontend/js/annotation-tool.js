@@ -133,7 +133,6 @@ define(
             start: function (configuration, integration) {
                 _.bindAll(
                     this,
-                    "updateSelectionOnTimeUpdate",
                     "createAnnotation",
                     "fetchData",
                     "importCategories",
@@ -142,7 +141,8 @@ define(
                     "selectTrack",
                     "setSelection",
                     "addTimeupdateListener",
-                    "removeTimeupdateListener"
+                    "removeTimeupdateListener",
+                    "updateSelectionOnTimeUpdate"
                 );
 
                 _.extend(this, configuration, integration);
@@ -226,10 +226,10 @@ define(
                         });
                     } else {
                         tracks.showTracks(
-                          tracks.filter(function (track) {
-                              return track.isMine()
-                                || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
-                          })
+                            tracks.filter(function (track) {
+                                return track.isMine()
+                                    || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                            })
                         );
                         ready.resolve();
                     }
@@ -364,7 +364,7 @@ define(
                 this.video.get("tracks").trigger("select", track, previousTrack);
             },
 
-           /**
+            /**
              * Switch to different tab in goldenLayout
              * @alias annotationTool.switchLayout
              */

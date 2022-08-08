@@ -45,48 +45,6 @@
                 title="{{t "annotation.you own"}}"
             ></i>
         {{/if}}
-
-        {{#if scalevalues}}
-            <span class="scaling">
-                {{#if isMine}}
-                    <select>
-                        {{#each scalevalues}}
-                            <option
-                                value="{{this.id}}"
-                                {{#if this.isSelected}}
-                                    selected="selected"
-                                {{/if}}
-                            >{{this.name}}</option>
-                        {{/each}}
-                    </select>
-                {{/if}}
-                {{#if scalevalue}}
-                    <span
-                        class="label-style"
-                        title="{{scalevalue.name}}"
-                    >{{scalevalue.name}}</span>
-                {{/if}}
-            </span>
-        {{/if}}
-
-        <span
-            class="category"
-            {{#if label}}
-                title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"
-            {{/if}}
-        >
-            {{#if label}}
-                <span class="abbreviation">{{label.abbreviation}}</span>
-                <span class="label-value print">{{label.value}}</span>
-                {{#if scalevalue}}
-                    <span class="scalevalue print">
-                        {{scalevalue.name}} ({{scalevalue.value}})
-                    </span>
-                {{/if}}
-            {{else}}
-                <span class="no-label">{{text}}</span>
-            {{/if}}
-        </span>
     </div>
 
     <div class="right">

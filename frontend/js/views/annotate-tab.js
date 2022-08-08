@@ -162,9 +162,7 @@ define(
                     "render"
                 );
 
-                this.categories                = annotationTool.video.get("categories");
-                this.filter                    = attr.filter;
-                this.roles                     = attr.roles;
+                this.categories = annotationTool.video.get("categories");
                 this.defaultCategoryAttributes = attr.attributes;
 
                 this.filter = function (category) {
@@ -197,7 +195,6 @@ define(
                 });
                 this.titleLink.find(".file").on("change", this.onImport);
 
-                this.listenTo(this.categories, "change:deleted_at", this.removeOne);
                 this.listenTo(this.categories, "add", function (category) {
                     if (!this.filter(category)) return;
                     this.addCategory(category);
@@ -207,7 +204,7 @@ define(
                         ));
                     }
                 });
-                this.listenTo(this.categories, "remove", this.removeOne);
+                this.listenTo(this.categories, "change:deleted_at", this.removeOne);
 
                 return this;
             },

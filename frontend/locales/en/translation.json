@@ -27,7 +27,6 @@
     "create category": "Create category",
     "delete category": "Delete category",
     "confirm edit": "Warning: Editing the selected annotation discards the current annotation draft!",
-    "create a label": "Create a label",
     "download categories": "Download categories",
     "edit mode": "Edit mode",
     "edit category": "Edit category",
@@ -345,7 +344,6 @@
     "player": "Player",
     "questionnaire": "Questionnaire"
   },
-  "version": "Version: {{version}}",
   "validation errors": {
     "empty": "This field must not be empty",
     "min items": "You have to choose the required number of items.",

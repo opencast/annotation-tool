@@ -470,9 +470,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!eas().hasResourceAccess(s)) {
               return UNAUTHORIZED;
             }
-
-            // @todo CC-MERGE | 1 | Master: Delete scale; Feature: Keep deleted entities, return type
-
             // Delete all scale values
             List<ScaleValue> values = eas().getScaleValues(s.getId(), Option.none(), Option.none(), Option.none(),
                     Option.none(), Option.none());
@@ -480,9 +477,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
               logger.debug("Deleting {}", value.getName());
               eas().deleteScaleValue(value);
             }
-
             // Delete scale itself
-            // return eas().deleteScale(s) ? NO_CONTENT : NOT_FOUND;
             s = eas().deleteScale(s);
             return Response.ok(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), s)))
                     .header(LOCATION, scaleLocationUri(s, videoId.isSome())).build();
@@ -655,7 +650,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        // @todo CC-MERGE | 1 | Feature: Change return type
         return eas().getScaleValue(id, true).fold(new Option.Match<ScaleValue, Response>() {
           @Override
           public Response some(ScaleValue s) {
@@ -872,7 +866,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
     return run(nil, new Function0<Response>() {
       @Override
       public Response apply() {
-        // @todo CC-MERGE | 1 | Feature: Change return type
         return eas().getCategory(categoryId, true).fold(new Option.Match<Category, Response>() {
           @Override
           public Response some(Category c) {
@@ -1064,8 +1057,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!eas().hasResourceAccess(l))
               return UNAUTHORIZED;
 
-              // @todo CC-MERGE | 1.2 | Master: Deletion behaviour, Feature: Return type
-
             // If the label is a copy from a series category, delete it on the series category instead
             if (l.getSeriesLabelId().isSome()) {
               return eas().getLabel(l.getSeriesLabelId().get(), false).fold(new Option.Match<Label, Response>() {
@@ -1074,7 +1065,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
                   if (!eas().hasResourceAccess(l))
                     return UNAUTHORIZED;
 
-                  //return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
                   l = eas().deleteLabel(l);
                   return Response.ok(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), l)))
                           .header(LOCATION, labelLocationUri(l, videoId)).build();
@@ -1087,7 +1077,6 @@ public abstract class AbstractExtendedAnnotationsRestService {
               });
             // Otherwise, delete normally
             } else {
-              //return eas().deleteLabel(l) ? NO_CONTENT : NOT_FOUND;
               l = eas().deleteLabel(l);
               return Response.ok(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), l)))
                       .header(LOCATION, labelLocationUri(l, videoId)).build();

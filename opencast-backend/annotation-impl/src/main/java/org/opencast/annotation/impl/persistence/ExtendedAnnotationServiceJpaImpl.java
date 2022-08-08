@@ -767,7 +767,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return false;
   }
 
-  // @todo CC-MERGE | Review needed: Check 'result' variable declaration, conditional, return
   @Override
   public Category deleteCategory(Category category) throws ExtendedAnnotationException {
     Category result = null;

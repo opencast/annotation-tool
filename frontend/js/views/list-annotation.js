@@ -40,9 +40,27 @@ define(
         "templates/content-item-header",
         "backbone"
     ],
-
-    function ($, _, util, i18next, CommentsContainer, AddFreeTextModal, AddLabelledModal, EditFreeTextModal, EditLabelledModal, commentsContainerHeader, TmplCollapsed, TmplExpanded, TmplEdit, TmplCategory, TmplTypeText, TmplTypeLabel, TmplTypeScaling, TmplContentItemHeader, Backbone) {
-
+    function (
+        $,
+        _,
+        util,
+        i18next,
+        CommentsContainer,
+        AddFreeTextModal,
+        AddLabelledModal,
+        EditFreeTextModal,
+        EditLabelledModal,
+        commentsContainerHeader,
+        TmplCollapsed,
+        TmplExpanded,
+        TmplEdit,
+        TmplCategory,
+        TmplTypeText,
+        TmplTypeLabel,
+        TmplTypeScaling,
+        TmplContentItemHeader,
+        Backbone
+    ) {
         "use strict";
 
         /**
@@ -99,7 +117,6 @@ define(
 
                 this.listenTo(annotationTool.video.get("categories"), "change add remove", this.render);
 
-                this.model.fetchComments();
                 this.listenTo(this.model.get("comments"), "add remove reset reply", this.render);
                 this.listenTo(this.model, "change", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);
@@ -395,7 +412,6 @@ define(
 
             /**
              * Listener for click on this annotation
-             * @alias module:views-list-annotation.ListAnnotation#onSelect
              * @param {Event} event the click event
              */
             onSelect: function (event) {
