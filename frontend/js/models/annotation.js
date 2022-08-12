@@ -52,6 +52,13 @@ define(
             },
 
             /**
+             * (Re-)Fetch the scale values once our ID changes.
+             */
+            fetchChildren: function () {
+                this.attributes.comments.fetch();
+            },
+
+            /**
              * Constructor
              * @alias module:models-annotation.Annotation#initialize
              * @param {object} attr Object literal containing the model initialion attributes.
