@@ -73,6 +73,9 @@ define(
              * Constructor
              */
             initialize: function () {
+                _.bindAll(this,
+                    "getLabels");
+
                 this.get("categories").seriesExtId = this.get("series_extid");
                 Resource.prototype.initialize.apply(this, arguments);
             },
@@ -109,58 +112,39 @@ define(
              * @param {Category?} category
              *     A category to filter the returned annotations by.
              *     Falsy values mean free text annotations.
-             * @todo CC-MERGE | Re-implement refactoring from master? - 3c479627f8978159bdd2b88ddfd6dad64574a635
              */
-            getAnnotations: function (category) {
-                var result = [];
-                var handleAnnotation;
-                if (_.isUndefined(category)) {
-                    handleAnnotation = _.bind(Array.prototype.push, result);
-                } else if (category) {
-                    handleAnnotation = function (annotation) {
+            getAnnotations: (function () {
+                return function (category) {
+                    return this.get("tracks").chain()
+                        .map(_.property(["annotations", "models"]))
+                        .flatten()
+                        .filter(filter(category))
+                        .value();
+                };
+
+                function filter(category) {
+                    if (category) {
+                        return withCategory(category);
+                    } else {
+                        return withoutCategory;
+                    }
+                }
+
+                function withoutCategory(annotation) {
+                    var labels = annotation.getLabels();
+                    return !labels.length;
+                }
+
+                function withCategory(category) {
+                    return function (annotation) {
                         var labels = annotation.getLabels();
                         var anyMatches = _.some(labels, function (label) {
                             return category.id === label.get('category').id;
                         });
-                        if (anyMatches) {
-                            result.push(annotation);
-                        }
-                    };
-                } else {
-                    handleAnnotation = function (annotation) {
-                        var labels = annotation.getLabels();
-                        if (!labels.length) {
-                            result.push(annotation);
-                        }
+                        return anyMatches;
                     };
                 }
-                this.get("tracks").each(function (track) {
-                    track.annotations.each(handleAnnotation);
-                });
-                return result;
-            },
-
-            /**
-             * Get the annotation with the given id on the given track
-             * @alias module:models-video.Video#getAnnotation
-             * @param  {integer} annotationId The id from the wanted annotation
-             * @param  {integer} trackId      The id from the track containing the annotation
-             * @return {Track}                The annotation with the given id
-             */
-            getAnnotation: function (annotationId, trackId) {
-                var track = this.getTrack(trackId),
-                    tmpAnnotation;
-
-                if (track) {
-                    return track.getAnnotation(annotationId);
-                } else {
-                    this.get("tracks").find(function (trackItem) {
-                        tmpAnnotation = trackItem.getAnnotation(annotationId);
-                        return !_.isUndefined(tmpAnnotation);
-                    });
-                    return tmpAnnotation;
-                }
-            },
+            })(),
 
             /**
              * Get all labels present in all of this video's categories
