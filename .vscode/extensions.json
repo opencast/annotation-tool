@@ -11,6 +11,7 @@
 		"editorconfig.editorconfig",
 		"huizhou.githd",
 		"mhutchie.git-graph",
-		"mkaufman.htmlhint"
+		"mkaufman.htmlhint",
+		"vscjava.vscode-java-pack"
 	]
 }
