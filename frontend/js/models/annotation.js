@@ -52,18 +52,15 @@ define(
             },
 
             /**
-             * (Re-)Fetch the scale values once our ID changes.
-             */
-            fetchChildren: function () {
-                this.attributes.comments.fetch();
-            },
-
-            /**
              * Constructor
              * @alias module:models-annotation.Annotation#initialize
              * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
+                // @todo MERGE - Fixes comments not being loaded/updated anymore (e.g. reload app); also fixes icon status.
+                // @todo MERGE - This was removed in master (35e244e000f82ff8def250bfe566bd213d4705a2) - Check if this is correct.
+                Resource.prototype.initialize.apply(this, arguments);
+
                 if (!(this.get("content") instanceof AnnotationContent)) {
                     this.attributes.content = new AnnotationContent(attr.content || []);
                 }
