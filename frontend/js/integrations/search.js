@@ -58,6 +58,10 @@ define([
             if (beforeSend) beforeSend.apply(this, arguments);
             this.url = "../../extended-annotations" + this.url;
 
+            // TODO: Workaround bug that adds '&undefined=...' parameter (likely from label model)
+            // Avoids a 404 in the URL (seemingly no effect to users either way)
+            this.url = this.url.replace(/&\w+=\w+/, "");
+
             // Sanitize query strings, so that they're actually at the end
             // TODO: Clean this up OR find a better way to do this
             var queryString = this.url.match(/\?(.*?)\//);
