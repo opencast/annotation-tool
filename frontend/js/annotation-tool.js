@@ -676,12 +676,16 @@ define(
                             line.push("");
                         }
 
-                        // Scale, Value
+                        // Scale/Value filled in 'content' part
                         line.push("");
                         line.push("");
                         line.push("");
 
                         bookData.push(line);
+
+                        _.each(annotation.attributes.content.models, function (content) {
+                            addContentLine(line, content);
+                        });
 
                         _.each(annotation.attributes.comments.models, function (comment) {
                             addCommentLine(line, comment);
@@ -689,11 +693,6 @@ define(
                             if (comment.replies.length > 0) {
                                 commentReplies(line, comment.replies.models);
                             }
-                        });
-
-                        // Todo: Does not work, appends the new columns AFTER the scale/value ...
-                        _.each(annotation.attributes.content.models, function (content) {
-                            addContentLine(line, content);
                         });
                     });
                 });
