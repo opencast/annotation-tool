@@ -664,7 +664,7 @@ define(
                         line.push(util.formatTime(annotation.attributes.start));
                         line.push(util.formatTime(annotation.attributes.start + annotation.attributes.duration));
                         line.push(util.formatTime(annotation.attributes.duration));
-                        line.push(annotation.attributes.text);
+                        line.push("");
 
                         if (label) {
                             line.push(label.category.name);
@@ -676,15 +676,10 @@ define(
                             line.push("");
                         }
 
-                        if (annotation.attributes.scalevalue) {
-                            line.push(annotation.attributes.scalevalue.scale.name);
-                            line.push(annotation.attributes.scalevalue.name);
-                            line.push(annotation.attributes.scalevalue.value);
-                        } else {
-                            line.push("");
-                            line.push("");
-                            line.push("");
-                        }
+                        // Scale, Value
+                        line.push("");
+                        line.push("");
+                        line.push("");
 
                         bookData.push(line);
 
@@ -696,6 +691,10 @@ define(
                             }
                         });
 
+                        // Todo: Does not work, appends the new columns AFTER the scale/value ...
+                        _.each(annotation.attributes.content.models, function (content) {
+                            addContentLine(line, content);
+                        });
                     });
                 });
 
@@ -746,6 +745,25 @@ define(
 
                         commentReplies(line, comment.attributes.replies);
                     });
+                }
+
+                // TODO | CC | Implement scale
+                function addContentLine(line, content) {
+                    var contentLine = [];
+                    Array.prototype.push.apply(contentLine, line);
+
+                    var category = content.getCategory();
+                    var label = content.getLabel();
+
+                    contentLine[9] = content.getText();
+                    contentLine[10] = category ? category.attributes.name : "";
+                    contentLine[11] = label ? label.attributes.value : "";
+                    contentLine[12] = label ? label.attributes.abbreviation : "";
+                    // 13 = Scale name
+                    // 14 = Scale value name
+                    contentLine[15] = content.getScaleValue();
+
+                    bookData.push(contentLine);
                 }
             }
         });
