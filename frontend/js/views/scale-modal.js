@@ -49,18 +49,28 @@ define([
                 if (this.model.isNew()) {
                     annotationTool.video.get("scales").add(this.model);
                 }
+                // Wahrscheinlich hier schon Unterschied: Warum ist es befüllt, und womit?
+                // Todo: Check if scaleValues is filled anytime. Check model.
                 var previousScaleValues = this.model.get("scaleValues");
+
                 return this.model.save(this.scaleEditor.model.attributes)
                     .then(_.bind(function () {
                         return $.when.apply(
                             $,
+                            // Das funktioniert schon nicht mehr (scalevalue save)
+                            // Entweder keine Daten (?) oder sonst ein Fehler?
                             this.model.get("scaleValues").map(function (scaleValue, index) {
                                 return scaleValue.save({ order: index });
                             }).concat(
+                                // previousScaleValues = []
+                                // - Filter lässt vermutlich alles durch, da nichts da ist
+                                // Empty array und invoke(destroy) = Failure?
+                                // Warum dann überhaupt aufrufen, wenn es kein Previous geben sollte?
                                 previousScaleValues.chain()
                                     .filter(function (scaleValue) {
                                         return !this.model.get("scaleValues").get(scaleValue.id);
                                     }, this)
+                                    .tap(sv => { console.log("previousScaleValues", sv); })
                                     .invoke("destroy")
                                     .value()
                             )

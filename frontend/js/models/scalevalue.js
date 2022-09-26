@@ -36,6 +36,7 @@ define(
          * @memberOf module:models-scalevalue
          */
         var ScaleValue = Resource.extend({
+            _INFO_MODEL_SCALE_VALUE: true,
 
             /**
              * Default models value

@@ -38,6 +38,7 @@ define(
          * @memberOf module:models-scale
          */
         var Scale = Resource.extend({
+            _INFO_MODEL_SCALE: true,
 
             /**
              * @see module:models-resource.Resource#administratorCanEditPublicInstances
@@ -52,6 +53,12 @@ define(
              */
             defaults: function () {
                 return {
+										// Todo: This new init might be culprit (???)
+										// It might generate a scale with scale values '0'
+										//
+										// >>> var previousScaleValues = this.model.get("scaleValues");
+										// >>> models[0].attributes.value = 0 => Error ???
+										//
                     scaleValues: new ScaleValues([], { scale: this })
                 };
             },
