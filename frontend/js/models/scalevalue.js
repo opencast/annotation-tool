@@ -36,6 +36,7 @@ define(
          * @memberOf module:models-scalevalue
          */
         var ScaleValue = Resource.extend({
+            // TODO - CC
             _INFO_MODEL_SCALE_VALUE: true,
 
             /**
@@ -61,6 +62,8 @@ define(
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
+                console.warn("scalevalue: validate");
+
                 var invalidResource = Resource.prototype.validate.call(this, attr);
                 if (invalidResource) return invalidResource;
 
@@ -84,7 +87,11 @@ define(
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
+                console.warn("scalevalue: toJSON");
+
                 var json = Resource.prototype.toJSON.call(this);
+
+                console.log(json);
 
                 if (json.scale && json.scale.attributes) {
                     json.scale = this.attributes.scale.toJSON();
@@ -97,6 +104,8 @@ define(
              * @return {JSON} JSON representation of the model for export
              */
             toExportJSON: function () {
+                console.warn("scalevalue: toExportJSON");
+
                 var json = {
                     name: this.attributes.name,
                     value: this.attributes.value,

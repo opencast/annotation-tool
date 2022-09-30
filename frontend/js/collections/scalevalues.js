@@ -48,6 +48,9 @@ define(
              * constructor
              */
             initialize: function (models, options) {
+                console.warn("scalevalues: initialize");
+                console.log(models, options);
+
                 this.scale = options.scale;
             },
 
@@ -57,6 +60,12 @@ define(
              * @return {object}      the part of the given data related to the scalevalues
              */
             parse: function (data) {
+                console.warn("scalevalues: parse");
+                console.log(data);
+								// TODO: FIND A WAY TO AVOID THIS !!!
+								// TODO: Ajax request on scale save triggers sync, which then fetches all again and parses the XHR
+								// TODO: The XHR is empty [] and overrides the existing scaleValues unfortunately, that would otherwise work
+								// TODO: FIND A WAY TO AVOID THIS !!!
                 if (data.scaleValues && _.isArray(data.scaleValues)) {
                     return data.scaleValues;
                 } else if (_.isArray(data)) {

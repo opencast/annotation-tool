@@ -48,6 +48,7 @@ define(
              * constructor
              */
             initialize: function (models, options) {
+                console.warn("scales: initialize");
                 this.video = options.video;
             },
 
@@ -57,6 +58,7 @@ define(
              * @return {object}      the part of the given data related to the scales
              */
             parse: function (data) {
+                console.warn("scales: parse");
                 if (data.scales && _.isArray(data.scales)) {
                     return data.scales;
                 } else if (_.isArray(data)) {

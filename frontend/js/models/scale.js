@@ -38,6 +38,7 @@ define(
          * @memberOf module:models-scale
          */
         var Scale = Resource.extend({
+            // TODO - CC
             _INFO_MODEL_SCALE: true,
 
             /**
@@ -53,12 +54,11 @@ define(
              */
             defaults: function () {
                 return {
-										// Todo: This new init might be culprit (???)
-										// It might generate a scale with scale values '0'
-										//
-										// >>> var previousScaleValues = this.model.get("scaleValues");
-										// >>> models[0].attributes.value = 0 => Error ???
-										//
+                    // TODO - CC
+                    // This new init might be culprit (???)
+                    // It might generate a scale with scale values '0'
+                    // >>> var previousScaleValues = this.model.get("scaleValues");
+                    // >>> models[0].attributes.value = 0 => Error ???
                     scaleValues: new ScaleValues([], { scale: this })
                 };
             },
@@ -67,7 +67,15 @@ define(
              * (Re-)Fetch the scale values once our ID changes.
              */
             fetchChildren: function () {
+                console.warn("scale: fetchChildren 1");
+                console.log(this.attributes.scaleValues);
+
+                // TODO - CC
+                // - Check: Is this called on first app load? Does it fill 'scaleValues'
                 this.attributes.scaleValues.fetch({ async: false });
+
+                console.warn("scale: fetchChildren 2");
+                console.log(this.attributes.scaleValues);
             },
 
             /**
@@ -76,7 +84,11 @@ define(
              * @return {string} If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
+                console.warn("scale: validate");
+                console.log(this.attributes.scaleValues);
+
                 var invalidResource = Resource.prototype.validate.call(this, attr);
+
                 if (invalidResource) return invalidResource;
 
                 if (attr.name && !_.isString(attr.name)) {
@@ -96,13 +108,26 @@ define(
              * @return {object} The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
+                console.warn("scale: parse (data) 1", data);
+                console.log(this.attributes.scaleValues);
+
+                // TODO ************************************************************************************************
+                // TODO ************************************************************************************************
+                // Todo: Maybe scalevalues is never set
+                // TODO ************************************************************************************************
+                // TODO ************************************************************************************************
                 // The API might return the values of this scale as part of the response
                 // for asking for a scale. If this is the case, we want to parse it
                 // (the JSON data of the scale values) into a proper Backbone collection
                 // for easier access and manipulation.
                 if (data.scaleValues) {
                     data.scaleValues = new ScaleValues(data.scaleValues, { scale: this });
+                    console.warn("scale: parse (data.scaleValues)", data.scaleValues);
                 }
+
+                console.warn("scale: parse (data) 2", data);
+                console.log(this.attributes.scaleValues);
+
                 return data;
             },
 
@@ -111,7 +136,13 @@ define(
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
+                console.warn("scalevalue: toJSON");
+                console.log(this.attributes.scaleValues);
+
                 var json = Resource.prototype.toJSON.call(this);
+
+                console.log(json);
+                // Todo: Maybe delete issue?
 
                 delete json.scaleValues;
 

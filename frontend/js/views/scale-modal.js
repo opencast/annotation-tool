@@ -39,11 +39,16 @@ define([
         events: {
             "click .cancel": "remove",
             "change select": function (event) {
+                console.warn("ScaleModal : change select");
+
                 this.model = annotationTool.video.get("scales").get(event.target.value);
+                console.log(this.model);
 
                 this.render();
             },
             "submit form": function (event) {
+                console.warn("ScaleModal : submit form");
+
                 event.preventDefault();
 
                 if (this.model.isNew()) {
@@ -53,13 +58,27 @@ define([
                 // Todo: Check if scaleValues is filled anytime. Check model.
                 var previousScaleValues = this.model.get("scaleValues");
 
+                console.warn("ScaleModal : submit form - previousScaleValues");
+                console.log(previousScaleValues);
+
+                console.warn("ScaleModal : submit form - NOW: save …");
+                console.warn(this.scaleEditor.model.attributes);
+                console.warn(this.scaleEditor.model.toJSON());
+
                 return this.model.save(this.scaleEditor.model.attributes)
                     .then(_.bind(function () {
+                        console.warn("ScaleModal : submit form / model.save .then .bind");
+                        console.log(this.model.get("scaleValues"));
+
                         return $.when.apply(
                             $,
+                            // Once arriving here 'this.model.get("scaleValues")' is magically empty again
+                            // - Despite previous debugs can show that it contains values.
                             // Das funktioniert schon nicht mehr (scalevalue save)
                             // Entweder keine Daten (?) oder sonst ein Fehler?
                             this.model.get("scaleValues").map(function (scaleValue, index) {
+                                console.warn("ScaleModal : submit form / $.when.apply");
+                                console.log(scaleValue, index);
                                 return scaleValue.save({ order: index });
                             }).concat(
                                 // previousScaleValues = []
@@ -93,6 +112,7 @@ define([
             Modal.prototype.initialize.apply(this, arguments);
 
             if (options && options.create) {
+                // Todo: Why array with object? In 'scale' the default is just the array
                 this.model = new Scale({ scaleValues: [{}] }, { parse: true });
             }
 
@@ -115,6 +135,7 @@ define([
             if (this.model) {
                 // Roundabout way to clone our scale so that it doesn't refetch the scale values,
                 // and also gets a new scale value collection.
+                // Todo: Check if that maybe breaks the scale / scalevalue data ???
                 var clone = new Scale(
                     _.chain(this.model.attributes)
                         .omit("id")

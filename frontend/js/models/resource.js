@@ -49,6 +49,8 @@ var Resource = Backbone.Model.extend({
      * Constructor
      */
     initialize: function () {
+        console.warn("RESOURCE: INITIALIZE");
+
         if (this.attributes.tags) {
             this.set("tags", util.parseJSONString(this.attributes.tags));
         }
@@ -73,6 +75,8 @@ var Resource = Backbone.Model.extend({
     fetchChildren: function () {},
 
     sync: function () {
+        console.warn("resource: sync");
+
         return Backbone.Model.prototype.sync.apply(this, arguments)
             .then(_.bind(function (data, state, response) {
                 return $.when(this.fetchChildren()).then(function () {
@@ -87,6 +91,8 @@ var Resource = Backbone.Model.extend({
      * @return {string} If the validation failed, an error message will be returned.
      */
     validate: function (attr, callbacks) {
+        console.warn("resource: validate");
+
         var created = this.get("created_at");
 
         if (attr.tags && _.isUndefined(util.parseJSONString(attr.tags))) {
@@ -126,6 +132,8 @@ var Resource = Backbone.Model.extend({
      * @return {object} The object literal with the list of parsed model attribute.
      */
     parse: function (attr) {
+        console.warn("resource: parse");
+
         if (attr.created_at) {
             attr.created_at = util.parseDate(attr.created_at);
         }
@@ -153,6 +161,8 @@ var Resource = Backbone.Model.extend({
      * @return {JSON} JSON representation of the instance
      */
     toJSON: function (options) {
+        console.warn("resource: toJSON");
+
         var json = Backbone.Model.prototype.toJSON.call(this, options);
 
         if (options && options.stringifySub) {
@@ -215,10 +225,16 @@ var Resource = Backbone.Model.extend({
      * @override
      */
     destroy: function (options) {
+        console.warn("resource: destroy");
+
         options = options || {};
         if (this.keepDeleted) {
+            console.warn("resource: destroy / keepDeleted");
+
             var beforeSend = options.beforeSend;
             options.beforeSend = function () {
+                console.warn("resource: destroy / options.beforeSend");
+
                 if (beforeSend) {
                     beforeSend.apply(this, arguments);
                 }
