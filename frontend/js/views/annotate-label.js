@@ -109,6 +109,10 @@ define(
 
                 this.el.id = this.ID_PREFIX + this.model.get("id");
 
+                // Todo: Maybe sth. wrong in model or render?
+                console.warn("annotate-label: initialize");
+                console.log(this.model);
+
                 this.listenTo(this.model, "change", this.render);
 
                 this.setupScaling();
@@ -162,6 +166,8 @@ define(
              * Set up scale values according to category
              */
             setupScaling: function () {
+                console.warn("annotate-label: setupScaling");
+
                 var category = this.model.collection.category;
                 var scaleId = category.get("scale_id");
                 var scale = scaleId && annotationTool.video.get("scales").get(scaleId);
@@ -174,6 +180,13 @@ define(
 
                 var settings = category.get("settings");
                 this.isScaleEnable = settings && settings.hasScale;
+
+                console.log(category);
+                console.log(scaleId);
+                console.log(scale);
+                console.log(this.scaleValues);
+                console.log(settings);
+                console.log(this.isScaleEnable);
             },
 
             /**
@@ -181,7 +194,10 @@ define(
              * @return {LabelView} this label view
              */
             render: function () {
+                console.warn("annotate-label: render 1");
                 var modelJSON = this.model.toJSON();
+                console.log(modelJSON);
+                console.log(this.scaleValues);
 
                 if (this.scaleValues) {
                     this.scaleValues.sort();
@@ -189,6 +205,8 @@ define(
                       .filter(function (scaleValue) {
                           return !scaleValue.deleted_at;
                       });
+
+                    console.log(modelJSON.scaleValues);
                 }
 
                 this.$el.html(this.template(modelJSON));

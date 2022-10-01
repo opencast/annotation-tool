@@ -70,8 +70,10 @@ define([
                 return this.model
                     .save(this.scaleEditor.model.attributes, {
                         // Todo: This might be bad for scale but good for scalevalues (???)
-                        __XXX__: 0,
-                        parse: false,
+                        // Todo: This might be bad for scale but good for scalevalues (???)
+                        // __XXX__: 0,
+                        // parse: false,
+                        /* * /
                         success: (model, resp, options) => {
                             // Todo: Unsure if this is useful, here 'scaleValues' are already empty again
                             console.warn(
@@ -92,22 +94,23 @@ define([
                             console.log("---");
                             console.log([
                                 this.scaleEditor.model.cid,
-                                this.scaleEditor.id
+                                this.scaleEditor.id,
                             ]);
-                            console.log(
-                                this.scaleEditor.model.attributes
-                            );
+                            console.log(this.scaleEditor.model.attributes);
                             console.log(
                                 this.scaleEditor.model.previousAttributes()
                             );
                             console.log(
                                 this.scaleEditor.model.previous("scaleValues")
                             );
-                            console.log(this.scaleEditor.model.get("scaleValues"));
+                            console.log(
+                                this.scaleEditor.model.get("scaleValues")
+                            );
                             console.log(this.scaleEditor.model.toJSON());
                             console.log(this.scaleEditor.model.isNew());
                             console.log("--- <<<");
-                        }
+                        },
+                        /* */
                     })
                     .then(
                         _.bind(function () {
@@ -138,6 +141,7 @@ define([
                                         // - Filter lässt vermutlich alles durch, da nichts da ist
                                         // Empty array und invoke(destroy) = Failure?
                                         // Warum dann überhaupt aufrufen, wenn es kein Previous geben sollte?
+                                        // Todo: This request must be understood + fixed, as modal won't close without it
                                         previousScaleValues
                                             .chain()
                                             .filter(function (scaleValue) {
@@ -145,12 +149,12 @@ define([
                                                     .get("scaleValues")
                                                     .get(scaleValue.id);
                                             }, this)
-                                            .tap((sv) => {
-                                                console.log(
-                                                    "previousScaleValues",
-                                                    sv
-                                                );
-                                            })
+                                            //.tap((sv) => {
+                                            //    console.log(
+                                            //        "previousScaleValues",
+                                            //        sv
+                                            //    );
+                                            //})
                                             .invoke("destroy")
                                             .value()
                                     )

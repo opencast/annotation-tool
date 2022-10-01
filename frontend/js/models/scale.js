@@ -71,6 +71,8 @@ define(
                 console.log(this.attributes.scaleValues);
 
                 // TODO - CC
+                // Todo: Reminder, if truly needed, it MIGHT be possible to pass options here
+                // Goal: Pass info through to scalevalues. Seems like the worst solutio …
                 // - Check: Is this called on first app load? Does it fill 'scaleValues'
                 this.attributes.scaleValues.fetch({ async: false });
 
