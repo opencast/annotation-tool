@@ -107,8 +107,9 @@ define(
              * @param {object} data Object literal containing the model attribute to parse.
              * @return {object} The object literal with the list of parsed model attribute.
              */
-            parse: function (data) {
-                console.warn("scale: parse (data) 1", data);
+            parse: function (data, options) {
+                console.warn("scale: parse (data) 1");
+                console.log(data, options);
                 console.log(this.attributes.scaleValues);
 
                 // TODO ************************************************************************************************

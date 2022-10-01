@@ -56,16 +56,28 @@ define(
 
             /**
              * Parse the given data
+             *
+             * @todo CC | Review: 'data.scaleValues' is emptied when 'scale' model is saved and never contains sth.
              * @param  {object} data Object or array containing the data to parse.
              * @return {object}      the part of the given data related to the scalevalues
              */
-            parse: function (data) {
+            parse: function (data, options) {
                 console.warn("scalevalues: parse");
-                console.log(data);
-								// TODO: FIND A WAY TO AVOID THIS !!!
-								// TODO: Ajax request on scale save triggers sync, which then fetches all again and parses the XHR
-								// TODO: The XHR is empty [] and overrides the existing scaleValues unfortunately, that would otherwise work
-								// TODO: FIND A WAY TO AVOID THIS !!!
+                console.log(data, options);
+
+                if (options.data && _.isArray(options.data)) {
+                    console.warn("scalevalues: parse / options.data RETURN");
+                    console.log(options.data);
+                    return options.data;
+                } else {
+                    console.warn("scalevalues: parse / null RETURN");
+                    return null;
+                }
+
+                // Maybe helpful / Alternative?
+                // - if (options.add|parse …) …
+
+                /* Old code for comparison * /
                 if (data.scaleValues && _.isArray(data.scaleValues)) {
                     return data.scaleValues;
                 } else if (_.isArray(data)) {
@@ -73,6 +85,7 @@ define(
                 } else {
                     return null;
                 }
+                /* */
             },
 
             comparator: function (scaleValue) {
@@ -85,7 +98,7 @@ define(
              */
             url: function () {
                 return _.result(this.scale, "url") + "/scalevalues";
-            }
+            },
         });
 
         return ScaleValues;

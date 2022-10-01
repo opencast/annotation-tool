@@ -62,39 +62,101 @@ define([
                 console.log(previousScaleValues);
 
                 console.warn("ScaleModal : submit form - NOW: save …");
-                console.warn(this.scaleEditor.model.attributes);
-                console.warn(this.scaleEditor.model.toJSON());
+                console.log(this.scaleEditor.model.attributes);
+                console.log(this.scaleEditor.model.toJSON());
+                console.log(this.scaleEditor.model.isNew());
+                console.log(this.model.isNew());
 
-                return this.model.save(this.scaleEditor.model.attributes)
-                    .then(_.bind(function () {
-                        console.warn("ScaleModal : submit form / model.save .then .bind");
-                        console.log(this.model.get("scaleValues"));
+                return this.model
+                    .save(this.scaleEditor.model.attributes, {
+                        // Todo: This might be bad for scale but good for scalevalues (???)
+                        __XXX__: 0,
+                        parse: false,
+                        success: (model, resp, options) => {
+                            // Todo: Unsure if this is useful, here 'scaleValues' are already empty again
+                            console.warn(
+                                "ScaleModal : submit form / model.save - success"
+                            );
+                            console.log([model.cid, model.id]);
+                            console.log(model.attributes);
+                            console.log(model);
+                            console.log(resp);
+                            console.log(options);
+                            console.log(">>> ---");
+                            console.log(this);
+                            console.log([this.model.cid, this.model.id]);
+                            console.log(this.model.attributes);
+                            console.log(this.model.previousAttributes());
+                            console.log(this.model.previous("scaleValues"));
+                            console.log(this.model.get("scaleValues"));
+                            console.log("---");
+                            console.log([
+                                this.scaleEditor.model.cid,
+                                this.scaleEditor.id
+                            ]);
+                            console.log(
+                                this.scaleEditor.model.attributes
+                            );
+                            console.log(
+                                this.scaleEditor.model.previousAttributes()
+                            );
+                            console.log(
+                                this.scaleEditor.model.previous("scaleValues")
+                            );
+                            console.log(this.scaleEditor.model.get("scaleValues"));
+                            console.log(this.scaleEditor.model.toJSON());
+                            console.log(this.scaleEditor.model.isNew());
+                            console.log("--- <<<");
+                        }
+                    })
+                    .then(
+                        _.bind(function () {
+                            console.warn(
+                                "ScaleModal : submit form / model.save .then .bind"
+                            );
+                            console.log(this.model.get("scaleValues"));
 
-                        return $.when.apply(
-                            $,
-                            // Once arriving here 'this.model.get("scaleValues")' is magically empty again
-                            // - Despite previous debugs can show that it contains values.
-                            // Das funktioniert schon nicht mehr (scalevalue save)
-                            // Entweder keine Daten (?) oder sonst ein Fehler?
-                            this.model.get("scaleValues").map(function (scaleValue, index) {
-                                console.warn("ScaleModal : submit form / $.when.apply");
-                                console.log(scaleValue, index);
-                                return scaleValue.save({ order: index });
-                            }).concat(
-                                // previousScaleValues = []
-                                // - Filter lässt vermutlich alles durch, da nichts da ist
-                                // Empty array und invoke(destroy) = Failure?
-                                // Warum dann überhaupt aufrufen, wenn es kein Previous geben sollte?
-                                previousScaleValues.chain()
-                                    .filter(function (scaleValue) {
-                                        return !this.model.get("scaleValues").get(scaleValue.id);
-                                    }, this)
-                                    .tap(sv => { console.log("previousScaleValues", sv); })
-                                    .invoke("destroy")
-                                    .value()
-                            )
-                        );
-                    }, this))
+                            return $.when.apply(
+                                $,
+                                // Once arriving here 'this.model.get("scaleValues")' is magically empty again
+                                // - Despite previous debugs can show that it contains values.
+                                // Das funktioniert schon nicht mehr (scalevalue save)
+                                // Entweder keine Daten (?) oder sonst ein Fehler?
+                                this.model
+                                    .get("scaleValues")
+                                    .map(function (scaleValue, index) {
+                                        console.warn(
+                                            "ScaleModal : submit form / $.when.apply"
+                                        );
+                                        console.log(scaleValue, index);
+                                        return scaleValue.save({
+                                            order: index,
+                                        });
+                                    })
+                                    .concat(
+                                        // previousScaleValues = []
+                                        // - Filter lässt vermutlich alles durch, da nichts da ist
+                                        // Empty array und invoke(destroy) = Failure?
+                                        // Warum dann überhaupt aufrufen, wenn es kein Previous geben sollte?
+                                        previousScaleValues
+                                            .chain()
+                                            .filter(function (scaleValue) {
+                                                return !this.model
+                                                    .get("scaleValues")
+                                                    .get(scaleValue.id);
+                                            }, this)
+                                            .tap((sv) => {
+                                                console.log(
+                                                    "previousScaleValues",
+                                                    sv
+                                                );
+                                            })
+                                            .invoke("destroy")
+                                            .value()
+                                    )
+                            );
+                        }, this)
+                    )
                     .then(_.bind(this.remove, this));
             },
             "click #delete": function () {
@@ -135,6 +197,7 @@ define([
             if (this.model) {
                 // Roundabout way to clone our scale so that it doesn't refetch the scale values,
                 // and also gets a new scale value collection.
+                // Todo: Check if that maybe breaks the scale / scalevalue data ???
                 // Todo: Check if that maybe breaks the scale / scalevalue data ???
                 var clone = new Scale(
                     _.chain(this.model.attributes)

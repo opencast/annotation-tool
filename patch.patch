@@ -1,0 +1,245 @@
+diff --git a/frontend/js/collections/scalevalues.js b/frontend/js/collections/scalevalues.js
+index 9d1ddd09..db363af0 100644
+--- a/frontend/js/collections/scalevalues.js
++++ b/frontend/js/collections/scalevalues.js
+@@ -38,7 +38,6 @@ define(
+          * @memberOf module:collections-scalevalues
+          */
+         var ScaleValues = Backbone.Collection.extend({
+-
+             /**
+              * Model of the instances contained in this collection
+              */
+@@ -56,16 +55,28 @@ define(
+ 
+             /**
+              * Parse the given data
++             *
++             * @todo CC | Review: 'data.scaleValues' is emptied when 'scale' model is saved and never contains sth.
+              * @param  {object} data Object or array containing the data to parse.
+              * @return {object}      the part of the given data related to the scalevalues
+              */
+-            parse: function (data) {
++            parse: function (data, options) {
+                 console.warn("scalevalues: parse");
+-                console.log(data);
+-								// TODO: FIND A WAY TO AVOID THIS !!!
+-								// TODO: Ajax request on scale save triggers sync, which then fetches all again and parses the XHR
+-								// TODO: The XHR is empty [] and overrides the existing scaleValues unfortunately, that would otherwise work
+-								// TODO: FIND A WAY TO AVOID THIS !!!
++                console.log(data, options);
++
++                if (options.data && _.isArray(options.data)) {
++                    console.warn("scalevalues: parse / options.data RETURN");
++                    console.log(options.data);
++                    return options.data;
++                } else {
++                    console.warn("scalevalues: parse / null RETURN");
++                    return null;
++                }
++
++                // Maybe helpful / Alternative?
++                // - if (options.add|parse …) …
++
++                /* Old code for comparison * /
+                 if (data.scaleValues && _.isArray(data.scaleValues)) {
+                     return data.scaleValues;
+                 } else if (_.isArray(data)) {
+@@ -73,6 +84,7 @@ define(
+                 } else {
+                     return null;
+                 }
++                /* */
+             },
+ 
+             comparator: function (scaleValue) {
+@@ -85,7 +97,7 @@ define(
+              */
+             url: function () {
+                 return _.result(this.scale, "url") + "/scalevalues";
+-            }
++            },
+         });
+ 
+         return ScaleValues;
+diff --git a/frontend/js/models/annotation.js b/frontend/js/models/annotation.js
+index d76bf9ef..c966a1d8 100644
+--- a/frontend/js/models/annotation.js
++++ b/frontend/js/models/annotation.js
+@@ -57,8 +57,8 @@ define(
+              * @param {object} attr Object literal containing the model initialion attributes.
+              */
+             initialize: function (attr) {
+-                // @todo MERGE - Fixes comments not being loaded/updated anymore (e.g. reload app); also fixes icon status.
+-                // @todo MERGE - This was removed in master (35e244e000f82ff8def250bfe566bd213d4705a2) - Check if this is correct.
++                // @todo CC - Fixes comments not being loaded/updated anymore (e.g. reload app); also fixes icon status.
++                // @todo CC - This was removed in master (35e244e000f82ff8def250bfe566bd213d4705a2) - Check if this is correct.
+                 Resource.prototype.initialize.apply(this, arguments);
+ 
+                 if (!(this.get("content") instanceof AnnotationContent)) {
+diff --git a/frontend/js/models/scale.js b/frontend/js/models/scale.js
+index 3d581f18..a6002f30 100644
+--- a/frontend/js/models/scale.js
++++ b/frontend/js/models/scale.js
+@@ -107,8 +107,9 @@ define(
+              * @param {object} data Object literal containing the model attribute to parse.
+              * @return {object} The object literal with the list of parsed model attribute.
+              */
+-            parse: function (data) {
+-                console.warn("scale: parse (data) 1", data);
++            parse: function (data, options) {
++                console.warn("scale: parse (data) 1");
++                console.log(data, options);
+                 console.log(this.attributes.scaleValues);
+ 
+                 // TODO ************************************************************************************************
+diff --git a/frontend/js/views/scale-modal.js b/frontend/js/views/scale-modal.js
+index acb80971..79b72d5e 100644
+--- a/frontend/js/views/scale-modal.js
++++ b/frontend/js/views/scale-modal.js
+@@ -62,39 +62,104 @@ define([
+                 console.log(previousScaleValues);
+ 
+                 console.warn("ScaleModal : submit form - NOW: save …");
+-                console.warn(this.scaleEditor.model.attributes);
+-                console.warn(this.scaleEditor.model.toJSON());
+-
+-                return this.model.save(this.scaleEditor.model.attributes)
+-                    .then(_.bind(function () {
+-                        console.warn("ScaleModal : submit form / model.save .then .bind");
+-                        console.log(this.model.get("scaleValues"));
+-
+-                        return $.when.apply(
+-                            $,
+-                            // Once arriving here 'this.model.get("scaleValues")' is magically empty again
+-                            // - Despite previous debugs can show that it contains values.
+-                            // Das funktioniert schon nicht mehr (scalevalue save)
+-                            // Entweder keine Daten (?) oder sonst ein Fehler?
+-                            this.model.get("scaleValues").map(function (scaleValue, index) {
+-                                console.warn("ScaleModal : submit form / $.when.apply");
+-                                console.log(scaleValue, index);
+-                                return scaleValue.save({ order: index });
+-                            }).concat(
+-                                // previousScaleValues = []
+-                                // - Filter lässt vermutlich alles durch, da nichts da ist
+-                                // Empty array und invoke(destroy) = Failure?
+-                                // Warum dann überhaupt aufrufen, wenn es kein Previous geben sollte?
+-                                previousScaleValues.chain()
+-                                    .filter(function (scaleValue) {
+-                                        return !this.model.get("scaleValues").get(scaleValue.id);
+-                                    }, this)
+-                                    .tap(sv => { console.log("previousScaleValues", sv); })
+-                                    .invoke("destroy")
+-                                    .value()
+-                            )
+-                        );
+-                    }, this))
++                console.log(this.scaleEditor.model.attributes);
++                console.log(this.scaleEditor.model.toJSON());
++                console.log(this.scaleEditor.model.isNew());
++                console.log(this.model.isNew());
++
++                return this.model
++                    .save(this.scaleEditor.model.attributes, {
++                        // Todo: This might be bad for scale but good for scalevalues (???)
++                        __XXX__: 0,
++                        parse: false,
++                        success: (model, resp, options) => {
++                            // Todo: Unsure if this is useful, here 'scaleValues' are already empty again
++                            console.warn(
++                                "ScaleModal : submit form / model.save - success"
++                            );
++                            console.log([model.cid, model.id]);
++                            console.log(model.attributes);
++                            console.log(model);
++                            console.log(resp);
++                            console.log(options);
++                            console.log(">>> ---");
++                            console.log(this);
++                            console.log([this.model.cid, this.model.id]);
++                            console.log(this.model.attributes);
++                            console.log(this.model.previousAttributes());
++                            console.log(this.model.previous("scaleValues"));
++                            console.log(this.model.get("scaleValues"));
++                            console.log(
++                                this.model.get("scaleValues").previousAttributes()
++                            );
++                            console.log("---");
++                            console.log([
++                                this.scaleEditor.model.cid,
++                                this.scaleEditor.id
++                            ]);
++                            console.log(
++                                this.scaleEditor.model.attributes
++                            );
++                            console.log(
++                                this.scaleEditor.model.previousAttributes()
++                            );
++                            console.log(
++                                this.scaleEditor.model.previous("scaleValues")
++                            );
++                            console.log(this.scaleEditor.model.get("scaleValues"));
++                            console.log(this.scaleEditor.model.toJSON());
++                            console.log(this.scaleEditor.model.isNew());
++                            console.log("--- <<<");
++                        }
++                    })
++                    .then(
++                        _.bind(function () {
++                            console.warn(
++                                "ScaleModal : submit form / model.save .then .bind"
++                            );
++                            console.log(this.model.get("scaleValues"));
++
++                            return $.when.apply(
++                                $,
++                                // Once arriving here 'this.model.get("scaleValues")' is magically empty again
++                                // - Despite previous debugs can show that it contains values.
++                                // Das funktioniert schon nicht mehr (scalevalue save)
++                                // Entweder keine Daten (?) oder sonst ein Fehler?
++                                this.model
++                                    .get("scaleValues")
++                                    .map(function (scaleValue, index) {
++                                        console.warn(
++                                            "ScaleModal : submit form / $.when.apply"
++                                        );
++                                        console.log(scaleValue, index);
++                                        return scaleValue.save({
++                                            order: index,
++                                        });
++                                    })
++                                    .concat(
++                                        // previousScaleValues = []
++                                        // - Filter lässt vermutlich alles durch, da nichts da ist
++                                        // Empty array und invoke(destroy) = Failure?
++                                        // Warum dann überhaupt aufrufen, wenn es kein Previous geben sollte?
++                                        previousScaleValues
++                                            .chain()
++                                            .filter(function (scaleValue) {
++                                                return !this.model
++                                                    .get("scaleValues")
++                                                    .get(scaleValue.id);
++                                            }, this)
++                                            .tap((sv) => {
++                                                console.log(
++                                                    "previousScaleValues",
++                                                    sv
++                                                );
++                                            })
++                                            .invoke("destroy")
++                                            .value()
++                                    )
++                            );
++                        }, this)
++                    )
+                     .then(_.bind(this.remove, this));
+             },
+             "click #delete": function () {
+@@ -136,6 +201,7 @@ define([
+                 // Roundabout way to clone our scale so that it doesn't refetch the scale values,
+                 // and also gets a new scale value collection.
+                 // Todo: Check if that maybe breaks the scale / scalevalue data ???
++                // Todo: Check if that maybe breaks the scale / scalevalue data ???
+                 var clone = new Scale(
+                     _.chain(this.model.attributes)
+                         .omit("id")
