@@ -59,6 +59,15 @@ define([
                             }).concat(
                                 previousScaleValues.chain()
                                     .filter(function (scaleValue) {
+                                        // Empty placeholder value must not trigger HTTP request (would cause error 405)
+                                        var isEmptyPlacehoder = !scaleValue.id && !scaleValue.attributes.value;
+
+                                        if (isEmptyPlacehoder) {
+                                            // @todo CC | Safety measure to avoid doing something with the unneeded placeholder. Check if this is really needed.
+                                            scaleValue.collection.remove(scaleValue);
+                                            return false;
+                                        }
+
                                         return !this.model.get("scaleValues").get(scaleValue.id);
                                     }, this)
                                     .invoke("destroy")
