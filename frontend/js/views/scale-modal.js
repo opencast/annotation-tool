@@ -54,7 +54,7 @@ define([
                     .then(_.bind(function () {
                         return $.when.apply(
                             $,
-                            this.model.get("scaleValues").map(function (scaleValue, index) {
+                            this.scaleEditor.model.attributes.scaleValues.map(function (scaleValue, index) {
                                 return scaleValue.save({ order: index });
                             }).concat(
                                 previousScaleValues.chain()
