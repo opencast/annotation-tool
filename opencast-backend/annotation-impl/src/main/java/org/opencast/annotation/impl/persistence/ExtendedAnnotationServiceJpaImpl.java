@@ -1124,19 +1124,20 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public boolean hasResourceAccess(Resource resource) {
     org.opencastproject.security.api.User opencastUser = securityService.getUser();
-    Option<Long> currentUserId = getUserId(opencastUser);
 
     return resource.getAccess() == Resource.PUBLIC
         || resource.getAccess() == Resource.SHARED_WITH_EVERYONE
-        || resource.getCreatedBy().equals(currentUserId)
-        || resource.getAccess() == Resource.SHARED_WITH_ADMIN && isAnnotateAdmin(opencastUser, getResourceVideo(resource));
+        || resource.getCreatedBy().equals(getUserId(opencastUser))
+        || isOpencastAdmin(opencastUser)
+        || resource.getAccess() == Resource.SHARED_WITH_ADMIN && isAnnotateAdmin(getResourceVideo(resource));
   }
 
-  private boolean isAnnotateAdmin(org.opencastproject.security.api.User user, Option<Video> video) {
-    if (user.hasRole(securityService.getOrganization().getAdminRole())
-            || user.hasRole(SecurityConstants.GLOBAL_ADMIN_ROLE)) {
-      return true;
-    }
+  private boolean isOpencastAdmin(org.opencastproject.security.api.User user) {
+    return user.hasRole(SecurityConstants.GLOBAL_ADMIN_ROLE)
+            || user.hasRole(securityService.getOrganization().getAdminRole());
+  }
+
+  private boolean isAnnotateAdmin(Option<Video> video) {
 
     return video.fold(new Match<Video, Boolean>() {
       @Override
@@ -1167,7 +1168,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public boolean hasVideoAccess(MediaPackage mediaPackage, String access) {
-    return authorizationService.hasPermission(mediaPackage, access);
+    return isOpencastAdmin(securityService.getUser()) || authorizationService.hasPermission(mediaPackage, access);
   }
 
   private Option<Video> getResourceVideo(Resource resource) {
