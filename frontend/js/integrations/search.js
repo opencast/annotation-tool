@@ -184,6 +184,10 @@ define([
                 videos.sort(
                     util.lexicographic([
                         util.firstWith(_.compose(
+                            RegExp.prototype.test.bind(/composite\/.*/),
+                            _.property("type")
+                        )),
+                        util.firstWith(_.compose(
                             RegExp.prototype.test.bind(/presenter\/.*/),
                             _.property("type")
                         )),
