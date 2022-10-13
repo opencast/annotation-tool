@@ -54,29 +54,23 @@ define(
             /**
              * Parse the given data
              *
-             * @todo CC | Review: A Backbone expert should peer review this solution
-             * @param  {object} data Object or array containing the data to parse.
-             * @return {object}      the part of the given data related to the scalevalues
+             * @todo CC | Review by Backbone expert - Two parameters seem overly complicated
+             * @todo CC | Behav Backbone update from 0.99 -> 1.0.0 (9.1.0 = '... parse now receives options as its second argument.')
+             * @todo CC | Reference: https://github.com/jashkenas/backbone/compare/0.9.9...0.9.10
+             * @param {object} data {scaleValues:[{...}], ...} | {scaleValues:[], ...} Object or array containing data to parse (e.g. on application startup).
+             * @param {object} options {data:[], ...} | {data:[{...}], ...} Object containing data to parse (only if saved directly).
+             * @return {object} The part of the given data related to the scalevalues
              */
             parse: function (data, options) {
-                if (options.data && _.isArray(options.data)) {
+                if (options.data.length) {
                     return options.data;
-                } else {
-                    return null;
                 }
 
-                // Maybe helpful / Alternative?
-                // - if (options.add|parse …) …
-
-                /* Old code for comparison * /
-                if (data.scaleValues && _.isArray(data.scaleValues)) {
+                if (data.scaleValues.length) {
                     return data.scaleValues;
-                } else if (_.isArray(data)) {
-                    return data;
-                } else {
-                    return null;
                 }
-                /* */
+
+                return null;
             },
 
             comparator: function (scaleValue) {
