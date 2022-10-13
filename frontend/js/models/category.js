@@ -147,10 +147,12 @@ define(
 
             /**
              * Prepare the model as JSON to export and return it
-             * @param {boolean} withScales Define if the scale has to be included
+             *
+             * @todo CC | Decide if to use or remove the 'withScale' feature. It seems unused but is still working (not used in master).
+             * @param {boolean} withScale Define if the scale has to be included
              * @return {JSON} JSON representation of the model for export
              */
-            toExportJSON: function () {
+            toExportJSON: function (withScale) {
                 var json = {
                     name: this.attributes.name,
                     labels: this.attributes.labels
@@ -174,7 +176,7 @@ define(
                     json.settings = this.attributes.settings;
                 }
 
-                if (!_.isUndefined(withScale) && withScale) {
+                if (!!withScale) {
                     if (this.attributes.scale_id) {
                         json.scale = annotationTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
                     } else if (this.attributes.scale) {
