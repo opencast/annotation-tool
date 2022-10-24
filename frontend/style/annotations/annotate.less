@@ -118,11 +118,11 @@ i.check {
         white-space: nowrap;
     }
 
-	#mca-creator {
-		width: 100%;
-		text-align: center;
-		padding: 1.5em;
-	}
+  #mca-creator {
+    width: 100%;
+    text-align: center;
+    padding: 1.5em;
+  }
 }
 
 #annotate-container {
@@ -220,12 +220,18 @@ i.check {
                     }
                 }
 
+                // Override Bootstrap default: Avoid elements sticking out of screen
+                &:last-child .dropdown-menu {
+                  left: inherit;
+                  right: 0;
+                }
+
                 .label-item {
                     @labelHeight: 16px;
-					@padding: 4px;
-					font-size: @baseFontSize*1.1;
+                    @padding: 4px;
+                    font-size: @baseFontSize*1.1;
                     padding: @padding;
-					height: @labelHeight+(4*@padding);
+                    height: @labelHeight+(4*@padding);
                     position: relative;
                     background-color: fade(@white, 60%);
                     border-right: 1px solid @white;
