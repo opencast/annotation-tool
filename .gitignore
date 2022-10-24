@@ -28,5 +28,8 @@ deploy
 # Ignore directory with frontend build
 /frontend/src/main/resources/ui
 
+# Ignore browser local overrides
+/frontend/localhost:8080
+
 # Ignore flattened POMs
 .flattened-pom.xml
