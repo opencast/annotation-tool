@@ -10,10 +10,14 @@
   "css.validate": false,
   "less.validate": false,
   "scss.validate": false,
+  "files.exclude": {
+      "frontend/src/**": true
+  },
   "search.exclude": {
       "**/.git": true,
       "**/node_modules": true,
-      "frontend/src/main/resources/ui/**": true,
+      "frontend/localhost:8080/**": true,
+      "frontend/src/**": true,
       "frontend/target/classes/ui/**": true,
       "opencast-backend/annotation-tool/target/classes/ui/js/**": true
   },
