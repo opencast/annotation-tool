@@ -670,7 +670,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     List<Category> categories = videoId.fold(new Option.Match<Long, List<Category>>() {
       @Override
       public List<Category> some(Long id) {
-        return findAllById(toCategory, offset, limit, "Category.findAllOfVideo", id);
+        List<Category> categories = findAllById(toCategory, offset, limit, "Category.findAllOfVideo", id);
+
+        return filterByAccess(categories);
       }
 
       @Override
