@@ -54,8 +54,8 @@ define(
             /**
              * Parse the given data
              *
-             * @todo CC | Review by Backbone expert - Two parameters seem overly complicated
-             * @todo CC | Behav Backbone update from 0.99 -> 1.0.0 (9.1.0 = '... parse now receives options as its second argument.')
+             * @todo CC | Review by Backbone expert - Maybe it can be simplified OR is needed in other collections 'parse' too
+             * @todo CC | Backbone update from 0.99 -> 1.0.0 (9.1.0 = '... parse now receives options as its second argument.')
              * @todo CC | Reference: https://github.com/jashkenas/backbone/compare/0.9.9...0.9.10
              * @param {object} data {scaleValues:[{...}], ...} | {scaleValues:[], ...} Object or array containing data to parse (e.g. on application startup).
              * @param {object} options {data:[], ...} | {data:[{...}], ...} Object containing data to parse (only if saved directly).
