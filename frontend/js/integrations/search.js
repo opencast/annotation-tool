@@ -92,7 +92,7 @@ define([
     var isAdmin = $.ajax({
         url: "/extended-annotations/users/is-annotate-admin/" + mediaPackageId
     }).then(function (data) {
-        return data === 'true';
+        return data === "true";
     });
 
     /**
