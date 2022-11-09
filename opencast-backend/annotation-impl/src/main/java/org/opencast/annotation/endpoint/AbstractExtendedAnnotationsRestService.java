@@ -16,6 +16,7 @@
 package org.opencast.annotation.endpoint;
 
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
+import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
 import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 import static org.opencastproject.util.UrlSupport.uri;
 import static org.opencastproject.util.data.Arrays.array;
@@ -48,6 +49,7 @@ import org.opencast.annotation.impl.persistence.UserDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.util.RestUtil;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Option;
@@ -225,6 +227,17 @@ public abstract class AbstractExtendedAnnotationsRestService {
         });
       }
     });
+  }
+
+  @GET
+  @Produces(MediaType.TEXT_PLAIN)
+  @Path("/users/is-annotate-admin/{mpId}")
+  public Response isAnnotateAdmin(@PathParam("mpId") final String mpId) {
+    Option<MediaPackage> mpOpt = eas().findMediaPackage(mpId);
+    if (mpOpt.isSome()) {
+      return RestUtil.R.ok(eas().hasVideoAccess(mpOpt.get(), ANNOTATE_ADMIN_ACTION));
+    }
+    return RestUtil.R.ok(false);
   }
 
   @POST

@@ -46,6 +46,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -70,6 +71,7 @@ public class CommentDto extends AbstractResourceDto {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
+  @Lob
   @Column(name = "text", nullable = false)
   private String text;
 
