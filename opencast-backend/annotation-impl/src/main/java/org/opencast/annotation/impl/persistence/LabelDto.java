@@ -69,7 +69,7 @@ public class LabelDto extends AbstractResourceDto {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-  @Column(name = "seriesLabelId")
+  @Column(name = "series_label_id")
   private Long seriesLabelId;
 
   @Column(name = "value", nullable = false)

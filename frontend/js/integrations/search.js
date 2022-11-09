@@ -95,38 +95,10 @@ define([
     var user = $.ajax({
         url: "/info/me.json"
     });
-    // Find out which roles should have admin rights
-    var adminRoles = mediaPackage.then(function (mediaPackage) {
-        // First we need to find the proper XACML file
-        var attachments = util.array(mediaPackage.attachments.attachment);
-        var selectedXACML = function () {
-            var seriesXACML;
-            for (var i = 0; i < attachments.length; i++) {
-                var attachment = attachments[i];
-                if (attachment.type === "security/xacml+episode") {
-                    // Immediately return an XACML belonging to this specific episode
-                    return attachment;
-                }
-                if (attachment.type === "security/xacml+series") {
-                    // Remember any series XACML on the way,
-                    //   so we can return that as a fallback
-                    seriesXACML = attachment;
-                }
-            }
-            return seriesXACML;
-        }();
-        return $.ajax({
-            url: selectedXACML.url,
-            crossDomain: true,
-            dataType: "xml"
-        });
-    }).then(function (xacmlData) {
-        // Then we need to extract the appropriate rules
-        return $(xacmlData).find("Rule").filter(function (index, rule) {
-            return $(rule).find("Action AttributeValue").text() === "annotate-admin";
-        }).map(function (index, rule) {
-            return $(rule).find("Condition AttributeValue").text();
-        }).toArray();
+    var isAdmin = $.ajax({
+        url: "/extended-annotations/users/is-annotate-admin/" + mediaPackageId
+    }).then(function (data) {
+        return data === "true";
     });
 
     /**
@@ -151,7 +123,7 @@ define([
          * Authenticate the user
          */
         authenticate: function () {
-            $.when(user, adminRoles).then(function (userResult, adminRoles) {
+            $.when(user, isAdmin).then(function (userResult, isAdmin) {
                 var user = userResult[0];
                 var userData = user.user;
                 var nickname = (typeof(userData.name) !== "undefined" && userData.name !== null) ? userData.name : userData.username;
@@ -160,10 +132,7 @@ define([
                     user_extid: userData.username,
                     nickname: nickname, //userData.username,
                     email: userData.email,
-                    isAdmin: _.intersection(
-                        adminRoles.concat(["ROLE_ADMIN"]),
-                        user.roles
-                    ).length > 0
+                    isAdmin: isAdmin
                 });
                 return this.user.save();
             }.bind(this)).then(function () {
@@ -191,6 +160,10 @@ define([
                     ));
                 videos.sort(
                     util.lexicographic([
+                        util.firstWith(_.compose(
+                            RegExp.prototype.test.bind(/composite\/.*/),
+                            _.property("type")
+                        )),
                         util.firstWith(_.compose(
                             RegExp.prototype.test.bind(/presenter\/.*/),
                             _.property("type")
