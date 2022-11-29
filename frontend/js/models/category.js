@@ -176,6 +176,8 @@ define(
                     json.settings = this.attributes.settings;
                 }
 
+                // @todo CC | For export it's not needed here anymore:
+                // @see annotate-tab.js -> _.each(tmpScales, function (scale) { …
                 if (!!withScale) {
                     if (this.attributes.scale_id) {
                         json.scale = annotationTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
