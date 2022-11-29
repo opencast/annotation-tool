@@ -221,7 +221,8 @@ i.check {
                 }
 
                 // Override Bootstrap default: Avoid elements sticking out of screen
-                &:last-child .dropdown-menu {
+                // - Relevant only for last one and if 2+ menues exist
+                &:last-child:not(:only-child) .dropdown-menu {
                   left: inherit;
                   right: 0;
                 }
