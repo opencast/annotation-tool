@@ -511,7 +511,7 @@ define(
                     delete scale.id;
                     delete scale.scaleValues;
 
-                    var newScale = this.video.get("scales").create(scale, { async: false });
+                    var newScale = annotationTool.video.get("scales").create(scale, { async: false });
                     scalesIdMap[scaleOldId] = newScale.get("id");
 
                     if (scaleValuesToAdd) {
