@@ -41,7 +41,7 @@
       "placeholder": "Write a free text annotation. ($t(annotate.new.title))",
       "title": "Use “ shift + return” keys to create a new line."
     },
-    "no selected track": "No tracak selected",
+    "no selected track": "No track selected",
     "pause": {
       "legend": "Pause video:",
       "freetext": "When writing a free text annotation",
