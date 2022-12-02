@@ -61,7 +61,7 @@ define([
             // @todo CC | Workaround bug to remove '&undefined=...' parameters (likely from label model).
             // - Trigger: On category deletion, the last request (GET) would result in a 404
             // - Example: /categories/…/labels&undefined=…&undefined=…?series-extid=…
-            this.url = this.url.replace(/&undefined=\w+/, "");
+            this.url = this.url.replace(/&undefined=\w+/g, "");
 
             // Sanitize query strings, so that they're actually at the end
             // TODO: Clean this up OR find a better way to do this
