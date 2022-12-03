@@ -76,7 +76,7 @@ define(
                 Resource.prototype.initialize.apply(this, arguments);
 
                 this.set("settings", _.extend({
-                    hasScale: true,
+                    hasScale: false,
                     color: "#008080",
                     createdAsMine: !this.isPublic()
                 }, this.get("settings")));
