@@ -527,8 +527,13 @@ define(
                     var labelsToAdd = category.labels;
                     category.scale_id = scalesIdMap[category.scale_id];
                     delete category.labels;
+
                     var newCat = videoCategories
-                        .create(_.extend(category, defaultCategoryAttributes), { async: false });
+                        .create(_.extend(category, defaultCategoryAttributes, {
+                            settings: {
+                                hasScale: !!category.scale_id
+                            }
+                        }), { async: false });
 
                     if (labelsToAdd) {
                         _.each(labelsToAdd, function (label) {
