@@ -68,8 +68,17 @@ define(
 
             /**
              * (Re-)Fetch the comments once our ID changes.
+             * 1) Questionnaire: Cancelling freshly created annotation leads to: 'Uncaught Error: A "url" property or function must be specified'.
+             *    Collection exists only until 'destroy', but not here - so no URL can be found. Guess: keepDeleted behaviour?
+             * @todo CC | Review: Fix/Workaround for questionnaire annotation, eventually remove warning (added for convenience/understanding)
              */
             fetchChildren: function () {
+                // 1) Should -only- occur on questionnaire annotation deletion!
+                if (!this.collection) {
+                    console.warn("Annotation collection not found, skip fetching children");
+                    return;
+                }
+
                 this.attributes.comments.fetch();
             },
 
