@@ -119,6 +119,7 @@
             border: 1px solid @btnBorder;
             vertical-align: top;
             line-height: @headerHeight;
+            white-space: nowrap;
             &.collapse {
                 .link-button();
             }
@@ -322,6 +323,17 @@
 
         .content-item header {
             line-height: 25px;
+        }
+
+        .title-short {
+            line-height: 100%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            position: relative;
+            top: 2px;
+            width: 60%; // Mobile
         }
 
         .content-item .actions {
