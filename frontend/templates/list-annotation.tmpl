@@ -32,11 +32,6 @@
 
     <div class="right">
         {{#if isMine}}
-            <i
-                class="delete icon-trash me-2"
-                title="{{t "annotation.edit.delete"}}"
-            ></i>
-
             {{#if createdFromQuestionnaire}}
                   <i
                      class="toggle-edit icon-pencil me-2"
@@ -52,9 +47,9 @@
 
         <i
             class="{{#if numberOfComments}}
-                icon-comment-amount
+                icon-comment-amount me-1
             {{else}}
-                icon-comment
+                icon-comment me-1
             {{/if}}"
             title="{{t "annotation.comments.count" count=numberOfComments}}"
         >
@@ -62,5 +57,12 @@
                 <span class="comment-amount">{{numberOfComments}}</span>
             {{/if}}
         </i>
+
+        {{#if isMine}}
+            <i
+                class="delete icon-trash"
+                title="{{t "annotation.edit.delete"}}"
+            ></i>
+        {{/if}}
     </div>
 </div>
