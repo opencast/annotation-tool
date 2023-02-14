@@ -50,11 +50,7 @@
     <div class="right">
         {{#if isMine}}
             <i
-                class="delete icon-trash"
-                title="{{t "annotation.edit.delete"}}"
-            ></i>
-            <i
-                class="toggle-edit icon-time"
+                class="toggle-edit icon-time me-2"
                 title="{{t "annotation.edit.edit"}}"
             ></i>
         {{/if}}
@@ -73,6 +69,13 @@
                 </span>
             {{/if}}
         </i>
+
+        {{#if isMine}}
+            <i
+                class="delete icon-trash"
+                title="{{t "annotation.edit.delete"}}"
+            ></i>
+        {{/if}}
     </div>
 </div>
 
