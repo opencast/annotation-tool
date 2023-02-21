@@ -494,6 +494,7 @@ define(
 
             /**
              * Import the given categories in the tool
+             * @todo CC | Optimize: Extend overrides settings -and- mutates the input. A recursive extend variant would be better.
              * @param {PlainObject} imported Object containing the .categories and .scales to insert in the tool
              * @param {PlainObject} defaultCategoryAttributes The default attributes to use to insert the imported categories (like access)
              */
@@ -525,15 +526,14 @@ define(
                 var videoCategories = this.video.get("categories");
                 _.each(imported.categories, function (category) {
                     var labelsToAdd = category.labels;
+
                     category.scale_id = scalesIdMap[category.scale_id];
                     delete category.labels;
 
-                    var newCat = videoCategories
-                        .create(_.extend(category, defaultCategoryAttributes, {
-                            settings: {
-                                hasScale: !!category.scale_id
-                            }
-                        }), { async: false });
+                    let attr = _.clone(defaultCategoryAttributes);
+                    attr.settings = _.extend({}, attr.settings, category.settings, { hasScale: !!category.scale_id });
+
+                    var newCat = videoCategories.create(_.extend({}, category, attr), { async: false });
 
                     if (labelsToAdd) {
                         _.each(labelsToAdd, function (label) {

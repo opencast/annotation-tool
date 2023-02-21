@@ -117,17 +117,6 @@ define(
             },
 
             /**
-             * Change category color
-             * @param  {string} color the new color
-             */
-            setColor: function (color) {
-                var settings = _.clone(this.get("settings"));
-                settings.color = color;
-
-                this.set("settings", settings);
-            },
-
-            /**
              * Override the default toJSON function to ensure complete JSONing.
              * @param {Object} options The options to control the "JSONification" of this collection
              * @return {JSON} JSON representation of the instance
