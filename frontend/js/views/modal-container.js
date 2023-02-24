@@ -28,6 +28,8 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * @alias module:views-modal-container.ModalContainer#initialize
          */
         initialize: function(options) {
+            console.warn("modal-container / initialize");
+
             this.buttonText = options.buttonText;
             this.contentView = options.contentView;
             this.header = options.header;
@@ -43,6 +45,8 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * @alias module:views-modal-container.ModalContainer#remove
          */
         remove: function() {
+            console.warn("modal-container / remove");
+
             this.contentView.remove();
             Backbone.View.prototype.remove.apply(this, arguments);
         },
@@ -63,6 +67,8 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * @alias module:views-modal-container.ModalContainer#close
          */
         close: function() {
+            console.warn("modal-container / close");
+
             this.$(".modal").modal("hide");
             this.remove();
         },
@@ -72,6 +78,8 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * @alias module:views-modal-container.ModalContainer#onClick
          */
         onClick: function(event) {
+            console.warn("modal-container / onClick");
+
             this.contentView.trigger("modal:click", event);
         }
     });

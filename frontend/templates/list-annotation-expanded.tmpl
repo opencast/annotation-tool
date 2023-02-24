@@ -86,25 +86,9 @@
     {{#if isMine}}
         {{#unless createdFromQuestionnaire}}
             <div>
-                <span>{{t "annotation.add content.list prompt"}}</span>
-                <button class="btn add-free-text-content" type="button">
-                    {{t "annotation.add content.free text"}}
+                <button class="btn add-content-modal" type="button">
+                    {{t "annotation.add content.list prompt"}}
                 </button>
-
-                {{#each categories}}
-                         {{#unless deleted_at}}
-                              {{#if isPublic}}
-                                  <button class="btn add-labelled-content" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
-                                      {{t "annotation.add content.category"}} {{name}}
-                                  </button>
-                              {{else if isMine}}
-                                  <button class="btn add-labelled-content" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
-                                          {{t "annotation.add content.category"}} {{name}}
-                                  </button>
-                              {{/if}}
-                          {{/unless}}
-                {{/each}}
-
             </div>
         {{/unless}}
     {{/if}}

@@ -84,8 +84,9 @@
       "add free text": "Freitext hinzufügen",
       "category": "Kategorie:",
       "free text": "Freitext",
-      "list prompt": "Inhalt hinzufügen:",
-      "please choose": "Wählen Sie bitte ein Kennzeichen"
+      "list prompt": "Inhalt hinzufügen",
+      "please choose": "Wählen Sie bitte ein Kennzeichen",
+      "modal": "Inhalte hinzufügen"
     },
     "edit": {
       "delete": "Annotation löschen.",

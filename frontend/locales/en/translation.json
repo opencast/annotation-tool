@@ -87,8 +87,9 @@
       "add free text": "Add free text",
       "category": "Category:",
       "free text": "Free Text",
-      "list prompt": "Add content:",
-      "please choose": "Please choose a label"
+      "list prompt": "Add content",
+      "please choose": "Please choose a label",
+      "modal": "Add content"
     },
     "edit": {
       "delete": "Delete annotation.",

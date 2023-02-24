@@ -25,10 +25,9 @@ define(
         "util",
         "i18next",
         "views/comments-container",
-        "views/modal-add-free-text",
-        "views/modal-add-labelled",
         "views/modal-edit-free-text",
         "views/modal-edit-labelled",
+        "views/modal-mca",
         "templates/comments-container-header",
         "templates/list-annotation",
         "templates/list-annotation-expanded",
@@ -46,10 +45,9 @@ define(
         util,
         i18next,
         CommentsContainer,
-        AddFreeTextModal,
-        AddLabelledModal,
         EditFreeTextModal,
         EditLabelledModal,
+        McaModal,
         commentsContainerHeader,
         TmplCollapsed,
         TmplExpanded,
@@ -315,6 +313,8 @@ define(
              * Render this view
              */
             render: function () {
+                console.warn("list-annotation / render");
+
                 var modelJSON,
                     title;
 
@@ -362,6 +362,9 @@ define(
                             return _.extend(category.toJSON(), { labels: labels, scale: scale });
                         }
                     );
+
+                console.log(modelJSON.categories);
+                console.log(modelJSON);
 
                 var partials = _.extend(
                     {
@@ -576,34 +579,18 @@ define(
             },
 
             /**
-             * Add a new annotation with a content item containing free text.
-             * @alias module:views-list-annotation.ListAnnotation#addFreetextContent
+             * Add modal to select content.
+             * @todo CC | WIP - Implement options ...
+             * @alias module:views-list-annotation.ListAnnotation#addContentModal
              * @param {Event} event Event object
              */
-            addFreeTextContent: function (event) {
-                event.stopPropagation();
+            addContentModal: function (event) {
+                console.warn("addContentModal");
 
                 annotationTool.addModal(
-                    i18next.t("annotation.add content.add free text"),
-                    new AddFreeTextModal({ model: this.model }),
+                    i18next.t("annotation.add content.modal"),
+                    new McaModal({ model: this.model }),
                     i18next.t("common actions.insert")
-                );
-            },
-
-            /**
-             * Add a new annotation with a content item containing a label w/ or w/o a scale value.
-             * @alias module:views-list-annotation.ListAnnotation#addLabelledContent
-             * @param {Event} event Event object
-             */
-            addLabelledContent: function (event) {
-                event.stopPropagation();
-
-                var categoryID = $(event.target).data("category");
-                var category = annotationTool.video.get("categories").get(categoryID);
-
-                annotationTool.addModal(
-                    i18next.t("annotation.add content.category") + " " + category.get("name"),
-                    new AddLabelledModal({ model: this.model, category: category })
                 );
             },
 
@@ -702,8 +689,7 @@ define(
                         "click i.icon-comment": "toggleCommentsState",
                         "click .toggle-edit": "toggleEditState",
                         "click i.delete": "deleteFull",
-                        "click button.add-free-text-content": "addFreeTextContent",
-                        "click button.add-labelled-content": "addLabelledContent",
+                        "click button.add-content-modal": "addContentModal",
                         "click .content-item-expand": "toggleContentItem",
                         "click .content-item-collapse": "toggleContentItem",
                         "click .content-item-edit": "editContentItem",

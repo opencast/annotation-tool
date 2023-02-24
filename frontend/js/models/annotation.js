@@ -46,9 +46,7 @@ define(
                 return {
                     start: 0,
 
-                    // Values > 0 for a time based annotation by default (contrary to point annotation)
-                    // @todo CC | WIP: Default duration ^= slightly larger than point annotation visual size (0.33~)
-                    // - Discuss from UX perspective what should be done
+                    // Value > 0 for time based annotation by default (contrary to point annotation)
                     duration: 0.5,
 
                     comments: new Comments([], { annotation: this }),

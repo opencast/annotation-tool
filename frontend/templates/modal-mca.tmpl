@@ -1,0 +1,9 @@
+<button class="btn mca--add-free-text-content" type="button">
+    {{t "annotation.add content.free text"}}
+</button>
+
+{{#each categories}}
+    <button class="btn mca--add-labelled-content" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
+        {{t "annotation.add content.category"}} {{name}}
+    </button>
+{{/each}}
