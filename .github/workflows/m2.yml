@@ -4,6 +4,7 @@ on: push
 jobs:
   main:
     runs-on: ubuntu-latest
+    environment: m2 deployment
     steps:
       - name: Set up a compatible Java version
         uses: actions/setup-java@v1
@@ -18,6 +19,7 @@ jobs:
         with:
           ref: m2
           path: m2
+          ssh-key: ${{ secrets.M2_DEPLOY_KEY }}
 
       - name: Cache Maven dependencies
         uses: actions/cache@v2
@@ -36,7 +38,7 @@ jobs:
 
       - name: Get the date
         id: date
-        run: echo "::set-output name=date::$(date +%Y.%m%d.%H%M%S)"
+        run: echo "date=$(date +%Y.%m%d.%H%M%S)" >> $GITHUB_OUTPUT
       - name: Build the artifacts
         run: mvn clean deploy
           --batch-mode
