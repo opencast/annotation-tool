@@ -861,11 +861,21 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
     List<Label> labels;
 
-    if (since.isSome())
+    logger.error("> getLabels()");
+    logger.error(": offset", offset);
+    logger.error(": limit", limit);
+
+    if (since.isSome()) {
+      logger.error(">> getLabels() / findAllOfCategorySince");
+      logger.error(": since.get() ", since.get());
       labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategorySince",
               tuple("since", since.get()));
-    else
+    }
+    else {
+      logger.error(">> getLabels() / findAllOfCategory");
       labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategory", tuple("id", categoryId));
+    }
+
 
     // Handle series categories
     // Series categories initially do not have any labels of themselves, so we need to generate them in case they
@@ -901,8 +911,15 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         // At some point you probably want to associated copied labels with their original, so they can be properly updated
         // This will lose changes made on non-master category labels if the master then looses their series.
         // But that is quite a rare scenario (hopefully) and I'm running out of time.
-        //labels = newLabels;
-        labels = newLabels;
+
+        // @todo CC | FIX | 1) Series labels get infinitely duplicated on each HTTP request.
+        // @todo CC | FIX | 2) Overriding labels (like old code did) prevented accessing potentially deleted labels, breaking annotations that use it (= full app error).
+        // @todo CC | FIX | 3) Remove temporary workaround that simply merges old + new labels (just to get the app running until a fix is there)
+        List<Label> merged = new ArrayList<>();
+        merged.addAll(labels);
+        merged.addAll(newLabels);
+
+        labels = merged;
       }
     }
 
