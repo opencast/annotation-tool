@@ -58,7 +58,7 @@ define([
             if (beforeSend) beforeSend.apply(this, arguments);
             this.url = "../../extended-annotations" + this.url;
 
-            // Workaround bug to remove '&undefined=...' parameters (likely from label model).
+            // @todo CC | Workaround bug to remove '&undefined=...' parameters (likely from label model).
             // - Trigger: On category deletion, the last request (GET) would result in a 404
             // - Example: /categories/…/labels&undefined=…&undefined=…?series-extid=…
             this.url = this.url.replace(/&undefined=\w+/g, "");

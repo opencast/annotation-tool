@@ -97,7 +97,7 @@ define([
             // Get all the labels in a tabular structure for easy processing by the template
             var labelRows = labels
                 .groupBy(function (label) {
-                    // Fix attribute value access
+                    // @todo CC | Fix attribute value access - Check if works everywhere
                     return label.get("category").name;
                 })
                 .pairs()

@@ -721,7 +721,7 @@ define(
                     commentLine[17] = comment.attributes.created_at.toISOString();
                     commentLine[18] = comment.attributes.updated_at.toISOString();
                     commentLine[19] = comment.attributes.updated_by_nickname;
-                    commentLine[20] = "";
+                    commentLine[20] = ""; // @todo Remove non-existing email field?
                     commentLine[21] = comment.attributes.text;
 
                     if (comment.collection.replyTo) {
