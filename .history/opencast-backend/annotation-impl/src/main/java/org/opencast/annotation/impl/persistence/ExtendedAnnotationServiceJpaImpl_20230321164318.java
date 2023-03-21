@@ -912,9 +912,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         // This will lose changes made on non-master category labels if the master then looses their series.
         // But that is quite a rare scenario (hopefully) and I'm running out of time.
 
-        // @todo CC | Fix: 1) Series labels get infinitely duplicated on each HTTP request.
-        // @todo CC | Fix: 2) Overriding labels (like old code did) prevented accessing potentially deleted labels, breaking annotations that use it (= full app error).
-        // @todo CC | Fix: 3) Remove temporary workaround that simply merges old + new labels (just to get the app running until a fix is there)
+        // @todo CC | FIX | 1) Series labels get infinitely duplicated on each HTTP request.
+        // @todo CC | FIX | 2) Overriding labels (like old code did) prevented accessing potentially deleted labels, breaking annotations that use it (= full app error).
+        // @todo CC | FIX | 3) Remove temporary workaround that simply merges old + new labels (just to get the app running until a fix is there)
         List<Label> merged = new ArrayList<>();
         merged.addAll(labels);
         merged.addAll(newLabels);

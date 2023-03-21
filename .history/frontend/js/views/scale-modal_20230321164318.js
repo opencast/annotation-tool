@@ -63,7 +63,7 @@ define([
                                         var isEmptyPlacehoder = !scaleValue.id && !scaleValue.attributes.value;
 
                                         if (isEmptyPlacehoder) {
-                                            // @todo CC | Review: Check if this is really needed
+                                            // @todo CC | Check if this is really needed
                                             // Safety measure to avoid doing something with the unneeded placeholder
                                             scaleValue.collection.remove(scaleValue);
                                             return false;
