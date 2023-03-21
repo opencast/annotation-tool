@@ -131,7 +131,7 @@ define([
 
                     // Build the display code
                     if (labels.length) {
-                        // @todo CC | Fix attribute value access - Check if works everywhere
+                        // Fix attribute value access
                         result.codes = _.chain(labels).map("attributes").pluck("abbreviation").join(", ");
                     } else {
                         result.codes = "Free";
