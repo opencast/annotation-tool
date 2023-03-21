@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 >
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opencast.annotate</groupId>
     <artifactId>annotation-tool</artifactId>
@@ -18,32 +18,32 @@
     <properties>
         <revision>0-SNAPSHOT</revision>
 
-        <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
-        <joda-time.version>2.9.4</joda-time.version>
-        <json-simple.version>1.1.1</json-simple.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <eclipselink.version>2.6.9</eclipselink.version>
-        <commons-collection.version>3.2.2</commons-collection.version>
-        <commons-compress.version>1.12</commons-compress.version>
-        <httpcomponents-httpcore.version>4.4.1</httpcomponents-httpcore.version>
-        <httpcomponents-httpclient.version>4.5</httpcomponents-httpclient.version>
-        <aws.version>1.11.49_1</aws.version>
-        <jmeter.version>2.4</jmeter.version>
-        <osgi.compendium.version>5.0.0</osgi.compendium.version>
-        <osgi.core.version>5.0.0</osgi.core.version>
-        <osgi.enterprise.version>5.0.0</osgi.enterprise.version>
-        <karaf.version>4.2.2</karaf.version>
-        <pax.web.version>4.3.0</pax.web.version>
-        <cxf.version>3.1.7</cxf.version>
-        <jackson.version>2.7.0</jackson.version>
-        <opencast.version>[10,12-SNAPSHOT)</opencast.version>
-    </properties>
+    <jmeter.home>${project.build.directory}/jakarta-jmeter-${jmeter.version}</jmeter.home>
+    <joda-time.version>2.9.4</joda-time.version>
+    <json-simple.version>1.1.1</json-simple.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <eclipselink.version>2.6.9</eclipselink.version>
+    <commons-collection.version>3.2.2</commons-collection.version>
+    <commons-compress.version>1.12</commons-compress.version>
+    <httpcomponents-httpcore.version>4.4.1</httpcomponents-httpcore.version>
+    <httpcomponents-httpclient.version>4.5</httpcomponents-httpclient.version>
+    <aws.version>1.11.49_1</aws.version>
+    <jmeter.version>2.4</jmeter.version>
+    <osgi.compendium.version>5.0.0</osgi.compendium.version>
+    <osgi.core.version>5.0.0</osgi.core.version>
+    <osgi.enterprise.version>5.0.0</osgi.enterprise.version>
+    <karaf.version>4.2.2</karaf.version>
+    <pax.web.version>4.3.0</pax.web.version>
+    <cxf.version>3.1.7</cxf.version>
+    <jackson.version>2.7.0</jackson.version>
+    <opencast.version>[11,13-SNAPSHOT)</opencast.version>
+  </properties>
 
-    <modules>
-        <module>frontend</module>
-        <module>opencast-backend</module>
-    </modules>
+  <modules>
+    <module>frontend</module>
+    <module>opencast-backend</module>
+  </modules>
 
     <build>
         <defaultGoal>install</defaultGoal>
@@ -395,13 +395,13 @@
         </pluginManagement>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
-            </dependency>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version>
+      </dependency>
 
             <!-- OSGi -->
             <dependency>
