@@ -861,21 +861,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
     List<Label> labels;
 
-    logger.error("> getLabels()");
-    logger.error(": offset", offset);
-    logger.error(": limit", limit);
-
-    if (since.isSome()) {
-      logger.error(">> getLabels() / findAllOfCategorySince");
-      logger.error(": since.get() ", since.get());
+    if (since.isSome())
       labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategorySince",
               tuple("since", since.get()));
-    }
-    else {
-      logger.error(">> getLabels() / findAllOfCategory");
+    else
       labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategory", tuple("id", categoryId));
-    }
-
 
     // Handle series categories
     // Series categories initially do not have any labels of themselves, so we need to generate them in case they
