@@ -29,6 +29,7 @@ jobs:
             frontend/node
           key: maven-2-${{ hashFiles('**/pom.xml') }}
           restore-keys: maven-2-
+
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
@@ -39,6 +40,7 @@ jobs:
       - name: Get the date
         id: date
         run: echo "date=$(date +%Y.%m%d.%H%M%S)" >> $GITHUB_OUTPUT
+
       - name: Build the artifacts
         run: mvn clean deploy
           --batch-mode
