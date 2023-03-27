@@ -229,7 +229,7 @@ define(
                 var modelJSON = this.model.toJSON();
 
                 if (modelJSON.access === ACCESS.PUBLIC) {
-                    modelJSON.canEdit = annotationTool.user.get("isAdmin");
+                    modelJSON.canEdit = modelJSON.isMine || annotationTool.user.get("isAdmin");
                 } else {
                     modelJSON.canEdit = modelJSON.isMine;
                 }
