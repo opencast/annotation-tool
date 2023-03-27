@@ -20,7 +20,6 @@ i.check {
 }
 
 #annotate-form {
-
     display: flex;
     flex-direction: column;
 
@@ -29,8 +28,12 @@ i.check {
         display: flex;
         flex-direction: column;
 
-        .dropdown {
+        .categories-container-scroll {
+            overflow-y: scroll;
+            height: 100vh;
+        }
 
+        .dropdown {
             margin-left: 5px;
 
             button.dropdown-toggle {

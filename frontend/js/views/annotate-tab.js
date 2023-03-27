@@ -81,7 +81,7 @@ define(
              * @type {HandlebarsTemplate}
              */
             itemContainerTemplate: Handlebars.compile("<div class=\"item row-fluid\">\
-                                                        <div class=\"span12\">\
+                                                        <div class=\"span12 categories-container-scroll\">\
                                                           <div class=\"row-fluid categories-container\">\
                                                           </div>\
                                                         </div>\
