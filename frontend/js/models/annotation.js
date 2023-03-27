@@ -45,7 +45,12 @@ define(
             defaults: function () {
                 return {
                     start: 0,
-                    duration: 0,
+
+                    // Values > 0 for a time based annotation by default (contrary to point annotation)
+                    // @todo CC | WIP: Default duration ^= slightly larger than point annotation visual size (0.33~)
+                    // - Discuss from UX perspective what should be done
+                    duration: 0.5,
+
                     comments: new Comments([], { annotation: this }),
                     content: new AnnotationContent([])
                 };
@@ -70,7 +75,8 @@ define(
              * (Re-)Fetch the comments once our ID changes.
              * 1) Questionnaire: Cancelling freshly created annotation leads to: 'Uncaught Error: A "url" property or function must be specified'.
              *    Collection exists only until 'destroy', but not here - so no URL can be found. Guess: keepDeleted behaviour?
-             * @todo CC | Review: Fix/Workaround for questionnaire annotation, eventually remove warning (added for convenience/understanding)
+             * @todo CC | Review: Same issue fixed here appears in other deletion places too (e.g. deleting a track). Fix all?
+             * @todo CC | Review: Fix/Workaround for questionnaire annotation, eventually remove warning (added for convenience/understanding).
              */
             fetchChildren: function () {
                 // 1) Should -only- occur on questionnaire annotation deletion!

@@ -5,9 +5,11 @@
             {{> editTimestamp flavor="start" timestamp=(time startTime)}}
             {{^}}
             {{> viewTimestamp flavor="start" timestamp=(time startTime)}}
-            {{#unless editMode}}
-                <i class="toggle-edit icon-pencil" data-editmode="start" title="{{t "annotation.edit.edit"}}"></i>
-            {{/unless}}
+            {{#if annotation.isMine}}
+                {{#unless editMode}}
+                    <i class="toggle-edit btn-icon icon-pencil" data-editmode="start" title="{{t "annotation.edit.edit"}}"></i>
+                {{/unless}}
+            {{/if}}
         {{/ifeq}}
     </div>
 </div>
@@ -23,9 +25,12 @@
             {{^}}
                 {{> viewTimestamp flavor="end" timestamp=(time endTime)}}
             {{/ifeq}}
-            {{#unless editMode}}
-                <i class="toggle-edit icon-pencil" data-editmode="end" title="{{t "annotation.edit.edit"}}"></i>
-            {{/unless}}
+            {{#if annotation.isMine}}
+                {{#unless editMode}}
+                    <i class="toggle-edit btn-icon icon-pencil" data-editmode="end" title="{{t "annotation.edit.edit"}}"></i>
+                    <i class="convert-type btn-icon icon-asterisk" title="{{t "annotation.edit.type point"}}"></i>
+                {{/unless}}
+            {{/if}}
         {{/ifeq}}
     </div>
 </div>

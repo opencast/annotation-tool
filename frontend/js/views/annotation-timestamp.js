@@ -26,6 +26,7 @@ define([
 
         events: {
             "click i.toggle-edit": "onClickToggleEdit",
+            "click i.convert-type": "onClickSetAnnotationTypePoint",
 
             "click .timestamp-save": "onClickSave",
             "click .timestamp-cancel": "onClickCancel",
@@ -135,6 +136,10 @@ define([
         onClickToggleEdit: function (event) {
             var $target = $(event.currentTarget);
             this.editMode = $target.data().editmode;
+            this.render();
+        },
+        onClickSetAnnotationTypePoint: function (event) {
+            this.model.save({ duration: 0 });
             this.render();
         }
     });

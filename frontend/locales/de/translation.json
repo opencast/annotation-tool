@@ -92,6 +92,7 @@
       "edit": "Annotation bearbeiten.",
       "end time": "Schluss",
       "free text placeholder": "Freitext …",
+      "type point": "Umwandeln in Punkt-Annotation",
       "set end to playhead": {
         "long": "Schluss auf aktuelle Abspielposition setzen",
         "short": "SCHLUSS"

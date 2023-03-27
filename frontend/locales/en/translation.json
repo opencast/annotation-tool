@@ -96,6 +96,7 @@
       "edit": "Edit annotation.",
       "end time": "End time",
       "free text placeholder": "Free text …",
+      "type point": "Convert to point annotation",
       "set end to playhead": {
         "long": "Set the video playhead as end point.",
         "short": "OUT"
