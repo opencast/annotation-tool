@@ -31,9 +31,6 @@ define([
          * @alias module:views-modal-edit-labelled.ModalMca#initialize
          */
         initialize: function () {
-            console.warn("modal-mca / initialize");
-            console.log(this.model);
-
             this.listenTo(this, "modal:click", this.render);
         },
 
@@ -54,8 +51,6 @@ define([
                 .map(function (category) {
                     return _.extend(category.toJSON());
                 });
-
-            console.log(categories);
 
             this.$el.html(template({
                 categories: categories
@@ -94,8 +89,6 @@ define([
 
             const categoryID = $(event.target).data("category");
             const category = annotationTool.video.get("categories").get(categoryID);
-
-            console.log($(event.target), categoryID, category);
 
             this.trigger("modal:request-close");
             annotationTool.addModal(

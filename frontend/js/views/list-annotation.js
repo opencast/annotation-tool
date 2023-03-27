@@ -363,9 +363,6 @@ define(
                         }
                     );
 
-                console.log(modelJSON.categories);
-                console.log(modelJSON);
-
                 var partials = _.extend(
                     {
                       "category": TmplCategory,
