@@ -70,12 +70,17 @@
     },
     "comments": {
       "author": "Kommentar von",
-      "count": "Ein Kommentar",
+      "cancel": "$t(common actions.cancel)",
+      "count": "1 Kommentar",
       "count_plural": "{{count}} Kommentare",
       "created": "am {{date}}",
+      "delete": "$t(common actions.delete)",
       "edit": {
-        "button": "Bearbeiten"
+        "button": "Bearbeiten",
+        "cancel": "$t(common actions.cancel)",
+        "save": "$t(common actions.save)"
       },
+      "insert": "$t(common actions.insert)",
       "modified": "zuletzt verändert am {{date}}",
       "placeholder": "Einen Kommentar für diese Annotation schreiben",
       "title": "Kommentare"
@@ -90,6 +95,7 @@
     },
     "edit": {
       "delete": "Annotation löschen.",
+      "double click to edit": "Doppelklick zum Bearbeiten.",
       "edit": "Annotation bearbeiten.",
       "end time": "Schluss",
       "free text placeholder": "Freitext …",
@@ -139,12 +145,20 @@
     "name": "Standard {{nickname}}"
   },
   "delete modal": {
+    "cancel": "$t(common actions.cancel)",
+    "delete": "$t(common actions.delete)",
     "title": "$t(models.{{context}}.identifier) löschen",
     "warning": "Wollen Sie $t(models.determined, { 'determiner': 'definite article', 'case': 'accusative', 'context': '{{context}}' }) „{{content}}“ wirklich löschen?"
   },
   "description": "Werkzeug zur Videoannotation",
   "delete operations": {
     "unauthorized": "Sie sind nicht autorisiert, $t(models.determined, { 'determiner': 'demonstrative', 'case': 'accusative', 'context': '{{context}}' }) zu löschen!"
+  },
+  "import operations": {
+    "wrong format": "Das Daten-Schema enthält Fehler und kann nicht importiert werden."
+  },
+  "list annotation": {
+    "double click to edit": "Doppelklick zum Bearbeiten."
   },
   "loop controller": {
     "enable": "Schleifen aktivieren",
@@ -171,7 +185,10 @@
       "track management": "$t(track management.action)",
       "head": "Ansicht",
       "views": {
-        "head": "Fenster"
+        "annotate view": "$t(views.annotate)",
+        "head": "Fenster",
+        "list view": "$t(views.list)",
+        "loop controller": "$t(views.loop)"
       },
       "templates": {
         "head": "Layouts",
@@ -299,6 +316,7 @@
       "long": "Keine Spur entspricht den aktuell gesetzten Filtern."
     },
     "track management": "$t(track management.action)",
+    "navigation": "Navigation",
     "hidden items": "Ein verstecktes Element",
     "hidden items_plural": "{{count}} versteckte Elemente",
     "reset zoom": "Zoom zurücksetzen",
@@ -315,6 +333,9 @@
   "track management": {
     "action": "Spuren verwalten",
     "(un-)select all": "Alle (de-)selektieren",
+    "cancel": "$t(common actions.cancel)",
+    "header": "$t(track management.action)",
+    "ok": "$t(common actions.ok)",
     "search": {
       "clear": "Löschen",
       "hint": "Benutzer mit öffentlichen Annotationen",
@@ -381,6 +402,7 @@
     "player": "Player",
     "questionnaire": "Fragebogen"
   },
+  "version": "Version: {{version}}",
   "validation errors": {
     "empty": "Dieses Feld darf nicht leer sein",
     "min items": "Es wurde nicht eine genügende Menge an Einträgen gewählt.",
