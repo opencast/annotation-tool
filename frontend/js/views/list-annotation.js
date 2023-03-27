@@ -302,6 +302,16 @@ define(
             },
 
             /**
+             * Change annotation type to point.
+             * @param  {event} event Event object
+             */
+            setAnnotationTypePoint: function (event) {
+                event.stopImmediatePropagation();
+
+                this.model.save({ duration: 0 });
+            },
+
+            /**
              * Render this view
              */
             render: function () {
@@ -718,6 +728,7 @@ define(
                         "click i.delete": "deleteFull",
                         "click button.in": "setCurrentTimeAsStart",
                         "click button.out": "setCurrentTimeAsEnd",
+                        "click button.type-point": "setAnnotationTypePoint",
                         "keydown .start-value": "saveStart",
                         "keydown .end-value": "saveEnd",
                         "focusout .start-value": "saveStart",
