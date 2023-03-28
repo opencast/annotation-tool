@@ -10,6 +10,7 @@ deploy
 # ignore Eclipse project data
 .project
 .classpath
+.history
 .metadata/
 .settings/
 .recommenders/
