@@ -97,7 +97,6 @@ define([
             // Get all the labels in a tabular structure for easy processing by the template
             var labelRows = labels
                 .groupBy(function (label) {
-                    // @todo CC | Fix attribute value access - Check if works everywhere
                     return label.get("category").name;
                 })
                 .pairs()
@@ -131,7 +130,6 @@ define([
 
                     // Build the display code
                     if (labels.length) {
-                        // @todo CC | Fix attribute value access - Check if works everywhere
                         result.codes = _.chain(labels).map("attributes").pluck("abbreviation").join(", ");
                     } else {
                         result.codes = "Free";

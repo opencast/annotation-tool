@@ -313,8 +313,6 @@ define(
              * Render this view
              */
             render: function () {
-                console.warn("list-annotation / render");
-
                 var modelJSON,
                     title;
 
@@ -362,9 +360,6 @@ define(
                             return _.extend(category.toJSON(), { labels: labels, scale: scale });
                         }
                     );
-
-                console.log(modelJSON.categories);
-                console.log(modelJSON);
 
                 var partials = _.extend(
                     {
@@ -580,13 +575,10 @@ define(
 
             /**
              * Add modal to select content.
-             * @todo CC | WIP - Implement options ...
              * @alias module:views-list-annotation.ListAnnotation#addContentModal
              * @param {Event} event Event object
              */
             addContentModal: function (event) {
-                console.warn("addContentModal");
-
                 annotationTool.addModal(
                     i18next.t("annotation.add content.modal"),
                     new McaModal({ model: this.model }),

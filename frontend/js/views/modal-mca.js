@@ -27,13 +27,9 @@ define([
 
         /**
          * Constructor
-         * @todo CC | WIP - Implement options ...
          * @alias module:views-modal-edit-labelled.ModalMca#initialize
          */
         initialize: function () {
-            console.warn("modal-mca / initialize");
-            console.log(this.model);
-
             this.listenTo(this, "modal:click", this.render);
         },
 
@@ -43,8 +39,6 @@ define([
          * @alias module:views-modal-edit-labelled.ModalMca#render
          */
         render: function () {
-            console.warn("modal-mca / render");
-
             const categories = annotationTool.video.get("categories")
                 .filter(function (category) {
                     const isOwned = !(category.get("settings").createdAsMine && !category.isMine());
@@ -54,8 +48,6 @@ define([
                 .map(function (category) {
                     return _.extend(category.toJSON());
                 });
-
-            console.log(categories);
 
             this.$el.html(template({
                 categories: categories
@@ -70,8 +62,6 @@ define([
          * @param {Event} event Event object
          */
         addFreeTextContent: function (event) {
-            console.warn("modal-mca / addFreeTextContent");
-
             event.stopPropagation();
 
             this.trigger("modal:request-close");
@@ -88,14 +78,10 @@ define([
          * @param {Event} event Event object
          */
         addLabelledContent: function (event) {
-            console.warn("modal-mca / addFreeTextContent");
-
             event.stopPropagation();
 
             const categoryID = $(event.target).data("category");
             const category = annotationTool.video.get("categories").get(categoryID);
-
-            console.log($(event.target), categoryID, category);
 
             this.trigger("modal:request-close");
             annotationTool.addModal(

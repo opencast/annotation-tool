@@ -721,7 +721,7 @@ define(
                     commentLine[17] = comment.attributes.created_at.toISOString();
                     commentLine[18] = comment.attributes.updated_at.toISOString();
                     commentLine[19] = comment.attributes.updated_by_nickname;
-                    commentLine[20] = ""; // @todo CC | Remove non-existing email field?
+                    commentLine[20] = "";
                     commentLine[21] = comment.attributes.text;
 
                     if (comment.collection.replyTo) {
@@ -897,6 +897,7 @@ define(
                 },
                 customMessage: function (target) {
                     if (target.get("series_category_id")) {
+                        // TODO: Fix custom message does not output anything
                         return i18next.t("series category modal.custom message");
                     } else {
                         return "";
