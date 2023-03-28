@@ -897,6 +897,7 @@ define(
                 },
                 customMessage: function (target) {
                     if (target.get("series_category_id")) {
+                        // TODO: Fix custom message does not output anything
                         return i18next.t("series category modal.custom message");
                     } else {
                         return "";

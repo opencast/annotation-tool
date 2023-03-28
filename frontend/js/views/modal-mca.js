@@ -27,7 +27,6 @@ define([
 
         /**
          * Constructor
-         * @todo CC | WIP - Implement options ...
          * @alias module:views-modal-edit-labelled.ModalMca#initialize
          */
         initialize: function () {
@@ -40,8 +39,6 @@ define([
          * @alias module:views-modal-edit-labelled.ModalMca#render
          */
         render: function () {
-            console.warn("modal-mca / render");
-
             const categories = annotationTool.video.get("categories")
                 .filter(function (category) {
                     const isOwned = !(category.get("settings").createdAsMine && !category.isMine());
@@ -65,8 +62,6 @@ define([
          * @param {Event} event Event object
          */
         addFreeTextContent: function (event) {
-            console.warn("modal-mca / addFreeTextContent");
-
             event.stopPropagation();
 
             this.trigger("modal:request-close");
@@ -83,8 +78,6 @@ define([
          * @param {Event} event Event object
          */
         addLabelledContent: function (event) {
-            console.warn("modal-mca / addFreeTextContent");
-
             event.stopPropagation();
 
             const categoryID = $(event.target).data("category");
