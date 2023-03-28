@@ -16,6 +16,7 @@
   "search.exclude": {
       "**/.git": true,
       "**/node_modules": true,
+      ".history": true,
       "frontend/localhost:8080/**": true,
       "frontend/src/**": true,
       "frontend/target/classes/ui/**": true,
