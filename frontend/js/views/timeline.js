@@ -545,9 +545,9 @@ define([
                     properties.event.tapCount > 1
                 );
 
+                // Double click
                 if (properties.event.tapCount > 1 && model && model.get("createdFromQuestionnaire")) {
-                    Backbone.trigger("questionnaire:edit-annotation", this.items.get(properties.items[0]).model);
-                    annotationTool.switchLayout("questionnaire");
+                    annotationTool.views.main.openViewQuestionnaireAnnotation(model);
                 }
 
             }, this));

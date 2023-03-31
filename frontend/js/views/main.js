@@ -33,6 +33,7 @@ define(
         "views/tracks-selection",
         "views/print",
         "views/questionnaire",
+        "views/questionnaire-drafts",
         "backbone",
         "goldenlayout",
         "bootstrap"
@@ -51,6 +52,7 @@ define(
         TracksSelectionView,
         PrintView,
         QuestionnaireView,
+        QuestionnaireDraftsView,
         Backbone,
         GoldenLayout
     ) {
@@ -94,7 +96,7 @@ define(
                 "click #opt-annotate-categories": "toggleStructuredAnnotations",
                 "click .opt-tracks-select": "tracksSelection",
                 "click #opt-auto-expand": "toggleAutoExpand",
-                "click .opt-view": "toggleView",
+                "click .opt-view": "toggleViewFromElement",
                 "click .opt-template": "loadTemplate",
                 "keyup": "handleAnnotationShortcut",
                 "blur #annotation-shortcut-focus": "interruptAnnotationShortcut"
@@ -149,6 +151,14 @@ define(
             },
 
             /**
+             * Updates component title
+             * @param  {object} component The component
+             */
+            updateComponentTitle: function (component) {
+                component.title = i18next.t("views." + component.componentName);
+            },
+
+            /**
              * Creates the views for the annotations
              */
             createViews: function () {
@@ -158,10 +168,18 @@ define(
                     "annotate",
                     "list",
                     "loop",
-                    "questionnaire"
+                    "questionnaire",
+                    "questionnaire-drafts"
                 ];
 
-                var closableViews = ["list", "annotate", "loop", "questionnaire"];
+                var closableViews = [
+                    "annotate",
+                    "list",
+                    "loop",
+                    "questionnaire",
+                    "questionnaire-drafts"
+                ];
+
                 this.viewConfigs = _.object(_.map(views, function (view) { return [
                     view, {
                         type: "component",
@@ -202,32 +220,32 @@ define(
                             {
                                 type: "column",
                                 content: [
-                                  {
-                                      type: "column",
-                                      content: [
-                                          "player"
-                                      ].map(viewConfig)
-                                  },
-                                  {
-                                      type: "stack",
-                                      content: [
-                                          "timeline",
-                                          "list"
-                                      ].map(viewConfig)
-                                  },
+                                    {
+                                        type: "column",
+                                        content: [
+                                            "player"
+                                        ].map(viewConfig)
+                                    },
+                                    {
+                                        type: "stack",
+                                        content: [
+                                            "timeline"
+                                        ].map(viewConfig)
+                                    }
                                 ]
                             },
                             {
                                 type: "column",
                                 content: [
-                                  {
-                                      type: "stack",
-                                      content: [
-                                          "questionnaire",
-                                          "annotate",
-                                          "loop"
-                                      ].map(viewConfig)
-                                  }
+                                    {
+                                        type: "stack",
+                                        content: [
+                                            "questionnaire-drafts",
+                                            "questionnaire",
+                                            "annotate",
+                                            "loop"
+                                        ].map(viewConfig)
+                                    }
                                 ]
                             }
                         ]
@@ -348,12 +366,14 @@ define(
                     if (!(layout in templates)) layout = "default";
                     layout = { content: [templates[layout]] };
                 }
+
                 // Reset the titles of all the views.
                 // We might have to retranslate these,
                 // if the user changed their language.
-                visitComponents(layout, function (component) {
-                    component.title = i18next.t("views." + component.componentName);
+                visitComponents(layout, (component) => {
+                    self.updateComponentTitle(component);
                 });
+
                 layout.settings = _.extend(layout.settings || {}, {
                     showPopoutIcon: false,
                     showMaximiseIcon: false,
@@ -453,6 +473,8 @@ define(
                     });
                 });
 
+                // @todo CC | Review: '$(".opt-" + view)' never finds elements as they have generic selector '.opt-view'.
+                // - Some other intention? Code seems to work without show|hide calls, so would it be safe to remove them?
                 function setupClosing(view, container) {
                     $(".opt-" + view).show();
 
@@ -497,7 +519,17 @@ define(
                         setupClosing("questionnaire", container);
                         resolveView("questionnaire", new QuestionnaireView({
                             playerAdapter: player,
-                            el: container.getElement(),
+                            el: container.getElement()
+                        }));
+                    });
+                });
+                goldenLayout.registerComponent("questionnaire-drafts", function (container) {
+                    container.getElement().addClass("golden-layout-component-questionnaire-drafts");
+                    requireViews(["player"], function (player) {
+                        setupClosing("questionnaire-drafts", container);
+                        resolveView("questionnaire-drafts", new QuestionnaireDraftsView({
+                            playerAdapter: player,
+                            el: container.getElement()
                         }));
                     });
                 });
@@ -693,23 +725,116 @@ define(
             },
 
             /**
-             * Add/remove a view from the layout
-             * @param {Event} event The event
+             * Add/remove a view from the layout.
+             * @param {string} view GoldenLayout view component name
              */
-            toggleView: function (event) {
-                var view = event.currentTarget.dataset.view;
-                var root = goldenLayout.root.contentItems[0];
+            toggleView: function (view) {
                 if (this.views[view]) {
-                    // Note that the objects returned by `ContentItem#getComponentsByName`
-                    // unfortunately do now allow for their own removal from the layout,
-                    // hence our copying some of the functionality of that method.
-                    root.getItemsByFilter(function (item) {
-                        return item.componentName === view;
-                    })[0].remove();
+                    this.closeView(view);
                 } else {
-                    var parent = goldenLayout.selectedItem || root;
-                    parent.addChild(this.viewConfigs[view]);
+                    this.openView(view);
                 }
+            },
+
+            /**
+             * Toggle views that must have the same open/close state.
+             * @param {string} view1 GoldenLayout view component name
+             * @param {string} view2 GoldenLayout view component name
+             * @param {boolean} flag Toggle flag (true = Close | false = Open)
+             */
+            toggleViewsSync: function (view1, view2, flag) {
+                if (flag) {
+                    this.closeView(view1);
+                    this.closeView(view2);
+                }
+                else {
+                    this.openView(view1);
+                    this.openView(view2);
+                }
+            },
+
+            /**
+             * Toggle view(s) from UI element event.
+             * Conceptual design: There's always one designated main view. There can be an optional related view,
+             * that is needed for the other view and opened for usability and convenience. The distinction is made
+             * as the current architecture allows only one view to properly toggle windows and menu display states.
+             * @param {Event} event The event
+             * @example Element attribute notation
+             *   data-view="a"
+             *   data-view="a" data-viewrel="a2"
+             */
+            toggleViewFromElement: function (event) {
+                const el = event.currentTarget;
+                const isChecked = $(el).hasClass("checked");
+                const view1 = el.dataset.view;
+                const view2 = el.dataset.viewrel;
+
+                if (view2) {
+                    this.toggleViewsSync(view1, view2, isChecked);
+                }
+                else {
+                    this.toggleView(view1);
+                }
+            },
+
+            /**
+             * Close view and remove element.
+             * @param {string} view GoldenLayout view component name
+             */
+            closeView: function (view) {
+                const root = goldenLayout.root.contentItems[0];
+
+                // Note that the objects returned by `ContentItem#getComponentsByName`
+                // unfortunately do now allow for their own removal from the layout,
+                // hence our copying some of the functionality of that method.
+                const el = root.getItemsByFilter(function (item) {
+                    return item.componentName === view;
+                })[0];
+
+                if (!el) {
+                    console.error("View is already closed.", el);
+                    return;
+                }
+
+                el.remove();
+            },
+
+            /**
+             * Open view and add element. Also update title (translation scope might have changed).
+             * @param {string} view GoldenLayout view component name
+             */
+            openView: function (view) {
+                const el = this.views[view];
+
+                if (el) {
+                    console.error("View is already opened.", el);
+                    return;
+                }
+
+                const root = goldenLayout.root.contentItems[0];
+                const parent = goldenLayout.selectedItem || root;
+                const component = this.viewConfigs[view];
+
+                this.updateComponentTitle(component);
+                parent.addChild(component);
+            },
+
+            /**
+             * Open questionnaire and show as active window.
+             * @param {Annotation} annotation Annotation model
+             */
+            openViewQuestionnaire: function (annotationModel) {
+                this.openView("questionnaire");
+                annotationTool.switchTab("questionnaire");
+            },
+
+            /**
+             * Open questionnaire view with an annotation to edit.
+             * @param {Annotation} annotation Annotation model
+             */
+            openViewQuestionnaireAnnotation: function (annotationModel) {
+                this.openViewQuestionnaire();
+                Backbone.trigger(QuestionnaireView.prototype.customEvents.editAnnotation, annotationModel);
             },
 
             /**

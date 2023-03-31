@@ -11,21 +11,34 @@
  *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  *  or implied. See the License for the specific language governing
  *  permissions and limitations under the License.
- *
  */
 define([
     "underscore",
     "jquery",
+    "alerts",
     "i18next",
     "backbone",
     "templates/questionnaire",
-    "views/questionnaire-block-categories",
-    "views/questionnaire-block-help",
-    "views/questionnaire-block-label",
-    "views/questionnaire-block-scale",
-    "views/questionnaire-block-text",
+    "views/questionnaire/categories",
+    "views/questionnaire/help",
+    "views/questionnaire/label",
+    "views/questionnaire/scale",
+    "views/questionnaire/text",
     "views/annotation-timestamp"
-], function(_, $, i18next, Backbone, template, CategoriesBlock, HelpBlock, LabelBlock, ScaleBlock, TextBlock, AnnotationTimestampView) {
+], function (
+    _,
+    $,
+    alerts,
+    i18next,
+    Backbone,
+    template,
+    CategoriesBlock,
+    HelpBlock,
+    LabelBlock,
+    ScaleBlock,
+    TextBlock,
+    AnnotationTimestampView
+) {
     "use strict";
 
     /**
@@ -36,179 +49,242 @@ define([
      * @alias module:views-questionnaire.QuestionnaireView
      */
     return Backbone.View.extend({
-        /** Events to handle
+        /**
+         * Single questionnaire
+         * @alias module:views-questionnaire.QuestionnaireView#questionnaire
+         * @type {null|Questionnaire}
+         */
+        questionnaire: null,
+
+        /**
+         * List of questionnaires
+         * @alias module:views-questionnaire.QuestionnaireView#questionnaires
+         * @type {null|Questionnaires}
+         */
+        questionnaires: null,
+
+        /**
+         * Events to handle
          * @alias module:views-questionnaire.QuestionnaireView
          * @type {object}
          */
         events: {
-            "click .questionnaire-start": "onStart",
             "submit form": "onSubmitForm",
             "click button.cancel": "onCancel"
         },
 
         /**
+         * Custom event name map
+         * @todo CC | Optimize: Implement storage deletion, if annotation is deleted (hook into its event)? Avoid stale data and filling the browsers capacity.
+         * @alias module:views-questionnaire.QuestionnaireView#customEvents
+         * @type {object}
+         */
+        customEvents: {
+            // Subscribe
+            createAnnotation: "questionnaire:create-annotation",
+            editAnnotation: "questionnaire:edit-annotation"
+        },
+
+        /**
          * Constructor
          * @alias module:views-questionnaire.QuestionnaireView#initialize
+         * @param {object} _options
          */
-        initialize: function(options) {
-            this.questionnaire = annotationTool.video.getQuestionnaire();
-            // TODO
-            this.questionnaire = getMockupQuestionnaire();
-            this.resetQuestionnaire();
+        initialize: function (_options) {
+            this.questionnaires = annotationTool.video.get("questionnaires");
+
+            this.resetViewAndValidation();
             this.render();
-
-            Backbone.on("questionnaire:edit-annotation", this.onShowEdit.bind(this));
+            this.bind();
         },
 
         /**
-         * Reset local storage of questionnaire
-         * @alias module:views-questionnaire.QuestionnaireView#resetDraft
+         * Event binding
+         * @alias module:views-questionnaire.QuestionnaireView#bind
          */
-        resetDraft: function() {
-            // remove fields + draft from local storage
-            if (typeof(Storage) !== "undefined") {
-                Object.keys(localStorage)
-                    .filter(x => x.startsWith('oat_questionnaire'))
-                    .forEach(x => localStorage.removeItem(x));
+        bind: function () {
+            Backbone.on(
+                this.customEvents.createAnnotation,
+                this.onStart.bind(this)
+            );
 
-            }
-        },
-
-        /**
-         * Reset local state of questionnaire.
-         * @alias module:views-questionnaire.QuestionnaireView#resetQuestionnaire
-         */
-        resetQuestionnaire: function() {
-            this.annotation = null;
-            if (this.timestampsView) {
-                this.timestampsView.remove();
-                this.timestampsView = null;
-            }
-            if (this.items) {
-                _.invoke(this.items, "remove");
-            }
-            this.items = {};
-            this.validationErrors = { start: null, end: null };
+            Backbone.on(
+                this.customEvents.editAnnotation,
+                this.onShowEdit.bind(this)
+            );
         },
 
         /**
          * Destructor
+         * @augments module:Backbone.View
          * @alias module:views-questionnaire.QuestionnaireView#remove
          */
-        remove: function() {
+        remove: function () {
+            Backbone.off(this.customEvents.createAnnotation);
+            Backbone.off(this.customEvents.editAnnotation);
+
             if (this.items) {
                 _.invoke(this.items, "remove");
             }
-            Backbone.off("questionnaire:edit-annotation");
 
             Backbone.View.prototype.remove.apply(this, arguments);
+        },
+
+        /**
+         * Reset storage of questionnaire for annotation.
+         * @alias module:views-questionnaire.QuestionnaireView#resetDraft
+         * @param {null|object} annotation Annotation to delete state for
+         */
+        resetDraft: function (annotation) {
+            if (annotation) {
+                TextBlock.prototype.clearStorage(annotation.id);
+            }
+        },
+
+        /**
+         * Reset view, state and validation.
+         * @alias module:views-questionnaire.QuestionnaireView#resetViewAndValidation
+         */
+        resetViewAndValidation: function () {
+            if (this.timestampsView) {
+                this.timestampsView.remove();
+                this.timestampsView = null;
+            }
+
+            if (this.items) {
+                _.invoke(this.items, "remove");
+            }
+
+            this.items = {};
+            this.validationErrors = { start: null, end: null };
         },
 
         /**
          * Render this view
          * @alias module:views-questionnaire.QuestionnaireView#render
          */
-        render: function() {
-            _.each(this.items, function(item) {
-                item.render().$el.detach();
-            });
-
+        render: function () {
             this.timestampsView && this.timestampsView.$el.detach();
 
-            var annotation;
+            let annotation;
             if (this.annotation) {
                 annotation = this.annotation.toJSON();
                 annotation.end = annotation.start + annotation.duration;
             }
 
-            this.$el.html(template({
-                annotation: annotation,
-                prompt: this.questionnaire.prompt,
-            }));
+            if (this.annotation && this.questionnaire) {
+                const jsonForm = this.questionnaire.getForm();
+                this.items = createItems(jsonForm, this.annotation);
+            }
+
+            _.each(this.items, function (item) {
+                item.render({ isFirstOpen: true }).$el.detach();
+            });
+
+            this.$el.html(
+                template({
+                    annotation: annotation,
+                    prompt: this.questionnaire ? this.questionnaire.getPromptAttribute() : null
+                })
+            );
 
             if (this.annotation && !this.timestampsView) {
-                this.timestampsView = new AnnotationTimestampView({ model: this.annotation }).render();
+                this.timestampsView = new AnnotationTimestampView({
+                    model: this.annotation
+                }).render();
             }
 
             if (this.timestampsView) {
-                this.$(".questionnaire-timestamps-container").append(this.timestampsView.$el);
+                this.$(".questionnaire-timestamps-container").append(
+                    this.timestampsView.$el
+                );
             }
 
-            var $viewContainer = this.$(".questionnaire-items");
-            _.each(this.items, function(item) {
+            const $viewContainer = this.$(".questionnaire-items");
+            _.each(this.items, function (item) {
                 $viewContainer.append(item.$el);
             });
         },
 
         /**
-         * Listener for click on the cancel button
+         * Listener for click on the cancel button.
+         * 1) Annotation is created from questionnaire, but initial value is '0'.
+         * @todo CC | Optimize: Integrate cancel modal (see comment below)?
+         * @todo CC | Review: Refactor - Remove legacy conditional check 'createdFromQuestionnaire'?
+         * @todo CC | Review: Should multiple drafts be allowed (instead of deleting them on switching?)
          * @alias module:views-questionnaire.QuestionnaireView#onCancel
-         * @param {Event} event the click event
+         * @param {Event} _event Click event
          */
-        onCancel: function(event) {
-            if (!this.annotation.get("createdFromQuestionnaire")) {
+        onCancel: function (_event) {
+            if (!this.annotation.get("createdFromQuestionnaire")) { // 1)
                 annotationTool.deleteOperation.start(
                     this.annotation,
                     annotationTool.deleteOperation.targetTypes.ANNOTATION,
                     this.closeQuestionnaire.bind(this)
                 );
             } else {
-                //alerts.warning( i18next.t("questionnaire.draft.cancel") );
-                // Listener for cancel confirmation
-                //$( "#confirm-alert" ).one("click", this.onDestroy());
-                // TODO: !!!
-                this.closeQuestionnaire();
+                // alerts.warning( i18next.t("questionnaire.draft.cancel") );
+                // Listener for cancel confirmation. See 'annotation-tool.js' example:
+                // deleteModal.find("#confirm-delete").one("click", confirm) ...
+                this.closeQuestionnaire(this.annotation);
             }
         },
 
         /**
-         * Helper function for resetting the local state and re-rendering.
+         * Helper function for resetting the state and re-rendering.
          * @alias module:views-questionnaire.QuestionnaireView#onDestroy
          */
-        onDestroy: function() {
-            this.closeQuestionnaire();
+        onDestroy: function () {
+            this.closeQuestionnaire(this.annotation);
         },
 
         /**
-         * Closes the questionnaire.
-         * @alias module:views-questionnaire.QuestionnaireView#closeQuestionnaire
+         * On persisting annotation for questionnaire, create view items and handle storage.
+         * Annotation ID given from server is needed.
+         * @alias module:views-questionnaire.QuestionnaireView#onDestroy
          */
-        closeQuestionnaire: function() {
-            this.stopListening(this.annotation);
-            this.annotation = null;
-            this.resetQuestionnaire();
-            this.resetDraft();
+        onPersist: function () {
             this.render();
         },
 
         /**
          * Listener for changes while editing the end time
          * @alias module:views-questionnaire.Questionnaire#onChangeEnd
-         * @param  {event} event Event object
+         * @param  {Event} event Change event
          */
-        onChangeEnd: function(event) {
-            var $target = $(event.currentTarget);
-            var value = $target.val();
+        onChangeEnd: function (event) {
+            const $target = $(event.currentTarget);
+            const value = $target.val();
 
             this.validationErrors.end = null;
 
-            if (!value.match(/^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)$/)) {
+            if (
+                !value.match(
+                    /^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)$/
+                )
+            ) {
                 this.validationErrors.end = "validation errors.wrong format";
                 return;
             }
 
-            var values = value.split(":");
-            var newEnd;
+            const values = value.split(":");
+            let newEnd;
             if (values.length === 3) {
-                newEnd = parseInt(values[0], 10) * 3600 + parseInt(values[1], 10) * 60 + parseInt(values[2], 10);
+                newEnd =
+                    parseInt(values[0], 10) * 3600 +
+                    parseInt(values[1], 10) * 60 +
+                    parseInt(values[2], 10);
             } else if (values.length === 2) {
                 newEnd = parseInt(values[0], 10) * 60 + parseInt(values[1], 10);
             } else {
                 newEnd = parseInt(values[0], 10);
             }
 
-            var start = this.annotation.get("start");
-            if (annotationTool.playerAdapter.getDuration() < newEnd || start > newEnd) {
+            const start = this.annotation.get("start");
+            if (
+                annotationTool.playerAdapter.getDuration() < newEnd ||
+                start > newEnd
+            ) {
                 this.validationErrors.end = "validation errors.out of bounds";
 
                 return;
@@ -221,38 +297,46 @@ define([
         /**
          * Listener for changes while editing the start time
          * @alias module:views-questionnaire.Questionnaire#onChangeStart
-         * @param  {event} event Event object
+         * @param {Event} event Change start event
          */
-        onChangeStart: function(event) {
-            var $target = $(event.currentTarget);
-            var $controlGroup = $target.closest(".control-group");
-            var $error = $controlGroup.find(".error-msg");
-            var value = $target.val();
+        onChangeStart: function (event) {
+            const $target = $(event.currentTarget);
+            const $controlGroup = $target.closest(".control-group");
+            const $error = $controlGroup.find(".error-msg");
+            const value = $target.val();
 
             $error.html("");
             $controlGroup.removeClass("error");
             this.validationErrors.start = null;
 
-            if (!value.match(/^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)$/)) {
+            if (
+                !value.match(
+                    /^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)$/
+                )
+            ) {
                 this.validationErrors.start = "validation errors.wrong format";
                 $controlGroup.addClass("error");
                 $error.html(i18next.t(this.validationErrors.start));
                 return;
             }
 
-            var values = value.split(":");
-            var newStart;
+            const values = value.split(":");
+            let newStart;
             if (values.length === 3) {
-                newStart = parseInt(values[0], 10) * 3600 + parseInt(values[1], 10) * 60 + parseInt(values[2], 10);
+                newStart =
+                    parseInt(values[0], 10) * 3600 +
+                    parseInt(values[1], 10) * 60 +
+                    parseInt(values[2], 10);
             } else if (values.length === 2) {
-                newStart = parseInt(values[0], 10) * 60 + parseInt(values[1], 10);
+                newStart =
+                    parseInt(values[0], 10) * 60 + parseInt(values[1], 10);
             } else {
                 newStart = parseInt(values[0], 10);
             }
 
-            var duration = this.annotation.get("duration");
-            var start = this.annotation.get("start");
-            var end = start + duration;
+            const duration = this.annotation.get("duration");
+            const start = this.annotation.get("start");
+            const end = start + duration;
 
             if (duration > 0 && end < newStart) {
                 this.validationErrors.start = "validation errors.start after end";
@@ -261,97 +345,175 @@ define([
                 return;
             }
 
-            this.annotation.set({ start: newStart, duration: Math.round(end - newStart) });
+            this.annotation.set({
+                start: newStart,
+                duration: Math.round(end - newStart)
+            });
         },
 
         /**
-         * Listener for click on the start button
+         * Listener for starting a new questionnaire.
+         * - Destroy any old data if exists, just in case.
+         * - Create annotation and bind events to defer rendering.
+         * @todo CC | Optimize: If clicking away in UI (NOT on cancel button) or creating a new, the empty annotation should be deleted
          * @alias module:views-questionnaire.QuestionnaireView#onStart
-         * @param {Event} event the click event
+         * @param {number} id Questionnaire ID
          */
-        onStart: function(event) {
-            /*
-             { createdFromQuestionnaire: true } does not work as params because delete operation in onCancel fails
-             */
-            var annotation = annotationTool.createAnnotation({} );
-            this.openQuestionnaire(annotation);
-        },
+        onStart: function (id) {
+            this.closeQuestionnaire(this.annotation);
 
-        /**
-         * Opens the questionnaire using the given annotation.
-         * @alias module:views-questionnaire.QuestionnaireView#openQuestionnaire
-         * @param {Annotation} annotation the annotation to show
-         */
-        openQuestionnaire: function (annotation) {
-            this.annotation = annotation;
-            this.listenTo(this.annotation, "destroy", this.onDestroy);
-            this.items = createItems(this.questionnaire, this.annotation);
-            this.render();
+            const annotation = annotationTool.createAnnotation({ createdFromQuestionnaire: id });
+
+            this.setQuestionnaire(id);
+            this.setAnnotation(annotation);
+
+            this.listenToOnce(annotation, "sync", this.onPersist);
+            this.listenToOnce(annotation, "destroy", this.onDestroy);
+            this.listenToOnce(annotation, "error", () => {
+                throw new Error("Cannot persist annotation");
+            });
         },
 
         /**
          * Listener for submitting the form
          * @alias module:views-questionnaire.QuestionnaireView#onSubmitForm
-         * @param {Event} event the submit event
+         * @param {Event} event Submit event
          */
-        onSubmitForm: function(event) {
+        onSubmitForm: function (event) {
             event.preventDefault();
 
-            if (!this.validationErrors.start &&
+            if (
+                !this.validationErrors.start &&
                 !this.validationErrors.end &&
-                _.every(_.invoke(this.items, "validate"))) {
-                var contentItems = _.filter(_.flatten(_.invoke(this.items, "getContentItems")));
+                _.every(_.invoke(this.items, "validate"))
+            ) {
+                const contentItems = _.filter(
+                    _.flatten(_.invoke(this.items, "getContentItems"))
+                );
+
                 this.annotation.get("content").reset(contentItems);
-                this.annotation.set({createdFromQuestionnaire: true});
+                this.annotation.set({ createdFromQuestionnaire: this.questionnaire.id });
                 this.annotation.save();
-                this.annotation = null;
+
                 this.onDestroy();
             } else {
-              this.render();
+                this.render();
             }
         },
 
         /**
          * Listener for the signal to open the questionnaire for editing of an existing annotation.
+         * @todo CC | Review: Shouldn't discard confirmation also delete the empty annotation? Currently only happens on clicking 'cancel'..
          * @alias module:views-questionnaire.QuestionnaireView#onShowEdit
-         * @param {Annotation} annotation the annotation to edit
+         * @param {Annotation} annotation The annotation to edit
          */
-        onShowEdit: function(annotation) {
-            // we are already editing this annotation
-            if (this.annotation && this.annotation.cid === annotation.cid) {
-                console.error("You are already editing this annotation.");
-                return;
-            }
+        onShowEdit: function (annotation) {
+            const questionnaireId = annotation.get("createdFromQuestionnaire");
 
-            if (!annotation.get("createdFromQuestionnaire")) {
+            if (!questionnaireId) {
                 console.error("This annotation cannot be edited via questionnaire.");
                 return;
             }
 
+            if (this.annotation && this.annotation.cid === annotation.cid) {
+                console.error("You are already editing this annotation.");
+                this.showLayout();
+                return;
+            }
+
             if (this.annotation) {
-                var confirmed = confirm(i18next.t("annotate.confirm edit"));
+                const confirmed = confirm(i18next.t("annotate.confirm edit"));
+
                 if (!confirmed) {
+                    console.error("Not confirmed, end.");
                     return;
                 }
             }
-            this.closeQuestionnaire();
-            this.openQuestionnaire(annotation);
+
+            this.showLayout();
+            this.closeQuestionnaire(this.annotation);
+            this.openQuestionnaire(questionnaireId, annotation);
+        },
+
+        /**
+         * Opens the questionnaire using the given annotation.
+         * @alias module:views-questionnaire.QuestionnaireView#openQuestionnaire
+         * @param {Number} questionnaireId The questionnaire ID
+         * @param {Annotation} annotation The annotation to show
+         */
+        openQuestionnaire: function (questionnaireId, annotation) {
+            this.setQuestionnaire(questionnaireId);
+            this.setAnnotation(annotation);
+
+            this.render();
+        },
+
+        /**
+         * Closes the questionnaire.
+         * Unbind, reset, delete all data and re-render view.
+         * @alias module:views-questionnaire.QuestionnaireView#closeQuestionnaire
+         */
+        closeQuestionnaire: function (annotation) {
+            this.stopListening(annotation);
+            this.resetViewAndValidation();
+            this.resetDraft(annotation);
+            this.setQuestionnaire(null);
+            this.setAnnotation(null);
+
+            this.render();
+        },
+
+        /**
+         * Set/unset annotation model
+         * @†odo CC | Review: Unsetting annotation, should it then be removed from collection?
+         * @alias module:views-questionnaire.QuestionnaireView#setAnnotation
+         * @param {null|object} annotation Annotation model | null
+         */
+        setAnnotation: function (annotation) {
+            this.annotation = annotation;
+        },
+
+        /**
+         * Set/unset questionnaire model
+         * @alias module:views-questionnaire.QuestionnaireView#setQuestionnaire
+         * @param {null|number} id Questionnaire ID | null
+         */
+        setQuestionnaire: function (id) {
+            this.questionnaire = id ? this.questionnaires.getOneById(id) : null;
+        },
+
+        /**
+         * Switch layout to questionnaire
+         * @alias module:views-questionnaire.QuestionnaireView#showLayout
+         */
+        showLayout: function () {
+            annotationTool.switchTab("questionnaire");
         }
     });
 
+    /**
+     * Map JSON to view items
+     * @alias module:views-questionnaire.QuestionnaireView#createItems
+     * @param {object} jsonform JSON form data
+     * @param {object} annotation Annotation model
+     * @return {object} View blocks
+     */
     function createItems(jsonform, annotation) {
-        var typeMapping = {
+        const typeMapping = {
             label: LabelBlock,
             scale: ScaleBlock,
             string: TextBlock,
             categories: CategoriesBlock
         };
 
-        var formFields = _.reduce(
+        const formFields = _.reduce(
             jsonform.schema,
-            function(memo, item, key) {
+            function (memo, item, key) {
                 if (!(item.type in typeMapping)) {
-                    throw new Error("Missing item type: " + item.type);
+                    const msg = i18next.t("questionnaire.json format error", { name: "type" });
+
+                    alerts.error(msg);
+                    throw new Error(msg);
                 }
                 memo[key] = item;
 
@@ -360,24 +522,25 @@ define([
             {}
         );
 
-        var values = annotation.get("content").groupBy(function (contentItem) {
+        const values = annotation.get("content").groupBy(function (contentItem) {
             return contentItem.get("schema");
         });
 
-        return _.map(jsonform.form, function(formItem) {
+        return _.map(jsonform.form, function (formItem) {
             if (_.isString(formItem) && formItem in formFields) {
+                const formField = formFields[formItem];
+                const typeFunction = typeMapping[formField.type];
+                let value = null;
 
-                var formField = formFields[formItem];
-                var typeFunction = typeMapping[formField.type];
-                var value = null;
                 if (formItem in values) {
                     value =
-                        formField.type !== 'categories'
-                        ? _.head(values[formItem]).get("value")
-                        : values[formItem];
+                        formField.type !== "categories"
+                            ? _.head(values[formItem]).get("value")
+                            : values[formItem];
                 }
 
-                var block = new typeFunction({
+                const block = new typeFunction({
+                    annotation: annotation,
                     item: formField,
                     schema: formItem,
                     value: value
@@ -386,68 +549,15 @@ define([
                 return block;
             }
 
-            if (_.isObject(formItem) && formItem.type && formItem.type === "help") {
+            if (
+                _.isObject(formItem) &&
+                formItem.type &&
+                formItem.type === "help"
+            ) {
                 return new HelpBlock({ item: formItem });
             }
 
-            throw "Invalid JSON form.";
+            throw new Error("Invalid JSON form.");
         });
     }
 });
-
-function getMockupQuestionnaire() {
-    return {
-        "schema": {
-            "item-0": {
-                "type": "string",
-                "name": "description",
-                "title": "1. Beschreibung",
-                "description": "Beschreiben Sie alle relevanten Ereignisse, die Sie hinsichtlich des Analysefokus entdecken können.",
-                "required": true
-            },
-            "item-1": {
-                "type": "categories",
-                "title": "2a. Interpretation",
-                "description": "Interpretieren und erklären Sie möglichst theoriegeleitet die (Re-)Aktion der Lehrperson (und ggf. der SuS) in dieser Unterrichtssequenz. Nutzen Sie die Kategorien des Analysefokus. (Wählen Sie mindestens eine Kategorie aus)",
-                // "categories": [
-                //     "KF-MO: Monitoring",
-                //     "KF-ST: Strukturierung",
-                //     "KF-RR: Regeln und Routinen"
-                // ],
-                "minItems": 1
-            },
-            "item-2": {
-                "type": "string",
-                "name": "interpretation",
-                "title": "2b. Interpretation",
-                "description": "Interpretieren und erklären Sie möglichst theoriegeleitet die (Re-)Aktion der Lehrperson (und ggf. der SuS) in dieser Unterrichtssequenz. Begründen Sie Ihre Interpretation.",
-                "required": true
-            },
-            "item-3": {
-                "type": "string",
-                "name": "evaluation",
-                "title": "3. Bewertung",
-                "description": "Bewerten Sie, wie angemessen die (Re-)Aktion der Lehrperson im jeweiligen Kontext erscheint und begründen Sie Ihre Einschätzung.",
-                "required": true
-            },
-            "item-4": {
-                "type": "string",
-                "name": "alternatives",
-                "title": "4. Handlungsalternative",
-                "description": "Formulieren Sie eine sinnvolle Handlungsalternative für die Lehrperson und diskutieren Sie, ob und inwiefern diese im gegebenen Kontext angemessener als die realisierte Handlung der Lehrperson wäre.",
-                "required": true
-            }
-        },
-        "form": [
-            {
-                "type": "help",
-                "helpvalue": "Freie Annotation des Unterrichtsvideos: Wählen Sie zunächst oben die Start- und Endzeit der annotierten Unterrichtssequenz. Benutzen Sie dann das folgende Analyseschema mit den vier Facetten der professionellen Unterrichtswahrnehmung."
-            },
-            "item-0",
-            "item-1",
-            "item-2",
-            "item-3",
-            "item-4"
-        ]
-    };
-}

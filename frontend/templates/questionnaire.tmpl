@@ -1,25 +1,29 @@
-{{#if annotation}}
-    <div class="questionnaire-form well" style="">
-        <form class="form-horizontal">
-            <fieldset>
-                <legend>{{t "questionnaire.form prompt"}}</legend>
-                <div class="questionnaire-timestamps-container"></div>
-                <div class="questionnaire-items"></div>
-            </fieldset>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">{{t "common actions.save"}}</button>
-                <button type="button" class="btn cancel">{{t "common actions.cancel"}}</button>
-            </div>
+<div class="window expanded questionnaire-form-container">
+    <div class="questionnaire-form p-2 pe-4">
+        {{#if annotation}}
+            {{#if prompt}}
+                <h5 class="text">{{prompt}}</h5>
+            {{/if}}
+            <form class="form-horizontal">
+                <fieldset>
+                    <legend>{{t "questionnaire.form prompt"}}</legend>
+                    <div class="questionnaire-timestamps-container"></div>
+                    <div class="questionnaire-items"></div>
+                </fieldset>
+                <div class="form-actions">
+                    {{#if annotation.isMine}}
+                        <button type="submit" class="btn btn-primary">{{t "common actions.save"}}</button>
+                    {{/if}}
+                    <button type="button" class="btn cancel">{{t "common actions.cancel"}}</button>
+                </div>
+            </form>
+        {{else}}
+            <h5 class="text">
+                {{t "questionnaire.blank slate.heading"}}
+            </h5>
+            <p class="text">
+                {{t "questionnaire.blank slate.info"}}
+            </p>
+        {{/if}}
     </div>
-    {{^}}
-    <div class="questionnaire-blank-slate well">
-        <div>
-            <h2>{{t "questionnaire.blank slate.heading"}}</h2>
-            <p> {{prompt}} </p>
-            <button type="button" class="btn questionnaire-start">
-                {{t "questionnaire.blank slate.start"}}
-            </button>
-        </div>
-    </div>
-{{/if}}
+</div>

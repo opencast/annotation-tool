@@ -64,7 +64,7 @@ define(
 
             /*
              * Sorts the given data
-             * @alias module:collections-questionnaires.Categories#sort
+             * @alias module:collections-categories.Categories#sort
              * @param  {object} data Object or array containing the data to sort.
              * @return {object} sorted data
              */

@@ -3,10 +3,11 @@
         <label class="control-label">{{item.title}}{{#if item.required}} *{{/if}}</label>
         <div class="controls">
             <span class="help-block pt-1">{{item.description}}</span>
-            <textarea rows="5" name="{{#if item.name}}{{item.name}}{{/if}}" class="input-block-level save-content"{{#if item.required}} required{{/if}}>{{contentItem.value}}</textarea>
+            <textarea rows="5" name="{{#if item.name}}{{item.name}}{{/if}}" class="input-block-level save-content"{{#if item.required}} required{{/if}} {{#unless @root.isMine}}disabled{{/unless}}>{{contentItem.value}}</textarea>
             {{#each validationErrors as |error|}}
                 <span class="help-block"> {{t error}} </span>
             {{/each}}
         </div>
     </div>
+
 {{/layout}}

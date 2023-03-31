@@ -16,35 +16,39 @@
         </p>
         --}}
 
-        {{#if item.minItems}}
-        <span class="help-block mt-1">
-            <b>
-                {{#ifeq item.minItems 1}}
-                {{t "questionnaire.help min items singular"}}
-                {{else}}
-                {{t "questionnaire.help min items plural" count=item.minItems}}
-                {{/ifeq}}
-            </b>
-        </span>
-        {{/if}}
+        {{#if @root.isMine}}
+            {{#if item.minItems}}
+            <span class="help-block mt-1">
+                <b>
+                    {{#ifeq item.minItems 1}}
+                    {{t "questionnaire.help min items singular"}}
+                    {{else}}
+                    {{t "questionnaire.help min items plural" count=item.minItems}}
+                    {{/ifeq}}
+                </b>
+            </span>
+            {{/if}}
 
-        {{#each categories as |category|}}
-          {{#unless category.deleted_at}}
-              {{#if category.isPublic}}
-                  {{> chooser category=category}}
-              {{else if category.isMine}}
-                  {{> chooser category=category}}
-              {{/if}}
-          {{/unless}}
-        {{/each}}
+            {{#each categories as |category|}}
+              {{#unless category.deleted_at}}
+                  {{#if category.isPublic}}
+                      {{> chooser category=category}}
+                  {{else if category.isMine}}
+                      {{> chooser category=category}}
+                  {{/if}}
+              {{/unless}}
+            {{/each}}
+        {{/if}}
 
         {{#if contentItems}}
         <ul class="questionnaire-content-items mt-2">
             {{#each contentItems as |item|}}
             <li>
-                <button class="questionnaire-content-item-remove" type="button">
-                    <i class="icon-trash"></i>
-                </button>
+                {{#if @root.isMine}}
+                    <button class="questionnaire-content-item-remove" type="button">
+                        <i class="icon-trash"></i>
+                    </button>
+                {{/if}}
                 <span>
                     {{#ifeq item.type "label"}} {{> contentItemLabel}} {{/ifeq}}
                     {{#ifeq item.type "scaling"}} {{> contentItemScaling}} {{/ifeq}}
@@ -72,9 +76,8 @@
 <span
     class="content-item-label"
     title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})">
-
-    <b>{{label.value}} ({{label.abbreviation}})</b> <b {{#if label.category.settings.color}}style="background-color: {{label.category.settings.color}};"{{/if}}>[{{label.category.name}}]</b>
-
+    <b class="text">{{label.value}} ({{label.abbreviation}})</b>
+    <b {{#if label.category.settings.color}}style="background-color: {{label.category.settings.color}};"{{/if}}>[{{label.category.name}}]</b>
 </span>
 
 {{/with}}

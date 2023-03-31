@@ -186,6 +186,7 @@
       "head": "View",
       "views": {
         "annotate view": "$t(views.annotate)",
+        "annotate templates": "$t(views.annotate templates)",
         "head": "Views",
         "list view": "$t(views.list)",
         "loop controller": "$t(views.loop)"
@@ -198,7 +199,7 @@
         "alternative": "Alternative",
         "reviewing": "Reviewing",
         "fullscreen timeline": "Fullscreen timeline",
-        "questionnaire": "Questionnaire"
+        "questionnaire": "Annotation templates"
       },
       "auto expand": "Automatically expand active annotations",
       "drag here": "Drag icon to place element"
@@ -239,16 +240,27 @@
   },
   "questionnaire": {
     "draft": {
-      "cancel": "Delete draft?"
+      "cancel": "Do you really want to delete the draft?"
     },
-    "form prompt": "Create an annotation using a questionnaire",
+    "tabs": {
+      "all": "All",
+      "mine": "Mine",
+      "public": "Public"
+    },
+    "form prompt": "Create an annotation using a annotation template",
+    "delete": "Delete annotation template",
+    "upload": "Import annotation template",
     "blank slate": {
-      "heading": "Questionnaire-based Annotations",
-      "start": "Annotate video"
+      "heading": "Template-based Annotations",
+      "info": "Select an annotation or annotation template first."
     },
     "help timestamp": "Format: 0:00:00",
     "help min items singular": "You have to select at least one label.",
-    "help min items plural": "You have to select at least {{count}} labels."
+    "help min items plural": "You have to select at least {{count}} labels.",
+    "json format error": "Missing JSON schema item '{{name}}'."
+  },
+  "questionnaire drafts": {
+     "heading": "Annotation templates"
   },
   "required fields": "Required fields",
   "scale modal": {
@@ -350,11 +362,13 @@
   "untitled video": "Untitled video",
   "views": {
     "annotate": "Create new annotations",
+    "annotate templates": "Manage annotation templates",
     "list": "Annotation list",
     "loop": "Loop controller",
     "timeline": "Timeline",
     "player": "Player",
-    "questionnaire": "Questionnaire"
+    "questionnaire": "Annotation template form",
+    "questionnaire-drafts": "Annotation templates"
   },
   "validation errors": {
     "empty": "This field must not be empty",

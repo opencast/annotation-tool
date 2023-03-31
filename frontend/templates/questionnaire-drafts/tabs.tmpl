@@ -1,0 +1,28 @@
+{{#*inline "tab"}}
+<li class="tab-button {{is isActive "active" ""}}">
+    <a data-toggle="tab" data-tabid="{{id}}" data-target="#questionnaire-tab-{{id}}">
+        {{name}}
+        {{#if showDropdown}}
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown">
+                    <b class="caret"></b>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <button class="import" type="button"
+                          data-file="questionnaire-file-{{id}}"
+                          data-toggle="import">{{t "questionnaire.upload"}}</button>
+                    </li>
+                </ul>
+            </div>
+        {{/if}}
+    </a>
+    <input data-file-input class="file" id="questionnaire-file-{{id}}" type="file">
+</li>
+{{/inline}}
+
+<ul class="nav nav-tabs">
+    {{#each tabs}}
+        {{> tab id=id name=name showDropdown=(hasFileUploadMenu id role) isActive=(eq @root.activeTabId id) }}
+    {{/each}}
+</ul>

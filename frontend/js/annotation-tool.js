@@ -136,6 +136,7 @@ define(
                     "createAnnotation",
                     "fetchData",
                     "importCategories",
+                    "importQuestionnaires",
                     "onDestroyRemoveSelection",
                     "onTimeUpdate",
                     "selectTrack",
@@ -366,13 +367,12 @@ define(
 
             /**
              * Switch to different tab in goldenLayout
-             * @alias annotationTool.switchLayout
+             * @alias annotationTool.switchTab
              */
-            switchLayout: function (component_name) {
+            switchTab: function (component_name) {
                 // TODO: use MainView instead
                 var goldenLayout = annotationTool.views.main.goldenlayout;
                 for (var i = 0; i < goldenLayout._getAllContentItems().length; i++) {
-                    // console.log(myLayout._getAllContentItems()[i].componentName);
                     if (goldenLayout._getAllContentItems()[i].componentName == component_name) {
                         var contentItem = goldenLayout._getAllContentItems()[i];
                         contentItem.parent.setActiveContentItem(contentItem);
@@ -499,7 +499,6 @@ define(
              * @param {PlainObject} defaultCategoryAttributes The default attributes to use to insert the imported categories (like access)
              */
             importCategories: function (imported, defaultCategoryAttributes) {
-
                 if (!imported.categories || imported.categories.length === 0) {
                     return;
                 }
@@ -541,6 +540,46 @@ define(
                             newCat.get("labels").create(label);
                         });
                     }
+                });
+            },
+
+            /**
+             * Import the given questionnaires in the tool.
+             * 1) Enforce array format and flatten, if nested (allows object|array notation to be passed)
+             *    Input => Transform => Output example: {} | [{}] => [{}] | [[{}]] => [{}]
+             * @param {string} questionnairesRaw String containing raw questionnaire data (assumed: object|array notation)
+             * @param {PlainObject|undefined} defaultQuestionnaireAttributes The default attributes to use to insert the imported questionnaires (like access)
+             */
+            importQuestionnaires: function (questionnairesRaw, defaultQuestionnaireAttributes) {
+                if (!questionnairesRaw) {
+                    return;
+                }
+
+                const questionnaires = JSON.parse("[" + questionnairesRaw + "]").flat(); // 1)
+                const videoQuestionnaires = this.video.get("questionnaires");
+
+                // @todo CC | Review: Good solution? Does not seem best-practice to have listener here.
+                // Prevent rendering broken data and show error
+                this.listenToOnce(videoQuestionnaires, "error", function (model) {
+                    videoQuestionnaires.remove(model.cid);
+
+                    throw new Error(i18next.t("import operations.wrong format"));
+                });
+
+                _.each(questionnaires, function (questionnaire) {
+                    questionnaire.title = questionnaire.prompt;
+                    questionnaire.content = {
+                        prompt: questionnaire.prompt,
+                        schema: questionnaire.schema,
+                        form: questionnaire.form
+                    };
+
+                    delete questionnaire.prompt;
+                    delete questionnaire.schema;
+                    delete questionnaire.form;
+
+                    videoQuestionnaires
+                        .create(_.extend(questionnaire, defaultQuestionnaireAttributes), { async: false });
                 });
             },
 
@@ -944,6 +983,25 @@ define(
                         }
                     });
                 }
+            },
+            QUESTIONNAIRE: {
+                name: "questionnaire",
+                getContent: function (target) {
+                    return target.get("title");
+                },
+                destroy: function (questionnaire, callback) {
+                    questionnaire.destroy({
+                        success: function () {
+                            if (callback) {
+                                callback();
+                            }
+                        },
+                        error: function (error) {
+                            console.warn("Cannot delete questionnaire: " + error);
+                        }
+                    });
+                },
+                customMessage: function (target) {}
             }
         };
 

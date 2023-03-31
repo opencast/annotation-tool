@@ -1,0 +1,24 @@
+{{#*inline "listItem"}}
+    <li class="questionnaire-list-item">
+        <a data-toggle="editor" data-id="{{id}}" class="link">
+            {{title}}
+        </a>
+        <a data-toggle="delete" data-id="{{id}}" class="delete">
+          <i class="icon-trash" title="{{t "questionnaire.delete"}}"></i>
+        </a>
+    </li>
+{{/inline}}
+
+{{#*inline "listItems"}}
+    <ul id="c-tab-{{tabs.id}}" class="tab-pane {{is isActive "active" ""}} m-0">
+        {{#each questionnaires}}
+            {{> listItem id=attributes.id title=attributes.title }}
+        {{/each}}
+    </ul>
+{{/inline}}
+
+<div class="tab-content">
+    {{#each tabs as |tabs|}}
+        {{> listItems tabs=tabs questionnaires=@root.questionnaires isActive=(eq @root.activeTabId id) }}
+    {{/each}}
+</div>

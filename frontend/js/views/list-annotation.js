@@ -435,9 +435,9 @@ define(
                     "list"
                 );
 
+                // Double click
                 if (event.originalEvent.detail > 1 && this.model.get("createdFromQuestionnaire")) {
-                    Backbone.trigger("questionnaire:edit-annotation", this.model);
-                    annotationTool.switchLayout("questionnaire");
+                    annotationTool.views.main.openViewQuestionnaireAnnotation(this.model);
                 }
             },
 
@@ -460,8 +460,7 @@ define(
                 }
 
                 if (this.model.get("createdFromQuestionnaire")) {
-                    Backbone.trigger("questionnaire:edit-annotation", this.model);
-                    annotationTool.switchLayout("questionnaire");
+                    annotationTool.views.main.openViewQuestionnaireAnnotation(this.model);
                 } else {
 
                     this.commentContainer.setState(CommentsContainer.STATES.READ);

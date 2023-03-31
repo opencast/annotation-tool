@@ -12,12 +12,13 @@
  *  or implied. See the License for the specific language governing
  *  permissions and limitations under the License.
  *
+ * @module questionnaire
  */
 define([
     "underscore",
     "models/content-item",
-    "templates/questionnaire-block-label",
-    "templates/questionnaire-block-layout",
+    "templates/questionnaire/block-label",
+    "templates/questionnaire/block-layout",
     "templates/partial-label-chooser",
     "backbone",
     "bootstrap"
@@ -28,7 +29,7 @@ define([
         tagName: "section",
         className: "questionnaire-block-label",
         events: {
-            "click .btn": "onClick"
+            "click .btn": "onClick",
         },
         initialize: function (options) {
             this.item = options.item;
@@ -48,9 +49,14 @@ define([
                     {
                         item: this.item,
                         color: getColor(category),
-                        labels: getLabels(category, this.model)
+                        labels: getLabels(category, this.model),
                     },
-                    { partials: { layout: tmplLayout, labelChooser: tmplLabelChooser } }
+                    {
+                        partials: {
+                            layout: tmplLayout,
+                            labelChooser: tmplLabelChooser,
+                        },
+                    }
                 )
             );
             return this;
@@ -96,8 +102,10 @@ define([
     }
 
     function getCategoryByName(name) {
-        return annotationTool.video.get("categories").models.find(function (category) {
-            return category.get("name") === name;
-        });
+        return annotationTool.video
+            .get("categories")
+            .models.find(function (category) {
+                return category.get("name") === name;
+            });
     }
 });

@@ -109,7 +109,9 @@ define(
                 this.labelViews = [];
 
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
+
                 // Not our category but someone elses? Should not be clickable
+                // @see module:questionnaire#getCategoryFiltered for consistent solution
                 if (attr.category.get("settings").createdAsMine && !attr.category.isMine()) {
                     this.$el.addClass("read-only");
                 }
