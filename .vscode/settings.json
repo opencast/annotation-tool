@@ -14,6 +14,7 @@
       "frontend/src/**": true
   },
   "search.exclude": {
+      "*.patch": true,
       "**/.git": true,
       "**/node_modules": true,
       ".history": true,
