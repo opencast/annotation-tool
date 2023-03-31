@@ -80,8 +80,8 @@ public class AnnotationDto extends AbstractResourceDto {
   @Column(name = "content", nullable = false)
   private String content;
 
-  @Column(name = "createdFromQuestionnaire", nullable = false)
-  private boolean createdFromQuestionnaire;
+  @Column(name = "createdFromQuestionnaire")
+  private long createdFromQuestionnaire;
 
   // Settings as JSON string
   @Column(name = "settings")
@@ -98,14 +98,14 @@ public class AnnotationDto extends AbstractResourceDto {
   protected Map<String, String> tags = new HashMap<String, String>();
 
   public static AnnotationDto create(long trackId, double start, Option<Double> duration, String content,
-          boolean createdFromQuestionnaire, Option<String> settings, Resource resource) {
+          long createdFromQuestionnaire, Option<String> settings, Resource resource) {
     final AnnotationDto dto = new AnnotationDto().update(start, duration, content, createdFromQuestionnaire,
             settings, resource);
     dto.trackId = trackId;
     return dto;
   }
 
-  public AnnotationDto update(double start, Option<Double> duration, String content, boolean createdFromQuestionnaire,
+  public AnnotationDto update(double start, Option<Double> duration, String content, long createdFromQuestionnaire,
           Option<String> settings, Resource resource) {
     super.update(resource);
     this.content = content;

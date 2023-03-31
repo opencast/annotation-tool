@@ -24,6 +24,7 @@ import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
 import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.api.Questionnaire;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
 import org.opencast.annotation.api.Track;
@@ -35,6 +36,7 @@ import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
 import org.opencast.annotation.impl.persistence.CommentDto;
+import org.opencast.annotation.impl.persistence.QuestionnaireDto;
 import org.opencast.annotation.impl.persistence.ScaleDto;
 import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
@@ -302,7 +304,7 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations")
   public Response postAnnotation(@PathParam("trackId") final long trackId, @FormParam("start") final Double start,
           @FormParam("duration") final Double duration, @FormParam("content") @DefaultValue("[]") final String content,
-          @FormParam("createdFromQuestionnaire") @DefaultValue("false") final boolean createdFromQuestionnaire,
+          @FormParam("createdFromQuestionnaire") final long createdFromQuestionnaire,
           @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
     return run(array(start), new Function0<Response>() {
       @Override
@@ -331,7 +333,7 @@ public class VideoEndpoint {
   public Response putAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id,
           @FormParam("start") final double start, @FormParam("duration") final Double duration,
           @FormParam("content") @DefaultValue("[]") final String content,
-          @FormParam("createdFromQuestionnaire") @DefaultValue("false") final boolean createdFromQuestionnaire,
+          @FormParam("createdFromQuestionnaire") final long createdFromQuestionnaire,
           @FormParam("settings") final String settings,
           @FormParam("tags") final String tags) {
     return run(array(start), new Function0<Response>() {
@@ -694,6 +696,69 @@ public class VideoEndpoint {
     return host.deleteLabelResponse(some(videoId), categoryId, id);
   }
 
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("questionnaires/{questionnaireId}")
+  public Response getQuestionnaire(@PathParam("questionnaireId") final long id) {
+    return host.getQuestionnaireResponse(some(videoId), id);
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("questionnaires")
+  public Response getQuestionnaires(
+          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
+          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
+          @QueryParam("tags-or") final String tagsOr) {
+    return host.getQuestionnairesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr);
+  }
+
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("questionnaires")
+  public Response postQuestionnaire(
+          @FormParam("questionnaireId") final Long id,
+          @FormParam("title") final String title,
+          @FormParam("content") @DefaultValue("[]") final String content,
+          @FormParam("settings") final String settings,
+          @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    if (id == null)
+      return host.postQuestionnaireResponse(some(videoId), title, content, settings, access, tags);
+
+    return run(array(id), new Function0<Response>() {
+      @Override
+      public Response apply() {
+        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
+
+        if (videoOpt.isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
+          return BAD_REQUEST;
+
+        Resource resource = eas.createResource(tagsMap.bind(Functions.identity()));
+        Option<Questionnaire> questionnaireFromTemplate = eas.createQuestionnaireFromTemplate(id, videoId, resource);
+
+        return questionnaireFromTemplate.fold(new Option.Match<Questionnaire, Response>() {
+          @Override
+          public Response some(Questionnaire q) {
+            return Response.created(host.questionnaireLocationUri(q, true))
+              .entity(Strings.asStringNull().apply(QuestionnaireDto.toJson.apply(eas, q))).build();
+          }
+
+          @Override
+          public Response none() {
+            return BAD_REQUEST;
+          }
+        });
+      }
+    });
+  }
+
+  @DELETE
+  @Path("questionnaires/{questionnaireId}")
+  public Response deleteQuestionnaire(@PathParam("questionnaireId") final long questionnaireId) {
+    return host.deleteQuestionnaireResponse(some(videoId), questionnaireId);
+  }
+
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("tracks/{trackId}/annotations/{annotationId}/comments")
@@ -903,6 +968,10 @@ public class VideoEndpoint {
     if (comment.isNone()) return BAD_REQUEST;
     return getCommentsResponse(trackId, annotationId, some(commentId), limit, offset, date, tagsAnd,
             tagsOr);
+  }
+
+  private URI questionnaireLocationUri(Questionnaire q) {
+    return uri(host.getEndpointBaseUrl(), "videos", q.getVideoId(), "questionnaire", q.getId());
   }
 
   private URI trackLocationUri(Track t) {

@@ -19,6 +19,7 @@ import static org.opencast.annotation.impl.persistence.AnnotationDto.toAnnotatio
 import static org.opencast.annotation.impl.persistence.CategoryDto.toCategory;
 import static org.opencast.annotation.impl.persistence.CommentDto.toComment;
 import static org.opencast.annotation.impl.persistence.LabelDto.toLabel;
+import static org.opencast.annotation.impl.persistence.QuestionnaireDto.toQuestionnaire;
 import static org.opencast.annotation.impl.persistence.ScaleDto.toScale;
 import static org.opencast.annotation.impl.persistence.ScaleValueDto.toScaleValue;
 import static org.opencast.annotation.impl.persistence.TrackDto.toTrack;
@@ -37,6 +38,7 @@ import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationException.Cause;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Label;
+import org.opencast.annotation.api.Questionnaire;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
 import org.opencast.annotation.api.ScaleValue;
@@ -47,6 +49,7 @@ import org.opencast.annotation.impl.AnnotationImpl;
 import org.opencast.annotation.impl.CategoryImpl;
 import org.opencast.annotation.impl.CommentImpl;
 import org.opencast.annotation.impl.LabelImpl;
+import org.opencast.annotation.impl.QuestionnaireImpl;
 import org.opencast.annotation.impl.ResourceImpl;
 import org.opencast.annotation.impl.ScaleImpl;
 import org.opencast.annotation.impl.ScaleValueImpl;
@@ -337,7 +340,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Annotation createAnnotation(final long trackId, final double start, final Option<Double> duration,
-          final String content, final boolean createdFromQuestionnaire, final Option<String> settings, final Resource resource)
+          final String content, final long createdFromQuestionnaire, final Option<String> settings, final Resource resource)
           throws ExtendedAnnotationException {
     if (getTrack(trackId).isSome()) {
       final AnnotationDto dto = AnnotationDto.create(trackId, start, duration, content, createdFromQuestionnaire,
@@ -995,6 +998,100 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             deleteResource);
     updateComment(updated);
     return true;
+  }
+
+  @Override
+  public Questionnaire createQuestionnaire(Option<Long> videoId, String title, String content, Option<String> settings, Resource resource)
+          throws ExtendedAnnotationException {
+    final QuestionnaireDto dto = QuestionnaireDto.create(videoId, title, content, settings, resource);
+
+    return tx(Queries.persist(dto)).toQuestionnaire();
+  }
+
+  @Override
+  public Option<Questionnaire> getQuestionnaire(long id, boolean includeDeleted) throws ExtendedAnnotationException {
+    Option<QuestionnaireDto> dto;
+
+    if (includeDeleted) {
+      dto = findById("Questionnaire.findByIdIncludeDeleted", id);
+    } else {
+      dto = findById("Questionnaire.findById", id);
+    }
+    return dto.map(toQuestionnaire);
+  }
+
+  @Override
+  public List<Questionnaire> getQuestionnaires(final Option<Long> videoId,
+          final Option<Integer> offset, final Option<Integer> limit, Option<Date> since,
+          final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
+          throws ExtendedAnnotationException {
+
+    List<Questionnaire> questionnaires = videoId.fold(new Option.Match<Long, List<Questionnaire>>() {
+      @Override
+      public List<Questionnaire> some(Long id) {
+        List<Questionnaire> questionnaires = findAllById(toQuestionnaire, offset, limit, "Questionnaire.findAllOfVideo", id);
+
+        return filterByAccess(questionnaires);
+      }
+
+      @Override
+      public List<Questionnaire> none() {
+        return tx(named.<QuestionnaireDto> findAllM("Questionnaire.findAllOfTemplate", offset, limit)).map(toQuestionnaire).value();
+      }
+    });
+
+    if (tagsAnd.isSome())
+      questionnaires = filterAndTags(questionnaires, tagsAnd.get());
+
+    if (tagsOr.isSome())
+      questionnaires = filterOrTags(questionnaires, tagsOr.get());
+
+    return questionnaires;
+  }
+
+  @Override
+  public Option<Questionnaire> createQuestionnaireFromTemplate(
+      final long templateQuestionnaireId,
+      final long videoId,
+      final Resource resource) throws ExtendedAnnotationException {
+    return getQuestionnaire(templateQuestionnaireId, false).map(new Function<Questionnaire, Questionnaire>() {
+      @Override
+      public Questionnaire apply(Questionnaire q) {
+        final QuestionnaireDto copyDto = QuestionnaireDto.create(Option.some(videoId), q.getTitle(), q.getContent(), q.getSettings(), resource);
+
+        Questionnaire questionnaire = (Questionnaire) tx(new Function<EntityManager, Object>() {
+          @Override
+          public Object apply(EntityManager em) {
+            return Queries.persist(copyDto).apply(em).toQuestionnaire();
+          }
+        });
+
+        return questionnaire;
+      }
+    });
+  }
+
+  @Override
+  public void updateQuestionnaire(final Questionnaire q) throws ExtendedAnnotationException {
+    update("Questionnaire.findByIdIncludeDeleted", q.getId(), new Effect<QuestionnaireDto>() {
+      @Override
+      public void run(QuestionnaireDto dto) {
+        dto.update(q.getVideoId(), q.getTitle(), q.getContent(), q.getSettings(), q);
+      }
+    });
+  }
+
+  @Override
+  public Questionnaire deleteQuestionnaire(Questionnaire questionnaire) throws ExtendedAnnotationException {
+    Questionnaire result = null;
+    Resource deleteResource = deleteResource(questionnaire);
+
+    final Questionnaire updated = new QuestionnaireImpl(questionnaire.getId(), questionnaire.getVideoId(),
+            questionnaire.getTitle(), questionnaire.getContent(), questionnaire.getSettings(), deleteResource);
+
+    updateQuestionnaire(updated);
+
+    return updated;
   }
 
   // --

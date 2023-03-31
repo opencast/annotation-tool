@@ -38,6 +38,9 @@ drop text,
 drop label_id,
 drop scale_value_id;
 
+alter table xannotations_annotation
+modify createdFromQuestionnaire bigint(20) DEFAULT NULL;
+
 alter table xannotations_label
 add series_label_id bigint(20) DEFAULT NULL
 
