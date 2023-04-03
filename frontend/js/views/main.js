@@ -243,6 +243,7 @@ define(
                                             "questionnaire-drafts",
                                             "questionnaire",
                                             "annotate",
+                                            "list",
                                             "loop"
                                         ].map(viewConfig)
                                     }
