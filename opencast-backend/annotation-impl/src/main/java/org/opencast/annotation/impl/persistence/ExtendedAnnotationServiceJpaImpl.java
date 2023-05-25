@@ -53,6 +53,9 @@ import org.opencast.annotation.impl.ScaleValueImpl;
 import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.UserImpl;
 import org.opencast.annotation.impl.VideoImpl;
+import org.opencast.annotation.impl.persistence.util.PersistenceEnv;
+import org.opencast.annotation.impl.persistence.util.PersistenceEnvs;
+import org.opencast.annotation.impl.persistence.util.Queries;
 
 import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.search.api.SearchQuery;
@@ -70,9 +73,6 @@ import org.opencastproject.util.data.Option.Match;
 import org.opencastproject.util.data.Predicate;
 import org.opencastproject.util.data.Tuple;
 import org.opencastproject.util.data.functions.Options;
-import org.opencastproject.util.persistence.PersistenceEnv;
-import org.opencastproject.util.persistence.PersistenceEnvs;
-import org.opencastproject.util.persistence.Queries;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -1270,7 +1270,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   /**
-   * Wrapper for {@link org.opencastproject.util.persistence.Queries#named}
+   * Wrapper for {@link org.opencast.annotation.impl.persistence.util.Queries#named}
    * to support safe varargs without warnings
    */
   // TODO Why this wrapper ...

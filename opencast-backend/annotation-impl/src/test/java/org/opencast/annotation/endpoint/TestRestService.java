@@ -15,7 +15,7 @@
  */
 package org.opencast.annotation.endpoint;
 
-import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
+import static org.opencast.annotation.impl.persistence.util.PersistenceUtil.newTestEntityManagerFactory;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
