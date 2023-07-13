@@ -1,5 +1,6 @@
 module.exports = {
     defaultSeverity: 'warning',
+    customSyntax: 'postcss-less',
     rules: {
         'no-eol-whitespace': true,
         'block-opening-brace-space-before': 'always-multi-line',
