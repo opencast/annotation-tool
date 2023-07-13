@@ -79,7 +79,7 @@ public class UserDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "value")
+  @Column(name = "\"VALUE\"")
   @CollectionTable(name = "xannotations_user_tags", joinColumns = @JoinColumn(name = "user_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 

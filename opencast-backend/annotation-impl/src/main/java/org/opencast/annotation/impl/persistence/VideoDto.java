@@ -68,7 +68,7 @@ public final class VideoDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "value")
+  @Column(name = "\"VALUE\"")
   @CollectionTable(name = "xannotations_video_tags", joinColumns = @JoinColumn(name = "video_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
