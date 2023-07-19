@@ -1,12 +1,14 @@
 module.exports = {
+    plugins: ['stylelint-stylistic'],
     defaultSeverity: 'warning',
+    customSyntax: 'postcss-less',
     rules: {
-        'no-eol-whitespace': true,
-        'block-opening-brace-space-before': 'always-multi-line',
-        'block-opening-brace-newline-after': 'always-multi-line',
-        'block-opening-brace-space-after': 'always-single-line',
-        'block-closing-brace-space-before': 'always-single-line',
-        'block-closing-brace-newline-before': 'always-multi-line',
-        'indentation': 4
+        'stylistic/no-eol-whitespace': true,
+        'stylistic/block-opening-brace-space-before': 'always-multi-line',
+        'stylistic/block-opening-brace-newline-after': 'always-multi-line',
+        'stylistic/block-opening-brace-space-after': 'always-single-line',
+        'stylistic/block-closing-brace-space-before': 'always-single-line',
+        'stylistic/block-closing-brace-newline-before': 'always-multi-line',
+        'stylistic/indentation': 4
     }
 };
