@@ -88,7 +88,6 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 
@@ -271,7 +270,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Video> getVideo(final long id) throws ExtendedAnnotationException {
-    return getVideoDto(id).map(toVideo);
+    return findById(toVideo, "Video.findById", id);
   }
 
   @Override
@@ -291,7 +290,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public Track createTrack(final long videoId, final String name, final Option<String> description,
           final Option<String> settings, final Resource resource) throws ExtendedAnnotationException {
-    if (getVideoDto(videoId).isSome()) {
+    if (getVideo(videoId).isSome()) {
       final TrackDto dto = TrackDto.create(videoId, name, description, settings, resource);
       return tx(namedQuery.persist(dto)).toTrack();
     } else {
@@ -301,7 +300,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Track createTrack(final Track track) throws ExtendedAnnotationException {
-    if (getVideoDto(track.getVideoId()).isSome()) {
+    if (getVideo(track.getVideoId()).isSome()) {
       return tx(namedQuery.persist(TrackDto.fromTrack(track))).toTrack();
     } else {
       throw notFound;
@@ -387,7 +386,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Annotation createAnnotation(final Annotation annotation) throws ExtendedAnnotationException {
-    if (getTrackDto(annotation.getTrackId()).isSome()) {
+    if (getTrack(annotation.getTrackId()).isSome()) {
       return tx(namedQuery.persist(AnnotationDto.fromAnnotation(annotation))).toAnnotation();
     } else {
       throw notFound;
@@ -488,13 +487,13 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Scale> getScale(long id, boolean includeDeleted) throws ExtendedAnnotationException {
-    final Option<ScaleDto> dto;
+    final Option<Scale> scale;
     if (includeDeleted) {
-      dto = findById("Scale.findByIdIncludeDeleted", id);
+      scale = findById(toScale, "Scale.findByIdIncludeDeleted", id);
     } else {
-      dto = findById("Scale.findById", id);
+      scale = findById(toScale, "Scale.findById", id);
     }
-    return dto.map(toScale);
+    return scale;
   }
 
   @Override
@@ -588,7 +587,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<ScaleValue> getScaleValue(long id) throws ExtendedAnnotationException {
-    return this.<ScaleValueDto> findById("ScaleValue.findById", id).map(toScaleValue);
+    return findById(toScaleValue, "ScaleValue.findById", id);
   }
 
   @Override
@@ -669,12 +668,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public void updateCategoryAndDeleteOtherSeriesCategories(final Category c) throws ExtendedAnnotationException {
     // Get the pre-update version of the category, to figure out its seriesCategoryId
-    Option<CategoryDto> dto;
-    Option<Category> pastC = none();
-    dto = findById("Category.findById", c.getId());
-    if (dto.isSome()) {
-      pastC = dto.map(toCategory);
-    }
+    Option<Category> pastC = findById(toCategory, "Category.findById", c.getId());
 
     // Get all categories on all videos belonging to the seriesCategoryId (including the master)
     if (pastC.isSome() && pastC.get().getSeriesCategoryId().isSome()) {
@@ -698,13 +692,13 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Category> getCategory(long id, boolean includeDeleted) throws ExtendedAnnotationException {
-    Option<CategoryDto> dto;
+    Option<Category> category;
     if (includeDeleted) {
-      dto = findById("Category.findByIdIncludeDeleted", id);
+      category = findById(toCategory, "Category.findByIdIncludeDeleted", id);
     } else {
-      dto = findById("Category.findById", id);
+      category = findById(toCategory, "Category.findById", id);
     }
-    return dto.map(toCategory);
+    return category;
   }
 
   @Override
@@ -898,13 +892,13 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Label> getLabel(long id, boolean includeDeleted) throws ExtendedAnnotationException {
-    Option<LabelDto> dto;
+    Option<Label> label;
     if (includeDeleted) {
-      dto = findById("Label.findByIdIncludeDeleted", id);
+      label = findById(toLabel, "Label.findByIdIncludeDeleted", id);
     } else {
-      dto = findById("Label.findById", id);
+      label = findById(toLabel, "Label.findById", id);
     }
-    return dto.map(toLabel);
+    return label;
   }
 
   @Override
@@ -1077,33 +1071,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     } else {
       return none();
     }
-  }
-
-  /**
-   * Do not nest inside a tx!
-   *
-   * @param id
-   *          value of the ":id" parameter in the named query.
-   */
-  private <A> Option<A> findById(final String queryName, final Object id) {
-    try {
-      Optional<A> result = (Optional<A>) tx(namedQuery.findOpt(queryName, Pair.of("id", id)));
-      if (result.isPresent()) {
-        return some(result.get());
-      } else {
-        return none();
-      }
-    } catch (NoResultException | NonUniqueResultException e) {
-      return none();
-    }
-  }
-
-  private Option<VideoDto> getVideoDto(final long id) {
-    return findById("Video.findById", id);
-  }
-
-  private Option<TrackDto> getTrackDto(final long id) {
-    return findById("Track.findById", id);
   }
 
   /** Create an "id" parameter pair. */
