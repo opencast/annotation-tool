@@ -411,7 +411,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
       update.apply(o);
       return o;
-    }); //.orError(notFound);
+    });
   }
 
   @Override
@@ -434,9 +434,8 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
           throws ExtendedAnnotationException {
 
-    List<Annotation> annotations;
     // TODO refactoring with since
-    List<AnnotationDto> annotationDtos = new ArrayList<>();
+    List<AnnotationDto> annotationDtos;
     if (start.isSome() && end.isSome()) {
       annotationDtos = findAllWithOffsetAndLimit(AnnotationDto.class, "Annotation.findAllOfTrackStartEnd", offset, limit, Pair.of("start", start.get()), Pair.of("end", end.get()));
     } else if (start.isSome()) {
@@ -447,7 +446,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       annotationDtos = findAllWithOffsetAndLimit(AnnotationDto.class, "Annotation.findAllOfTrack", offset, limit, id(trackId));
     }
 
-    annotations = annotationDtos.stream()
+    List<Annotation> annotations = annotationDtos.stream()
             .map(AnnotationDto::toAnnotation)
             .collect(Collectors.toList());
 
@@ -1069,12 +1068,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    *          value of the ":id" parameter in the named query.
    */
   private <A, B> Option<A> findById(final Function<B, A> toA, final String queryName, final Object id) {
-    Optional<B> lol = (Optional<B>) tx(em -> {
+    Optional<B> result = (Optional<B>) tx(em -> {
       return namedQuery.findOpt(queryName, Pair.of("id", id)).apply(em);
     });
-    if (lol.isPresent()) {
-      A lel = toA.apply(lol.get());
-      return some(lel);
+    if (result.isPresent()) {
+      A appliedResult = toA.apply(result.get());
+      return some(appliedResult);
     } else {
       return none();
     }
@@ -1088,9 +1087,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    */
   private <A> Option<A> findById(final String queryName, final Object id) {
     try {
-      Optional<A> lol = (Optional<A>) tx(namedQuery.findOpt(queryName, Pair.of("id", id)));
-      if (lol.isPresent()) {
-        return some(lol.get());
+      Optional<A> result = (Optional<A>) tx(namedQuery.findOpt(queryName, Pair.of("id", id)));
+      if (result.isPresent()) {
+        return some(result.get());
       } else {
         return none();
       }
@@ -1346,7 +1345,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   private <T> List<T> findAllWithOffsetAndLimit(Class<T> type, String q, Option<Integer> offset,
           Option<Integer> limit, Pair<String, Object>... params) {
     List<T> result = tx(em -> {
-      TypedQuery<T> partial = em.createNamedQuery(q, type); //.setParameter("since", since);
+      TypedQuery<T> partial = em.createNamedQuery(q, type);
       for (Pair<String, Object> param : params) {
         partial.setParameter(param.getLeft(), param.getRight());
       }
