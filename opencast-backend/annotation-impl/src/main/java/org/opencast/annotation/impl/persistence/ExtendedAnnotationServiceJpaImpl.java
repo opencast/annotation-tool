@@ -1074,7 +1074,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   /** Create an "id" parameter pair. */
-  public static <A> Pair<String, A> id(A id) {
+  private static <A> Pair<String, A> id(A id) {
     return Pair.of("id", id);
   }
 
