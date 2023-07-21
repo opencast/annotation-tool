@@ -1293,11 +1293,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     }
   }
 
-  /** Create an "id" parameter pair. */
-  private static <A> Pair<String, A> id(A id) {
-    return Pair.of("id", id);
-  }
-
   /**
    * Custom function for findAll functionality with offset and limit
    * Would be nice if this could be replaced with something like `namedQuery.findAll`, but I couldn't
@@ -1344,6 +1339,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       }
     }
     return q;
+  }
+
+  /** Create an "id" parameter pair. */
+  private static <A> Pair<String, A> id(A id) {
+    return Pair.of("id", id);
   }
 
   @SuppressWarnings("SameParameterValue")
