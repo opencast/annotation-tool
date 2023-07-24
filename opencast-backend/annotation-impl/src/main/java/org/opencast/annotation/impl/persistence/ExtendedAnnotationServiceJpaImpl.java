@@ -211,7 +211,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<User> getUser(final long id) {
-    return findById(toUser, "User.findById", id);
+    return findById(toUser, "User.findById", id, UserDto.class);
   }
 
   @Override
@@ -229,7 +229,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<User> getUserByExtId(final String id) {
-    return findById(toUser, "User.findByUserId", id);
+    return findById(toUser, "User.findByUserId", id, UserDto.class);
   }
 
   @Override
@@ -273,7 +273,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Video> getVideo(final long id) throws ExtendedAnnotationException {
-    return findById(toVideo, "Video.findById", id);
+    return findById(toVideo, "Video.findById", id, VideoDto.class);
   }
 
   @Override
@@ -287,7 +287,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Video> getVideoByExtId(final String id) throws ExtendedAnnotationException {
-    return findById(toVideo, "Video.findByExtId", id);
+    return findById(toVideo, "Video.findByExtId", id, VideoDto.class);
   }
 
   @Override
@@ -326,7 +326,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Track> getTrack(final long trackId) throws ExtendedAnnotationException {
-    return findById(toTrack, "Track.findById", trackId);
+    return findById(toTrack, "Track.findById", trackId, TrackDto.class);
   }
 
   /** Remove all none values from the list of query parameters. */
@@ -427,7 +427,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Annotation> getAnnotation(long id) throws ExtendedAnnotationException {
-    return findById(toAnnotation, "Annotation.findById", id);
+    return findById(toAnnotation, "Annotation.findById", id, AnnotationDto.class);
   }
 
   @Override
@@ -492,9 +492,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public Option<Scale> getScale(long id, boolean includeDeleted) throws ExtendedAnnotationException {
     final Option<Scale> scale;
     if (includeDeleted) {
-      scale = findById(toScale, "Scale.findByIdIncludeDeleted", id);
+      scale = findById(toScale, "Scale.findByIdIncludeDeleted", id, ScaleDto.class);
     } else {
-      scale = findById(toScale, "Scale.findById", id);
+      scale = findById(toScale, "Scale.findById", id, ScaleDto.class);
     }
     return scale;
   }
@@ -590,7 +590,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<ScaleValue> getScaleValue(long id) throws ExtendedAnnotationException {
-    return findById(toScaleValue, "ScaleValue.findById", id);
+    return findById(toScaleValue, "ScaleValue.findById", id, ScaleValueDto.class);
   }
 
   @Override
@@ -671,7 +671,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public void updateCategoryAndDeleteOtherSeriesCategories(final Category c) throws ExtendedAnnotationException {
     // Get the pre-update version of the category, to figure out its seriesCategoryId
-    Option<Category> pastC = findById(toCategory, "Category.findById", c.getId());
+    Option<Category> pastC = findById(toCategory, "Category.findById", c.getId(), CategoryDto.class);
 
     // Get all categories on all videos belonging to the seriesCategoryId (including the master)
     if (pastC.isSome() && pastC.get().getSeriesCategoryId().isSome()) {
@@ -697,9 +697,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public Option<Category> getCategory(long id, boolean includeDeleted) throws ExtendedAnnotationException {
     Option<Category> category;
     if (includeDeleted) {
-      category = findById(toCategory, "Category.findByIdIncludeDeleted", id);
+      category = findById(toCategory, "Category.findByIdIncludeDeleted", id, CategoryDto.class);
     } else {
-      category = findById(toCategory, "Category.findById", id);
+      category = findById(toCategory, "Category.findById", id, CategoryDto.class);
     }
     return category;
   }
@@ -897,9 +897,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   public Option<Label> getLabel(long id, boolean includeDeleted) throws ExtendedAnnotationException {
     Option<Label> label;
     if (includeDeleted) {
-      label = findById(toLabel, "Label.findByIdIncludeDeleted", id);
+      label = findById(toLabel, "Label.findByIdIncludeDeleted", id, LabelDto.class);
     } else {
-      label = findById(toLabel, "Label.findById", id);
+      label = findById(toLabel, "Label.findById", id, LabelDto.class);
     }
     return label;
   }
@@ -995,7 +995,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<Comment> getComment(long id) {
-    return findById(toComment, "Comment.findById", id);
+    return findById(toComment, "Comment.findById", id, CommentDto.class);
   }
 
   @Override
@@ -1057,29 +1057,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   private static final ExtendedAnnotationException notFound = new ExtendedAnnotationException(Cause.NOT_FOUND);
-
-  /**
-   * Do not nest inside a tx!
-   *
-   * @param id
-   *          value of the ":id" parameter in the named query.
-   */
-  private <A, B> Option<A> findById(final Function<B, A> toA, final String queryName, final Object id) {
-    Optional<B> result = (Optional<B>) tx(em -> {
-      return namedQuery.findOpt(queryName, id(id)).apply(em);
-    });
-    if (result.isPresent()) {
-      A appliedResult = toA.apply(result.get());
-      return some(appliedResult);
-    } else {
-      return none();
-    }
-  }
-
-  /** Create an "id" parameter pair. */
-  private static <A> Pair<String, A> id(A id) {
-    return Pair.of("id", id);
-  }
 
   @Override
   public Resource createResource() {
@@ -1298,6 +1275,29 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         }
       }).value();
     }
+  }
+
+  /**
+   * Do not nest inside a tx!
+   *
+   * @param id
+   *          value of the ":id" parameter in the named query.
+   */
+  private <A, B> Option<A> findById(final Function<B, A> toA, final String queryName, final Object id, Class<B> type) {
+    Optional<B> result = tx(em -> {
+      return namedQuery.findOpt(queryName, type, id(id)).apply(em);
+    });
+    if (result.isPresent()) {
+      A appliedResult = toA.apply(result.get());
+      return some(appliedResult);
+    } else {
+      return none();
+    }
+  }
+
+  /** Create an "id" parameter pair. */
+  private static <A> Pair<String, A> id(A id) {
+    return Pair.of("id", id);
   }
 
   /**
