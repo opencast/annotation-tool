@@ -149,17 +149,16 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   private <A> A tx(java.util.function.Function<EntityManager, A> f) {
     try {
       return db.execTx(f);
-    } catch (Exception e) {
-      if (e instanceof ExtendedAnnotationException) {
-        throw (ExtendedAnnotationException) e;
-      } else if (e instanceof RollbackException) {
-        final Throwable cause = e.getCause();
-        String message = cause.getMessage().toLowerCase();
-        if (message.contains("unique") || message.contains("duplicate"))
-          throw new ExtendedAnnotationException(Cause.DUPLICATE);
-      } else if (e instanceof NoResultException) {
-        throw new ExtendedAnnotationException(Cause.NOT_FOUND);
+    } catch (NoResultException e) {
+      throw new ExtendedAnnotationException(Cause.NOT_FOUND);
+    } catch (RollbackException e) {
+      Throwable cause = e.getCause();
+      String message = cause.getMessage().toLowerCase();
+      if (message.contains("unique") || message.contains("duplicate")) {
+        throw new ExtendedAnnotationException(Cause.DUPLICATE);
       }
+      throw new ExtendedAnnotationException(Cause.SERVER_ERROR, e);
+    } catch (RuntimeException e) {
       throw new ExtendedAnnotationException(Cause.SERVER_ERROR, e);
     }
   }
