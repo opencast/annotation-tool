@@ -409,7 +409,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   /** Generic update method. */
   private <A> void update(String q, long id, Effect<A> update) {
     tx(em -> {
-      A o = (A) namedQuery.find(q, Pair.of("id", id)).apply(em);
+      A o = (A) namedQuery.find(q, id(id)).apply(em);
 
       update.apply(o);
       return o;
@@ -1066,7 +1066,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    */
   private <A, B> Option<A> findById(final Function<B, A> toA, final String queryName, final Object id) {
     Optional<B> result = (Optional<B>) tx(em -> {
-      return namedQuery.findOpt(queryName, Pair.of("id", id)).apply(em);
+      return namedQuery.findOpt(queryName, id(id)).apply(em);
     });
     if (result.isPresent()) {
       A appliedResult = toA.apply(result.get());
