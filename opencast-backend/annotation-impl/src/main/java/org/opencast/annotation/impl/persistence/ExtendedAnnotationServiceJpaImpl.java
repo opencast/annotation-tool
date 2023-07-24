@@ -191,22 +191,22 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   @Override
   public boolean clearDatabase() throws ExtendedAnnotationException {
     return tx(em -> {
-        namedQuery.update("Annotation.clear").apply(em);
-        namedQuery.update("Track.clear").apply(em);
-        namedQuery.update("User.clear").apply(em);
-        namedQuery.update("Video.clear").apply(em);
-        namedQuery.update("Category.clear").apply(em);
-        namedQuery.update("Label.clear").apply(em);
-        namedQuery.update("Annotation.clear").apply(em);
-        namedQuery.update("Track.clear").apply(em);
-        namedQuery.update("User.clear").apply(em);
-        namedQuery.update("Video.clear").apply(em);
-        namedQuery.update("Category.clear").apply(em);
-        namedQuery.update("Label.clear").apply(em);
-        namedQuery.update("Scale.clear").apply(em);
-        namedQuery.update("ScaleValue.clear").apply(em);
-        namedQuery.update("Comment.clear").apply(em);
-        return true;
+      namedQuery.update("Annotation.clear").apply(em);
+      namedQuery.update("Track.clear").apply(em);
+      namedQuery.update("User.clear").apply(em);
+      namedQuery.update("Video.clear").apply(em);
+      namedQuery.update("Category.clear").apply(em);
+      namedQuery.update("Label.clear").apply(em);
+      namedQuery.update("Annotation.clear").apply(em);
+      namedQuery.update("Track.clear").apply(em);
+      namedQuery.update("User.clear").apply(em);
+      namedQuery.update("Video.clear").apply(em);
+      namedQuery.update("Category.clear").apply(em);
+      namedQuery.update("Label.clear").apply(em);
+      namedQuery.update("Scale.clear").apply(em);
+      namedQuery.update("ScaleValue.clear").apply(em);
+      namedQuery.update("Comment.clear").apply(em);
+      return true;
     });
   }
 
