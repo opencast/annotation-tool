@@ -71,6 +71,7 @@ import org.opencastproject.util.data.Option.Match;
 import org.opencastproject.util.data.Predicate;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.base.AbstractInstant;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -78,6 +79,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +90,9 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.RollbackException;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
 /**
@@ -1312,7 +1316,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   private <T> List<T> findAllWithOffsetAndLimit(Class<T> type, String q, Option<Integer> offset,
           Option<Integer> limit, Pair<String, Object>... params) {
     List<T> result = tx(em -> {
-      TypedQuery<T> partial = em.createNamedQuery(q, type);
+      TypedQuery<T> partial = configureQuery(em.createNamedQuery(q, type), params);
       for (Pair<String, Object> param : params) {
         partial.setParameter(param.getLeft(), param.getRight());
       }
@@ -1326,6 +1330,45 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     });
 
     return result;
+  }
+
+  protected <T> TypedQuery<T> configureQuery(TypedQuery<T> q, Object... params) {
+    return (TypedQuery<T>) configureQuery((Query) q, params);
+  }
+
+  /**
+   * When creating queries on the em directly, we need to pay special attention to dates
+   * Copied from https://github.com/opencast/opencast/blob/develop/modules/common/src/main/java/org/opencastproject/db/Queries.java#L58
+   */
+  protected Query configureQuery(Query q, Object... params) {
+    for (int i = 0; i < params.length; i++) {
+      Object p = params[i];
+
+      if (p instanceof Pair) { // named parameters
+        Pair<String, ?> pair = (Pair<String, ?>) p;
+        String key = pair.getKey();
+        Object value = pair.getValue();
+        if (value instanceof Date) {
+          q.setParameter(key, (Date) value, TemporalType.TIMESTAMP);
+        } else if (value instanceof Calendar) {
+          q.setParameter(key, (Calendar) value, TemporalType.TIMESTAMP);
+        } else if (value instanceof AbstractInstant) {
+          q.setParameter(key, ((AbstractInstant) value).toDate(), TemporalType.TIMESTAMP);
+        } else {
+          q.setParameter(key, value);
+        }
+      } else { // positional parameters
+        if (p instanceof Date) {
+          q.setParameter(i + 1, (Date) p, TemporalType.TIMESTAMP);
+        } else if (p instanceof AbstractInstant) {
+          q.setParameter(i + 1, ((AbstractInstant) p).toDate(), TemporalType.TIMESTAMP);
+        } else {
+          q.setParameter(i + 1, p);
+        }
+      }
+    }
+
+    return q;
   }
 
   @SuppressWarnings("SameParameterValue")
