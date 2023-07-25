@@ -1339,7 +1339,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
    * When creating queries on the em directly, we need to pay special attention to dates
    * Copied from https://github.com/opencast/opencast/blob/develop/modules/common/src/main/java/org/opencastproject/db/Queries.java#L58
    */
-  protected Query configureQuery(Query q, Object... params) {
+  private Query configureQuery(Query q, Object... params) {
     for (int i = 0; i < params.length; i++) {
       Object p = params[i];
 
