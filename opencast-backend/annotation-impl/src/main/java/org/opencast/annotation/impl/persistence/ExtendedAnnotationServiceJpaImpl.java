@@ -1331,7 +1331,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return result;
   }
 
-  protected <T> TypedQuery<T> configureQuery(TypedQuery<T> q, Object... params) {
+  private <T> TypedQuery<T> configureQuery(TypedQuery<T> q, Object... params) {
     return (TypedQuery<T>) configureQuery((Query) q, params);
   }
 
