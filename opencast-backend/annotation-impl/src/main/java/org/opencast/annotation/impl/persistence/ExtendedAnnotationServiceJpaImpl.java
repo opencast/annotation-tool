@@ -1316,9 +1316,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           Option<Integer> limit, Pair<String, Object>... params) {
     List<T> result = tx(em -> {
       TypedQuery<T> partial = configureQuery(em.createNamedQuery(q, type), params);
-      for (Pair<String, Object> param : params) {
-        partial.setParameter(param.getLeft(), param.getRight());
-      }
       if (limit.isSome()) {
         partial.setMaxResults(limit.get());
       }
