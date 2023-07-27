@@ -51,6 +51,22 @@ define(
                 this.category = options.category;
             },
 
+            /*
+             * Sorts the given data
+             * @alias module:collections-categories.Categories#sort
+             * @param  {object} data Object or array containing the data to sort.
+             * @return {object} sorted data
+             */
+            sort: function (data) {
+                return data.sort((a, b) => {
+                    var aa = a.name.toLowerCase();
+                    var ab = b.name.toLowerCase();
+                    if(aa < ab) { return -1; }
+                    if(aa > ab) { return 1; }
+                    return 0;
+                });
+            },
+
             /**
              * Parse the given data
              * @param  {object} data Object or array containing the data to parse.
@@ -59,22 +75,10 @@ define(
             parse: function (resp) {
                 if (resp.labels && _.isArray(resp.labels)) {
                     // sort by abbreviation of label
-                    return resp.labels.sort((a, b) => {
-                        let aa = a.abbreviation.toLowerCase();
-                        let ab = b.abbreviation.toLowerCase();
-                        if(aa < ab) { return -1; }
-                        if(aa > ab) { return 1; }
-                        return 0;
-                    });
+                    return this.sort(resp.labels);
                 } else if (_.isArray(resp)) {
                     // sort by abbreviation of label
-                    return resp.sort((a, b) => {
-                        let aa = a.abbreviation.toLowerCase();
-                        let ab = b.abbreviation.toLowerCase();
-                        if(aa < ab) { return -1; }
-                        if(aa > ab) { return 1; }
-                        return 0;
-                    });
+                    return this.sort(resp);
                 } else {
                     return null;
                 }
