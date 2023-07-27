@@ -131,7 +131,10 @@ define([
 
                     // Build the display code
                     if (labels.length) {
+<<<<<<< HEAD
                         // Fix attribute value access
+=======
+>>>>>>> cc/master-merge-bugfixes---REBASED
                         result.codes = _.chain(labels).map("attributes").pluck("abbreviation").join(", ");
                     } else {
                         result.codes = "Free";

@@ -23,6 +23,9 @@ deploy
 *.iml
 .idea
 
+# Git
+*.patch
+
 # OS
 .DS_Store
 

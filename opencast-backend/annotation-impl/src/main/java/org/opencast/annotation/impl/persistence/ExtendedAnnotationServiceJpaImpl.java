@@ -864,11 +864,14 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
     List<Label> labels;
 
-    if (since.isSome())
+    if (since.isSome()) {
       labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategorySince",
               tuple("since", since.get()));
-    else
+    }
+    else {
       labels = findAllWithParams(toLabel, offset, limit, "Label.findAllOfCategory", tuple("id", categoryId));
+    }
+
 
     // Handle series categories
     // Series categories initially do not have any labels of themselves, so we need to generate them in case they
