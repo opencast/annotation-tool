@@ -85,6 +85,10 @@ define([
         var color = annotation.getColor();
         item.style = color && (
             "background-color:" + color + ";" +
+            // todo: Make text color not always black
+            // This is an issue due to multi-content annotations which can now have differently colored labels,
+            // but text color is based on annotation level. Ideally, labels could store their own color and this
+            // code could be moved to labels?
                 "color:" + (
                     chroma(color).luminance() < 0.5
                         ? "black" // before: white
