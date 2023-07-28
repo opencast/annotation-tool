@@ -84,7 +84,7 @@ public class CommentDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "\"VALUE\"")
+  @Column(name = "value")
   @CollectionTable(name = "xannotations_comment_tags", joinColumns = @JoinColumn(name = "comment_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
