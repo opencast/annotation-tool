@@ -82,7 +82,7 @@ public class TrackDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "value")
+  @Column(name = "\"VALUE\"")
   @CollectionTable(name = "xannotations_track_tags", joinColumns = @JoinColumn(name = "track_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
