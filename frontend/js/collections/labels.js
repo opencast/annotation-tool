@@ -59,8 +59,8 @@ define(
              */
             sort: function (data) {
                 return data.sort((a, b) => {
-                    var aa = a.name.toLowerCase();
-                    var ab = b.name.toLowerCase();
+                    var aa = a.abbreviation.toLowerCase();
+                    var ab = b.abbreviation.toLowerCase();
                     if(aa < ab) { return -1; }
                     if(aa > ab) { return 1; }
                     return 0;
