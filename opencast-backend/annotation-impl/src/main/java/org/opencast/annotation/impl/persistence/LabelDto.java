@@ -72,7 +72,7 @@ public class LabelDto extends AbstractResourceDto {
   @Column(name = "series_label_id")
   private Long seriesLabelId;
 
-  @Column(name = "value", nullable = false)
+  @Column(name = "\"VALUE\"", nullable = false)
   private String value;
 
   @Column(name = "abbreviation", nullable = false)
@@ -90,7 +90,7 @@ public class LabelDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "value")
+  @Column(name = "\"VALUE\"")
   @CollectionTable(name = "xannotations_label_tags", joinColumns = @JoinColumn(name = "label_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 

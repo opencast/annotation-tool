@@ -44,7 +44,7 @@ jobs:
       - name: Build the artifacts
         run: mvn clean deploy
           --batch-mode
-          -Deslint.maxWarnings=0
+          -DmaxWarnings=0
           -DaltDeploymentRepository=m2::default::file:m2
           -Drevision=${{ steps.date.outputs.date }}-${{ github.sha }}
 

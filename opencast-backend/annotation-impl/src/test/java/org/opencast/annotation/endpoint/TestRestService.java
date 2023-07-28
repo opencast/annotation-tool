@@ -15,7 +15,8 @@
  */
 package org.opencast.annotation.endpoint;
 
-import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
+import static org.opencastproject.db.DBTestEnv.getDbSessionFactory;
+import static org.opencastproject.db.DBTestEnv.newEntityManagerFactory;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
@@ -51,7 +52,9 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     extendedAnnotationService.setSecurityService(getSecurityService());
     extendedAnnotationService.setAuthorizationService(getAuthorizationService());
     extendedAnnotationService.setEntityManagerFactory(
-            newTestEntityManagerFactory("org.opencast.annotation.impl.persistence"));
+            newEntityManagerFactory("org.opencast.annotation.impl.persistence"));
+    extendedAnnotationService.setDBSessionFactory(getDbSessionFactory());
+    extendedAnnotationService.activate();
   }
 
   @Override
