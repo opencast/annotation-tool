@@ -70,7 +70,7 @@ public class ScaleValueDto extends AbstractResourceDto {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "\"VALUE\"", nullable = false)
+  @Column(name = "value", nullable = false)
   private double value;
 
   @Column(name = "order_value", nullable = false)
@@ -82,7 +82,7 @@ public class ScaleValueDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "\"VALUE\"")
+  @Column(name = "value")
   @CollectionTable(name = "xannotations_scale_value_tags", joinColumns = @JoinColumn(name = "scale_value_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
