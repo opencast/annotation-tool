@@ -93,7 +93,7 @@ public class AnnotationDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "\"VALUE\"")
+  @Column(name = "value")
   @CollectionTable(name = "xannotations_annotation_tags", joinColumns = @JoinColumn(name = "annotation_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
