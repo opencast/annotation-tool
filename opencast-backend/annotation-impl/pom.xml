@@ -94,9 +94,7 @@
     <!-- Testing -->
     <dependency>
       <groupId>junit</groupId>
-      <!-- Use junit-dep which does not include hamcrest since it leads to method-not-found collisions with rest-assured. -->
-      <artifactId>junit-dep</artifactId>
-      <version>4.10</version>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
