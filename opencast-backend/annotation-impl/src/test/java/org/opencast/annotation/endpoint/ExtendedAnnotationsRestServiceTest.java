@@ -642,8 +642,8 @@ public class ExtendedAnnotationsRestServiceTest {
 
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
             .pathParam("commentId", id).formParam("text", "Updated comment").formParam("tags", json.toJSONString())
-            .expect().statusCode(OK).when().body("text", equalTo("Updated comment")).body("tags", equalTo(json))
-            .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+            .expect().statusCode(OK).body("text", equalTo("Updated comment")).body("tags", equalTo(json))
+            .when().put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
 
     // get
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
