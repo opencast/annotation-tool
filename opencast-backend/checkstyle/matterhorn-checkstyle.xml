@@ -61,7 +61,7 @@
       <property name="severity" value="error" />
     </module>
     <module name="ImportOrder">
-      <property name="groups" value="org.opencast,org.opencastproject,com,net,org,java,javax" />
+      <property name="groups" value="org.opencast,org.opencastproject,com,io,net,org,java,javax" />
       <property name="ordered" value="true" />
       <property name="separated" value="true" />
       <property name="option" value="top" />
