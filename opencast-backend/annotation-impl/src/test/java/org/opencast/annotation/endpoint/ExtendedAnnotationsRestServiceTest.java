@@ -15,7 +15,7 @@
  */
 package org.opencast.annotation.endpoint;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.iterableWithSize;
@@ -34,7 +34,7 @@ import org.opencast.annotation.impl.ResourceImpl;
 
 import org.opencastproject.test.rest.RestServiceTestEnv;
 
-import com.jayway.restassured.http.ContentType;
+import io.restassured.http.ContentType;
 
 import org.hamcrest.Description;
 import org.json.simple.JSONObject;
@@ -642,8 +642,8 @@ public class ExtendedAnnotationsRestServiceTest {
 
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
             .pathParam("commentId", id).formParam("text", "Updated comment").formParam("tags", json.toJSONString())
-            .expect().statusCode(OK).when().body("text", equalTo("Updated comment")).body("tags", equalTo(json))
-            .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
+            .expect().statusCode(OK).body("text", equalTo("Updated comment")).body("tags", equalTo(json))
+            .when().put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
 
     // get
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
@@ -876,7 +876,7 @@ public class ExtendedAnnotationsRestServiceTest {
     return rt.host(path);
   }
 
-  private static String extractLocationId(com.jayway.restassured.response.Response r) {
+  private static String extractLocationId(io.restassured.response.Response r) {
     String[] segments = r.header(LOCATION).split("/");
     return segments[segments.length - 1];
   }
