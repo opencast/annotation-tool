@@ -202,32 +202,32 @@ define(
                             {
                                 type: "column",
                                 content: [
-                                  {
-                                      type: "column",
-                                      content: [
-                                          "player"
-                                      ].map(viewConfig)
-                                  },
-                                  {
-                                      type: "stack",
-                                      content: [
-                                          "timeline",
-                                          "list"
-                                      ].map(viewConfig)
-                                  },
+                                    {
+                                        type: "column",
+                                        content: [
+                                            "player"
+                                        ].map(viewConfig)
+                                    },
+                                    {
+                                        type: "stack",
+                                        content: [
+                                            "timeline",
+                                            "list"
+                                        ].map(viewConfig)
+                                    }
                                 ]
                             },
                             {
                                 type: "column",
                                 content: [
-                                  {
-                                      type: "stack",
-                                      content: [
-                                          "questionnaire",
-                                          "annotate",
-                                          "loop"
-                                      ].map(viewConfig)
-                                  }
+                                    {
+                                        type: "stack",
+                                        content: [
+                                            "questionnaire",
+                                            "annotate",
+                                            "loop"
+                                        ].map(viewConfig)
+                                    }
                                 ]
                             }
                         ]
@@ -497,7 +497,7 @@ define(
                         setupClosing("questionnaire", container);
                         resolveView("questionnaire", new QuestionnaireView({
                             playerAdapter: player,
-                            el: container.getElement(),
+                            el: container.getElement()
                         }));
                     });
                 });

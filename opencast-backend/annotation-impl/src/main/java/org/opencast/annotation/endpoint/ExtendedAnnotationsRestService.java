@@ -31,9 +31,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.Path;
 
-@Component(service = ExtendedAnnotationsRestService.class, property = {
-        "opencast.service.type=org.opencast.annotation",
-        "opencast.service.path=/extended-annotations"})
 @Path("/")
 @RestService(
     name = "extended-annotations",
@@ -41,6 +38,11 @@ import javax.ws.rs.Path;
     abstractText = "Scientific video annotations on Opencast media..",
     notes = { "The Annotation Tool does not yet provide REST documentation." }
 )
+@Component(service = ExtendedAnnotationsRestService.class,
+        immediate = true,
+        property = {
+        "opencast.service.type=org.opencast.annotation",
+        "opencast.service.path=/extended-annotations"})
 public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsRestService {
 
   private ExtendedAnnotationService extendedAnnotationService;

@@ -124,8 +124,8 @@ define(
                             return !scaleValue.get("deleted_at");
                         })
                         .map(function (scaleValue) {
-                        return scaleValue.toExportJSON();
-                    })
+                            return scaleValue.toExportJSON();
+                        })
                 };
 
                 if (this.attributes.description) {

@@ -222,7 +222,7 @@ var Resource = Backbone.Model.extend({
                 if (beforeSend) {
                     beforeSend.apply(this, arguments);
                 }
-                this.type = 'delete';
+                this.type = "delete";
             };
             return this.save(null, options);
         } else {

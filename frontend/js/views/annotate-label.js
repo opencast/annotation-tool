@@ -186,9 +186,9 @@ define(
                 if (this.scaleValues) {
                     this.scaleValues.sort();
                     modelJSON.scaleValues = this.scaleValues.toJSON()
-                      .filter(function (scaleValue) {
-                          return !scaleValue.deleted_at;
-                      });
+                        .filter(function (scaleValue) {
+                            return !scaleValue.deleted_at;
+                        });
                 }
 
                 this.$el.html(this.template(modelJSON));

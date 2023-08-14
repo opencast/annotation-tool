@@ -18,7 +18,7 @@
  * A module representing the annotation-content model
  * @module models-content-item
  */
-define(["underscore", "backbone"], function(_, Backbone) {
+define(["underscore", "backbone"], function (_, Backbone) {
     "use strict";
 
     /**
@@ -34,7 +34,7 @@ define(["underscore", "backbone"], function(_, Backbone) {
          * @alias module:models-content-item.ContentItem#getCategory
          * @return {Category|undefined} Either a category or undefined if there is none
          */
-        getCategory: function() {
+        getCategory: function () {
             var label = this.getLabel();
 
             return label && annotationTool.video.get("categories")
@@ -46,21 +46,21 @@ define(["underscore", "backbone"], function(_, Backbone) {
          * @alias module:models-content-item.ContentItem#getLabel
          * @return {Label|undefined} Either a label or undefined if there is none
          */
-        getLabel: function() {
+        getLabel: function () {
             var labelId;
             switch (this.get("type")) {
-                case "label":
-                    labelId = this.get("value");
-                    break;
-                case "scaling":
-                    labelId = this.get("value").label;
-                    break;
+            case "label":
+                labelId = this.get("value");
+                break;
+            case "scaling":
+                labelId = this.get("value").label;
+                break;
             }
 
             return labelId && _.findWhere(annotationTool.video.getLabels(), { id: labelId });
         },
 
-        getScaleValue: function() {
+        getScaleValue: function () {
             return this.getType() === "scaling"
                 ? _.findWhere(annotationTool.video.getScaleValues(), { id: this.get("value").scaling })
                 : undefined;
@@ -71,19 +71,19 @@ define(["underscore", "backbone"], function(_, Backbone) {
          * @alias module:models-content-item.ContentItem#getText
          * @return {string} The short string describing this item.
          */
-        getText: function() {
+        getText: function () {
             switch (this.get("type")) {
-                case "text":
-                    return this.get("value");
+            case "text":
+                return this.get("value");
 
-                case "label":
-                    return this.getLabel().get("value");
+            case "label":
+                return this.getLabel().get("value");
 
-                case "scaling":
-                    var scaleValue = _.findWhere(annotationTool.video.getScaleValues(), {
-                        id: this.get("value").scaling
-                    });
-                    return this.getLabel().get("abbreviation") + " (" + scaleValue.get("name") + ")";
+            case "scaling":
+                var scaleValue = _.findWhere(annotationTool.video.getScaleValues(), {
+                    id: this.get("value").scaling
+                });
+                return this.getLabel().get("abbreviation") + " (" + scaleValue.get("name") + ")";
             }
         },
 
@@ -92,7 +92,7 @@ define(["underscore", "backbone"], function(_, Backbone) {
          * @alias module:models-content-item.ContentItem#getType
          * @return {string} The type of this content item
          */
-        getType: function() {
+        getType: function () {
             return this.get("type");
         }
     });

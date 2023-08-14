@@ -39,7 +39,7 @@ define([
          * Constructor
          * @alias module:views-modal-add-labelled.ModalAddLabelled#initialize
          */
-        initialize: function(options) {
+        initialize: function (options) {
             this.category = options.category;
         },
 
@@ -47,7 +47,7 @@ define([
          * Render this view
          * @alias module:views-modal-add-labelled.ModalAddLabelled#render
          */
-        render: function() {
+        render: function () {
             this.$el.html(
                 template(
                     {
@@ -74,7 +74,7 @@ define([
          * Listener for click on a button to add a `label` content item
          * @alias module:views-modal-add-labelled.ModalAddLabelled#onLabelledContent
          */
-        onLabelledContent: function(event) {
+        onLabelledContent: function (event) {
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
 
@@ -90,7 +90,7 @@ define([
          * Listener for click on a button to add a `scaling` content item
          * @alias module:views-modal-add-labelled.ModalAddLabelled#onScalingContent
          */
-        onScalingContent: function(event) {
+        onScalingContent: function (event) {
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
             var scaleValueId = $button.data("scalevalue");

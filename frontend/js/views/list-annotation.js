@@ -305,8 +305,8 @@ define(
              * Render this view
              */
             render: function () {
-                var modelJSON,
-                    title;
+                var modelJSON;
+                var title;
 
                 // See which content items are currently expanded;
                 // we want to preserve that state during a re-render
@@ -355,11 +355,11 @@ define(
 
                 var partials = _.extend(
                     {
-                      "category": TmplCategory,
-                      "text": TmplTypeText,
-                      "label": TmplTypeLabel,
-                      "scaling": TmplTypeScaling,
-                      "content-item-header": TmplContentItemHeader
+                        "category": TmplCategory,
+                        "text": TmplTypeText,
+                        "label": TmplTypeLabel,
+                        "scaling": TmplTypeScaling,
+                        "content-item-header": TmplContentItemHeader
                     },
                     this.currentState.partials || {}
                 );
@@ -367,7 +367,6 @@ define(
 
                 // removed background color
                 // this.$el.css("background-color", this.model.getColor() || '');
-
 
                 title = this.model.getTitleAttribute();
 
@@ -697,7 +696,7 @@ define(
                         "click .content-item-expand": "toggleContentItem",
                         "click .content-item-collapse": "toggleContentItem",
                         "click .content-item-edit": "editContentItem",
-                        "click .content-item-trash": "removeContentItem",
+                        "click .content-item-trash": "removeContentItem"
                     }
                 },
                 EDIT: {

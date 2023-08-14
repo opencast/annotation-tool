@@ -18,7 +18,7 @@ define([
     "i18next",
     "backbone",
     "templates/annotation-timestamp"
-], function($, i18next, Backbone, template) {
+], function ($, i18next, Backbone, template) {
     "use strict";
 
     return Backbone.View.extend({
@@ -34,16 +34,16 @@ define([
             "focusout .start-value": "onChangeStart",
 
             "keyup .end-value": "onChangeEnd",
-            "focusout .end-value": "onChangeEnd",
+            "focusout .end-value": "onChangeEnd"
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.listenTo(this.model, "change:start", this.render);
             this.listenTo(this.model, "change:duration", this.render);
             this.editMode = null;
         },
 
-        render: function() {
+        render: function () {
             var annotation;
             annotation = this.model.toJSON();
             annotation.end = annotation.start + annotation.duration;
@@ -63,7 +63,7 @@ define([
          * @alias module:views-questionnaire.Questionnaire#onChangeEnd
          * @param  {event} event Event object
          */
-        onChangeEnd: function(event) {
+        onChangeEnd: function (event) {
             var $target = $(event.currentTarget);
             var value = $target.val();
             var $controlGroup = $target.closest(".control-group");
@@ -86,7 +86,7 @@ define([
             }
 
             console.log("setting", { duration: Math.round(newEnd - start) });
-            this.model.set({ duration: Math.round(newEnd - start) }, {silent: true});
+            this.model.set({ duration: Math.round(newEnd - start) }, { silent: true });
             console.log("onChangeEnd", this.model.get("start"), this.model.get("duration"));
         },
 
@@ -95,7 +95,7 @@ define([
          * @alias module:views-questionnaire.Questionnaire#onChangeStart
          * @param  {event} event Event object
          */
-        onChangeStart: function(event) {
+        onChangeStart: function (event) {
             var $target = $(event.currentTarget);
             var value = $target.val();
             var $controlGroup = $target.closest(".control-group");
@@ -121,7 +121,7 @@ define([
             this.model.set({
                 start: newStart,
                 duration: duration ? Math.round(end - newStart) : 0
-            }, {silent: true});
+            }, { silent: true });
         },
         onClickCancel: function () {
             this.editMode = null;

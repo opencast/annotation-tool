@@ -19,7 +19,7 @@ define([
     "models/content-item",
     "backbone",
     "bootstrap"
-], function(template, tmplLayout, ContentItem, Backbone) {
+], function (template, tmplLayout, ContentItem, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
@@ -28,12 +28,12 @@ define([
         events: {
             "keyup textarea": "onKeyup"
         },
-        initialize: function(options) {
+        initialize: function (options) {
             this.item = options.item;
             var value = options.value || null;
 
             if (typeof(Storage) !== "undefined") {
-                if(window.localStorage.getItem("oat_questionnaire_draft") != null) {
+                if (window.localStorage.getItem("oat_questionnaire_draft") != null) {
                     //console.log("init block while draft = true, prefill");
                     value = window.localStorage.getItem("oat_questionnaire_field_" + this.item.name);
                 } else {
@@ -49,7 +49,7 @@ define([
             });
             this.validationErrors = [];
         },
-        render: function() {
+        render: function () {
             this.$el.html(
                 template(
                     {
@@ -62,7 +62,7 @@ define([
             );
             return this;
         },
-        validate: function() {
+        validate: function () {
             if (this.item.required) {
                 var text = this.model.get("value");
                 if (!_.isString(text) || !text.trim().length) {
@@ -75,15 +75,15 @@ define([
 
             return true;
         },
-        getContentItems: function() {
+        getContentItems: function () {
             return this.model;
         },
-        onKeyup: function(event) {
+        onKeyup: function (event) {
             event.stopImmediatePropagation();
             //console.log($(event.target).attr("name"));
             if (typeof(Storage) !== "undefined") {
                 window.localStorage.setItem("oat_questionnaire_draft","true");
-                window.localStorage.setItem("oat_questionnaire_field_"+$(event.target).attr("name"), $(event.target).val());
+                window.localStorage.setItem("oat_questionnaire_field_" + $(event.target).attr("name"), $(event.target).val());
             }
             this.model.set("value", $(event.target).val());
         }
