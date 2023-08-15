@@ -18,7 +18,7 @@
 
   <properties>
     <integration>search</integration>
-    <eslint.maxWarnings>-1</eslint.maxWarnings>
+    <maxWarnings>-1</maxWarnings>
   </properties>
 
   <build>
@@ -65,7 +65,7 @@
             <configuration>
               <arguments>
                 --integration=${integration}
-                --maxWarnings=${eslint.maxWarnings}
+                --maxWarnings=${maxWarnings}
               </arguments>
             </configuration>
           </execution>

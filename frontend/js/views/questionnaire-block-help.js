@@ -18,23 +18,23 @@ define([
     "templates/questionnaire-block-layout",
     "backbone",
     "bootstrap"
-], function(template, tmplLayout, Backbone) {
+], function (template, tmplLayout, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
         tagName: "section",
         className: "questionnaire-block-help",
-        initialize: function(options) {
+        initialize: function (options) {
             this.item = options.item;
         },
-        render: function() {
+        render: function () {
             this.$el.html(template({ item: this.item }, { partials: { layout: tmplLayout } }));
             return this;
         },
-        validate: function() {
+        validate: function () {
             return true;
         },
-        getContentItems: function() {
+        getContentItems: function () {
             return [];
         }
     });

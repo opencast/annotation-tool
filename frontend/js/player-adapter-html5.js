@@ -174,7 +174,7 @@ define(
                         });
 
                         // Workaround to fix chrome fullscreen bug (#214)
-                        $(document).bind('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', function (e) {
+                        $(document).bind("fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange", function (e) {
                             self.resetSize();
                         });
 

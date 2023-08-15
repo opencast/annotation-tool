@@ -86,10 +86,10 @@ define([
         item.style = color && (
             "background-color:" + color + ";" +
                 "color:" + (
-                    chroma(color).luminance() < 0.5
-                        ? "black" // before: white
-                        : "black"
-                ) + ";"
+                chroma(color).luminance() < 0.5
+                    ? "black" // before: white
+                    : "black"
+            ) + ";"
         );
 
         var labels = annotation.getLabels();

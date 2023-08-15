@@ -13,7 +13,7 @@
  *  permissions and limitations under the License.
  *
  */
-define(["templates/modal-edit-free-text", "backbone", "bootstrap"], function(template, Backbone) {
+define(["templates/modal-edit-free-text", "backbone", "bootstrap"], function (template, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
@@ -21,7 +21,7 @@ define(["templates/modal-edit-free-text", "backbone", "bootstrap"], function(tem
          * Constructor
          * @alias module:views-modal-edit-free-text.ModalEditFreeText#initialize
          */
-        initialize: function(options) {
+        initialize: function (options) {
             this.contentItem = options.contentItem;
             this.error = false;
             this.listenTo(this, "modal:click", this.updateContent);
@@ -30,7 +30,7 @@ define(["templates/modal-edit-free-text", "backbone", "bootstrap"], function(tem
          * Render this view
          * @alias module:views-modal-edit-free-text.ModalEditFreeText#render
          */
-        render: function() {
+        render: function () {
             this.$el.html(
                 template({
                     cid: this.cid,
@@ -44,7 +44,7 @@ define(["templates/modal-edit-free-text", "backbone", "bootstrap"], function(tem
          * Listener for click on this modal's submit button
          * @alias module:views-modal-edit-free-text.ModalEditFreeText#updateContent
          */
-        updateContent: function(event) {
+        updateContent: function (event) {
             this.error = false;
             var value = this.$("textarea").val();
             if (value.length) {

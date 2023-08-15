@@ -20,9 +20,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opencast.annotation.Annotations.textAnnotation;
+import static org.opencastproject.db.DBTestEnv.getDbSessionFactory;
+import static org.opencastproject.db.DBTestEnv.newEntityManagerFactory;
 import static org.opencastproject.util.data.Option.none;
 import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.persistence.PersistenceUtil.newTestEntityManagerFactory;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
@@ -674,8 +675,9 @@ public class ExtendedAnnotationServiceJpaImplTest {
     extendedAnnotationService.setSecurityService(securityService);
     extendedAnnotationService.setSearchService(searchService);
     extendedAnnotationService.setAuthorizationService(authorizationService);
-    extendedAnnotationService.setEntityManagerFactory(
-            newTestEntityManagerFactory("org.opencast.annotation.impl.persistence"));
+    extendedAnnotationService.setEntityManagerFactory(newEntityManagerFactory("org.opencast.annotation.impl.persistence"));
+    extendedAnnotationService.setDBSessionFactory(getDbSessionFactory());
+    extendedAnnotationService.activate();
     return extendedAnnotationService;
   }
 }

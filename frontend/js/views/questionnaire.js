@@ -25,7 +25,7 @@ define([
     "views/questionnaire-block-scale",
     "views/questionnaire-block-text",
     "views/annotation-timestamp"
-], function(_, $, i18next, Backbone, template, CategoriesBlock, HelpBlock, LabelBlock, ScaleBlock, TextBlock, AnnotationTimestampView) {
+], function (_, $, i18next, Backbone, template, CategoriesBlock, HelpBlock, LabelBlock, ScaleBlock, TextBlock, AnnotationTimestampView) {
     "use strict";
 
     /**
@@ -50,7 +50,7 @@ define([
          * Constructor
          * @alias module:views-questionnaire.QuestionnaireView#initialize
          */
-        initialize: function(options) {
+        initialize: function (options) {
             this.questionnaire = annotationTool.video.getQuestionnaire();
             // TODO
             this.questionnaire = getMockupQuestionnaire();
@@ -64,11 +64,11 @@ define([
          * Reset local storage of questionnaire
          * @alias module:views-questionnaire.QuestionnaireView#resetDraft
          */
-        resetDraft: function() {
+        resetDraft: function () {
             // remove fields + draft from local storage
             if (typeof(Storage) !== "undefined") {
                 Object.keys(localStorage)
-                    .filter(x => x.startsWith('oat_questionnaire'))
+                    .filter(x => x.startsWith("oat_questionnaire"))
                     .forEach(x => localStorage.removeItem(x));
 
             }
@@ -78,7 +78,7 @@ define([
          * Reset local state of questionnaire.
          * @alias module:views-questionnaire.QuestionnaireView#resetQuestionnaire
          */
-        resetQuestionnaire: function() {
+        resetQuestionnaire: function () {
             this.annotation = null;
             if (this.timestampsView) {
                 this.timestampsView.remove();
@@ -95,7 +95,7 @@ define([
          * Destructor
          * @alias module:views-questionnaire.QuestionnaireView#remove
          */
-        remove: function() {
+        remove: function () {
             if (this.items) {
                 _.invoke(this.items, "remove");
             }
@@ -108,8 +108,8 @@ define([
          * Render this view
          * @alias module:views-questionnaire.QuestionnaireView#render
          */
-        render: function() {
-            _.each(this.items, function(item) {
+        render: function () {
+            _.each(this.items, function (item) {
                 item.render().$el.detach();
             });
 
@@ -123,7 +123,7 @@ define([
 
             this.$el.html(template({
                 annotation: annotation,
-                prompt: this.questionnaire.prompt,
+                prompt: this.questionnaire.prompt
             }));
 
             if (this.annotation && !this.timestampsView) {
@@ -135,7 +135,7 @@ define([
             }
 
             var $viewContainer = this.$(".questionnaire-items");
-            _.each(this.items, function(item) {
+            _.each(this.items, function (item) {
                 $viewContainer.append(item.$el);
             });
         },
@@ -145,7 +145,7 @@ define([
          * @alias module:views-questionnaire.QuestionnaireView#onCancel
          * @param {Event} event the click event
          */
-        onCancel: function(event) {
+        onCancel: function (event) {
             if (!this.annotation.get("createdFromQuestionnaire")) {
                 annotationTool.deleteOperation.start(
                     this.annotation,
@@ -165,7 +165,7 @@ define([
          * Helper function for resetting the local state and re-rendering.
          * @alias module:views-questionnaire.QuestionnaireView#onDestroy
          */
-        onDestroy: function() {
+        onDestroy: function () {
             this.closeQuestionnaire();
         },
 
@@ -173,7 +173,7 @@ define([
          * Closes the questionnaire.
          * @alias module:views-questionnaire.QuestionnaireView#closeQuestionnaire
          */
-        closeQuestionnaire: function() {
+        closeQuestionnaire: function () {
             this.stopListening(this.annotation);
             this.annotation = null;
             this.resetQuestionnaire();
@@ -186,7 +186,7 @@ define([
          * @alias module:views-questionnaire.Questionnaire#onChangeEnd
          * @param  {event} event Event object
          */
-        onChangeEnd: function(event) {
+        onChangeEnd: function (event) {
             var $target = $(event.currentTarget);
             var value = $target.val();
 
@@ -223,7 +223,7 @@ define([
          * @alias module:views-questionnaire.Questionnaire#onChangeStart
          * @param  {event} event Event object
          */
-        onChangeStart: function(event) {
+        onChangeStart: function (event) {
             var $target = $(event.currentTarget);
             var $controlGroup = $target.closest(".control-group");
             var $error = $controlGroup.find(".error-msg");
@@ -269,7 +269,7 @@ define([
          * @alias module:views-questionnaire.QuestionnaireView#onStart
          * @param {Event} event the click event
          */
-        onStart: function(event) {
+        onStart: function (event) {
             /*
              { createdFromQuestionnaire: true } does not work as params because delete operation in onCancel fails
              */
@@ -294,7 +294,7 @@ define([
          * @alias module:views-questionnaire.QuestionnaireView#onSubmitForm
          * @param {Event} event the submit event
          */
-        onSubmitForm: function(event) {
+        onSubmitForm: function (event) {
             event.preventDefault();
 
             if (!this.validationErrors.start &&
@@ -302,12 +302,12 @@ define([
                 _.every(_.invoke(this.items, "validate"))) {
                 var contentItems = _.filter(_.flatten(_.invoke(this.items, "getContentItems")));
                 this.annotation.get("content").reset(contentItems);
-                this.annotation.set({createdFromQuestionnaire: true});
+                this.annotation.set({ createdFromQuestionnaire: true });
                 this.annotation.save();
                 this.annotation = null;
                 this.onDestroy();
             } else {
-              this.render();
+                this.render();
             }
         },
 
@@ -316,7 +316,7 @@ define([
          * @alias module:views-questionnaire.QuestionnaireView#onShowEdit
          * @param {Annotation} annotation the annotation to edit
          */
-        onShowEdit: function(annotation) {
+        onShowEdit: function (annotation) {
             // we are already editing this annotation
             if (this.annotation && this.annotation.cid === annotation.cid) {
                 console.error("You are already editing this annotation.");
@@ -349,7 +349,7 @@ define([
 
         var formFields = _.reduce(
             jsonform.schema,
-            function(memo, item, key) {
+            function (memo, item, key) {
                 if (!(item.type in typeMapping)) {
                     throw new Error("Missing item type: " + item.type);
                 }
@@ -364,7 +364,7 @@ define([
             return contentItem.get("schema");
         });
 
-        return _.map(jsonform.form, function(formItem) {
+        return _.map(jsonform.form, function (formItem) {
             if (_.isString(formItem) && formItem in formFields) {
 
                 var formField = formFields[formItem];
@@ -372,9 +372,9 @@ define([
                 var value = null;
                 if (formItem in values) {
                     value =
-                        formField.type !== 'categories'
-                        ? _.head(values[formItem]).get("value")
-                        : values[formItem];
+                        formField.type !== "categories"
+                            ? _.head(values[formItem]).get("value")
+                            : values[formItem];
                 }
 
                 var block = new typeFunction({

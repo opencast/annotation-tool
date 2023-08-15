@@ -139,7 +139,7 @@ define(
                     return function (annotation) {
                         var labels = annotation.getLabels();
                         var anyMatches = _.some(labels, function (label) {
-                            return category.id === label.get('category').id;
+                            return category.id === label.get("category").id;
                         });
                         return anyMatches;
                     };
@@ -151,7 +151,7 @@ define(
              * @alias module:models-video.Video#getLabels
              * @return {array} an array of all the labels
              */
-            getLabels: function() {
+            getLabels: function () {
                 return _.flatten(this.get("categories").map(
                     function (category) {
                         return category.get("labels").models;
@@ -164,7 +164,7 @@ define(
              * @alias module:models-video.Video#getScaleValues
              * @return {array} an array of all the scale values
              */
-            getScaleValues: function() {
+            getScaleValues: function () {
                 return _.flatten(this.get("scales").map(
                     function (scale) {
                         return scale.get("scaleValues").models;
@@ -177,7 +177,7 @@ define(
              * @alias module:models-video.Video#getQuestionnaire
              * @return {object|undefined} an object describing a questionnaire if there is one connected to this video
              */
-            getQuestionnaire: function() {
+            getQuestionnaire: function () {
                 // TODO: this has to be provided by the backend
                 // return undefined
                 return {};

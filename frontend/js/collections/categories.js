@@ -62,36 +62,23 @@ define(
                     + (this.seriesExtId ? "?series-extid=" + this.seriesExtId : "");
             },
 
-            /*
-             * Sorts the given data
-             * @alias module:collections-questionnaires.Categories#sort
-             * @param  {object} data Object or array containing the data to sort.
-             * @return {object} sorted data
-             */
-            sort: function (data) {
-                return data.sort((a, b) => {
-                    var aa = a.name.toLowerCase();
-                    var ab = b.name.toLowerCase();
-                    if(aa < ab) { return -1; }
-                    if(aa > ab) { return 1; }
-                    return 0;
-                });
-            },
-
             /**
              * Parse the given data
              * @param {object} data Object or array containing the data to parse.
              * @return {object} the part of the given data related to the categories
              */
             parse: function (data) {
+                var categories;
                 if (data.categories && _.isArray(data.categories)) {
-                    return this.sort(data.categories);
+                    categories = data.categories;
                 } else if (_.isArray(data)) {
-                    // sort categories alphabetically
-                    return this.sort(data);
+                    categories = data;
                 } else {
                     return null;
                 }
+                return _.sortBy(categories, function (category) {
+                    return category.name.toLowerCase();
+                });
             }
         });
 

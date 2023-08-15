@@ -88,7 +88,7 @@ define([
      * Compare two values for equality.
      * @alias module:Handlebars#ifeq
      */
-    Handlebars.registerHelper('ifeq', function (a, b, options) {
+    Handlebars.registerHelper("ifeq", function (a, b, options) {
         if (a == b) {
             return options.fn(this);
         }

@@ -20,7 +20,7 @@ define([
     "templates/partial-scale-chooser",
     "backbone",
     "bootstrap"
-], function(ContentItem, template, tmplLayout, tmplScaleChooser, Backbone) {
+], function (ContentItem, template, tmplLayout, tmplScaleChooser, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
@@ -29,13 +29,13 @@ define([
         events: {
             "click .btn": "onClick"
         },
-        initialize: function(options) {
+        initialize: function (options) {
             this.item = options.item;
             var value = options.value || {};
             this.model = new ContentItem({ type: "scaling", title: this.item.title, value: value });
             this.validationErrors = [];
         },
-        render: function() {
+        render: function () {
             var category = getCategoryByName(this.item.category);
             this.$el.html(
                 template(
@@ -50,7 +50,7 @@ define([
             );
             return this;
         },
-        validate: function() {
+        validate: function () {
             var value = this.model.get("value");
             if (!_.isObject(value) || !value.label || !value.scaling) {
                 this.validationErrors = ["validation errors.empty"];
@@ -60,10 +60,10 @@ define([
 
             return true;
         },
-        getContentItems: function() {
+        getContentItems: function () {
             return this.model;
         },
-        onClick: function(event) {
+        onClick: function (event) {
             event.preventDefault();
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
@@ -85,7 +85,7 @@ define([
         var labels = category
             .get("labels")
             .toJSON()
-            .map(function(label) {
+            .map(function (label) {
                 return _.extend(label, { selected: label.id === labelId });
             });
 
@@ -100,7 +100,7 @@ define([
             var scaleValues = scale
                 .get("scaleValues")
                 .toJSON()
-                .map(function(scaleValue) {
+                .map(function (scaleValue) {
                     return _.extend(scaleValue, { selected: scaleValue.id === selectedScaleValueId });
                 });
             scale = _.extend(scale.toJSON(), { scaleValues: scaleValues });
@@ -110,7 +110,7 @@ define([
     }
 
     function getCategoryByName(name) {
-        return annotationTool.video.get("categories").models.find(function(category) {
+        return annotationTool.video.get("categories").models.find(function (category) {
             return category.get("name") === name;
         });
     }

@@ -27,7 +27,7 @@ define(
         "models/resource",
         "i18next"
     ],
-  function (_, util, Comments, AnnotationContent, ContentItem, Resource, i18next) {
+    function (_, util, Comments, AnnotationContent, ContentItem, Resource, i18next) {
 
         "use strict";
 

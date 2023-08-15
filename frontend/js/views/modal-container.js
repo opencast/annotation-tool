@@ -13,7 +13,7 @@
  *  permissions and limitations under the License.
  *
  */
-define(["templates/modal-container", "backbone", "bootstrap"], function(template, Backbone) {
+define(["templates/modal-container", "backbone", "bootstrap"], function (template, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
@@ -27,7 +27,7 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * Constructor
          * @alias module:views-modal-container.ModalContainer#initialize
          */
-        initialize: function(options) {
+        initialize: function (options) {
             this.buttonText = options.buttonText;
             this.contentView = options.contentView;
             this.header = options.header;
@@ -42,7 +42,7 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * Destructor
          * @alias module:views-modal-container.ModalContainer#remove
          */
-        remove: function() {
+        remove: function () {
             this.contentView.remove();
             Backbone.View.prototype.remove.apply(this, arguments);
         },
@@ -51,7 +51,7 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * Render this view
          * @alias module:views-modal-container.ModalContainer#render
          */
-        render: function() {
+        render: function () {
             this.$el.html(template({ cid: this.cid, buttonText: this.buttonText, header: this.header }));
             this.$(".modal-body").append(this.contentView.render().$el);
 
@@ -62,7 +62,7 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * Listener for a close event out of this container
          * @alias module:views-modal-container.ModalContainer#close
          */
-        close: function() {
+        close: function () {
             this.$(".modal").modal("hide");
             this.remove();
         },
@@ -71,7 +71,7 @@ define(["templates/modal-container", "backbone", "bootstrap"], function(template
          * Listener for a click on the submit button of this modal.
          * @alias module:views-modal-container.ModalContainer#onClick
          */
-        onClick: function(event) {
+        onClick: function (event) {
             this.contentView.trigger("modal:click", event);
         }
     });
