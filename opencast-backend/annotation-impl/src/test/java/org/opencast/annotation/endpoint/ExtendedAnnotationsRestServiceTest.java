@@ -20,8 +20,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.opencast.annotation.endpoint.ExtendedAnnotationsRestServiceTest.RegexMatcher.regex;
 import static org.opencastproject.test.rest.RestServiceTestEnv.testEnvForClasses;
 import static org.opencastproject.util.data.Option.none;
@@ -45,6 +45,7 @@ import org.junit.Test;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.ws.rs.core.Response;
@@ -65,9 +66,11 @@ public class ExtendedAnnotationsRestServiceTest {
   }
 
   @Test
-  public void testUser() throws Exception {
+  public void testUser() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     // put/malformed
     given().formParam("user_extid", "admin").expect().statusCode(BAD_REQUEST).when().put(host("/users"));
@@ -82,7 +85,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("id", id).expect().statusCode(OK).body("user_extid", equalTo("admin"))
             .body("nickname", equalTo("klausi")).body("tags", equalTo(json)).when().get(host("/users/{id}"));
     // update
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().formParam("user_extid", "admin").formParam("nickname", "santa").formParam("tags", json.toJSONString())
             .expect().statusCode(OK).body("nickname", equalTo("santa")).when().put(host("/users"));
     given().pathParam("id", id).expect().statusCode(OK).body("nickname", equalTo("santa"))
@@ -116,7 +119,9 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testVideo() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect()
             .body("user_extid", equalTo("admin")).when().put(host("/users"));
@@ -126,7 +131,7 @@ public class ExtendedAnnotationsRestServiceTest {
             .header(LOCATION, startsWith(host("/videos/"))).body("tags", equalTo(json))
             .body("video_extid", equalTo("lecture")).when().post(host("/videos")));
     // put/update
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().formParam("video_extid", "lecture").formParam("tags", json.toJSONString()).expect().statusCode(OK)
             .body("tags", equalTo(json)).body("video_extid", equalTo("lecture")).when().put(host("/videos"));
     // put/create/malformed
@@ -146,7 +151,9 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testTrack() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect()
             .body("user_extid", equalTo("admin")).when().put(host("/users"));
@@ -180,7 +187,7 @@ public class ExtendedAnnotationsRestServiceTest {
             // .body("settings.type", equalTo("lecture")) todo
             .when().get(host("/videos/{videoId}/tracks/{trackId}"));
     // put
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("tags", json.toJSONString())
             .formParam("name", "track2").expect().statusCode(OK).body("name", equalTo("track2"))
             .body("tags", equalTo(json)).when().put(host("/videos/{videoId}/tracks/{trackId}"));
@@ -210,26 +217,28 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testEqualsIgnoreTimestamp() throws Exception {
     Resource resource = new ResourceImpl(some(Resource.PRIVATE), none(), none(), none(), some(new Date()), none(),
-            none(), new HashMap<String, String>());
+            none(), new HashMap<>());
     final Annotation a = new AnnotationImpl(1, 1, some("a text"), 10D, some(20D), some("the settings"), none(), none(),
             resource);
     Thread.sleep(10);
     final Annotation b = new AnnotationImpl(1, 1, some("a text"), 10D, some(20D), some("the settings"), none(), none(),
             new ResourceImpl(some(Resource.PRIVATE), none(), none(), none(), some(new Date()), none(), none(),
-            new HashMap<String, String>()));
+                    new HashMap<>()));
     final Annotation c = new AnnotationImpl(1, 2, some("a text"), 10D, some(10D), some("the settings"), none(), none(),
             resource);
     final Annotation d = new AnnotationImpl(1, 1, some("another text"), 10D, some(20D), some("other settings"), none(),
             none(), resource);
-    assertTrue(a.equals(b));
-    assertFalse(a.equals(c));
-    assertFalse(a.equals(d));
+    assertEquals(a, b);
+    assertNotEquals(a, c);
+    assertNotEquals(a, d);
   }
 
   @Test
-  public void testAnnotation() throws Exception {
+  public void testAnnotation() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect()
             .body("user_extid", equalTo("admin")).when().put(host("/users"));
@@ -300,7 +309,9 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testCategory() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     // create user and video
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
@@ -321,7 +332,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).formParam("category_id", templateId).expect().statusCode(CREATED)
             .body("name", equalTo("categoryTemplateName")).when().post(host("/videos/{videoId}/categories"));
     // put template
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().pathParam("videoId", 212).pathParam("categoryId", id).contentType(ContentType.URLENC).expect()
             .statusCode(BAD_REQUEST).when().put(host("/videos/{videoId}/categories/{categoryId}"));
 
@@ -336,7 +347,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", 342).pathParam("categoryId", id).expect().statusCode(BAD_REQUEST).when()
             .get(host("/videos/{videoId}/categories/{categoryId}"));
     // get all
-    json.put("channel", "33");
+    safeJson.put("channel", "33");
     given().expect().statusCode(OK).body("categories", iterableWithSize(1)).when()
             .get(host("/categories"));
     given().queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
@@ -345,7 +356,7 @@ public class ExtendedAnnotationsRestServiceTest {
             .body("categories", iterableWithSize(1)).when().get(host("/categories"));
     given().pathParam("videoId", videoId).expect().statusCode(OK)
             .body("categories", iterableWithSize(2)).when().get(host("/videos/{videoId}/categories"));
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().queryParam("tags-and", json.toJSONString()).pathParam("videoId", videoId).expect()
             .statusCode(OK).body("categories", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/categories"));
@@ -357,7 +368,9 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testScale() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     // create user and video
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
@@ -378,7 +391,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).formParam("scale_id", templateId).expect().statusCode(CREATED)
             .body("name", equalTo("scaleTemplateName")).when().post(host("/videos/{videoId}/scales"));
     // put template
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().pathParam("videoId", 212).pathParam("scaleId", id).contentType(ContentType.URLENC).expect()
             .statusCode(BAD_REQUEST).when().put(host("/videos/{videoId}/scales/{scaleId}"));
 
@@ -393,7 +406,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", 342).pathParam("scaleId", id).expect().statusCode(BAD_REQUEST).when()
             .get(host("/videos/{videoId}/scales/{scaleId}"));
     // get all
-    json.put("channel", "33");
+    safeJson.put("channel", "33");
     given().expect().statusCode(OK).body("scales", iterableWithSize(1)).when()
             .get(host("/scales"));
     given().queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
@@ -402,7 +415,7 @@ public class ExtendedAnnotationsRestServiceTest {
             .body("scales", iterableWithSize(1)).when().get(host("/scales"));
     given().pathParam("videoId", videoId).expect().statusCode(OK)
             .body("scales", iterableWithSize(2)).when().get(host("/videos/{videoId}/scales"));
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().queryParam("tags-and", json.toJSONString()).pathParam("videoId", videoId).expect()
             .statusCode(OK).body("scales", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/scales"));
@@ -423,7 +436,9 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testScaleValue() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     // create user, video and scale
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
@@ -446,7 +461,7 @@ public class ExtendedAnnotationsRestServiceTest {
             .body("name", equalTo("scaleValueName")).body("tags", equalTo(json)).when()
             .post(host("/videos/{videoId}/scales/{scaleId}/scalevalues")));
     // put template
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().pathParam("videoId", 212).pathParam("scaleId", scaleId).pathParam("scaleValueId", id)
             .contentType(ContentType.URLENC).expect() .statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
@@ -509,7 +524,9 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testLabel() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     // create user, video and scale
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
@@ -535,7 +552,7 @@ public class ExtendedAnnotationsRestServiceTest {
             .body("abbreviation", equalTo("testAbbreviation")).body("tags", equalTo(json)).when()
             .post(host("/videos/{videoId}/categories/{categoryId}/labels")));
     // put template
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().pathParam("videoId", 212).pathParam("categoryId", categoryId).pathParam("labelId", id)
             .contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
@@ -594,7 +611,9 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testComment() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     // create user, video and scale
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
@@ -629,7 +648,7 @@ public class ExtendedAnnotationsRestServiceTest {
             .when().post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments"));
 
     // put template
-    json.put("channel", "22");
+    safeJson.put("channel", "22");
     given().pathParam("videoId", 323233).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
             .pathParam("commentId", id).contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));
@@ -731,7 +750,9 @@ public class ExtendedAnnotationsRestServiceTest {
   @Test
   public void testReply() {
     JSONObject json = new JSONObject();
-    json.put("channel", "33");
+    @SuppressWarnings("unchecked")
+    Map<String, Object> safeJson = (Map<String, Object>) json;
+    safeJson.put("channel", "33");
 
     // create user, video, annotation and comment
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
@@ -776,7 +797,7 @@ public class ExtendedAnnotationsRestServiceTest {
             .post(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}/replies"));
 
     // put
-    json.put("channel", "33");
+    safeJson.put("channel", "33");
     given().pathParam("videoId", 323233).pathParam("trackId", trackId).pathParam("annotationId", annotationId)
             .pathParam("commentId", id).contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/tracks/{trackId}/annotations/{annotationId}/comments/{commentId}"));

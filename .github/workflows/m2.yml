@@ -2,57 +2,54 @@ name: Deploy Maven artifacts
 on: push
 
 jobs:
-  main:
+  deploy:
     runs-on: ubuntu-latest
     environment: m2 deployment
     steps:
-      - name: Set up a compatible Java version
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-
       - name: Check out the code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up a compatible Java version
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 11
+          cache: maven
+
+      - name: Potentially restore node from cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            frontend/node
+          key: node-${{ hashFiles('frontend/pom.xml') }}
+          restore-keys: node-
+
+      - name: Potentially restore npm dependencies from cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-
 
       - name: Check out the m2 repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: m2
           path: m2
-          ssh-key: ${{ secrets.M2_DEPLOY_KEY }}
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2
-            frontend/node
-          key: maven-2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: maven-2-
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: npm-2-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-2-
-
-      - name: Get the date
-        id: date
-        run: echo "date=$(date +%Y.%m%d.%H%M%S)" >> $GITHUB_OUTPUT
+      - name: Generate revision
+        id: revision
+        run: echo "revision=$(date +%Y.%m%d.%H%M%S)-${{ github.sha }}" >> $GITHUB_OUTPUT
 
       - name: Build the artifacts
         run: mvn clean deploy
           --batch-mode
           -DmaxWarnings=0
-          -DaltDeploymentRepository=m2::default::file:m2
-          -Drevision=${{ steps.date.outputs.date }}-${{ github.sha }}
+          -DaltDeploymentRepository=m2::file:m2
+          -Drevision=${{ steps.revision.outputs.revision }}
 
       - name: Deploy the artifacts to GitHub
-        uses: EndBug/add-and-commit@v5
+        uses: EndBug/add-and-commit@v9
         with:
-          message: Update m2 repository
+          message: ${{ steps.revision.outputs.revision }}
           cwd: m2
-          branch: m2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

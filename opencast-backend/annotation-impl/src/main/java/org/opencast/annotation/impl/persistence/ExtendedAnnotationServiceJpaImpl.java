@@ -78,7 +78,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -330,11 +329,16 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   /** Remove all none values from the list of query parameters. */
   @SafeVarargs
-  private static Pair<String, Object>[] qparams(Option<Pair<String, Object>>... p) {
-    return Arrays.stream(p)
-            .filter(Option::isSome)
-            .map(Option::get)
-            .<Pair<String, Object>> toArray(Pair[]::new);
+  private static Pair<String, Object>[] qparams(Option<Pair<String, Object>>... ps) {
+    final ArrayList<Pair<String, Object>> result = new ArrayList<>(ps.length);
+    for (Option<Pair<String, Object>> op : ps) {
+      for (Pair<String, Object> p : op) {
+        result.add(p);
+      }
+    }
+    @SuppressWarnings("unchecked")
+    Pair<String, Object>[] safeResult = (Pair<String, Object>[]) result.toArray(Pair[]::new);
+    return safeResult;
   }
 
   @Override

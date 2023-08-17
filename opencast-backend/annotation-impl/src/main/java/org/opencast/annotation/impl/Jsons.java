@@ -25,10 +25,10 @@ import org.opencastproject.util.data.Tuple;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** JSON builder based on json-simple. */
 public final class Jsons {
@@ -36,14 +36,17 @@ public final class Jsons {
 
   }
 
-  private static final Tuple<String, Object> ZERO = Tuple.<String, Object> tuple("", "");
+  private static final Tuple<String, Object> ZERO = Tuple.tuple("", "");
 
   /** Create a JSON object. The tuples are key/value. */
+  @SafeVarargs
   public static JSONObject jO(Tuple<String, Object>... ps) {
     final JSONObject j = new JSONObject();
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> safeJ = (Map<String, Object>) j;
     for (Tuple<String, Object> p : ps) {
       if (!ZERO.equals(p))
-        j.put(p.getA(), p.getB());
+        safeJ.put(p.getA(), p.getB());
     }
     return j;
   }
@@ -51,30 +54,37 @@ public final class Jsons {
   /** Create a JSON object from a key value Map */
   public static JSONObject jOTags(Map<String, String> map) {
     final JSONObject tags = new JSONObject();
-    JSONObject a = new JSONObject();
-    a.putAll(map);
-    tags.put("tags", a);
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> safeTags = (Map<String, Object>) tags;
+    final JSONObject a = new JSONObject(map);
+    safeTags.put("tags", a);
     return tags;
   }
 
   /** Create a JSON array. */
   public static JSONArray jA(Object... vs) {
     final JSONArray a = new JSONArray();
-    Collections.addAll(a, vs);
+    @SuppressWarnings("unchecked")
+    final Collection<Object> safeA = (Collection<Object>) a;
+    Collections.addAll(safeA, vs);
     return a;
   }
 
   /** Create a JSON array. */
   public static JSONArray jA(List<Object> vs) {
     final JSONArray a = new JSONArray();
-    a.addAll(vs);
+    @SuppressWarnings("unchecked")
+    final Collection<Object> safeA = (Collection<Object>) a;
+    safeA.addAll(vs);
     return a;
   }
 
   /** Create a JSON array. */
-  public static JSONArray jA(Monadics.ListMonadic vs) {
+  public static JSONArray jA(Monadics.ListMonadic<Object> vs) {
     final JSONArray a = new JSONArray();
-    a.addAll(vs.value());
+    @SuppressWarnings("unchecked")
+    final Collection<Object> safeA = (Collection<Object>) a;
+    safeA.addAll(vs.value());
     return a;
   }
 
@@ -85,14 +95,14 @@ public final class Jsons {
 
   /** Create an optional property of a JSON object. If <code>value</code> is none the property is not added. */
   public static <A> Tuple<String, Object> p(String key, Option<A> value) {
-    return value.map(Jsons.<A> tupleize(key)).getOrElse(ZERO);
+    return value.map(Jsons.tupleize(key)).getOrElse(ZERO);
   }
 
   private static <A> Function<A, Tuple<String, Object>> tupleize(final String key) {
-    return new Function<A, Tuple<String, Object>>() {
+    return new Function<>() {
       @Override
       public Tuple<String, Object> apply(A value) {
-        return Tuple.<String, Object> tuple(key, value);
+        return Tuple.tuple(key, value);
       }
     };
   }
@@ -100,14 +110,13 @@ public final class Jsons {
   /** Concatenate a list of JSON objects (merging). */
   public static JSONObject conc(JSONObject... js) {
     final JSONObject j = new JSONObject();
-    for (JSONObject a : js)
-      add(j, a);
-    return j;
-  }
-
-  private static void add(JSONObject j, JSONObject a) {
-    for (Map.Entry e : (Set<Map.Entry>) a.entrySet()) {
-      j.put(e.getKey(), e.getValue());
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> safeJ = (Map<String, Object>) j;
+    for (JSONObject a : js) {
+      @SuppressWarnings("unchecked")
+      final Map<String, Object> safeA = (Map<String, Object>) a;
+      safeJ.putAll(safeA);
     }
+    return j;
   }
 }

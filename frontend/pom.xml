@@ -24,7 +24,9 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
+        <version>3.3.1</version>
         <configuration>
           <filesets>
             <fileset>
@@ -36,6 +38,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.13.4</version>
         <executions>
           <execution>
             <id>install node and npm</id>
@@ -46,7 +49,6 @@
               <nodeVersion>v16.13.0</nodeVersion>
             </configuration>
           </execution>
-
           <execution>
             <id>npm install</id>
             <goals>
@@ -61,7 +63,6 @@
             <goals>
               <goal>grunt</goal>
             </goals>
-
             <configuration>
               <arguments>
                 --integration=${integration}

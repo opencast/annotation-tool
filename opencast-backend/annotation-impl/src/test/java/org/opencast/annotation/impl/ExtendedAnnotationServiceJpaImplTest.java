@@ -17,6 +17,7 @@ package org.opencast.annotation.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opencastproject.db.DBTestEnv.getDbSessionFactory;
@@ -63,7 +64,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
 
   @Before
   public void setUp() {
-    Map<String, String> tagsMap = new HashMap<String, String>();
+    Map<String, String> tagsMap = new HashMap<>();
     tagsMap.put("channel", "7832");
     tagsMap.put("room", "B1");
     tags = Option.some(tagsMap);
@@ -262,7 +263,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   }
 
   @Test
-  public void testCreateAndFindAnnotation() throws Exception {
+  public void testCreateAndFindAnnotation() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
     final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
     final Video v = eas.createVideo("lecture", resource);
@@ -363,8 +364,8 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertEquals(categoryTemplate.getName(), cCopy.get().getName());
     assertEquals(categoryTemplate.getDescription(), cCopy.get().getDescription());
     assertEquals(categoryTemplate.getSettings(), cCopy.get().getSettings());
-    assertFalse(categoryTemplate.getScaleId().equals(cCopy.get().getScaleId()));
-    assertEquals(new Long(20), cCopy.get().getVideoId().get());
+    assertNotEquals(categoryTemplate.getScaleId(), cCopy.get().getScaleId());
+    assertEquals(Long.valueOf(20), cCopy.get().getVideoId().get());
     Option<Scale> copyScale = eas.getScale(cCopy.get().getScaleId().get(), false);
     assertTrue(copyScale.isSome());
     assertEquals(cCopy.get().getVideoId(), copyScale.get().getVideoId());
