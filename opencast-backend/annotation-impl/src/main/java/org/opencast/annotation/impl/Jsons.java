@@ -25,14 +25,18 @@ import org.opencastproject.util.data.Tuple;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /** JSON builder based on json-simple. */
-// CHECKSTYLE:OFF
-public class Jsons {
-  public static final Tuple<String, Object> ZERO = Tuple.<String, Object> tuple("", "");
+public final class Jsons {
+  private Jsons() {
+
+  }
+
+  private static final Tuple<String, Object> ZERO = Tuple.<String, Object> tuple("", "");
 
   /** Create a JSON object. The tuples are key/value. */
   public static JSONObject jO(Tuple<String, Object>... ps) {
@@ -56,9 +60,7 @@ public class Jsons {
   /** Create a JSON array. */
   public static JSONArray jA(Object... vs) {
     final JSONArray a = new JSONArray();
-    for (Object v : vs) {
-      a.add(v);
-    }
+    Collections.addAll(a, vs);
     return a;
   }
 

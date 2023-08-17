@@ -76,7 +76,7 @@ public abstract class AbstractResourceDto {
     return this;
   }
 
-  public static final Function2<ExtendedAnnotationService, Resource, JSONObject> toJson = new Function2<ExtendedAnnotationService, Resource, JSONObject>() {
+  public static final Function2<ExtendedAnnotationService, Resource, JSONObject> toJson = new Function2<>() {
     @Override
     public JSONObject apply(ExtendedAnnotationService s, Resource resource) {
       String createdAt = resource.getCreatedAt().map(getDateAsUtc).getOrElseNull();
@@ -102,14 +102,14 @@ public abstract class AbstractResourceDto {
     }
   };
 
-  public static final Function<Date, String> getDateAsUtc = new Function<Date, String>() {
+  public static final Function<Date, String> getDateAsUtc = new Function<>() {
     @Override
     public String apply(Date date) {
       return DateTimeSupport.toUTC(date.getTime());
     }
   };
 
-  public static final Function2<ExtendedAnnotationService, Long, String> getUserNickname = new Function2<ExtendedAnnotationService, Long, String>() {
+  public static final Function2<ExtendedAnnotationService, Long, String> getUserNickname = new Function2<>() {
     @Override
     public String apply(ExtendedAnnotationService s, Long userId) {
       Option<User> user = s.getUser(userId);
@@ -120,10 +120,10 @@ public abstract class AbstractResourceDto {
     }
   };
 
-  private static final Function2<ExtendedAnnotationService, Long, Option<String>> getUserEmail = new Function2<ExtendedAnnotationService, Long, Option<String>>() {
+  private static final Function2<ExtendedAnnotationService, Long, Option<String>> getUserEmail = new Function2<>() {
     @Override
-    public Option apply(ExtendedAnnotationService s, Long userId) {
-      return s.getUser(userId).flatMap(new Function<User, Option<String>>() {
+    public Option<String> apply(ExtendedAnnotationService s, Long userId) {
+      return s.getUser(userId).flatMap(new Function<>() {
         @Override
         public Option<String> apply(User user) {
           return user.getEmail();
