@@ -59,7 +59,7 @@ define(
             parse: function (resp) {
                 var labels;
                 if (resp.labels && _.isArray(resp.labels)) {
-                    labels = data.labels;
+                    labels = resp.labels;
                 } else if (_.isArray(resp)) {
                     labels = resp;
                 } else {
