@@ -29,6 +29,7 @@ import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Label;
+import org.opencast.annotation.api.Questionnaire;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
 import org.opencast.annotation.api.ScaleValue;
@@ -43,6 +44,7 @@ import org.opencast.annotation.impl.UserImpl;
 import org.opencast.annotation.impl.VideoImpl;
 import org.opencast.annotation.impl.persistence.CategoryDto;
 import org.opencast.annotation.impl.persistence.LabelDto;
+import org.opencast.annotation.impl.persistence.QuestionnaireDto;
 import org.opencast.annotation.impl.persistence.ScaleDto;
 import org.opencast.annotation.impl.persistence.ScaleValueDto;
 import org.opencast.annotation.impl.persistence.UserDto;
@@ -1105,6 +1107,141 @@ public abstract class AbstractExtendedAnnotationsRestService {
     });
   }
 
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/questionnaires/{questionnaireId}")
+  public Response getQuestionnaire(@PathParam("questionnaireId") final long id) {
+    return getQuestionnaireResponse(none(), id);
+  }
+
+  Response getQuestionnaireResponse(final Option<Long> videoId, final long id) {
+    if (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<Response>() {
+      @Override
+      public Response apply() {
+        return eas().getQuestionnaire(id, false).fold(new Option.Match<Questionnaire, Response>() {
+          @Override
+          public Response some(Questionnaire c) {
+            if (!eas().hasResourceAccess(c))
+              return UNAUTHORIZED;
+            return buildOk(QuestionnaireDto.toJson.apply(eas(), c));
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/questionnaires")
+  public Response getQuestionnaires(
+          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
+          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
+          @QueryParam("tags-or") final String tagsOr) {
+    return getQuestionnairesResponse(none(), limit, offset, date, tagsAnd, tagsOr);
+  }
+
+  Response getQuestionnairesResponse(Option<Long> videoId, final int limit,
+          final int offset, final String date, final String tagsAnd, final String tagsOr) {
+    return run(nil, new Function0<Response>() {
+      @Override
+      public Response apply() {
+        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
+        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
+        final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
+        final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
+        final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
+
+        if (datem.isSome() && datem.get().isNone() || (videoId.isSome() && eas().getVideo(videoId.get()).isNone())
+                || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
+                || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
+          return BAD_REQUEST;
+        } else {
+          return buildOk(QuestionnaireDto.toJson(
+                  eas(),
+                  offset,
+                  eas().getQuestionnaires(videoId, offsetm, limitm, datem.bind(Functions.identity()),
+                          tagsAndArray.bind(Functions.identity()), tagsOrArray.bind(Functions.identity()))));
+        }
+      }
+    });
+  }
+
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/questionnaires")
+  public Response postQuestionnaireTemplate(
+          @FormParam("title") final String title,
+          @FormParam("content") @DefaultValue("[]") final String content,
+          @FormParam("settings") final String settings,
+          @FormParam("access") final Integer access,
+          @FormParam("tags") final String tags) {
+    return postQuestionnaireResponse(none(), title, content, settings, access, tags);
+  }
+
+  Response postQuestionnaireResponse(final Option<Long> videoId,
+      final String title, final String content, final String settings, final Integer access, final String tags) {
+
+    return run(array(title, content), new Function0<Response>() {
+      @Override
+      public Response apply() {
+        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
+
+        if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone())
+            || (tagsMap.isSome() && tagsMap.get().isNone()))
+          return BAD_REQUEST;
+
+        Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
+        final Questionnaire questionnaire = eas().createQuestionnaire(videoId, title, content, trimToNone(settings), resource);
+
+        return Response.created(questionnaireLocationUri(questionnaire, videoId.isSome()))
+          .entity(Strings.asStringNull().apply(QuestionnaireDto.toJson.apply(eas(), questionnaire))).build();
+      }
+    });
+  }
+
+  @DELETE
+  @Path("questionnaires/{questionnaireId}")
+  public Response deleteQuestionnaire(@PathParam("questionnaireId") final long questionnaireId) {
+    return deleteQuestionnaireResponse(none(), questionnaireId);
+  }
+
+  Response deleteQuestionnaireResponse(final Option<Long> videoId, final long questionnaireId) {
+    if ((videoId.isSome() && eas().getVideo(videoId.get()).isNone()) || eas().getQuestionnaire(questionnaireId, false).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<Response>() {
+      @Override
+      public Response apply() {
+        return eas().getQuestionnaire(questionnaireId, true).fold(new Option.Match<Questionnaire, Response>() {
+          @Override
+          public Response some(Questionnaire q) {
+            if (!eas().hasResourceAccess(q))
+              return UNAUTHORIZED;
+
+            q = eas().deleteQuestionnaire(q);
+
+            return Response.ok(Strings.asStringNull().apply(QuestionnaireDto.toJson.apply(eas(), q)))
+                    .header(LOCATION, questionnaireLocationUri(q, videoId.isSome())).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
+  }
+
   // --
 
   static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
@@ -1169,6 +1306,14 @@ public abstract class AbstractExtendedAnnotationsRestService {
       return uri(getEndpointBaseUrl(), "videos", c.getVideoId().get(), "categories", c.getId());
     } else {
       return uri(getEndpointBaseUrl(), "categories", c.getId());
+    }
+  }
+
+  URI questionnaireLocationUri(Questionnaire q, boolean hasVideo) {
+    if (hasVideo && q.getVideoId().isSome()) {
+      return uri(getEndpointBaseUrl(), "videos", q.getVideoId().get(), "questionnaires", q.getId());
+    } else {
+      return uri(getEndpointBaseUrl(), "questionnaires", q.getId());
     }
   }
 

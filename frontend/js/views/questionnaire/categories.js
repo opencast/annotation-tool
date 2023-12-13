@@ -12,6 +12,7 @@
  *  or implied. See the License for the specific language governing
  *  permissions and limitations under the License.
  *
+ * @module questionnaire
  */
 define([
     "underscore",
@@ -19,11 +20,20 @@ define([
     "i18next",
     "jquery",
     "collections/annotation-content",
-    "templates/questionnaire-block-categories",
-    "templates/questionnaire-block-layout",
+    "templates/questionnaire/block-categories",
+    "templates/questionnaire/block-layout",
     "views/modal-add-labelled",
     "bootstrap"
-], function (_, Backbone, i18next, $, ContentItems, template, tmplLayout, AddLabelledModal) {
+], function (
+    _,
+    Backbone,
+    i18next,
+    $,
+    ContentItems,
+    template,
+    tmplLayout,
+    AddLabelledModal
+) {
     "use strict";
 
     return Backbone.View.extend({
@@ -34,6 +44,7 @@ define([
             "click button.questionnaire-content-item-remove": "removeContentItem"
         },
         initialize: function (options) {
+            this.annotation = options.annotation;
             this.item = options.item;
             this.schema = options.schema;
             var value = options.value || [];
@@ -41,11 +52,21 @@ define([
             this.listenTo(this.contentItems, "all", this.render);
             this.validationErrors = [];
         },
+        /**
+         * @param {*} arguments Custom object: {isFirstOpen: true} | Backbone native/arbitrary
+         */
         render: function () {
-            var categories = getCategories(this.item);
+            const isFirstOpen = arguments[0] && arguments[0].isFirstOpen;
+            const categories = getCategories(this.item);
+
+            if (!isFirstOpen && this.annotation.isMine()) {
+                this.validate();
+            }
+
             this.$el.html(
                 template(
                     {
+                        isMine: this.annotation.isMine(),
                         item: this.item,
                         categories: categories,
                         contentItems: this.contentItems.toJSON(),
@@ -58,7 +79,10 @@ define([
             return this;
         },
         validate: function () {
-            if (this.item.minItems && this.contentItems.size() < this.item.minItems) {
+            if (
+                this.item.minItems &&
+                this.contentItems.size() < this.item.minItems
+            ) {
                 this.validationErrors = ["validation errors.min items"];
 
                 return false;
@@ -73,11 +97,15 @@ define([
         addContentItem: function (event) {
             var self = this;
             var categoryID = $(event.target).data("category");
-            var category = annotationTool.video.get("categories").get(categoryID);
+            var category = annotationTool.video
+                .get("categories")
+                .get(categoryID);
 
             var self = this;
             annotationTool.addModal(
-                i18next.t("annotation.add content.category") + " " + category.get("name"),
+                i18next.t("annotation.add content.category") +
+                    " " +
+                    category.get("name"),
                 new AddLabelledModal({
                     model: {
                         addContent: function (content) {
@@ -97,18 +125,47 @@ define([
         }
     });
 
+    /**
+     * @todo CC | Review: If categories is an empty array or not an array, what should happen then? (Currently = Result empty)
+     * @todo CC | Review: Maybe 'isPublic' should be done in the resource (analog to isMine)?
+     * @todo CC | Optimize: Simplify extending JSON with 'isPublic' (less code?)
+     */
     function getCategories(item) {
-        return _.invoke(
-            "categories" in item
-                ? _.filter(_.map(item.categories, getCategoryByName))
-                : annotationTool.video.get("categories").models,
-            "toJSON"
-        );
+        const categories = "categories" in item
+            ? _.filter(_.map(item.categories, getCategoryByName))
+            : getCategoryFiltered();
+        const json = _.invoke(categories, "toJSON");
+
+        _.each(json, (jsonCategory) => {
+            const category = _.findWhere(categories, { id: jsonCategory.id });
+            jsonCategory.isPublic = category.isPublic();
+        });
+
+        return json;
     }
 
+    /**
+     * Get category by name.
+     * @todo CC | Review: Duplicate names can lead to picking wrong category (e.g. same name but different rights -> Display issues)
+     */
     function getCategoryByName(name) {
-        return annotationTool.video.get("categories").models.find(function (category) {
-            return category.get("name") === name;
-        });
+        return getCategoryFiltered()
+            .find(function (category) {
+                return category.get("name") === name;
+            });
+    }
+
+    /**
+     * Get own categories by name.
+     * @see module:views-annotate-category#initialize for consistent solution
+     */
+    function getCategoryFiltered() {
+        return annotationTool.video
+            .get("categories").models
+            .filter(function (category) {
+                const isOwned = !(category.get("settings").createdAsMine && !category.isMine());
+
+                return isOwned;
+            });
     }
 });

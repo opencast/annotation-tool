@@ -271,9 +271,9 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // create
     final Annotation a = eas.createAnnotation(t.getId(), 20.0D, some(10.0D), textAnnotation("cool video"),
-            false, none(), resource);
-    eas.createAnnotation(t.getId(), 30.0D, some(3.0D), textAnnotation("nice!"), false, none(), resource);
-    eas.createAnnotation(t.getId(), 40.0D, some(5.0D), textAnnotation("look at this"), false, none(), resource);
+            0, none(), resource);
+    eas.createAnnotation(t.getId(), 30.0D, some(3.0D), textAnnotation("nice!"), 0, none(), resource);
+    eas.createAnnotation(t.getId(), 40.0D, some(5.0D), textAnnotation("look at this"), 0, none(), resource);
     // get
     assertTrue(eas.getAnnotation(a.getId()).isSome());
     assertEquals(textAnnotation("cool video"), eas.getAnnotation(a.getId()).get().getContent());
@@ -311,17 +311,17 @@ public class ExtendedAnnotationServiceJpaImplTest {
       @Override
       protected void run() {
         eas.updateAnnotation(new AnnotationImpl(12345, 12345, 21.0D, some(10.0D), textAnnotation("not cool"),
-                false, none(), resource));
+                0, none(), resource));
       }
     });
     // create
     final Annotation a = eas.createAnnotation(t.getId(), 20.0D, some(10.0D), textAnnotation("cool video"),
-            false, none(), resource);
+            0, none(), resource);
     assertEquals(textAnnotation("cool video"), eas.getAnnotation(a.getId()).get().getContent());
 
     Resource updatedResource = eas.updateResource(a, tags);
     eas.updateAnnotation(new AnnotationImpl(a.getId(), t.getId(), 22.0D, some(5.0D), textAnnotation("not cool"),
-            false, none(), updatedResource));
+            0, none(), updatedResource));
     assertEquals(textAnnotation("not cool"), eas.getAnnotation(a.getId()).get().getContent());
     assertEquals(tags.get(), eas.getAnnotation(a.getId()).get().getTags());
   }
@@ -334,7 +334,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Track t = eas.createTrack(v.getId(), "track", none(), none(), resource);
     // create
     final Annotation a = eas.createAnnotation(t.getId(), 20.0D, some(10.0D), textAnnotation("cool video"),
-            false, none(), resource);
+            0, none(), resource);
     assertTrue(eas.getAnnotation(a.getId()).isSome());
     // delete
     eas.deleteAnnotation(a);
@@ -637,7 +637,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Video v = eas.createVideo("lecture", resource);
     final Track t = eas.createTrack(v.getId(), "track", none(), none(), resource);
     final Annotation a = eas.createAnnotation(t.getId(), 20.0D, some(10.0D), textAnnotation("cool video"),
-            false, none(), resource);
+            0, none(), resource);
     assertTrue(eas.getUser(u.getId()).isSome());
     assertTrue(eas.getVideo(v.getId()).isSome());
     assertTrue(eas.getTrack(t.getId()).isSome());

@@ -12,30 +12,30 @@
  *  or implied. See the License for the specific language governing
  *  permissions and limitations under the License.
  *
+ * @module questionnaire
  */
 define([
-    "underscore",
     "models/content-item",
-    "templates/questionnaire-block-label",
-    "templates/questionnaire-block-layout",
-    "templates/partial-label-chooser",
+    "templates/questionnaire/block-scale",
+    "templates/questionnaire/block-layout",
+    "templates/partial-scale-chooser",
+    "underscore",
     "backbone",
     "bootstrap"
-], function (_, ContentItem, template, tmplLayout, tmplLabelChooser, Backbone) {
+], function (ContentItem, template, tmplLayout, tmplScaleChooser, _, Backbone) {
     "use strict";
 
     return Backbone.View.extend({
         tagName: "section",
-        className: "questionnaire-block-label",
+        className: "questionnaire-block-scale",
         events: {
             "click .btn": "onClick"
         },
         initialize: function (options) {
             this.item = options.item;
-            var value = options.value || null;
+            var value = options.value || {};
             this.model = new ContentItem({
-                type: "label",
-                schema: options.schema,
+                type: "scaling",
                 title: this.item.title,
                 value: value
             });
@@ -48,15 +48,22 @@ define([
                     {
                         item: this.item,
                         color: getColor(category),
-                        labels: getLabels(category, this.model)
+                        labels: getLabels(category, this.model),
+                        scale: getScale(category, this.model)
                     },
-                    { partials: { layout: tmplLayout, labelChooser: tmplLabelChooser } }
+                    {
+                        partials: {
+                            layout: tmplLayout,
+                            scaleChooser: tmplScaleChooser
+                        }
+                    }
                 )
             );
             return this;
         },
         validate: function () {
-            if (!_.isString(this.model.get("value"))) {
+            var value = this.model.get("value");
+            if (!_.isObject(value) || !value.label || !value.scaling) {
                 this.validationErrors = ["validation errors.empty"];
                 return false;
             }
@@ -71,8 +78,9 @@ define([
             event.preventDefault();
             var $button = $(event.currentTarget);
             var labelId = $button.data("label");
+            var scaleValueId = $button.data("scalevalue");
 
-            this.model.set("value", labelId);
+            this.model.set("value", { label: labelId, scaling: scaleValueId });
             this.render();
         }
     });
@@ -84,7 +92,7 @@ define([
     }
 
     function getLabels(category, contentItem) {
-        var labelId = contentItem.get("value");
+        var labelId = contentItem.get("value").label;
         var labels = category
             .get("labels")
             .toJSON()
@@ -95,9 +103,33 @@ define([
         return labels;
     }
 
+    function getScale(category, contentItem) {
+        var scale;
+        if (category.get("scale_id")) {
+            var selectedScaleValueId =
+                contentItem && contentItem.get("value").scaling;
+            scale = annotationTool.video
+                .get("scales")
+                .get(category.get("scale_id"));
+            var scaleValues = scale
+                .get("scaleValues")
+                .toJSON()
+                .map(function (scaleValue) {
+                    return _.extend(scaleValue, {
+                        selected: scaleValue.id === selectedScaleValueId
+                    });
+                });
+            scale = _.extend(scale.toJSON(), { scaleValues: scaleValues });
+        }
+
+        return scale;
+    }
+
     function getCategoryByName(name) {
-        return annotationTool.video.get("categories").models.find(function (category) {
-            return category.get("name") === name;
-        });
+        return annotationTool.video
+            .get("categories")
+            .models.find(function (category) {
+                return category.get("name") === name;
+            });
     }
 });

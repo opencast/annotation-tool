@@ -198,7 +198,7 @@
         "alternative": "Alternativ",
         "reviewing": "Durchsehen",
         "fullscreen timeline": "Vollbild-Zeitleiste",
-        "questionnaire": "Fragebogen"
+        "questionnaire": "Annotationsvorlagen"
       },
       "auto expand": "Aktive Annotationen automatisch aufklappen",
       "drag here": "Icon ziehen, um das Element zu platzieren"
@@ -241,14 +241,25 @@
     "draft": {
       "cancel": "Möchten Sie den Entwurf wirklich verwerfen?"
     },
-    "form prompt": "Fragebogengestütze Annotation erstellen",
+    "tabs": {
+      "all": "Alle",
+      "mine": "Meine",
+      "public": "Öffentlich"
+    },
+    "form prompt": "Vorlagen-gestütze Annotation erstellen",
+    "delete": "Annotationsvorlage löschen",
+    "upload": "Annotationsvorlage importieren",
     "blank slate": {
-      "heading": "Fragebogengestütze Annotationen",
-      "start": "Video annotieren"
+      "heading": "Vorlagen-gestützte Annotationen",
+      "info": "Wählen Sie zuerst eine Annotation oder Annotationsvorlage aus."
     },
     "help timestamp": "Format: 0:00:00",
     "help min items singular": "Es muss mindestens ein Kennzeichen gewählt werden.",
-    "help min items plural": "Es müssen mindestens {{count}} Kennzeichen gewählt werden."
+    "help min items plural": "Es müssen mindestens {{count}} Kennzeichen gewählt werden.",
+    "json format error": "JSON Schema Item '{{name}}' fehlt."
+  },
+  "questionnaire drafts": {
+     "heading": "Annotationsvorlagen"
   },
   "required fields": "Pflichtfelder",
   "scale modal": {
@@ -368,6 +379,10 @@
       "identifier": "Kategorie",
       "gender": "female"
     },
+    "questionnaire": {
+      "identifier": "Annotationsvorlagen",
+      "gender": "male"
+    },
     "scale value": {
       "identifier": "Skalenwert",
       "gender": "male"
@@ -396,11 +411,13 @@
   },
   "views": {
     "annotate": "Neue Annotationen erstellen",
+    "annotate templates": "Annotationsvorlagen bearbeiten",
     "list": "Liste von Annotationen",
     "loop": "Schleifensteuerung",
     "timeline": "Zeitleiste",
     "player": "Player",
-    "questionnaire": "Fragebogen"
+    "questionnaire": "Annotationsvorlage Formular",
+    "questionnaire-drafts": "Annotationsvorlagen"
   },
   "version": "Version: {{version}}",
   "validation errors": {

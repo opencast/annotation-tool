@@ -125,7 +125,6 @@ define([
                 }, this);
 
                 this.model.get("labels").each(function (label) {
-                    // @todo CC | Review: Good solution? OR: Should labels be updated first and removed last?
                     // Ignore 'undefined' as these have been removed previously
                     if (this.labels.get(label.id)) {
                         label.save(this.labels.get(label.id).attributes);

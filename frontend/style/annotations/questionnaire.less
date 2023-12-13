@@ -1,19 +1,19 @@
-.golden-layout-component-questionnaire {
-    overflow-y: auto;
-}
+.questionnaire-form-container {
+    overflow-y: scroll;
 
-.questionnaire-blank-slate {
-    display: flex;
-    height: -moz-available;
-    height: -webkit-fill-available;
-    height: 100%;
-    height: fill-available;
-    justify-content: center;
+    // ^= .well (partly)
+    background: #f5f5f5;
+    border: 1px solid #e3e3e3;
 }
 
 .questionnaire-form {
     input.start-value, input.end-value {
         transition: all .4s;
+    }
+
+    .text,
+    .control-label {
+        color: @black;
     }
 
     .questionnaire-timestamps {
@@ -46,7 +46,6 @@
             display: flex;
             line-height: 20px;
             padding: 2px 0;
-            //width: 20em;
         }
 
         li > span {
@@ -65,8 +64,4 @@
         padding: 0;
         box-sizing: border-box;
     }
-}
-
-.questionnaire-block-text textarea {
-    //  max-width: 45em;
 }

@@ -25,6 +25,7 @@ define(
         "collections/tracks",
         "collections/categories",
         "collections/scales",
+        "collections/questionnaires",
         "models/resource"
     ],
     function (
@@ -33,6 +34,7 @@ define(
         Tracks,
         Categories,
         Scales,
+        Questionnaires,
         Resource
     ) {
         "use strict";
@@ -59,13 +61,16 @@ define(
 
             /**
              * Default model values
+             *
+             * @see toJSON Remove collections
              */
             defaults: function () {
                 return {
                     access: ACCESS.PUBLIC,
                     tracks: new Tracks([], { video: this }),
                     categories: new Categories([], { video: this }),
-                    scales: new Scales([], { video: this })
+                    scales: new Scales([], { video: this }),
+                    questionnaires: new Questionnaires([], { video: this })
                 };
             },
 
@@ -87,6 +92,7 @@ define(
                 this.get("categories").fetch({ async: false });
                 this.get("tracks").fetch({ async: false });
                 this.get("scales").fetch({ async: false });
+                this.get("questionnaires").fetch({ async: false });
             },
 
             /**
@@ -173,25 +179,17 @@ define(
             },
 
             /**
-             * Get questionnaire.
-             * @alias module:models-video.Video#getQuestionnaire
-             * @return {object|undefined} an object describing a questionnaire if there is one connected to this video
-             */
-            getQuestionnaire: function () {
-                // TODO: this has to be provided by the backend
-                // return undefined
-                return {};
-            },
-
-            /**
              * Override the default toJSON function to ensure complete JSONing.
+             * Remove collections to to prevent infinite loop.
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function () {
                 var json = Resource.prototype.toJSON.call(this);
+
                 delete json.tracks;
                 delete json.categories;
                 delete json.scales;
+                delete json.questionnaires;
 
                 return json;
             }

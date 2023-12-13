@@ -12,10 +12,11 @@
  *  or implied. See the License for the specific language governing
  *  permissions and limitations under the License.
  *
+ * @module questionnaire
  */
 define([
-    "templates/questionnaire-block-help",
-    "templates/questionnaire-block-layout",
+    "templates/questionnaire/block-help",
+    "templates/questionnaire/block-layout",
     "backbone",
     "bootstrap"
 ], function (template, tmplLayout, Backbone) {
@@ -28,7 +29,12 @@ define([
             this.item = options.item;
         },
         render: function () {
-            this.$el.html(template({ item: this.item }, { partials: { layout: tmplLayout } }));
+            this.$el.html(
+                template(
+                    { item: this.item },
+                    { partials: { layout: tmplLayout } }
+                )
+            );
             return this;
         },
         validate: function () {

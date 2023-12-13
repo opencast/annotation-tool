@@ -1,37 +1,14 @@
 <div class="control-group{{#if validationErrors.start}} error{{/if}}">
     <label class="control-label">{{t "annotation.edit.start time"}}</label>
     <div class="controls">
-        {{#ifeq editMode "start"}}
             {{> editTimestamp flavor="start" timestamp=(time startTime)}}
-            {{^}}
-            {{> viewTimestamp flavor="start" timestamp=(time startTime)}}
-            {{#if annotation.isMine}}
-                {{#unless editMode}}
-                    <i class="toggle-edit btn-icon icon-pencil" data-editmode="start" title="{{t "annotation.edit.edit"}}"></i>
-                {{/unless}}
-            {{/if}}
-        {{/ifeq}}
     </div>
 </div>
 
 <div class="control-group{{#if validationErrors.end}} error{{/if}}">
     <label class="control-label">{{t "annotation.edit.end time"}}</label>
     <div class="controls">
-        {{#ifeq editMode "end"}}
             {{> editTimestamp flavor="end" timestamp=(time endTime)}}
-            {{^}}
-            {{#ifeq startTime endTime}}
-                {{> viewTimestamp flavor="end" timestamp=(t "annotation.edit.no duration")}}
-            {{^}}
-                {{> viewTimestamp flavor="end" timestamp=(time endTime)}}
-            {{/ifeq}}
-            {{#if annotation.isMine}}
-                {{#unless editMode}}
-                    <i class="toggle-edit btn-icon icon-pencil" data-editmode="end" title="{{t "annotation.edit.edit"}}"></i>
-                    <i class="convert-type btn-icon icon-asterisk" title="{{t "annotation.edit.type point"}}"></i>
-                {{/unless}}
-            {{/if}}
-        {{/ifeq}}
     </div>
 </div>
 
@@ -42,20 +19,8 @@
     pattern="(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)"
     required
 >
-<button class="btn timestamp-save" type="button" data-input="{{flavor}}-value">
-    {{t "common actions.save"}}
-</button>
-<button class="btn timestamp-cancel"" type="button">
-    {{t "common actions.cancel"}}
-</button>
-<span class="help-block"> {{t "questionnaire.help timestamp"}} </span>
+{{#ifeq flavor "end"}}
+	<i class="convert-type btn-icon icon-asterisk" title="{{t "annotation.edit.type point"}}"></i>
+{{/ifeq}}
 <span class="error-msg help-block"></span>
-{{/inline}}
-
-{{#*inline "viewTimestamp"}}
-<input title="{{t "questionnaire.help timestamp"}}" class="{{flavor}}-value"
-    type="text"
-    value="{{timestamp}}"
-    disabled
->
 {{/inline}}

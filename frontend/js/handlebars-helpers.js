@@ -9,6 +9,17 @@ define([
     i18next,
     util
 ) {
+
+    /**
+     * Generic conditional utilities.
+     * @param {object} fn Functions
+     * @return Boolean match
+     */
+    Handlebars.registerHelper({
+        eq: (a, b) => a === b,
+        is: (el, resultIf, resultOr) => !!el ? resultIf : resultOr
+    });
+
     /**
      * Expose the global annotation tool to the templates to access configuration.
      * @param {String} key The property to access from the global anntoation tool
@@ -125,6 +136,21 @@ define([
      */
     Handlebars.registerHelper("isAdmin", function () {
         return annotationTool.user.get("isAdmin");
+    });
+
+    /**
+     * Get if menu can show file upload.
+     * Based on user role, except for 'all'.
+     *
+     * @param {string} id Menu identifier (Enum: all|public|mine)
+     * @param {string} role User role (Enum: 'ROLES')
+     * @return {boolean}
+     * @alias module:Handlebars#hasFileUploadMenu
+     */
+    Handlebars.registerHelper("hasFileUploadMenu", function (id, role) {
+        const isMenuAll = id.toLowerCase() === "all";
+
+        return !isMenuAll && annotationTool.user.hasRole(role);
     });
 
     return Handlebars;

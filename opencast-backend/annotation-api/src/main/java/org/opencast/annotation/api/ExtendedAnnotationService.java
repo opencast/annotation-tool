@@ -26,7 +26,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Create a new user.
-   * 
+   *
    * @param extId
    *          the user's external id
    * @param nickname
@@ -44,7 +44,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update an existing user.
-   * 
+   *
    * @param u
    *          the user to update
    * @throws ExtendedAnnotationException
@@ -54,7 +54,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete a user.
-   * 
+   *
    * @param u
    *          the user
    * @return true if the user existed and could be successfully deleted.
@@ -65,7 +65,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Clear all annotation tables
-   * 
+   *
    * @return true if all tables could be successfully cleared.
    * @throws ExtendedAnnotationException
    *           if an error occurs while deleting from persistence storage
@@ -74,7 +74,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a user by id.
-   * 
+   *
    * @param id
    *          the user's internal id
    * @return the requested user
@@ -85,7 +85,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get all users
-   * 
+   *
    * @param offset
    *          pagination offset
    * @param limit
@@ -101,7 +101,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a user by his external id, which is the id he has in the surrounding video portal.
-   * 
+   *
    * @param id
    *          the user's external id
    * @return the user
@@ -112,7 +112,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Create a new video.
-   * 
+   *
    * @param extId
    *          the video's id in the surrounding video portal.
    * @param resource
@@ -125,7 +125,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update a video.
-   * 
+   *
    * @param v
    *          the video to update
    * @throws ExtendedAnnotationException
@@ -135,7 +135,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete a video.
-   * 
+   *
    * @param v
    *          the video
    * @return true if the video existed and could be successfully deleted.
@@ -146,7 +146,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a video by id.
-   * 
+   *
    * @param id
    *          the video id
    * @return the video
@@ -157,7 +157,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get all videos.
-   * 
+   *
    * @return the video list or an empty list if no videos has been found
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
@@ -166,7 +166,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a video by its external id, which is the id it has in to surrounding video portal.
-   * 
+   *
    * @param id
    *          videos external id
    * @return the video
@@ -177,7 +177,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Create a new track in a given video.
-   * 
+   *
    * @param videoId
    *          the video id
    * @param name
@@ -197,7 +197,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Create a track with a certain track.
-   * 
+   *
    * @param track
    *          the track to store
    * @return the stored track
@@ -208,7 +208,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update a track of a video.
-   * 
+   *
    * @param track
    *          the track to update
    * @throws ExtendedAnnotationException
@@ -218,7 +218,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete a track.
-   * 
+   *
    * @param track
    *          the track to delete
    * @return true if the track existed and could be successfully deleted.
@@ -229,7 +229,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a track.
-   * 
+   *
    * @param id
    *          the track id
    * @return the requested track
@@ -240,7 +240,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get all tracks from a video.
-   * 
+   *
    * @param videoId
    *          the video id
    * @param offset
@@ -262,7 +262,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Annotate a track of a video.
-   * 
+   *
    * @param trackId
    *          the track id
    * @param start
@@ -271,6 +271,10 @@ public interface ExtendedAnnotationService {
    *          the duration of the annotation in seconds
    * @param content
    *          the content of the annotation
+   * @param createdFromQuestionnaire
+   *          the questionnaire ID of the annotation
+   * @param settings
+   *          the settings
    * @param resource
    *          the base {@link Resource}
    * @return the created annotation
@@ -278,12 +282,12 @@ public interface ExtendedAnnotationService {
    *           if an error occurs while storing/retrieving from persistence storage
    */
   Annotation createAnnotation(long trackId, double start, Option<Double> duration, String content,
-          boolean createdFromQuestionnaire, Option<String> settings, Resource resource)
+          long createdFromQuestionnaire, Option<String> settings, Resource resource)
           throws ExtendedAnnotationException;
 
   /**
    * Create an annotation with a certain annotation.
-   * 
+   *
    * @param annotation
    *          the annotation to store
    * @return the stored annotation
@@ -294,7 +298,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update an annotation.
-   * 
+   *
    * @param annotation
    *          the annotation to update
    * @throws ExtendedAnnotationException
@@ -304,7 +308,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete an annotation.
-   * 
+   *
    * @param annotation
    *          the annotation to delete
    * @return true if the annotation existed and could be successfully deleted.
@@ -315,7 +319,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get an annotation.
-   * 
+   *
    * @param id
    *          the annotation id
    * @return the requested annotation
@@ -326,7 +330,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get annotations of a track.
-   * 
+   *
    * @param trackId
    *          the track id
    * @param offset
@@ -349,7 +353,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Create a scale
-   * 
+   *
    * @param videoId
    *          the video id or none if it is a template scale
    * @param name
@@ -365,7 +369,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Creates a copy of a templates scale
-   * 
+   *
    * @param videoId
    *          the video id
    * @param templateScale
@@ -380,7 +384,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a scale by id.
-   * 
+   *
    * @param id
    *          the scale id
    * @param includeDeleted
@@ -393,7 +397,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get all scales from a video.
-   * 
+   *
    * @param videoId
    *          the video id
    * @param offset
@@ -415,7 +419,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update a scale.
-   * 
+   *
    * @param scale
    *          the scale to update
    * @throws ExtendedAnnotationException
@@ -425,7 +429,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete a scale.
-   * 
+   *
    * @param scale
    *          the scale to delete
    * @return a representation of the deleted scale
@@ -436,7 +440,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Create a scale value
-   * 
+   *
    * @param name
    *          the scale name
    * @param value
@@ -456,7 +460,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a scale value by id.
-   * 
+   *
    * @param id
    *          the scale value id
    * @param includeDeleted
@@ -469,7 +473,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get all scale values from a scale.
-   * 
+   *
    * @param scaleId
    *          the scale id
    * @param offset
@@ -491,7 +495,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update a scale value
-   * 
+   *
    * @param scaleValue
    *          the scale value to update
    * @throws ExtendedAnnotationException
@@ -501,7 +505,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete a scale value
-   * 
+   *
    * @param scaleValue
    *          the scale value to delete
    * @return a representation of the deleted scale value
@@ -511,8 +515,101 @@ public interface ExtendedAnnotationService {
   ScaleValue deleteScaleValue(ScaleValue scaleValue) throws ExtendedAnnotationException;
 
   /**
+   * Create a new questionnaire in a given video.
+   *
+   * @param videoId
+   *          the video id
+   * @param title
+   *          the title
+   * @param content
+   *          the content
+   * @param settings
+   *          the settings
+   * @param resource
+   *          the base {@link Resource}
+   * @return the created questionnaire
+   * @throws ExtendedAnnotationException
+   *           if an error occurs while storing/retrieving from persistence storage
+   */
+  Questionnaire createQuestionnaire(Option<Long> videoId, String title, String content,
+         Option<String> settings, Resource resource) throws ExtendedAnnotationException;
+
+  /**
+   * Creates a questionnaire.
+   *
+   * @param templateQuestionnaireId
+   *          the template questionnaire id
+   * @param videoId
+   *          the video id where the questionnaire is
+   * @param resource
+   *          the resource
+   * @return the created questionnaire
+   * @throws ExtendedAnnotationException
+   *           if an error occurs while storing/retrieving from persistence storage
+   */
+  Option<Questionnaire> createQuestionnaireFromTemplate(long templateQuestionnaireId,
+          long videoId, Resource resource) throws ExtendedAnnotationException;
+
+  /**
+   * Get a questionnaire value by id.
+   *
+   * @param id
+   *          the questionnaire value id
+   * @param includeDeleted
+   *          if <code>true</code> it will find also deleted questionnaires
+   * @return the questionnaire
+   * @throws ExtendedAnnotationException
+   *           if an error occurs while storing/retrieving from persistence storage
+   */
+  Option<Questionnaire> getQuestionnaire(long id, boolean includeDeleted) throws ExtendedAnnotationException;
+
+  /**
+   * Get all questionnaires from a video.
+   *
+   * @param videoId
+   *          the video id
+   * @param offset
+   *          pagination offset
+   * @param limit
+   *          limit the result set to the said amount
+   * @param since
+   *          limit the result set to annotations modified since the said date
+   * @param tagsAnd
+   *          the tags logical AND Map
+   * @param tagsOr
+   *          the tags logical OR Map
+   * @return the questionnaire list or an empty list if no questionnaires has been found
+   * @throws ExtendedAnnotationException
+   *           if an error occurs while storing/retrieving from persistence storage
+   */
+  List<Questionnaire> getQuestionnaires(Option<Long> videoId, Option<Integer> offset,
+          Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
+          Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+
+  /**
+   * Update a questionnaire.
+   *
+   * @param questionnaire
+   *          the questionnaire to update
+   * @throws ExtendedAnnotationException
+   *           if an error occurs while storing/retrieving from persistence storage
+   */
+  void updateQuestionnaire(Questionnaire questionnaire) throws ExtendedAnnotationException;
+
+  /**
+   * Delete a questionnaire.
+   *
+   * @param questionnaire
+   *          the questionnaire to delete
+   * @return a representation of the deleted questionnaire
+   * @throws ExtendedAnnotationException
+   *           if an error occurs while storing/retrieving from persistence storage
+   */
+  Questionnaire deleteQuestionnaire(Questionnaire questionnaire) throws ExtendedAnnotationException;
+
+  /**
    * Creates a template category
-   * 
+   *
    * @param seriesExtId
    *          the external series the category belongs to
    * @param seriesCategoryId
@@ -539,7 +636,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Creates a category
-   * 
+   *
    * @param seriesExtId
    *          the external series the category belongs to
    * @param seriesCategoryId
@@ -557,7 +654,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a category value by id.
-   * 
+   *
    * @param id
    *          the category value id
    * @param includeDeleted
@@ -570,7 +667,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get all categories from a video.
-   * 
+   *
    * @param seriesExtId
    *          the external series the category belongs to
    * @param videoId
@@ -595,7 +692,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update a category.
-   * 
+   *
    * @param category
    *          the category to update
    * @throws ExtendedAnnotationException
@@ -616,7 +713,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete a category.
-   * 
+   *
    * @param category
    *          the category to delete
    * @return a representation of the deleted category
@@ -627,7 +724,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Creates a label
-   * 
+   *
    * @param categoryId
    *          the category id of this label
    * @param value
@@ -649,7 +746,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a label by id.
-   * 
+   *
    * @param id
    *          the label id
    * @param includeDeleted
@@ -662,7 +759,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get all labels from a video.
-   * 
+   *
    * @param categoryId
    *          the category id
    * @param offset
@@ -684,7 +781,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update a label.
-   * 
+   *
    * @param label
    *          the label to update
    * @throws ExtendedAnnotationException
@@ -694,7 +791,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete a label.
-   * 
+   *
    * @param label
    *          the label to delete
    * @return a representation of the deleted label
@@ -705,7 +802,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Creates a comment
-   * 
+   *
    * @param annotationId
    *          the annotation id
    * @param replyToId
@@ -720,7 +817,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get a comment by id.
-   * 
+   *
    * @param id
    *          the comment id
    * @return the comment
@@ -729,7 +826,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Get all comments from an annotation
-   * 
+   *
    * @param annotationId
    *          the annotation id
    * @param replyToId
@@ -751,7 +848,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update a comment
-   * 
+   *
    * @param comment
    *          the comment to update
    */
@@ -759,7 +856,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Delete a comment.
-   * 
+   *
    * @param comment
    *          the comment to delete
    * @return true if the comment existed and could be successfully deleted.
@@ -768,24 +865,24 @@ public interface ExtendedAnnotationService {
 
   /**
    * Create the base {@link Resource} for logging.
-   * 
+   *
    * @return the base resource
    */
   Resource createResource();
 
   /**
    * Create the base {@link Resource} for logging with tags.
-   * 
+   *
    * @param tags
    *          the tags map
-   * 
+   *
    * @return the base resource
    */
   Resource createResource(Option<Map<String, String>> tags);
 
   /**
    * Create the base {@link Resource} for logging with tags and access
-   * 
+   *
    * @param access
    *          the access level from the resource
    * @param tags
@@ -796,7 +893,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update the resource update information
-   * 
+   *
    * @param resource
    *          the base resource to update
    * @return the updated base resource
@@ -805,7 +902,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update the resource update information with tags
-   * 
+   *
    * @param resource
    *          the base resource to update
    * @param tags
@@ -816,7 +913,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Update the resource deletion information
-   * 
+   *
    * @param resource
    *          the base resource to update
    * @return the updated base resource
@@ -825,7 +922,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Checks if the current user has access to the given resource
-   * 
+   *
    * @param resource
    *          the resource to check for access
    * @return true if the current user has access to the resource
@@ -834,7 +931,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Checks whether the current user has a certain ACL action on a media package
-   * 
+   *
    * @param mediaPackage
    *          the media package to check for access
    * @param access
@@ -850,7 +947,7 @@ public interface ExtendedAnnotationService {
 
   /**
    * Find the Opencast media package based on its id
-   * 
+   *
    * @param id
    *          the Opencast-level id of a media package
    * @return the media package corresponding to the given id, if it can be found

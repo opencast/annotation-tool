@@ -53,7 +53,7 @@ define(
 
             /**
              * Parse the given data
-             * @param {object} data Object or array containing the data to parse.
+             * @param {object} resp Object or array containing the data to parse.
              * @return {object} the part of the given data related to the labels
              */
             parse: function (resp) {

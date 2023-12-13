@@ -25,11 +25,7 @@ define([
         className: "questionnaire-timestamps",
 
         events: {
-            "click i.toggle-edit": "onClickToggleEdit",
             "click i.convert-type": "onClickSetAnnotationTypePoint",
-
-            "click .timestamp-save": "onClickSave",
-            "click .timestamp-cancel": "onClickCancel",
 
             "keyup .start-value": "onChangeStart",
             "focusout .start-value": "onChangeStart",
@@ -41,7 +37,6 @@ define([
         initialize: function (options) {
             this.listenTo(this.model, "change:start", this.render);
             this.listenTo(this.model, "change:duration", this.render);
-            this.editMode = null;
         },
 
         render: function () {
@@ -51,7 +46,6 @@ define([
 
             this.$el.html(template({
                 annotation: annotation,
-                editMode: this.editMode,
                 endTime: annotation && (annotation.start + annotation.duration),
                 startTime: annotation && annotation.start
             }));
@@ -75,6 +69,7 @@ define([
 
             if (!validateTimestamp(value)) {
                 $controlGroup.addClass("error");
+                $error.html(i18next.t("questionnaire.help timestamp"));
                 return;
             }
 
@@ -107,6 +102,7 @@ define([
 
             if (!validateTimestamp(value)) {
                 $controlGroup.addClass("error");
+                $error.html(i18next.t("questionnaire.help timestamp"));
                 return;
             }
 
@@ -123,20 +119,6 @@ define([
                 start: newStart,
                 duration: duration ? Math.round(end - newStart) : 0
             }, { silent: true });
-        },
-        onClickCancel: function () {
-            this.editMode = null;
-            this.render();
-        },
-        onClickSave: function (event) {
-            var $target = $(event.currentTarget);
-            this.model.save();
-            this.onClickCancel();
-        },
-        onClickToggleEdit: function (event) {
-            var $target = $(event.currentTarget);
-            this.editMode = $target.data().editmode;
-            this.render();
         },
         onClickSetAnnotationTypePoint: function (event) {
             this.model.save({ duration: 0 });

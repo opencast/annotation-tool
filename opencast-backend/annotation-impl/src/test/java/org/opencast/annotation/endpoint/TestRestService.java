@@ -44,7 +44,7 @@ import javax.ws.rs.core.Response;
 @Ignore
 public class TestRestService extends AbstractExtendedAnnotationsRestService {
   // Declare this dependency static since the TestRestService gets instantiated multiple times.
-  // Haven't found out who's responsible for this but that's the way it is.
+  // Haven't found out who's responsible forf this but that's the way it is.
   public static final ExtendedAnnotationServiceJpaImpl extendedAnnotationService =
           new ExtendedAnnotationServiceJpaImpl();
   static {
