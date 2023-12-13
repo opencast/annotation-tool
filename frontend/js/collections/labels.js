@@ -66,7 +66,7 @@ define(
                     return null;
                 }
                 return _.sortBy(labels, function (label) {
-                    return label.name.toLowerCase();
+                    return label.value.toLowerCase();
                 });
             },
 
