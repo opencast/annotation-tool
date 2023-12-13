@@ -163,8 +163,11 @@ define(
                 );
 
                 this.categories = annotationTool.video.get("categories");
-                this.filter = attr.filter;
                 this.defaultCategoryAttributes = attr.attributes;
+
+                this.filter = function (category) {
+                    return !category.get("deleted_at") && attr.filter(category);
+                };
 
                 this.categoryViews = [];
 
@@ -201,7 +204,7 @@ define(
                         ));
                     }
                 });
-                this.listenTo(this.categories, "remove", this.removeOne);
+                this.listenTo(this.categories, "change:deleted_at", this.removeOne);
 
                 return this;
             },

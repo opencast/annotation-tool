@@ -53,10 +53,22 @@ define(
 
             /**
              * Parse the given data
+             *
+             * @todo CC | Review: A Backbone expert should peer review this solution
              * @param  {object} data Object or array containing the data to parse.
              * @return {object}      the part of the given data related to the scalevalues
              */
-            parse: function (data) {
+            parse: function (data, options) {
+                if (options.data && _.isArray(options.data)) {
+                    return options.data;
+                } else {
+                    return null;
+                }
+
+                // Maybe helpful / Alternative?
+                // - if (options.add|parse …) …
+
+                /* Old code for comparison * /
                 if (data.scaleValues && _.isArray(data.scaleValues)) {
                     return data.scaleValues;
                 } else if (_.isArray(data)) {
@@ -64,6 +76,7 @@ define(
                 } else {
                     return null;
                 }
+                /* */
             },
 
             comparator: function (scaleValue) {

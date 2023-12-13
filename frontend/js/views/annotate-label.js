@@ -84,7 +84,7 @@ define(
              */
             events: {
                 "click": "annotate",
-                "click .scaling li": "annnotateWithScaling"
+                "click .scaling li": "annotateWithScaling"
             },
 
             /**
@@ -92,8 +92,6 @@ define(
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                var scaleId;
-
                 if (!attr.label || !_.isObject(attr.label)) {
                     throw "Label object must be given as constuctor attribute!";
                 }
@@ -103,7 +101,7 @@ define(
                     this,
                     "render",
                     "annotate",
-                    "annnotateWithScaling"
+                    "annotateWithScaling"
                 );
 
                 this.model = attr.label;
@@ -122,17 +120,17 @@ define(
              * Create a new annotation at the current playedhead time with a scaling value
              * @param {event} event Event related to this action
              */
-            annnotateWithScaling: function (event) {
+            annotateWithScaling: function (event) {
                 event.stopImmediatePropagation();
 
-                var id = event.target.getAttribute("value");
-                var scalevalue = this.scaleValues.get(id);
-
-                createAnnotation({
-                    text: this.model.get("value"),
-                    label: this.model,
-                    scalevalue: scalevalue.toJSON()
-                });
+                var id = JSON.parse(event.target.dataset["id"]);
+                createAnnotation({ content: [{
+                    type: "scaling",
+                    value: {
+                        label: this.model.id,
+                        scaling: id
+                    }
+                }] });
             },
 
             /**
@@ -146,10 +144,10 @@ define(
                     return;
                 }
 
-                createAnnotation({
-                    text: this.model.get("value"),
-                    label: this.model
-                });
+                createAnnotation({ content: [{
+                    type: "label",
+                    value: this.model.id
+                }] });
             },
 
             /**
@@ -186,7 +184,11 @@ define(
                 var modelJSON = this.model.toJSON();
 
                 if (this.scaleValues) {
-                    modelJSON.scaleValues = this.scaleValues.sort().toJSON();
+                    this.scaleValues.sort();
+                    modelJSON.scaleValues = this.scaleValues.toJSON()
+                        .filter(function (scaleValue) {
+                            return !scaleValue.deleted_at;
+                        });
                 }
 
                 this.$el.html(this.template(modelJSON));

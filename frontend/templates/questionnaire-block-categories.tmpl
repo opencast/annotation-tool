@@ -1,0 +1,102 @@
+{{#> layout}}
+<div class="control-group{{#if validationErrors}} error{{/if}}">
+    <label class="control-label">{{item.title}}{{#if item.minItems}} *{{/if}}</label>
+    <div class="controls">
+        {{#if validationErrors}}
+        <div class="well">
+            {{#each validationErrors as |error|}}
+            <span class="help-block"> {{t error}} </span>
+            {{/each}}
+        </div>
+        {{/if}}
+
+        {{!--
+        <p>
+             <span class="help-block">{{item.description}}</span>
+        </p>
+        --}}
+
+        {{#if item.minItems}}
+        <span class="help-block mt-1">
+            <b>
+                {{#ifeq item.minItems 1}}
+                {{t "questionnaire.help min items singular"}}
+                {{else}}
+                {{t "questionnaire.help min items plural" count=item.minItems}}
+                {{/ifeq}}
+            </b>
+        </span>
+        {{/if}}
+
+        {{#each categories as |category|}}
+          {{#unless category.deleted_at}}
+              {{#if category.isPublic}}
+                  {{> chooser category=category}}
+              {{else if category.isMine}}
+                  {{> chooser category=category}}
+              {{/if}}
+          {{/unless}}
+        {{/each}}
+
+        {{#if contentItems}}
+        <ul class="questionnaire-content-items mt-2">
+            {{#each contentItems as |item|}}
+            <li>
+                <button class="questionnaire-content-item-remove" type="button">
+                    <i class="icon-trash"></i>
+                </button>
+                <span>
+                    {{#ifeq item.type "label"}} {{> contentItemLabel}} {{/ifeq}}
+                    {{#ifeq item.type "scaling"}} {{> contentItemScaling}} {{/ifeq}}
+                </span>
+            </li>
+            {{/each}}
+        </ul>
+        {{/if}}
+
+    </div>
+</div>
+{{/layout}}
+
+
+{{#*inline "chooser"}}
+<button class="btn add-labelled-content mb-1" type="button" data-category="{{id}}" {{#if settings.color}}style="background-color:{{settings.color}};background-image: none;"{{/if}}>
+  {{!--  {{t "annotation.add content.category"}}  --}} {{name}}
+</button>
+{{/inline}}
+
+
+{{#* inline "contentItemLabel"}}
+{{#with (withLabel value) as |label|}}
+
+<span
+    class="content-item-label"
+    title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})">
+
+    <b>{{label.value}} ({{label.abbreviation}})</b> <b {{#if label.category.settings.color}}style="background-color: {{label.category.settings.color}};"{{/if}}>[{{label.category.name}}]</b>
+
+</span>
+
+{{/with}}
+{{/inline}}
+
+
+{{#*inline "contentItemScaling"}}
+{{#with (withLabel value.label) as |label|}}
+
+<span
+    class="content-item-scaling"
+    title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"
+    {{#if label.category.settings.color}}style="background-color: {{label.category.settings.color}};"{{/if}}>
+
+    <b>
+        {{label.abbreviation}}
+        {{#with (withScaleValue ../value.scaling) as |scaleValue|}}
+        <span class="scalevalue"> ({{scaleValue.value}}) </span>
+        {{/with}}
+    </b>
+
+</span>
+
+{{/with}}
+{{/inline}}

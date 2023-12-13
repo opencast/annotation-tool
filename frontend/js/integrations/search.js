@@ -53,8 +53,14 @@ define([
             method = "update";
         }
 
+        var beforeSend = options.beforeSend;
         options.beforeSend = function () {
+            if (beforeSend) beforeSend.apply(this, arguments);
             this.url = "../../extended-annotations" + this.url;
+
+            // TODO: Workaround bug that adds '&undefined=...' parameter (likely from label model)
+            // Avoids a 404 in the URL (seemingly no effect to users either way)
+            this.url = this.url.replace(/&\w+=\w+/, "");
 
             // Sanitize query strings, so that they're actually at the end
             // TODO: Clean this up OR find a better way to do this
@@ -120,9 +126,11 @@ define([
             $.when(user, isAdmin).then(function (userResult, isAdmin) {
                 var user = userResult[0];
                 var userData = user.user;
+                var nickname = (typeof(userData.name) !== "undefined" && userData.name !== null) ? userData.name : userData.username;
+
                 this.user = new User({
                     user_extid: userData.username,
-                    nickname: userData.name || userData.username,
+                    nickname: nickname, //userData.username,
                     email: userData.email,
                     isAdmin: isAdmin
                 });
@@ -174,7 +182,9 @@ define([
                     videos.map(function (track) {
                         return {
                             src: track.url,
-                            type: track.mimetype
+                            type: track.mimetype,
+                            framerate: track.video.framerate,
+                            resolution: track.video.resolution
                         };
                     })
                 );

@@ -77,6 +77,49 @@ define([
     });
 
     /**
+     * Encode some data to JSON to store it in `data`-attributes
+     * @alias module:Handlebars#data
+     */
+    Handlebars.registerHelper("data", function (value) {
+        return JSON.stringify(value);
+    });
+
+    /**
+     * Compare two values for equality.
+     * @alias module:Handlebars#ifeq
+     */
+    Handlebars.registerHelper("ifeq", function (a, b, options) {
+        if (a == b) {
+            return options.fn(this);
+        }
+        return options.inverse(this);
+    });
+
+    /**
+     * Given an ID, create a new context with the matching scale value
+     * @alias module:Handlebars#ifeq
+     */
+    Handlebars.registerHelper("withScaleValue", function (id) {
+        var scaleValue = _.findWhere(annotationTool.video.getScaleValues(), { id: id });
+
+        return scaleValue && scaleValue.toJSON();
+    });
+
+    /**
+     * Given an ID, create a new context with the matching label
+     * @alias module:Handlebars#ifeq
+     */
+    Handlebars.registerHelper("withLabel", function (id) {
+        var label = _.findWhere(annotationTool.video.getLabels(), { id: id });
+        if (!label) return undefined;
+        label = label.toJSON();
+        label.category = annotationTool.video.get("categories")
+            .get(label.category.id)
+            .toJSON();
+        return label;
+    });
+
+    /**
      * Check whether the current user is an annotation tool admin.
      * @alias module:Handlebars#isAdmin
      */

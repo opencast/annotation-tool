@@ -117,6 +117,12 @@ i.check {
         color: @white;
         white-space: nowrap;
     }
+
+    #mca-creator {
+        width: 100%;
+        text-align: center;
+        padding: 1.5em;
+    }
 }
 
 #annotate-container {
@@ -216,9 +222,10 @@ i.check {
 
                 .label-item {
                     @labelHeight: 16px;
-                    @padding: 3px;
+                    @padding: 4px;
+                    font-size: @baseFontSize*1.1;
                     padding: @padding;
-                    height: @labelHeight+(2*@padding);
+                    height: @labelHeight+(4*@padding);
                     position: relative;
                     background-color: fade(@white, 60%);
                     border-right: 1px solid @white;
@@ -437,4 +444,8 @@ i.check {
 
 .tab-content {
     color: black;
+}
+
+.modal-add-free-text textarea {
+    width: calc(100% - 15px);
 }

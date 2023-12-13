@@ -265,20 +265,20 @@ public interface ExtendedAnnotationService {
    * 
    * @param trackId
    *          the track id
-   * @param text
-   *          the annotation text
    * @param start
    *          the annotation entry timepoint in seconds
    * @param duration
    *          the duration of the annotation in seconds
+   * @param content
+   *          the content of the annotation
    * @param resource
    *          the base {@link Resource}
    * @return the created annotation
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Annotation createAnnotation(long trackId, Option<String> text, double start, Option<Double> duration,
-          Option<String> settings, Option<Long> labelId, Option<Long> scaleValueId, Resource resource)
+  Annotation createAnnotation(long trackId, double start, Option<Double> duration, String content,
+          boolean createdFromQuestionnaire, Option<String> settings, Resource resource)
           throws ExtendedAnnotationException;
 
   /**
@@ -428,11 +428,11 @@ public interface ExtendedAnnotationService {
    * 
    * @param scale
    *          the scale to delete
-   * @return true if the scale existed and could be successfully deleted.
+   * @return a representation of the deleted scale
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  boolean deleteScale(Scale scale) throws ExtendedAnnotationException;
+  Scale deleteScale(Scale scale) throws ExtendedAnnotationException;
 
   /**
    * Create a scale value
@@ -459,11 +459,13 @@ public interface ExtendedAnnotationService {
    * 
    * @param id
    *          the scale value id
+   * @param includeDeleted
+   *          if <code>true</code> it will find also deleted scale values
    * @return the scale value
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Option<ScaleValue> getScaleValue(long id) throws ExtendedAnnotationException;
+  Option<ScaleValue> getScaleValue(long id, boolean includeDeleted) throws ExtendedAnnotationException;
 
   /**
    * Get all scale values from a scale.
@@ -502,11 +504,11 @@ public interface ExtendedAnnotationService {
    * 
    * @param scaleValue
    *          the scale value to delete
-   * @return true if the scale value existed and could be successfully deleted.
+   * @return a representation of the deleted scale value
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  boolean deleteScaleValue(ScaleValue scaleValue) throws ExtendedAnnotationException;
+  ScaleValue deleteScaleValue(ScaleValue scaleValue) throws ExtendedAnnotationException;
 
   /**
    * Creates a template category
@@ -617,11 +619,11 @@ public interface ExtendedAnnotationService {
    * 
    * @param category
    *          the category to delete
-   * @return true if the category existed and could be successfully deleted.
+   * @return a representation of the deleted category
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  boolean deleteCategory(Category category) throws ExtendedAnnotationException;
+  Category deleteCategory(Category category) throws ExtendedAnnotationException;
 
   /**
    * Creates a label
@@ -695,11 +697,11 @@ public interface ExtendedAnnotationService {
    * 
    * @param label
    *          the label to delete
-   * @return true if the label existed and could be successfully deleted.
+   * @return a representation of the deleted label
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  boolean deleteLabel(Label label) throws ExtendedAnnotationException;
+  Label deleteLabel(Label label) throws ExtendedAnnotationException;
 
   /**
    * Creates a comment

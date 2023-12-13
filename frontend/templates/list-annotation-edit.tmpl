@@ -45,48 +45,6 @@
                 title="{{t "annotation.you own"}}"
             ></i>
         {{/if}}
-
-        {{#if scalevalues}}
-            <span class="scaling">
-                {{#if isMine}}
-                    <select>
-                        {{#each scalevalues}}
-                            <option
-                                value="{{this.id}}"
-                                {{#if this.isSelected}}
-                                    selected="selected"
-                                {{/if}}
-                            >{{this.name}}</option>
-                        {{/each}}
-                    </select>
-                {{/if}}
-                {{#if scalevalue}}
-                    <span
-                        class="label-style"
-                        title="{{scalevalue.name}}"
-                    >{{scalevalue.name}}</span>
-                {{/if}}
-            </span>
-        {{/if}}
-
-        <span
-            class="category"
-            {{#if label}}
-                title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"
-            {{/if}}
-        >
-            {{#if label}}
-                <span class="abbreviation">{{label.abbreviation}}</span>
-                <span class="label-value print">{{label.value}}</span>
-                {{#if scalevalue}}
-                    <span class="scalevalue print">
-                        {{scalevalue.name}} ({{scalevalue.value}})
-                    </span>
-                {{/if}}
-            {{else}}
-                <span class="no-label">{{text}}</span>
-            {{/if}}
-        </span>
     </div>
 
     <div class="right">
@@ -96,7 +54,7 @@
                 title="{{t "annotation.edit.delete"}}"
             ></i>
             <i
-                class="toggle-edit icon-pencil"
+                class="toggle-edit icon-time"
                 title="{{t "annotation.edit.edit"}}"
             ></i>
         {{/if}}
@@ -117,26 +75,5 @@
         </i>
     </div>
 </div>
-
-{{#unless label}}
-    <div id="text-container{{id}}" class="in text-container">
-        <span class="text">
-            <span class="freetext">
-                <textarea
-                    placeholder="{{t "annotation.edit.free text placeholder"}}"
-                    style="height: {{textHeight}}px"
-                >{{text}}</textarea>
-            </span>
-            <div class="button-bar">
-                <button type="button" class="btn">
-                    Cancel
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    OK
-                </button>
-            </div>
-        </span>
-    </div>
-{{/unless}}
 
 <div class="comments"></div>

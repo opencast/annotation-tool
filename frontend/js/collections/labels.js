@@ -53,17 +53,21 @@ define(
 
             /**
              * Parse the given data
-             * @param  {object} data Object or array containing the data to parse.
-             * @return {object}      the part of the given data related to the labels
+             * @param {object} data Object or array containing the data to parse.
+             * @return {object} the part of the given data related to the labels
              */
             parse: function (resp) {
+                var labels;
                 if (resp.labels && _.isArray(resp.labels)) {
-                    return resp.labels;
+                    labels = resp.labels;
                 } else if (_.isArray(resp)) {
-                    return resp;
+                    labels = resp;
                 } else {
                     return null;
                 }
+                return _.sortBy(labels, function (label) {
+                    return label.name.toLowerCase();
+                });
             },
 
             /**

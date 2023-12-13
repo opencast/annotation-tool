@@ -1,6 +1,7 @@
 {
   "alert": {
     "ok": "$t(common actions.ok)",
+    "cancel": "$t(common actions.cancel)",
     "error": {
       "title": "Error!"
     },
@@ -25,10 +26,12 @@
     },
     "create category": "Create category",
     "delete category": "Delete category",
+    "confirm edit": "Warning: Editing the selected annotation discards the current annotation draft!",
     "download categories": "Download categories",
     "edit mode": "Edit mode",
     "edit category": "Edit category",
     "insert": "$t(common actions.insert)",
+    "insert mca": "Create multi content annotation",
     "items visibility": {
       "collapse all": "Collapse all",
       "expand all": "Expand all",
@@ -58,6 +61,11 @@
     "author": "Created by",
     "created": "on",
     "track": "on",
+    "types": {
+      "free text": "free text",
+      "label": "label",
+      "scaling": "label with scale value"
+    },
     "comments": {
       "author": "Comment by",
       "cancel": "$t(common actions.cancel)",
@@ -75,6 +83,13 @@
       "placeholder": "Write a comment for this annotation.",
       "title": "Comments"
     },
+    "add content": {
+      "add free text": "Add free text",
+      "category": "Category:",
+      "free text": "Free Text",
+      "list prompt": "Add content:",
+      "please choose": "Please choose a label"
+    },
     "edit": {
       "delete": "Delete annotation.",
       "double click to edit": "Double click to edit",
@@ -89,9 +104,12 @@
         "long": "Set the video playhead as start point.",
         "short": "IN"
       },
-      "start time": "Start time"
+      "start time": "Start time",
+      "duration": "Duration",
+      "no duration": "no duration"
     },
-    "you own": "You own this annotation"
+    "you own": "You own this annotation",
+    "no content": "(no content)"
   },
   "category modal": {
     "abbreviation": "Abbreviation",
@@ -169,7 +187,8 @@
         "with loops": "With loops",
         "alternative": "Alternative",
         "reviewing": "Reviewing",
-        "fullscreen timeline": "Fullscreen timeline"
+        "fullscreen timeline": "Fullscreen timeline",
+        "questionnaire": "Questionnaire"
       },
       "auto expand": "Automatically expand active annotations",
       "drag here": "Drag icon to place element"
@@ -207,6 +226,19 @@
       }
     },
     "title": "Name of the video: {{title}}"
+  },
+  "questionnaire": {
+    "draft": {
+      "cancel": "Delete draft?"
+    },
+    "form prompt": "Create an annotation using a questionnaire",
+    "blank slate": {
+      "heading": "Questionnaire-based Annotations",
+      "start": "Annotate video"
+    },
+    "help timestamp": "Format: 0:00:00",
+    "help min items singular": "You have to select at least one label.",
+    "help min items plural": "You have to select at least {{count}} labels."
   },
   "required fields": "Required fields",
   "scale modal": {
@@ -309,7 +341,15 @@
     "list": "Annotation list",
     "loop": "Loop controller",
     "timeline": "Timeline",
-    "player": "Player"
+    "player": "Player",
+    "questionnaire": "Questionnaire"
+  },
+  "validation errors": {
+    "empty": "This field must not be empty",
+    "min items": "You have to choose the required number of items.",
+    "start after end": "Start time must be before end time",
+    "wrong format": "Wrong format",
+    "out of bounds": "Chosen time is out of bounds."
   },
   "common actions": {
     "cancel": "Cancel",

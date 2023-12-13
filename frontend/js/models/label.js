@@ -49,6 +49,9 @@ define(
                 access: ACCESS.PUBLIC
             },
 
+            /** @override */
+            keepDeleted: true,
+
             /**
              * Constructor
              */

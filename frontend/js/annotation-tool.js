@@ -28,6 +28,7 @@ define(
         "i18next",
         "models/video",
         "views/main",
+        "views/modal-container",
         "alerts",
         "templates/delete-modal",
         "player-adapter",
@@ -46,6 +47,7 @@ define(
         i18next,
         Video,
         MainView,
+        ModalContainerView,
         alerts,
         DeleteModalTmpl,
         PlayerAdapter,
@@ -131,7 +133,6 @@ define(
             start: function (configuration, integration) {
                 _.bindAll(
                     this,
-                    "updateSelectionOnTimeUpdate",
                     "createAnnotation",
                     "fetchData",
                     "importCategories",
@@ -364,6 +365,22 @@ define(
             },
 
             /**
+             * Switch to different tab in goldenLayout
+             * @alias annotationTool.switchLayout
+             */
+            switchLayout: function (component_name) {
+                // TODO: use MainView instead
+                var goldenLayout = annotationTool.views.main.goldenlayout;
+                for (var i = 0; i < goldenLayout._getAllContentItems().length; i++) {
+                    // console.log(myLayout._getAllContentItems()[i].componentName);
+                    if (goldenLayout._getAllContentItems()[i].componentName == component_name) {
+                        var contentItem = goldenLayout._getAllContentItems()[i];
+                        contentItem.parent.setActiveContentItem(contentItem);
+                    }
+                }
+            },
+
+            /**
              * Update the ordering of the tracks and alert everyone who is interested.
              * @param {Array} order The new track order
              */
@@ -429,10 +446,15 @@ define(
              */
             isVisible: function (annotation) {
                 if (!annotation.collection.track.get("visible")) return false;
-                var category = annotation.category();
-                if (category && !category.get("visible")) return false;
-                if (!category && !annotationTool.freeTextVisible) return false;
-                return true;
+                var categories = annotation.getCategories();
+                if (categories.length) {
+                    return _.chain(categories)
+                        .invoke("get", "visible")
+                        .every().value();
+                } else {
+                    // Free text annotation
+                    return annotationTool.freeTextVisible;
+                }
             },
 
             //////////////
@@ -451,12 +473,12 @@ define(
             createAnnotation: function (params) {
                 var annotation = this.selectedTrack.annotations
                     .create(_.extend(
-                        params,
                         { start: this.playerAdapter.getCurrentTime() },
                         // The loop controller can constrain annotations
                         // to the current loop using this.
                         // @see module:views-loop.Loop#toggleConstrainAnnotations
-                        this.annotationConstraints
+                        this.annotationConstraints,
+                        params
                     ), {
                         wait: true,
                         success: _.bind(function () {
@@ -515,6 +537,20 @@ define(
                         });
                     }
                 });
+            },
+
+            addModal: function (header, contentView, buttonText) {
+                var container = new ModalContainerView(
+                    {
+                        buttonText: buttonText,
+                        contentView: contentView,
+                        header: header
+                    }
+                );
+
+                return function closeModal() {
+                    container.close();
+                };
             },
 
             ////////////////
@@ -628,7 +664,7 @@ define(
                         line.push(util.formatTime(annotation.attributes.start));
                         line.push(util.formatTime(annotation.attributes.start + annotation.attributes.duration));
                         line.push(util.formatTime(annotation.attributes.duration));
-                        line.push(annotation.attributes.text);
+                        line.push("");
 
                         if (label) {
                             line.push(label.category.name);
@@ -640,17 +676,16 @@ define(
                             line.push("");
                         }
 
-                        if (annotation.attributes.scalevalue) {
-                            line.push(annotation.attributes.scalevalue.scale.name);
-                            line.push(annotation.attributes.scalevalue.name);
-                            line.push(annotation.attributes.scalevalue.value);
-                        } else {
-                            line.push("");
-                            line.push("");
-                            line.push("");
-                        }
+                        // Scale/Value filled in 'content' part
+                        line.push("");
+                        line.push("");
+                        line.push("");
 
                         bookData.push(line);
+
+                        _.each(annotation.attributes.content.models, function (content) {
+                            addContentLine(line, content);
+                        });
 
                         _.each(annotation.attributes.comments.models, function (comment) {
                             addCommentLine(line, comment);
@@ -659,7 +694,6 @@ define(
                                 commentReplies(line, comment.replies.models);
                             }
                         });
-
                     });
                 });
 
@@ -711,6 +745,25 @@ define(
                         commentReplies(line, comment.attributes.replies);
                     });
                 }
+
+                // TODO | CC | Implement scale
+                function addContentLine(line, content) {
+                    var contentLine = [];
+                    Array.prototype.push.apply(contentLine, line);
+
+                    var category = content.getCategory();
+                    var label = content.getLabel();
+
+                    contentLine[9] = content.getText();
+                    contentLine[10] = category ? category.attributes.name : "";
+                    contentLine[11] = label ? label.attributes.value : "";
+                    contentLine[12] = label ? label.attributes.abbreviation : "";
+                    // 13 = Scale name
+                    // 14 = Scale value name
+                    contentLine[15] = content.getScaleValue();
+
+                    bookData.push(contentLine);
+                }
             }
         });
 
@@ -734,7 +787,7 @@ define(
             ANNOTATION: {
                 name: "annotation",
                 getContent: function (target) {
-                    return target.get("text");
+                    return target.getTitleAttribute();
                 },
                 destroy: function (target, callback) {
 

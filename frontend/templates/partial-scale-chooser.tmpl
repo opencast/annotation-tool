@@ -1,0 +1,15 @@
+<table class="scale-chooser">
+    {{#each labels as |label|}}
+    <tr>
+        <th{{#if ../color}} style="background-color:{{../color}};"{{/if}}>{{label.value}}</th>
+        {{#each ../scale.scaleValues}}
+        <td>
+            <a class="btn label-and-scale{{#if label.selected}}{{#if selected}} btn-primary{{/if}}{{/if}}"
+                href="#" data-label="{{../id}}" data-scalevalue="{{id}}">
+                <span> {{name}} ({{value}})</span>
+            </a>
+        </td>
+        {{/each}}
+    </tr>
+    {{/each}}
+</table>

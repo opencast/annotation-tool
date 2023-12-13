@@ -1,0 +1,72 @@
+.golden-layout-component-questionnaire {
+    overflow-y: auto;
+}
+
+.questionnaire-blank-slate {
+    display: flex;
+    height: -moz-available;
+    height: -webkit-fill-available;
+    height: 100%;
+    height: fill-available;
+    justify-content: center;
+}
+
+.questionnaire-form {
+    input.start-value, input.end-value {
+        transition: all .4s;
+    }
+
+    .questionnaire-timestamps {
+        .control-group {
+            margin-bottom: 0.5em;
+        }
+
+        input:disabled {
+            background: transparent;
+            border-color: transparent;
+            box-shadow: none;
+            cursor: initial;
+        }
+
+        i.toggle-edit:hover {
+            #list-container .iconStateSelected();
+        }
+    }
+}
+
+.questionnaire-items section {
+    margin: 1em 0 1em 0;
+}
+
+.questionnaire-block-categories {
+    .questionnaire-content-items {
+        margin: 0 0 2em 0;
+
+        li {
+            display: flex;
+            line-height: 20px;
+            padding: 2px 0;
+            //width: 20em;
+        }
+
+        li > span {
+            margin-left: 8px;
+            flex: 1;
+        }
+
+        .icon-trash {
+            margin-top: 0;
+        }
+    }
+
+    .questionnaire-content-item-remove {
+        background: 0;
+        border: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+}
+
+.questionnaire-block-text textarea {
+    //  max-width: 45em;
+}

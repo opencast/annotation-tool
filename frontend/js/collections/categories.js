@@ -68,13 +68,17 @@ define(
              * @return {object} the part of the given data related to the categories
              */
             parse: function (data) {
+                var categories;
                 if (data.categories && _.isArray(data.categories)) {
-                    return data.categories;
+                    categories = data.categories;
                 } else if (_.isArray(data)) {
-                    return data;
+                    categories = data;
                 } else {
                     return null;
                 }
+                return _.sortBy(categories, function (category) {
+                    return category.name.toLowerCase();
+                });
             }
         });
 

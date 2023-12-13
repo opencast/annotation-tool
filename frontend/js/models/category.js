@@ -41,6 +41,9 @@ define(
              */
             administratorCanEditPublicInstances: true,
 
+            /** @override */
+            keepDeleted: true,
+
             /**
              * Default model values
              */
@@ -147,12 +150,16 @@ define(
              * @param {boolean} withScales Define if the scale has to be included
              * @return {JSON} JSON representation of the model for export
              */
-            toExportJSON: function (withScale) {
+            toExportJSON: function () {
                 var json = {
                     name: this.attributes.name,
-                    labels: this.attributes.labels.map(function (label) {
-                        return label.toExportJSON();
-                    })
+                    labels: this.attributes.labels
+                        .filter(function (label) {
+                            return !label.get("deleted_at");
+                        })
+                        .map(function (label) {
+                            return label.toExportJSON();
+                        })
                 };
 
                 if (this.attributes.description) {

@@ -63,7 +63,6 @@ define(
             defaults: function () {
                 return {
                     access: ACCESS.PUBLIC,
-
                     tracks: new Tracks([], { video: this }),
                     categories: new Categories([], { video: this }),
                     scales: new Scales([], { video: this })
@@ -74,6 +73,9 @@ define(
              * Constructor
              */
             initialize: function () {
+                _.bindAll(this,
+                    "getLabels");
+
                 this.get("categories").seriesExtId = this.get("series_extid");
                 Resource.prototype.initialize.apply(this, arguments);
             },
@@ -129,16 +131,57 @@ define(
                 }
 
                 function withoutCategory(annotation) {
-                    return annotation.get("label");
+                    var labels = annotation.getLabels();
+                    return !labels.length;
                 }
 
                 function withCategory(category) {
                     return function (annotation) {
-                        var label = annotation.get("label");
-                        return label && label.category.id === category.id;
+                        var labels = annotation.getLabels();
+                        var anyMatches = _.some(labels, function (label) {
+                            return category.id === label.get("category").id;
+                        });
+                        return anyMatches;
                     };
                 }
             })(),
+
+            /**
+             * Get all labels present in all of this video's categories
+             * @alias module:models-video.Video#getLabels
+             * @return {array} an array of all the labels
+             */
+            getLabels: function () {
+                return _.flatten(this.get("categories").map(
+                    function (category) {
+                        return category.get("labels").models;
+                    }
+                ));
+            },
+
+            /**
+             * Get all scale values present in all of this video's categories
+             * @alias module:models-video.Video#getScaleValues
+             * @return {array} an array of all the scale values
+             */
+            getScaleValues: function () {
+                return _.flatten(this.get("scales").map(
+                    function (scale) {
+                        return scale.get("scaleValues").models;
+                    }
+                ));
+            },
+
+            /**
+             * Get questionnaire.
+             * @alias module:models-video.Video#getQuestionnaire
+             * @return {object|undefined} an object describing a questionnaire if there is one connected to this video
+             */
+            getQuestionnaire: function () {
+                // TODO: this has to be provided by the backend
+                // return undefined
+                return {};
+            },
 
             /**
              * Override the default toJSON function to ensure complete JSONing.

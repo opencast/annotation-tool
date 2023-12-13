@@ -44,6 +44,7 @@ module.exports = {
     }, {
         files: 'js/**/*',
         env: {
+            es2020: true,
             browser: true,
             amd: true
         }

@@ -120,7 +120,7 @@ define(
 
                 labels = this.model.get("labels");
                 this.listenTo(labels, "add", this.addLabel);
-                this.listenTo(labels, "remove", this.removeOne);
+                this.listenTo(labels, "change:deleted_at", this.removeOne);
                 this.listenTo(this.model, "change", this.onChange);
 
                 $(window).on("resize.annotate-category", this.updateInputWidth);
@@ -177,7 +177,9 @@ define(
              */
             addLabels: function (labels) {
                 labels.each(function (label) {
-                    this.addLabel(label, false);
+                    if (!label.get("deleted_at")) {
+                        this.addLabel(label, false);
+                    }
                 }, this);
             },
 

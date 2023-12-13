@@ -16,12 +16,13 @@
 package org.opencast.annotation.endpoint;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.opencast.annotation.Annotations.scalingAnnotation;
+import static org.opencast.annotation.Annotations.textAnnotation;
 import static org.opencast.annotation.endpoint.ExtendedAnnotationsRestServiceTest.RegexMatcher.regex;
 import static org.opencastproject.test.rest.RestServiceTestEnv.testEnvForClasses;
 import static org.opencastproject.util.data.Option.none;
@@ -218,16 +219,17 @@ public class ExtendedAnnotationsRestServiceTest {
   public void testEqualsIgnoreTimestamp() throws Exception {
     Resource resource = new ResourceImpl(some(Resource.PRIVATE), none(), none(), none(), some(new Date()), none(),
             none(), new HashMap<>());
-    final Annotation a = new AnnotationImpl(1, 1, some("a text"), 10D, some(20D), some("the settings"), none(), none(),
-            resource);
+    final Annotation a = new AnnotationImpl(1, 1, 10D, some(20D), textAnnotation("a text"),
+            false, some("the settings"), resource);
     Thread.sleep(10);
-    final Annotation b = new AnnotationImpl(1, 1, some("a text"), 10D, some(20D), some("the settings"), none(), none(),
+    final Annotation b = new AnnotationImpl(1, 1, 10D, some(20D), textAnnotation("a text"),
+            false, some("the settings"),
             new ResourceImpl(some(Resource.PRIVATE), none(), none(), none(), some(new Date()), none(), none(),
                     new HashMap<>()));
-    final Annotation c = new AnnotationImpl(1, 2, some("a text"), 10D, some(10D), some("the settings"), none(), none(),
-            resource);
-    final Annotation d = new AnnotationImpl(1, 1, some("another text"), 10D, some(20D), some("other settings"), none(),
-            none(), resource);
+    final Annotation c = new AnnotationImpl(1, 2, 10D, some(10D), textAnnotation("a text"),
+            false, some("the settings"), resource);
+    final Annotation d = new AnnotationImpl(1, 1, 10D, some(20D), textAnnotation("another text"),
+            false, some("other settings"), resource);
     assertEquals(a, b);
     assertNotEquals(a, c);
     assertNotEquals(a, d);
@@ -249,39 +251,27 @@ public class ExtendedAnnotationsRestServiceTest {
             .statusCode(CREATED).header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+"))).when()
             .post(host("/videos/{videoId}/tracks")));
     // post/malformed video does not exist
-    given().formParam("text", "cool video").expect().statusCode(BAD_REQUEST).when()
+    given().formParam("content", textAnnotation("cool video")).expect().statusCode(BAD_REQUEST).when()
             .post(host("/videos/12345/tracks/12345/annotations"));
     // post
     final String id = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .formParam("text", "cool video").formParam("tags", json.toJSONString()).formParam("start", 40)
+            .formParam("content", textAnnotation("cool video")).formParam("tags", json.toJSONString()).formParam("start", 40)
             .formParam("settings", "{\"type\":\"test\"}").expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+")))
-            .body("text", equalTo("cool video")).body("settings", equalTo("{\"type\":\"test\"}"))
+            .body("content", equalTo(textAnnotation("cool video"))).body("settings", equalTo("{\"type\":\"test\"}"))
             .body("tags", equalTo(json)).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations")));
     // get
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("id", id).expect().statusCode(OK)
-            .body("text", equalTo("cool video")).when()
+            .body("content", equalTo(textAnnotation("cool video"))).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations/{id}"));
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK)
             .body("annotations", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
-    // get all since temporary removed!
-    // Thread.sleep(10);
-    // given().pathParam("videoId", videoId).pathParam("trackId", trackId)
-    // .queryParam("since", ISODateTimeFormat.dateTime().print(new Date().getTime())).expect().statusCode(OK)
-    // .body("annotations", iterableWithSize(0)).when()
-    // .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
-    // Calendar c = Calendar.getInstance();
-    // c.add(Calendar.MINUTE, -1);
-    // given().pathParam("videoId", videoId).pathParam("trackId", trackId)
-    // .queryParam("since", ISODateTimeFormat.dateTime().print(c.getTimeInMillis())).expect().statusCode(OK)
-    // .body("annotations", iterableWithSize(1)).when()
-    // .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     // post/another one
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("text", "nice")
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("content", textAnnotation("nice"))
             .formParam("start", 50).expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+")))
-            .body("text", equalTo("nice")).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
+            .body("content", equalTo(textAnnotation("nice"))).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK)
             .body("annotations", iterableWithSize(2)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
@@ -424,12 +414,12 @@ public class ExtendedAnnotationsRestServiceTest {
             .get(host("/videos/{videoId}/scales"));
     // delete
     given().pathParam("scaleId", 12345).expect().statusCode(NOT_FOUND).when().delete(host("/scales/{scaleId}"));
-    given().pathParam("scaleId", templateId).expect().statusCode(NO_CONTENT).when().delete(host("/scales/{scaleId}"));
+    given().pathParam("scaleId", templateId).expect().statusCode(OK).when().delete(host("/scales/{scaleId}"));
     given().pathParam("videoId", "3290").pathParam("scaleId", id).expect().statusCode(BAD_REQUEST).when()
             .delete(host("/videos/{videoId}/scales/{scaleId}"));
     given().pathParam("videoId", videoId).pathParam("scaleId", 32342).expect().statusCode(NOT_FOUND).when()
             .delete(host("/videos/{videoId}/scales/{scaleId}"));
-    given().pathParam("videoId", videoId).pathParam("scaleId", id).expect().statusCode(NO_CONTENT).when()
+    given().pathParam("videoId", videoId).pathParam("scaleId", id).expect().statusCode(OK).when()
             .delete(host("/videos/{videoId}/scales/{scaleId}"));
   }
 
@@ -506,7 +496,7 @@ public class ExtendedAnnotationsRestServiceTest {
     // delete
     given().pathParam("scaleId", scaleId).pathParam("scaleValueId", 12345).expect().statusCode(NOT_FOUND).when()
             .delete(host("/scales/{scaleId}/scalevalues/{scaleValueId}"));
-    given().pathParam("scaleId", scaleId).pathParam("scaleValueId", templateId).expect().statusCode(NO_CONTENT).when()
+    given().pathParam("scaleId", scaleId).pathParam("scaleValueId", templateId).expect().statusCode(OK).when()
             .delete(host("/scales/{scaleId}/scalevalues/{scaleValueId}"));
     given().pathParam("videoId", "3290").pathParam("scaleId", scaleId).pathParam("scaleValueId", id).expect()
             .statusCode(BAD_REQUEST).when()
@@ -517,8 +507,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).pathParam("scaleValueId", 12345).expect()
             .statusCode(NOT_FOUND).when().delete(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
     given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).pathParam("scaleValueId", id).expect()
-            .statusCode(NO_CONTENT).when()
-            .delete(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
+            .statusCode(OK).when().delete(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
   }
 
   @Test
@@ -596,7 +585,7 @@ public class ExtendedAnnotationsRestServiceTest {
     // delete
     given().pathParam("categoryId", categoryId).pathParam("labelId", 12345).expect().statusCode(NOT_FOUND).when()
             .delete(host("/categories/{categoryId}/labels/{labelId}"));
-    given().pathParam("categoryId", categoryId).pathParam("labelId", templateId).expect().statusCode(NO_CONTENT).when()
+    given().pathParam("categoryId", categoryId).pathParam("labelId", templateId).expect().statusCode(OK).when()
             .delete(host("/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", "3290").pathParam("categoryId", categoryId).pathParam("labelId", id).expect()
             .statusCode(BAD_REQUEST).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
@@ -605,7 +594,7 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).pathParam("labelId", 12345).expect()
             .statusCode(NOT_FOUND).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).pathParam("labelId", id).expect()
-            .statusCode(NO_CONTENT).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
+            .statusCode(OK).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
   }
 
   @Test
@@ -624,10 +613,10 @@ public class ExtendedAnnotationsRestServiceTest {
             .statusCode(CREATED).header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+"))).when()
             .post(host("/videos/{videoId}/tracks")));
     final String annotationId = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .formParam("text", "cool video").formParam("start", 40).formParam("settings", "{\"type\":\"test\"}")
+            .formParam("content", textAnnotation("cool video")).formParam("start", 40).formParam("settings", "{\"type\":\"test\"}")
             .expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+")))
-            .body("text", equalTo("cool video")).body("settings", equalTo("{\"type\":\"test\"}")).when()
+            .body("content", equalTo(textAnnotation("cool video"))).body("settings", equalTo("{\"type\":\"test\"}")).when()
             .post(host("/videos/{videoId}/tracks/{trackId}/annotations")));
 
     // post template
@@ -740,11 +729,12 @@ public class ExtendedAnnotationsRestServiceTest {
             .when().post(host("/videos/{videoId}/categories/{categoryId}/labels")));
 
     // post
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("text", "cool video")
-            .formParam("start", 40).formParam("settings", "{\"type\":\"test\"}").formParam("label_id", labelId)
-            .formParam("scale_value_id", scaleValueId).expect().statusCode(CREATED)
-            .body(containsString("label")).body(containsString("scalevalue")).body(containsString("scale"))
-            .body(containsString("category")).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId)
+            .formParam("content", scalingAnnotation(Long.parseLong(labelId), Long.parseLong(scaleValueId)))
+            .formParam("start", 40).formParam("settings", "{\"type\":\"test\"}")
+            .expect().statusCode(CREATED)
+            .body("content", equalTo(scalingAnnotation(Long.parseLong(labelId), Long.parseLong(scaleValueId))))
+            .when().post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
   }
 
   @Test
@@ -763,10 +753,10 @@ public class ExtendedAnnotationsRestServiceTest {
             .statusCode(CREATED).header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+"))).when()
             .post(host("/videos/{videoId}/tracks")));
     final String annotationId = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .formParam("text", "cool video").formParam("start", 40).formParam("settings", "{\"type\":\"test\"}")
+            .formParam("content", textAnnotation("cool video")).formParam("start", 40).formParam("settings", "{\"type\":\"test\"}")
             .expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+")))
-            .body("text", equalTo("cool video")).body("settings", equalTo("{\"type\":\"test\"}")).when()
+            .body("content", equalTo(textAnnotation("cool video"))).body("settings", equalTo("{\"type\":\"test\"}")).when()
             .post(host("/videos/{videoId}/tracks/{trackId}/annotations")));
 
     final String commentId = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
