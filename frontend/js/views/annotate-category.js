@@ -197,12 +197,22 @@ define(
             },
 
             /**
-             * Remove the given category from the views list
+             * Potentially remove the given category from the views list
              * @param {Category} Category from which the view has to be deleted
              */
-            removeOne: function (delLabel) {
+            removeOne: function (delLabel, deleted) {
+                if (deleted == null) {
+                    return;
+                }
+
                 _.find(this.labelViews, function (labelView, index) {
                     if (delLabel === labelView.model) {
+                        // This event fires when the "deleted_at" attribute of the label model changes
+                        // Ignore this event when the attribute is just being initialized
+                        if (labelView.model.changed.deleted_at == null) {
+                            return false;
+                        }
+
                         labelView.remove();
                         this.labelViews.splice(index, 1);
                         return true;
@@ -219,7 +229,7 @@ define(
                 var modelJSON = this.model.toJSON();
 
                 if (modelJSON.access === ACCESS.PUBLIC) {
-                    modelJSON.canEdit = annotationTool.user.get("isAdmin");
+                    modelJSON.canEdit = modelJSON.isMine || annotationTool.user.get("isAdmin");
                 } else {
                     modelJSON.canEdit = modelJSON.isMine;
                 }

@@ -81,7 +81,7 @@ define(
              * @type {HandlebarsTemplate}
              */
             itemContainerTemplate: Handlebars.compile("<div class=\"item row-fluid\">\
-                                                        <div class=\"span12\">\
+                                                        <div class=\"span12 categories-container-scroll\">\
                                                           <div class=\"row-fluid categories-container\">\
                                                           </div>\
                                                         </div>\
@@ -274,9 +274,19 @@ define(
              * Remove the given category from the views list
              * @param {Category} Category from which the view has to be deleted
              */
-            removeOne: function (delCategory) {
+            removeOne: function (delCategory, deleted) {
+                if (deleted == null) {
+                    return;
+                }
+
                 _.find(this.categoryViews, function (catView, index) {
                     if (delCategory === catView.model) {
+                        // This event fires when the "deleted_at" attribute of the model changes
+                        // Ignore this event when the attribute is just being initialized
+                        if (catView.model.changed.deleted_at == null) {
+                            return false;
+                        }
+
                         catView.remove();
                         // If this is the last item on the last page
                         if (

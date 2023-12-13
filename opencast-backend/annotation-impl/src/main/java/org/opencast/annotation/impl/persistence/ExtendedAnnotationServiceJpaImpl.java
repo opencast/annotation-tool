@@ -724,9 +724,9 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       @Override
       public List<Category> some(Long id) {
         List<CategoryDto> categoryDtos = findAllWithOffsetAndLimit(CategoryDto.class, "Category.findAllOfVideo", offset, limit, id(id));
-        return categoryDtos.stream()
+        return filterByAccess(categoryDtos.stream()
                 .map(CategoryDto::toCategory)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
       }
 
       @Override
@@ -962,8 +962,15 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         // At some point you probably want to associated copied labels with their original, so they can be properly updated
         // This will lose changes made on non-master category labels if the master then looses their series.
         // But that is quite a rare scenario (hopefully) and I'm running out of time.
-        //labels = newLabels;
-        labels = newLabels;
+
+        // @todo CC | Fix: 1) Series labels get infinitely duplicated on each HTTP request.
+        // @todo CC | Fix: 2) Overriding labels (like old code did) prevented accessing potentially deleted labels, breaking annotations that use it (= full app error).
+        // @todo CC | Fix: 3) Remove temporary workaround that simply merges old + new labels (just to get the app running until a fix is there)
+        List<Label> merged = new ArrayList<>();
+        merged.addAll(labels);
+        merged.addAll(newLabels);
+
+        labels = merged;
       }
     }
 

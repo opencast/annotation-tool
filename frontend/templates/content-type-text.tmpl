@@ -1,6 +1,6 @@
 <div class="content-item open" data-position="{{@index}}">
     {{#> content-item-header annotation=annotation}}
-        <b>{{#if title}}{{title}}{{^}}{{t "annotation.types.free text"}}: {{displayRaw value}}{{/if}}</b>
+        <b class="title-short">{{#if title}}{{title}}{{^}}{{t "annotation.types.free text"}}: {{displayRaw value}}{{/if}}</b>
     {{/content-item-header}}
     <div class="well">{{displayRaw value}}</div>
 </div>

@@ -20,17 +20,21 @@ i.check {
 }
 
 #annotate-form {
-
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
 
     #categories {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
 
-        .dropdown {
+        .categories-container-scroll {
+            overflow-y: scroll;
+            height: 100vh;
+        }
 
+        .dropdown {
             margin-left: 5px;
 
             button.dropdown-toggle {
@@ -218,6 +222,13 @@ i.check {
                     [class*="icon-"] {
                         flex-shrink: 0;
                     }
+                }
+
+                // Override Bootstrap default: Avoid elements sticking out of screen
+                // - Relevant only for last one and if 2+ menues exist
+                &:last-child:not(:only-child) .dropdown-menu {
+                  left: inherit;
+                  right: 0;
                 }
 
                 .label-item {

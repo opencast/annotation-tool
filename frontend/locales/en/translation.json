@@ -39,9 +39,9 @@
     },
     "new": {
       "placeholder": "Write a free text annotation. ($t(annotate.new.title))",
-      "title": "Use “ shift + return” keys to create a new line."
+      "title": "Use ' shift + return' keys to create a new line."
     },
-    "no selected track": "No tracak selected",
+    "no selected track": "No track selected",
     "pause": {
       "legend": "Pause video:",
       "freetext": "When writing a free text annotation",
@@ -62,6 +62,8 @@
     "created": "on",
     "track": "on",
     "types": {
+      "empty": "No content",
+      "multi": "Multi content",
       "free text": "free text",
       "label": "label",
       "scaling": "label with scale value"
@@ -87,8 +89,9 @@
       "add free text": "Add free text",
       "category": "Category:",
       "free text": "Free Text",
-      "list prompt": "Add content:",
-      "please choose": "Please choose a label"
+      "list prompt": "Add content",
+      "please choose": "Please choose a label",
+      "modal": "Add content"
     },
     "edit": {
       "delete": "Delete annotation.",
@@ -96,6 +99,7 @@
       "edit": "Edit annotation.",
       "end time": "End time",
       "free text placeholder": "Free text …",
+      "type point": "Convert to point annotation",
       "set end to playhead": {
         "long": "Set the video playhead as end point.",
         "short": "OUT"
@@ -144,9 +148,15 @@
     "cancel": "$t(common actions.cancel)",
     "delete": "$t(common actions.delete)",
     "title": "Delete {{context}}",
-    "warning": "Do you really want to delete the {{context}} “ {{content}}”?"
+    "warning": "Do you really want to delete the {{context}} '{{content}}'?"
   },
   "description": "Video annotation tool",
+  "delete operations": {
+    "unauthorized": "You are not authorized to delete '{{context}}'!"
+  },
+  "import operations": {
+    "wrong format": "The data scheme is invalid or contains errors and cannot be imported."
+  },
   "list annotation": {
     "double click to edit": "Double click to edit"
   },
@@ -266,6 +276,13 @@
     }
   },
   "timeline": {
+    "change visibility": {
+      "tooltip": "Change visibility",
+      "to shared with everyone": "Make visible by default",
+      "to public": "Shared with anyone",
+      "to shared with admin": "Share with admin",
+      "to private": "Make private"
+    },
     "track modals": {
       "header_add": "Add new track",
       "header_update": "Update track",
@@ -292,13 +309,6 @@
         "placeholder_update": "Insert the track name"
       }
     },
-    "change visibility": {
-      "tooltip": "Change visibility",
-      "to shared with everyone": "Make visible by default",
-      "to public": "Shared with anyone",
-      "to shared with admin": "Share with admin",
-      "to private": "Make private"
-    },
     "delete track": "Delete track",
     "name required": "Name is required!",
     "no description": "No description",
@@ -313,6 +323,8 @@
     "reset zoom": "Reset zoom",
     "scripts not allowed": "Scripts are not allowed!",
     "track": {
+      "private": "Private",
+      "public": "Public",
       "you own": "You own this track",
       "expand": "Expand track",
       "collapse": "Collapse track"
@@ -351,15 +363,14 @@
     "wrong format": "Wrong format",
     "out of bounds": "Chosen time is out of bounds."
   },
+  "version": "Version: {{version}}",
   "common actions": {
     "cancel": "Cancel",
     "close": "Close",
     "ok": "OK",
     "insert": "Insert",
     "save": "Save",
-    "delete": "Delete"
-  },
-  "delete operations": {
-    "unauthorized": "You are not authorized to deleted this {{context}}!"
+    "delete": "Delete",
+    "double click to edit": "Double click to edit"
   }
 }

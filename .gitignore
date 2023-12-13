@@ -10,6 +10,7 @@ deploy
 # ignore Eclipse project data
 .project
 .classpath
+.history
 .metadata/
 .settings/
 .recommenders/
@@ -22,11 +23,17 @@ deploy
 *.iml
 .idea
 
+# Git
+*.patch
+
 # OS
 .DS_Store
 
 # Ignore directory with frontend build
 /frontend/src/main/resources/ui
+
+# Ignore browser local overrides
+/frontend/localhost:8080
 
 # Ignore flattened POMs
 .flattened-pom.xml

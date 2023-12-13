@@ -54,11 +54,21 @@ define([
                     .then(_.bind(function () {
                         return $.when.apply(
                             $,
-                            this.model.get("scaleValues").map(function (scaleValue, index) {
+                            this.scaleEditor.model.attributes.scaleValues.map(function (scaleValue, index) {
                                 return scaleValue.save({ order: index });
                             }).concat(
                                 previousScaleValues.chain()
                                     .filter(function (scaleValue) {
+                                        // Empty placeholder value must not trigger HTTP request (would cause error 405)
+                                        var isEmptyPlacehoder = !scaleValue.id && !scaleValue.attributes.value;
+
+                                        if (isEmptyPlacehoder) {
+                                            // Safety measure to avoid doing something with the unneeded placeholder.
+                                            // @todo CC | Review: Check if safety measure is really needed
+                                            scaleValue.collection.remove(scaleValue);
+                                            return false;
+                                        }
+
                                         return !this.model.get("scaleValues").get(scaleValue.id);
                                     }, this)
                                     .invoke("destroy")

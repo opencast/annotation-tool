@@ -494,6 +494,7 @@ define(
 
             /**
              * Import the given categories in the tool
+             * @todo CC | Optimize: Extend overrides settings -and- mutates the input. A recursive extend variant would be better.
              * @param {PlainObject} imported Object containing the .categories and .scales to insert in the tool
              * @param {PlainObject} defaultCategoryAttributes The default attributes to use to insert the imported categories (like access)
              */
@@ -511,7 +512,7 @@ define(
                     delete scale.id;
                     delete scale.scaleValues;
 
-                    var newScale = this.video.get("scales").create(scale, { async: false });
+                    var newScale = annotationTool.video.get("scales").create(scale, { async: false });
                     scalesIdMap[scaleOldId] = newScale.get("id");
 
                     if (scaleValuesToAdd) {
@@ -525,10 +526,14 @@ define(
                 var videoCategories = this.video.get("categories");
                 _.each(imported.categories, function (category) {
                     var labelsToAdd = category.labels;
+
                     category.scale_id = scalesIdMap[category.scale_id];
                     delete category.labels;
-                    var newCat = videoCategories
-                        .create(_.extend(category, defaultCategoryAttributes), { async: false });
+
+                    let attr = _.clone(defaultCategoryAttributes);
+                    attr.settings = _.extend({}, attr.settings, category.settings, { hasScale: !!category.scale_id });
+
+                    var newCat = videoCategories.create(_.extend({}, category, attr), { async: false });
 
                     if (labelsToAdd) {
                         _.each(labelsToAdd, function (label) {
@@ -627,21 +632,25 @@ define(
             gatherExportData: function (tracks, categories, freeText) {
                 var bookData = [];
                 var header = [];
+
+                // Header indexes: 0-4
                 addResourceHeaders(header);
-                header.push("Track name");
+                // Header indexes: 5-22
+                header.push("Track name"); // 5
                 header.push("Leadin");
                 header.push("Leadout");
                 header.push("Duration");
                 header.push("Text");
-                header.push("Category name");
+                header.push("Category name"); // 10
                 header.push("Label name");
                 header.push("Label abbreviation");
                 header.push("Scale name");
                 header.push("Scale value name");
-                header.push("Scale value value");
-                addResourceHeaders(header, "comment");
+                header.push("Scale value value"); // 15
+                addResourceHeaders(header, "comment"); // 16-20
                 header.push("Comment text");
                 header.push("Comment replies to");
+                header.push("Type"); // 23
                 bookData.push(header);
 
                 _.each(tracks, function (track) {
@@ -658,30 +667,7 @@ define(
                             if (!freeText) return;
                         }
 
-                        addResource(line, annotation);
-                        line.push(track.attributes.name);
-
-                        line.push(util.formatTime(annotation.attributes.start));
-                        line.push(util.formatTime(annotation.attributes.start + annotation.attributes.duration));
-                        line.push(util.formatTime(annotation.attributes.duration));
-                        line.push("");
-
-                        if (label) {
-                            line.push(label.category.name);
-                            line.push(label.value);
-                            line.push(label.abbreviation);
-                        } else {
-                            line.push("");
-                            line.push("");
-                            line.push("");
-                        }
-
-                        // Scale/Value filled in 'content' part
-                        line.push("");
-                        line.push("");
-                        line.push("");
-
-                        bookData.push(line);
+                        addResource(line, annotation, track);
 
                         _.each(annotation.attributes.content.models, function (content) {
                             addContentLine(line, content);
@@ -714,26 +700,35 @@ define(
                     header.push(util.capitalize(prefix + "Author mail"));
                 }
 
-                function addResource(line, resource) {
+                function addResource(line, resource, track) {
                     line.push(resource.id);
                     line.push(resource.attributes.created_at.toISOString());
                     line.push(resource.attributes.updated_at.toISOString());
                     line.push(resource.attributes.created_by_nickname);
                     line.push(resource.attributes.created_by_email);
+
+                    line.push(track.attributes.name);
+                    line.push(util.formatTime(resource.attributes.start));
+                    line.push(util.formatTime(resource.attributes.start + resource.attributes.duration));
+                    line.push(util.formatTime(resource.attributes.duration));
                 }
 
                 function addCommentLine(line, comment) {
                     var commentLine = [];
                     Array.prototype.push.apply(commentLine, line);
 
-                    addResource(commentLine, comment);
+                    commentLine[16] = comment.attributes.id;
+                    commentLine[17] = comment.attributes.created_at.toISOString();
+                    commentLine[18] = comment.attributes.updated_at.toISOString();
+                    commentLine[19] = comment.attributes.updated_by_nickname;
+                    commentLine[20] = "";
+                    commentLine[21] = comment.attributes.text;
 
-                    commentLine.push(comment.attributes.text);
                     if (comment.collection.replyTo) {
-                        commentLine.push(comment.collection.replyTo.id);
-                    } else {
-                        commentLine.push("");
+                        commentLine[22] = comment.collection.replyTo.id;
                     }
+
+                    commentLine[23] = "comment";
 
                     bookData.push(commentLine);
                 }
@@ -746,21 +741,26 @@ define(
                     });
                 }
 
-                // TODO | CC | Implement scale
                 function addContentLine(line, content) {
                     var contentLine = [];
                     Array.prototype.push.apply(contentLine, line);
 
                     var category = content.getCategory();
                     var label = content.getLabel();
+                    var scaleValue = content.getScaleValue();
 
                     contentLine[9] = content.getText();
                     contentLine[10] = category ? category.attributes.name : "";
                     contentLine[11] = label ? label.attributes.value : "";
                     contentLine[12] = label ? label.attributes.abbreviation : "";
-                    // 13 = Scale name
-                    // 14 = Scale value name
-                    contentLine[15] = content.getScaleValue();
+
+                    if (!!scaleValue) {
+                        contentLine[13] = scaleValue.collection.scale.get("name");
+                        contentLine[14] = scaleValue.attributes.name;
+                        contentLine[15] = scaleValue.attributes.value;
+                    }
+
+                    contentLine[23] = (scaleValue) ? "content-scale" : "content";
 
                     bookData.push(contentLine);
                 }
@@ -897,6 +897,7 @@ define(
                 },
                 customMessage: function (target) {
                     if (target.get("series_category_id")) {
+                        // TODO: Fix custom message does not output anything
                         return i18next.t("series category modal.custom message");
                     } else {
                         return "";

@@ -39,6 +39,11 @@
             title="{{t "annotation.edit.set end to playhead.long"}}"
         >{{t "annotation.edit.set end to playhead.short"}}</button>
 
+        <button
+            class="btn type-point"
+            title="{{t "annotation.edit.type point"}}"
+        ><i class="icon-asterisk"></i></button>
+
         {{#if isMine}}
             <i
                 class="private icon-user"
@@ -50,11 +55,7 @@
     <div class="right">
         {{#if isMine}}
             <i
-                class="delete icon-trash"
-                title="{{t "annotation.edit.delete"}}"
-            ></i>
-            <i
-                class="toggle-edit icon-time"
+                class="toggle-edit icon-time me-2"
                 title="{{t "annotation.edit.edit"}}"
             ></i>
         {{/if}}
@@ -73,6 +74,13 @@
                 </span>
             {{/if}}
         </i>
+
+        {{#if isMine}}
+            <i
+                class="delete icon-trash"
+                title="{{t "annotation.edit.delete"}}"
+            ></i>
+        {{/if}}
     </div>
 </div>
 

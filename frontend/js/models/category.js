@@ -76,7 +76,7 @@ define(
                 Resource.prototype.initialize.apply(this, arguments);
 
                 this.set("settings", _.extend({
-                    hasScale: true,
+                    hasScale: false,
                     color: "#008080",
                     createdAsMine: !this.isPublic()
                 }, this.get("settings")));
@@ -117,17 +117,6 @@ define(
             },
 
             /**
-             * Change category color
-             * @param  {string} color the new color
-             */
-            setColor: function (color) {
-                var settings = _.clone(this.get("settings"));
-                settings.color = color;
-
-                this.set("settings", settings);
-            },
-
-            /**
              * Override the default toJSON function to ensure complete JSONing.
              * @param {Object} options The options to control the "JSONification" of this collection
              * @return {JSON} JSON representation of the instance
@@ -147,7 +136,7 @@ define(
 
             /**
              * Prepare the model as JSON to export and return it
-             * @param {boolean} withScales Define if the scale has to be included
+             *
              * @return {JSON} JSON representation of the model for export
              */
             toExportJSON: function () {
@@ -172,14 +161,6 @@ define(
 
                 if (this.attributes.settings) {
                     json.settings = this.attributes.settings;
-                }
-
-                if (!_.isUndefined(withScale) && withScale) {
-                    if (this.attributes.scale_id) {
-                        json.scale = annotationTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
-                    } else if (this.attributes.scale) {
-                        json.scale = annotationTool.video.get("scales").get(this.attributes.scale.get("id")).toExportJSON();
-                    }
                 }
 
                 return json;

@@ -77,7 +77,7 @@ define([
             // Get all used categories and and their scales
             var labels = annotations.invoke("getLabels").flatten();
 
-            var categories = labels.pluck("category")
+            var categories = labels.map("attributes").pluck("category")
                 .sortBy("name")
                 .uniq("id")
                 .map(function (category) {
@@ -93,9 +93,12 @@ define([
                     }
                     return result;
                 });
+
             // Get all the labels in a tabular structure for easy processing by the template
             var labelRows = labels
-                .groupBy(function (label) { return label.category.name; })
+                .groupBy(function (label) {
+                    return label.get("category").name;
+                })
                 .pairs()
                 .sortBy(0)
                 .map(1)
@@ -127,7 +130,7 @@ define([
 
                     // Build the display code
                     if (labels.length) {
-                        result.codes = labels.invoke("get", "abbreviation").join(", ");
+                        result.codes = _.chain(labels).map("attributes").pluck("abbreviation").join(", ");
                     } else {
                         result.codes = "Free";
                     }

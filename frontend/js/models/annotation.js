@@ -45,7 +45,10 @@ define(
             defaults: function () {
                 return {
                     start: 0,
-                    duration: 0,
+
+                    // Value > 0 for time based annotation by default (contrary to point annotation)
+                    duration: 0.5,
+
                     comments: new Comments([], { annotation: this }),
                     content: new AnnotationContent([])
                 };
@@ -57,8 +60,8 @@ define(
              * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
-                // @todo MERGE - Fixes comments not being loaded/updated anymore (e.g. reload app); also fixes icon status.
-                // @todo MERGE - This was removed in master (35e244e000f82ff8def250bfe566bd213d4705a2) - Check if this is correct.
+                // Fixes comments not being loaded/updated anymore (e.g. reload app); also fixes icon status.
+                // @todo CC | Review: This was removed in master (35e244e000f82ff8def250bfe566bd213d4705a2) - Why?
                 Resource.prototype.initialize.apply(this, arguments);
 
                 if (!(this.get("content") instanceof AnnotationContent)) {
@@ -68,8 +71,18 @@ define(
 
             /**
              * (Re-)Fetch the comments once our ID changes.
+             * 1) Questionnaire: Cancelling freshly created annotation leads to: 'Uncaught Error: A "url" property or function must be specified'.
+             *    Collection exists only until 'destroy', but not here - so no URL can be found. Guess: keepDeleted behaviour?
+             * @todo CC | Review: Same issue fixed here appears in other deletion places too (e.g. deleting a track). Fix all?
+             * @todo CC | Review: Fix/Workaround for questionnaire annotation, eventually remove warning (added for convenience/understanding).
              */
             fetchChildren: function () {
+                // 1) Should -only- occur on questionnaire annotation deletion!
+                if (!this.collection) {
+                    console.warn("Annotation collection not found, skip fetching children");
+                    return;
+                }
+
                 this.attributes.comments.fetch();
             },
 
