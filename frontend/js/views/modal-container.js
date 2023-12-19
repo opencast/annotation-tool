@@ -13,7 +13,7 @@
  *  permissions and limitations under the License.
  *
  */
-define(["templates/modal-container", "backbone", "bootstrap"], function (template, Backbone) {
+define(["templates/modal-container", "backbone"], function (template, Backbone) {
     "use strict";
 
     return Backbone.View.extend({

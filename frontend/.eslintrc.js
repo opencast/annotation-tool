@@ -1,6 +1,5 @@
 module.exports = {
     ignorePatterns: [
-        '/js/libs',
         'src',
         'target',
         '!.*'

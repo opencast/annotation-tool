@@ -19,8 +19,7 @@ define([
     "templates/modal-add-labelled",
     "templates/partial-label-chooser",
     "templates/partial-scale-chooser",
-    "backbone",
-    "bootstrap"
+    "backbone"
 ], function (_, $, template, tmplLabelChooser, tmplScaleChooser, Backbone) {
     "use strict";
 

@@ -35,8 +35,7 @@ define(
         "views/questionnaire",
         "views/questionnaire-drafts",
         "backbone",
-        "goldenlayout",
-        "bootstrap"
+        "goldenlayout"
     ],
     function (
         $,

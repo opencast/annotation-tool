@@ -13,7 +13,7 @@ module.exports = function (grunt) {
 
         less: {
             options: {
-                paths: 'style',
+                paths: ['style', 'node_modules/bootstrap/less'],
                 syncImport: true,
                 compress: true,
                 sourceMap: true,
@@ -47,7 +47,8 @@ module.exports = function (grunt) {
                         'js/**/*',
                         'img/**/*',
                         'style/**/*',
-                        'locales/**/*'
+                        'locales/**/*',
+                        'node_modules/**/*'
                     ],
                     dest: '<%= destPath %>'
                 }, {
@@ -67,12 +68,16 @@ module.exports = function (grunt) {
                     'jquery.colorPicker',
                     'slider',
                     'bootstrap',
+                    'slider',
+                    // This is actually an AMD module
+                    //   but doesn't behave correctly.
+                    //   See https://github.com/eligrey/FileSaver.js/issues/646
                     'filesaver'
                 ]
             },
             all: {
                 expand: true,
-                src: ['js/**/*.js', '!js/libs/**/*'],
+                src: ['js/**/*.js'],
                 dest: '.'
             }
         },
@@ -83,7 +88,7 @@ module.exports = function (grunt) {
                 maxWarnings: grunt.option('maxWarnings'),
                 fix: grunt.option('fix')
             },
-            files: ['js/**/*.js', './{,.}*.js', '!js/libs/**/{,.}*']
+            files: ['js/**/*.js', './{,.}*.js']
         },
 
         stylelint: {

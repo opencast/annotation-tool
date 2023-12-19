@@ -6,19 +6,23 @@ require(
         "domReady",
         "jquery",
         "i18next",
-        "i18next-xhr-backend",
+        "i18next-http-backend",
         "jquery-i18next",
         "i18next-browser-language-detector",
         "moment",
         "mediaelementplayer",
         "configuration",
-        "integration"
+        "integration",
+        // Include all the bootstrap stuff since it is kind of hopeless
+        // to include only what you need when you need it, all of this
+        // operating on the global scope and all.
+        "bootstrap"
     ],
     function (
         domReady,
         $,
         i18next,
-        i18nextXHRBackend,
+        i18nextHTTPBackend,
         $i18next,
         LngDetector,
         moment,
@@ -29,7 +33,7 @@ require(
         "use strict";
 
         i18next
-            .use(i18nextXHRBackend)
+            .use(i18nextHTTPBackend)
             .use(LngDetector)
             .init({
                 fallbackLng: "en",

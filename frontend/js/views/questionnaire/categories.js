@@ -22,8 +22,7 @@ define([
     "collections/annotation-content",
     "templates/questionnaire/block-categories",
     "templates/questionnaire/block-layout",
-    "views/modal-add-labelled",
-    "bootstrap"
+    "views/modal-add-labelled"
 ], function (
     _,
     Backbone,
