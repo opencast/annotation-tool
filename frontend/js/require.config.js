@@ -32,7 +32,6 @@ require.config({
         "papaparse": "libs/papaparse.min",
         "filesaver": "libs/FileSaver.min"
     },
-    waitSeconds: 10,
 
     shim: {
         "backbone": {
