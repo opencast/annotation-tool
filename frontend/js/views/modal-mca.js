@@ -1,4 +1,5 @@
 define([
+    "underscore",
     "backbone",
     "i18next",
     "templates/modal-mca",
@@ -6,6 +7,7 @@ define([
     "views/modal-add-labelled",
     "bootstrap"
 ], function (
+    _,
     Backbone,
     i18next,
     template,
