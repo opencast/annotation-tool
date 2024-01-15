@@ -31,8 +31,7 @@ define([
     "templates/timeline-group",
     "backbone",
     "vis-timeline",
-    "chroma",
-    "bootstrap"
+    "chroma"
 ], function (
     util,
     $,

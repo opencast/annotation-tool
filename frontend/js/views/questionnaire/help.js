@@ -17,8 +17,7 @@
 define([
     "templates/questionnaire/block-help",
     "templates/questionnaire/block-layout",
-    "backbone",
-    "bootstrap"
+    "backbone"
 ], function (template, tmplLayout, Backbone) {
     "use strict";
 

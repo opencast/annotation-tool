@@ -18,8 +18,7 @@ define([
     "templates/questionnaire/block-text",
     "templates/questionnaire/block-layout",
     "models/content-item",
-    "backbone",
-    "bootstrap"
+    "backbone"
 ], function (template, tmplLayout, ContentItem, Backbone) {
     "use strict";
 

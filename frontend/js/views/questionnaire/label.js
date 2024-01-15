@@ -20,8 +20,7 @@ define([
     "templates/questionnaire/block-label",
     "templates/questionnaire/block-layout",
     "templates/partial-label-chooser",
-    "backbone",
-    "bootstrap"
+    "backbone"
 ], function (_, ContentItem, template, tmplLayout, tmplLabelChooser, Backbone) {
     "use strict";
 

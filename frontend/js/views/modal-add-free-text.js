@@ -13,7 +13,7 @@
  *  permissions and limitations under the License.
  *
  */
-define(["templates/modal-add-free-text", "backbone", "bootstrap"], function (template, Backbone) {
+define(["templates/modal-add-free-text", "backbone"], function (template, Backbone) {
     "use strict";
 
     return Backbone.View.extend({

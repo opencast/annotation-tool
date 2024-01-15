@@ -20,8 +20,7 @@ define([
     "templates/questionnaire/block-layout",
     "templates/partial-scale-chooser",
     "underscore",
-    "backbone",
-    "bootstrap"
+    "backbone"
 ], function (ContentItem, template, tmplLayout, tmplScaleChooser, _, Backbone) {
     "use strict";
 

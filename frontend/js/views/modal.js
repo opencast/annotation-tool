@@ -15,8 +15,7 @@
 
 define([
     "underscore",
-    "backbone",
-    "bootstrap"
+    "backbone"
 ], function (
     _,
     Backbone
