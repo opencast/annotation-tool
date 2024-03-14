@@ -80,7 +80,7 @@ define([
         data: "id=" + mediaPackageId + "&limit=1",
         dataType: "json"
     }).then(function (data) {
-        return data["search-results"].result;
+        return data.result[0];
     });
     var mediaPackage = searchResult.then(function (result) {
         return result.mediapackage;
