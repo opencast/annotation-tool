@@ -22,9 +22,6 @@ import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
 
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.search.api.SearchQuery;
-import org.opencastproject.search.api.SearchResult;
-import org.opencastproject.search.api.SearchResultItem;
 import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.DefaultOrganization;
@@ -47,7 +44,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   // Haven't found out who's responsible forf this but that's the way it is.
   public static final ExtendedAnnotationServiceJpaImpl extendedAnnotationService =
           new ExtendedAnnotationServiceJpaImpl();
-  static {
+  static  {
     extendedAnnotationService.setSearchService(getSearchService());
     extendedAnnotationService.setSecurityService(getSecurityService());
     extendedAnnotationService.setAuthorizationService(getAuthorizationService());
@@ -90,17 +87,12 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   private static SearchService getSearchService() {
     MediaPackage mediaPackage = EasyMock.createNiceMock(MediaPackage.class);
 
-    SearchResultItem searchResultItem = EasyMock.createNiceMock(SearchResultItem.class);
-    EasyMock.expect(searchResultItem.getMediaPackage()).andReturn(mediaPackage).anyTimes();
-    EasyMock.replay(searchResultItem);
-
-    SearchResult searchResult = EasyMock.createNiceMock(SearchResult.class);
-    EasyMock.expect(searchResult.getItems()).andReturn(new SearchResultItem[]{searchResultItem}).anyTimes();
-    EasyMock.replay(searchResult);
-
     SearchService searchService = EasyMock.createNiceMock(SearchService.class);
-    EasyMock.expect(searchService.getByQuery(EasyMock.anyObject(SearchQuery.class)))
-            .andReturn(searchResult).anyTimes();
+    try {
+      EasyMock.expect(searchService.get(EasyMock.anyObject(String.class))).andReturn(mediaPackage).anyTimes();
+    } catch (Exception e) {
+      // Do nothing. We just have to pretend to handle checked exceptions somehow to appease the compiler.
+    }
     EasyMock.replay(searchService);
     return searchService;
   }
