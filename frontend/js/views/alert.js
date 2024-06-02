@@ -21,8 +21,7 @@ define(
     [
         "underscore",
         "views/modal",
-        "templates/alert-modal",
-        "bootstrap"
+        "templates/alert-modal"
     ],
     function (
         _,

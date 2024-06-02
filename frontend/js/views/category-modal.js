@@ -20,7 +20,6 @@ define([
     "views/modal",
     "views/category-modal/label",
     "templates/category-modal",
-    "bootstrap",
     "jquery.colorPicker"
 ], function (
     _,

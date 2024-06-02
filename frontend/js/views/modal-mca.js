@@ -4,8 +4,7 @@ define([
     "i18next",
     "templates/modal-mca",
     "views/modal-add-free-text",
-    "views/modal-add-labelled",
-    "bootstrap"
+    "views/modal-add-labelled"
 ], function (
     _,
     Backbone,

@@ -23,8 +23,7 @@ define(
         "underscore",
         "views/list-annotation",
         "templates/list",
-        "backbone",
-        "bootstrap"
+        "backbone"
     ],
     function (
         _,
