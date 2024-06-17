@@ -83,7 +83,7 @@ module.exports = function (grunt) {
                 maxWarnings: grunt.option('maxWarnings'),
                 fix: grunt.option('fix')
             },
-            files: ['js/**/*.js', './{,.}*.js', '!js/libs/**/{,.}*']
+            files: ['.']
         },
 
         stylelint: {
