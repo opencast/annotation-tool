@@ -32,8 +32,10 @@ import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.api.UnauthorizedException;
 import org.opencastproject.security.api.User;
 import org.opencastproject.security.util.SecurityUtil;
+import org.opencastproject.util.NotFoundException;
 
 import org.easymock.EasyMock;
 import org.junit.Ignore;
@@ -50,7 +52,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   // Haven't found out who's responsible for this but that's the way it is.
   public static final ExtendedAnnotationServiceJpaImpl extendedAnnotationService =
           new ExtendedAnnotationServiceJpaImpl();
-  static  {
+  static {
     extendedAnnotationService.setSearchService(getSearchService());
     extendedAnnotationService.setSecurityService(getSecurityService());
     extendedAnnotationService.setAuthorizationService(getAuthorizationService());
@@ -96,7 +98,7 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
     SearchService searchService = EasyMock.createNiceMock(SearchService.class);
     try {
       EasyMock.expect(searchService.get(EasyMock.anyObject(String.class))).andReturn(mediaPackage).anyTimes();
-    } catch (Exception e) {
+    } catch (UnauthorizedException | NotFoundException e) {
       // Do nothing. We just have to pretend to handle checked exceptions somehow to appease the compiler.
     }
     EasyMock.replay(searchService);
