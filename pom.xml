@@ -67,7 +67,7 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <opencast.build.version>16-SNAPSHOT</opencast.build.version>
+    <opencast.build.version>16.0</opencast.build.version>
     <opencast.deploy.version>;version=16.0</opencast.deploy.version>
   </properties>
 
