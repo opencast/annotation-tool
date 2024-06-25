@@ -60,12 +60,12 @@ import org.opencast.annotation.impl.VideoImpl;
 import org.opencastproject.db.DBSession;
 import org.opencastproject.db.DBSessionFactory;
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.search.api.SearchQuery;
-import org.opencastproject.search.api.SearchResultItem;
 import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.api.UnauthorizedException;
+import org.opencastproject.util.NotFoundException;
 import org.opencastproject.util.data.Effect;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
@@ -1271,14 +1271,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
   @Override
   public Option<MediaPackage> findMediaPackage(String id) {
-    return head(searchService.getByQuery(new SearchQuery().withId(id)).getItems()).map(
-            new Function<>() {
-              @Override
-              public MediaPackage apply(SearchResultItem searchResultItem) {
-                return searchResultItem.getMediaPackage();
-              }
-            }
-    );
+    try {
+      return Option.some(searchService.get(id));
+    } catch (NotFoundException | UnauthorizedException e) {
+      return Option.none();
+    }
   }
 
   @Override

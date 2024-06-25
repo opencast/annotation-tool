@@ -22,15 +22,14 @@ import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.impl.persistence.ExtendedAnnotationServiceJpaImpl;
 
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.search.api.SearchQuery;
-import org.opencastproject.search.api.SearchResult;
-import org.opencastproject.search.api.SearchResultItem;
 import org.opencastproject.search.api.SearchService;
 import org.opencastproject.security.api.AuthorizationService;
 import org.opencastproject.security.api.DefaultOrganization;
 import org.opencastproject.security.api.SecurityService;
+import org.opencastproject.security.api.UnauthorizedException;
 import org.opencastproject.security.api.User;
 import org.opencastproject.security.util.SecurityUtil;
+import org.opencastproject.util.NotFoundException;
 
 import org.easymock.EasyMock;
 import org.junit.Ignore;
@@ -90,17 +89,12 @@ public class TestRestService extends AbstractExtendedAnnotationsRestService {
   private static SearchService getSearchService() {
     MediaPackage mediaPackage = EasyMock.createNiceMock(MediaPackage.class);
 
-    SearchResultItem searchResultItem = EasyMock.createNiceMock(SearchResultItem.class);
-    EasyMock.expect(searchResultItem.getMediaPackage()).andReturn(mediaPackage).anyTimes();
-    EasyMock.replay(searchResultItem);
-
-    SearchResult searchResult = EasyMock.createNiceMock(SearchResult.class);
-    EasyMock.expect(searchResult.getItems()).andReturn(new SearchResultItem[]{searchResultItem}).anyTimes();
-    EasyMock.replay(searchResult);
-
     SearchService searchService = EasyMock.createNiceMock(SearchService.class);
-    EasyMock.expect(searchService.getByQuery(EasyMock.anyObject(SearchQuery.class)))
-            .andReturn(searchResult).anyTimes();
+    try {
+      EasyMock.expect(searchService.get(EasyMock.anyObject(String.class))).andReturn(mediaPackage).anyTimes();
+    } catch (UnauthorizedException | NotFoundException e) {
+      // Do nothing. We just have to pretend to handle checked exceptions somehow to appease the compiler.
+    }
     EasyMock.replay(searchService);
     return searchService;
   }
