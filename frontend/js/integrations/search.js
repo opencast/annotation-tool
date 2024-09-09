@@ -184,8 +184,8 @@ define([
                         return {
                             src: track.url,
                             type: track.mimetype,
-                            framerate: track.video.framerate,
-                            resolution: track.video.resolution
+                            framerate: track.video && track.video.framerate,
+                            resolution: track.video && track.video.resolution
                         };
                     })
                 );
