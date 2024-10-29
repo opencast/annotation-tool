@@ -48,7 +48,7 @@ define([
         // that the JSON we pass is nested no deeper than one level.
         options.data = model.toJSON(_.defaults(options, { stringifySub: true }));
 
-        // Some models (marked with `mPOST`) need to always be `PUT`, i.e. never be `POST`ed
+        // Some models (marked with `noPOST`) need to always be `PUT`, i.e. never be `POST`ed
         if (model.noPOST && method === "create") {
             method = "update";
         }
