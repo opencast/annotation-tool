@@ -17,6 +17,7 @@ module.exports = function (grunt) {
                 syncImport: true,
                 compress: true,
                 sourceMap: true,
+                math: 'always',
                 sourceMapURL: 'style/style.css.map',
                 sourceMapBasepath: 'style'
             },
