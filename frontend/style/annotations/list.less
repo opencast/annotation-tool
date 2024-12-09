@@ -336,6 +336,14 @@
             position: relative;
             top: 2px;
             width: 60%; // Mobile
+
+            br {
+                content: ""
+            }
+
+            br:after {
+                content: "\00a0"
+            }
         }
 
         .content-item .actions {
