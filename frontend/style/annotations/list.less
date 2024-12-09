@@ -337,8 +337,12 @@
             top: 2px;
             width: 60%; // Mobile
 
-            br{
-                display: none;
+            br {
+                content: ""
+            }
+
+            br:after {
+                content: "\00a0"
             }
         }
 
