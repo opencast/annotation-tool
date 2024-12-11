@@ -47,7 +47,7 @@ define(
                     start: 0,
 
                     // Value > 0 for time based annotation by default (contrary to point annotation)
-                    duration: 0.5,
+                    duration: 0,
 
                     comments: new Comments([], { annotation: this }),
                     content: new AnnotationContent([])
