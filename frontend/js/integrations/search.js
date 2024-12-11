@@ -111,11 +111,11 @@ define([
          * @return {Promise.<object>} Metadata about the video
          */
         getVideoParameters: function () {
-            return mediaPackage.then(function (mediaPackage) {
+            return $.when(mediaPackageId, searchResult, mediaPackage).then(function (id, result, mediaPackage) {
                 return {
-                    video_extid: mediaPackage.id,
+                    video_extid: id,
                     series_extid: mediaPackage.series,
-                    title: mediaPackage.title,
+                    title: result.dcTitle
                 };
             });
         },

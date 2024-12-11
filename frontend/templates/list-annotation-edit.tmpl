@@ -84,4 +84,31 @@
     </div>
 </div>
 
+<div id="text-container{{id}}" class="text-container">
+    <div class="creator-info">
+        {{t "annotation.author"}}
+        <span class="user">{{created_by_nickname}}</span>
+        {{t "annotation.created"}}
+        <span class="created">{{formatDate created_at}}</span>
+        {{t "annotation.track"}}
+        <span class="track">{{track}}</span>
+    </div>
+
+    <div id="accordion-container-{{id}}" class="accordion content-items">
+        {{#each content}}
+            {{> (lookup . 'type') annotation=..}}
+        {{/each}}
+    </div>
+
+    {{#if isMine}}
+        {{#unless createdFromQuestionnaire}}
+            <div>
+                <button class="btn add-content-modal" type="button">
+                    {{t "annotation.add content.list prompt"}}
+                </button>
+            </div>
+        {{/unless}}
+    {{/if}}
+</div>
+
 <div class="comments"></div>
