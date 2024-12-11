@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opencast.annotate</groupId>
+    <artifactId>annotation-tool-backend</artifactId>
+    <version>2024.1211.161313-c31238ba12a69c751654baf0203da9b70c3af50f</version>
+  </parent>
+  <groupId>org.opencast.annotate</groupId>
+  <artifactId>annotation-tool-karaf-feature</artifactId>
+  <version>2024.1211.161313-c31238ba12a69c751654baf0203da9b70c3af50f</version>
+  <packaging>pom</packaging>
+  <name>Opencast Annotation Tool :: Backend :: Karaf Feature</name>
+  <licenses>
+    <license>
+      <name>Educational Community License, Version 2.0</name>
+      <url>http://www.osedu.org/licenses/ECL-2.0/ecl2.txt</url>
+    </license>
+  </licenses>
+  <dependencies>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>annotation-tool-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>annotation-tool-impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>annotation-tool-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>4.4.3</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>generate-features-file</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>features-generate-descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <primaryFeatureName>opencast-annotation-tool</primaryFeatureName>
+          <includeTransitiveDependency>false</includeTransitiveDependency>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <id>deploy</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target if="deployTo">
+                <copy file="${project.build.directory}/feature/feature.xml" todir="${deployTo}" overwrite="true" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
