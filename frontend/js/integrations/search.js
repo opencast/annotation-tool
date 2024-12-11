@@ -115,7 +115,7 @@ define([
                 return {
                     video_extid: mediaPackage.id,
                     series_extid: mediaPackage.series,
-                    title: mediaPackage.title,
+                    title: mediaPackage.title
                 };
             });
         },
