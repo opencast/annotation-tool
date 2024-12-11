@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="annotation-tool-karaf-feature">
+    <feature name="opencast-annotation-tool" description="Opencast Annotation Tool :: Backend :: Karaf Feature" version="2024.1211.160704.6268e84555196f7493b81c095bc1660b271b8371">
+        <details>The Opencast Annotation Tool is an additional module for Opencast to scientifically annotate videos</details>
+        <bundle>mvn:org.opencast.annotate/annotation-tool-api/2024.1211.160704-6268e84555196f7493b81c095bc1660b271b8371</bundle>
+        <bundle>mvn:org.opencast.annotate/annotation-tool-impl/2024.1211.160704-6268e84555196f7493b81c095bc1660b271b8371</bundle>
+        <bundle>mvn:org.opencast.annotate/annotation-tool-frontend/2024.1211.160704-6268e84555196f7493b81c095bc1660b271b8371</bundle>
+    </feature>
+</features>
