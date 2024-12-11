@@ -916,6 +916,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
           throws ExtendedAnnotationException {
 
     List<Label> labels;
+    List<Label> deletedLabels = new ArrayList<>();
 
     if (since.isSome()) {
       List<LabelDto> labelDtos = findAllWithOffsetAndLimit(LabelDto.class, "Label.findAllOfCategorySince", offset, limit,
@@ -945,7 +946,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         // Update our labels with the labels from the master series category
         // Note: Maybe do an actual update instead of delete/create
         for (Label label: labels) {
-          deleteLabel(label);
+          deletedLabels.add(deleteLabel(label));
         }
         List<Label> newLabels = new ArrayList<>();
         for (Label seriesLabel : seriesCategoryLabels) {
@@ -967,7 +968,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
         // @todo CC | Fix: 2) Overriding labels (like old code did) prevented accessing potentially deleted labels, breaking annotations that use it (= full app error).
         // @todo CC | Fix: 3) Remove temporary workaround that simply merges old + new labels (just to get the app running until a fix is there)
         List<Label> merged = new ArrayList<>();
-        merged.addAll(labels);
+        merged.addAll(deletedLabels);
         merged.addAll(newLabels);
 
         labels = merged;
