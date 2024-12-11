@@ -225,15 +225,15 @@ define(
                             wait: true,
                             success: function () { ready.resolve(); }
                         });
-                    } else {
-                        tracks.showTracks(
-                            tracks.filter(function (track) {
-                                return track.isMine()
-                                    || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
-                            })
-                        );
-                        ready.resolve();
                     }
+                    tracks.showTracks(
+                        tracks.filter(function (track) {
+                            return track.isMine()
+                                || track.get("access") === ACCESS.SHARED_WITH_EVERYONE;
+                        })
+                    );
+                    ready.resolve();
+
                     return ready.then(function () { return tracks; });
                 }, this)).then(_.bind(function (tracks) {
                     // At least one private track should exist, we select the first one
