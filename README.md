@@ -58,7 +58,7 @@ For discussion around the Opencast Annotation Tool the [mailing list](https://gr
 
 ### Current Development of this branch
 * [virtUOS, Universität Osnabrück](https://www.virtuos.uni-osnabrueck.de)
-* [ELAN e.V.](https://elan-ev.de)
+* [elan e.V.](https://elan-ev.de)
 
 ### Contact
 * Rüdiger Rolf, [rrolf@uni-osnabrueck.de](mailto:rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
