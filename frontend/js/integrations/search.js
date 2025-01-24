@@ -150,9 +150,11 @@ define([
                         RegExp.prototype.test.bind(/application\/.*|video\/.*/),
                         _.property("mimetype")
                     ));
-                videos = _.sortBy(videos, "master").reverse();
                 videos.sort(
                     util.lexicographic([
+                        util.firstWith(
+                            _.property("master")
+                        ),
                         util.firstWith(_.compose(
                             RegExp.prototype.test.bind(/composite\/.*/),
                             _.property("type")
