@@ -85,7 +85,6 @@ define(
 
                 window.Hls = Hls;
                 mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
-                    renderers: ["native_hls", "html5"],
                     alwaysShowControls: true,
                     autoRewind: false,
                     stretching: "fill",
