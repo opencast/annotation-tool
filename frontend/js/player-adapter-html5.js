@@ -106,6 +106,7 @@ define(
                             // If duration is valid, we changed status
                             self.status = PlayerAdapter.STATUS.PAUSED;
                             self.dispatchEvent(new Event(PlayerAdapter.EVENTS.READY));
+                            mediaElementPlayer.updateDuration();
 
                             if (self.waitToPlay) {
                                 self.play();
