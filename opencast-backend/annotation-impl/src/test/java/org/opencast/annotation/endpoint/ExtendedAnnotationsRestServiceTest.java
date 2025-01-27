@@ -151,11 +151,6 @@ public class ExtendedAnnotationsRestServiceTest {
 
   @Test
   public void testTrack() {
-    JSONObject json = new JSONObject();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> safeJson = (Map<String, Object>) json;
-    safeJson.put("channel", "33");
-
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect()
             .body("user_extid", equalTo("admin")).when().put(host("/users"));
     // put/create
@@ -168,15 +163,8 @@ public class ExtendedAnnotationsRestServiceTest {
     // post/create
     final String trackId = extractLocationId(given().pathParam("videoId", videoId).formParam("name", "track")
             .formParam("settings", "{\"type\":\"lecture\"}").formParam("description", "just a track")
-            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
-            .header(LOCATION, startsWith(host("/videos/"))).body("description", equalTo("just a track"))
-            .body("tags", equalTo(json)).when().post(host("/videos/{videoId}/tracks")));
-    // get todo disabled for now
-    // given().pathParam("videoId", videoId)
-    // .pathParam("id", trackId)
-    // .expect().statusCode(OK)
-    // .body("tracks", iterableWithSize(1))
-    // .when().get(host("/videos/{videoId}/tracks/{id}");
+            .expect().statusCode(CREATED).header(LOCATION, startsWith(host("/videos/")))
+            .body("description", equalTo("just a track")).when().post(host("/videos/{videoId}/tracks")));
     // post/create with same name
     given().pathParam("videoId", videoId).formParam("name", "track").formParam("settings", "{\"type\":\"lecture\"}")
             .expect().statusCode(CREATED).body("name", equalTo("track")).when().post(host("/videos/{videoId}/tracks"));
@@ -185,25 +173,14 @@ public class ExtendedAnnotationsRestServiceTest {
     // get
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK)
             .body("name", equalTo("track")).body("description", equalTo("just a track"))
-            // .body("settings.type", equalTo("lecture")) todo
             .when().get(host("/videos/{videoId}/tracks/{trackId}"));
     // put
-    safeJson.put("channel", "22");
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("tags", json.toJSONString())
-            .formParam("name", "track2").expect().statusCode(OK).body("name", equalTo("track2"))
-            .body("tags", equalTo(json)).when().put(host("/videos/{videoId}/tracks/{trackId}"));
+    given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("name", "track2").expect()
+            .statusCode(OK).body("name", equalTo("track2")).when().put(host("/videos/{videoId}/tracks/{trackId}"));
 
     // get all
-    given().pathParam("videoId", videoId).expect().statusCode(OK).body("tracks", iterableWithSize(2))
-            .when().get(host("/videos/{videoId}/tracks"));
-    given().pathParam("videoId", videoId).queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
-            .body("tracks", iterableWithSize(1))
-            // .body("tracks.name", hasItems("track", "track"))
-            .when().get(host("/videos/{videoId}/tracks"));
-    given().pathParam("videoId", videoId).queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
-            .body("tracks", iterableWithSize(1))
-            // .body("tracks.name", hasItems("track", "track"))
-            .when().get(host("/videos/{videoId}/tracks"));
+    given().pathParam("videoId", videoId).expect().statusCode(OK).body("tracks", iterableWithSize(2)).when()
+            .get(host("/videos/{videoId}/tracks"));
     // delete
     given().pathParam("videoId", 12345).pathParam("id", 12345).expect().statusCode(BAD_REQUEST).when()
             .delete(host("/videos/{videoId}/tracks/{id}"));

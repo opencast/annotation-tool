@@ -19,7 +19,6 @@ import static org.opencast.annotation.impl.Jsons.conc;
 import static org.opencast.annotation.impl.Jsons.jA;
 import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.p;
-import static org.opencastproject.util.data.Monadics.mlist;
 import static org.opencastproject.util.data.Option.option;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -35,8 +34,8 @@ import org.opencastproject.util.data.Option;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -57,7 +56,6 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Track.findById", query = "select a from Track a where a.id = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Track.findAllOfVideo", query = "select a from Track a where a.videoId = :id and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Track.findAllOfVideoSince", query = "select a from Track a where a.videoId = :id and a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
         @NamedQuery(name = "Track.deleteById", query = "delete from Track a where a.id = :id"),
         @NamedQuery(name = "Track.clear", query = "delete from Track") })
 public class TrackDto extends AbstractResourceDto {
@@ -131,7 +129,7 @@ public class TrackDto extends AbstractResourceDto {
     }
   };
 
-  public static JSONObject toJson(ExtendedAnnotationService eas, int offset, List<Track> ts) {
-    return jO(p("offset", offset), p("count", ts.size()), p("tracks", jA(mlist(ts).map(toJson.curry(eas)))));
+  public static JSONObject toJson(ExtendedAnnotationService eas, Stream<Track> ts) {
+    return jO(p("tracks", jA(ts.map(t -> toJson.apply(eas, t)).toArray())));
   }
 }

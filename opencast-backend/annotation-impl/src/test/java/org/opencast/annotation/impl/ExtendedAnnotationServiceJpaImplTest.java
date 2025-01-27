@@ -205,10 +205,10 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testTrack() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), none());
     final Video v = eas.createVideo("lecture1", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
-    // try adding a track to a non existing video
+    // try adding a track to a non-existing video
     expectCause(Cause.NOT_FOUND, new Effect0() {
       @Override
       protected void run() {
@@ -222,24 +222,17 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertTrue(eas.getTrack(3478813).isNone());
     assertTrue(eas.getTrack(t.getId()).isSome());
     assertEquals("track1", eas.getTrack(t.getId()).get().getName());
-    assertEquals(tags.get(), t.getTags());
     // update track
     String updatedSettings = "new settings";
     eas.updateTrack(new TrackImpl(t.getId(), t.getVideoId(), t.getName(), t.getDescription(), some(updatedSettings),
             resource));
     assertEquals(updatedSettings, eas.getTrack(t.getId()).get().getSettings().get());
     // get all/non existing track
-    assertTrue(eas.getTracks(12345, none(), none(), none(), Option.none(), Option.none()).isEmpty());
+    assertTrue(eas.getTracks(12345).findAny().isEmpty());
     // get all
     assertEquals(
             3,
-            eas.getTracks(v.getId(), none(), none(), none(), Option.none(), Option.none()).size());
-    assertEquals(
-            2,
-            eas.getTracks(v.getId(), some(1), none(), none(), Option.none(), Option.none()).size());
-    assertEquals(
-            1,
-            eas.getTracks(v.getId(), some(1), some(1), none(), Option.none(), Option.none()).size());
+            eas.getTracks(v.getId()).count());
   }
 
   @Test

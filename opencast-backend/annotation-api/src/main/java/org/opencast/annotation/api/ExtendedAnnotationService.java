@@ -21,6 +21,7 @@ import org.opencastproject.util.data.Option;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public interface ExtendedAnnotationService {
 
@@ -241,24 +242,11 @@ public interface ExtendedAnnotationService {
   /**
    * Get all tracks from a video.
    *
-   * @param videoId
-   *          the video id
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to annotations modified since the said date
-   * @param tagsAnd
-   *          the tags logical AND Map
-   * @param tagsOr
-   *          the tags logical OR Map
+   * @param videoId the video id
    * @return the track list or an empty list if no track has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
+   * @throws ExtendedAnnotationException if an error occurs while storing/retrieving from persistence storage
    */
-  List<Track> getTracks(long videoId, Option<Integer> offset, Option<Integer> limit, Option<Date> since,
-          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+  Stream<Track> getTracks(long videoId) throws ExtendedAnnotationException;
 
   /**
    * Annotate a track of a video.

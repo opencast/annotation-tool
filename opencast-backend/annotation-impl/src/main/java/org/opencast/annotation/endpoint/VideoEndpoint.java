@@ -136,25 +136,17 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("tracks")
   public Response postTrack(@FormParam("name") final String name, @FormParam("description") final String description,
-          @FormParam("settings") final String settings, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
+          @FormParam("settings") final String settings, @FormParam("access") final Integer access) {
 
-    return run(array(name), new Function0<Response>() {
+    return run(array(name), new Function0<>() {
       @Override
       public Response apply() {
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
-          return BAD_REQUEST;
-
         try {
-
-          Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
+          Resource resource = eas.createResource(option(access), none());
           final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
-          return Response.created(trackLocationUri(t))
-                  .entity(TrackDto.toJson.apply(eas, t).toString()).build();
+          return Response.created(trackLocationUri(t)).entity(TrackDto.toJson.apply(eas, t).toString()).build();
         } catch (ExtendedAnnotationException e) {
-          // here not_found leads to a bad_request
           return notFoundToBadRequest(e);
         }
       }
@@ -166,30 +158,25 @@ public class VideoEndpoint {
   @Path("tracks/{id}")
   public Response putTrack(@PathParam("id") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("settings") final String settings,
-          @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
+          @FormParam("access") final Integer access) {
     return run(array(name), new Function0<Response>() {
       @Override
       public Response apply() {
         // check if video exists
         if (videoOpt.isSome()) {
-          return eas.getTrack(id).fold(new Option.Match<Track, Response>() {
+          return eas.getTrack(id).fold(new Option.Match<>() {
             // update track
             @Override
             public Response some(Track track) {
-              if (!eas.hasResourceAccess(track))
+              if (!eas.hasResourceAccess(track)) {
                 return UNAUTHORIZED;
+              }
 
-              final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-              if (tagsMap.isSome() && tagsMap.get().isNone())
-                return BAD_REQUEST;
-
-              Resource resource = eas.updateResource(track,
-                      tagsMap.bind(Functions.identity()));
+              Resource resource = eas.updateResource(track, Option.none());
 
               final Track updated = new TrackImpl(id, videoId, name, trimToNone(description), trimToNone(settings),
-                      new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-                              .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource
-                              .getDeletedAt(), resource.getTags()));
+                  new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(),
+                      resource.getDeletedAt(), resource.getTags()));
               if (!track.equals(updated)) {
                 eas.updateTrack(updated);
                 track = updated;
@@ -216,14 +203,15 @@ public class VideoEndpoint {
   public Response deleteTrack(@PathParam("trackId") final long trackId) {
     // TODO optimize querying for the existence of video and track
     if (videoOpt.isSome()) {
-      return run(nil, new Function0<Response>() {
+      return run(nil, new Function0<>() {
         @Override
         public Response apply() {
-          return eas.getTrack(trackId).fold(new Option.Match<Track, Response>() {
+          return eas.getTrack(trackId).fold(new Option.Match<>() {
             @Override
             public Response some(Track t) {
-              if (!eas.hasResourceAccess(t))
+              if (!eas.hasResourceAccess(t)) {
                 return UNAUTHORIZED;
+              }
               return eas.deleteTrack(t) ? NO_CONTENT : NOT_FOUND;
             }
 
@@ -243,15 +231,16 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("tracks/{id}")
   public Response getTrack(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
+    return run(nil, new Function0<>() {
       @Override
       public Response apply() {
         if (videoOpt.isSome()) {
-          return eas.getTrack(id).fold(new Option.Match<Track, Response>() {
+          return eas.getTrack(id).fold(new Option.Match<>() {
             @Override
             public Response some(Track t) {
-              if (!eas.hasResourceAccess(t))
+              if (!eas.hasResourceAccess(t)) {
                 return UNAUTHORIZED;
+              }
               return Response.ok(TrackDto.toJson.apply(eas, t).toString()).build();
             }
 
@@ -270,29 +259,14 @@ public class VideoEndpoint {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("tracks")
-  public Response getTracks(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
-          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+  public Response getTracks() {
+    return run(nil, new Function0<>() {
       @Override
       public Response apply() {
-        final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
-        final Option<Integer> limitm = limit > 0 ? some(limit) : none();
-        final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
-        final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
-        final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
-
-        if ((datem.isSome() && datem.get().isNone()) || videoOpt.isNone()
-                || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
-                || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
+        if (videoOpt.isNone()) {
           return BAD_REQUEST;
         } else {
-          return Response.ok(TrackDto.toJson(
-                  eas,
-                  offset,
-                  eas.getTracks(videoId, offsetm, limitm, datem.bind(Functions.identity()),
-                          tagsAndArray.bind(Functions.identity()),
-                          tagsOrArray.bind(Functions.identity()))).toString()).build();
+          return Response.ok(TrackDto.toJson(eas, eas.getTracks(videoId)).toString()).build();
         }
       }
     });

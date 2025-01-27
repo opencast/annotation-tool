@@ -90,6 +90,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -257,10 +258,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     final Video updated = new VideoImpl(video.getId(), video.getExtId(), deleteResource);
     updateVideo(updated);
 
-    List<Track> tracks = getTracks(video.getId(), none(), none(), none(), none(), none());
-    for (Track track : tracks) {
-      deleteTrack(track);
-    }
+    getTracks(video.getId()).forEach(this::deleteTrack);
 
     List<Category> categories = getCategories(none(), some(video.getId()), none(), none(), none(), none(), none());
     for (Category category : categories) {
@@ -347,29 +345,11 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public List<Track> getTracks(final long videoId, final Option<Integer> offset, final Option<Integer> limit,
-          Option<Date> since, final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
+  public Stream<Track> getTracks(final long videoId)
           throws ExtendedAnnotationException {
-
-    final Pair<String, Object>[] qparams = qparams(some(id(videoId)),
-            since.map(pairB("since")));
-
-    final String q = since.isSome() ? "Track.findAllOfVideoSince" : "Track.findAllOfVideo";
-
-    List<TrackDto> trackDtos = findAllWithOffsetAndLimit(TrackDto.class, q, offset, limit, qparams);
-    List <Track> tracks = trackDtos.stream()
-            .map(TrackDto::toTrack)
-            .collect(Collectors.toList());
-
-    if (tagsAnd.isSome())
-      tracks = filterAndTags(tracks, tagsAnd.get());
-
-    if (tagsOr.isSome())
-      tracks = filterOrTags(tracks, tagsOr.get());
-
-    tracks = filterByAccess(tracks);
-
-    return tracks;
+    return findAllWithOffsetAndLimit(TrackDto.class, "Track.findAllOfVideo", none(), none(), id(videoId)).stream()
+        .map(TrackDto::toTrack)
+        .filter(this::hasResourceAccess);
   }
 
   @Override
