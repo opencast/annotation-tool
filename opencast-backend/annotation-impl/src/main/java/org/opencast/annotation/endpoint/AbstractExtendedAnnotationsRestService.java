@@ -17,7 +17,6 @@ package org.opencast.annotation.endpoint;
 
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 import static org.opencastproject.util.UrlSupport.uri;
 import static org.opencastproject.util.data.Arrays.array;
 import static org.opencastproject.util.data.Option.none;
@@ -51,12 +50,10 @@ import org.opencast.annotation.impl.persistence.UserDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.util.RestUtil;
 import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
-import org.opencastproject.util.data.functions.Strings;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
@@ -127,7 +124,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         eas().updateUser(u);
 
         return Response.created(userLocationUri(u))
-                .entity(Strings.asStringNull().apply(UserDto.toJson.apply(eas(), u))).build();
+                .entity(UserDto.toJson.apply(eas(), u).toString()).build();
       }
     });
   }
@@ -161,8 +158,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
               u = updated;
             }
 
-            return Response.ok(Strings.asStringNull().apply(UserDto.toJson.apply(eas(), u)))
-                    .header(LOCATION, userLocationUri(u)).build();
+            return Response.ok(UserDto.toJson.apply(eas(), u).toString())
+                    .header(LOCATION, userLocationUri(u))
+                    .build();
           }
 
           @Override
@@ -176,7 +174,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
             eas().updateUser(u);
             return Response.created(userLocationUri(u))
-                    .entity(Strings.asStringNull().apply(UserDto.toJson.apply(eas(), u))).build();
+                    .entity(UserDto.toJson.apply(eas(), u).toString()).build();
           }
         });
       }
@@ -219,7 +217,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!eas().hasResourceAccess(u))
               return UNAUTHORIZED;
 
-            return buildOk(UserDto.toJson.apply(eas(), u));
+            return Response.ok(UserDto.toJson.apply(eas(), u).toString()).build();
           }
 
           @Override
@@ -237,9 +235,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
   public Response isAnnotateAdmin(@PathParam("mpId") final String mpId) {
     Option<MediaPackage> mpOpt = eas().findMediaPackage(mpId);
     if (mpOpt.isSome()) {
-      return RestUtil.R.ok(eas().hasVideoAccess(mpOpt.get(), ANNOTATE_ADMIN_ACTION));
+      return Response.ok(Boolean.toString(eas().hasVideoAccess(mpOpt.get(), ANNOTATE_ADMIN_ACTION))).build();
     }
-    return RestUtil.R.ok(false);
+    return Response.ok("false").build();
   }
 
   @POST
@@ -264,7 +262,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         Resource resource = eas().createResource(tagsMap.bind(Functions.identity()));
         final Video v = eas().createVideo(videoExtId, resource);
         return Response.created(videoLocationUri(v))
-                .entity(Strings.asStringNull().apply(VideoDto.toJson.apply(eas(), v))).build();
+                .entity(VideoDto.toJson.apply(eas(), v).toString()).build();
       }
     });
   }
@@ -300,8 +298,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
               eas().updateVideo(updated);
               v = updated;
             }
-            return Response.ok(Strings.asStringNull().apply(VideoDto.toJson.apply(eas(), v)))
-                    .header(LOCATION, videoLocationUri(v)).build();
+            return Response.ok(VideoDto.toJson.apply(eas(), v).toString())
+                    .header(LOCATION, videoLocationUri(v))
+                    .build();
           }
 
           @Override
@@ -313,7 +312,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                             .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
                             resource.getTags()));
             return Response.created(videoLocationUri(v))
-                    .entity(Strings.asStringNull().apply(VideoDto.toJson.apply(eas(), v))).build();
+                    .entity(VideoDto.toJson.apply(eas(), v).toString()).build();
           }
         });
       }
@@ -347,7 +346,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         Resource resource = eas().createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas().createScale(videoId, name, trimToNone(description), resource);
         return Response.created(scaleLocationUri(scale, videoId.isSome()))
-                .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), scale))).build();
+                .entity(ScaleDto.toJson.apply(eas(), scale).toString()).build();
       }
     });
   }
@@ -383,8 +382,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
               eas().updateScale(updated);
               scale = updated;
             }
-            return Response.ok(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), scale)))
-                    .header(LOCATION, scaleLocationUri(scale, videoId.isSome())).build();
+            return Response.ok(ScaleDto.toJson.apply(eas(), scale).toString())
+                    .header(LOCATION, scaleLocationUri(scale, videoId.isSome()))
+                    .build();
           }
 
           @Override
@@ -393,7 +393,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             final Scale scale = eas().createScale(videoId, name, trimToNone(description), resource);
 
             return Response.created(scaleLocationUri(scale, videoId.isSome()))
-                    .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), scale))).build();
+                    .entity(ScaleDto.toJson.apply(eas(), scale).toString()).build();
           }
         });
       }
@@ -419,7 +419,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Scale s) {
             if (!eas().hasResourceAccess(s))
               return UNAUTHORIZED;
-            return buildOk(ScaleDto.toJson.apply(eas(), s));
+            return Response.ok(ScaleDto.toJson.apply(eas(), s).toString()).build();
           }
 
           @Override
@@ -456,12 +456,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
           return BAD_REQUEST;
         } else {
-          return buildOk(ScaleDto.toJson(
+          return Response.ok(ScaleDto.toJson(
                   eas(),
                   offset,
                   eas().getScales(videoId, offsetm, limitm, datem.bind(Functions.identity()),
                           tagsAndArray.bind(Functions.identity()),
-                          tagsOrArray.bind(Functions.identity()))));
+                          tagsOrArray.bind(Functions.identity()))).toString()).build();
         }
       }
     });
@@ -494,8 +494,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
             }
             // Delete scale itself
             s = eas().deleteScale(s);
-            return Response.ok(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas(), s)))
-                    .header(LOCATION, scaleLocationUri(s, videoId.isSome())).build();
+            return Response.ok(ScaleDto.toJson.apply(eas(), s).toString())
+                    .header(LOCATION, scaleLocationUri(s, videoId.isSome()))
+                    .build();
           }
 
           @Override
@@ -531,7 +532,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
         return Response.created(scaleValueLocationUri(scaleValue, videoId))
-                .entity(Strings.asStringNull().apply(ScaleValueDto.toJson.apply(eas(), scaleValue))).build();
+                .entity(ScaleValueDto.toJson.apply(eas(), scaleValue).toString()).build();
       }
     });
   }
@@ -569,8 +570,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
               eas().updateScaleValue(updated);
               s = updated;
             }
-            return Response.ok(Strings.asStringNull().apply(ScaleValueDto.toJson.apply(eas(), s)))
-                    .header(LOCATION, scaleValueLocationUri(s, videoId)).build();
+            return Response.ok(ScaleValueDto.toJson.apply(eas(), s).toString())
+                    .header(LOCATION, scaleValueLocationUri(s, videoId))
+                    .build();
           }
 
           @Override
@@ -579,7 +581,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
             final ScaleValue scaleValue = eas().createScaleValue(scaleId, name, value, order, resource);
 
             return Response.created(scaleValueLocationUri(scaleValue, videoId))
-                    .entity(Strings.asStringNull().apply(ScaleValueDto.toJson.apply(eas(), scaleValue))).build();
+                    .entity(ScaleValueDto.toJson.apply(eas(), scaleValue).toString()).build();
           }
         });
       }
@@ -605,7 +607,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(ScaleValue s) {
             if (!eas().hasResourceAccess(s))
               return UNAUTHORIZED;
-            return buildOk(ScaleValueDto.toJson.apply(eas(), s));
+            return Response.ok(ScaleValueDto.toJson.apply(eas(), s).toString()).build();
           }
 
           @Override
@@ -642,12 +644,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
           return BAD_REQUEST;
 
-        return buildOk(ScaleValueDto.toJson(
+        return Response.ok(ScaleValueDto.toJson(
                 eas(),
                 offset,
                 eas().getScaleValues(scaleId, offsetm, limitm, datem.bind(Functions.identity()),
                         tagsAndArray.bind(Functions.identity()),
-                        tagsOrArray.bind(Functions.identity()))));
+                        tagsOrArray.bind(Functions.identity()))).toString()).build();
       }
     });
   }
@@ -671,8 +673,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!eas().hasResourceAccess(s))
               return UNAUTHORIZED;
             s = eas().deleteScaleValue(s);
-            return Response.ok(Strings.asStringNull().apply(ScaleValueDto.toJson.apply(eas(), s)))
-                    .header(LOCATION, scaleValueLocationUri(s, videoId)).build();
+            return Response.ok(ScaleValueDto.toJson.apply(eas(), s).toString())
+                    .header(LOCATION, scaleValueLocationUri(s, videoId))
+                    .build();
           }
 
           @Override
@@ -711,7 +714,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 trimToNone(description), trimToNone(settings), resource);
 
         return Response.created(categoryLocationUri(category, videoId.isSome()))
-                .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();
+                .entity(CategoryDto.toJson.apply(eas(), category).toString()).build();
       }
     });
   }
@@ -780,8 +783,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
               }
               c = updated;
             }
-            return Response.ok(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), c)))
-                    .header(LOCATION, categoryLocationUri(c, videoId.isSome())).build();
+            return Response.ok(CategoryDto.toJson.apply(eas(), c).toString())
+                    .header(LOCATION, categoryLocationUri(c, videoId.isSome()))
+                    .build();
           }
 
           @Override
@@ -793,7 +797,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                             resource.getUpdatedAt(), resource.getDeletedAt(), resource.getTags()));
 
             return Response.created(categoryLocationUri(category, videoId.isSome()))
-                    .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), category))).build();
+                    .entity(CategoryDto.toJson.apply(eas(), category).toString()).build();
           }
         });
       }
@@ -819,7 +823,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Category c) {
             if (!eas().hasResourceAccess(c))
               return UNAUTHORIZED;
-            return buildOk(CategoryDto.toJson.apply(eas(), c));
+            return Response.ok(CategoryDto.toJson.apply(eas(), c).toString()).build();
           }
 
           @Override
@@ -858,11 +862,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
           return BAD_REQUEST;
         } else {
-          return buildOk(CategoryDto.toJson(
+          return Response.ok(CategoryDto.toJson(
                   eas(),
                   offset,
                   eas().getCategories(seriesExtIdm, videoId, offsetm, limitm, datem.bind(Functions.identity()),
-                          tagsAndArray.bind(Functions.identity()), tagsOrArray.bind(Functions.identity()))));
+                          tagsAndArray.bind(Functions.identity()), tagsOrArray.bind(Functions.identity()))).toString())
+                  .build();
         }
       }
     });
@@ -887,8 +892,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
             if (!eas().hasResourceAccess(c))
               return UNAUTHORIZED;
             c = eas().deleteCategory(c);
-            return Response.ok(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas(), c)))
-                    .header(LOCATION, categoryLocationUri(c, videoId.isSome())).build();
+            return Response.ok(CategoryDto.toJson.apply(eas(), c).toString())
+                    .header(LOCATION, categoryLocationUri(c, videoId.isSome()))
+                    .build();
           }
 
           @Override
@@ -927,7 +933,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 trimToNone(settings), resource);
 
         return Response.created(labelLocationUri(label, videoId))
-                .entity(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), label))).build();
+                .entity(LabelDto.toJson.apply(eas(), label).toString()).build();
       }
     });
   }
@@ -968,8 +974,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
               eas().updateLabel(updated);
               l = updated;
             }
-            return Response.ok(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), l)))
-                    .header(LOCATION, labelLocationUri(l, videoId)).build();
+            return Response.ok(LabelDto.toJson.apply(eas(), l).toString())
+                    .header(LOCATION, labelLocationUri(l, videoId))
+                    .build();
           }
 
           @Override
@@ -979,7 +986,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
                     trimToNone(settings), resource);
 
             return Response.created(labelLocationUri(label, videoId))
-                    .entity(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), label))).build();
+                    .entity(LabelDto.toJson.apply(eas(), label).toString()).build();
           }
         });
       }
@@ -1005,7 +1012,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Label l) {
             if (!eas().hasResourceAccess(l))
               return UNAUTHORIZED;
-            return buildOk(LabelDto.toJson.apply(eas(), l));
+            return Response.ok(LabelDto.toJson.apply(eas(), l).toString()).build();
           }
 
           @Override
@@ -1043,12 +1050,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
           return BAD_REQUEST;
 
-        return buildOk(LabelDto.toJson(
+        return Response.ok(LabelDto.toJson(
                 eas(),
                 offset,
                 eas().getLabels(categoryId, offsetm, limitm, datem.bind(Functions.identity()),
                         tagsAndArray.bind(Functions.identity()),
-                        tagsOrArray.bind(Functions.identity()))));
+                        tagsOrArray.bind(Functions.identity()))).toString()).build();
       }
     });
   }
@@ -1081,8 +1088,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
                     return UNAUTHORIZED;
 
                   l = eas().deleteLabel(l);
-                  return Response.ok(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), l)))
-                          .header(LOCATION, labelLocationUri(l, videoId)).build();
+                  return Response.ok(LabelDto.toJson.apply(eas(), l).toString())
+                          .header(LOCATION, labelLocationUri(l, videoId))
+                          .build();
                 }
 
                 @Override
@@ -1093,8 +1101,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
             // Otherwise, delete normally
             } else {
               l = eas().deleteLabel(l);
-              return Response.ok(Strings.asStringNull().apply(LabelDto.toJson.apply(eas(), l)))
-                      .header(LOCATION, labelLocationUri(l, videoId)).build();
+              return Response.ok(LabelDto.toJson.apply(eas(), l).toString())
+                      .header(LOCATION, labelLocationUri(l, videoId))
+                      .build();
             }
           }
 
@@ -1127,7 +1136,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           public Response some(Questionnaire c) {
             if (!eas().hasResourceAccess(c))
               return UNAUTHORIZED;
-            return buildOk(QuestionnaireDto.toJson.apply(eas(), c));
+            return Response.ok(QuestionnaireDto.toJson.apply(eas(), c).toString()).build();
           }
 
           @Override
@@ -1165,11 +1174,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
           return BAD_REQUEST;
         } else {
-          return buildOk(QuestionnaireDto.toJson(
+          return Response.ok(QuestionnaireDto.toJson(
                   eas(),
                   offset,
                   eas().getQuestionnaires(videoId, offsetm, limitm, datem.bind(Functions.identity()),
-                          tagsAndArray.bind(Functions.identity()), tagsOrArray.bind(Functions.identity()))));
+                          tagsAndArray.bind(Functions.identity()), tagsOrArray.bind(Functions.identity()))).toString())
+                  .build();
         }
       }
     });
@@ -1203,7 +1213,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
         final Questionnaire questionnaire = eas().createQuestionnaire(videoId, title, content, trimToNone(settings), resource);
 
         return Response.created(questionnaireLocationUri(questionnaire, videoId.isSome()))
-          .entity(Strings.asStringNull().apply(QuestionnaireDto.toJson.apply(eas(), questionnaire))).build();
+                .entity(QuestionnaireDto.toJson.apply(eas(), questionnaire).toString()).build();
       }
     });
   }
@@ -1229,8 +1239,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
             q = eas().deleteQuestionnaire(q);
 
-            return Response.ok(Strings.asStringNull().apply(QuestionnaireDto.toJson.apply(eas(), q)))
-                    .header(LOCATION, questionnaireLocationUri(q, videoId.isSome())).build();
+            return Response.ok(QuestionnaireDto.toJson.apply(eas(), q).toString())
+                    .header(LOCATION, questionnaireLocationUri(q, videoId.isSome()))
+                    .build();
           }
 
           @Override

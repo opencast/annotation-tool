@@ -11,7 +11,6 @@ import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestSe
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseDate;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
-import static org.opencast.annotation.endpoint.util.Responses.buildOk;
 import static org.opencastproject.util.UrlSupport.uri;
 import static org.opencastproject.util.data.Arrays.array;
 import static org.opencastproject.util.data.Option.none;
@@ -45,7 +44,6 @@ import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Option;
 import org.opencastproject.util.data.functions.Functions;
-import org.opencastproject.util.data.functions.Strings;
 
 import java.net.URI;
 import java.util.Date;
@@ -100,7 +98,7 @@ public class VideoEndpoint {
           public Response some(Video v) {
             if (!eas.hasResourceAccess(v))
               return UNAUTHORIZED;
-            return buildOk(VideoDto.toJson.apply(eas, v));
+            return Response.ok(VideoDto.toJson.apply(eas, v).toString()).build();
           }
 
           @Override
@@ -154,7 +152,7 @@ public class VideoEndpoint {
           final Track t = eas.createTrack(videoId, name, trimToNone(description), trimToNone(settings), resource);
 
           return Response.created(trackLocationUri(t))
-                  .entity(Strings.asStringNull().apply(TrackDto.toJson.apply(eas, t))).build();
+                  .entity(TrackDto.toJson.apply(eas, t).toString()).build();
         } catch (ExtendedAnnotationException e) {
           // here not_found leads to a bad_request
           return notFoundToBadRequest(e);
@@ -196,8 +194,9 @@ public class VideoEndpoint {
                 eas.updateTrack(updated);
                 track = updated;
               }
-              return Response.ok(Strings.asStringNull().apply(TrackDto.toJson.apply(eas, track)))
-                      .header(LOCATION, trackLocationUri(updated)).build();
+              return Response.ok(TrackDto.toJson.apply(eas, track).toString())
+                      .header(LOCATION, trackLocationUri(updated))
+                      .build();
             }
 
             @Override
@@ -253,7 +252,7 @@ public class VideoEndpoint {
             public Response some(Track t) {
               if (!eas.hasResourceAccess(t))
                 return UNAUTHORIZED;
-              return buildOk(TrackDto.toJson.apply(eas, t));
+              return Response.ok(TrackDto.toJson.apply(eas, t).toString()).build();
             }
 
             @Override
@@ -288,12 +287,12 @@ public class VideoEndpoint {
                 || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
           return BAD_REQUEST;
         } else {
-          return buildOk(TrackDto.toJson(
+          return Response.ok(TrackDto.toJson(
                   eas,
                   offset,
                   eas.getTracks(videoId, offsetm, limitm, datem.bind(Functions.identity()),
                           tagsAndArray.bind(Functions.identity()),
-                          tagsOrArray.bind(Functions.identity()))));
+                          tagsOrArray.bind(Functions.identity()))).toString()).build();
         }
       }
     });
@@ -319,7 +318,7 @@ public class VideoEndpoint {
           final Annotation a = eas.createAnnotation(trackId, start, option(duration), content, createdFromQuestionnaire,
                   trimToNone(settings), resource);
           return Response.created(annotationLocationUri(videoId, a))
-                  .entity(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas, a))).build();
+                  .entity(AnnotationDto.toJson.apply(eas, a).toString()).build();
         } else {
           return BAD_REQUEST;
         }
@@ -361,8 +360,9 @@ public class VideoEndpoint {
                 eas.updateAnnotation(updated);
                 annotation = updated;
               }
-              return Response.ok(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas, annotation)))
-                      .header(LOCATION, annotationLocationUri(videoId, updated)).build();
+              return Response.ok(AnnotationDto.toJson.apply(eas, annotation).toString())
+                      .header(LOCATION, annotationLocationUri(videoId, updated))
+                      .build();
             }
 
             // create a new one
@@ -373,7 +373,7 @@ public class VideoEndpoint {
                       new AnnotationImpl(id, trackId, start, option(duration), content, createdFromQuestionnaire,
                               trimToNone(settings), resource));
               return Response.created(annotationLocationUri(videoId, a))
-                      .entity(Strings.asStringNull().apply(AnnotationDto.toJson.apply(eas, a))).build();
+                      .entity(AnnotationDto.toJson.apply(eas, a).toString()).build();
             }
           });
         } else {
@@ -425,7 +425,7 @@ public class VideoEndpoint {
             public Response some(Annotation a) {
               if (!eas.hasResourceAccess(a))
                 return UNAUTHORIZED;
-              return buildOk(AnnotationDto.toJson.apply(eas, a));
+              return Response.ok(AnnotationDto.toJson.apply(eas, a).toString()).build();
             }
 
             @Override
@@ -464,13 +464,13 @@ public class VideoEndpoint {
                   || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
             return BAD_REQUEST;
           } else {
-            return buildOk(AnnotationDto.toJson(
+            return Response.ok(AnnotationDto.toJson(
                     eas,
                     offset,
                     eas.getAnnotations(trackId, startm, endm, offsetm, limitm,
                             datem.bind(Functions.identity()),
                             tagsAndArray.bind(Functions.identity()),
-                            tagsOrArray.bind(Functions.identity()))));
+                            tagsOrArray.bind(Functions.identity()))).toString()).build();
           }
         } else {
           return NOT_FOUND;
@@ -500,7 +500,7 @@ public class VideoEndpoint {
         Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
         return Response.created(host.scaleLocationUri(scale, true))
-                .entity(Strings.asStringNull().apply(ScaleDto.toJson.apply(eas, scale))).build();
+                .entity(ScaleDto.toJson.apply(eas, scale).toString()).build();
       }
     });
   }
@@ -604,7 +604,7 @@ public class VideoEndpoint {
           @Override
           public Response some(Category c) {
             return Response.created(host.categoryLocationUri(c, true))
-                    .entity(Strings.asStringNull().apply(CategoryDto.toJson.apply(eas, c))).build();
+                    .entity(CategoryDto.toJson.apply(eas, c).toString()).build();
           }
 
           @Override
@@ -741,7 +741,7 @@ public class VideoEndpoint {
           @Override
           public Response some(Questionnaire q) {
             return Response.created(host.questionnaireLocationUri(q, true))
-              .entity(Strings.asStringNull().apply(QuestionnaireDto.toJson.apply(eas, q))).build();
+                    .entity(QuestionnaireDto.toJson.apply(eas, q).toString()).build();
           }
 
           @Override
@@ -783,7 +783,7 @@ public class VideoEndpoint {
           final Comment comment = eas.createComment(annotationId, replyToId, text, resource);
 
           return Response.created(commentLocationUri(comment, videoId, trackId))
-                  .entity(Strings.asStringNull().apply(CommentDto.toJson.apply(eas, comment))).build();
+                  .entity(CommentDto.toJson.apply(eas, comment).toString()).build();
         }
       });
     } else {
@@ -820,8 +820,9 @@ public class VideoEndpoint {
                 eas.updateComment(updated);
                 c = updated;
               }
-              return Response.ok(Strings.asStringNull().apply(CommentDto.toJson.apply(eas, c)))
-                      .header(LOCATION, commentLocationUri(c, videoId, trackId)).build();
+              return Response.ok(CommentDto.toJson.apply(eas, c).toString())
+                      .header(LOCATION, commentLocationUri(c, videoId, trackId))
+                      .build();
             }
 
             @Override
@@ -830,7 +831,7 @@ public class VideoEndpoint {
               final Comment comment = eas.createComment(annotationId, Option.none(), text, resource);
 
               return Response.created(commentLocationUri(comment, videoId, trackId))
-                      .entity(Strings.asStringNull().apply(CommentDto.toJson.apply(eas, comment))).build();
+                      .entity(CommentDto.toJson.apply(eas, comment).toString()).build();
             }
           });
         }
@@ -887,7 +888,7 @@ public class VideoEndpoint {
             public Response some(Comment c) {
               if (!eas.hasResourceAccess(c))
                 return UNAUTHORIZED;
-              return buildOk(CommentDto.toJson.apply(eas, c));
+              return Response.ok(CommentDto.toJson.apply(eas, c).toString()).build();
             }
 
             @Override
@@ -930,13 +931,13 @@ public class VideoEndpoint {
                   || (tagsOrArray.isSome() && tagsOrArray.get().isNone()))
             return BAD_REQUEST;
 
-          return buildOk(CommentDto.toJson(
+          return Response.ok(CommentDto.toJson(
                   eas,
                   offset,
                   eas.getComments(annotationId, replyToId, offsetm, limitm,
                           datem.bind(Functions.identity()),
                           tagsAndArray.bind(Functions.identity()),
-                          tagsOrArray.bind(Functions.identity()))));
+                          tagsOrArray.bind(Functions.identity()))).toString()).build();
         }
       });
     } else {
