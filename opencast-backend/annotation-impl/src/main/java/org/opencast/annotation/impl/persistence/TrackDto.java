@@ -56,7 +56,6 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Track.findById", query = "select a from Track a where a.id = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Track.findAllOfVideo", query = "select a from Track a where a.videoId = :id and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Track.deleteById", query = "delete from Track a where a.id = :id"),
         @NamedQuery(name = "Track.clear", query = "delete from Track") })
 public class TrackDto extends AbstractResourceDto {
   @Id
