@@ -78,10 +78,6 @@ public class TrackDto extends AbstractResourceDto {
     return dto;
   }
 
-  public static TrackDto fromTrack(Track t) {
-    return create(t.getVideoId(), t.getName(), t.getDescription(), t.getSettings(), t);
-  }
-
   public TrackDto update(String name, Option<String> description, Option<String> settings,
           Resource resource) {
     super.update(resource);

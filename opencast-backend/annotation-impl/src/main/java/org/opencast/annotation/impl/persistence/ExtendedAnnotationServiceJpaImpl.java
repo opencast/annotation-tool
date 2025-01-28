@@ -281,15 +281,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public Track createTrack(final Track track) throws ExtendedAnnotationException {
-    if (getVideo(track.getVideoId()).isSome()) {
-      return tx(namedQuery.persist(TrackDto.fromTrack(track))).toTrack();
-    } else {
-      throw notFound;
-    }
-  }
-
-  @Override
   public boolean deleteTrack(Track t) throws ExtendedAnnotationException {
     Resource deleteResource = deleteResource(t);
     final Track updated = new TrackImpl(t.getId(), t.getVideoId(), t.getName(), t.getDescription(), t.getSettings(),

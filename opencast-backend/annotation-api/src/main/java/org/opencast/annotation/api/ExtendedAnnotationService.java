@@ -172,17 +172,6 @@ public interface ExtendedAnnotationService {
           Resource resource) throws ExtendedAnnotationException;
 
   /**
-   * Create a track with a certain track.
-   *
-   * @param track
-   *          the track to store
-   * @return the stored track
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
-   */
-  Track createTrack(Track track) throws ExtendedAnnotationException;
-
-  /**
    * Update a track of a video.
    *
    * @param track
