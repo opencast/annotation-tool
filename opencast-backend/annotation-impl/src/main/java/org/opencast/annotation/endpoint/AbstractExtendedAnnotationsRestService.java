@@ -108,12 +108,12 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return CONFLICT;
         }
 
-        Resource resource = eas().createResource(none());
+        Resource resource = eas().createResource();
         User u = eas().createUser(userExtId, nickname, emailo, resource);
         // This might have been the first user, which would mean
         // that the resource above has no owner.
         // To fix this, we just recreate it and update the user to persist it.
-        resource = eas().createResource(none());
+        resource = eas().createResource();
         u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
         eas().updateUser(u);
 
@@ -245,7 +245,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
           return CONFLICT;
         }
 
-        Resource resource = eas().createResource(none());
+        Resource resource = eas().createResource();
         final Video v = eas().createVideo(videoExtId, resource);
         return Response.created(videoLocationUri(v)).entity(VideoDto.toJson.apply(eas(), v).toString()).build();
       }

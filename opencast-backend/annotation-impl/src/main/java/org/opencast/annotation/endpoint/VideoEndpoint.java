@@ -285,7 +285,7 @@ public class VideoEndpoint {
       @Override
       public Response apply() {
         if (videoOpt.isSome() && eas.getTrack(trackId).isSome()) {
-          Resource resource = eas.createResource(none());
+          Resource resource = eas.createResource();
           final Annotation a = eas.createAnnotation(trackId, start, option(duration), content, createdFromQuestionnaire,
               trimToNone(settings), resource);
           return Response.created(annotationLocationUri(videoId, a)).entity(AnnotationDto.toJson.apply(eas, a).toString()).build();

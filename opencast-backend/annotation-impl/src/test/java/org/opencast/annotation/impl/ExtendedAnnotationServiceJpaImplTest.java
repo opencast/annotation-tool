@@ -72,7 +72,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateAndGetUser() throws Exception {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(none());
+    final Resource resource = eas.createResource();
     final User u = eas.createUser("k_dall", "Karl Dall", none(), resource);
     eas.createUser("k_dall2", "Karl Dall2", none(), resource);
     eas.createUser("k_dall3", "Karl Dall3", none(), resource);
@@ -138,7 +138,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateFindAndDeleteVideo() {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(none());
+    final Resource resource = eas.createResource();
     final Video v = eas.createVideo("lecture1", resource);
     assertTrue(eas.getVideo(v.getId()).isSome());
     assertTrue(eas.getVideoByExtId("lecture1").isSome());
