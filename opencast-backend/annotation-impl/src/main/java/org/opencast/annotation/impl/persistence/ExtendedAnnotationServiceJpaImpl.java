@@ -1138,11 +1138,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public Resource updateResource(final Resource r) {
-    return updateResource(r, some(r.getTags()));
-  }
-
-  @Override
   public Resource updateResource(final Resource r, final Option<Map<String, String>> tags) {
     Map<String, String> tagsMap;
     if (tags.isSome())

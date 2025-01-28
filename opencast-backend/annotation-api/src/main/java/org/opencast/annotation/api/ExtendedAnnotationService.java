@@ -844,15 +844,6 @@ public interface ExtendedAnnotationService {
   Resource createResource(Option<Integer> access, Option<Map<String, String>> tags);
 
   /**
-   * Update the resource update information
-   *
-   * @param resource
-   *          the base resource to update
-   * @return the updated base resource
-   */
-  Resource updateResource(Resource resource);
-
-  /**
    * Update the resource update information with tags
    *
    * @param resource
