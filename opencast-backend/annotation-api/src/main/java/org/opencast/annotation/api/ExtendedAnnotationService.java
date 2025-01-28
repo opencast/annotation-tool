@@ -85,22 +85,6 @@ public interface ExtendedAnnotationService {
   Option<User> getUser(long id) throws ExtendedAnnotationException;
 
   /**
-   * Get all users
-   *
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to annotations modified since the said date
-   * @return the user list or an empty list if no user has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
-   */
-  List<User> getUsers(Option<Integer> offset, Option<Integer> limit, Option<Date> since)
-          throws ExtendedAnnotationException;
-
-  /**
    * Get a user by his external id, which is the id he has in the surrounding video portal.
    *
    * @param id

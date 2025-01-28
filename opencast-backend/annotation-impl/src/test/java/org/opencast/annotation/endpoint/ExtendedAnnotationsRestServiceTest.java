@@ -68,53 +68,27 @@ public class ExtendedAnnotationsRestServiceTest {
 
   @Test
   public void testUser() {
-    JSONObject json = new JSONObject();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> safeJson = (Map<String, Object>) json;
-    safeJson.put("channel", "33");
-
     // put/malformed
     given().formParam("user_extid", "admin").expect().statusCode(BAD_REQUEST).when().put(host("/users"));
-    // given().formParam("user_extid", "admin").formParam("nickname", "klausi").formParam("tags", "{\"channel\" : 33}")
-    // .expect().statusCode(BAD_REQUEST).when().put(host("/users"));
     // put
     final String id = extractLocationId(given().formParam("user_extid", "admin").formParam("nickname", "klausi")
-            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
-            .header(LOCATION, regex(host("/users/[0-9]+"))).body("nickname", equalTo("klausi"))
-            .body("tags", equalTo(json)).when().post(host("/users")));
+            .expect().statusCode(CREATED).header(LOCATION, regex(host("/users/[0-9]+")))
+            .body("nickname", equalTo("klausi")).when().post(host("/users")));
     // get
     given().pathParam("id", id).expect().statusCode(OK).body("user_extid", equalTo("admin"))
-            .body("nickname", equalTo("klausi")).body("tags", equalTo(json)).when().get(host("/users/{id}"));
+            .body("nickname", equalTo("klausi")).when().get(host("/users/{id}"));
     // update
-    safeJson.put("channel", "22");
-    given().formParam("user_extid", "admin").formParam("nickname", "santa").formParam("tags", json.toJSONString())
-            .expect().statusCode(OK).body("nickname", equalTo("santa")).when().put(host("/users"));
-    given().pathParam("id", id).expect().statusCode(OK).body("nickname", equalTo("santa"))
-            .body("tags", equalTo(json)).when().get(host("/users/{id}"));
-    // get all
-    // Removed get all method until Sprint X
-    // given().expect().statusCode(OK).body("users", iterableWithSize(1)).when().get(host("/users"));
-    // Thread.sleep(10);
-    // given().queryParam("since", ISODateTimeFormat.dateTime().print(new Date().getTime())).expect()
-    // .statusCode(OK).body("users", iterableWithSize(0)).when().get(host("/users"));
-    // Calendar c = Calendar.getInstance();
-    // c.add(Calendar.MINUTE, -1);
-    // given().queryParam("since",
-    // ISODateTimeFormat.dateTime().print(c.getTimeInMillis())).expect().statusCode(OK)
-    // .body("users", iterableWithSize(1)).when().get(host("/users"));
+    given().formParam("user_extid", "admin").formParam("nickname", "santa").expect().statusCode(OK)
+            .body("nickname", equalTo("santa")).when().put(host("/users"));
+    given().pathParam("id", id).expect().statusCode(OK).body("nickname", equalTo("santa")).when()
+            .get(host("/users/{id}"));
     // post/another one
     given().formParam("user_extid", "klaus2").formParam("nickname", "klausi2").expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/users/[0-9]+"))).body("nickname", equalTo("klausi2")).when()
             .put(host("/users"));
-    // given().expect().statusCode(OK).body("users", iterableWithSize(2)).when().get(host("/users"));
     // post duplicated
     given().formParam("user_extid", "klaus2").formParam("nickname", "klausi2").expect().statusCode(CONFLICT).when()
             .post(host("/users"));
-    // delete
-    // Removed deletion method for Sprint X
-    // given().pathParam("id", 12345).expect().statusCode(NOT_FOUND).when().delete(host("/users/{id}"));
-    // given().pathParam("id", id).expect().statusCode(NO_CONTENT).when().delete(host("/users/{id}"));
-    // given().pathParam("id", id).expect().statusCode(NOT_FOUND).when().get(host("/users/{id}"));
   }
 
   @Test

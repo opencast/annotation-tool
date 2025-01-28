@@ -53,8 +53,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +70,9 @@ public class ExtendedAnnotationServiceJpaImplTest {
   }
 
   @Test
-  public void testCreateAndFindUser() throws Exception {
+  public void testCreateAndGetUser() throws Exception {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags);
+    final Resource resource = eas.createResource(none());
     final User u = eas.createUser("k_dall", "Karl Dall", none(), resource);
     eas.createUser("k_dall2", "Karl Dall2", none(), resource);
     eas.createUser("k_dall3", "Karl Dall3", none(), resource);
@@ -85,18 +83,6 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertEquals("k_dall", eas.getUser(u.getId()).get().getExtId());
     assertTrue(eas.getUserByExtId(u.getExtId()).isSome());
     assertEquals("Karl Dall", eas.getUserByExtId(u.getExtId()).get().getNickname());
-    assertEquals(tags.get(), u.getTags());
-
-    assertEquals(3, eas.getUsers(none(), none(), none()).size());
-    assertEquals(2, eas.getUsers(some(1), none(), none()).size());
-    assertEquals(1, eas.getUsers(some(1), some(1), none()).size());
-
-    // get all since
-    Thread.sleep(10);
-    assertEquals(0, eas.getUsers(none(), none(), some(new Date())).size());
-    Calendar c = Calendar.getInstance();
-    c.add(Calendar.MINUTE, -1);
-    assertEquals(3, eas.getUsers(none(), none(), some(c.getTime())).size());
   }
 
   @Test
@@ -120,11 +106,9 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertTrue(eas.getUser(u.getId()).isSome());
     assertEquals(some("js@bach.de"), eas.getUser(u.getId()).get().getEmail());
 
-    resource = eas.updateResource(resource, tags);
     eas.updateUser(new UserImpl(u.getId(), u.getExtId(), "Bach", none(), resource));
     assertEquals("Bach", eas.getUser(u.getId()).get().getNickname());
     assertEquals(none(), eas.getUser(u.getId()).get().getEmail());
-    assertEquals(tags.get(), eas.getUser(u.getId()).get().getTags());
   }
 
   @Test

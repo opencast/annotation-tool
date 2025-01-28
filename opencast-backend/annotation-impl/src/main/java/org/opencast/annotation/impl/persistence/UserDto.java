@@ -34,19 +34,13 @@ import org.opencastproject.util.data.Option;
 
 import org.json.simple.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -57,10 +51,6 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "User.findById", query = "select a from User a where a.id = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "User.findByUserId", query = "select a from User a where a.userId = :id and a.deletedAt IS NULL"),
-        @NamedQuery(name = "User.findAll", query = "select a from User a where a.deletedAt IS NULL"),
-        @NamedQuery(name = "User.findAllSince", query = "select a from User a where a.deletedAt IS NULL and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
-        @NamedQuery(name = "User.deleteById", query = "delete from User a where a.id = :id"),
-        @NamedQuery(name = "User.count", query = "select count(a) from User a where a.deletedAt IS NULL"),
         @NamedQuery(name = "User.clear", query = "delete from User") })
 public class UserDto extends AbstractResourceDto {
   @Id
@@ -77,12 +67,6 @@ public class UserDto extends AbstractResourceDto {
   @Column(name = "email")
   private String email;
 
-  @ElementCollection
-  @MapKeyColumn(name = "name")
-  @Column(name = "value")
-  @CollectionTable(name = "xannotations_user_tags", joinColumns = @JoinColumn(name = "user_id"))
-  protected Map<String, String> tags = new HashMap<String, String>();
-
   public static UserDto create(String userId, String nickname, Option<String> email, Resource resource) {
     return new UserDto().update(userId, nickname, email, resource);
   }
@@ -92,14 +76,12 @@ public class UserDto extends AbstractResourceDto {
     this.userId = userId;
     this.nickname = nickname;
     this.email = email.getOrElseNull();
-    if (resource.getTags() != null)
-      this.tags = resource.getTags();
     return this;
   }
 
   public User toUser() {
     return new UserImpl(id, userId, nickname, option(email), new ResourceImpl(option(access), option(createdBy),
-            option(updatedBy), option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), tags));
+            option(updatedBy), option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), null));
   }
 
   public static final Function<UserDto, User> toUser = new Function<UserDto, User>() {

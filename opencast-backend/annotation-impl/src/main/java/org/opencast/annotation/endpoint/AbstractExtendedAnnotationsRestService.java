@@ -100,31 +100,25 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/users")
   public Response postUsers(@FormParam("user_extid") final String userExtId,
-          @FormParam("nickname") final String nickname, @FormParam("email") final String email,
-          @FormParam("tags") final String tags) {
+          @FormParam("nickname") final String nickname, @FormParam("email") final String email) {
     final Option<String> emailo = trimToNone(email);
-    return run(array(userExtId, nickname), new Function0<Response>() {
+    return run(array(userExtId, nickname), new Function0<>() {
       @Override
       public Response apply() {
-        if (eas().getUserByExtId(userExtId).isSome())
+        if (eas().getUserByExtId(userExtId).isSome()) {
           return CONFLICT;
+        }
 
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
-          return BAD_REQUEST;
-
-        Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
-        Resource resource = eas().createResource(tags);
+        Resource resource = eas().createResource(none());
         User u = eas().createUser(userExtId, nickname, emailo, resource);
         // This might have been the first user, which would mean
         // that the resource above has no owner.
         // To fix this, we just recreate it and update the user to persist it.
-        resource = eas().createResource(tags);
+        resource = eas().createResource(none());
         u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
         eas().updateUser(u);
 
-        return Response.created(userLocationUri(u))
-                .entity(UserDto.toJson.apply(eas(), u).toString()).build();
+        return Response.created(userLocationUri(u)).entity(UserDto.toJson.apply(eas(), u).toString()).build();
       }
     });
   }
@@ -133,34 +127,26 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/users")
   public Response putUser(@FormParam("user_extid") final String userExtId,
-          @FormParam("nickname") final String nickname, @FormParam("email") final String email,
-          @FormParam("tags") final String tags) {
+          @FormParam("nickname") final String nickname, @FormParam("email") final String email) {
     final Option<String> emailo = trimToNone(email);
-    return run(array(userExtId, nickname), new Function0<Response>() {
+    return run(array(userExtId, nickname), new Function0<>() {
       @Override
       public Response apply() {
-        Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
-          return BAD_REQUEST;
-
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
-
-        return eas().getUserByExtId(userExtId).fold(new Option.Match<User, Response>() {
+        return eas().getUserByExtId(userExtId).fold(new Option.Match<>() {
           @Override
           public Response some(User u) {
-            if (!eas().hasResourceAccess(u))
+            if (!eas().hasResourceAccess(u)) {
               return UNAUTHORIZED;
+            }
 
-            Resource resource = eas().updateResource(u, tags);
+            Resource resource = eas().updateResource(u, Option.none());
             final User updated = new UserImpl(u.getId(), userExtId, nickname, emailo, resource);
             if (!u.equals(updated)) {
               eas().updateUser(updated);
               u = updated;
             }
 
-            return Response.ok(UserDto.toJson.apply(eas(), u).toString())
-                    .header(LOCATION, userLocationUri(u))
-                    .build();
+            return Response.ok(UserDto.toJson.apply(eas(), u).toString()).header(LOCATION, userLocationUri(u)).build();
           }
 
           @Override
@@ -170,11 +156,9 @@ public abstract class AbstractExtendedAnnotationsRestService {
             // This might have been the first user, which would mean
             // that the resource above has no owner.
             // To fix this, we just recreate it and update the user to persist it.
-            resource = eas().createResource(tags);
             u = new UserImpl(u.getId(), u.getExtId(), u.getNickname(), u.getEmail(), resource);
             eas().updateUser(u);
-            return Response.created(userLocationUri(u))
-                    .entity(UserDto.toJson.apply(eas(), u).toString()).build();
+            return Response.created(userLocationUri(u)).entity(UserDto.toJson.apply(eas(), u).toString()).build();
           }
         });
       }
@@ -184,14 +168,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @DELETE
   @Path("/users/{id}")
   public Response deleteUser(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
+    return run(nil, new Function0<>() {
       @Override
       public Response apply() {
-        return eas().getUser(id).fold(new Option.Match<User, Response>() {
+        return eas().getUser(id).fold(new Option.Match<>() {
           @Override
           public Response some(User u) {
-            if (!eas().hasResourceAccess(u))
+            if (!eas().hasResourceAccess(u)) {
               return UNAUTHORIZED;
+            }
             return eas().deleteUser(u) ? NO_CONTENT : NOT_FOUND;
           }
 
@@ -208,14 +193,15 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/users/{id}")
   public Response getUser(@PathParam("id") final long id) {
-    return run(nil, new Function0<Response>() {
+    return run(nil, new Function0<>() {
       @Override
       public Response apply() {
-        return eas().getUser(id).fold(new Option.Match<User, Response>() {
+        return eas().getUser(id).fold(new Option.Match<>() {
           @Override
           public Response some(User u) {
-            if (!eas().hasResourceAccess(u))
+            if (!eas().hasResourceAccess(u)) {
               return UNAUTHORIZED;
+            }
 
             return Response.ok(UserDto.toJson.apply(eas(), u).toString()).build();
           }

@@ -219,19 +219,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public List<User> getUsers(final Option<Integer> offset, final Option<Integer> limit, final Option<Date> since)
-          throws ExtendedAnnotationException {
-    final Pair<String, Object>[] qparams = qparams(since.map(pairB("since")));
-    final String q = since.isSome() ? "User.findAllSince" : "User.findAll";
-
-    List<UserDto> result = findAllWithOffsetAndLimit(UserDto.class, q, offset, limit, qparams);
-
-    return result.stream()
-            .map(UserDto::toUser)
-            .collect(Collectors.toList());
-  }
-
-  @Override
   public Option<User> getUserByExtId(final String id) {
     return findById(toUser, "User.findByUserId", id, UserDto.class);
   }
