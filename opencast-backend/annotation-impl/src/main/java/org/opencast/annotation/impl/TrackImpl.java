@@ -39,8 +39,7 @@ public final class TrackImpl extends ResourceImpl implements Track {
   public TrackImpl(long id, long videoId, String name, Option<String> description, Option<String> settings,
           Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.videoId = videoId;
     this.name = name;
@@ -87,12 +86,11 @@ public final class TrackImpl extends ResourceImpl implements Track {
       return false;
     Track track = (Track) o;
     return id == track.getId() && videoId == track.getVideoId() && description.equals(track.getDescription())
-            && name.equals(track.getName()) && settings.equals(track.getSettings()) && getAccess() == track.getAccess()
-            && getTags().equals(track.getTags());
+            && name.equals(track.getName()) && settings.equals(track.getSettings()) && getAccess() == track.getAccess();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, videoId, name, description, settings, getTags());
+    return Objects.hash(id, videoId, name, description, settings);
   }
 }

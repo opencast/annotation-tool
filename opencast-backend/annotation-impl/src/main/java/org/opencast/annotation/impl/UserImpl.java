@@ -34,8 +34,7 @@ public final class UserImpl extends ResourceImpl implements User {
 
   public UserImpl(long id, String extId, String nickname, Option<String> email, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.extId = extId;
     this.nickname = nickname;
@@ -70,11 +69,11 @@ public final class UserImpl extends ResourceImpl implements User {
       return false;
     User user = (User) o;
     return id == user.getId() && extId.equals(user.getExtId()) && nickname.equals(user.getNickname())
-            && email.equals(user.getEmail()) && getTags().equals(user.getTags());
+            && email.equals(user.getEmail());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, extId, nickname, email, getTags());
+    return Objects.hash(id, extId, nickname, email);
   }
 }

@@ -35,8 +35,7 @@ public final class VideoImpl extends ResourceImpl implements Video {
 
   public VideoImpl(long id, String extId, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.extId = extId;
   }
@@ -63,11 +62,11 @@ public final class VideoImpl extends ResourceImpl implements Video {
     if (o == null || getClass() != o.getClass())
       return false;
     Video user = (Video) o;
-    return id == user.getId() && extId.equals(user.getExtId()) && getTags().equals(user.getTags());
+    return id == user.getId() && extId.equals(user.getExtId());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, extId, getTags());
+    return Objects.hash(id, extId);
   }
 }
