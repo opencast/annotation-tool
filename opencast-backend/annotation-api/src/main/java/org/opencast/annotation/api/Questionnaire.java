@@ -4,8 +4,10 @@ import org.opencastproject.util.data.Option;
 
 public interface Questionnaire extends Resource {
 
-  /** The video id where the questionnaire is */
-  Option<Long> getVideoId();
+  /**
+   * The video id where the questionnaire is
+   */
+  long getVideoId();
 
   /** The questionnaire title */
   String getTitle();

@@ -1020,7 +1020,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
 
   @Override
-  public Questionnaire createQuestionnaire(Option<Long> videoId, String title, String content, Option<String> settings, Resource resource)
+  public Questionnaire createQuestionnaire(long videoId, String title, String content, Option<String> settings, Resource resource)
           throws ExtendedAnnotationException {
     final QuestionnaireDto dto = QuestionnaireDto.create(videoId, title, content, settings, resource);
 
@@ -1037,39 +1037,12 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public List<Questionnaire> getQuestionnaires(final Option<Long> videoId,
-          final Option<Integer> offset, final Option<Integer> limit, Option<Date> since,
-          final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
+  public Stream<Questionnaire> getQuestionnaires(final long videoId)
           throws ExtendedAnnotationException {
-
-    List<Questionnaire> questionnaires = videoId.fold(new Option.Match<>() {
-      @Override
-      public List<Questionnaire> some(Long id) {
-        List<QuestionnaireDto> questionnairesDtos = findAllWithOffsetAndLimit(QuestionnaireDto.class, "Questionnaire.findAllOfVideo",  offset, limit, id(id));
-
-        List<Questionnaire> questionnaires = questionnairesDtos.stream()
-                .map(QuestionnaireDto::toQuestionnaire)
-                .collect(Collectors.toList());
-
-        return filterByAccess(questionnaires);
-      }
-
-      @Override
-      public List<Questionnaire> none() {
-        List<QuestionnaireDto> questionnaireDtos = findAllWithOffsetAndLimit(QuestionnaireDto.class, "Questionnaire.findAllOfTemplate", offset, limit);
-        return questionnaireDtos.stream()
-                .map(QuestionnaireDto::toQuestionnaire)
-                .collect(Collectors.toList());
-      }
-    });
-
-    if (tagsAnd.isSome())
-      questionnaires = filterAndTags(questionnaires, tagsAnd.get());
-
-    if (tagsOr.isSome())
-      questionnaires = filterOrTags(questionnaires, tagsOr.get());
-
-    return questionnaires;
+    return findAllWithOffsetAndLimit(QuestionnaireDto.class, "Questionnaire.findAllOfVideo", none(), none(),
+            id(videoId)).stream()
+            .map(QuestionnaireDto::toQuestionnaire)
+            .filter(this::hasResourceAccess);
   }
 
   @Override
@@ -1080,7 +1053,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return getQuestionnaire(templateQuestionnaireId, false).map(new Function<>() {
       @Override
       public Questionnaire apply(Questionnaire q) {
-        final QuestionnaireDto copyDto = QuestionnaireDto.create(Option.some(videoId), q.getTitle(), q.getContent(), q.getSettings(), resource);
+        final QuestionnaireDto copyDto = QuestionnaireDto.create(videoId, q.getTitle(), q.getContent(), q.getSettings(), resource);
 
         return tx(namedQuery.persist(copyDto)).toQuestionnaire();
       }

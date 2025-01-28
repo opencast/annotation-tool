@@ -483,7 +483,7 @@ public interface ExtendedAnnotationService {
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Questionnaire createQuestionnaire(Option<Long> videoId, String title, String content,
+  Questionnaire createQuestionnaire(long videoId, String title, String content,
          Option<String> settings, Resource resource) throws ExtendedAnnotationException;
 
   /**
@@ -518,25 +518,11 @@ public interface ExtendedAnnotationService {
   /**
    * Get all questionnaires from a video.
    *
-   * @param videoId
-   *          the video id
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to annotations modified since the said date
-   * @param tagsAnd
-   *          the tags logical AND Map
-   * @param tagsOr
-   *          the tags logical OR Map
+   * @param videoId the video id
    * @return the questionnaire list or an empty list if no questionnaires has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
+   * @throws ExtendedAnnotationException if an error occurs while storing/retrieving from persistence storage
    */
-  List<Questionnaire> getQuestionnaires(Option<Long> videoId, Option<Integer> offset,
-          Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
-          Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+  Stream<Questionnaire> getQuestionnaires(long videoId) throws ExtendedAnnotationException;
 
   /**
    * Update a questionnaire.

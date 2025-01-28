@@ -676,17 +676,45 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("questionnaires/{questionnaireId}")
   public Response getQuestionnaire(@PathParam("questionnaireId") final long id) {
-    return host.getQuestionnaireResponse(some(videoId), id);
+    if (eas.getVideo(videoId).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getQuestionnaire(id, false).fold(new Option.Match<>() {
+          @Override
+          public Response some(Questionnaire c) {
+            if (!eas.hasResourceAccess(c)) {
+              return UNAUTHORIZED;
+            }
+            return Response.ok(QuestionnaireDto.toJson.apply(eas, c).toString()).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("questionnaires")
-  public Response getQuestionnaires(
-          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
-          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return host.getQuestionnairesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr);
+  public Response getQuestionnaires() {
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone()) {
+          return BAD_REQUEST;
+        } else {
+          return Response.ok(QuestionnaireDto.toJson(eas, eas.getQuestionnaires(videoId)).toString())
+                  .build();
+        }
+      }
+    });
   }
 
   @POST
@@ -699,25 +727,43 @@ public class VideoEndpoint {
           @FormParam("settings") final String settings,
           @FormParam("access") final Integer access,
           @FormParam("tags") final String tags) {
-    if (id == null)
-      return host.postQuestionnaireResponse(some(videoId), title, content, settings, access, tags);
+    if (id == null) {
+      return run(array(title, content), new Function0<>() {
+        @Override
+        public Response apply() {
+          final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
 
-    return run(array(id), new Function0<Response>() {
+          if (eas.getVideo(videoId).isNone() || (tagsMap.isSome() && tagsMap.get()
+              .isNone())) {
+            return BAD_REQUEST;
+          }
+
+          Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
+          final Questionnaire questionnaire = eas.createQuestionnaire(videoId, title, content, trimToNone(settings),
+              resource);
+
+          return Response.created(host.questionnaireLocationUri(questionnaire)).entity(QuestionnaireDto.toJson.apply(eas, questionnaire).toString()).build();
+        }
+      });
+    }
+
+    return run(array(id), new Function0<>() {
       @Override
       public Response apply() {
         final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
 
-        if (videoOpt.isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
+        if (videoOpt.isNone() || (tagsMap.isSome() && tagsMap.get().isNone())) {
           return BAD_REQUEST;
+        }
 
         Resource resource = eas.createResource(tagsMap.bind(Functions.identity()));
         Option<Questionnaire> questionnaireFromTemplate = eas.createQuestionnaireFromTemplate(id, videoId, resource);
 
-        return questionnaireFromTemplate.fold(new Option.Match<Questionnaire, Response>() {
+        return questionnaireFromTemplate.fold(new Option.Match<>() {
           @Override
           public Response some(Questionnaire q) {
-            return Response.created(host.questionnaireLocationUri(q, true))
-                    .entity(QuestionnaireDto.toJson.apply(eas, q).toString()).build();
+            return Response.created(host.questionnaireLocationUri(q))
+                .entity(QuestionnaireDto.toJson.apply(eas, q).toString()).build();
           }
 
           @Override
@@ -732,7 +778,33 @@ public class VideoEndpoint {
   @DELETE
   @Path("questionnaires/{questionnaireId}")
   public Response deleteQuestionnaire(@PathParam("questionnaireId") final long questionnaireId) {
-    return host.deleteQuestionnaireResponse(some(videoId), questionnaireId);
+    if (eas.getVideo(videoId).isNone() || eas.getQuestionnaire(
+        questionnaireId, false).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getQuestionnaire(questionnaireId, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(Questionnaire q) {
+            if (!eas.hasResourceAccess(q)) {
+              return UNAUTHORIZED;
+            }
+
+            q = eas.deleteQuestionnaire(q);
+
+            return Response.ok(QuestionnaireDto.toJson.apply(eas, q).toString())
+                .header(LOCATION, host.questionnaireLocationUri(q)).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @POST

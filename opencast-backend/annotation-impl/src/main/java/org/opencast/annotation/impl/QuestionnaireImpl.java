@@ -1,5 +1,7 @@
 package org.opencast.annotation.impl;
 
+import static org.opencastproject.util.data.Option.some;
+
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Questionnaire;
 import org.opencast.annotation.api.Resource;
@@ -14,15 +16,15 @@ import java.util.Objects;
 public final class QuestionnaireImpl extends ResourceImpl implements Questionnaire {
 
   private final long id;
-  private final Option<Long> videoId;
+  private final long videoId;
   private final String title;
   private final String content;
   private final Option<String> settings;
 
-  public QuestionnaireImpl(long id, Option<Long> videoId, String title, String content, Option<String> settings, Resource resource) {
+  public QuestionnaireImpl(long id, long videoId, String title, String content, Option<String> settings, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(),
             resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
-            resource.getTags());
+            null);
     this.id = id;
     this.videoId = videoId;
     this.title = title;
@@ -37,11 +39,11 @@ public final class QuestionnaireImpl extends ResourceImpl implements Questionnai
 
   @Override
   public Option<Long> getVideo(ExtendedAnnotationService eas) {
-    return videoId;
+    return some(videoId);
   }
 
   @Override
-  public Option<Long> getVideoId() {
+  public long getVideoId() {
     return videoId;
   }
 
@@ -68,16 +70,15 @@ public final class QuestionnaireImpl extends ResourceImpl implements Questionnai
       return false;
     Questionnaire questionnaire = (Questionnaire) o;
     return id == questionnaire.getId()
-            && videoId.equals(questionnaire.getVideoId())
+            && videoId == questionnaire.getVideoId()
             && title.equals(questionnaire.getTitle())
             && content.equals(questionnaire.getContent())
             && settings.equals(questionnaire.getSettings())
-            && getAccess() == questionnaire.getAccess()
-            && getTags().equals(questionnaire.getTags());
+            && getAccess() == questionnaire.getAccess();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, videoId, title, content, settings, getTags());
+    return Objects.hash(id, videoId, title, content, settings);
   }
 }
