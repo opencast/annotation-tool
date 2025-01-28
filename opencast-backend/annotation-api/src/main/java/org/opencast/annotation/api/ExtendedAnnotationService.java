@@ -141,15 +141,6 @@ public interface ExtendedAnnotationService {
   Option<Video> getVideo(long id) throws ExtendedAnnotationException;
 
   /**
-   * Get all videos.
-   *
-   * @return the video list or an empty list if no videos has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
-   */
-  List<Video> getVideos() throws ExtendedAnnotationException;
-
-  /**
    * Get a video by its external id, which is the id it has in to surrounding video portal.
    *
    * @param id

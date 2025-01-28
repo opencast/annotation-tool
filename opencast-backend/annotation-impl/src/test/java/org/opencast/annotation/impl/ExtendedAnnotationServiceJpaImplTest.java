@@ -138,11 +138,10 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateFindAndDeleteVideo() {
     ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags);
+    final Resource resource = eas.createResource(none());
     final Video v = eas.createVideo("lecture1", resource);
     assertTrue(eas.getVideo(v.getId()).isSome());
     assertTrue(eas.getVideoByExtId("lecture1").isSome());
-    assertEquals(tags.get(), v.getTags());
     eas.deleteVideo(v);
     assertTrue(eas.getUserByExtId("lecture1").isNone());
   }
@@ -168,10 +167,8 @@ public class ExtendedAnnotationServiceJpaImplTest {
     assertTrue(eas.getVideo(v.getId()).isSome());
     assertEquals("lecture", eas.getVideo(v.getId()).get().getExtId());
 
-    resource = eas.updateResource(resource, tags);
     eas.updateVideo(new VideoImpl(v.getId(), "talk", resource));
     assertEquals("talk", eas.getVideo(v.getId()).get().getExtId());
-    assertEquals(tags.get(), eas.getVideo(v.getId()).get().getTags());
   }
 
   @Test

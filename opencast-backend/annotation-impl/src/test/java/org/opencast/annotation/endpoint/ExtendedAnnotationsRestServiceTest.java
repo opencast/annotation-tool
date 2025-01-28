@@ -93,22 +93,15 @@ public class ExtendedAnnotationsRestServiceTest {
 
   @Test
   public void testVideo() {
-    JSONObject json = new JSONObject();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> safeJson = (Map<String, Object>) json;
-    safeJson.put("channel", "33");
-
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect()
             .body("user_extid", equalTo("admin")).when().put(host("/users"));
     // put/create
     final String id = extractLocationId(given().formParam("video_extid", "lecture")
-            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
-            .header(LOCATION, startsWith(host("/videos/"))).body("tags", equalTo(json))
+            .expect().statusCode(CREATED).header(LOCATION, startsWith(host("/videos/")))
             .body("video_extid", equalTo("lecture")).when().post(host("/videos")));
     // put/update
-    safeJson.put("channel", "22");
-    given().formParam("video_extid", "lecture").formParam("tags", json.toJSONString()).expect().statusCode(OK)
-            .body("tags", equalTo(json)).body("video_extid", equalTo("lecture")).when().put(host("/videos"));
+    given().formParam("video_extid", "lecture").expect().statusCode(OK).body("video_extid", equalTo("lecture")).when()
+            .put(host("/videos"));
     // put/create/malformed
     given().contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when().put(host("/videos"));
     given().formParam("video_extid", "").expect().statusCode(BAD_REQUEST).when().put(host("/videos"));

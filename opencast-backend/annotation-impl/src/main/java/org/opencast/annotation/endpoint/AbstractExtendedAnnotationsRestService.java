@@ -229,26 +229,26 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/videos")
-  public Response postVideos(@FormParam("video_extid") final String videoExtId, @FormParam("tags") final String tags) {
-    return run(array(videoExtId), new Function0<Response>() {
+  public Response postVideos(@FormParam("video_extid") final String videoExtId) {
+    return run(array(videoExtId), new Function0<>() {
       @Override
       public Response apply() {
         final Option<MediaPackage> potentialMediaPackage = eas().findMediaPackage(videoExtId);
-        if (potentialMediaPackage.isNone()) return BAD_REQUEST;
-        final MediaPackage videoMediaPackage = potentialMediaPackage.get();
-        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
-
-        if (eas().getVideoByExtId(videoExtId).isSome())
-          return CONFLICT;
-
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
+        if (potentialMediaPackage.isNone()) {
           return BAD_REQUEST;
+        }
+        final MediaPackage videoMediaPackage = potentialMediaPackage.get();
+        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) {
+          return FORBIDDEN;
+        }
 
-        Resource resource = eas().createResource(tagsMap.bind(Functions.identity()));
+        if (eas().getVideoByExtId(videoExtId).isSome()) {
+          return CONFLICT;
+        }
+
+        Resource resource = eas().createResource(none());
         final Video v = eas().createVideo(videoExtId, resource);
-        return Response.created(videoLocationUri(v))
-                .entity(VideoDto.toJson.apply(eas(), v).toString()).build();
+        return Response.created(videoLocationUri(v)).entity(VideoDto.toJson.apply(eas(), v).toString()).build();
       }
     });
   }
@@ -257,48 +257,42 @@ public abstract class AbstractExtendedAnnotationsRestService {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/videos")
   public Response putVideo(@FormParam("video_extid") final String videoExtId,
-          @FormParam("access") final Integer access, @FormParam("tags") final String tags) {
-    return run(array(videoExtId), new Function0<Response>() {
+          @FormParam("access") final Integer access) {
+    return run(array(videoExtId), new Function0<>() {
       @Override
       public Response apply() {
         final Option<MediaPackage> potentialMediaPackage = eas().findMediaPackage(videoExtId);
-        if (potentialMediaPackage.isNone()) return BAD_REQUEST;
-        final MediaPackage videoMediaPackage = potentialMediaPackage.get();
-        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) return FORBIDDEN;
-
-        Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
+        if (potentialMediaPackage.isNone()) {
           return BAD_REQUEST;
+        }
+        final MediaPackage videoMediaPackage = potentialMediaPackage.get();
+        if (!eas().hasVideoAccess(videoMediaPackage, ANNOTATE_ACTION)) {
+          return FORBIDDEN;
+        }
 
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
-
-        return eas().getVideoByExtId(videoExtId).fold(new Option.Match<Video, Response>() {
+        return eas().getVideoByExtId(videoExtId).fold(new Option.Match<>() {
           @Override
           public Response some(Video v) {
-            if (!eas().hasResourceAccess(v))
+            if (!eas().hasResourceAccess(v)) {
               return UNAUTHORIZED;
+            }
 
-            Resource resource = eas().updateResource(v, tags);
+            Resource resource = eas().updateResource(v, Option.none());
             final Video updated = new VideoImpl(v.getId(), videoExtId, resource);
             if (!v.equals(updated)) {
               eas().updateVideo(updated);
               v = updated;
             }
-            return Response.ok(VideoDto.toJson.apply(eas(), v).toString())
-                    .header(LOCATION, videoLocationUri(v))
-                    .build();
+            return Response.ok(VideoDto.toJson.apply(eas(), v).toString()).header(LOCATION, videoLocationUri(v)).build();
           }
 
           @Override
           public Response none() {
-            Resource resource = eas().createResource(tags);
-            final Video v = eas().createVideo(
-                    videoExtId,
-                    new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-                            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
-                            resource.getTags()));
-            return Response.created(videoLocationUri(v))
-                    .entity(VideoDto.toJson.apply(eas(), v).toString()).build();
+            Resource resource = eas().createResource(Option.none());
+            final Video v = eas().createVideo(videoExtId,
+                new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
+                    resource.getTags()));
+            return Response.created(videoLocationUri(v)).entity(VideoDto.toJson.apply(eas(), v).toString()).build();
           }
         });
       }

@@ -90,14 +90,15 @@ public class VideoEndpoint {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Response getVideo() {
-    return run(nil, new Function0<Response>() {
+    return run(nil, new Function0<>() {
       @Override
       public Response apply() {
-        return videoOpt.fold(new Option.Match<Video, Response>() {
+        return videoOpt.fold(new Option.Match<>() {
           @Override
           public Response some(Video v) {
-            if (!eas.hasResourceAccess(v))
+            if (!eas.hasResourceAccess(v)) {
               return UNAUTHORIZED;
+            }
             return Response.ok(VideoDto.toJson.apply(eas, v).toString()).build();
           }
 
@@ -112,14 +113,15 @@ public class VideoEndpoint {
 
   @DELETE
   public Response deleteVideo() {
-    return run(nil, new Function0<Response>() {
+    return run(nil, new Function0<>() {
       @Override
       public Response apply() {
-        return videoOpt.fold(new Option.Match<Video, Response>() {
+        return videoOpt.fold(new Option.Match<>() {
           @Override
           public Response some(Video v) {
-            if (!eas.hasResourceAccess(v))
+            if (!eas.hasResourceAccess(v)) {
               return UNAUTHORIZED;
+            }
             return eas.deleteVideo(v) ? NO_CONTENT : NOT_FOUND;
           }
 

@@ -265,15 +265,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public List<Video> getVideos() throws ExtendedAnnotationException {
-    List<VideoDto> result = findAllWithOffsetAndLimit(VideoDto.class, "Video.findAll", none(), none());
-
-    return result.stream()
-            .map(VideoDto::toVideo)
-            .collect(Collectors.toList());
-  }
-
-  @Override
   public Option<Video> getVideoByExtId(final String id) throws ExtendedAnnotationException {
     return findById(toVideo, "Video.findByExtId", id, VideoDto.class);
   }

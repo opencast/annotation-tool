@@ -31,18 +31,11 @@ import org.opencastproject.util.data.Function2;
 
 import org.json.simple.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -53,8 +46,6 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Video.findById", query = "select a from Video a where a.id = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Video.findByExtId", query = "select a from Video a where a.extId = :id and a.deletedAt IS NULL"),
-        @NamedQuery(name = "Video.findAll", query = "select a from Video a where a.deletedAt IS NULL"),
-        @NamedQuery(name = "Video.deleteById", query = "delete from Video a where a.id = :id"),
         @NamedQuery(name = "Video.clear", query = "delete from Video") })
 public final class VideoDto extends AbstractResourceDto {
 
@@ -66,12 +57,6 @@ public final class VideoDto extends AbstractResourceDto {
   @Column(name = "extid", nullable = false, unique = true)
   private String extId;
 
-  @ElementCollection
-  @MapKeyColumn(name = "name")
-  @Column(name = "value")
-  @CollectionTable(name = "xannotations_video_tags", joinColumns = @JoinColumn(name = "video_id"))
-  protected Map<String, String> tags = new HashMap<String, String>();
-
   public static VideoDto create(String extId, Resource resource) {
     return new VideoDto().update(extId, resource);
   }
@@ -79,24 +64,22 @@ public final class VideoDto extends AbstractResourceDto {
   public VideoDto update(String extId, Resource resource) {
     super.update(resource);
     this.extId = extId;
-    if (resource.getTags() != null)
-      this.tags = resource.getTags();
     return this;
   }
 
   public Video toVideo() {
     return new VideoImpl(id, extId, new ResourceImpl(option(access), option(createdBy), option(updatedBy),
-            option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), tags));
+            option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), null));
   }
 
-  public static final Function<VideoDto, Video> toVideo = new Function<VideoDto, Video>() {
+  public static final Function<VideoDto, Video> toVideo = new Function<>() {
     @Override
     public Video apply(VideoDto dto) {
       return dto.toVideo();
     }
   };
 
-  public static final Function2<ExtendedAnnotationService, Video, JSONObject> toJson = new Function2<ExtendedAnnotationService, Video, JSONObject>() {
+  public static final Function2<ExtendedAnnotationService, Video, JSONObject> toJson = new Function2<>() {
     @Override
     public JSONObject apply(ExtendedAnnotationService s, Video v) {
       return conc(AbstractResourceDto.toJson.apply(s, v), jO(p("id", v.getId()), p("video_extid", v.getExtId())));
