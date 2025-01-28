@@ -539,13 +539,12 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateComment() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(tags);
+    final Resource resource = eas.createResource();
 
     final Comment c = eas.createComment(32, none(), "New comment", resource);
     Option<Comment> comment = eas.getComment(c.getId());
 
     assertTrue(comment.isSome());
-    assertEquals(tags.get(), comment.get().getTags());
     assertEquals(32, comment.get().getAnnotationId());
     assertEquals("New comment", comment.get().getText());
   }
@@ -566,11 +565,9 @@ public class ExtendedAnnotationServiceJpaImplTest {
     final Comment c = eas.createComment(32, none(), "New comment", resource);
     assertEquals("New comment", eas.getComment(c.getId()).get().getText());
 
-    final Resource updatedResource = eas.updateResource(resource, tags);
-    eas.updateComment(new CommentImpl(c.getId(), 11, "new text", none(), updatedResource));
+    eas.updateComment(new CommentImpl(c.getId(), 11, "new text", none(), resource));
     assertEquals(32, eas.getComment(c.getId()).get().getAnnotationId());
     assertEquals("new text", eas.getComment(c.getId()).get().getText());
-    assertEquals(tags.get(), eas.getComment(c.getId()).get().getTags());
   }
 
   @Test

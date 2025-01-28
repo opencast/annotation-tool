@@ -934,42 +934,16 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public List<Comment> getComments(final long annotationId, final Option<Long> replyToId, final Option<Integer> offset,
-          final Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
-          Option<Map<String, String>> tagsOr) {
-
-    List<Comment> comments;
-    List<CommentDto> commentDtos;
-
+  public Stream<Comment> getComments(final long annotationId, final Option<Long> replyToId) {
+    List<CommentDto> comments;
     if (replyToId.isSome()) {
-      if (since.isSome()) {
-        commentDtos = findAllWithOffsetAndLimit(CommentDto.class, "Comment.findAllRepliesSince", offset, limit,
-                Pair.of("since", since.get()), Pair.of("id", replyToId.get()));
-      }
-      else {
-        commentDtos = findAllWithOffsetAndLimit(CommentDto.class, "Comment.findAllReplies", offset, limit,
-                Pair.of("id", replyToId.get()));
-      }
+      comments = findAllWithOffsetAndLimit(CommentDto.class, "Comment.findAllReplies", none(), none(),
+              id(replyToId.get()));
     } else {
-      if (since.isSome()) {
-        commentDtos = findAllWithOffsetAndLimit(CommentDto.class, "Comment.findAllOfAnnotationSince", offset, limit,
-                Pair.of("since", since.get()), Pair.of("id", annotationId));
-      }
-      else {
-        commentDtos = findAllWithOffsetAndLimit(CommentDto.class, "Comment.findAllOfAnnotation", offset, limit,
-                Pair.of("id", annotationId));
-      }
+      comments = findAllWithOffsetAndLimit(CommentDto.class, "Comment.findAllOfAnnotation", none(), none(),
+              id(annotationId));
     }
-
-    comments = commentDtos.stream().map(CommentDto::toComment).collect(Collectors.toList());
-
-    if (tagsAnd.isSome())
-      comments = filterAndTags(comments, tagsAnd.get());
-
-    if (tagsOr.isSome())
-      comments = filterOrTags(comments, tagsOr.get());
-
-    return comments;
+    return comments.stream().map(CommentDto::toComment);
   }
 
   @Override

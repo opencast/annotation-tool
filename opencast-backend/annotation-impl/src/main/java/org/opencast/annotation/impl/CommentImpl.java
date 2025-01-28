@@ -37,8 +37,7 @@ public final class CommentImpl extends ResourceImpl implements Comment {
 
   public CommentImpl(long id, long annotationId, String text, Option<Long> replyToId, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.annotationId = annotationId;
     this.text = text;
@@ -51,7 +50,7 @@ public final class CommentImpl extends ResourceImpl implements Comment {
   }
 
   public Option<Long> getVideo(final ExtendedAnnotationService eas) {
-    return eas.getAnnotation(annotationId).bind(new Function<Annotation, Option<Long>>() {
+    return eas.getAnnotation(annotationId).bind(new Function<>() {
       @Override
       public Option<Long> apply(Annotation annotation) {
         return annotation.getVideo(eas);
@@ -81,12 +80,11 @@ public final class CommentImpl extends ResourceImpl implements Comment {
     if (o == null || getClass() != o.getClass())
       return false;
     Comment comment = (Comment) o;
-    return id == comment.getId() && annotationId == comment.getAnnotationId() && text.equals(comment.getText())
-            && getTags().equals(comment.getTags());
+    return id == comment.getId() && annotationId == comment.getAnnotationId() && text.equals(comment.getText());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, annotationId, text, getTags());
+    return Objects.hash(id, annotationId, text);
   }
 }

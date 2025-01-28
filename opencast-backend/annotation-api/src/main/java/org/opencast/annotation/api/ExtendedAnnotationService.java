@@ -751,24 +751,11 @@ public interface ExtendedAnnotationService {
   /**
    * Get all comments from an annotation
    *
-   * @param annotationId
-   *          the annotation id
-   * @param replyToId
-   *          id of the comment to ge the replies to
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to comments modified since the said date
-   * @param tagsAnd
-   *          the tags logical AND Map
-   * @param tagsOr
-   *          the tags logical OR Map
+   * @param annotationId the annotation id
+   * @param replyToId    id of the comment to ge the replies to
    * @return the comment list or an empty list if no comments has been found
    */
-  List<Comment> getComments(long annotationId, Option<Long> replyToId, Option<Integer> offset, Option<Integer> limit,
-          Option<Date> since, Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr);
+  Stream<Comment> getComments(long annotationId, Option<Long> replyToId);
 
   /**
    * Update a comment
