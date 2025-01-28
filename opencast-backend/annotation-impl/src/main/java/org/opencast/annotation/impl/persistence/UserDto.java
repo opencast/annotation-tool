@@ -84,20 +84,18 @@ public class UserDto extends AbstractResourceDto {
             option(updatedBy), option(deletedBy), option(createdAt), option(updatedAt), option(deletedAt), null));
   }
 
-  public static final Function<UserDto, User> toUser = new Function<UserDto, User>() {
+  public static final Function<UserDto, User> toUser = new Function<>() {
     @Override
     public User apply(UserDto dto) {
       return dto.toUser();
     }
   };
 
-  public static final Function2<ExtendedAnnotationService, User, JSONObject> toJson = new Function2<ExtendedAnnotationService, User, JSONObject>() {
+  public static final Function2<ExtendedAnnotationService, User, JSONObject> toJson = new Function2<>() {
     @Override
     public JSONObject apply(ExtendedAnnotationService s, User u) {
-      return conc(
-              AbstractResourceDto.toJson.apply(s, u),
-              jO(p("id", u.getId()), p("user_extid", u.getExtId()), p("nickname", u.getNickname()),
-                      p("email", u.getEmail())));
+      return conc(AbstractResourceDto.toJson.apply(s, u),
+          jO(p("id", u.getId()), p("user_extid", u.getExtId()), p("nickname", u.getNickname()), p("email", u.getEmail())));
     }
   };
 

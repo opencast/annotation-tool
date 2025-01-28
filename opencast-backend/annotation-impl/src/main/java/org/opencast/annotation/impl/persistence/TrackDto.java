@@ -97,20 +97,18 @@ public class TrackDto extends AbstractResourceDto {
             option(deletedAt), null));
   }
 
-  public static final Function<TrackDto, Track> toTrack = new Function<TrackDto, Track>() {
+  public static final Function<TrackDto, Track> toTrack = new Function<>() {
     @Override
     public Track apply(TrackDto dto) {
       return dto.toTrack();
     }
   };
 
-  public static final Function2<ExtendedAnnotationService, Track, JSONObject> toJson = new Function2<ExtendedAnnotationService, Track, JSONObject>() {
+  public static final Function2<ExtendedAnnotationService, Track, JSONObject> toJson = new Function2<>() {
     @Override
     public JSONObject apply(ExtendedAnnotationService s, Track t) {
-      return conc(
-              AbstractResourceDto.toJson.apply(s, t),
-              jO(p("id", t.getId()), p("name", t.getName()), p("description", t.getDescription()),
-                      p("settings", t.getSettings())));
+      return conc(AbstractResourceDto.toJson.apply(s, t),
+          jO(p("id", t.getId()), p("name", t.getName()), p("description", t.getDescription()), p("settings", t.getSettings())));
     }
   };
 

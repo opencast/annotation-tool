@@ -1429,12 +1429,4 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       }
     };
   }
-
-  private static <A> Option<A> head(final A[] as) {
-    if (as.length > 0) {
-      return some(as[0]);
-    } else {
-      return none();
-    }
-  }
 }
