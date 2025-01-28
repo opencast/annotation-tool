@@ -240,7 +240,7 @@ public class ExtendedAnnotationServiceJpaImplTest {
   @Test
   public void testCreateAndFindAnnotation() {
     final ExtendedAnnotationService eas = newExtendedAnnotationService();
-    final Resource resource = eas.createResource(some(Resource.PUBLIC), tags);
+    final Resource resource = eas.createResource(some(Resource.PUBLIC), none());
     final Video v = eas.createVideo("lecture", resource);
     final Track t = eas.createTrack(v.getId(), "track1", none(), none(), resource);
     // create
@@ -251,27 +251,12 @@ public class ExtendedAnnotationServiceJpaImplTest {
     // get
     assertTrue(eas.getAnnotation(a.getId()).isSome());
     assertEquals(textAnnotation("cool video"), eas.getAnnotation(a.getId()).get().getContent());
-    assertEquals(tags.get(), a.getTags());
-    // get all/non existing track
-    assertTrue(eas.getAnnotations(12345, none(), none(), none(), none(), none(), Option.none(), Option.none())
-            .isEmpty());
+    // get all/non-existing track
+    assertTrue(eas.getAnnotations(12345).findAny().isEmpty());
     // get all
     assertEquals(
             3,
-            eas.getAnnotations(t.getId(), none(), none(), none(), none(), none(), Option.none(), Option.none()).size());
-    assertEquals(
-            2,
-            eas.getAnnotations(t.getId(), none(), none(), some(1), none(), none(), Option.none(), Option.none()).size());
-    assertEquals(
-            1,
-            eas.getAnnotations(t.getId(), none(), none(), some(1), some(1), none(), Option.none(), Option.none())
-                    .size());
-    // get all since
-    // Thread.sleep(10);
-    // assertEquals(0, eas.getAnnotations(t.getId(), none(), none(), none(), none(), some(new Date())).size());
-    // Calendar c = Calendar.getInstance();
-    // c.add(Calendar.MINUTE, -1);
-    // assertEquals(3, eas.getAnnotations(t.getId(), none(), none(), none(), none(), some(c.getTime())).size());
+            eas.getAnnotations(t.getId()).count());
   }
 
   @Test
@@ -293,11 +278,9 @@ public class ExtendedAnnotationServiceJpaImplTest {
             0, none(), resource);
     assertEquals(textAnnotation("cool video"), eas.getAnnotation(a.getId()).get().getContent());
 
-    Resource updatedResource = eas.updateResource(a, tags);
     eas.updateAnnotation(new AnnotationImpl(a.getId(), t.getId(), 22.0D, some(5.0D), textAnnotation("not cool"),
-            0, none(), updatedResource));
+            0, none(), resource));
     assertEquals(textAnnotation("not cool"), eas.getAnnotation(a.getId()).get().getContent());
-    assertEquals(tags.get(), eas.getAnnotation(a.getId()).get().getTags());
   }
 
   @Test

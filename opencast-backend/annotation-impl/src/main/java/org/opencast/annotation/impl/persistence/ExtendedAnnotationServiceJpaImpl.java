@@ -287,10 +287,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
             deleteResource);
     updateTrack(updated);
 
-    List<Annotation> annotations = getAnnotations(t.getId(), none(), none(), none(), none(), none(), none(), none());
-    for (Annotation a : annotations) {
-      deleteAnnotation(a);
-    }
+    getAnnotations(t.getId()).forEach(this::deleteAnnotation);
     return true;
   }
 
@@ -388,37 +385,13 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public List<Annotation> getAnnotations(final long trackId, final Option<Double> start, final Option<Double> end,
-          final Option<Integer> offset, final Option<Integer> limit, final Option<Date> since,
-          final Option<Map<String, String>> tagsAnd, final Option<Map<String, String>> tagsOr)
+  public Stream<Annotation> getAnnotations(final long trackId)
           throws ExtendedAnnotationException {
 
-    // TODO refactoring with since
-    List<AnnotationDto> annotationDtos;
-    if (start.isSome() && end.isSome()) {
-      annotationDtos = findAllWithOffsetAndLimit(AnnotationDto.class, "Annotation.findAllOfTrackStartEnd", offset, limit, Pair.of("start", start.get()), Pair.of("end", end.get()));
-    } else if (start.isSome()) {
-      annotationDtos = findAllWithOffsetAndLimit(AnnotationDto.class, "Annotation.findAllOfTrackStart", offset, limit, Pair.of("start", start.get()));
-    } else if (end.isSome()) {
-      annotationDtos = findAllWithOffsetAndLimit(AnnotationDto.class, "Annotation.findAllOfTrackEnd", offset, limit, Pair.of("end", end.get()));
-    } else {
-      annotationDtos = findAllWithOffsetAndLimit(AnnotationDto.class, "Annotation.findAllOfTrack", offset, limit, id(trackId));
-    }
-
-    List<Annotation> annotations = annotationDtos.stream()
+    return findAllWithOffsetAndLimit(AnnotationDto.class, "Annotation.findAllOfTrack", none(), none(), id(trackId))
+            .stream()
             .map(AnnotationDto::toAnnotation)
-            .collect(Collectors.toList());
-
-    if (tagsAnd.isSome())
-      annotations = filterAndTags(annotations, tagsAnd.get());
-
-    if (tagsOr.isSome())
-      annotations = filterOrTags(annotations, tagsOr.get());
-
-    // Filter out structured annotations from categories the current user cannot access
-    annotations = filterByCategoryAccess(annotations);
-
-    return annotations;
+            .filter(this::hasCategoryAccess);
   }
 
   @Override

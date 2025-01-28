@@ -280,21 +280,15 @@ public class VideoEndpoint {
   public Response postAnnotation(@PathParam("trackId") final long trackId, @FormParam("start") final Double start,
           @FormParam("duration") final Double duration, @FormParam("content") @DefaultValue("[]") final String content,
           @FormParam("createdFromQuestionnaire") final long createdFromQuestionnaire,
-          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
-    return run(array(start), new Function0<Response>() {
+          @FormParam("settings") final String settings) {
+    return run(array(start), new Function0<>() {
       @Override
       public Response apply() {
         if (videoOpt.isSome() && eas.getTrack(trackId).isSome()) {
-          final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-          if (tagsMap.isSome() && tagsMap.get().isNone())
-            return BAD_REQUEST;
-
-          Resource resource = eas.createResource(
-                  tagsMap.bind(Functions.identity()));
+          Resource resource = eas.createResource(none());
           final Annotation a = eas.createAnnotation(trackId, start, option(duration), content, createdFromQuestionnaire,
-                  trimToNone(settings), resource);
-          return Response.created(annotationLocationUri(videoId, a))
-                  .entity(AnnotationDto.toJson.apply(eas, a).toString()).build();
+              trimToNone(settings), resource);
+          return Response.created(annotationLocationUri(videoId, a)).entity(AnnotationDto.toJson.apply(eas, a).toString()).build();
         } else {
           return BAD_REQUEST;
         }
@@ -309,47 +303,37 @@ public class VideoEndpoint {
           @FormParam("start") final double start, @FormParam("duration") final Double duration,
           @FormParam("content") @DefaultValue("[]") final String content,
           @FormParam("createdFromQuestionnaire") final long createdFromQuestionnaire,
-          @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return run(array(start), new Function0<Response>() {
+          @FormParam("settings") final String settings) {
+    return run(array(start), new Function0<>() {
       @Override
       public Response apply() {
-        Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (tagsMap.isSome() && tagsMap.get().isNone())
-          return BAD_REQUEST;
-
-        final Option<Map<String, String>> tags = tagsMap.bind(Functions.identity());
-
         // check if video and track exist
         if (videoOpt.isSome() && eas.getTrack(trackId).isSome()) {
-          return eas.getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
+          return eas.getAnnotation(id).fold(new Option.Match<>() {
             // update annotation
             @Override
             public Response some(Annotation annotation) {
-              if (!eas.hasResourceAccess(annotation))
+              if (!eas.hasResourceAccess(annotation)) {
                 return UNAUTHORIZED;
+              }
 
-              Resource resource = eas.updateResource(annotation, tags);
+              Resource resource = eas.updateResource(annotation, Option.none());
               final Annotation updated = new AnnotationImpl(id, trackId, start, option(duration), content,
-                      createdFromQuestionnaire, trimToNone(settings), resource);
+                  createdFromQuestionnaire, trimToNone(settings), resource);
               if (!annotation.equals(updated)) {
                 eas.updateAnnotation(updated);
                 annotation = updated;
               }
-              return Response.ok(AnnotationDto.toJson.apply(eas, annotation).toString())
-                      .header(LOCATION, annotationLocationUri(videoId, updated))
-                      .build();
+              return Response.ok(AnnotationDto.toJson.apply(eas, annotation).toString()).header(LOCATION, annotationLocationUri(videoId, updated)).build();
             }
 
             // create a new one
             @Override
             public Response none() {
-              Resource resource = eas.createResource(tags);
+              Resource resource = eas.createResource(Option.none());
               final Annotation a = eas.createAnnotation(
-                      new AnnotationImpl(id, trackId, start, option(duration), content, createdFromQuestionnaire,
-                              trimToNone(settings), resource));
-              return Response.created(annotationLocationUri(videoId, a))
-                      .entity(AnnotationDto.toJson.apply(eas, a).toString()).build();
+                  new AnnotationImpl(id, trackId, start, option(duration), content, createdFromQuestionnaire, trimToNone(settings), resource));
+              return Response.created(annotationLocationUri(videoId, a)).entity(AnnotationDto.toJson.apply(eas, a).toString()).build();
             }
           });
         } else {
@@ -364,14 +348,15 @@ public class VideoEndpoint {
   @Path("tracks/{trackId}/annotations/{id}")
   public Response deleteAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id) {
     if (videoOpt.isSome() && eas.getTrack(trackId).isSome()) {
-      return run(nil, new Function0<Response>() {
+      return run(nil, new Function0<>() {
         @Override
         public Response apply() {
-          return eas.getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
+          return eas.getAnnotation(id).fold(new Option.Match<>() {
             @Override
             public Response some(Annotation a) {
-              if (!eas.hasResourceAccess(a))
+              if (!eas.hasResourceAccess(a)) {
                 return UNAUTHORIZED;
+              }
               return eas.deleteAnnotation(a) ? NO_CONTENT : NOT_FOUND;
             }
 
@@ -393,14 +378,15 @@ public class VideoEndpoint {
   public Response getAnnotation(@PathParam("trackId") final long trackId, @PathParam("id") final long id) {
     // TODO optimize querying for the existence of video and track
     if (videoOpt.isSome() && eas.getTrack(trackId).isSome()) {
-      return run(nil, new Function0<Response>() {
+      return run(nil, new Function0<>() {
         @Override
         public Response apply() {
-          return eas.getAnnotation(id).fold(new Option.Match<Annotation, Response>() {
+          return eas.getAnnotation(id).fold(new Option.Match<>() {
             @Override
             public Response some(Annotation a) {
-              if (!eas.hasResourceAccess(a))
+              if (!eas.hasResourceAccess(a)) {
                 return UNAUTHORIZED;
+              }
               return Response.ok(AnnotationDto.toJson.apply(eas, a).toString()).build();
             }
 
@@ -417,37 +403,17 @@ public class VideoEndpoint {
     }
   }
 
+  // TODO Is this even used?
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("tracks/{trackId}/annotations")
-  public Response getAnnotations(@PathParam("trackId") final long trackId, @QueryParam("limit") final int limit,
-          @QueryParam("offset") final int offset, @QueryParam("start") final double start,
-          @QueryParam("end") final double end, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return run(nil, new Function0<Response>() {
+  public Response getAnnotations(@PathParam("trackId") final long trackId) {
+    return run(nil, new Function0<>() {
       @Override
       public Response apply() {
         if (videoOpt.isSome()) {
-          final Option<Double> startm = start > 0 ? some(start) : none();
-          final Option<Double> endm = end > 0 ? some(end) : none();
-          final Option<Integer> offsetm = offset > 0 ? some(offset) : none();
-          final Option<Integer> limitm = limit > 0 ? some(limit) : none();
-          final Option<Option<Date>> datem = trimToNone(date).map(parseDate);
-          final Option<Option<Map<String, String>>> tagsAndArray = trimToNone(tagsAnd).map(parseToJsonMap);
-          final Option<Option<Map<String, String>>> tagsOrArray = trimToNone(tagsOr).map(parseToJsonMap);
-
-          if ((datem.isSome() && datem.get().isNone()) || (tagsAndArray.isSome() && tagsAndArray.get().isNone())
-                  || (tagsOrArray.isSome() && tagsOrArray.get().isNone())) {
-            return BAD_REQUEST;
-          } else {
-            return Response.ok(AnnotationDto.toJson(
-                    eas,
-                    offset,
-                    eas.getAnnotations(trackId, startm, endm, offsetm, limitm,
-                            datem.bind(Functions.identity()),
-                            tagsAndArray.bind(Functions.identity()),
-                            tagsOrArray.bind(Functions.identity()))).toString()).build();
-          }
+          return Response.ok(AnnotationDto.toJson(eas,
+                  eas.getAnnotations(trackId)).toString()).build();
         } else {
           return NOT_FOUND;
         }

@@ -41,8 +41,7 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
   public AnnotationImpl(long id, long trackId, double start, Option<Double> duration,
           String content, long createdFromQuestionnaire, Option<String> settings, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.trackId = trackId;
     this.start = start;
@@ -59,7 +58,7 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
 
   @Override
   public Option<Long> getVideo(final ExtendedAnnotationService eas) {
-    return eas.getTrack(trackId).bind(new Function<Track, Option<Long>>() {
+    return eas.getTrack(trackId).bind(new Function<>() {
       @Override
       public Option<Long> apply(Track track) {
         return track.getVideo(eas);
@@ -106,11 +105,11 @@ public class AnnotationImpl extends ResourceImpl implements Annotation {
     Annotation annotation = (Annotation) o;
     return id == annotation.getId() && trackId == annotation.getTrackId() && duration.equals(annotation.getDuration())
             && start == annotation.getStart() && content.equals(annotation.getContent())
-            && settings.equals(annotation.getSettings()) && getTags().equals(annotation.getTags());
+            && settings.equals(annotation.getSettings());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, trackId, start, duration, content, settings, getTags());
+    return Objects.hash(id, trackId, start, duration, content, settings);
   }
 }

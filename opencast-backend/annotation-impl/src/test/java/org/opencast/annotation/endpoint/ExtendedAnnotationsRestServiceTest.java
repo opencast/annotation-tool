@@ -181,11 +181,6 @@ public class ExtendedAnnotationsRestServiceTest {
 
   @Test
   public void testAnnotation() {
-    JSONObject json = new JSONObject();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> safeJson = (Map<String, Object>) json;
-    safeJson.put("channel", "33");
-
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect()
             .body("user_extid", equalTo("admin")).when().put(host("/users"));
     final String videoId = extractLocationId(given().formParam("video_extid", "lecture5").expect().statusCode(CREATED)
@@ -199,11 +194,11 @@ public class ExtendedAnnotationsRestServiceTest {
             .post(host("/videos/12345/tracks/12345/annotations"));
     // post
     final String id = extractLocationId(given().pathParam("videoId", videoId).pathParam("trackId", trackId)
-            .formParam("content", textAnnotation("cool video")).formParam("tags", json.toJSONString()).formParam("start", 40)
+            .formParam("content", textAnnotation("cool video")).formParam("start", 40)
             .formParam("settings", "{\"type\":\"test\"}").expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+")))
             .body("content", equalTo(textAnnotation("cool video"))).body("settings", equalTo("{\"type\":\"test\"}"))
-            .body("tags", equalTo(json)).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations")));
+            .when().post(host("/videos/{videoId}/tracks/{trackId}/annotations")));
     // get
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).pathParam("id", id).expect().statusCode(OK)
             .body("content", equalTo(textAnnotation("cool video"))).when()
@@ -215,15 +210,10 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).formParam("content", textAnnotation("nice"))
             .formParam("start", 50).expect().statusCode(CREATED)
             .header(LOCATION, regex(host("/videos/[0-9]+/tracks/[0-9]+/annotations/[0-9]+")))
-            .body("content", equalTo(textAnnotation("nice"))).when().post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
+            .body("content", equalTo(textAnnotation("nice"))).when()
+            .post(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     given().pathParam("videoId", videoId).pathParam("trackId", trackId).expect().statusCode(OK)
             .body("annotations", iterableWithSize(2)).when()
-            .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).queryParam("tags-and", json.toJSONString())
-            .expect().statusCode(OK).body("annotations", iterableWithSize(1)).when()
-            .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
-    given().pathParam("videoId", videoId).pathParam("trackId", trackId).queryParam("tags-or", json.toJSONString())
-            .expect().statusCode(OK).body("annotations", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/tracks/{trackId}/annotations"));
     // delete
     given().pathParam("videoId", 12345).pathParam("trackId", 12345).pathParam("id", 12345).expect()

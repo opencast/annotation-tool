@@ -283,25 +283,11 @@ public interface ExtendedAnnotationService {
   /**
    * Get annotations of a track.
    *
-   * @param trackId
-   *          the track id
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to annotations modified since the said date
-   * @param tagsAnd
-   *          the tags logical AND Map
-   * @param tagsOr
-   *          the tags logical OR Map
+   * @param trackId the track id
    * @return the annotation list or an empty list if no annotation has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
+   * @throws ExtendedAnnotationException if an error occurs while storing/retrieving from persistence storage
    */
-  List<Annotation> getAnnotations(long trackId, Option<Double> start, Option<Double> end, Option<Integer> offset,
-          Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
-          Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+  Stream<Annotation> getAnnotations(long trackId) throws ExtendedAnnotationException;
 
   /**
    * Create a scale
