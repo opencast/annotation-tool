@@ -263,7 +263,7 @@ public abstract class AbstractExtendedAnnotationsRestService {
 
           @Override
           public Response none() {
-            Resource resource = eas().createResource(Option.none());
+            Resource resource = eas().createResource();
             final Video v = eas().createVideo(videoExtId,
                 new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
                     resource.getTags()));

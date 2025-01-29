@@ -304,21 +304,6 @@ public interface ExtendedAnnotationService {
           throws ExtendedAnnotationException;
 
   /**
-   * Creates a copy of a templates scale
-   *
-   * @param videoId
-   *          the video id
-   * @param templateScale
-   *          the template scale to copy
-   * @param resource
-   *          the resource
-   * @return the created scale
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storages
-   */
-  Scale createScaleFromTemplate(long videoId, long templateScale, Resource resource) throws ExtendedAnnotationException;
-
-  /**
    * Get a scale by id.
    *
    * @param id
@@ -445,22 +430,6 @@ public interface ExtendedAnnotationService {
          Option<String> settings, Resource resource) throws ExtendedAnnotationException;
 
   /**
-   * Creates a questionnaire.
-   *
-   * @param templateQuestionnaireId
-   *          the template questionnaire id
-   * @param videoId
-   *          the video id where the questionnaire is
-   * @param resource
-   *          the resource
-   * @return the created questionnaire
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
-   */
-  Option<Questionnaire> createQuestionnaireFromTemplate(long templateQuestionnaireId,
-          long videoId, Resource resource) throws ExtendedAnnotationException;
-
-  /**
    * Get a questionnaire value by id.
    *
    * @param id
@@ -529,24 +498,6 @@ public interface ExtendedAnnotationService {
   Category createCategory(Option<String> seriesExtId, Option<Long> seriesCategoryId, long videoId,
           Option<Long> scaleId, String name, Option<String> description, Option<String> settings, Resource resource)
           throws ExtendedAnnotationException;
-
-  /**
-   * Creates a category
-   *
-   * @param seriesExtId
-   *          the external series the category belongs to
-   * @param seriesCategoryId
-   *          the series category the category belongs to
-   * @param videoId
-   *          the video id where the category is
-   * @param resource
-   *          the resource
-   * @return the created category
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
-   */
-  Option<Category> createCategoryFromTemplate(long templateCategoryId, String seriesExtId, Long seriesCategoryId,
-          long videoId, Resource resource) throws ExtendedAnnotationException;
 
   /**
    * Get a category value by id.

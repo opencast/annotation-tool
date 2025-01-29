@@ -336,10 +336,7 @@ public class VideoEndpoint {
             // create a new one
             @Override
             public Response none() {
-              Resource resource = eas.createResource(Option.none());
-              final Annotation a = eas.createAnnotation(
-                  new AnnotationImpl(id, trackId, start, option(duration), content, createdFromQuestionnaire, trimToNone(settings), resource));
-              return Response.created(annotationLocationUri(videoId, a)).entity(AnnotationDto.toJson.apply(eas, a).toString()).build();
+              return NOT_FOUND;
             }
           });
         } else {
@@ -430,33 +427,16 @@ public class VideoEndpoint {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales")
-  public Response postScale(@FormParam("name") final String name, @FormParam("description") final String description,
-          @FormParam("scale_id") final Long scaleId, @FormParam("access") final Integer access) {
-    if (scaleId == null) {
-      return run(array(name), new Function0<>() {
-        @Override
-        public Response apply() {
-          if (eas.getVideo(videoId).isNone()) {
-            return BAD_REQUEST;
-          }
-
-          Resource resource = eas.createResource(option(access), none());
-          final Scale scale = eas.createScale(videoId, name, trimToNone(description), resource);
-          return Response.created(scaleLocationUri(scale)).entity(ScaleDto.toJson.apply(eas, scale).toString()).build();
-        }
-      });
-    }
-
-    // TODO Why does this not use `createScale`?
-    return run(array(scaleId), new Function0<>() {
+  public Response postScale(@FormParam("name") final String name, @FormParam("description") final String description, @FormParam("access") final Integer access) {
+    return run(array(name), new Function0<>() {
       @Override
       public Response apply() {
-        if (eas.getScale(scaleId, false).isNone() || videoOpt.isNone()) {
+        if (eas.getVideo(videoId).isNone()) {
           return BAD_REQUEST;
         }
 
         Resource resource = eas.createResource(option(access), none());
-        final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
+        final Scale scale = eas.createScale(videoId, name, trimToNone(description), resource);
         return Response.created(scaleLocationUri(scale)).entity(ScaleDto.toJson.apply(eas, scale).toString()).build();
       }
     });
@@ -491,10 +471,7 @@ public class VideoEndpoint {
 
           @Override
           public Response none() {
-            Resource resource = eas.createResource();
-            final Scale scale = eas.createScale(videoId, name, trimToNone(description), resource);
-
-            return Response.created(scaleLocationUri(scale)).entity(ScaleDto.toJson.apply(eas, scale).toString()).build();
+            return NOT_FOUND;
           }
         });
       }
@@ -626,10 +603,7 @@ public class VideoEndpoint {
 
           @Override
           public Response none() {
-            Resource resource = eas.createResource(option(access), Option.none());
-            final ScaleValue scaleValue = eas.createScaleValue(scaleId, name, value, order, resource);
-
-            return Response.created(scaleValueLocationUri(scaleValue, videoId)).entity(ScaleValueDto.toJson.apply(eas, scaleValue).toString()).build();
+            return NOT_FOUND;
           }
         });
       }
@@ -712,50 +686,22 @@ public class VideoEndpoint {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories")
-  public Response postCategory(@FormParam("category_id") final Long id,
-          @FormParam("series_extid") final String seriesExtId,
+  public Response postCategory(@FormParam("series_extid") final String seriesExtId,
           @FormParam("series_category_id") final Long seriesCategoryId, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("scale_id") final Long scaleId,
           @FormParam("settings") final String settings, @FormParam("access") final Integer access) {
-    if (id == null) {
-      return run(array(name), new Function0<>() {
-        @Override
-        public Response apply() {
-          if (eas.getVideo(videoId).isNone()) {
-            return BAD_REQUEST;
-          }
-
-          Resource resource = eas.createResource(option(access), none());
-          final Category category = eas.createCategory(trimToNone(seriesExtId), option(seriesCategoryId), videoId,
-              option(scaleId), name, trimToNone(description), trimToNone(settings), resource);
-
-          return Response.created(categoryLocationUri(category)).entity(CategoryDto.toJson.apply(eas, category).toString()).build();
-        }
-      });
-    }
-    return run(array(id), new Function0<>() {
+    return run(array(name), new Function0<>() {
       @Override
       public Response apply() {
-        if (videoOpt.isNone()) {
+        if (eas.getVideo(videoId).isNone()) {
           return BAD_REQUEST;
         }
 
-        Resource resource = eas.createResource();
-        Option<Category> categoryFromTemplate = eas.createCategoryFromTemplate(id, seriesExtId, seriesCategoryId,
-            videoId, resource);
-        return categoryFromTemplate.fold(new Option.Match<>() {
+        Resource resource = eas.createResource(option(access), none());
+        final Category category = eas.createCategory(trimToNone(seriesExtId), option(seriesCategoryId), videoId,
+            option(scaleId), name, trimToNone(description), trimToNone(settings), resource);
 
-          @Override
-          public Response some(Category c) {
-            return Response.created(categoryLocationUri(c)).entity(CategoryDto.toJson.apply(eas, c).toString()).build();
-          }
-
-          @Override
-          public Response none() {
-            return BAD_REQUEST;
-          }
-
-        });
+        return Response.created(categoryLocationUri(category)).entity(CategoryDto.toJson.apply(eas, category).toString()).build();
       }
     });
   }
@@ -820,13 +766,7 @@ public class VideoEndpoint {
 
           @Override
           public Response none() {
-            Resource resource = eas.createResource();
-            final Category category = eas.createCategory(seriesExtIdOpt, seriesCategoryIdOpt, videoId, option(scaleId), name,
-                trimToNone(description), trimToNone(settings),
-                new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource.getDeletedBy(),
-                    resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource.getTags()));
-
-            return Response.created(categoryLocationUri(category)).entity(CategoryDto.toJson.apply(eas, category).toString()).build();
+            return NOT_FOUND;
           }
         });
       }
@@ -961,10 +901,7 @@ public class VideoEndpoint {
 
           @Override
           public Response none() {
-            Resource resource = eas.createResource(option(access), Option.none());
-            final Label label = eas.createLabel(categoryId, value, abbreviation, trimToNone(description), trimToNone(settings), resource);
-
-            return Response.created(labelLocationUri(label)).entity(LabelDto.toJson.apply(eas, label).toString()).build();
+            return NOT_FOUND;
           }
         });
       }
@@ -1115,50 +1052,22 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("questionnaires")
   public Response postQuestionnaire(
-          @FormParam("questionnaireId") final Long id,
           @FormParam("title") final String title,
           @FormParam("content") @DefaultValue("[]") final String content,
           @FormParam("settings") final String settings,
           @FormParam("access") final Integer access) {
-    if (id == null) {
-      return run(array(title, content), new Function0<>() {
-        @Override
-        public Response apply() {
-          if (eas.getVideo(videoId).isNone()) {
-            return BAD_REQUEST;
-          }
-
-          Resource resource = eas.createResource(option(access), none());
-          final Questionnaire questionnaire = eas.createQuestionnaire(videoId, title, content, trimToNone(settings),
-              resource);
-
-          return Response.created(questionnaireLocationUri(questionnaire)).entity(QuestionnaireDto.toJson.apply(eas, questionnaire).toString()).build();
-        }
-      });
-    }
-
-    return run(array(id), new Function0<>() {
+    return run(array(title, content), new Function0<>() {
       @Override
       public Response apply() {
-        if (videoOpt.isNone()) {
+        if (eas.getVideo(videoId).isNone()) {
           return BAD_REQUEST;
         }
 
-        Resource resource = eas.createResource();
-        Option<Questionnaire> questionnaireFromTemplate = eas.createQuestionnaireFromTemplate(id, videoId, resource);
+        Resource resource = eas.createResource(option(access), none());
+        final Questionnaire questionnaire = eas.createQuestionnaire(videoId, title, content, trimToNone(settings),
+            resource);
 
-        return questionnaireFromTemplate.fold(new Option.Match<>() {
-          @Override
-          public Response some(Questionnaire q) {
-            return Response.created(questionnaireLocationUri(q))
-                .entity(QuestionnaireDto.toJson.apply(eas, q).toString()).build();
-          }
-
-          @Override
-          public Response none() {
-            return BAD_REQUEST;
-          }
-        });
+        return Response.created(questionnaireLocationUri(questionnaire)).entity(QuestionnaireDto.toJson.apply(eas, questionnaire).toString()).build();
       }
     });
   }
@@ -1250,10 +1159,7 @@ public class VideoEndpoint {
 
             @Override
             public Response none() {
-              Resource resource = eas.createResource();
-              final Comment comment = eas.createComment(annotationId, Option.none(), text, resource);
-
-              return Response.created(commentLocationUri(comment, videoId, trackId)).entity(CommentDto.toJson.apply(eas, comment).toString()).build();
+              return NOT_FOUND;
             }
           });
         }

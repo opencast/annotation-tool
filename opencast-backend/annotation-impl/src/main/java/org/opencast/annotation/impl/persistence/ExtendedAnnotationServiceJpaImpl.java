@@ -383,23 +383,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
   }
 
   @Override
-  public Scale createScaleFromTemplate(long videoId, long templateScaleId, Resource resource)
-          throws ExtendedAnnotationException {
-    // Copy scale
-    Option<Scale> templateScale = getScale(templateScaleId, false);
-    if (templateScale.isNone())
-      throw new ExtendedAnnotationException(Cause.SERVER_ERROR);
-
-    Scale scale = createScale(videoId, templateScale.get().getName(),
-            templateScale.get().getDescription(), resource);
-
-    for (ScaleValue sv : getScaleValuesByScaleId(templateScaleId)) {
-      createScaleValue(scale.getId(), sv.getName(), sv.getValue(), sv.getOrder(), resource);
-    }
-    return scale;
-  }
-
-  @Override
   public Option<Scale> getScale(long id, boolean includeDeleted) throws ExtendedAnnotationException {
     final Option<Scale> scale;
     if (includeDeleted) {
@@ -501,40 +484,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     } else {
       throw notFound;
     }
-  }
-
-  @Override
-  public Option<Category> createCategoryFromTemplate(final long templateCategoryId, final String seriesExtId,
-          final Long seriesCategoryId, final long videoId, final Resource resource) throws ExtendedAnnotationException {
-    return getCategory(templateCategoryId, false).map(new Function<>() {
-      @Override
-      public Category apply(Category c) {
-        Long scaleId = null;
-        // Copy scale
-        if (c.getScaleId().isSome()) {
-          Option<Scale> scale = getScale(c.getScaleId().get(), false);
-          if (scale.isNone())
-            throw new ExtendedAnnotationException(Cause.SERVER_ERROR);
-
-          scaleId = createScale(videoId, scale.get().getName(), scale.get().getDescription(), resource)
-                  .getId();
-
-          for (ScaleValue sv : getScaleValuesByScaleId(c.getScaleId().get())) {
-            createScaleValue(scaleId, sv.getName(), sv.getValue(), sv.getOrder(), resource);
-          }
-        }
-        // Copy category
-        final CategoryDto copyDto = CategoryDto.create(option(seriesExtId), option(seriesCategoryId),
-                videoId, option(scaleId), c.getName(), c.getDescription(), c.getSettings(), resource);
-        Category category = tx(namedQuery.persist(copyDto)).toCategory();
-
-        // Copy labels
-        getLabelsByCategoryId(templateCategoryId).forEach(
-                l -> createLabel(category.getId(), l.getValue(), l.getAbbreviation(), l.getDescription(),
-                        l.getSettings(), resource));
-        return category;
-      }
-    });
   }
 
   @Override
@@ -898,21 +847,6 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
     return findAll(QuestionnaireDto.class, "Questionnaire.findAllOfVideo", id(videoId)).stream()
             .map(QuestionnaireDto::toQuestionnaire)
             .filter(this::hasResourceAccess);
-  }
-
-  @Override
-  public Option<Questionnaire> createQuestionnaireFromTemplate(
-      final long templateQuestionnaireId,
-      final long videoId,
-      final Resource resource) throws ExtendedAnnotationException {
-    return getQuestionnaire(templateQuestionnaireId, false).map(new Function<>() {
-      @Override
-      public Questionnaire apply(Questionnaire q) {
-        final QuestionnaireDto copyDto = QuestionnaireDto.create(videoId, q.getTitle(), q.getContent(), q.getSettings(), resource);
-
-        return tx(namedQuery.persist(copyDto)).toQuestionnaire();
-      }
-    });
   }
 
   @Override
