@@ -41,7 +41,7 @@ public class ResourceImpl implements Resource {
   private final Option<Long> updatedBy;
   private final Option<Long> deletedBy;
 
-  private Map<String, String> tags = new HashMap<String, String>();
+  private Map<String, String> tags = new HashMap<>();
 
   public ResourceImpl(Option<Integer> access, Option<Long> createdBy, Option<Long> updatedBy, Option<Long> deletedBy,
           Option<Date> createdAt, Option<Date> updatedAt, Option<Date> deletedAt, Map<String, String> tags) {

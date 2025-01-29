@@ -19,7 +19,6 @@ import static org.opencast.annotation.impl.Jsons.conc;
 import static org.opencast.annotation.impl.Jsons.jA;
 import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.p;
-import static org.opencastproject.util.data.Monadics.mlist;
 import static org.opencastproject.util.data.Option.option;
 
 import org.opencast.annotation.api.Category;
@@ -35,19 +34,13 @@ import org.opencastproject.util.data.Option;
 
 import org.json.simple.JSONObject;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.stream.Stream;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -59,9 +52,6 @@ import javax.persistence.Table;
         @NamedQuery(name = "Label.findByIdIncludeDeleted", query = "select a from Label a where a.id = :id"),
         @NamedQuery(name = "Label.findById", query = "select a from Label a where a.id = :id and a.deletedAt IS NULL"),
         @NamedQuery(name = "Label.findAllOfCategory", query = "select a from Label a where a.categoryId = :id"),
-        @NamedQuery(name = "Label.findAllOfCategorySince", query = "select a from Label a where a.categoryId = :id and ((a.updatedAt IS NOT NULL AND a.updatedAt >= :since) OR (a.updatedAt IS NULL AND a.createdAt >= :since))"),
-        @NamedQuery(name = "Label.deleteById", query = "delete from Label a where a.id = :id"),
-        @NamedQuery(name = "Label.count", query = "select count(a) from Label a where a.deletedAt IS NULL"),
         @NamedQuery(name = "Label.clear", query = "delete from Label") })
 public class LabelDto extends AbstractResourceDto {
   @Id
@@ -88,12 +78,6 @@ public class LabelDto extends AbstractResourceDto {
   @Column(name = "category_id", nullable = false)
   private long categoryId;
 
-  @ElementCollection
-  @MapKeyColumn(name = "name")
-  @Column(name = "value")
-  @CollectionTable(name = "xannotations_label_tags", joinColumns = @JoinColumn(name = "label_id"))
-  protected Map<String, String> tags = new HashMap<String, String>();
-
   public static LabelDto create(Option<Long> seriesLabelId, long categoryId, String value, String abbreviation,
           Option<String> description, Option<String> settings, Resource resource) {
     LabelDto dto = new LabelDto().update(seriesLabelId, value, abbreviation, description, settings, resource);
@@ -109,38 +93,34 @@ public class LabelDto extends AbstractResourceDto {
     this.abbreviation = abbreviation;
     this.description = description.getOrElseNull();
     this.settings = settings.getOrElseNull();
-    if (resource.getTags() != null)
-      this.tags = resource.getTags();
     return this;
   }
 
   public Label toLabel() {
     return new LabelImpl(id, option(seriesLabelId), categoryId, value, abbreviation, option(description),
             option(settings), new ResourceImpl(option(access), option(createdBy), option(updatedBy), option(deletedBy),
-                    option(createdAt), option(updatedAt), option(deletedAt), tags));
+                    option(createdAt), option(updatedAt), option(deletedAt), null));
   }
 
-  public static final Function<LabelDto, Label> toLabel = new Function<LabelDto, Label>() {
+  public static final Function<LabelDto, Label> toLabel = new Function<>() {
     @Override
     public Label apply(LabelDto dto) {
       return dto.toLabel();
     }
   };
 
-  public static final Function2<ExtendedAnnotationService, Label, JSONObject> toJson = new Function2<ExtendedAnnotationService, Label, JSONObject>() {
+  public static final Function2<ExtendedAnnotationService, Label, JSONObject> toJson = new Function2<>() {
     @Override
     public JSONObject apply(ExtendedAnnotationService s, Label l) {
       Category category = s.getCategory(l.getCategoryId(), true).get();
 
-      return conc(
-              AbstractResourceDto.toJson.apply(s, l),
-              jO(p("id", l.getId()), p("value", l.getValue()), p("abbreviation", l.getAbbreviation()),
-                      p("description", l.getDescription()), p("settings", l.getSettings()),
-                      p("category", CategoryDto.toJson.apply(s, category))));
+      return conc(AbstractResourceDto.toJson.apply(s, l),
+          jO(p("id", l.getId()), p("value", l.getValue()), p("abbreviation", l.getAbbreviation()), p("description", l.getDescription()), p("settings", l.getSettings()),
+              p("category", CategoryDto.toJson.apply(s, category))));
     }
   };
 
-  public static JSONObject toJson(ExtendedAnnotationService s, int offset, List<Label> ls) {
-    return jO(p("offset", offset), p("count", ls.size()), p("labels", jA(mlist(ls).map(toJson.curry(s)))));
+  public static JSONObject toJson(ExtendedAnnotationService s, Stream<Label> ls) {
+    return jO(p("labels", jA(ls.map(l -> toJson.apply(s, l)).toArray())));
   }
 }

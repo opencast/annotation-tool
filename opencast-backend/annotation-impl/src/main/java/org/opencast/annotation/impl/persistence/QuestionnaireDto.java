@@ -41,12 +41,11 @@ public class QuestionnaireDto extends AbstractResourceDto {
   @Id
   @Column(name = "id", nullable = false)
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+  private long id;
 
   // Foreign key
-  /** If video id is null, it is a template */
-  @Column(name = "video_id")
-  private Long videoId;
+  @Column(name = "video_id", nullable = false)
+  private long videoId;
 
   @Column(name = "title", nullable = false)
   private String title;

@@ -38,7 +38,6 @@ import org.opencastproject.test.rest.RestServiceTestEnv;
 import io.restassured.http.ContentType;
 
 import org.hamcrest.Description;
-import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,7 +45,6 @@ import org.junit.Test;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.ws.rs.core.Response;
@@ -232,123 +230,65 @@ public class ExtendedAnnotationsRestServiceTest {
 
   @Test
   public void testCategory() {
-    JSONObject json = new JSONObject();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> safeJson = (Map<String, Object>) json;
-    safeJson.put("channel", "33");
-
     // create user and video
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
     final String videoId = extractLocationId(given().formParam("video_extid", "lecture").expect().statusCode(CREATED)
             .when().post(host("/videos")));
-    // post template
-    final String templateId = extractLocationId(given().formParam("name", "categoryTemplateName")
-            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
-            .body("name", equalTo("categoryTemplateName")).when().post(host("/categories")));
 
     given().pathParam("videoId", 333).formParam("name", "categoryName").expect().statusCode(BAD_REQUEST).when()
             .post(host("/videos/{videoId}/categories"));
 
-    final String id = extractLocationId(given().pathParam("videoId", videoId).formParam("tags", json.toJSONString())
-            .formParam("name", "categoryName").expect().statusCode(CREATED).body("name", equalTo("categoryName"))
-            .body("tags", equalTo(json)).when().post(host("/videos/{videoId}/categories")));
-
-    given().pathParam("videoId", videoId).formParam("category_id", templateId).expect().statusCode(CREATED)
-            .body("name", equalTo("categoryTemplateName")).when().post(host("/videos/{videoId}/categories"));
-    // put template
-    safeJson.put("channel", "22");
+    // post
+    final String id = extractLocationId(given().pathParam("videoId", videoId).formParam("name", "categoryName")
+            .expect().statusCode(CREATED).body("name", equalTo("categoryName")).when()
+            .post(host("/videos/{videoId}/categories")));
+    // put
+    given().pathParam("videoId", videoId).pathParam("categoryId", id).formParam("name", "newName")
+            .expect().statusCode(OK).body("name", equalTo("newName")).when()
+            .put(host("/videos/{videoId}/categories/{categoryId}"));
     given().pathParam("videoId", 212).pathParam("categoryId", id).contentType(ContentType.URLENC).expect()
             .statusCode(BAD_REQUEST).when().put(host("/videos/{videoId}/categories/{categoryId}"));
-
-    given().pathParam("videoId", videoId).pathParam("categoryId", id).formParam("name", "newName")
-            .formParam("tags", json.toJSONString()).expect().statusCode(OK).body("name", equalTo("newName"))
-            .body("tags", equalTo(json)).when().put(host("/videos/{videoId}/categories/{categoryId}"));
     // get
-    given().pathParam("categoryId", templateId).expect().statusCode(OK).body("name", equalTo("categoryTemplateName"))
-            .when().get(host("/categories/{categoryId}"));
     given().pathParam("videoId", videoId).pathParam("categoryId", id).expect().statusCode(OK)
             .body("name", equalTo("newName")).when().get(host("/videos/{videoId}/categories/{categoryId}"));
     given().pathParam("videoId", 342).pathParam("categoryId", id).expect().statusCode(BAD_REQUEST).when()
             .get(host("/videos/{videoId}/categories/{categoryId}"));
     // get all
-    safeJson.put("channel", "33");
-    given().expect().statusCode(OK).body("categories", iterableWithSize(1)).when()
-            .get(host("/categories"));
-    given().queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
-            .body("categories", iterableWithSize(1)).when().get(host("/categories"));
-    given().queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
-            .body("categories", iterableWithSize(1)).when().get(host("/categories"));
     given().pathParam("videoId", videoId).expect().statusCode(OK)
-            .body("categories", iterableWithSize(2)).when().get(host("/videos/{videoId}/categories"));
-    safeJson.put("channel", "22");
-    given().queryParam("tags-and", json.toJSONString()).pathParam("videoId", videoId).expect()
-            .statusCode(OK).body("categories", iterableWithSize(1)).when()
-            .get(host("/videos/{videoId}/categories"));
-    given().queryParam("tags-or", json.toJSONString()).pathParam("videoId", videoId).expect()
-            .statusCode(OK).body("categories", iterableWithSize(1)).when()
-            .get(host("/videos/{videoId}/categories"));
+            .body("categories", iterableWithSize(1)).when().get(host("/videos/{videoId}/categories"));
   }
 
   @Test
   public void testScale() {
-    JSONObject json = new JSONObject();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> safeJson = (Map<String, Object>) json;
-    safeJson.put("channel", "33");
-
     // create user and video
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
     final String videoId = extractLocationId(given().formParam("video_extid", "lecture").expect().statusCode(CREATED)
             .when().post(host("/videos")));
-    // post template
-    final String templateId = extractLocationId(given().formParam("name", "scaleTemplateName")
-            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
-            .body("name", equalTo("scaleTemplateName")).when().post(host("/scales")));
-
+    // post
     given().pathParam("videoId", 333).formParam("name", "scaleName").expect().statusCode(BAD_REQUEST).when()
             .post(host("/videos/{videoId}/scales"));
 
     final String id = extractLocationId(given().pathParam("videoId", videoId).formParam("name", "scaleName")
-            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED).body("name", equalTo("scaleName"))
-            .body("tags", equalTo(json)).when().post(host("/videos/{videoId}/scales")));
+            .expect().statusCode(CREATED).body("name", equalTo("scaleName"))
+            .when().post(host("/videos/{videoId}/scales")));
 
-    given().pathParam("videoId", videoId).formParam("scale_id", templateId).expect().statusCode(CREATED)
-            .body("name", equalTo("scaleTemplateName")).when().post(host("/videos/{videoId}/scales"));
-    // put template
-    safeJson.put("channel", "22");
+    // put
     given().pathParam("videoId", 212).pathParam("scaleId", id).contentType(ContentType.URLENC).expect()
             .statusCode(BAD_REQUEST).when().put(host("/videos/{videoId}/scales/{scaleId}"));
 
     given().pathParam("videoId", videoId).pathParam("scaleId", id).formParam("name", "newName")
-            .formParam("tags", json.toJSONString()).expect().statusCode(OK).body("name", equalTo("newName"))
-            .body("tags", equalTo(json)).when().put(host("/videos/{videoId}/scales/{scaleId}"));
+            .expect().statusCode(OK).body("name", equalTo("newName")).when()
+            .put(host("/videos/{videoId}/scales/{scaleId}"));
     // get
-    given().pathParam("scaleId", templateId).expect().statusCode(OK).body("name", equalTo("scaleTemplateName")).when()
-            .get(host("/scales/{scaleId}"));
     given().pathParam("videoId", videoId).pathParam("scaleId", id).expect().statusCode(OK)
             .body("name", equalTo("newName")).when().get(host("/videos/{videoId}/scales/{scaleId}"));
     given().pathParam("videoId", 342).pathParam("scaleId", id).expect().statusCode(BAD_REQUEST).when()
             .get(host("/videos/{videoId}/scales/{scaleId}"));
     // get all
-    safeJson.put("channel", "33");
-    given().expect().statusCode(OK).body("scales", iterableWithSize(1)).when()
-            .get(host("/scales"));
-    given().queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
-            .body("scales", iterableWithSize(1)).when().get(host("/scales"));
-    given().queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
-            .body("scales", iterableWithSize(1)).when().get(host("/scales"));
     given().pathParam("videoId", videoId).expect().statusCode(OK)
-            .body("scales", iterableWithSize(2)).when().get(host("/videos/{videoId}/scales"));
-    safeJson.put("channel", "22");
-    given().queryParam("tags-and", json.toJSONString()).pathParam("videoId", videoId).expect()
-            .statusCode(OK).body("scales", iterableWithSize(1)).when()
-            .get(host("/videos/{videoId}/scales"));
-    given().queryParam("tags-or", json.toJSONString()).pathParam("videoId", videoId).expect()
-            .statusCode(OK).body("scales", iterableWithSize(1)).when()
-            .get(host("/videos/{videoId}/scales"));
+            .body("scales", iterableWithSize(1)).when().get(host("/videos/{videoId}/scales"));
     // delete
     given().pathParam("scaleId", 12345).expect().statusCode(NOT_FOUND).when().delete(host("/scales/{scaleId}"));
-    given().pathParam("scaleId", templateId).expect().statusCode(OK).when().delete(host("/scales/{scaleId}"));
     given().pathParam("videoId", "3290").pathParam("scaleId", id).expect().statusCode(BAD_REQUEST).when()
             .delete(host("/videos/{videoId}/scales/{scaleId}"));
     given().pathParam("videoId", videoId).pathParam("scaleId", 32342).expect().statusCode(NOT_FOUND).when()
@@ -359,47 +299,30 @@ public class ExtendedAnnotationsRestServiceTest {
 
   @Test
   public void testScaleValue() {
-    JSONObject json = new JSONObject();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> safeJson = (Map<String, Object>) json;
-    safeJson.put("channel", "33");
-
     // create user, video and scale
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
     final String videoId = extractLocationId(given().formParam("video_extid", "lecture").expect().statusCode(CREATED)
             .when().post(host("/videos")));
     final String scaleId = extractLocationId(given().pathParam("videoId", videoId).formParam("name", "scaleName")
             .expect().body("name", equalTo("scaleName")).when().post(host("/videos/{videoId}/scales")));
-    // post template
-    final String templateId = extractLocationId(given().pathParam("scaleId", scaleId)
-            .formParam("name", "scaleValueTemplateName").expect().statusCode(CREATED)
-            .body("name", equalTo("scaleValueTemplateName")).when().post(host("/scales/{scaleId}/scalevalues")));
-
-    given().pathParam("scaleId", 3232).formParam("name", "scaleValueTemplateName").expect().statusCode(BAD_REQUEST)
-            .when().post(host("/scales/{scaleId}/scalevalues"));
+    // post
     given().pathParam("videoId", 333).pathParam("scaleId", scaleId).formParam("name", "scaleName").expect()
             .statusCode(BAD_REQUEST).when().post(host("/videos/{videoId}/scales/{scaleId}/scalevalues"));
 
     final String id = extractLocationId(given().pathParam("videoId", videoId).pathParam("scaleId", scaleId)
-            .formParam("name", "scaleValueName").formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
-            .body("name", equalTo("scaleValueName")).body("tags", equalTo(json)).when()
-            .post(host("/videos/{videoId}/scales/{scaleId}/scalevalues")));
-    // put template
-    safeJson.put("channel", "22");
+            .formParam("name", "scaleValueName").expect().statusCode(CREATED).body("name", equalTo("scaleValueName"))
+            .when().post(host("/videos/{videoId}/scales/{scaleId}/scalevalues")));
+    // put
     given().pathParam("videoId", 212).pathParam("scaleId", scaleId).pathParam("scaleValueId", id)
             .contentType(ContentType.URLENC).expect() .statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
 
     given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).pathParam("scaleValueId", id)
-            .formParam("name", "newName").formParam("tags", json.toJSONString()).expect().statusCode(OK)
-            .body("name", equalTo("newName")).body("tags", equalTo(json)).when()
+            .formParam("name", "newName").expect().statusCode(OK).body("name", equalTo("newName")).when()
             .put(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
     // get
-    given().pathParam("scaleId", scaleId).pathParam("scaleValueId", templateId).expect().statusCode(OK)
-            .body("name", equalTo("scaleValueTemplateName")).when()
-            .get(host("/scales/{scaleId}/scalevalues/{scaleValueId}"));
-    given().pathParam("scaleId", scaleId).pathParam("scaleValueId", 323).expect().statusCode(NOT_FOUND).when()
-            .get(host("/scales/{scaleId}/scalevalues/{scaleValueId}"));
+    given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).pathParam("scaleValueId", 323).expect()
+            .statusCode(NOT_FOUND).when().get(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
     given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).pathParam("scaleValueId", id).expect()
             .statusCode(OK).body("name", equalTo("newName")).when()
             .get(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
@@ -408,30 +331,10 @@ public class ExtendedAnnotationsRestServiceTest {
     given().pathParam("videoId", videoId).pathParam("scaleId", 323).pathParam("scaleValueId", id).expect()
             .statusCode(BAD_REQUEST).when().get(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
     // get all
-    given().pathParam("scaleId", scaleId).expect().statusCode(OK)
-            .body("scaleValues", iterableWithSize(2)).when().get(host("/scales/{scaleId}/scalevalues"));
-    given().queryParam("tags-and", json.toJSONString()).pathParam("scaleId", scaleId).expect()
-            .statusCode(OK).body("scaleValues", iterableWithSize(1)).when()
-            .get(host("/scales/{scaleId}/scalevalues"));
-    given().queryParam("tags-or", json.toJSONString()).pathParam("scaleId", scaleId).expect()
-            .statusCode(OK).body("scaleValues", iterableWithSize(1)).when()
-            .get(host("/scales/{scaleId}/scalevalues"));
     given().pathParam("videoId", videoId).pathParam("scaleId", scaleId).expect().statusCode(OK)
-            .body("scaleValues", iterableWithSize(2)).when()
-            .get(host("/videos/{videoId}/scales/{scaleId}/scalevalues"));
-    given().pathParam("videoId", videoId).pathParam("scaleId", scaleId)
-            .queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
-            .body("scaleValues", iterableWithSize(1)).when()
-            .get(host("/videos/{videoId}/scales/{scaleId}/scalevalues"));
-    given().pathParam("videoId", videoId).pathParam("scaleId", scaleId)
-            .queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
             .body("scaleValues", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/scales/{scaleId}/scalevalues"));
     // delete
-    given().pathParam("scaleId", scaleId).pathParam("scaleValueId", 12345).expect().statusCode(NOT_FOUND).when()
-            .delete(host("/scales/{scaleId}/scalevalues/{scaleValueId}"));
-    given().pathParam("scaleId", scaleId).pathParam("scaleValueId", templateId).expect().statusCode(OK).when()
-            .delete(host("/scales/{scaleId}/scalevalues/{scaleValueId}"));
     given().pathParam("videoId", "3290").pathParam("scaleId", scaleId).pathParam("scaleValueId", id).expect()
             .statusCode(BAD_REQUEST).when()
             .delete(host("/videos/{videoId}/scales/{scaleId}/scalevalues/{scaleValueId}"));
@@ -446,81 +349,46 @@ public class ExtendedAnnotationsRestServiceTest {
 
   @Test
   public void testLabel() {
-    JSONObject json = new JSONObject();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> safeJson = (Map<String, Object>) json;
-    safeJson.put("channel", "33");
-
     // create user, video and scale
     given().formParam("user_extid", "admin").formParam("nickname", "klausi").expect().when().put(host("/users"));
     final String videoId = extractLocationId(given().formParam("video_extid", "lecture").expect().statusCode(CREATED)
             .when().post(host("/videos")));
-    final String categoryId = extractLocationId(given().formParam("name", "categoryTemplateName").expect()
-            .statusCode(CREATED).when().post(host("/categories")));
-    // post template
-    final String templateId = extractLocationId(given().pathParam("categoryId", categoryId)
-            .formParam("value", "testTemplateValue").formParam("abbreviation", "testTemplateAbbreviation").expect()
-            .statusCode(CREATED).body("abbreviation", equalTo("testTemplateAbbreviation")).when()
-            .post(host("/categories/{categoryId}/labels")));
-    given().pathParam("categoryId", 3232).formParam("value", "testTemplateValue")
-            .formParam("abbreviation", "testTemplateAbbreviation").expect().statusCode(BAD_REQUEST).when()
-            .post(host("/categories/{categoryId}/labels"));
-    given().pathParam("videoId", 333).pathParam("categoryId", categoryId).formParam("value", "testTemplateValue")
-            .formParam("abbreviation", "testTemplateAbbreviation").expect().statusCode(BAD_REQUEST).when()
-            .post(host("/videos/{videoId}/categories/{categoryId}/labels"));
-
-    final String id = extractLocationId(given().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
-            .formParam("value", "testValue").formParam("abbreviation", "testAbbreviation")
-            .formParam("tags", json.toJSONString()).expect().statusCode(CREATED)
-            .body("abbreviation", equalTo("testAbbreviation")).body("tags", equalTo(json)).when()
+    final String categoryId = extractLocationId(given().pathParam("videoId", videoId).formParam("name", "categoryName")
+            .expect().statusCode(CREATED).when().post(host("/videos/{videoId}/categories")));
+    // post
+    String id = extractLocationId(given().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
+            .formParam("value", "testValue").formParam("abbreviation", "testAbbreviation").expect()
+            .statusCode(CREATED).body("abbreviation", equalTo("testAbbreviation")).when()
             .post(host("/videos/{videoId}/categories/{categoryId}/labels")));
-    // put template
-    safeJson.put("channel", "22");
+    given().pathParam("videoId", videoId).pathParam("categoryId", 3232).formParam("value", "testValue")
+            .formParam("abbreviation", "testAbbreviation").expect().statusCode(BAD_REQUEST).when()
+            .post(host("/videos/{videoId}/categories/{categoryId}/labels"));
+    given().pathParam("videoId", 333).pathParam("categoryId", categoryId).formParam("value", "testValue")
+            .formParam("abbreviation", "testAbbreviation").expect().statusCode(BAD_REQUEST).when()
+            .post(host("/videos/{videoId}/categories/{categoryId}/labels"));
+    // put
     given().pathParam("videoId", 212).pathParam("categoryId", categoryId).pathParam("labelId", id)
             .contentType(ContentType.URLENC).expect().statusCode(BAD_REQUEST).when()
             .put(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
-
     given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).pathParam("labelId", id)
             .formParam("value", "newValue").formParam("abbreviation", "newAbbreviation")
-            .formParam("tags", json.toJSONString()).expect().statusCode(OK)
-            .body("abbreviation", equalTo("newAbbreviation")).body("tags", equalTo(json)).when()
+            .expect().statusCode(OK).body("abbreviation", equalTo("newAbbreviation")).when()
             .put(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
     // get
-    given().pathParam("categoryId", categoryId).pathParam("labelId", templateId).expect().statusCode(OK)
-            .body("abbreviation", equalTo("testTemplateAbbreviation")).when()
-            .get(host("/categories/{categoryId}/labels/{labelId}"));
-    given().pathParam("categoryId", categoryId).pathParam("labelId", 323).expect().statusCode(NOT_FOUND).when()
-            .get(host("/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).pathParam("labelId", id).expect()
             .statusCode(OK).body("abbreviation", equalTo("newAbbreviation")).when()
             .get(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
+    given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).pathParam("labelId", 323).expect()
+            .statusCode(NOT_FOUND).when().get(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", 342).pathParam("categoryId", categoryId).pathParam("labelId", id).expect()
             .statusCode(BAD_REQUEST).when().get(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", videoId).pathParam("categoryId", 323).pathParam("labelId", id).expect()
             .statusCode(BAD_REQUEST).when().get(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
     // get all
-    given().pathParam("categoryId", categoryId).expect().statusCode(OK)
-            .body("labels", iterableWithSize(2)).when().get(host("/categories/{categoryId}/labels"));
-    given().pathParam("categoryId", categoryId).queryParam("tags-and", json.toJSONString()).expect()
-            .statusCode(OK).body("labels", iterableWithSize(1)).when()
-            .get(host("/categories/{categoryId}/labels"));
-    given().pathParam("categoryId", categoryId).queryParam("tags-or", json.toJSONString()).expect()
-            .statusCode(OK).body("labels", iterableWithSize(1)).when()
-            .get(host("/categories/{categoryId}/labels"));
     given().pathParam("videoId", videoId).pathParam("categoryId", categoryId).expect().statusCode(OK)
-            .body("labels", iterableWithSize(2)).when()
+            .body("labels", iterableWithSize(1)).when()
             .get(host("/videos/{videoId}/categories/{categoryId}/labels"));
-    given().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
-            .queryParam("tags-and", json.toJSONString()).expect().statusCode(OK)
-            .body("labels", iterableWithSize(1)).when().get(host("/videos/{videoId}/categories/{categoryId}/labels"));
-    given().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
-            .queryParam("tags-or", json.toJSONString()).expect().statusCode(OK)
-            .body("labels", iterableWithSize(1)).when().get(host("/videos/{videoId}/categories/{categoryId}/labels"));
     // delete
-    given().pathParam("categoryId", categoryId).pathParam("labelId", 12345).expect().statusCode(NOT_FOUND).when()
-            .delete(host("/categories/{categoryId}/labels/{labelId}"));
-    given().pathParam("categoryId", categoryId).pathParam("labelId", templateId).expect().statusCode(OK).when()
-            .delete(host("/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", "3290").pathParam("categoryId", categoryId).pathParam("labelId", id).expect()
             .statusCode(BAD_REQUEST).when().delete(host("/videos/{videoId}/categories/{categoryId}/labels/{labelId}"));
     given().pathParam("videoId", videoId).pathParam("categoryId", 322).pathParam("labelId", id).expect()
@@ -641,8 +509,8 @@ public class ExtendedAnnotationsRestServiceTest {
     final String scaleValueId = extractLocationId(given().pathParam("videoId", videoId).pathParam("scaleId", scaleId)
             .formParam("name", "scaleValueName").expect().statusCode(CREATED).when()
             .post(host("/videos/{videoId}/scales/{scaleId}/scalevalues")));
-    final String categoryId = extractLocationId(given().formParam("name", "categoryTemplateName").expect()
-            .statusCode(CREATED).when().post(host("/categories")));
+    final String categoryId = extractLocationId(given().pathParam("videoId", videoId).formParam("name", "categoryName")
+            .expect().statusCode(CREATED).when().post(host("/videos/{videoId}/categories")));
     final String labelId = extractLocationId(given().pathParam("videoId", videoId).pathParam("categoryId", categoryId)
             .formParam("value", "testValue").formParam("abbreviation", "testAbbreviation").expect().statusCode(CREATED)
             .when().post(host("/videos/{videoId}/categories/{categoryId}/labels")));

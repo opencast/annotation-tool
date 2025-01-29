@@ -41,8 +41,7 @@ public final class LabelImpl extends ResourceImpl implements Label {
   public LabelImpl(long id, Option<Long> seriesLabelId, long categoryId, String value, String abbreviation,
           Option<String> description, Option<String> settings, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(),
-            resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
-            resource.getTags());
+            resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.seriesLabelId = seriesLabelId;
     this.categoryId = categoryId;
@@ -60,7 +59,7 @@ public final class LabelImpl extends ResourceImpl implements Label {
   @Override
   public Option<Long> getVideo(final ExtendedAnnotationService eas) {
     final boolean includeDeleted = true;
-    return eas.getCategory(categoryId, includeDeleted).bind(new Function<Category, Option<Long>>() {
+    return eas.getCategory(categoryId, includeDeleted).bind(new Function<>() {
       @Override
       public Option<Long> apply(Category category) {
         return category.getVideo(eas);
@@ -107,11 +106,11 @@ public final class LabelImpl extends ResourceImpl implements Label {
     Label label = (Label) o;
     return id == label.getId() && categoryId == label.getCategoryId() && value.equals(label.getValue())
             && abbreviation.equals(label.getAbbreviation()) && description.equals(label.getDescription())
-            && settings.equals(label.getSettings()) && getTags().equals(label.getTags());
+            && settings.equals(label.getSettings());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, seriesLabelId, categoryId, value, abbreviation, description, settings, getTags());
+    return Objects.hash(id, seriesLabelId, categoryId, value, abbreviation, description, settings);
   }
 }

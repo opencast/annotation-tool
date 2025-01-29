@@ -16,10 +16,8 @@
 package org.opencast.annotation.impl.persistence;
 
 import static org.opencast.annotation.impl.Jsons.conc;
-import static org.opencast.annotation.impl.Jsons.jA;
 import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.p;
-import static org.opencastproject.util.data.Monadics.mlist;
 import static org.opencastproject.util.data.Option.option;
 
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -33,8 +31,6 @@ import org.opencastproject.util.data.Function2;
 import org.opencastproject.util.data.Option;
 
 import org.json.simple.JSONObject;
-
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -98,8 +94,4 @@ public class UserDto extends AbstractResourceDto {
           jO(p("id", u.getId()), p("user_extid", u.getExtId()), p("nickname", u.getNickname()), p("email", u.getEmail())));
     }
   };
-
-  public static JSONObject toJson(ExtendedAnnotationService eas, int offset, List<User> us) {
-    return jO(p("offset", offset), p("count", us.size()), p("users", jA(mlist(us).map(toJson.curry(eas)))));
-  }
 }

@@ -21,8 +21,10 @@ import org.opencastproject.util.data.Option;
 /** A class representing a scale of the annotation tool. */
 public interface Scale extends Resource {
 
-  /** The video id where the scale is */
-  Option<Long> getVideoId();
+  /**
+   * The video id where the scale is
+   */
+  long getVideoId();
 
   /** The scale name */
   String getName();

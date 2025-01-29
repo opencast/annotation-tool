@@ -18,8 +18,6 @@ package org.opencast.annotation.api;
 import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.util.data.Option;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -302,7 +300,7 @@ public interface ExtendedAnnotationService {
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Scale createScale(Option<Long> videoId, String name, Option<String> description, Resource resource)
+  Scale createScale(long videoId, String name, Option<String> description, Resource resource)
           throws ExtendedAnnotationException;
 
   /**
@@ -336,24 +334,11 @@ public interface ExtendedAnnotationService {
   /**
    * Get all scales from a video.
    *
-   * @param videoId
-   *          the video id
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to annotations modified since the said date
-   * @param tagsAnd
-   *          the tags logical AND Map
-   * @param tagsOr
-   *          the tags logical OR Map
+   * @param videoId the video id
    * @return the scale list or an empty list if no scale has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
+   * @throws ExtendedAnnotationException if an error occurs while storing/retrieving from persistence storage
    */
-  List<Scale> getScales(Option<Long> videoId, Option<Integer> offset, Option<Integer> limit, Option<Date> since,
-          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+  Stream<Scale> getScales(long videoId) throws ExtendedAnnotationException;
 
   /**
    * Update a scale.
@@ -412,24 +397,11 @@ public interface ExtendedAnnotationService {
   /**
    * Get all scale values from a scale.
    *
-   * @param scaleId
-   *          the scale id
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to annotations modified since the said date
-   * @param tagsAnd
-   *          the tags logical AND Map
-   * @param tagsOr
-   *          the tags logical OR Map
+   * @param scaleId the scale id
    * @return the scale value list or an empty list if no scale values has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
+   * @throws ExtendedAnnotationException if an error occurs while storing/retrieving from persistence storage
    */
-  List<ScaleValue> getScaleValues(long scaleId, Option<Integer> offset, Option<Integer> limit, Option<Date> since,
-          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+  Stream<ScaleValue> getScaleValues(long scaleId) throws ExtendedAnnotationException;
 
   /**
    * Update a scale value
@@ -554,7 +526,7 @@ public interface ExtendedAnnotationService {
    * @throws ExtendedAnnotationException
    *           if an error occurs while storing/retrieving from persistence storage
    */
-  Category createCategory(Option<String> seriesExtId, Option<Long> seriesCategoryId, Option<Long> videoId,
+  Category createCategory(Option<String> seriesExtId, Option<Long> seriesCategoryId, long videoId,
           Option<Long> scaleId, String name, Option<String> description, Option<String> settings, Resource resource)
           throws ExtendedAnnotationException;
 
@@ -592,27 +564,12 @@ public interface ExtendedAnnotationService {
   /**
    * Get all categories from a video.
    *
-   * @param seriesExtId
-   *          the external series the category belongs to
-   * @param videoId
-   *          the video id
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to annotations modified since the said date
-   * @param tagsAnd
-   *          the tags logical AND Map
-   * @param tagsOr
-   *          the tags logical OR Map
+   * @param seriesExtId the external series the category belongs to
+   * @param videoId     the video id
    * @return the category list or an empty list if no categories has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
+   * @throws ExtendedAnnotationException if an error occurs while storing/retrieving from persistence storage
    */
-  List<Category> getCategories(Option<String> seriesExtId, Option<Long> videoId, Option<Integer> offset,
-          Option<Integer> limit, Option<Date> since, Option<Map<String, String>> tagsAnd,
-          Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+  Stream<Category> getCategories(Option<String> seriesExtId, long videoId) throws ExtendedAnnotationException;
 
   /**
    * Update a category.
@@ -684,24 +641,11 @@ public interface ExtendedAnnotationService {
   /**
    * Get all labels from a video.
    *
-   * @param categoryId
-   *          the category id
-   * @param offset
-   *          pagination offset
-   * @param limit
-   *          limit the result set to the said amount
-   * @param since
-   *          limit the result set to lables modified since the said date
-   * @param tagsAnd
-   *          the tags logical AND Map
-   * @param tagsOr
-   *          the tags logical OR Map
+   * @param categoryId the category id
    * @return the label list or an empty list if no labels has been found
-   * @throws ExtendedAnnotationException
-   *           if an error occurs while storing/retrieving from persistence storage
+   * @throws ExtendedAnnotationException if an error occurs while storing/retrieving from persistence storage
    */
-  List<Label> getLabels(long categoryId, Option<Integer> offset, Option<Integer> limit, Option<Date> since,
-          Option<Map<String, String>> tagsAnd, Option<Map<String, String>> tagsOr) throws ExtendedAnnotationException;
+  Stream<Label> getLabels(long categoryId) throws ExtendedAnnotationException;
 
   /**
    * Update a label.

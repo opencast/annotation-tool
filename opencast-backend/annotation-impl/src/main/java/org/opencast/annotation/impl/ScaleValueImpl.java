@@ -38,8 +38,7 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
 
   public ScaleValueImpl(long id, long scaleId, String name, double value, int order, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.scaleId = scaleId;
     this.name = name;
@@ -55,7 +54,7 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
   @Override
   public Option<Long> getVideo(final ExtendedAnnotationService eas) {
     boolean includeDeleted = true;
-    return eas.getScale(scaleId, includeDeleted).bind(new Function<Scale, Option<Long>>() {
+    return eas.getScale(scaleId, includeDeleted).bind(new Function<>() {
       @Override
       public Option<Long> apply(Scale scale) {
         return scale.getVideo(eas);
@@ -91,12 +90,11 @@ public class ScaleValueImpl extends ResourceImpl implements ScaleValue {
       return false;
     ScaleValue scaleValue = (ScaleValue) o;
     return id == scaleValue.getId() && scaleId == scaleValue.getScaleId() && name.equals(scaleValue.getName())
-            && value == scaleValue.getValue() && order == scaleValue.getOrder()
-            && getTags().equals(scaleValue.getTags());
+            && value == scaleValue.getValue() && order == scaleValue.getOrder();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, scaleId, name, value, order, getTags());
+    return Objects.hash(id, scaleId, name, value, order);
   }
 }

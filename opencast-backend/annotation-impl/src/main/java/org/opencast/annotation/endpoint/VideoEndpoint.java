@@ -8,7 +8,6 @@ import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestSe
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.NO_CONTENT;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
-import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.parseToJsonMap;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
 import static org.opencastproject.util.UrlSupport.uri;
 import static org.opencastproject.util.data.Arrays.array;
@@ -22,30 +21,37 @@ import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.Comment;
 import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationService;
+import org.opencast.annotation.api.Label;
 import org.opencast.annotation.api.Questionnaire;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
+import org.opencast.annotation.api.ScaleValue;
 import org.opencast.annotation.api.Track;
 import org.opencast.annotation.api.Video;
 import org.opencast.annotation.impl.AnnotationImpl;
+import org.opencast.annotation.impl.CategoryImpl;
 import org.opencast.annotation.impl.CommentImpl;
+import org.opencast.annotation.impl.LabelImpl;
 import org.opencast.annotation.impl.ResourceImpl;
+import org.opencast.annotation.impl.ScaleImpl;
+import org.opencast.annotation.impl.ScaleValueImpl;
 import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.persistence.AnnotationDto;
 import org.opencast.annotation.impl.persistence.CategoryDto;
 import org.opencast.annotation.impl.persistence.CommentDto;
+import org.opencast.annotation.impl.persistence.LabelDto;
 import org.opencast.annotation.impl.persistence.QuestionnaireDto;
 import org.opencast.annotation.impl.persistence.ScaleDto;
+import org.opencast.annotation.impl.persistence.ScaleValueDto;
 import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
 
 import org.opencastproject.mediapackage.MediaPackage;
+import org.opencastproject.util.data.Function;
 import org.opencastproject.util.data.Function0;
 import org.opencastproject.util.data.Option;
-import org.opencastproject.util.data.functions.Functions;
 
 import java.net.URI;
-import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -147,7 +153,11 @@ public class VideoEndpoint {
 
           return Response.created(trackLocationUri(t)).entity(TrackDto.toJson.apply(eas, t).toString()).build();
         } catch (ExtendedAnnotationException e) {
-          return notFoundToBadRequest(e);
+          if (e.getCauseCode() == ExtendedAnnotationException.Cause.NOT_FOUND) {
+            return BAD_REQUEST;
+          } else {
+            throw e;
+          }
         }
       }
     });
@@ -159,7 +169,7 @@ public class VideoEndpoint {
   public Response putTrack(@PathParam("id") final long id, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("settings") final String settings,
           @FormParam("access") final Integer access) {
-    return run(array(name), new Function0<Response>() {
+    return run(array(name), new Function0<>() {
       @Override
       public Response apply() {
         // check if video exists
@@ -181,9 +191,7 @@ public class VideoEndpoint {
                 eas.updateTrack(updated);
                 track = updated;
               }
-              return Response.ok(TrackDto.toJson.apply(eas, track).toString())
-                      .header(LOCATION, trackLocationUri(updated))
-                      .build();
+              return Response.ok(TrackDto.toJson.apply(eas, track).toString()).header(LOCATION, trackLocationUri(updated)).build();
             }
 
             @Override
@@ -423,24 +431,33 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales")
   public Response postScale(@FormParam("name") final String name, @FormParam("description") final String description,
-          @FormParam("scale_id") final Long scaleId, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    if (scaleId == null)
-        return host.createScale(some(videoId), name, description, access, tags);
+          @FormParam("scale_id") final Long scaleId, @FormParam("access") final Integer access) {
+    if (scaleId == null) {
+      return run(array(name), new Function0<>() {
+        @Override
+        public Response apply() {
+          if (eas.getVideo(videoId).isNone()) {
+            return BAD_REQUEST;
+          }
+
+          Resource resource = eas.createResource(option(access), none());
+          final Scale scale = eas.createScale(videoId, name, trimToNone(description), resource);
+          return Response.created(scaleLocationUri(scale)).entity(ScaleDto.toJson.apply(eas, scale).toString()).build();
+        }
+      });
+    }
 
     // TODO Why does this not use `createScale`?
-    return run(array(scaleId), new Function0<Response>() {
+    return run(array(scaleId), new Function0<>() {
       @Override
       public Response apply() {
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (eas.getScale(scaleId, false).isNone() || videoOpt.isNone()
-                || (tagsMap.isSome() && tagsMap.get().isNone()))
+        if (eas.getScale(scaleId, false).isNone() || videoOpt.isNone()) {
           return BAD_REQUEST;
+        }
 
-        Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
+        Resource resource = eas.createResource(option(access), none());
         final Scale scale = eas.createScaleFromTemplate(videoId, scaleId, resource);
-        return Response.created(host.scaleLocationUri(scale, true))
-                .entity(ScaleDto.toJson.apply(eas, scale).toString()).build();
+        return Response.created(scaleLocationUri(scale)).entity(ScaleDto.toJson.apply(eas, scale).toString()).build();
       }
     });
   }
@@ -449,30 +466,113 @@ public class VideoEndpoint {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}")
   public Response putScale(@PathParam("scaleId") final long id, @FormParam("name") final String name,
-          @FormParam("description") final String description, @FormParam("tags") final String tags) {
-    return host.putScaleResponse(some(videoId), id, name, description, tags);
+          @FormParam("description") final String description) {
+    return run(array(name), new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone()) {
+          return BAD_REQUEST;
+        }
+
+        return eas.getScale(id, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(Scale scale) {
+            if (!eas.hasResourceAccess(scale)) {
+              return UNAUTHORIZED;
+            }
+            Resource resource = eas.updateResource(scale, Option.none());
+            final Scale updated = new ScaleImpl(id, videoId, name, trimToNone(description), resource);
+            if (!scale.equals(updated)) {
+              eas.updateScale(updated);
+              scale = updated;
+            }
+            return Response.ok(ScaleDto.toJson.apply(eas, scale).toString()).header(LOCATION, scaleLocationUri(scale)).build();
+          }
+
+          @Override
+          public Response none() {
+            Resource resource = eas.createResource();
+            final Scale scale = eas.createScale(videoId, name, trimToNone(description), resource);
+
+            return Response.created(scaleLocationUri(scale)).entity(ScaleDto.toJson.apply(eas, scale).toString()).build();
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}")
   public Response getScale(@PathParam("scaleId") final long id) {
-    return host.getScaleResponse(some(videoId), id);
+    if (eas.getVideo(videoId).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getScale(id, false).fold(new Option.Match<>() {
+          @Override
+          public Response some(Scale s) {
+            if (!eas.hasResourceAccess(s)) {
+              return UNAUTHORIZED;
+            }
+            return Response.ok(ScaleDto.toJson.apply(eas, s).toString()).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales")
-  public Response getScales(@QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
-          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return host.getScalesResponse(some(videoId), limit, offset, date, tagsAnd, tagsOr);
+  public Response getScales() {
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone()) {
+          return BAD_REQUEST;
+        } else {
+          return Response.ok(ScaleDto.toJson(eas, eas.getScales(videoId)).toString()).build();
+        }
+      }
+    });
   }
 
   @DELETE
   @Path("scales/{scaleId}")
   public Response deleteScale(@PathParam("scaleId") final long id) {
-    return host.deleteScaleResponse(some(videoId), id);
+    if (eas.getVideo(videoId).isNone())
+      return BAD_REQUEST;
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getScale(id, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(Scale s) {
+            if (!eas.hasResourceAccess(s)) {
+              return UNAUTHORIZED;
+            }
+            // Delete all scale values
+            eas.getScaleValues(s.getId()).forEach(eas::deleteScaleValue);
+            // Delete scale itself
+            s = eas.deleteScale(s);
+            return Response.ok(ScaleDto.toJson.apply(eas, s).toString()).header(LOCATION, scaleLocationUri(s)).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @POST
@@ -480,9 +580,20 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}/scalevalues")
   public Response postScaleValue(@PathParam("scaleId") final long scaleId, @FormParam("name") final String name,
           @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return host.postScaleValueResponse(some(videoId), scaleId, name, value, order, access, tags);
+          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access) {
+    return run(array(name), new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone() || eas.getScale(scaleId, false).isNone()) {
+          return BAD_REQUEST;
+        }
+
+        Resource resource = eas.createResource(option(access), none());
+        final ScaleValue scaleValue = eas.createScaleValue(scaleId, name, value, order, resource);
+
+        return Response.created(scaleValueLocationUri(scaleValue, videoId)).entity(ScaleValueDto.toJson.apply(eas, scaleValue).toString()).build();
+      }
+    });
   }
 
   @PUT
@@ -490,31 +601,112 @@ public class VideoEndpoint {
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response putScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id,
           @FormParam("name") final String name, @DefaultValue("0") @FormParam("value") final double value,
-          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return host.putScaleValueResponse(some(videoId), scaleId, id, name, value, order, access, tags);
+          @DefaultValue("0") @FormParam("order") final int order, @FormParam("access") final Integer access) {
+    return run(array(name), new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone() || eas.getScale(scaleId, false).isNone()) {
+          return BAD_REQUEST;
+        }
+
+        return eas.getScaleValue(id, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(ScaleValue s) {
+            if (!eas.hasResourceAccess(s)) {
+              return UNAUTHORIZED;
+            }
+            Resource resource = eas.updateResource(s, Option.none());
+            final ScaleValue updated = new ScaleValueImpl(id, scaleId, name, value, order, resource);
+            if (!s.equals(updated)) {
+              eas.updateScaleValue(updated);
+              s = updated;
+            }
+            return Response.ok(ScaleValueDto.toJson.apply(eas, s).toString()).header(LOCATION, scaleValueLocationUri(s, videoId)).build();
+          }
+
+          @Override
+          public Response none() {
+            Resource resource = eas.createResource(option(access), Option.none());
+            final ScaleValue scaleValue = eas.createScaleValue(scaleId, name, value, order, resource);
+
+            return Response.created(scaleValueLocationUri(scaleValue, videoId)).entity(ScaleValueDto.toJson.apply(eas, scaleValue).toString()).build();
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response getScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return host.getScaleValueResponse(some(videoId), scaleId, id);
+    if (eas.getVideo(videoId).isNone() || eas.getScale(scaleId, false).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getScaleValue(id, false).fold(new Option.Match<>() {
+          @Override
+          public Response some(ScaleValue s) {
+            if (!eas.hasResourceAccess(s)) {
+              return UNAUTHORIZED;
+            }
+            return Response.ok(ScaleValueDto.toJson.apply(eas, s).toString()).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("scales/{scaleId}/scalevalues")
-  public Response getScaleValues(@PathParam("scaleId") final long scaleId, @QueryParam("limit") final int limit,
-          @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return host.getScaleValuesResponse(some(videoId), scaleId, limit, offset, date, tagsAnd, tagsOr);
+  public Response getScaleValues(@PathParam("scaleId") final long scaleId) {
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone() || eas.getScale(scaleId, true).isNone()) {
+          return BAD_REQUEST;
+        }
+
+        return Response.ok(ScaleValueDto.toJson(eas, eas.getScaleValues(scaleId)).toString()).build();
+      }
+    });
   }
 
   @DELETE
   @Path("scales/{scaleId}/scalevalues/{scaleValueId}")
   public Response deleteScaleValue(@PathParam("scaleId") final long scaleId, @PathParam("scaleValueId") final long id) {
-    return host.deleteScaleValueResponse(some(videoId), scaleId, id);
+    if (eas.getVideo(videoId).isNone() || eas.getScale(scaleId, false).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getScaleValue(id, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(ScaleValue s) {
+            if (!eas.hasResourceAccess(s)) {
+              return UNAUTHORIZED;
+            }
+            s = eas.deleteScaleValue(s);
+            return Response.ok(ScaleValueDto.toJson.apply(eas, s).toString())
+                .header(LOCATION, scaleValueLocationUri(s, videoId)).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @POST
@@ -524,27 +716,38 @@ public class VideoEndpoint {
           @FormParam("series_extid") final String seriesExtId,
           @FormParam("series_category_id") final Long seriesCategoryId, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("scale_id") final Long scaleId,
-          @FormParam("settings") final String settings, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    if (id == null)
-      return host.postCategoryResponse(trimToNone(seriesExtId), option(seriesCategoryId), some(videoId), name,
-              description, scaleId, settings, access, tags);
-    return run(array(id), new Function0<Response>() {
+          @FormParam("settings") final String settings, @FormParam("access") final Integer access) {
+    if (id == null) {
+      return run(array(name), new Function0<>() {
+        @Override
+        public Response apply() {
+          if (eas.getVideo(videoId).isNone()) {
+            return BAD_REQUEST;
+          }
+
+          Resource resource = eas.createResource(option(access), none());
+          final Category category = eas.createCategory(trimToNone(seriesExtId), option(seriesCategoryId), videoId,
+              option(scaleId), name, trimToNone(description), trimToNone(settings), resource);
+
+          return Response.created(categoryLocationUri(category)).entity(CategoryDto.toJson.apply(eas, category).toString()).build();
+        }
+      });
+    }
+    return run(array(id), new Function0<>() {
       @Override
       public Response apply() {
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-        if (videoOpt.isNone() || (tagsMap.isSome() && tagsMap.get().isNone()))
+        if (videoOpt.isNone()) {
           return BAD_REQUEST;
+        }
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.identity()));
+        Resource resource = eas.createResource();
         Option<Category> categoryFromTemplate = eas.createCategoryFromTemplate(id, seriesExtId, seriesCategoryId,
-                videoId, resource);
-        return categoryFromTemplate.fold(new Option.Match<Category, Response>() {
+            videoId, resource);
+        return categoryFromTemplate.fold(new Option.Match<>() {
 
           @Override
           public Response some(Category c) {
-            return Response.created(host.categoryLocationUri(c, true))
-                    .entity(CategoryDto.toJson.apply(eas, c).toString()).build();
+            return Response.created(categoryLocationUri(c)).entity(CategoryDto.toJson.apply(eas, c).toString()).build();
           }
 
           @Override
@@ -564,33 +767,145 @@ public class VideoEndpoint {
           @FormParam("series_extid") final String seriesExtId,
           @FormParam("series_category_id") final Long seriesCategoryId, @FormParam("name") final String name,
           @FormParam("description") final String description, @FormParam("scale_id") final Long scaleId,
-          @FormParam("settings") final String settings, @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
-    return host.putCategoryResponse(id, trimToNone(seriesExtId), option(seriesCategoryId), some(videoId), name,
-            description, option(scaleId), settings, option(access), tags);
+          @FormParam("settings") final String settings, @FormParam("access") final Integer access) {
+    Option<Long> seriesCategoryIdOpt = option(seriesCategoryId);
+    Option<String> seriesExtIdOpt = trimToNone(seriesExtId);
+    return run(array(name), new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone()) {
+          return BAD_REQUEST;
+        }
+
+        return eas.getCategory(id, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(Category c) {
+            if (!eas.hasResourceAccess(c)) {
+              return UNAUTHORIZED;
+            }
+            Resource resource = eas.updateResource(c, Option.none());
+
+            // If we are updating a master series category from a local copy avoid changing the video
+            // the master series category belongs to by passing the series' category's video id
+            Option<Category> seriesCategory = seriesCategoryIdOpt.flatMap(new Function<>() {
+              @Override
+              public Option<Category> apply(Long seriesCategoryId11) {
+                return eas.getCategory(seriesCategoryId11, false);
+              }
+            });
+            if (seriesCategoryIdOpt.isSome() && seriesCategory.isNone()) {
+              return BAD_REQUEST;
+            }
+            Option<Long> seriesCategoryVideoId = seriesCategory.map(new Function<>() {
+              @Override
+              public Long apply(Category seriesCategory) {
+                return seriesCategory.getVideoId();
+              }
+            });
+
+            final Category updated = new CategoryImpl(id, seriesExtIdOpt, seriesCategoryIdOpt, seriesCategoryVideoId.getOrElse(videoId), option(scaleId),
+                name, trimToNone(description), trimToNone(settings),
+                new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource.getDeletedBy(),
+                    resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource.getTags()));
+            if (!c.equals(updated)) {
+              if (seriesCategoryIdOpt.isNone()) {
+                eas.updateCategoryAndDeleteOtherSeriesCategories(updated);
+              } else {
+                eas.updateCategory(updated);
+              }
+              c = updated;
+            }
+            return Response.ok(CategoryDto.toJson.apply(eas, c).toString()).header(LOCATION, categoryLocationUri(c)).build();
+          }
+
+          @Override
+          public Response none() {
+            Resource resource = eas.createResource();
+            final Category category = eas.createCategory(seriesExtIdOpt, seriesCategoryIdOpt, videoId, option(scaleId), name,
+                trimToNone(description), trimToNone(settings),
+                new ResourceImpl(option(access), resource.getCreatedBy(), resource.getUpdatedBy(), resource.getDeletedBy(),
+                    resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource.getTags()));
+
+            return Response.created(categoryLocationUri(category)).entity(CategoryDto.toJson.apply(eas, category).toString()).build();
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories/{categoryId}")
   public Response getCategory(@PathParam("categoryId") final long id) {
-    return host.getCategoryResponse(some(videoId), id);
+    if (eas.getVideo(videoId).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getCategory(id, false).fold(new Option.Match<>() {
+          @Override
+          public Response some(Category c) {
+            if (!eas.hasResourceAccess(c)) {
+              return UNAUTHORIZED;
+            }
+            return Response.ok(CategoryDto.toJson.apply(eas, c).toString()).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories")
-  public Response getCategories(@QueryParam("series-extid") final String seriesExtId,
-          @QueryParam("limit") final int limit, @QueryParam("offset") final int offset,
-          @QueryParam("since") final String date, @QueryParam("tags-and") final String tagsAnd,
-          @QueryParam("tags-or") final String tagsOr) {
-    return host.getCategoriesResponse(seriesExtId, some(videoId), limit, offset, date, tagsAnd, tagsOr);
+  public Response getCategories(@QueryParam("series-extid") final String seriesExtId) {
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        final Option<String> seriesExtIdm = trimToNone(seriesExtId);
+
+        if (eas.getVideo(videoId).isNone()) {
+          return BAD_REQUEST;
+        } else {
+          return Response.ok(CategoryDto.toJson(eas, eas.getCategories(seriesExtIdm, videoId)).toString()).build();
+        }
+      }
+    });
   }
 
   @DELETE
   @Path("categories/{categoryId}")
   public Response deleteCategory(@PathParam("categoryId") final long categoryId) {
-    return host.deleteCategoryResponse(some(videoId), categoryId);
+    if (eas.getVideo(videoId).isNone() || eas.getCategory(categoryId, false).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getCategory(categoryId, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(Category c) {
+            if (!eas.hasResourceAccess(c)) {
+              return UNAUTHORIZED;
+            }
+            c = eas.deleteCategory(c);
+            return Response.ok(CategoryDto.toJson.apply(eas, c).toString())
+                .header(LOCATION, categoryLocationUri(c)).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @POST
@@ -598,9 +913,20 @@ public class VideoEndpoint {
   @Path("categories/{categoryId}/labels")
   public Response postLabel(@PathParam("categoryId") final long categoryId, @FormParam("value") final String value,
           @FormParam("abbreviation") final String abbreviation, @FormParam("description") final String description,
-          @FormParam("access") final Integer access, @FormParam("settings") final String settings,
-          @FormParam("tags") final String tags) {
-    return host.postLabelResponse(some(videoId), categoryId, value, abbreviation, description, access, settings, tags);
+          @FormParam("access") final Integer access, @FormParam("settings") final String settings) {
+    return run(array(value, abbreviation), new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone() || eas.getCategory(categoryId, false).isNone()) {
+          return BAD_REQUEST;
+        }
+
+        Resource resource = eas.createResource(option(access), none());
+        final Label label = eas.createLabel(categoryId, value, abbreviation, trimToNone(description), trimToNone(settings), resource);
+
+        return Response.created(labelLocationUri(label)).entity(LabelDto.toJson.apply(eas, label).toString()).build();
+      }
+    });
   }
 
   @PUT
@@ -609,31 +935,135 @@ public class VideoEndpoint {
   public Response putLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id,
           @FormParam("value") final String value, @FormParam("abbreviation") final String abbreviation,
           @FormParam("description") final String description, @FormParam("access") final Integer access,
-          @FormParam("settings") final String settings, @FormParam("tags") final String tags) {
-    return host.putLabelResponse(some(videoId), categoryId, id, value, abbreviation, description, access, settings,
-            tags);
+          @FormParam("settings") final String settings) {
+    return run(array(value, abbreviation), new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone() || eas.getCategory(categoryId, false).isNone()) {
+          return BAD_REQUEST;
+        }
+
+        return eas.getLabel(id, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(Label l) {
+            if (!eas.hasResourceAccess(l)) {
+              return UNAUTHORIZED;
+            }
+            Resource resource = eas.updateResource(l, Option.none());
+            final Label updated = new LabelImpl(id, l.getSeriesLabelId(), categoryId, value, abbreviation, trimToNone(description), trimToNone(settings), resource);
+            if (!l.equals(updated)) {
+              eas.updateLabel(updated);
+              l = updated;
+            }
+            return Response.ok(LabelDto.toJson.apply(eas, l).toString()).header(LOCATION, labelLocationUri(l))
+                .build();
+          }
+
+          @Override
+          public Response none() {
+            Resource resource = eas.createResource(option(access), Option.none());
+            final Label label = eas.createLabel(categoryId, value, abbreviation, trimToNone(description), trimToNone(settings), resource);
+
+            return Response.created(labelLocationUri(label)).entity(LabelDto.toJson.apply(eas, label).toString()).build();
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories/{categoryId}/labels/{labelId}")
   public Response getLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id) {
-    return host.getLabelResponse(some(videoId), categoryId, id);
+    if (eas.getVideo(videoId).isNone() || eas.getCategory(categoryId, false).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getLabel(id, false).fold(new Option.Match<>() {
+          @Override
+          public Response some(Label l) {
+            if (!eas.hasResourceAccess(l)) {
+              return UNAUTHORIZED;
+            }
+            return Response.ok(LabelDto.toJson.apply(eas, l).toString()).build();
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("categories/{categoryId}/labels")
-  public Response getLabels(@PathParam("categoryId") final long categoryId, @QueryParam("limit") final int limit,
-          @QueryParam("offset") final int offset, @QueryParam("since") final String date,
-          @QueryParam("tags-and") final String tagsAnd, @QueryParam("tags-or") final String tagsOr) {
-    return host.getLabelsResponse(some(videoId), categoryId, limit, offset, date, tagsAnd, tagsOr);
+  public Response getLabels(@PathParam("categoryId") final long categoryId) {
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        if (eas.getVideo(videoId).isNone() || eas.getCategory(categoryId, true).isNone()) {
+          return BAD_REQUEST;
+        }
+
+        return Response.ok(LabelDto.toJson(eas, eas.getLabels(categoryId)).toString()).build();
+      }
+    });
   }
 
   @DELETE
   @Path("categories/{categoryId}/labels/{labelId}")
   public Response deleteLabel(@PathParam("categoryId") final long categoryId, @PathParam("labelId") final long id) {
-    return host.deleteLabelResponse(some(videoId), categoryId, id);
+    if (eas.getVideo(videoId).isNone() || eas.getCategory(categoryId, false).isNone())
+      return BAD_REQUEST;
+
+    return run(nil, new Function0<>() {
+      @Override
+      public Response apply() {
+        return eas.getLabel(id, true).fold(new Option.Match<>() {
+          @Override
+          public Response some(Label l) {
+            if (!eas.hasResourceAccess(l)) {
+              return UNAUTHORIZED;
+            }
+
+            // If the label is a copy from a series category, delete it on the series category instead
+            if (l.getSeriesLabelId().isSome()) {
+              return eas.getLabel(l.getSeriesLabelId().get(), false).fold(new Option.Match<>() {
+                @Override
+                public Response some(Label l) {
+                  if (!eas.hasResourceAccess(l)) {
+                    return UNAUTHORIZED;
+                  }
+
+                  l = eas.deleteLabel(l);
+                  return Response.ok(LabelDto.toJson.apply(eas, l).toString())
+                      .header(LOCATION, labelLocationUri(l)).build();
+                }
+
+                @Override
+                public Response none() {
+                  return NOT_FOUND;
+                }
+              });
+              // Otherwise, delete normally
+            } else {
+              l = eas.deleteLabel(l);
+              return Response.ok(LabelDto.toJson.apply(eas, l).toString()).header(LOCATION, labelLocationUri(l)).build();
+            }
+          }
+
+          @Override
+          public Response none() {
+            return NOT_FOUND;
+          }
+        });
+      }
+    });
   }
 
   @GET
@@ -689,24 +1119,20 @@ public class VideoEndpoint {
           @FormParam("title") final String title,
           @FormParam("content") @DefaultValue("[]") final String content,
           @FormParam("settings") final String settings,
-          @FormParam("access") final Integer access,
-          @FormParam("tags") final String tags) {
+          @FormParam("access") final Integer access) {
     if (id == null) {
       return run(array(title, content), new Function0<>() {
         @Override
         public Response apply() {
-          final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-
-          if (eas.getVideo(videoId).isNone() || (tagsMap.isSome() && tagsMap.get()
-              .isNone())) {
+          if (eas.getVideo(videoId).isNone()) {
             return BAD_REQUEST;
           }
 
-          Resource resource = eas.createResource(option(access), tagsMap.bind(Functions.identity()));
+          Resource resource = eas.createResource(option(access), none());
           final Questionnaire questionnaire = eas.createQuestionnaire(videoId, title, content, trimToNone(settings),
               resource);
 
-          return Response.created(host.questionnaireLocationUri(questionnaire)).entity(QuestionnaireDto.toJson.apply(eas, questionnaire).toString()).build();
+          return Response.created(questionnaireLocationUri(questionnaire)).entity(QuestionnaireDto.toJson.apply(eas, questionnaire).toString()).build();
         }
       });
     }
@@ -714,19 +1140,17 @@ public class VideoEndpoint {
     return run(array(id), new Function0<>() {
       @Override
       public Response apply() {
-        final Option<Option<Map<String, String>>> tagsMap = trimToNone(tags).map(parseToJsonMap);
-
-        if (videoOpt.isNone() || (tagsMap.isSome() && tagsMap.get().isNone())) {
+        if (videoOpt.isNone()) {
           return BAD_REQUEST;
         }
 
-        Resource resource = eas.createResource(tagsMap.bind(Functions.identity()));
+        Resource resource = eas.createResource();
         Option<Questionnaire> questionnaireFromTemplate = eas.createQuestionnaireFromTemplate(id, videoId, resource);
 
         return questionnaireFromTemplate.fold(new Option.Match<>() {
           @Override
           public Response some(Questionnaire q) {
-            return Response.created(host.questionnaireLocationUri(q))
+            return Response.created(questionnaireLocationUri(q))
                 .entity(QuestionnaireDto.toJson.apply(eas, q).toString()).build();
           }
 
@@ -759,7 +1183,7 @@ public class VideoEndpoint {
             q = eas.deleteQuestionnaire(q);
 
             return Response.ok(QuestionnaireDto.toJson.apply(eas, q).toString())
-                .header(LOCATION, host.questionnaireLocationUri(q)).build();
+                .header(LOCATION, questionnaireLocationUri(q)).build();
           }
 
           @Override
@@ -960,11 +1384,23 @@ public class VideoEndpoint {
             "comments", c.getId());
   }
 
-  private static Response notFoundToBadRequest(ExtendedAnnotationException e) throws ExtendedAnnotationException {
-    if (e.getCauseCode() == ExtendedAnnotationException.Cause.NOT_FOUND) {
-      return BAD_REQUEST;
-    } else {
-      throw e;
-    }
+  private URI scaleLocationUri(Scale s) {
+    return uri(host.getEndpointBaseUrl(), "videos", s.getVideoId(), "scales", s.getId());
+  }
+
+  private URI scaleValueLocationUri(ScaleValue s, long videoId) {
+    return uri(host.getEndpointBaseUrl(), "videos", videoId, "scales", s.getScaleId(), "scalevalues", s.getId());
+  }
+
+  private URI categoryLocationUri(Category c) {
+    return uri(host.getEndpointBaseUrl(), "videos", c.getVideoId(), "categories", c.getId());
+  }
+
+  private URI labelLocationUri(Label l) {
+    return uri(host.getEndpointBaseUrl(), "videos", videoId, "categories", l.getCategoryId(), "labels", l.getId());
+  }
+
+  private URI questionnaireLocationUri(Questionnaire q) {
+    return uri(host.getEndpointBaseUrl(), "videos", q.getVideoId(), "questionnaires", q.getId());
   }
 }

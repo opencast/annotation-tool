@@ -15,6 +15,8 @@
  */
 package org.opencast.annotation.impl;
 
+import static org.opencastproject.util.data.Option.some;
+
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
@@ -31,17 +33,16 @@ public class CategoryImpl extends ResourceImpl implements Category {
   private final long id;
   private final Option<String> seriesExtId;
   private final Option<Long> seriesCategoryId;
-  private final Option<Long> videoId;
+  private final long videoId;
   private final Option<Long> scaleId;
   private final String name;
   private final Option<String> description;
   private final Option<String> settings;
 
-  public CategoryImpl(long id, Option<String> seriesExtId, Option<Long> seriesCategoryId, Option<Long> videoId,
+  public CategoryImpl(long id, Option<String> seriesExtId, Option<Long> seriesCategoryId, long videoId,
           Option<Long> scaleId, String name, Option<String> description, Option<String> settings, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(),
-            resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(),
-            resource.getTags());
+            resource.getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.seriesExtId = seriesExtId;
     this.seriesCategoryId = seriesCategoryId;
@@ -69,11 +70,11 @@ public class CategoryImpl extends ResourceImpl implements Category {
 
   @Override
   public Option<Long> getVideo(ExtendedAnnotationService eas) {
-    return videoId;
+    return some(videoId);
   }
 
   @Override
-  public Option<Long> getVideoId() {
+  public long getVideoId() {
     return videoId;
   }
 
@@ -105,14 +106,14 @@ public class CategoryImpl extends ResourceImpl implements Category {
       return false;
     Category category = (Category) o;
     return id == category.getId() && seriesExtId.equals(category.getSeriesExtId())
-            && seriesCategoryId.equals(category.getSeriesCategoryId()) && videoId.equals(category.getVideoId())
+            && seriesCategoryId.equals(category.getSeriesCategoryId()) && videoId == category.getVideoId()
             && scaleId.equals(category.getScaleId()) && name.equals(category.getName())
             && description.equals(category.getDescription()) && getAccess() == category.getAccess()
-            && settings.equals(category.getSettings()) && getTags().equals(category.getTags());
+            && settings.equals(category.getSettings());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, seriesExtId, seriesCategoryId, videoId, scaleId, name, description, settings, getTags());
+    return Objects.hash(id, seriesExtId, seriesCategoryId, videoId, scaleId, name, description, settings);
   }
 }

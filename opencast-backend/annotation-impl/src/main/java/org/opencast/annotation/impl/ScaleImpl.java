@@ -15,6 +15,8 @@
  */
 package org.opencast.annotation.impl;
 
+import static org.opencastproject.util.data.Option.some;
+
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
@@ -29,14 +31,13 @@ import java.util.Objects;
 public class ScaleImpl extends ResourceImpl implements Scale {
 
   private final long id;
-  private final Option<Long> videoId;
+  private final long videoId;
   private final String name;
   private final Option<String> description;
 
-  public ScaleImpl(long id, Option<Long> videoId, String name, Option<String> description, Resource resource) {
+  public ScaleImpl(long id, long videoId, String name, Option<String> description, Resource resource) {
     super(Option.option(resource.getAccess()), resource.getCreatedBy(), resource.getUpdatedBy(), resource
-            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), resource
-            .getTags());
+            .getDeletedBy(), resource.getCreatedAt(), resource.getUpdatedAt(), resource.getDeletedAt(), null);
     this.id = id;
     this.videoId = videoId;
     this.name = name;
@@ -50,11 +51,11 @@ public class ScaleImpl extends ResourceImpl implements Scale {
 
   @Override
   public Option<Long> getVideo(ExtendedAnnotationService eas) {
-    return videoId;
+    return some(videoId);
   }
 
   @Override
-  public Option<Long> getVideoId() {
+  public long getVideoId() {
     return videoId;
   }
 
@@ -75,12 +76,12 @@ public class ScaleImpl extends ResourceImpl implements Scale {
     if (o == null || getClass() != o.getClass())
       return false;
     Scale scale = (Scale) o;
-    return id == scale.getId() && videoId.equals(scale.getVideoId()) && name.equals(scale.getName())
-            && description.equals(scale.getDescription()) && getTags().equals(scale.getTags());
+    return id == scale.getId() && videoId == scale.getVideoId() && name.equals(scale.getName())
+            && description.equals(scale.getDescription());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, videoId, name, description, getTags());
+    return Objects.hash(id, videoId, name, description);
   }
 }
