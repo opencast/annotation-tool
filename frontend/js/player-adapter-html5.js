@@ -85,7 +85,6 @@ define(
 
                 window.Hls = Hls;
                 mediaElementPlayer = new mejs.MediaElementPlayer(targetElement, {
-                    renderers: ["html5", "native_hls"],
                     alwaysShowControls: true,
                     autoRewind: false,
                     stretching: "fill",
@@ -96,7 +95,7 @@ define(
                          */
                         $(mediaElement).on("canplay durationchange", function () {
                             // If duration is still not valid
-                            if (isNaN(self.getDuration()) || mediaElement.readyState < 1) {
+                            if (!isFinite(self.getDuration()) || mediaElement.readyState < 1) {
                                 return;
                             }
 
@@ -105,6 +104,7 @@ define(
                             // If duration is valid, we changed status
                             self.status = PlayerAdapter.STATUS.PAUSED;
                             self.dispatchEvent(new Event(PlayerAdapter.EVENTS.READY));
+                            mediaElementPlayer.updateDuration();
 
                             if (self.waitToPlay) {
                                 self.play();
