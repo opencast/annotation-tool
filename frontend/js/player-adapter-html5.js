@@ -100,9 +100,7 @@ define(
                                 return;
                             }
 
-                            if (!self.initialized) {
-                                self.initialized = true;
-                            }
+                            self.initialized = true;
 
                             // If duration is valid, we changed status
                             self.status = PlayerAdapter.STATUS.PAUSED;
