@@ -33,10 +33,11 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 
 import javax.ws.rs.Path;
 
-@Path("/")
+@Path("/extended-annotations")
 @RestService(
     name = "extended-annotations",
     title = "Annotation Tool Backend",
@@ -48,6 +49,7 @@ import javax.ws.rs.Path;
         property = {
         "opencast.service.type=org.opencast.annotation",
         "opencast.service.path=/extended-annotations"})
+@JaxrsResource
 public class ExtendedAnnotationsRestService extends AbstractExtendedAnnotationsRestService {
 
   private ExtendedAnnotationService extendedAnnotationService;
