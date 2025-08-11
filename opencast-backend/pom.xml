@@ -22,16 +22,19 @@
 
   <name>Opencast Annotation Tool :: Backend</name>
 
-  <properties>
-    <maven.compiler.release>11</maven.compiler.release>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.opencastproject</groupId>
       <artifactId>opencast-common</artifactId>
       <version>${opencast.build.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <!-- TODO Without this, we get compiler warnings during the build
+      We might need a runtime counterpart as well, but let's first see how this goes -->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.1</version>
     </dependency>
   </dependencies>
 
@@ -49,7 +52,7 @@
             <configuration>
               <rules>
                 <requireJavaVersion>
-                  <version>11</version>
+                  <version>17</version>
                 </requireJavaVersion>
               </rules>
             </configuration>
@@ -60,17 +63,18 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>3.6.0</version>
+        <configuration>
+          <failOnWarning>true</failOnWarning>
+          <ignoredUnusedDeclaredDependencies>
+            <ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api</ignoredUnusedDeclaredDependency>
+          </ignoredUnusedDeclaredDependencies>
+        </configuration>
         <executions>
           <execution>
             <id>analyze</id>
             <goals>
-              <goal>
-                analyze-only
-              </goal>
+              <goal>analyze-only</goal>
             </goals>
-            <configuration>
-              <failOnWarning>true</failOnWarning>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -102,6 +106,7 @@
         <configuration>
           <failOnWarning>true</failOnWarning>
           <compilerArgument>-Xlint:all</compilerArgument>
+          <release>17</release>
         </configuration>
       </plugin>
       <plugin>
