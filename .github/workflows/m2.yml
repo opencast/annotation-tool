@@ -15,9 +15,38 @@ jobs:
       - name: Set up a compatible Java version
         uses: actions/setup-java@v4
         with:
-          distribution: zulu
-          java-version: 11
+          distribution: temurin
+          java-version: 17
           cache: maven
+
+      - name: See if we have the Opencast artifacts
+        id: exists
+        run: |
+          if [ -d ~/.m2/repository/org/opencastproject/base/17.0 ]
+          then
+            echo exists=true >> "$GITHUB_OUTPUT"
+          else
+            echo exists=false >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Potentially check out Opencast
+        if: steps.exists.outputs.exists == 'false'
+        uses: actions/checkout@v4
+        with:
+          repository: opencast/opencast
+          ref: "17.0"
+          path: opencast
+
+      - name: Potentially build Opencast
+        if: steps.exists.outputs.exists == 'false'
+        run: |
+          cd opencast
+          ./mvnw clean install -Pnone \
+            --batch-mode \
+            -Dmaven.test.skip \
+            -DskipTests \
+            -Dcheckstyle.skip \
+            -Dmdep.analyze.skip
 
       - name: Potentially restore node from cache
         uses: actions/cache@v3
