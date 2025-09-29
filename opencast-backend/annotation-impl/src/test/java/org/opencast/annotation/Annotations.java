@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2020, ELAN e.V., Germany
  *  Licensed under the Educational Community License, Version 2.0
  *  (the "License"); you may not use this file except in compliance
