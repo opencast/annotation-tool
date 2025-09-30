@@ -170,7 +170,12 @@ define([
             this.model = options.model;
 
             this.labels = new Labels(
-                this.model.get("labels").invoke("clone"),
+                this.model.get("labels").chain()
+                    .filter(function (label) {
+                        return !label.get("deleted_at");
+                    })
+                    .invoke("clone")
+                    .value(),
                 { category: this.model }
             );
 
