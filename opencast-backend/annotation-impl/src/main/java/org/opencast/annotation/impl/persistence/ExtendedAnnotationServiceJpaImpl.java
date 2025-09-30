@@ -950,9 +950,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
 
         // Update our labels with the labels from the master series category
         // Note: Maybe do an actual update instead of delete/create
-        for (Label label: labels) {
-          deleteLabel(label);
-        }
+        labels.replaceAll(this::deleteLabel);
         List<Label> newLabels = new ArrayList<>();
         for (Label seriesLabel : seriesCategoryLabels) {
           final LabelDto dto = LabelDto.create(some(seriesLabel.getId()), categoryId, seriesLabel.getValue(),
