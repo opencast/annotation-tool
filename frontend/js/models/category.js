@@ -59,8 +59,6 @@ define(
                 // If the model is referencing another model, sync to the other model
                 if (model.get("series_category_id")) {
                     model.set("id", model.get("series_category_id"));
-                } else if (model.tmpSeriesCategoryId) {
-                    model.set("id", model.tmpSeriesCategoryId);
                 }
 
                 return Resource.prototype.sync.call(this, method, model, options);
