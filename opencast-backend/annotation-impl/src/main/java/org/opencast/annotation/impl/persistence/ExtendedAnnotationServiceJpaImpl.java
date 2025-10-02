@@ -748,7 +748,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       List<Category> seriesCategories = categoryDtos.stream()
               .map(CategoryDto::toCategory)
               .filter(category -> Option.some(category.getId()).equals(category.getSeriesCategoryId()))
-              .collect(Collectors.toList());
+              .toList();
 
       // Link a category to a master series category if they are "sufficiently" equal
       for (Category videoCategory : allCategories) {
