@@ -829,7 +829,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       List<CategoryDto> categoryDtos = findAllWithOffsetAndLimit(CategoryDto.class, "Category.findAllOfSeriesCategory", none(), none(), id(category.getSeriesCategoryId().get()));
       List<Category> withSeriesCategoryId = categoryDtos.stream()
               .map(CategoryDto::toCategory)
-              .collect(Collectors.toList());
+              .toList();
       for (Category categoryBelongingToMaster: withSeriesCategoryId) {
         result = deleteCategoryImpl(categoryBelongingToMaster);
         if (!result) { break; }
