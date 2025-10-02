@@ -757,7 +757,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       List<Category> seriesCategories = categoryDtos.stream()
               .map(CategoryDto::toCategory)
               .filter(category -> Option.some(category.getId()).equals(category.getSeriesCategoryId()))
-              .collect(Collectors.toList());
+              .toList();
 
       // Link a category to a master series category if they are "sufficiently" equal
       for (Category videoCategory : allCategories) {
@@ -839,7 +839,7 @@ public final class ExtendedAnnotationServiceJpaImpl implements ExtendedAnnotatio
       List<CategoryDto> categoryDtos = findAllWithOffsetAndLimit(CategoryDto.class, "Category.findAllOfSeriesCategory", none(), none(), id(category.getSeriesCategoryId().get()));
       List<Category> withSeriesCategoryId = categoryDtos.stream()
               .map(CategoryDto::toCategory)
-              .collect(Collectors.toList());
+              .toList();
       for (Category categoryBelongingToMaster: withSeriesCategoryId) {
         result = deleteCategoryImpl(categoryBelongingToMaster);
       }
