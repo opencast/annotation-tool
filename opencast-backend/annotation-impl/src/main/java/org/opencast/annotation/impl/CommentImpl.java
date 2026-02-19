@@ -25,9 +25,8 @@ import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Comment;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
-
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Option;
+import org.opencast.annotation.util.data.Function;
+import org.opencast.annotation.util.data.Option;
 
 import java.util.Objects;
 

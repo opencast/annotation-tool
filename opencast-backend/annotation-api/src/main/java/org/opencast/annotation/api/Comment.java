@@ -21,7 +21,7 @@
 
 package org.opencast.annotation.api;
 
-import org.opencastproject.util.data.Option;
+import org.opencast.annotation.util.data.Option;
 
 /** A class representing a comment of an annotation. */
 public interface Comment extends Resource {

@@ -12,6 +12,7 @@
 
   <modules>
     <module>frontend</module>
+    <module>opencast-util</module>
     <module>opencast-backend</module>
   </modules>
 

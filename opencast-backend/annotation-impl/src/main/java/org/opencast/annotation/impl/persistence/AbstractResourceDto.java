@@ -29,11 +29,11 @@ import static org.opencast.annotation.impl.Jsons.p;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.User;
+import org.opencast.annotation.util.data.Function;
+import org.opencast.annotation.util.data.Function2;
+import org.opencast.annotation.util.data.Option;
 
 import org.opencastproject.util.DateTimeSupport;
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function2;
-import org.opencastproject.util.data.Option;
 
 import org.json.simple.JSONObject;
 

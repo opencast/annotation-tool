@@ -21,7 +21,7 @@
 
 package org.opencast.annotation.api;
 
-import org.opencastproject.util.data.Option;
+import org.opencast.annotation.util.data.Option;
 
 /** A class representing a scale of the annotation tool. */
 public interface Scale extends Resource {
