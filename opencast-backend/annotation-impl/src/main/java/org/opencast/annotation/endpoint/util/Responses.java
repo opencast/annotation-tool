@@ -21,7 +21,7 @@
 
 package org.opencast.annotation.endpoint.util;
 
-import static org.opencastproject.util.data.functions.Strings.asStringNull;
+import static org.opencast.annotation.util.data.functions.Strings.asStringNull;
 
 import org.json.simple.JSONObject;
 

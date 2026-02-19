@@ -24,8 +24,7 @@ package org.opencast.annotation.impl;
 import org.opencast.annotation.api.ExtendedAnnotationService;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.api.Scale;
-
-import org.opencastproject.util.data.Option;
+import org.opencast.annotation.util.data.Option;
 
 import java.util.Objects;
 
