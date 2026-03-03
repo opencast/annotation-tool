@@ -87,7 +87,7 @@ public class ScaleDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "value")
+  @Column(name = "value_")
   @CollectionTable(name = "xannotations_scale_tags", joinColumns = @JoinColumn(name = "scale_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 

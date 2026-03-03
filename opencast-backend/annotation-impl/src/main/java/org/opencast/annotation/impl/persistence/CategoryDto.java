@@ -101,7 +101,7 @@ public class CategoryDto extends AbstractResourceDto {
 
   @ElementCollection
   @MapKeyColumn(name = "name")
-  @Column(name = "value")
+  @Column(name = "value_")
   @CollectionTable(name = "xannotations_category_tags", joinColumns = @JoinColumn(name = "category_id"))
   protected Map<String, String> tags = new HashMap<String, String>();
 
