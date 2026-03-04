@@ -111,7 +111,7 @@
         <configuration>
           <failOnWarning>true</failOnWarning>
           <compilerArgument>-Xlint:all</compilerArgument>
-          <release>17</release>
+          <release>21</release>
         </configuration>
       </plugin>
       <plugin>
