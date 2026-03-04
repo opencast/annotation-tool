@@ -22,7 +22,7 @@ jobs:
       - name: See if we have the Opencast artifacts
         id: exists
         run: |
-          if [ -d ~/.m2/repository/org/opencastproject/base/17.0 ]
+          if [ -d ~/.m2/repository/org/opencastproject/base/18.0 ]
           then
             echo exists=true >> "$GITHUB_OUTPUT"
           else
@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: opencast/opencast
-          ref: "17.0"
+          ref: "18.0"
           path: opencast
 
       - name: Potentially build Opencast
