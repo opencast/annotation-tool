@@ -31,11 +31,11 @@ import static org.opencast.annotation.impl.persistence.ScaleValueDto.toScaleValu
 import static org.opencast.annotation.impl.persistence.TrackDto.toTrack;
 import static org.opencast.annotation.impl.persistence.UserDto.toUser;
 import static org.opencast.annotation.impl.persistence.VideoDto.toVideo;
+import static org.opencast.annotation.util.data.Monadics.mlist;
+import static org.opencast.annotation.util.data.Option.none;
+import static org.opencast.annotation.util.data.Option.option;
+import static org.opencast.annotation.util.data.Option.some;
 import static org.opencastproject.db.Queries.namedQuery;
-import static org.opencastproject.util.data.Monadics.mlist;
-import static org.opencastproject.util.data.Option.none;
-import static org.opencastproject.util.data.Option.option;
-import static org.opencastproject.util.data.Option.some;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
@@ -62,6 +62,12 @@ import org.opencast.annotation.impl.ScaleValueImpl;
 import org.opencast.annotation.impl.TrackImpl;
 import org.opencast.annotation.impl.UserImpl;
 import org.opencast.annotation.impl.VideoImpl;
+import org.opencast.annotation.util.data.Effect;
+import org.opencast.annotation.util.data.Function;
+import org.opencast.annotation.util.data.Function0;
+import org.opencast.annotation.util.data.Option;
+import org.opencast.annotation.util.data.Option.Match;
+import org.opencast.annotation.util.data.Predicate;
 
 import org.opencastproject.db.DBSession;
 import org.opencastproject.db.DBSessionFactory;
@@ -72,12 +78,6 @@ import org.opencastproject.security.api.SecurityConstants;
 import org.opencastproject.security.api.SecurityService;
 import org.opencastproject.security.api.UnauthorizedException;
 import org.opencastproject.util.NotFoundException;
-import org.opencastproject.util.data.Effect;
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Option;
-import org.opencastproject.util.data.Option.Match;
-import org.opencastproject.util.data.Predicate;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.base.AbstractInstant;

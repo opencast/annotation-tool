@@ -21,12 +21,12 @@
 
 package org.opencast.annotation.impl;
 
-import static org.opencastproject.util.data.Tuple.tuple;
+import static org.opencast.annotation.util.data.Tuple.tuple;
 
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Monadics;
-import org.opencastproject.util.data.Option;
-import org.opencastproject.util.data.Tuple;
+import org.opencast.annotation.util.data.Function;
+import org.opencast.annotation.util.data.Monadics;
+import org.opencast.annotation.util.data.Option;
+import org.opencast.annotation.util.data.Tuple;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

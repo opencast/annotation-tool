@@ -24,12 +24,12 @@ package org.opencast.annotation.endpoint;
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
 import static org.opencast.annotation.endpoint.util.Responses.buildOk;
+import static org.opencast.annotation.util.data.Arrays.array;
+import static org.opencast.annotation.util.data.Option.none;
+import static org.opencast.annotation.util.data.Option.option;
+import static org.opencast.annotation.util.data.Option.some;
+import static org.opencast.annotation.util.data.functions.Strings.trimToNone;
 import static org.opencastproject.util.UrlSupport.uri;
-import static org.opencastproject.util.data.Arrays.array;
-import static org.opencastproject.util.data.Option.none;
-import static org.opencastproject.util.data.Option.option;
-import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.data.functions.Strings.trimToNone;
 
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationException;
@@ -55,14 +55,14 @@ import org.opencast.annotation.impl.persistence.ScaleDto;
 import org.opencast.annotation.impl.persistence.ScaleValueDto;
 import org.opencast.annotation.impl.persistence.UserDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
+import org.opencast.annotation.util.data.Function;
+import org.opencast.annotation.util.data.Function0;
+import org.opencast.annotation.util.data.Option;
+import org.opencast.annotation.util.data.functions.Functions;
+import org.opencast.annotation.util.data.functions.Strings;
 
 import org.opencastproject.mediapackage.MediaPackage;
 import org.opencastproject.util.RestUtil;
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Option;
-import org.opencastproject.util.data.functions.Functions;
-import org.opencastproject.util.data.functions.Strings;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;

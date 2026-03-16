@@ -20,9 +20,9 @@
  */
 
 package org.opencast.annotation.api;
+import org.opencast.annotation.util.data.Option;
 
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.util.data.Option;
 
 import java.util.Date;
 import java.util.List;
