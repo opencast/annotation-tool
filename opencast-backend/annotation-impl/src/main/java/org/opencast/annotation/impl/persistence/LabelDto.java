@@ -25,7 +25,7 @@ import static org.opencast.annotation.impl.Jsons.conc;
 import static org.opencast.annotation.impl.Jsons.jA;
 import static org.opencast.annotation.impl.Jsons.jO;
 import static org.opencast.annotation.impl.Jsons.p;
-import static org.opencastproject.util.data.Option.option;
+import static org.opencast.annotation.util.data.Option.option;
 
 import org.opencast.annotation.api.Category;
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -33,10 +33,9 @@ import org.opencast.annotation.api.Label;
 import org.opencast.annotation.api.Resource;
 import org.opencast.annotation.impl.LabelImpl;
 import org.opencast.annotation.impl.ResourceImpl;
-
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function2;
-import org.opencastproject.util.data.Option;
+import org.opencast.annotation.util.data.Function;
+import org.opencast.annotation.util.data.Function2;
+import org.opencast.annotation.util.data.Option;
 
 import org.json.simple.JSONObject;
 
@@ -68,7 +67,7 @@ public class LabelDto extends AbstractResourceDto {
   @Column(name = "series_label_id")
   private Long seriesLabelId;
 
-  @Column(name = "value", nullable = false)
+  @Column(name = "value_", nullable = false)
   private String value;
 
   @Column(name = "abbreviation", nullable = false)

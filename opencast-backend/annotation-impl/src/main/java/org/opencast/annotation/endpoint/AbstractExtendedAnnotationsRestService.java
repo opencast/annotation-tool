@@ -23,10 +23,10 @@ package org.opencast.annotation.endpoint;
 
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ACTION;
 import static org.opencast.annotation.api.ExtendedAnnotationService.ANNOTATE_ADMIN_ACTION;
+import static org.opencast.annotation.util.data.Arrays.array;
+import static org.opencast.annotation.util.data.Option.option;
+import static org.opencast.annotation.util.data.functions.Strings.trimToNone;
 import static org.opencastproject.util.UrlSupport.uri;
-import static org.opencastproject.util.data.Arrays.array;
-import static org.opencastproject.util.data.Option.option;
-import static org.opencastproject.util.data.functions.Strings.trimToNone;
 
 import org.opencast.annotation.api.ExtendedAnnotationException;
 import org.opencast.annotation.api.ExtendedAnnotationService;
@@ -38,10 +38,10 @@ import org.opencast.annotation.impl.UserImpl;
 import org.opencast.annotation.impl.VideoImpl;
 import org.opencast.annotation.impl.persistence.UserDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
+import org.opencast.annotation.util.data.Function0;
+import org.opencast.annotation.util.data.Option;
 
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Option;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

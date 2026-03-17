@@ -36,6 +36,11 @@
       <artifactId>jaxb-api</artifactId>
       <version>2.3.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.opencast.annotate</groupId>
+      <artifactId>annnotation-tool-opencast-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -106,7 +111,7 @@
         <configuration>
           <failOnWarning>true</failOnWarning>
           <compilerArgument>-Xlint:all</compilerArgument>
-          <release>17</release>
+          <release>21</release>
         </configuration>
       </plugin>
       <plugin>

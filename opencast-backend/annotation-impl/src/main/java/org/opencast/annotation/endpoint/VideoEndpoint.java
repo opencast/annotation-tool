@@ -30,12 +30,12 @@ import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestSe
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.UNAUTHORIZED;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.nil;
 import static org.opencast.annotation.endpoint.AbstractExtendedAnnotationsRestService.run;
+import static org.opencast.annotation.util.data.Arrays.array;
+import static org.opencast.annotation.util.data.Option.none;
+import static org.opencast.annotation.util.data.Option.option;
+import static org.opencast.annotation.util.data.Option.some;
+import static org.opencast.annotation.util.data.functions.Strings.trimToNone;
 import static org.opencastproject.util.UrlSupport.uri;
-import static org.opencastproject.util.data.Arrays.array;
-import static org.opencastproject.util.data.Option.none;
-import static org.opencastproject.util.data.Option.option;
-import static org.opencastproject.util.data.Option.some;
-import static org.opencastproject.util.data.functions.Strings.trimToNone;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Category;
@@ -66,11 +66,11 @@ import org.opencast.annotation.impl.persistence.ScaleDto;
 import org.opencast.annotation.impl.persistence.ScaleValueDto;
 import org.opencast.annotation.impl.persistence.TrackDto;
 import org.opencast.annotation.impl.persistence.VideoDto;
+import org.opencast.annotation.util.data.Function;
+import org.opencast.annotation.util.data.Function0;
+import org.opencast.annotation.util.data.Option;
 
 import org.opencastproject.mediapackage.MediaPackage;
-import org.opencastproject.util.data.Function;
-import org.opencastproject.util.data.Function0;
-import org.opencastproject.util.data.Option;
 
 import java.net.URI;
 

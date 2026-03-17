@@ -12,6 +12,7 @@
 
   <modules>
     <module>frontend</module>
+    <module>opencast-util</module>
     <module>opencast-backend</module>
   </modules>
 
@@ -67,8 +68,9 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <opencast.build.version>17.0</opencast.build.version>
-    <opencast.deploy.version>;version="${opencast.build.version}"</opencast.deploy.version>
+    <opencast.version>18.0</opencast.version>
+    <opencast.build.version>[${opencast.version},)</opencast.build.version>
+    <opencast.deploy.version>;version="${opencast.version}"</opencast.deploy.version>
   </properties>
 
   <build>

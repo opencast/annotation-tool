@@ -30,9 +30,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.opencast.annotation.Annotations.scalingAnnotation;
 import static org.opencast.annotation.Annotations.textAnnotation;
 import static org.opencast.annotation.endpoint.ExtendedAnnotationsRestServiceTest.RegexMatcher.regex;
+import static org.opencast.annotation.util.data.Option.none;
+import static org.opencast.annotation.util.data.Option.some;
 import static org.opencastproject.test.rest.RestServiceTestEnv.testEnvForClasses;
-import static org.opencastproject.util.data.Option.none;
-import static org.opencastproject.util.data.Option.some;
 
 import org.opencast.annotation.api.Annotation;
 import org.opencast.annotation.api.Resource;
