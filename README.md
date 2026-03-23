@@ -49,19 +49,17 @@ A general documentation including the REST endpoints, the architecture etc. can 
 ## Communication
 For discussion around the Opencast Annotation Tool the [mailing list](https://groups.google.com/a/opencast.org/g/annotation-tool) can be used. You can subscribe to the list via [Google Groups](https://groups.google.com/a/opencast.org/g/annotation-tool) or by sending a mail to annotation-tool+subscribe@opencast.org.
 
-## Participants
-
 ### Initial Development
 * Entwine (now [Extron](https://www.extron.com/))
-* [SWITCH](https://www.switch.ch/)
+* [Switch](https://www.switch.ch/)
 * [Claudio Beffa](https://www.beffa.ch/)
 
-### Current Development of this branch
-* [virtUOS, Universität Osnabrück](https://www.virtuos.uni-osnabrueck.de)
-* [elan e.V.](https://elan-ev.de)
-
-### Contact
-* Rüdiger Rolf, [rrolf@uni-osnabrueck.de](mailto:rrolf@uni-osnabrueck.de), Phone: +49 541 969 6511
-
 ## License
-[ECL 2.0](https://opensource.org/licenses/ECL-2.0)
+
+This project is based on initial development by:
+
+* Entwine (now [Extron](https://www.extron.com/))
+* [Switch](https://www.switch.ch/)
+* [Claudio Beffa](https://www.beffa.ch/)
+
+It's licensed under the [ECL 2.0](https://opensource.org/licenses/ECL-2.0).
