@@ -1,10 +1,6 @@
 name: Deploy Maven artifacts
 on: push
 
-concurrency:
-  group: m2-deploy
-  cancel-in-progress: false
-
 permissions:
   contents: write
 
@@ -89,3 +85,4 @@ jobs:
         with:
           message: ${{ steps.revision.outputs.revision }}
           cwd: m2
+          pull: '--rebase --autostash'
