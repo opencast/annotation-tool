@@ -80,7 +80,7 @@ jobs:
           same-branch-only: false
 
       - name: Build the artifacts
-        run: mvn clean deploy
+        run: mvn deploy
           --batch-mode
           -DmaxWarnings=0
           -DaltDeploymentRepository=m2::file:m2
