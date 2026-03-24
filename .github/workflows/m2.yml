@@ -73,8 +73,14 @@ jobs:
         id: revision
         run: echo "revision=$(date +%Y.%m%d.%H%M%S)-${{ github.sha }}" >> $GITHUB_OUTPUT
 
+      # Use turnstyle instead of native concurrency so older pending runs wait instead of being replaced.
+      - name: Wait for prior m2 publication
+        uses: softprops/turnstyle@v2
+        with:
+          same-branch-only: false
+
       - name: Build the artifacts
-        run: mvn clean deploy
+        run: mvn deploy
           --batch-mode
           -DmaxWarnings=0
           -DaltDeploymentRepository=m2::file:m2
@@ -85,4 +91,3 @@ jobs:
         with:
           message: ${{ steps.revision.outputs.revision }}
           cwd: m2
-          pull: '--rebase --autostash'
