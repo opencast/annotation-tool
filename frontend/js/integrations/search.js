@@ -145,36 +145,43 @@ define([
          */
         loadVideo: function (container) {
             mediaPackage.then(function (mediaPackage) {
-                var videos = util.array(mediaPackage.media.track)
-                    .filter(_.compose(
-                        RegExp.prototype.test.bind(/application\/.*|video\/.*/),
-                        _.property("mimetype")
-                    ));
-                videos.sort(
-                    util.lexicographic([
-                        util.firstWith(
-                            _.property("master")
-                        ),
-                        util.firstWith(_.compose(
-                            RegExp.prototype.test.bind(/composite\/.*/),
-                            _.property("type")
-                        )),
-                        util.firstWith(_.compose(
-                            RegExp.prototype.test.bind(/presenter\/.*/),
-                            _.property("type")
-                        )),
-                        util.firstWith(_.compose(
-                            RegExp.prototype.test.bind(/presentation\/.*/),
-                            _.property("type")
-                        ))
-                    ])
-                );
+                var tracks = util.array(mediaPackage.media.track);
+
+                // Select the playable tracks by the following priority:
+                // 1. For dual stream videos we only want to show the 'composite/*' video
+                // 2. if none exist, prefer HLS videos ('application/*' and 'master')
+                // 3. if none exist, all tracks with type 'presenter/*'
+                // 4. if none exist, all tracks with type 'presentation/*'
+                var tracksWithType = function (pattern) {
+                    return tracks.filter(function (track) {
+                        return pattern.test(track.type);
+                    });
+                };
+                var compositeTracks = tracksWithType(/composite\/.*/);
+                var masterTracks = tracks.filter(function (track) {
+                    return /application\/.*/.test(track.mimetype) && track.master === true;
+                });
+                var presenterTracks = tracksWithType(/presenter\/.*/);
+                var presentationTracks = tracksWithType(/presentation\/.*/);
+
+                var playable;
+                if (compositeTracks.length > 0) {
+                    playable = compositeTracks;
+                } else if (masterTracks.length > 0) {
+                    playable = masterTracks;
+                } else if (presenterTracks.length > 0) {
+                    playable = presenterTracks;
+                } else if (presentationTracks.length > 0) {
+                    playable = presentationTracks;
+                } else {
+                    playable = [];
+                }
 
                 var videoElement = document.createElement("video");
                 container.appendChild(videoElement);
                 this.playerAdapter = new HTML5PlayerAdapter(
                     videoElement,
-                    videos.map(function (track) {
+                    playable.map(function (track) {
                         return {
                             src: track.url,
                             type: track.mimetype
